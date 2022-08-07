@@ -1,0 +1,61 @@
+Type=OleDll
+Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
+Module=modHexStr; ..\..\Shared\modHexStr.bas
+Class=NCode; NTCipher10\NCode.cls
+Module=modBitValue; ..\..\Shared\modBitValue.bas
+Module=modMain; NTCipher10\modMain.bas
+Class=UUCode; NTCipher10\UUCode.cls
+Module=modGuid; ..\..\Shared\modGUID.bas
+Class=Strand; ..\..\Shared\Strand.cls
+Class=PoolID; NTCipher10\PoolID.cls
+Class=GUID; NTCipher10\GUID.cls
+Class=Krimpt; NTCipher10\Krimpt.cls
+Module=modCommon; ..\..\Shared\modCommon.bas
+Form=NTCipher10\frmTimeSync.frm
+Class=Tractor; NTCipher10\Tractor.cls
+Class=BWord; NTCipher10\BWord.cls
+Startup="Sub Main"
+HelpFile=""
+Title="NTCipher10"
+ExeName32="NTCipher10.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTCipher10"
+HelpContextID="0"
+Description="Neotext Cipher Object 1.0"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTCipher10.dll"
+MajorVer=1
+MinorVer=0
+RevisionVer=430
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Cipher Object"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTCipher10=-1:VBIDE=-1:modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=-1
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1"

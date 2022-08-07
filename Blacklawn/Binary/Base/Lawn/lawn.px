@@ -1,0 +1,101 @@
+light
+{
+	type 3
+	ambient .5 .1 .1 .1
+	direction 0 -1 0
+	range 100000
+	position 0 100000 0
+}
+plane
+{
+	void1 -3429 -3709
+	void2 -3429 2813
+	void3 2198 2813
+	void4 2198 -3709
+	highsky sky.bmp
+	highground gravel.bmp
+	lowsky compass.bmp
+	lowground white.bmp
+}
+beacon
+{
+	singleplayer
+	percentxy 100 100
+	origin -2272 20 17
+	origin -153 155 -1972
+	origin 2461 20 -2829
+	origin -168 20 -2342
+	origin 356 20 -1636
+	origin -2485 20 -1881
+	origin -2682 620 -554
+	origin -2619 350 567
+	origin -2056 20 2448
+	filename shimmerstar1.bmp
+	filename shimmerstar2.bmp
+	filename shimmerstar3.bmp
+	filename shimmerstar4.bmp
+	filename shimmerstar5.bmp
+}
+parse
+{
+	filename city.px
+}
+parse
+{
+	filename idols.px
+}
+beacon
+{
+	identity n0
+	percentxy 50 50
+	filename nickel01.bmp
+	filename nickel02.bmp
+	filename nickel03.bmp
+	filename nickel04.bmp
+	filename nickel05.bmp
+	filename nickel06.bmp
+	filename nickel07.bmp
+	filename nickel08.bmp
+	filename nickel09.bmp
+	filename nickel10.bmp
+	filename nickel11.bmp
+	filename nickel12.bmp
+	allowance 15000
+	consumable
+	randomize
+}
+beacon
+{
+	identity n1
+	percentxy 25 40
+	filename n01.bmp
+	consumable
+	randomize
+}
+beacon
+{
+	identity n2
+	percentxy 25 40
+	filename n02.bmp
+	consumable
+	randomize
+}
+beacon
+{
+	identity n3
+	percentxy 25 40
+	filename n03.bmp
+	consumable
+	randomize
+}
+beacon
+{
+	identity n4
+	percentxy 25 40
+	filename n04.bmp
+	disposable
+	randomize
+}
+
+
+

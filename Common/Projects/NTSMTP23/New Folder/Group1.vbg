@@ -1,0 +1,4 @@
+VBGROUP 5.0
+StartupProject=Project1.vbp
+Project=..\..\NTAdvFTP61.vbp
+Project=..\..\NTSMTP23.vbp

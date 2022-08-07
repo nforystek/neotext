@@ -1,0 +1,56 @@
+Type=OleDll
+Class=Process; NTShell22\Process.cls
+Module=modProcess; ..\..\Shared\modProcess.bas
+Class=Program; NTShell22\Program.cls
+Module=modCommon; ..\..\Shared\modCommon.bas
+Module=modInternet; ..\..\Shared\modInternet.bas
+Class=Internet; NTShell22\Internet.cls
+Module=modMain; NTShell22\modMain.bas
+Class=Services; NTShell22\Services.cls
+Module=modResolve; NTShell22\modResolve.bas
+Module=modNTServices; ..\..\Shared\modNTServices.bas
+Module=modRegistry; ..\..\Shared\modRegistry.bas
+Startup="Sub Main"
+HelpFile=""
+Title="NTShell22"
+ExeName32="NTShell22.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTShell22"
+HelpContextID="0"
+Description="Neotext Shell Object 2.2"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTShell22.dll"
+MajorVer=2
+MinorVer=2
+RevisionVer=400
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Shell Object"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTShell22=-1:VBIDE=0:MODPROCESS=-1:modCommon=-1:modInternet=-1:modMain=-1:modResolve=-1:modNTServices=-1:modRegistry=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=-1
+StartMode=1
+Unattended=-1
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modProcess=-1:modCommon=-1:modInternet=-1:modMain=-1:modResolve=-1:modNTServices=-1:modRegistry=-1"

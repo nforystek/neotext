@@ -1,0 +1,68 @@
+Type=OleDll
+Object={0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}#1.0#0; msscript.ocx
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{7C0FFAB0-CD84-11D0-949A-00A0C91110ED}#1.0#0#..\..\..\..\WINDOWS\system32\msdatsrc.tlb#Microsoft Data Source Interfaces
+Reference=*\G{D63E0CE2-A0A2-11D0-9C02-00C04FC99C8E}#2.0#0#..\..\..\..\WINDOWS\system32\msxml.dll#Microsoft XML, version 2.0
+Reference=*\G{8B217740-717D-11CE-AB5B-D41203C10000}#1.0#0#..\..\..\..\WINDOWS\system32\TLBINF32.DLL#TypeLib Information
+Class=INode; NTNodes10\INode.cls
+Module=modBase; NTNodes10\modBase.bas
+Module=modStrands; NTNodes10\modStrands.bas
+Class=Strands; NTNodes10\Strands.cls
+Class=Stream; NTNodes10\Stream.cls
+Class=Collection; NTNodes10\Collection.cls
+Class=Item; NTNodes10\Item.cls
+Class=Nodes; NTNodes10\Nodes.cls
+Module=modIndexer; NTNodes10\modIndexer.bas
+Class=FragMem; NTNodes10\FragMem.cls
+Module=modCommon; ..\..\Shared\modCommon.bas
+Module=modFactory; ..\..\Shared\modFactory.bas
+Form=NTNodes10\frmTemp.frm
+Class=Serializer; NTNodes10\Serializer.cls
+Class=Helper; NTNodes10\Helper.cls
+Class=IStream; NTNodes10\IStream.cls
+Startup="Sub Main"
+HelpFile=""
+Title="NTNodes10"
+ExeName32="NTNodes10.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTNodes10"
+HelpContextID="0"
+Description="Neotext Hyper Node Objects 1.0"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTNodes10.dll"
+MajorVer=3
+MinorVer=1
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="List Classes  for Visual Basic 6.0"
+VersionCompanyName="Nicholas Randall Forystek"
+VersionFileDescription="Neotext Hyper Node Objects 1.0"
+VersionLegalTrademarks="Nicholas Randall Forystek, Visual Basic"
+VersionProductName="HyperNodes 3.1"
+CondComp="NTNodes10=-1:VBIDE=-1:modBase=-1:modStrands=-1:modIndexer=-1:modCommon=-1:modFactory=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+ThreadingModel=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modBase=-1:modStrands=-1:modIndexer=-1:modCommon=-1:modFactory=-1"

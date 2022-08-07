@@ -1,0 +1,62 @@
+Type=Control
+Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; richtx32.ocx
+Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; comdlg32.ocx
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+UserControl=NTControls22\URLBox.ctl
+Form=NTControls22\frmCombo.frm
+UserControl=NTControls22\AutoType.ctl
+UserControl=NTControls22\SiteInformation.ctl
+Module=modForms; ..\..\Shared\modForms.bas
+Module=modWinProc; NTControls22\modWinProc.bas
+UserControl=NTControls22\CodeEdit.ctl
+Module=modEditor; NTControls22\modEditor.bas
+UserControl=NTControls22\BrowseButton.ctl
+Class=Strand; ..\..\Shared\Strand.cls
+Module=modSockets; ..\..\Shared\modSockets.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+UserControl=NTControls22\NameInformation.ctl
+IconForm="frmCombo"
+Startup="Sub Main"
+HelpFile=""
+Title="NTControls22"
+ExeName32="NTControls22.ocx"
+Path32="..\Binary"
+Command32=""
+Name="NTControls22"
+HelpContextID="0"
+Description="Neotext Common Controls 2.2"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTControls22.ocx"
+MajorVer=2
+MinorVer=2
+RevisionVer=406
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Common Controls"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTControls22=-1:VBIDE=-1:modForms=-1:modWinProc=-1:modEditor=-1:modSockets=-1:modCommon=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=-1
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modForms=-1:modWinProc=-1:modEditor=-1:modSockets=-1:modCommon=-1"

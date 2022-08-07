@@ -1,0 +1,14 @@
+var menuBase = new menuObject(5,5,20,false,'Media/202.gif',false,true,"Media/PlusMinus/Black/plus.gif","Media/PlusMinus/Black/minus.gif",true,"Media/TreeLines/Black/top.gif","Media/TreeLines/Black/mid.gif","Media/TreeLines/Black/btm.gif","Media/TreeLines/Black/hline.gif","Media/TreeLines/Black/vline.gif");
+menuBase.menuItems[0] = new menuItemObject("Media/Bullet Icons/overview.gif","","","","RemindMe","Serif","2","Black","","help","",false);
+menuBase.menuItems[0].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Introduction","Serif","2","Black","Introduction.htm","help","",false);
+menuBase.menuItems[0].subMenu[1] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Operation Menu","Serif","2","Black","OperationMenu.htm","help","",false);
+menuBase.menuItems[0].subMenu[2] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Script Menu","Serif","2","Black","ScriptMenu.htm","help","",false);
+menuBase.menuItems[0].subMenu[3] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Help Menu","Serif","2","Black","HelpMenu.htm","help","",false);
+menuBase.menuItems[1] = new menuItemObject("Media/Bullet Icons/bookClosed.gif","Media/Bullet Icons/bookOpen.gif","","","Operations","Serif","2","Black","","help","",false);
+menuBase.menuItems[1].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Wizard","Serif","2","Black","Wizard.htm","help","",false);
+menuBase.menuItems[2] = new menuItemObject("Media/Bullet Icons/bookClosed.gif","Media/Bullet Icons/bookOpen.gif","","","Scripting","Serif","2","Black","","help","",false);
+menuBase.menuItems[2].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Integration","Serif","2","Black","Integration.htm","help","",false);
+menuBase.menuItems[2].subMenu[1] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Edit Menu","Serif","2","Black","EditMenu.htm","help","",false);
+menuBase.menuItems[2].subMenu[2] = new menuItemObject("Media/Bullet Icons/page.gif","","","","JavaScript","Serif","2","Black","JavaScript.htm","help","",false);
+menuBase.menuItems[2].subMenu[3] = new menuItemObject("Media/Bullet Icons/page.gif","","","","VBScript","Serif","2","Black","VBScript.htm","help","",false);
+menuBase.menuItems[3] = new menuItemObject("Media/Bullet Icons/world.gif","","","","Neotext.org","Serif","2","Black","http://www.neotext.org","_new","",false);

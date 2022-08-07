@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Item>
+
+	<Name>Name</Name>
+	<Class>ProdID.ClassID</Class>
+	<Source>%23JScript%0D%0A%0D%0A%23VBScript%0D%0A%0D%0A</Source>
+</Item>

@@ -1,0 +1,52 @@
+Type=OleDll
+Class=Schedule; NTSchedule20\Schedule.cls
+Module=modTimer; NTSchedule20\modTimer.bas
+Class=Timer; NTSchedule20\Timer.cls
+Module=modMain; NTSchedule20\modMain.bas
+Module=modWindow; ..\..\Shared\modWindow.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Startup="Sub Main"
+HelpFile=""
+Title="NTSchedule20"
+ExeName32="NTSchedule20.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTSchedule20"
+HelpContextID="0"
+Description="Neotext Schedule Object 2.0"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTSchedule20.dll"
+MajorVer=2
+MinorVer=0
+RevisionVer=461
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Schedule Object"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTSchedule20=-1:VBIDE=-1:modCommon=-1:modTimer=-1:modMain=-1:modWindow=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=1
+Unattended=-1
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+ThreadingModel=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modTimer=-1:modMain=-1:modWindow=-1:modCommon=-1"

@@ -1,0 +1,88 @@
+<HTML>
+ <HEAD>
+  <TITLE>Help - RemindMe - JavaScript</TITLE></HEAD>
+  <BODY >
+  
+  <pre>
+//**********************************************************************************************************
+//Note: Any comment beginning with RemindMe is a functional RemindMe comment, they
+//are used to add GUI functionality to procedure/functions in the operation wizard
+//
+//	Usage: //RemindMe:Enum:Name(DisplayedEnum:Value, DisplayedEnum:Value, DisplayedEnum:Value, ....)
+//	Usage: //RemindMe:Function:Name(DisplayedParam:Type, DisplayedParam:Type, DisplayedParam:Type, ....)
+//
+//Types for function parameters can be Boolean, Numeric, String, Browse, or <Enum Name>
+//The name field of functions must be the same as the actual scripted function
+//Declared RemindMe enumerators can be used in as types for function parameters
+//Underscores are replaced with spaces (" ") in display, double underscores are replaced with dashes (" - ")
+//**********************************************************************************************************
+
+//############ Enum Examples: (The following enum examples are used in distributed RemindMe functions)
+//RemindMe:Enum:IconTypes(Information:64, Exclamation:48, Critical:16)
+//RemindMe:Enum:FocusTypes(Normal_Focus:1, Normal_No_Focus:4, Minimized_Focus:2, Minimized_No_Focus:6, Maximized_Focus:3, Hidden:0)
+
+//############ Function Examples: (The following function examples are distributed as RemindMe operations able to be scheduled)
+//RemindMe:Function:Popup_Window(Message:String, Title:String, Icon:IconTypes)
+function Popup_Window(aMessage, aTitle, aIcon)
+{
+	var popup = new ActiveXObject("NTPopup21.Window");
+	with (popup)
+	{
+		Message = aMessage;
+		Icon = aIcon;
+		Title = aTitle;
+		Visible = true;
+	}
+}
+
+//RemindMe:Function:Popup_Window_with_Sound(Message:String, Title:String, Icon:IconTypes, Soundfile:Browse, Loop_Enabled:Boolean, Loop_Times:Numeric)
+function Popup_Window_with_Sound(aMessage, aTitle, aIcon, aSoundFile, aLoopEnabled, aLoopTimes)
+{
+	var popup = new ActiveXObject("NTPopup21.Window");
+	with (popup)
+	{
+		Message = aMessage;
+		Icon = aIcon;
+		Title = aTitle;
+		Visible = true;
+	}
+	var sound = new ActiveXObject("NTSound20.Player");
+	with (sound)
+	{
+		FileName = aSoundFile;
+		LoopEnabled = aLoopEnabled;
+		LoopTimes = aLoopTimes;
+		PlaySound();
+	}
+}
+
+//RemindMe:Function:Run_Program(Filename:Browse, Params:String, Focus:FocusTypes)
+function Run_Program(aFileName, aParams, aFocus)
+{
+	var shell = new ActiveXObject("NTShell22.Process");
+	shell.Run(aFileName, aParams, aFocus, false);
+}
+
+//RemindMe:Function:Play_Sound(SoundFile:Browse, Loop_Enabled:Boolean, Loop_Times:Numeric)
+function Play_Sound(aSoundFile, aLoopEnabled, aLoopTimes)
+{
+	var sound = new ActiveXObject("NTSound20.Player");
+	with (sound)
+	{
+		FileName = aSoundFile;
+		LoopEnabled = aLoopEnabled;
+		LoopTimes = aLoopTimes;
+		PlaySound();
+	}
+}
+
+//RemindMe:Function:Open_Website(WebLink:String)
+function Open_Website(WebLink)
+{
+	var web = new ActiveXObject("NTShell22.Internet");
+	web.OpenWebsite(WebLink);
+}
+  </pre>
+	
+ </BODY>
+</HTML>

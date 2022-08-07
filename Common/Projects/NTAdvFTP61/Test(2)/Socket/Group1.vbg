@@ -1,0 +1,4 @@
+VBGROUP 5.0
+StartupProject=ThreadDemo.vbp
+Project=..\..\..\NTAdvFTP61.vbp
+Project=..\..\..\NTNodes10.vbp

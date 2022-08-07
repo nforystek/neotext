@@ -1,0 +1,20 @@
+<HTML>
+ <HEAD>
+  <TITLE>Help - Blacklawn - Multiplayer</TITLE></HEAD>
+  <BODY >
+
+  
+  <H3>
+   Multiplayer</H3>
+   <B>Setting up a Server</b>
+  <P>
+	Blacklawn allows multiplayer through the use of a server service that must be optionally chosen during installation.  In multiplayer games everyone who connects brings their scores with them and anything you score in during multiplayer will carry over to your single player scores, unless the player sets "Clear Multiplayer Score" in their setup.  With "Clear Multiplayer Score" set you'll start with a default score when in multiplayer and your single player score will not be affected, any score you obtain in multiplayer will only remain for the session duration of that current multiplayer connection, once you disconnect your single player score will return.  Only one server must be installed to host a game and there is not requirement that the machine it is installed on must run the actual game play.  A player may however host the server and play the game at the same time.  The machine which hosts the server will have an entry in the “Services Manager” for starting it; a short cut the “Services Manager” is included under the Blacklawn programs menu when you install the multiplayer server.  To start the service, simply go to the “Services Manager” and locate the “Blacklawn Server” service highlight it, and right click it to popup a menu that allows starting and stopping the service.  Note:  The Blacklawn service listens for player connections using three ports that occur in a row by default starting at 28732, thus port 28733 and port 28734 must also be available.  You can change the initial first port for listening by editing the “listenport” value in the BlkLServer.ini file located under the programs path using a text editor, any port change requires stopping and starting the Blackalwn service to take affect.  Windows includes two services that block programs and applications from listening for connections for security purposes, these services are “Windows Firewall/Internet Connection Sharing (ICS)” and “Security Center,” and they may block the Blacklawn server from accepting connections.  You may have to make a port exception for the server in your firewall settings, and/or make a program exception for the executable in the security center.  Stopping these services is not recommended for security purposes.  Please consult your Administrator for help on configuring network firewalls and serving services.
+	</P>
+
+   <B>Using the Global Server</b>
+	<p>
+	The other option of playing Blacklawn 3D in multiplayer is to connect to the global server that Neotext.org hosts using the web.  This method of connection requires that the server connects to you by initiating it through the webconnect command in the console.  Your systems firewall if you have one must be setup for expections pretaining to the ports used, the same may also be needed for your internet routers firewall.  By default, unless specified otherwise in the webconnect command, expections would be needed for three ports starting at 28732.  Three consecutive ports must be made available starting at the port specified, thus if you specify 28732 then 28733 and 28734 will also be used in the connection.  The server will attempt to connect using your internet IP, if your computer's IP is not exposed to the internet then port forwarding would also have to be setup on your internet router such that all incoming connections for the specified ports get redirected to your computer's IP.  Please consult your network administrator or router manual for more information on setting up port forwarding.  Security expections for the Blacklawn program may also be needed if you have such a security center setup that restricts programs from using internet ports for incoming connections.
+	</P>
+	
+ </BODY>
+</HTML>

@@ -1,0 +1,56 @@
+Type=OleDll
+Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0; MSCOMCTL.OCX
+Class=Window; NTPopup21\Window.cls
+Form=NTPopup21\frmPopup.frm
+Module=modForms; ..\..\Shared\modForms.bas
+Module=modParentProc; NTPopup21\modParentProc.bas
+Module=modInternet; ..\..\Shared\modInternet.bas
+Module=modMain; NTPopup21\modMain.bas
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Startup="Sub Main"
+HelpFile=""
+Title="NTPopup21"
+ExeName32="NTPopup21.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTPopup21"
+HelpContextID="0"
+Description="Neotext Popup Window Object 2.1"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTPopup21.dll"
+MajorVer=2
+MinorVer=1
+RevisionVer=407
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Popup Window Object"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTPopup21=-1:Window=-1:frmPopup=-1:modCommon=-1:modForms=-1:modParentProc=-1:modInternet=-1:modMain=-1:VBIDE=0:MODPROCESS=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=-1
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+ThreadingModel=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modForms=-1:modParentProc=-1:modInternet=-1:modMain=-1:modProcess=-1:modCommon=-1"

@@ -1,0 +1,65 @@
+Type=Exe
+Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\WINDOWS\system32\msado15.dll#Microsoft ActiveX Data Objects 2.8 Library
+Reference=*\G{AC3B8B4C-B6CA-11D1-9F31-00C04FC29D52}#2.6#0#..\..\..\..\WINDOWS\system32\msjro.dll#Microsoft Jet and Replication Objects 2.6 Library
+Reference=*\G{D63E0CE2-A0A2-11D0-9C02-00C04FC99C8E}#2.0#0#..\..\..\..\WINDOWS\system32\msxml.dll#Microsoft XML, version 2.0
+Module=modMain; Utility\modMain.bas
+Form=Utility\frmMain.frm
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Class=clsDBConnection; Shared\clsDBConnection.cls
+Module=modShared; Shared\modShared.bas
+Class=clsArchive; Utility\clsArchive.cls
+Module=modGuid; ..\..\Shared\modGUID.bas
+Module=modHexStr; ..\..\Shared\modHexStr.bas
+Form=Utility\frmWarning.frm
+Module=modRegistry; ..\..\Shared\modRegistry.bas
+Module=modBitValue; ..\..\Shared\modBitValue.bas
+Module=modInternet; ..\..\Shared\modInternet.bas
+Module=modNTServices; ..\..\Shared\modNTServices.bas
+Class=Strand; ..\..\Shared\Strand.cls
+Class=Registry; ..\..\Shared\Registry.cls
+Module=modFolders; ..\..\Shared\modFolders.bas
+IconForm="frmMain"
+Startup="Sub Main"
+HelpFile=""
+Title="Utility"
+ExeName32="Utility.exe"
+Path32="..\Binary"
+Command32="/utility"
+Name="Utility"
+HelpContextID="0"
+Description="RemindMe Utility 2.1"
+CompatibleMode="0"
+MajorVer=2
+MinorVer=1
+RevisionVer=1
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="RemindMe"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="RemindMe 2.1"
+CondComp="Utility=-1:VBIDE=-1:modMain=-1:MODPROCESS=-1:modCommon=-1:modShared=-1:modGuid=-1:modHexStr=-1:modRegistry=-1:modBitValue=-1:modInternet=-1:modNTServices=-1:modFolders=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=-1
+UnroundedFP=-1
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modMain=-1:modProcess=-1:modCommon=-1:modShared=-1:modGuid=-1:modHexStr=-1:modRegistry=-1:modBitValue=-1:modInternet=-1:modNTServices=-1:modFolders=-1"

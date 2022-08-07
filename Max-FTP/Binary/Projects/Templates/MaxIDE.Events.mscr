@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Item>
+<Name>Events</Name>
+<Class>MaxIDE%2EEvents</Class>
+<Source>%23JScript%0D%0Afunction+Object%3AInit%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%0D%0A%09%7D%0D%0A%7D%0D%0A%0D%0Afunction+Object%3ATerm%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%0D%0A%09%7D%0D%0A%7D%0D%0A%23VBScript%0D%0AFunction+Object%3AInit%28Self%29%0D%0A%09With+Self%0D%0A%0D%0A%09End+With%0D%0AEnd+Function%0D%0A%0D%0AFunction+Object%3ATerm%28Self%29%0D%0A%09With+Self%0D%0A%0D%0A%09End+With%0D%0AEnd+Function%0D%0A</Source>
+</Item>
+

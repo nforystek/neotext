@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Project>
+<Language>JScript</Language>
+<Item>
+<Name>Project</Name>
+<Class>MaxIDE%2EProject</Class>
+<Source>%2F%2FMax%2DIDE+%22JScript%22+Project%0D%0A%0D%0Afunction+Project%3AExec%28%29%0D%0A%7B%0D%0A%09alert%28%27Display+output+is+printed+in+the+debug+window%2E%5CnUse+the+Stop+Project+tool+bar+button+to+finish%2E%27%29%3B%0D%0A%7D%0D%0A</Source>
+</Item>
+<Item>
+<Name>Debug</Name>
+<Class>MaxIDE%2EDebug</Class>
+<Source>function+Object%3AInit%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%0D%0A%09%7D%0D%0A%7D%0D%0A%0D%0Afunction+Object%3ATerm%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%0D%0A%09%7D%0D%0A%7D%0D%0A%0D%0A%0D%0A</Source>
+</Item>
+<Item>
+<Name>Module</Name>
+<Class>MaxIDE%2EModule</Class>
+<Source>function+Module%3AFirst%28Name%29%0D%0A%7B%0D%0A%09Debug%2EPrintLine%28%22%5Cr%5CnProject+Started%2E%2E%2E%22%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+Module%3ADefault%28Name%29%0D%0A%7B%0D%0A%09DoEvents%28%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+Module%3AFinal%28Name%29%0D%0A%7B%0D%0A%09Debug%2EPrintLine%28%22Project+Finished%2E%2E%2E%5Cr%5Cn%22%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+padLeft%28num%2C+val%2C+str%29%0D%0A%7B%0D%0A++++while+%28str%2Elength+%3C+num%29+%7B+str+%3D+val+%2B+str%3B+%7D%0D%0A++++return+str%3B%0D%0A%7D%0D%0A%0D%0Afunction+si%28c%2C+b%29%0D%0A%7B%0D%0A%09return+Project%2EMathFloor%28b+%2A+%28%28pillar+%3D+%21c%29+%3F+360+%3A+720%29%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+zi%28e%2C+d%29%0D%0A%7B%0D%0A%09piviot%3D%28e%3Fd%3Apiviot%29%3B%0D%0A%09Project%2ESetInterval%28%22zi%28pillar%2C%22%2B%21d%2B%22%29%22%2C36%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+ni%28%29%0D%0A%7B%0D%0A%09return+Project%2ESetTimeout%28ni%2C+pintoa%28%29%29%0D%0A%7D%0D%0A%0D%0Avar+piviot+%3D+zi%28pillar%2C+true%29%3B%0D%0A%0D%0Afunction+pintoa%28%29%0D%0A%7B%0D%0A%09return+si%28pillar%2C+Project%2EMathRandom%28%29%29%3B%0D%0A%7D%0D%0A%0D%0Avar+pillar+%3D+ni%28%29%3B%0D%0A%0D%0Afunction+aa%28a%2C+c%29%0D%0A%7B%0D%0A%09Project%2ESetTimeout%28%22Project%2EEvaluate%28%27%22+%2B+%28piviot%3F%22dd%22%3A%22bb%22%29+%2B+%22%28%22%2Ba%2B%22%29%3B%27%29%22%2C+72%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+bb%28c%29%0D%0A%7B%0D%0A%09return+ee%28piviot%2C+c%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+dd%28c%29%0D%0A%7B%0D%0A%09return+ee%28%21piviot%2C+c%29%3B%0D%0A%7D%0D%0A%0D%0Afunction+ee%28a%2C+c%29%0D%0A%7B%0D%0A%09direct%3D%28a%21%3Dc%3F%28a%3F%22v%22%3A%22x%22%29%3A%22Y%22%29%3B%0D%0A%09aa%28a%2C+c%29%3B%0D%0A%7D%0D%0A%0D%0Avar+direct+%3D+%22Y%22%3B%0D%0A%0D%0Aaa%28false%2C+false%29%3B%0D%0A</Source>
+</Item>
+<Item>
+<Name>Timer</Name>
+<Class>NTSchedule20%2ETimer</Class>
+<Source>function+Object%3AInit%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%09%09Interval+%3D+250%3B%0D%0A%09%09Enabled+%3D+true%3B%0D%0A%09%7D%0D%0A%7D%0D%0A%0D%0Afunction+Object%3ATerm%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%0D%0A%09%7D%0D%0A%7D%0D%0A%0D%0Afunction+Object%3AOnTicking%28self%29%0D%0A%7B%0D%0A%09with+%28self%29%0D%0A%09%7B%0D%0A%09%09Message+%3D+%28pillar%3F%27V%27%3A%27X%27%29+%2B+%27+%27+%2B+%28piviot%3F%27n%27%3A%27u%27%29+%2B+%27+%27+%2B+direct+%2B+%27+%27+%2B+padLeft%283%2C+%270%27%2C+pintoa%28%29+%2B+%27%27%29%3B%0D%0A%09%09Debug%2EText+%3D+Message%3B%0D%0A%09%7D%0D%0A%7D%0D%0A</Source>
+</Item>
+</Project>

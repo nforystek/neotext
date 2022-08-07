@@ -1,0 +1,63 @@
+Type=Exe
+Object={0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}#1.0#0; msscript.ocx
+Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\WINDOWS\system32\msado15.dll#Microsoft ActiveX Data Objects 2.8 Library
+Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#215.0#0#..\..\..\..\WINDOWS\system32\NTSchedule20.dll#Neotext Schedule Object 2.0
+Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#a3.0#0#..\..\..\..\WINDOWS\system32\NTService20.dll#Neotext Windows Service Object 2.0
+Form=RmdMeSrv\frmService.frm
+Class=clsDBConnection; Shared\clsDBConnection.cls
+Class=clsDBSettings; Shared\clsDBSettings.cls
+Module=modService; RmdMeSrv\modService.bas
+Class=clsOperation; RmdMeSrv\clsOperation.cls
+Class=clsOperationList; RmdMeSrv\clsOperationList.cls
+Module=modCommon; ..\..\Shared\modCommon.bas
+Module=modShared; Shared\modShared.bas
+Module=modProcess; ..\..\Shared\modProcess.bas
+Class=WindowsService; RmdMeSrv\WindowsService.cls
+Module=modWindow; ..\..\Shared\modWindow.bas
+Module=modRegistry; ..\..\Shared\modRegistry.bas
+Module=modFolders; ..\..\Shared\modFolders.bas
+IconForm="frmService"
+Startup="Sub Main"
+HelpFile=""
+Title="RmdMeSrv"
+ExeName32="RmdMeSrv.exe"
+Path32="..\Binary"
+Command32=""
+Name="RmdMeSrv"
+HelpContextID="0"
+Description="RemindMe Service 2.1"
+CompatibleMode="0"
+MajorVer=2
+MinorVer=1
+RevisionVer=1
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="RemindMe"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="RemindMe 2.1"
+CondComp="RmdMeSrv=-1:VBIDE=-1:modService=-1:modCommon=-1:modShared=-1:MODPROCESS=-1:modWindow=-1:modRegistry=-1:modFolders=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=-1
+UnroundedFP=-1
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modService=-1:modCommon=-1:modShared=-1:modProcess=-1:modWindow=-1:modRegistry=-1:modFolders=-1"

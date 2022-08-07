@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Item>
+<Name>Module</Name>
+<Class>MaxIDE%2EModule</Class>
+<Source>%23JScript%0D%0Afunction+Module%3AFirst%28Name%29%0D%0A%7B%0D%0A%0D%0A%7D%0D%0A%0D%0Afunction+Module%3ADefault%28Name%29%0D%0A%7B%0D%0A%0D%0A%7D%0D%0A%0D%0Afunction+Module%3AFinal%28Name%29%0D%0A%7B%0D%0A%0D%0A%7D%0D%0A%23VBScript%0D%0AFunction+Module%3AFirst%28Name%29%0D%0A%0D%0AEnd+Function%0D%0A%0D%0AFunction+Module%3ADefault%28Name%29%0D%0A%0D%0AEnd+Function%0D%0A%0D%0AFunction+Module%3AFinal%28Name%29%0D%0A%0D%0AEnd+Function%0D%0A%0D%0A</Source>
+</Item>
+

@@ -1,0 +1,76 @@
+Type=OleDll
+Reference=*\G{420B2830-E718-11CF-893D-00A0C9054228}#1.0#0#..\..\..\..\WINDOWS\system32\scrrun.dll#Microsoft Scripting Runtime
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#82.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{BD26B198-EE42-4725-9B23-AFA912434229}#2.1#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\CAPICOM\CapiCom.dll#CAPICOM v2.1 Type Library
+Module=modSockets; ..\..\Shared\modSockets.bas
+Module=modMain; NTAdvFTP61\modMain.bas
+Module=modWindow; ..\..\Shared\modWindow.bas
+Module=modWinProc; NTAdvFTP61\modWinProc.bas
+Module=modWildCard; NTAdvFTP61\modWildCard.bas
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Module=modMemory; ..\..\Shared\modMemory.bas
+Module=modBitValue; ..\..\Shared\modBitValue.bas
+Class=Client; NTAdvFTP61\Client.cls
+Class=URL; NTAdvFTP61\URL.cls
+Module=modFileSys; NTAdvFTP61\modFileSys.bas
+Class=Stream; NTAdvFTP61\Stream.cls
+Class=Group; NTAdvFTP61\Group.cls
+Form=NTAdvFTP61\frmThread.frm
+Class=ISocket; NTAdvFTP61\ISocket.cls
+Class=Socket; NTAdvFTP61\Socket.cls
+Module=modStream; NTAdvFTP61\modStream.bas
+Class=Crypto; NTAdvFTP61\Crypto.cls
+Class=IStream; NTAdvFTP61\IStream.cls
+Module=modDoTasks; ..\..\Shared\modDoTasks.bas
+Module=modCrypto; NTAdvFTP61\modCrypto.bas
+Class=Certificate; NTAdvFTP61\Certificate.cls
+Module=modGuid; ..\..\Shared\modGUID.bas
+Form=NTAdvFTP61\frmCert.frm
+ResFile32="NTAdvFTP61\PGPKeys.RES"
+Startup="Sub Main"
+HelpFile=""
+Title="NTAdvFTP61"
+ExeName32="NTAdvFTP61.dll"
+Path32="..\Binary"
+Command32=""
+Name="NTAdvFTP61"
+HelpContextID="0"
+Description="Neotext Advanced FTP Object 6.1"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\NTAdvFTP61.dll"
+MajorVer=6
+MinorVer=1
+RevisionVer=3
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Neotext Advanced FTP Object"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="Max-FTP 6.1"
+CondComp="NTAdvFTP61=-1:VBIDE=0:modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:MODPROCESS=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modCrypto=-1:modGuid=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+UseExistingBrowser=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:modProcess=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modCrypto=-1:modGuid=-1"

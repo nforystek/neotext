@@ -1,0 +1,154 @@
+Partition max is every 256th Cylinder
+
+Cylinder max is every 256th Segment
+
+Segment max is every 256th Byte
+
+
+
+File systems begin in read order byte of a Partition
+
+[Partition=0][Cylinder=0][Segment=0] is the first Partition
+
+
+But Byte Location 0, is [Partition][Cylinder][Segment] and
+Byte Locationm 256, is [Cylinder][Segment] and then
+Byte location 512, is [Segment] and then
+Byte location 768, is [Segment] and then
+Byte location 1024, is [Segment] and then
+so on [Segment] until 256 of them at first byte of header
+is seen before a [Cylinder][Segment] header returns
+and then repeats only [Segment] again for 256 headers
+and then repeats [Cylinder][Segment] until 256 of those
+is seen before a [Partition][Cylinder][Segment] occurs
+and repeats just like the expressed above at first byte 0
+If no [0][0][0] is found in read order then the above
+sequence is used to continue seeking for the 1st header
+
+A header also contains the footer, at initial state the
+read order of the header is considered to be hi-order
+and upon every successful header read, the hi/lo order
+toggles, so the footer information is not present with
+header information, finding [0][0][0] would be successful
+read, for the fourth value of the header, the [Handles]
+information, then the next read will be of header in
+lo order to the presence of handles or not reverse.
+When hi order is introductory read, as well is a header
+Lo order on the broad side of data ending it out is
+a header placed at the technical footer, unless were
+hi order footer, while a initial read lo header repeats.
+
+Because handles wont be judged as existing, or are existing
+they are also as well as unimportant information data to
+structure in sense of the logic, P=Partition, C=Cylinder,
+S=Segment, H=Handles, D=Data, x#=multiplyer, [] = cluster
+of visual information representing our file system;
+
+
+When intro are hi order they are headers:
+[[PCS[HD]x255][[CS[HD]x254][S[HD]x255]x253]x254]x253
+
+When outro are hi order they are headers:
+[[HD]x252SCP]
+
+When outro are hi order they are footers:
+[[HD]x252HPCS]
+
+When intro are lo order they are footers:
+[SCP[HD]x252]
+
+Notw the handle order is not effected by the header/footer,
+it is always interrior to the builk of able writable bytes,
+but itself can have reverse order determint of intristics.
+Any zero for file handles switches the outro to intro and
+vice versa when seeking out the next header or footer, such
+that, a header and footer logically exist for an entire
+partition on the intro and then the outro consequentially
+being the next partition structurally in reverse order
+
+
+Usable data amount is with-in structural reason
+to the partitioning which has a max container of
+
+((255*254)*253)*(254*253)=1,053,049,184,220
+
+Unincluded of the follow taken for structure
+
+(((1*255)+(2*254))*253)+((3*254)+253)=194,054
+
+1,053,049,184,220+194,054=1,053,049,378,274
+
+Not all the container space for handles and data
+is used, for instance a non formatted hard drive
+partition newly created in dynamic starts at just
+write 194054 bytes + a amount specified in sector
+size, such as multipliers of 256 in at or under
+4096 usually, which means 4096 of blank data will
+be written to the partition that signifies the
+growth rate for each subsequent use of filling the
+data, there will always be at least 4096 kept free
+above any 4096 with wrtten data. The value set for
+it can greatly improve performance depending on
+the major use for the hard drive.  If an server
+willbe writing and serving small generated web
+files under 1024 you could use a low value and
+the preformance wouldn't compensate least going
+over.  So normal rapid and large unpredictable
+home user use this is not so important.  Depending
+on the defragmentation rate if at all wirtes in
+say a serve environment, it can be well corrective
+to lifetime of a drive, that can become unstable
+in longer fragmentation use with out defragments.
+While the size usualy grows and deletes that are
+not reused immediatly by other free space uses
+the drive does not shrink, it only restricts to
+the initial partition size alotted for say other
+file systems if used or mutliple partitions to
+not clash with each other.  Each write in grow
+has to rewrite the cylinders least max capacity
+is met, where they are still in orderly checked
+off in continuous drive cycling ready for use.
+Data is wrtten in order of free space first but
+removal of say data inbetween two other writes
+then a write again of data larger then the removal
+fragments the information in to peices to fill
+the void, the exception is trailing ends of
+sectors before a cylinder or partition, and or
+a file expanding in size, that doesn't reverse
+and fill forward it just continues, a cycle
+around the end goes right back to the beginning
+with out missing a beat due tothe nature of
+the magnetics of a hard drive on a circular
+structure with spiraling clutch closer to center
+
+
+When if one handle per usable data cluster exists
+then 388,108 becomes our used amont for structure
+and 1,053,048,990,166 is our usable or total data.
+
+Now for what it's possible, the most basic write
+and read is one single continuous write that then
+only requires use of one byte per cluster for info
+describing the data following which maybe length
+
+
+Therefore say the containment amoutn in the current
+header/footer needs to be known as max allowed absent
+the handle byte, which may be 0 for no data, 1 for
+full use of containment, or 2 to 254 to express -1
+equals how much of data is relevant, from 1 to max-1.
+At the very least we will have 256-2 for header [SH]
+leaving 254 usable writes, and the header may verb
+o for absent, 1 for full, or 2 for one byte used 3
+for 2 bytes used and so on up to 251 for 253 bytes
+used, where it be for 2 in [SH] or 1 for full 254
+plus that two totals 256, is same as 1 or 254 as H.
+Now, 1 or 254 can become a hi/lo ordering itself for
+the end of write and or 0, making for the continous
+drum prequisit that harddrive hardware has in move-
+ment accountable compatible in a circular forward
+read/write and presumed backward write/read same
+timing dependant on which cam (physical dsic) the
+handle is adjustment to (two or more is a global pair
+theory of two seperate a speed, one double as fast)
+
