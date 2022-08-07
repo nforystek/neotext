@@ -1,7 +1,4 @@
 #
-*.ocx
-*.dll
-*.exe
 *.tmp
 *.log
 *.obj
