@@ -1,0 +1,825 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="NTService20.Controller_files/filelist.xml">
+<title>Help - Max-FTP - NTService20.Controller</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Nicholas Forystek</o:Author>
+  <o:LastAuthor>Nicholas Forystek</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>15</o:TotalTime>
+  <o:Created>2018-01-05T22:45:00Z</o:Created>
+  <o:LastSaved>2018-01-05T23:00:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>639</o:Words>
+  <o:Characters>3643</o:Characters>
+  <o:Company>Neotext Software</o:Company>
+  <o:Lines>30</o:Lines>
+  <o:Paragraphs>8</o:Paragraphs>
+  <o:CharactersWithSpaces>4274</o:CharactersWithSpaces>
+  <o:Version>10.2625</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal align=center style='margin-bottom:12.0pt;text-align:center'><o:p>&nbsp;</o:p></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=400
+ style='width:240.0pt;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td style='padding:0in 0in 0in 0in'>
+  <h2>NTService20.Controller ActiveX DLL</h2>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal align=center style='margin-bottom:12.0pt;text-align:center'><br
+style='mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+<![endif]></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=650
+ style='width:390.0pt;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td style='padding:0in 0in 0in 0in'>
+  <h2>Identification</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=600
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>NTService20.Controller</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>The Controller Component is an ActiveX DLL written
+        in Visual Basic that allows developer to enable their applications as
+        windows services. Supports Windows ME and NT or later Windows OS
+        services, using a Microsoft developed component NTService.ocx,
+        Neotext’s implementation is designed to be a drop loading DLL (as VB6
+        applications do, ending the program should there be nothing else active
+        in memory) that restricts installation/un-installation to the parent
+        housing the component for design ethic purposes to service debugging
+        challenges. A feature of NTService20 is that is does provide well
+        conformity equality with out additional system setup to the
+        thoroughness of a NT service for Windows ME servicing in single
+        compatibility, legacy as it maybe covered grounds spare no protest.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Events</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=600
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>StartService (Success)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Success</b> <i>Boolean</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=510 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>This should be set to true when receiving this
+          event.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is fired when the service controller
+        starts. This event is called when the StartUp method is used and the
+        StartUp method should not be called from with in the StartService
+        Event. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>StopService</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is fired when the service controller
+        stops. This event is called when the StopIt method is used and the
+        StopIt method should not be called from with in the StopService Event. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>PauseService (Success)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Success</b> <i>Boolean</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=510 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>This should be set to true when receiving this
+          event.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is fired when the service controller
+        pauses. This event is not supported in Windows 98/ME. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>ContinueService (Success)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Percent</b> <i>Long</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=510 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>This should be set to true when receiving this
+          event.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is fired when the service controller
+        continues from being paused. This event is not supported in Windows
+        98/ME. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Properties</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=600
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>IsWindowsNT</b> <i>(Boolean) (ReadOnly)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This is true if the operating system is Window NT or
+        Windows 2K.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>ServiceName</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Set a unique name to identify this service with.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>DisplayName</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sets a display name that shows under service control
+        panel.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>ExecuteName</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>The executable filename of the program to be
+        serviced.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Interactive</b> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sets if the service will have a GUI interface for
+        users to interact with.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:5'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>AutoStart</b> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sets if the service should automatically run when
+        the system starts up.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:6'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Account</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sets the local account name for the service to run
+        under, default is LocalSystem. This property is only used in Windows NT
+        and Windows 2K operating systems.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:7;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Password</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sets the password associated with the account
+        property. This property is only used in Windows NT and Windows 2K
+        operating systems.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Functions</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=600
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Install ()</b> <i>Boolean</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Installs the service into the operating system,
+        should only be used once or until the uninstall function has been
+        issued. Returns True if the service was successfully installed. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Uninstall ()</b> <i>Boolean</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Uninstalls the service from the operating system,
+        should only be used once after the install function is issued. Returns
+        True if the service was successfully uninstalled. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>StartUp ()</b> </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This function should be invoked when the service is
+        starting up, for instance in the initial main program execution when it
+        first is run. It tells the controller to actually start the program as
+        a service which then will call the StartService event. This method
+        should not be called from with in the StartService method. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>StopIt ()</b> </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This function stops the service and also raises the
+        StopService event so it should not be called with in the StopService
+        event. This method is for internal shutting down of the service, to
+        stop or start a service, external methods such as net.exe or mmc.exe
+        should be used. </p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Automation</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=600
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Object:Init (self)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=510 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Optional event that is called when the object is
+        initialized.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Object:Term (self)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=570
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=510 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=540 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Optional event that is called when the object is
+        terminated.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <p class=MsoNormal style='margin-bottom:12.0pt'><br style='mso-special-character:
+  line-break'>
+  <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+  <![endif]></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+Type=Exe
+Form=Wizard\frmMain.frm
+Module=modMain; Wizard\modMain.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Class=Program; Wizard\Program.cls
+Class=Executes; Wizard\Executes.cls
+RelatedDoc=Wizard\Manifest.ini
+RelatedDoc=Wizard\MAKECAB.DOC
+Module=modFolders; Wizard\modFolders.bas
+Module=modSystem; ..\..\Shared\modSystem.bas
+Module=modFileInfo; ..\..\Shared\modFileInfo.bas
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modGenerate; Wizard\modGenerate.bas
+Module=modWildCard; Wizard\modWildCard.bas
+RelatedDoc=Wizard\Uninstall.SED
+RelatedDoc=Wizard\Installer.SED
+RelatedDoc=Wizard\InstStar.nsi
+Form=Wizard\frmSlpash.frm
+Module=modForms; ..\..\Shared\modForms.bas
+Class=CabFile; Wizard\CabFile.cls
+Module=modCabFile; Wizard\modCabFile.bas
+Class=Registry; ..\..\Shared\Registry.cls
+Module=modWin32Ver; ..\..\Shared\modWin32Ver.bas
+ResFile32="Wizard\Wizard.RES"
+IconForm="frmSplash"
+Startup="Sub Main"
+HelpFile=""
+Title="Wizard"
+ExeName32="Wizard.exe"
+Path32="..\Binary"
+Command32="/compile Max-FTP"
+Name="Wizard"
+HelpContextID="0"
+Description="Neotext Install Star Wizard"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=1
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="Wizard used to install programs to the operating sytem and remove or modify them."
+VersionCompanyName="Neotext"
+VersionFileDescription="Install Star Wizard Application"
+VersionLegalTrademarks="Nicholas Randall Forystek"
+VersionProductName="Install Star"
+CondComp="Wizard=-1:VBIDE=-1:modMain=-1:modCommon=-1:modFolders=-1:modSystem=-1:modFileInfo=-1:modProcess=-1:modGenerate=-1:modWildCard=-1:modForms=-1:modCabFile=-1:modWin32Ver=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modMain=-1:modCommon=-1:modFolders=-1:modSystem=-1:modFileInfo=-1:modProcess=-1:modGenerate=-1:modWildCard=-1:modForms=-1:modCabFile=-1:modWin32Ver=-1"

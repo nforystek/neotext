@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<Tree>
+<Item>
+	<Type>Base</Type>
+	
+	<SaveImages>True</SaveImages>
+	<StretchBullets>False</StretchBullets>
+	<StaticView>False</StaticView>
+
+	<Top>5</Top>
+	<Left>5</Left>
+	<Height>20</Height>
+	
+	<UsePlusMinus>False</UsePlusMinus>
+	<PlusMinusColor>Black</PlusMinusColor>
+
+	<UseTreeLines>False</UseTreeLines>
+	<TreeLineColor>Black</TreeLineColor>
+
+	<BackColor></BackColor>
+	<imgBackImage></imgBackImage>
+
+	<LinkTarget></LinkTarget>
+
+	<UseFont>False</UseFont>
+	<FontFamily>Serif</FontFamily>
+	<FontColor>Black</FontColor>
+	<FontSize>2</FontSize>
+
+
+	<Label>Blank Tree</Label>
+	<UseCollapsed>False</UseCollapsed>
+	<UseExpanded>False</UseExpanded>
+	<imgCollapsed></imgCollapsed>
+	<imgExpanded></imgExpanded>
+	<Opened>True</Opened>
+
+	<File>Blank.item</File>
+
+
+
+</Item>
+</Tree>

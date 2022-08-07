@@ -1,0 +1,1 @@
+.\Ident.exe uninstall

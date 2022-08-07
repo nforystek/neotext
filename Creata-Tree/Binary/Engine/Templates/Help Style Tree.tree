@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<Tree>
+<Item>
+	<Type>Base</Type>
+
+	<SaveImages>True</SaveImages>
+	<StretchBullets>False</StretchBullets>
+	<StaticView>False</StaticView>
+
+	<Top>5</Top>
+	<Left>5</Left>
+	<Height>20</Height>
+	
+	<UsePlusMinus>True</UsePlusMinus>
+	<PlusMinusColor>Black</PlusMinusColor>
+
+	<UseTreeLines>True</UseTreeLines>
+	<TreeLineColor>Black</TreeLineColor>
+
+	<BackColor>White</BackColor>
+	<imgBackImage></imgBackImage>
+
+	<LinkTarget></LinkTarget>
+
+	<UseFont>False</UseFont>
+	<FontFamily>Serif</FontFamily>
+	<FontColor>Black</FontColor>
+	<FontSize>2</FontSize>
+
+
+	<Label>Contents</Label>
+	<UseCollapsed>True</UseCollapsed>
+	<UseExpanded>True</UseExpanded>
+	<imgCollapsed>Bullet+Icons\bookclosed.gif</imgCollapsed>
+	<imgExpanded>Bullet+Icons\bookopen.gif</imgExpanded>
+	<Opened>True</Opened>
+
+	<File>Blank.item</File>
+
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Category</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\bookClosed.gif</imgCollapsed>
+
+		<UseExpanded>True</UseExpanded>
+		<imgExpanded>Bullet+Icons\bookOpen.gif</imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Category</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Overview</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\overview.gif</imgCollapsed>
+
+		<UseExpanded>False</UseExpanded>
+		<imgExpanded></imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Overview</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Topic</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\topic.gif</imgCollapsed>
+
+		<UseExpanded>False</UseExpanded>
+		<imgExpanded></imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Topic</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+
+
+
+
+</Item>
+</Tree>

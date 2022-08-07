@@ -1,0 +1,16 @@
+var menuBase = new menuObject(5,5,20,false,'Media/202.gif',false,true,"Media/PlusMinus/Black/plus.gif","Media/PlusMinus/Black/minus.gif",true,"Media/TreeLines/Black/top.gif","Media/TreeLines/Black/mid.gif","Media/TreeLines/Black/btm.gif","Media/TreeLines/Black/hline.gif","Media/TreeLines/Black/vline.gif");
+menuBase.menuItems[0] = new menuItemObject("Media/Bullet Icons/overview.gif","","","","Main Window","Serif","2","Black","","help","",false);
+menuBase.menuItems[0].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Introduction","Serif","2","Black","Introduction.htm","help","",false);
+menuBase.menuItems[0].subMenu[1] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Tree Menu","Serif","2","Black","TreeMenu.htm","help","",false);
+menuBase.menuItems[0].subMenu[2] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Item Menu","Serif","2","Black","ItemMenu.htm","help","",false);
+menuBase.menuItems[0].subMenu[3] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Options Menu","Serif","2","Black","OptionsMenu.htm","help","",false);
+menuBase.menuItems[0].subMenu[4] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Help Menu","Serif","2","Black","HelpMenu.htm","help","",false);
+menuBase.menuItems[1] = new menuItemObject("Media/Bullet Icons/bookClosed.gif","Media/Bullet Icons/bookOpen.gif","","","Editing Trees","Serif","2","Black","","help","",false);
+menuBase.menuItems[1].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Tree Properties","Serif","2","Black","TreeProperties.htm","help","",false);
+menuBase.menuItems[1].subMenu[1] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Item Properties","Serif","2","Black","ItemProperties.htm","help","",false);
+menuBase.menuItems[1].subMenu[2] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Exporting Trees","Serif","2","Black","ExportingTrees.htm","help","",false);
+menuBase.menuItems[1].subMenu[3] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Framing Trees","Serif","2","Black","FramingTrees.htm","help","",false);
+menuBase.menuItems[2] = new menuItemObject("Media/Bullet Icons/bookClosed.gif","Media/Bullet Icons/bookOpen.gif","","","Media Library","Serif","2","Black","","help","",false);
+menuBase.menuItems[2].subMenu[0] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","The Browser","Serif","2","Black","TheBrowser.htm","help","",false);
+menuBase.menuItems[2].subMenu[1] = new menuItemObject("Media/Bullet Icons/topic.gif","","","","Using Media","Serif","2","Black","UsingMedia.htm","help","",false);
+menuBase.menuItems[3] = new menuItemObject("Media/Bullet Icons/world.gif","","","","Neotext.org","Serif","2","Black","http://www.neotext.org","_new","",false);

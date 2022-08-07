@@ -1,0 +1,28 @@
+<HTML>
+	<HEAD>
+		<SCRIPT LANGUAGE="JavaScript">
+			function bodyClick() {
+				document.title="hide";
+			}
+			function bodyKeypress() {
+				if(event.keyCode==27) {
+					document.title="hide";
+				}	
+			}
+			function bodyEvents() {
+				document.onclick = bodyClick;
+				document.onkeypress = bodyKeypress;
+			}
+		</SCRIPT>
+	</HEAD>
+	<BODY onLoad="bodyEvents();">
+		<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=100% HEIGHT=100%>
+			<TR><TD ALIGN=LEFT VALIGN=TOP>
+				<IMG SRC="aboutlogo.png"><BR>
+				</TD><TD ALIGN=RIGHT VALIGN=BOTTOM>
+				<FONT color=red size=2>Creata-Tree v3.1.0</FONT><BR>
+				<FONT color=black size=2><A TARGET="NEW" HREF='http://www.neotext.org'>http://www.neotext.org</A></FONT><BR>
+			</TD></TR>
+		</TABLE>
+	</BODY>
+</HTML>

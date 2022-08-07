@@ -1,0 +1,48 @@
+<HTML>
+ <HEAD>
+  <TITLE>Help - Creata-Tree - Framing Trees</TITLE></HEAD>
+  <BODY >
+
+  <H3>
+   Framing Trees</H3>
+
+  <P>
+	This is a short example of placing your tree into a framed HTML view:
+	</P>
+	
+	
+	<P>
+		First off, make sure all your items have a Link Target set, in this example we will use "content" you can choose this.
+	</P>
+
+	<P>
+		Next, export your tree to a folder, use windows explorer to navigate to the folder.  Create a new text document and open it. 
+	</P>
+
+	<P>
+		Enter the following code, replacing "intro.htm" with your first or default document (most likely the first tree item):
+	</P>
+	
+	<pre style="color:#0000FF;">
+		&lt;HTML&gt;
+		&lt;HEAD&gt;&lt;TITLE&gt;Creata-Tree Example&lt;/TITLE&gt;&lt;/HEAD&gt;
+
+		&lt;FRAMESET COLS="200,*"&gt;
+
+			&lt;FRAME NAME="menu" SRC="tree.html" SCROLLING=AUTO NORESIZE&gt;
+			&lt;FRAME NAME="content" SRC="intro.htm"&gt;
+
+		&lt;/FRAMESET&gt;
+		&lt;NOFRAMES&gt;
+		Your browser doesn't support frames.
+		&lt;/NOFRAMES&gt;
+		&lt;/HEAD&gt;	
+	</Pre>
+
+	<P>
+		Close the text document and rename it to Index.htm, then open it!
+	</P>
+	
+	
+ </BODY>
+</HTML>

@@ -1,0 +1,159 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="ScheduleOperations_files/filelist.xml">
+<link rel=Edit-Time-Data href="ScheduleOperations_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Help - Max-FTP - Operations</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Nicholas Forystek</o:Author>
+  <o:LastAuthor>Nicholas Forystek</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>10</o:TotalTime>
+  <o:Created>2018-01-05T22:46:00Z</o:Created>
+  <o:LastSaved>2018-01-05T22:56:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>412</o:Words>
+  <o:Characters>2353</o:Characters>
+  <o:Company>Neotext Software</o:Company>
+  <o:Lines>19</o:Lines>
+  <o:Paragraphs>5</o:Paragraphs>
+  <o:CharactersWithSpaces>2760</o:CharactersWithSpaces>
+  <o:Version>10.2625</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1>Operations</h1>
+
+<p class=MsoNormal style='margin-bottom:12.0pt'><o:p>&nbsp;</o:p></p>
+
+<h3>Properties of Operations</h3>
+
+<p><img width=513 height=351 id="_x0000_i1025" src=ScheduleOperations.png></p>
+
+<h3>Operation Info</h3>
+
+<p>By setting the Operation Info you are specifying what you want to occur when
+the operation runs. Valid operations are Copy, Move, Delete, Folder and Rename.
+You can specify anything you want for the Name value; it's for internal use
+only. All schedule events by default are logged under the System32\LogFiles
+folder, and NT based system also in EventLog. </p>
+
+<p>The copy operation requires that you tell Max-FTP what you want to copy. If
+you specify file, you'll need to enter just the filename you want to copy. If
+you specify folder, you'll need to enter just the last part of the folder name.
+You only enter the filename; or the last part of the folder the rest of the
+location (directory) is specified in the Source or Destination Directory URL
+section on the operation window. </p>
+
+<p>The move operation works the save way as the copy does except it moves the
+files off of the source location. </p>
+
+<p>Copy, move and delete operations have the option of including sub folders,
+this means that every folder until the root specified (apart from the root
+specified, the exception is delete which will remove the root specified as
+well) will be included in the provided operation action. Note, when using wild
+cards use just a star to specify folders included in the action, or use *.* to
+specify just all files. </p>
+
+<p>Copy and move operations have the option of overwrite, which has a sub
+option of only newer. Select overwrite to ensure the files are overwritten,
+select both overwrite and only newer if you want the destination overwrote only
+if the source is newer then the destination. </p>
+
+<p>The delete operation requires that you enter the file name you want to
+delete. You only enter the filename; the rest of the location (directory) is
+specified in the Source Directory URL section on the operation window. </p>
+
+<p>The Folder operation simply creates a folder of you choice. </p>
+
+<p>The Rename operation allows you to rename files or folders. You must specify
+the current name of the file or folder and the desired name of the file or
+folder. You only enter the filename; the rest of the location (directory) is
+specified in the Source Directory URL section on the operation window. </p>
+
+<h3>Source Directory URL</h3>
+
+<p>This is where you specify the location of the file to perform actions on. It
+can be local, ftp, or a network resource URL. You must specify the path to
+where the file resides. You do not include the filename or folder name of which
+you're performing action on. </p>
+
+<h3>Destination Directory URL</h3>
+
+<p>This is the same things as the Source Directory URL except it's for the
+Destination. This is only visible on Copy and Move operations. </p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<Tree>
+<Item>
+	<Type>Base</Type>
+
+	<SaveImages>True</SaveImages>
+	<StretchBullets>False</StretchBullets>
+	<StaticView>False</StaticView>
+
+	<Top>5</Top>
+	<Left>5</Left>
+	<Height>20</Height>
+	
+	<UsePlusMinus>False</UsePlusMinus>
+	<PlusMinusColor>Black</PlusMinusColor>
+
+	<UseTreeLines>False</UseTreeLines>
+	<TreeLineColor>Black</TreeLineColor>
+
+	<BackColor>White</BackColor>
+	<imgBackImage></imgBackImage>
+
+	<LinkTarget></LinkTarget>
+
+	<UseFont>False</UseFont>
+	<FontFamily>Serif</FontFamily>
+	<FontColor>Black</FontColor>
+	<FontSize>2</FontSize>
+
+
+	<Label>Macintosh</Label>
+	<UseCollapsed>True</UseCollapsed>
+	<UseExpanded>False</UseExpanded>
+	<imgCollapsed>Bullet+Icons\Disk.gif</imgCollapsed>
+	<imgExpanded></imgExpanded>
+	<Opened>True</Opened>
+
+	<File>Blank.item</File>
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Folder</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\macclosed%2Egif</imgCollapsed>
+
+		<UseExpanded>True</UseExpanded>
+		<imgExpanded>Bullet+Icons\macopen%2Egif</imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Folder</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Application</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\app.gif</imgCollapsed>
+
+		<UseExpanded>False</UseExpanded>
+		<imgExpanded></imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Application</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+	<Item>
+		<Type>Template</Type>
+		<Label>Document</Label>
+
+		<UseCollapsed>True</UseCollapsed>
+		<imgCollapsed>Bullet+Icons\page.gif</imgCollapsed>
+
+		<UseExpanded>False</UseExpanded>
+		<imgExpanded></imgExpanded>
+
+		<UseMouseOut>False</UseMouseOut>
+		<imgMouseOut></imgMouseOut>
+
+		<UseMouseOver>False</UseMouseOver>
+		<imgMouseOver></imgMouseOver>
+
+		<UseText>True</UseText>
+		<Text>Document</Text>
+
+		<UseFont>Default</UseFont>
+		<FontFamily></FontFamily>
+		<FontSize></FontSize>
+		<FontColor></FontColor>
+
+		<LinkURL></LinkURL>
+		<LinkToolTip></LinkToolTip>
+
+		<UseLinkTarget>Default</UseLinkTarget>
+		<LinkTarget></LinkTarget>
+
+		<Opened>False</Opened>
+
+	</Item>
+
+
+
+
+
+</Item>
+</Tree>

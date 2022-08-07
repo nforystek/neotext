@@ -1,0 +1,2756 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="NTAdvFTP61.Client_files/filelist.xml">
+<title>Help - Max-FTP - MaxIDE.Client</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Nicholas Forystek</o:Author>
+  <o:LastAuthor>Nicholas Forystek</o:LastAuthor>
+  <o:Revision>32</o:Revision>
+  <o:TotalTime>151</o:TotalTime>
+  <o:Created>2018-01-14T07:08:00Z</o:Created>
+  <o:LastSaved>2018-03-26T01:41:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>1685</o:Words>
+  <o:Characters>9608</o:Characters>
+  <o:Company>Neotext Software</o:Company>
+  <o:Lines>80</o:Lines>
+  <o:Paragraphs>22</o:Paragraphs>
+  <o:CharactersWithSpaces>11271</o:CharactersWithSpaces>
+  <o:Version>10.2625</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h2
+	{mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:2;
+	font-size:18.0pt;
+	font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal align=center style='margin-bottom:12.0pt;text-align:center'><o:p>&nbsp;</o:p></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=320
+ style='width:240.0pt;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td style='padding:0in 0in 0in 0in'>
+  <h2>NTAdvFTP61.Client ActiveX DLL</h2>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal align=center style='margin-bottom:12.0pt;text-align:center'><br
+style='mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+<![endif]></p>
+
+<div align=center>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=520
+ style='width:390.0pt;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td style='padding:0in 0in 0in 0in'>
+  <h2>Identification</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>NTAdvFTP61.Client</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This is the core FTP object in Max-FTP.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Enumerators</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ConnectedStates</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><span class=SpellE>NotState</span> = 0</p>
+      <p class=MsoNormal><span class=SpellE>AllStates</span> = -1</p>
+      <p class=MsoNormal><span class=SpellE>LocalHardDisk</span> = 1</p>
+      <p class=MsoNormal><span class=SpellE>SocketNetwork</span> = 2</p>
+      <p class=MsoNormal><span class=SpellE>LoggingInto</span> = 4</p>
+      <p class=MsoNormal><span class=SpellE>FullyRemoting</span> = 8</p>
+      <p class=MsoNormal><span class=SpellE>CommandRequest</span> = 16</p>
+      <p class=MsoNormal><span class=SpellE>ListingToFile</span> = 32</p>
+      <p class=MsoNormal><span class=SpellE>LocalToLocal</span> = 64</p>
+      <p class=MsoNormal><span class=SpellE>LocalToRemote</span> = 128</p>
+      <p class=MsoNormal><span class=SpellE>RemoteToLocal</span> = 256</p>
+      <p class=MsoNormal><span class=SpellE>DataStreaming</span> = 512</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal><span class=SpellE><b>ConnectionModes</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>Passive&nbsp; = 0<br>
+      Active = 1</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>TransferModes</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>None&nbsp; = -1<br>
+      Binary = 0<br>
+      ASCII = 1</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>RateTypes</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><span class=SpellE>HardDrive</span> = 0<br>
+      Download = 1<br>
+      Upload = 2</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ErrorReturns</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>Wait = -1</p>
+      <p class=MsoNormal>None&nbsp; = 0<br>
+      Last = 1</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ListSystems</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>None&nbsp; = 0<br>
+      Wins = 1<br>
+      Unix = 2</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ProgressTypes</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><span class=SpellE>FileListing</span> = 0<br>
+      <span class=SpellE>AllocatingFile</span> = 1<br>
+      <span class=SpellE>PositioningFile</span>= 2</p>
+      <p class=MsoNormal><span class=SpellE>TransferingFile</span> = 3</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal><span class=SpellE><b>AllocateSides</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>None = 0<br>
+      Client = 1<br>
+      Remote&nbsp; = 2</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal><span class=SpellE><b>MessageTypes</b></span></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal>Outgoing = 1<br>
+      Incoming = 2<br>
+      Incorrect&nbsp; = 3</p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Events</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Error (Number, Source, Description)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Number</b> <i>Long</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the error number raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><b>Source</b> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the source of the error raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><b>Description</b> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the description of the error raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event fires when an error occurs from the
+        server while FTP processing.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>LogMessage</b></span><b> (<span
+    class=SpellE>MessageType</span>, <span class=SpellE>AddedText</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>MessageType</b></span> <span
+        class=SpellE><i>MessageTypes</i></span><i><span style='mso-bidi-font-size:
+        10.0pt'><o:p></o:p></span></i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of message that was added to
+          the log.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>AddedText</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>The text that was added to the log.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Rises whenever the FTP log changes data.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ItemListing</b></span><b> (<span
+    class=SpellE>ItemName</span>, <span class=SpellE>ItemSize</span>, <span
+    class=SpellE>ItemDate</span>, <span class=SpellE>ItemAccess</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ItemName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder name. Folders start
+          with &quot;/&quot;.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ItemSize</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder size.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ItemDate</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder date.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ItemAccess</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file of folder access (Non MS-DOS).</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is raised for every item that is
+        successfully parsed with the <span class=SpellE>PraseListing</span>
+        function.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>DataProgress</b></span><b> (<span
+    class=SpellE>ProgressType</span>, <span class=SpellE>ReceivedBytes</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ProgressType</b></span><i> <span
+        class=SpellE>ProgressTypes</span></i><i><span style='mso-bidi-font-size:
+        10.0pt'><o:p></o:p></span></i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of progress this event is being
+          called about.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ReceivedBytes</b></span> <i>Long</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the total amount of bytes received for
+          the listing or file transfer.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event occurs when data is received during a
+        listing transfer.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>DataComplete</b></span><b> (<span
+    class=SpellE>ProgressType</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ProgressType</b></span><i> <span
+        class=SpellE>ProgressTypes</span></i><i><span style='mso-bidi-font-size:
+        10.0pt'><o:p></o:p></span></i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of progress this event is being
+          called about.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This event is raised when listing of directory
+        contents is complete.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Properties</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>PauseTransfers</b></span> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies whether or not the object or any object
+        connected in transfer is paused or in active transfer.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>PauseOnStandBy</b></span> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies whether the object will halt transfers
+        when the system goes into standby.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>LargeFileMode</b></span> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies whether or not to allow file sizes over 2 gigabytes
+        (or 2147483647 bytes), the maximum file size with this set is
+        9223372036854780000 bytes with this enabled. Files are opened in shared
+        mode when this is disabled. This option may auto enabled determinate of
+        the file size, however listing it likely will not if you have a<span
+        style='mso-spacerun:yes'>&nbsp; </span>listing over 2 gigabytes, of
+        which you would need this enabled.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ConnectedState</b></span><b>([Check])</b>
+    <i>(Boolean) (<span class=SpellE>ReadOnly</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>[Check]</b> <span class=SpellE><i>ConnectedStates</i></span></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Optional state to check on specifically for the
+          return value of the property to reflect.<span
+          style='mso-spacerun:yes'>&nbsp; </span>Omitted the return is whether
+          the object is connected or not, including the logged in state of the
+          object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns whether or not the object is connected and
+        logged in, when Check is specified the state specifically reflects the Check
+        only.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>AdapterCount</b></span> <i>(Long)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns the number of adapters in the <span
+        class=SpellE>AllAdapters</span> collection.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:5'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>AllAdapters</b></span> <i>(Collection)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns a collection of all the available network adapters
+        IP addresses on the local machine (multiple network cards on the same
+        system) for PORT based transfers. You can set the adapter to use by
+        setting the <span class=SpellE>NetAdapter</span> property to the index
+        or IP of the network adapter from the <span class=SpellE>AllAdapters</span>
+        collection.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:6'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>NetAdapter</b></span> <i>(Variant)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns the currently set network adapter index
+        being used for PORT based transfers. You can set this property by the
+        index associated to the <span class=SpellE>AllAdapters</span>
+        collection, or by the IP address of a network adapter found in the <span
+        class=SpellE>AllAdapters</span> collection.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:7'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>URLType</b></span> <i>(Integer) (<span
+    class=SpellE>ReadOnly</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the type of URL the object is connected
+        to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:8'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>URL</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>This is the URL the object should, or is connected
+        to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:9'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Server</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the server to connect to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:10'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Port</b> <i>(Long)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the port of the server to connect to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:11'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Username</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the username of the FTP site it's
+        connecting to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:12'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Password</b> <i>(String)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the password of the FTP site it's
+        connecting to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:13'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Folder</b> <i>(String) (<span class=SpellE>ReadOnly</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the folder you are currently connected to.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:14'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ConnectionMode</b></span> <i>(Variant)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>The mode the FTP protocol should use when
+        transferring files or listing directories, &quot;PASV&quot; or
+        &quot;PORT&quot;.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:15'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Timeout</b> <i>(Long)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the amount of time to wait for the server
+        to respond.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:16'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>LastError</b></span> <i>(String) (<span
+    class=SpellE>ReadOnly</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns the last error returned by the FTP server.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:17'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>LogBytes</b></span> <i>(Long)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies how big the log data can get in bytes,
+        zero for no limit.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:18'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>LogData</b></span> <i>(String) (<span
+    class=SpellE>ReadOnly</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns the FTP communication log.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:19'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Transfering</b></span> <i>(Boolean)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Returns true if the object is has a second data
+        socket open aside the protocol socket, actively listing or transferring
+        a file.<span style='mso-spacerun:yes'>&nbsp; </span>When no listing or
+        transfer is in progress, the return value is false.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal><span class=SpellE><b>TransferType</b></span> <i>(<span
+    class=SpellE>TransferModes</span>)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the type of connection stream to
+        initialize when transferring data.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:20;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>TransferRates</b></span><b>(Index)</b>
+    <i>(Long)</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Specifies the transfer rate of the object. Index 0 refers
+        to local to local transfers. Index 1 refers to remote to local
+        transfers (downloads). Index 2 refers to local to remote transfers
+        (uploads).</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Functions</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Connect ([<span class=SpellE>eURL</span>])</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>[<span class=SpellE>eURL</span>]</b> <i>String =
+        &quot;&quot;</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the URL to connect to.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Connects the object to a file system.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Disconnect ()</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Disconnects the object from the file system.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>CancelTransfer</b></span><b> ()</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Cancels a file transfer.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>NoOperation</b></span><b> ()</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Sends the No Operation command to the server. (Ping)</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>RetreiveHelp</b></span><b> ()</b> <i>String</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Retrieves the servers Help data.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:5'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ChangeFolderRelative</b></span><b>
+    (<span class=SpellE>NewFolder</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>NewFolder</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the folder to change to relative to the
+          current folder.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Changes the folder relative to the current folder.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:6'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ChangeFolderAbsolute</b></span><b>
+    (<span class=SpellE>NewFolder</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>NewFolder</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the new folder to change to.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Changes the current folder.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:7'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><b>Rename (<span class=SpellE>FromFileName</span>, <span
+    class=SpellE>ToFileName</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>FromFileName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file name to rename.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ToFileName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the new name of the file to rename.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Renames a file.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:8'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>MakeFolder</b></span><b> (<span
+    class=SpellE>NewFolder</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>NewFolder</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the new folder to create.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Creates a new folder.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:9'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>RemoveFile</b></span><b> (<span
+    class=SpellE>fileName</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>fileName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file name to remove.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Removes a file.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:10'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>RemoveFolder</b></span><b> (<span
+    class=SpellE>FolderName</span>)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>FolderName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies a folder to remove.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Removes a folder. This function is not recursive and
+        will likely error if the folder has contents for most servers.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:11'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ListContents</b></span><b> ([<span
+    class=SpellE>LocalFileName</span>]) </b><i style='mso-bidi-font-style:normal'><span
+    style='mso-bidi-font-weight:bold'>String</span><o:p></o:p></i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>[<span class=SpellE>LocalFileName</span>]</b> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies a file name to save the list contents
+          to, if no file is specified then a temporary file name will be
+          created and returned by the function.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Lists the current folders files and sub folders to a
+        local text file and returns the file path name that the listing is
+        contained, specified by <span class=SpellE>LocalFileName</span>.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:12'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>TransferFile</b></span><b> (<span
+    class=SpellE>SourceFileName</span>, <span class=SpellE>DestinationObject</span>,
+    [<span class=SpellE>ResumeByte</span>], [<span class=SpellE>TotalBytes</span>])</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>SourceFileName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file to transfer.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>DestinationObject</b></span> <i>Client</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A connected object in which to transfer the file
+          to.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>[<span class=SpellE>ResumeByte</span>]</b> <i>Long
+        = 0</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the byte position the transfer should
+          resume at.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><b><span style='mso-spacerun:yes'>&nbsp;</span>[<span
+        class=SpellE>TotalBytes</span>]</b> <i>Long = 0</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the total number of bytes for the file,
+          if known, this information maybe relevant in accuracy but is not
+          required.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Transfers a file from on file system to another.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:13;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>ParseListing</b></span><b> (<span
+    class=SpellE>ListData</span>, [<span class=SpellE>ListItems</span>()])</b> <i>Integer</i></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ListData</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the list data returned from the server
+          to parse.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>[<span class=SpellE>ListItems</span>()]</b> <i>Collection</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the array to parse the contents into,
+          maybe of type array or collection.<span
+          style='mso-spacerun:yes'>&nbsp; </span>When this parameter is supplied
+          the return value of the function is the system type, otherwise the
+          return value is the number of items parsed.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Parses out list contents from a string of text and can
+        optionally place it in an array or collection; this function also
+        raised the <span class=SpellE>ItemListing</span> event for every
+        properly formed item parsed from the list data.<span
+        style='mso-spacerun:yes'>&nbsp; </span>When no <span class=SpellE>ListItems</span>
+        is supplied, the total number of items parsed is the return value;
+        otherwise it will be one of the following list systems detected, <span
+        class=SpellE>lsys_Unknown</span>, <span class=SpellE>lsys_MSDos</span>
+        and <span class=SpellE>lsys_Unix</span>.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <h2>Automation</h2>
+  <div align=center>
+  <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=480
+   style='width:5.0in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+   <tr style='mso-yfti-irow:0'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:Init</b></span><b> (self)</b></p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Optional event that is called when the object is
+        initialized.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:1'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:Term</b></span><b> (self)</b>
+    </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Optional event that is called when the object is
+        terminated.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:2'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:Error</b></span><b> (self, Number,
+    Source, Description)</b> </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Number</b> <i>Long</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the error number raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Source</b> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the source of the error raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>Description</b> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Returns the description of the error raised.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Optional event fires when an error occurs from the
+        server while FTP processing.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:3'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:LogMessage</b></span><b>
+    (self, <span class=SpellE>MessageType</span>, <span class=SpellE>AddedText</span>)</b>
+    </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>MessageType</b></span> <span
+        class=SpellE><i>MessageTypes</i></span><i><span style='mso-bidi-font-size:
+        10.0pt'><o:p></o:p></span></i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of message that was added to
+          the log.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>AddedText</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>The text that was added to the log.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Rises whenever the FTP log changes data.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:4'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:ItemListing</b></span><b>
+    (self, <span class=SpellE>ItemName</span>, <span class=SpellE>ItemSize</span>,
+    <span class=SpellE>ItemDate</span>, <span class=SpellE>ItemAccess</span>)</b>
+    </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ItemName</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder name. Folders start
+          with &quot;/&quot;.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ItemSize</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder size.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ItemDate</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder date.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ItemAccess</b></span> <i>String</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the file or folder access (Non MS-DOS).</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Event that occurs for every item that is successfully
+        parsed with the <span class=SpellE>PraseListing</span> function.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:5'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:DataProgress</b></span><b>
+    (self, <span class=SpellE>ProgressType</span>, <span class=SpellE>ReceivedBytes</span>)</b>
+    </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><span
+      style='display:none;mso-hide:all'><o:p>&nbsp;</o:p></span></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><span class=SpellE><b>ProgressType</b></span> <span
+        class=SpellE><i>ProgressTypes</i></span></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of progress this event is being
+          called about.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ReceivedBytes</b></span> <i>Long</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the total amount of bytes received for
+          the listing transfer.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Event that occurs when data is received during a
+        listing transfer.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+   <tr style='mso-yfti-irow:6;mso-yfti-lastrow:yes'>
+    <td valign=top style='padding:0in 0in 0in 0in'>
+    <p class=MsoNormal><span class=SpellE><b>Object:DataComplete</b></span><b>
+    (self, <span class=SpellE>ProgressType</span>)</b> </p>
+    <div align=right>
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=456
+     style='width:4.75in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+     <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+      <td valign=top style='padding:0in 0in 0in 0in'>
+      <p class=MsoNormal><i>Parameters</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal><b>self</b> <i>Object</i></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>A reference to the object.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal><span class=SpellE><b>ProgressType</b></span> <span
+        class=SpellE><i>ProgressTypes</i></span></p>
+        <div align=right>
+        <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+         width=408 style='width:4.25in;mso-cellspacing:0in;mso-padding-alt:
+         0in 0in 0in 0in'>
+         <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+          <td valign=top style='padding:0in 0in 0in 0in'>
+          <p class=MsoNormal>Specifies the type of progress this event is being
+          called about.</p>
+          </td>
+         </tr>
+        </table>
+        </div>
+        <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal><i>Description</i></p>
+      <div align=right>
+      <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+       width=432 style='width:4.5in;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+       <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+        <td valign=top style='padding:0in 0in 0in 0in'>
+        <p class=MsoNormal>Event that occurs when listing of directory contents
+        is complete.</p>
+        </td>
+       </tr>
+      </table>
+      </div>
+      <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+      </td>
+     </tr>
+    </table>
+    </div>
+    <p class=MsoNormal align=right style='text-align:right'><o:p></o:p></p>
+    </td>
+   </tr>
+  </table>
+  </div>
+  <p class=MsoNormal style='margin-bottom:12.0pt'><o:p></o:p></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

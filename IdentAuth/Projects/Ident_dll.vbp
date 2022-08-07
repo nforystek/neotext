@@ -1,0 +1,59 @@
+Type=OleDll
+Object={E7BC34A0-BA86-11CF-84B1-CBC2DA68BF6C}#1.0#0; ntsvc.ocx
+Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
+Module=modMain; Ident\modMain.bas
+Form=Ident\frmIdent.frm
+Module=modSockets; Ident\modSockets.bas
+Module=modUserInfo; Ident\modUserInfo.bas
+Module=modPortInfo; Ident\modPortInfo.bas
+Module=modWin32Ver; Ident\modWin32Ver.bas
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Class=Application; Ident\Application.cls
+IconForm="frmIdent"
+Startup="Sub Main"
+HelpFile=""
+NoControlUpgrade=1
+Title="Ident"
+ExeName32="Ident.dll"
+Path32="..\..\..\Publish\ActiveX"
+Command32=""
+Name="Ident"
+HelpContextID="0"
+Description="(RFC 1413 - Identification Protocol)"
+CompatibleMode="0"
+CompatibleEXE32="..\..\..\Publish\ActiveX\Ident.dll"
+MajorVer=7
+MinorVer=1
+RevisionVer=769
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="SoSouiX"
+VersionFileDescription="(RFC 1413 - Identification Protocol)"
+VersionLegalCopyright="© 1999,2006,2013 by Neotext"
+VersionLegalTrademarks="Neotext.org is a trademark of SoSouiX"
+VersionProductName="IdentProtocol"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+CondComp="Ident=-1:VBIDE=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modProcess=-1:modCommon=-1:modMain=-1"
+
+[Neotext]
+CompCond="modMain=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modProcess=-1:modCommon=-1"

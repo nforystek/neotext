@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Item>
+	<Type>Template Blank</Type>
+	<Label>Blank</Label>
+
+	<UseCollapsed>False</UseCollapsed>
+	<imgCollapsed></imgCollapsed>
+
+	<UseExpanded>False</UseExpanded>
+	<imgExpanded></imgExpanded>
+
+	<UseMouseOut>False</UseMouseOut>
+	<imgMouseOut></imgMouseOut>
+
+	<UseMouseOver>False</UseMouseOver>
+	<imgMouseOver></imgMouseOver>
+
+	<UseText>False</UseText>
+	<Text></Text>
+
+	<UseFont>Default</UseFont>
+	<FontFamily></FontFamily>
+	<FontSize></FontSize>
+	<FontColor></FontColor>
+
+	<LinkURL></LinkURL>
+	<LinkToolTip></LinkToolTip>
+
+	<UseLinkTarget>Default</UseLinkTarget>
+	<LinkTarget></LinkTarget>
+
+	<Opened>False</Opened>
+
+</Item>

@@ -1,0 +1,16 @@
+pLocation =
+sLocation =ftp://ftp.neotext.org
+pPort =21
+sPort =21
+pPassive =1
+sPassive =1
+pPortRange =3000-9000
+sPortRange =10000-20000
+pAdapter =1
+sAdapter =1
+pSavePass =0
+sSavePass =1
+sLogin =Anonymous
+sPassword =maxftp@neotext.org
+pSSL =0
+sSSL =0

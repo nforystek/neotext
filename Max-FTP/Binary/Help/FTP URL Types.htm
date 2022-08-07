@@ -1,0 +1,188 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="FTP%20URL%20Types_files/filelist.xml">
+<title>Supported URLs</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Nicholas Forystek</o:Author>
+  <o:LastAuthor>Nicholas Forystek</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>36</o:TotalTime>
+  <o:Created>2018-01-05T22:45:00Z</o:Created>
+  <o:LastSaved>2018-01-05T23:21:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>321</o:Words>
+  <o:Characters>1831</o:Characters>
+  <o:Company>Neotext Software</o:Company>
+  <o:Lines>15</o:Lines>
+  <o:Paragraphs>4</o:Paragraphs>
+  <o:CharactersWithSpaces>2148</o:CharactersWithSpaces>
+  <o:Version>10.2625</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1>Supported URLs</h1>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h2>What is a URL?</h2>
+
+<p style='margin-left:15.0pt'>A URL is an extended address that points to
+locations of files or<br>
+directories. For instance, 'http://www.neotext.org' is a web URL.<br>
+Max-FTP uses standard Internet FTP and local file URLs.</p>
+
+<h2>Max-FTP URLs</h2>
+
+<p style='margin-left:15.0pt'>(Note: when reading these formats, fields
+enclosed in []'s are<br>
+optional, and fields enclosed in &lt;&gt;'s are required.)</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h3>FTP URL format</h3>
+
+<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-FTP URLs are in the format:</h4>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>ftp://[login:password@]&lt;server&gt;[:port][/directory]</span></b></p>
+
+<p style='margin-left:30.0pt'>The login and password of the URL are not
+required, nor is the<br>
+port or directory. If the directory is not specified then the servers<br>
+default directory is used. A single forward slash / will retrieve the<br>
+root directory. Directories in FTP URLs are may be case sensitive<br>
+depending on the server's settings.</p>
+
+<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-Examples of FTP URLs:</h4>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+style='color:blue'>ftp://guestuser1:guestpass1@ftp.neotext.org</span></p>
+
+<p style='margin-left:30.0pt'>This URL will login into 'ftp.neotext.org' with
+the user name<br>
+'guestuser1' and password 'guestpass1', at the root directory.</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+style='color:blue'>ftp://ftp.neotext.org/guestpass1</span></p>
+
+<p style='margin-left:30.0pt'>In Max-FTP this URL will ask for the login and
+password, and then<br>
+connect to 'ftp.neotext.org' and retrieve the directory '/guestpass1'.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<h3>File URL format</h3>
+
+<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-File URLs are in the fallowing
+formats:</h4>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>file:///&lt;driveletter|&gt;[/directory]</span></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>file://&lt;computername/sharedresource&gt;[/directory]</span></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>&lt;driveletter:&gt;[\directory]</span></b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>&lt;\\computername\sharedresource&gt;[\directory]</span></b></p>
+
+<p style='margin-left:30.0pt'>The 'drive letter' or 'computer/shared resource'
+are required<br>
+but the 'directory' is not. If the directory is not specified the<br>
+root directory is used. File URLs are not case sensitive.</p>
+
+<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-Examples</h4>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>file:///c|/My Documents</span></b></p>
+
+<p style='margin-left:30.0pt'>This URL will retrieve the directory 'My
+Documents' on the 'c:' drive.</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>c:\my documents</span></b></p>
+
+<p style='margin-left:30.0pt'>This URL will also retrieve the directory 'My
+Documents' on the 'c:' drive.</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>file://foo/c/My Documents</span></b></p>
+
+<p style='margin-left:30.0pt'>This URL will retrieve the directory 'My
+Documents' from<br>
+the shared resource 'c' on the computer with the name 'foo'.</p>
+
+<p class=MsoNormal>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span
+style='color:blue'>\\foo\c\my documents</span></b></p>
+
+<p style='margin-left:30.0pt'>This URL will also retrieve the directory 'My
+Documents' from<br>
+the shared resource 'c' on the computer with the name 'foo'.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

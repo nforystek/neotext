@@ -1,0 +1,44 @@
+Type=Exe
+Reference=*\G{EC397484-03DA-4B98-84D9-CF6F73F980A6}#1.0#0#..\Binary\MaxFTP.exe#Max-FTP Application 6.1
+Reference=*\G{6CC13E4F-5BDF-49C5-B1DC-91B22F3496A4}#2.0#0#..\Binary\MaxService.exe#Max-FTP Service 6.1
+Form=Form1.frm
+IconForm="Form1"
+Startup="Form1"
+HelpFile=""
+Title="Project1"
+ExeName32="Project1.exe"
+Command32=""
+Name="Project1"
+HelpContextID="0"
+CompatibleMode="1"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Neotext"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+RemoveUnusedControlInfo=0
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+VersionComments="http://www.neotext.org"
+VersionFileDescription="Program executable belonging to the product."
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionLegalTrademarks=""
+CondComp="Form1=-1:VBIDE=0:Project1=-1"

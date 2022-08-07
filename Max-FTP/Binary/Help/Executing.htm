@@ -1,0 +1,122 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=us-ascii">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="Executing_files/filelist.xml">
+<title>Help - Max-FTP - Executing</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Nicholas Forystek</o:Author>
+  <o:LastAuthor>Nicholas Forystek</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>38</o:TotalTime>
+  <o:Created>2018-01-05T22:45:00Z</o:Created>
+  <o:LastSaved>2018-01-05T23:23:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>235</o:Words>
+  <o:Characters>1345</o:Characters>
+  <o:Company>Neotext Software</o:Company>
+  <o:Lines>11</o:Lines>
+  <o:Paragraphs>3</o:Paragraphs>
+  <o:CharactersWithSpaces>1577</o:CharactersWithSpaces>
+  <o:Version>10.2625</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h3>The Environment</h3>
+
+<p>Each project requires the environment to be executing, more then one
+environment can be loaded at once. Due to the nature of the possibilities of
+scripts it is possible by scenario that the project never finishes thus the
+nature of rise is up to the creator. All errors become displayed in the
+debugging window and highlight the line of code with red, with the exception of
+evaluated string expressions. </p>
+
+<h3>Executing Projects</h3>
+
+<p>From the project file stand point MaxIDE's installer is setup to install
+actions for .MPRJ files in the system. By right clicking the project you have
+the option to open or execute the project. Executing the project from the file
+causing the environment to be invisible but still runs as a normal task to the
+system. Any error that occurs makes the environment visible. </p>
+
+<h3>Debugging Projects</h3>
+
+<p>The debugger window allows basic interface to VB functionality but is not
+connected to project runtime objects, it uses a separate interpreter. You are
+able to use &quot;!&quot; plus a statement to execute it, or &quot;?&quot; plus
+an expression to evaluate it in the window. For instance Typing &quot;?Asc(&quot;C&quot;)&quot;
+and hitting enter returns the Asc value of C, likewise typing
+&quot;?(4+9)&quot; evaluates to 13. </p>
+
+<h3>Project Definition</h3>
+
+<p>By default, no project is required to have any code and the environment will
+still run. All MaxIDE automation and events are supplied by the templates
+provided and are outlined in the help documents. Aside from everything else,
+uniquely, Project.Finish being executed defines the ending of a projects bound,
+for more information see the Project Object. </p>
+
+</div>
+
+</body>
+
+</html>

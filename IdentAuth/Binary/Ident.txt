@@ -1,0 +1,18 @@
+//
+// Installation Notes:  (You may close this file and ignore settings to use the defaults)
+//
+// 	This file is "Ident.ini" located under the installation directory. Use Reload.exe
+//	also located under the installation directory to apply changes made to this file.
+//
+
+[Service Settings]
+IdleTimeout = 180		// IdleTimeout - Sets the number of seconds before a connection is released, some connections convert into having no timeout.
+WinsOnlySys = false		// WinsOnlySys - Set true only returns WINS as the system field else may return other known Windows types as the WINS system.
+IncludeComp = false		// IncludeComp - Specifies whether false to just include User, or true too include computer name in responses, COMPUTER\User.
+AdapterAddr = every		// AdapterAddr - Specify every or a target IP address that the requests accept on, this variable may repeat for more listens.
+StandsAlone = true		// StandsAlone - Specify the service to interact with same neotext ident services in the intranet broadcast network if false.
+StandOnNeed = false		// StandOnNeed - Sets whether to only listen to income requests upon certian needed processes, each specified by ProcessNeed.
+ProcessNeed = ident		// ProcessNeed - The name of a processes file title to be watched and listened for, this variable may repeat to specify more.
+UserNameSID = false		// UserNameSID - This value tells the ident response to provide the string representation of the security identifyer instead.
+ServicePort = 			// ServicePort - Comma delimited list of ports that the Ident service should log authentiate that are local address services.
+

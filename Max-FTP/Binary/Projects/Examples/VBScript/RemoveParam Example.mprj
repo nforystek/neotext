@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Project>
+<Language>VBScript</Language>
+<Item>
+<Name>Project</Name>
+<Class>MaxIDE%2EProject</Class>
+<Source>%27Max%2DIDE+%22VBScript%22+Project%0D%0A%0D%0AFunction+Project%3AExec%28%29%0D%0A%0D%0A%09Dim+txt+%3A+txt+%3D+%22test+%3D+some+data%22+%26+vbCrLf+%26+%22test2+%3D+some+data%22+%26+vbCrLf+%26+%22test3+%3D+some+data%22+%26+vbCrLf%0D%0A%09Dim+lin+%3A+lin+%3D+%22%22%0D%0A%09Dim+idd+%3A+idd+%3D+%22%22%0D%0A%0D%0A%09Do+While+Not+%28txt+%3D+%22%22%29%0D%0A%0D%0A%09%09lin+%3D+Project%2ERemoveNextArg%28txt%2C+vbCrLf%29%0D%0A%09%09Debug%2EPrintLine+lin%0D%0A%0D%0A%09%09If+lin+%3D+%22%22+Then%0D%0A%09%09%09idd+%3D+Project%2ERemoveNextArg%28lin%2C+%22%3D%22%29%0D%0A%0D%0A%09%09%09Debug%2EPrintLine+idd+%26+%22+%3D+%22+%26+lin+%0D%0A%09%09End+if%0D%0A%09Loop%0D%0A%0D%0A%09Project%2EFinish%0D%0AEnd+Function%0D%0A</Source>
+</Item>
+<Item>
+<Name>Debug</Name>
+<Class>MaxIDE%2EDebug</Class>
+<Source>Function+Object%3AInit%28Self%29%0D%0A%09With+Self%0D%0A%0D%0A%09End+With%0D%0AEnd+Function%0D%0A%0D%0AFunction+Object%3ATerm%28Self%29%0D%0A%09With+Self%0D%0A%0D%0A%09End+With%0D%0AEnd+Function%0D%0A</Source>
+</Item>
+<Item>
+<Name>Module</Name>
+<Class>MaxIDE%2EModule</Class>
+<Source>Function+Module%3AFirst%28Name%29%0D%0A%09Debug%2EPrintLine+vbCrLf+%26+%22Project+Started%2E%2E%2E%22%0D%0AEnd+Function%0D%0A%0D%0AFunction+Module%3ADefault%28Name%29%0D%0A%09DoEvents%0D%0AEnd+Function%0D%0A%0D%0AFunction+Module%3AFinal%28Name%29%0D%0A%09Debug%2EPrintLine+%22Project+Finished%2E%2E%2E%22+%26+vbCrLf%0D%0AEnd+Function%0D%0A%0D%0A</Source>
+</Item>
+</Project>

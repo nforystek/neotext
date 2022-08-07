@@ -1,0 +1,48 @@
+
+
+D-B
+
+REGB
+CO
+
+
+D	S	RBOT
+
+S		WTRU
+
+UREG D
+	D	COPY
+
+S	D	RPLC
+
+
+B	D	REGD
+
+
+
+
+
+B	D	RBOT
+
+D		WTRU
+
+REGD
+DO
+UREG B
+
+	B	COPY
+
+D	B	RPLC
+
+
+D	S	UREG
+
+X-D
+S-D
+X-B
+CO
+
+
+
+
+

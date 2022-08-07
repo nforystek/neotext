@@ -1,0 +1,31 @@
+
+
+Private WithEvents clsISOWrt As clsISOWriter
+Set clsISOWrt = New clsISOWriter
+
+
+
+
+Dim clsDir As clsISODirectory
+set clsDIr = clsISOWrt.DirByPath("\")
+
+
+
+
+clsDir.Files.Add 
+
+
+
+clsISOWrt.VolumeSetID(True) = String(14, "0")
+clsISOWrt.Joliet = True
+clsISOWrt.VolumeID(True) = String(14, "0")
+clsISOWrt.VolumeCreation = Now
+clsISOWrt.ApplicationID(True) = ""
+clsISOWrt.DataPreparerID(True) = ""
+clsISOWrt.PublisherID(True) = ""
+clsISOWrt.SystemID(True) = ""
+
+
+
+
+clsISOWrt.SaveISO
