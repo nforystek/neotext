@@ -1,0 +1,7 @@
+
+
+field - stall, idle, force
+coins - empty, slow, taxed
+sails - coins, pass, ships 
+ships - equal, self, pails
+

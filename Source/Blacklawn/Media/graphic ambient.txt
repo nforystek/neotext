@@ -1,0 +1,43 @@
+
+
+
+
+	[0]	.	.	.	[WithInCityLimits]	[1/10]	.	.	.	.	.	[7/8]	.	.	[FadeDistance]
+255-
+-
+-
+-
+HI-	----------------------------------------------------------\
+-                                                                  -------------\
+-                                                                                ---------------\
+-                                                                                                -----------------\               
+LO-                                                                                                                -----------------------------------
+-
+-
+-
+0-
+
+
+Total Until = FadeDistance
+
+1/10 = ((FadeDistance-WithInCityLimits)/10)+WIthInCityLimits
+
+7/10 = (((FadeDistance-WithInCityLimits)/10)*7)+WIthInCityLimits
+
+
+
+if dist < FadeDistance then
+	if dist<((FadeDistance-WithInCityLimits)/10)+WIthInCityLimits then
+
+		set to HI
+
+	elseif dist>=((FadeDistance-WithInCityLimits)/10)+WIthInCityLimits and dist < (((FadeDistance-WithInCityLimits)/10)*7)+WIthInCityLimits then
+
+		LO + ((HI-LO)* (((((FadeDistance-WithInCityLimits)/10)*7)+WIthInCityLimits-((FadeDistance-WithInCityLimits)/10)+WIthInCityLimits) / 100))
+
+	elseif dist >=(((FadeDistance-WithInCityLimits)/10)*7)+WIthInCityLimits then
+
+		set to LO
+
+	endif
+endif

@@ -1,0 +1,167 @@
+
+
+image
+{
+	identity hudearthimg
+	filename hud_earth.bmp
+	padding 10
+	alignxleft
+	alignybottom
+	visible true
+	blackalpha
+}
+billboard
+{
+	identity water
+	animated .045
+	translucent
+	filename waterpool0.bmp
+	filename waterpool1.bmp
+	filename waterpool2.bmp
+	filename waterpool3.bmp
+	filename waterpool4.bmp
+	filename waterpool5.bmp
+	filename waterpool6.bmp
+	filename waterpool7.bmp
+	filename waterpool8.bmp
+	filename waterpool9.bmp
+}
+
+
+plane
+{
+	fogcolor 1 1.385 1.275 1.133
+	skytop sky_top.bmp
+	skyleft sky_left.bmp
+	skyright sky_right.bmp
+	skyback sky_back.bmp
+	skyfront sky_front.bmp
+	skybottom sky_bottom.bmp
+	cloudrotate 31.25
+}
+
+
+player
+{
+	visible true
+	identity player
+	location 7 -6 0
+	movespeed 0.04
+	cameraangle 1.5705
+	camerapitch -0.177
+	boundary 50
+	scale 1 1 1
+	rotate 0 0 0
+	boundsobj bounds-player.x
+	visualobj visual-player.x
+	gravitational
+
+
+}
+
+
+object
+{
+	identity ground
+	visible true
+	origin 0 0 0
+	scale 1 1 1
+	filename laliquebase.x
+	groundcollide
+}
+
+object
+{
+	identity ocean
+	visible true
+	origin 0 0 0
+	scale 1 1 1
+	filename laliquewater.x
+	replacer waterfall0.bmp water
+	liquidcollide
+}
+
+light
+{
+	type 3
+	ambience 1 .6 .6 .6
+	diffuse 1 .3 .3 .3
+	direction 0 -1 0
+	range 1000
+	position 0 1000 0
+	diffuseroll 50 -30
+	;diffuseroll .5 -30
+	sunlight
+}
+
+
+object
+{
+	visible true
+	identity cart
+	scale 1 1 1 
+	boundsobj laliquecart-bounds.x
+	visualobj laliquecart-visual.x
+	gravitational
+}
+
+
+
+object
+{
+	visible true
+	identity carthandle
+	scale 1 1 1 
+	visualobj laliquecart-handle.x
+	nocollision
+}
+
+object
+{
+	visible true
+	identity door
+	scale 1 1 1 
+	filename laliquedoor.x
+	groundcollide
+}
+object
+{
+	visible true
+	identity doorhandle
+	scale 1 1 1 
+	filename laliquehandle.x
+	groundcollide
+
+}
+object
+{
+	visible true
+	identity rebar1
+	scale 1 1 1 
+	visualobj laliquerebar1.x
+	groundcollide
+	nocollision
+}
+object
+{
+	visible true
+	identity rebar2
+	scale 1 1 1 
+	visualobj laliquerebar2.x
+	groundcollide
+	nocollision
+}
+
+
+
+database
+{
+
+	serialize [
+
+	]
+	deserialize [
+
+	]
+
+}
