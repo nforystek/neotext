@@ -2908,29 +2908,6 @@ Public Static Sub Refresh()
     
 End Sub
 
-Private Sub DebugDraw()
-    Dim cntx As Long
-    Dim cnty As Long
-    Dim unitx As Long
-    Dim unity As Long
-    If pText.Length > 0 Then
-        pBackBuffer.DrawLine LineColumnWidth / Screen.TwipsPerPixelX, UsercontrolHeight / 4 / Screen.TwipsPerPixelY * 3, UsercontrolWidth / Screen.TwipsPerPixelX + LineColumnWidth / Screen.TwipsPerPixelX, UsercontrolHeight / Screen.TwipsPerPixelY, GetSysColor(COLOR_GRAYTEXT), bf
-        
-        unitx = TextWidth / Screen.TwipsPerPixelX 'Picture1.ScaleWidth / pText.Length
-        unity = (UsercontrolHeight / 4) / (UBound(pColorRanges) + 1) / Screen.TwipsPerPixelY
-        
-        For cntx = 0 To pText.Length - 1
-            For cnty = LBound(pColorRanges) To UBound(pColorRanges)
-                If cntx >= pColorRanges(cnty).ColorRange.StartPos And cntx < pColorRanges(cnty).ColorRange.StopPos Then
-                    pBackBuffer.DrawLine LineColumnWidth / Screen.TwipsPerPixelX + cntx * unitx, UsercontrolHeight / 4 / Screen.TwipsPerPixelY * 3 + cnty * unity, LineColumnWidth / Screen.TwipsPerPixelX + cntx * unitx + unitx, UsercontrolHeight / 4 / Screen.TwipsPerPixelY * 3 + cnty * unity + unity, pColorRanges(cnty).BackColor, bf
-                    
-                    pBackBuffer.DrawLine LineColumnWidth / Screen.TwipsPerPixelX + cntx * unitx + unitx / 4, UsercontrolHeight / 4 / Screen.TwipsPerPixelY * 3 + cnty * unity + unity / 4, LineColumnWidth / Screen.TwipsPerPixelX + cntx * unitx + unitx / 4 * 3, UsercontrolHeight / 4 / Screen.TwipsPerPixelY * 3 + cnty * unity + unity / 4 * 3, pColorRanges(cnty).Forecolor, bf
-                End If
-            Next
-        Next
-    End If
-End Sub
-
 Friend Sub PaintBuffer()
     
     ScrollBar1.Backbuffer.Paint (ScrollBar1.Left / Screen.TwipsPerPixelX), (ScrollBar1.Top / Screen.TwipsPerPixelY), ((ScrollBar1.Left + ScrollBar1.Width) / Screen.TwipsPerPixelX), ((ScrollBar1.Top + ScrollBar1.Height) / Screen.TwipsPerPixelY)
