@@ -155,7 +155,7 @@ End Type
 
 Public Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectA" (lpLogFont As LOGFONT) As Long
 Public Const FW_NORMAL = 400
-Public Declare Function GetClientRect Lib "USER32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Public Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Public Declare Function SetBkMode Lib "gdi32" (ByVal hdc As Long, ByVal nBkMode As Long) As Long
 Public Const TRANSPARENT = 1
 Public Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal e As Long, ByVal O As Long, ByVal W As Long, ByVal I As Long, ByVal u As Long, ByVal S As Long, ByVal C As Long, ByVal Op As Long, ByVal cP As Long, ByVal Q As Long, ByVal PAF As Long, ByVal F As String) As Long
@@ -265,22 +265,22 @@ Public Const FF_SWISS = 32
 'Public Const DFCS_MONO = &H8000         'Button has a monochrome
 '                                        'border
 
-Public Declare Function DrawFrameControl Lib "USER32" (ByVal _
+Public Declare Function DrawFrameControl Lib "user32" (ByVal _
    hdc&, lpRect As RECT, ByVal un1 As Long, ByVal un2 As Long) _
    As Boolean
    
-Public Declare Function IsWindow Lib "USER32" (ByVal hWnd As Long) As Long
+Public Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
 
 Private Const GWL_WNDPROC = -4
 
-Private Declare Function CallWindowProc Lib "USER32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function DefWindowProc Lib "USER32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function SetWindowLong Lib "USER32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetWindowLong Lib "USER32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function DestroyWindow Lib "USER32" (ByVal hWnd As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
 
-Public Declare Function GetDC Lib "USER32" (ByVal hWnd As Long) As Long
-Public Declare Function ReleaseDC Lib "USER32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Public Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
 Public Declare Function SaveDC Lib "gdi32" (ByVal hdc As Long) As Long
 Public Declare Function RestoreDC Lib "gdi32" (ByVal hdc As Long, ByVal nSavedDC As Long) As Long
 Public Declare Function DeleteDC Lib "gdi32" (ByVal hdc As Long) As Long
@@ -307,7 +307,7 @@ Public Declare Function Arc Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, By
 Public Declare Function ArcTo Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
 Public Declare Function Pie Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
 Public Declare Function ExtFloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long, ByVal wFillType As Long) As Long
-Public Declare Function FillRect Lib "USER32" (ByVal hdc As Long, lpRect As RECT, ByVal hbrush As Long) As Long
+Public Declare Function FillRect Lib "user32" (ByVal hdc As Long, lpRect As RECT, ByVal hbrush As Long) As Long
 Public Declare Function FloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Public Declare Function PatBlt Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal dwRop As Long) As Long
 Public Declare Function GetPolyFillMode Lib "gdi32" (ByVal hdc As Long) As Long
@@ -317,9 +317,10 @@ Public Declare Function SetTextAlign Lib "gdi32" (ByVal hdc As Long, ByVal wFlag
 Public Declare Function GetTextAlign Lib "gdi32" (ByVal hdc As Long) As Long
 Public Declare Function GetTextColor Lib "gdi32" (ByVal hdc As Long) As Long
 Public Declare Function TextOut Lib "gdi32" Alias "TextOutA" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal lpString As String, ByVal nCount As Long) As Long
+Public Declare Function TextOutPtr Lib "gdi32" Alias "TextOutA" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal lpString As Long, ByVal nCount As Long) As Long
 Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
-
+Public Declare Function InvertRect Lib "user32" (ByVal hdc As Long, lpRect As RECT) As Long
 
 'Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal x As Long, ByVal y As Long) As Long
 'Public Declare Function GetPixelFormat Lib "gdi32" (ByVal hdc As Long) As Long
@@ -535,12 +536,12 @@ Private Const COLOR_BTNHILIGHT = COLOR_BTNHIGHLIGHT
 
 
 Private Declare Function SetSysColors _
- Lib "USER32" _
+ Lib "user32" _
  (ByVal nChanges As Long, lpSysColor As Long, _
  lpColorValues As Long) As Long
  
 Public Declare Function GetSysColor _
- Lib "USER32" (ByVal nIndex As Long) As Long
+ Lib "user32" (ByVal nIndex As Long) As Long
 
 Public Function RECT(Left, Top, Right, Bottom) As RECT
     With RECT

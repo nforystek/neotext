@@ -683,6 +683,8 @@ Public Property Let Length(ByVal RHS As Long)
             EndOfStream RHS
         ElseIf (RHS = 0) Then
             Reset
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -714,6 +716,8 @@ Attribute Push.VB_Description = "Shifts the entire container of the stream by Of
             EndOfStream Length
         ElseIf (Offset = lSize) Then
             Reset
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -745,6 +749,8 @@ Attribute Pull.VB_Description = "Shifts the entire container of the stream by Of
             EndOfStream Length
         ElseIf (Offset = lSize) Then
             Reset
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -770,10 +776,16 @@ Attribute Prepend.VB_Description = "Places Data() bytes at the beginning of the 
     End If
 End Sub
 
-Public Sub Clone(ByRef Origin As Strands, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Public Sub Clone(ByRef Origin As IStream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
 Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning.
+    Dim lSize As Long
+    lSize = Origin.Length
+    If Width = -1 Then Width = lSize
     Reset ScopeAs
-    If Origin.Length > 0 Then Concat Origin.Partial(Offset, Width)
+    If Offset < lSize And Offset >= 0 And Offset + Width <= lSize And Width > 0 Then
+        Length = Width
+        RtlMoveMemory ByVal Pointer + 4, ByVal Origin.Address + 4 + Offset, Width
+    End If
 End Sub
 
 Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
@@ -802,9 +814,10 @@ Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
     End If
 End Function
 
-Public Sub Post(ByRef RHS() As Byte) ' _
-Appends RHS bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by RHS. Psudonym to Concat()
-    Concat RHS
+Public Sub Post(ByRef RHS As Byte) ' _
+Appends RHS byte onto the stream at the end of the stream increasing it's size by one. Psudonym to Concat()
+    Length = Length + 1
+    Plot Length - 1, RHS
 End Sub
 
 Public Sub Concat(ByRef Data() As Byte) ' _
@@ -817,6 +830,9 @@ Attribute Concat.VB_Description = "Appends Data() bytes onto the stream at the e
             Dim lSize As Long
             lSize = ConcatNoFile(Data, nSize)
             WroteToStream Data, lSize, nSize
+            EndOfStream nSize
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -836,6 +852,9 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
             RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + 4 + Offset, Width
             Partial = ret
             Erase ret
+        Else
+            ReDim Partial(-1 To -1) As Byte
+    '        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -854,6 +873,8 @@ Attribute PlaceAt.VB_Description = "Places Width many bytes of Data() in the str
         If ((Width > 0) And (Pointer <> 0)) And (lSize > 0) Then
             RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal VarPtr(Data(LBound(Data))), Width
             WroteToStream Data, Offset, Width
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -862,91 +883,139 @@ End Function
 
 Public Function Pass(ByVal Data As Byte, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Long ' _
 Preforms a pass for Data returning the count of it in the stream, optionally confined to Offset and Width.
-    Dim lPos As Long
-    Dim bPart() As Byte
-    bPart = Partial(Offset, Width)
-    For lPos = LBound(bPart) To UBound(bPart)
-        If bPart(lPos) = Data Then Pass = Pass + 1
-    Next
+    If Behave <> Nothings_Initialized Then
+        Dim lPos As Long
+        Dim bPart() As Byte
+        bPart = Partial(Offset, Width)
+        For lPos = LBound(bPart) To UBound(bPart)
+            If bPart(lPos) = Data Then Pass = Pass + 1
+        Next
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
+    End If
 End Function
 
 Public Function Poll(ByVal Data As Byte, ByVal Ballot As Long, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Long ' _
 Preforms a poll for Data returning the offset up to the numerical Ballot's occurance of it, optionally confined to Offset and Width.
-    If Ballot > 0 And Width <> 0 And Length > 0 Then
-        Dim lPos As Long
-        Dim bPart() As Byte
-        If Ballot = 0 Then Exit Function
-        bPart = Partial(Offset, Width)
-        For lPos = LBound(bPart) To UBound(bPart)
-            If bPart(lPos) = Data Then
-                Poll = Poll + 1
-                If Poll = Ballot Then
-                    Poll = lPos + LBound(bPart)
-                    Exit Function
+    If Behave <> Nothings_Initialized Then
+        If Ballot > 0 And Width <> 0 And Length > 0 Then
+            Dim lPos As Long
+            Dim bPart() As Byte
+            If Ballot = 0 Then Exit Function
+            bPart = Partial(Offset, Width)
+            For lPos = LBound(bPart) To UBound(bPart)
+                If bPart(lPos) = Data Then
+                    Poll = Poll + 1
+                    If Poll = Ballot Then
+                        Poll = lPos + LBound(bPart)
+                        Exit Function
+                    End If
                 End If
+            Next
+            If Width > 0 Then
+                Poll = Width
+            Else
+                Poll = Length
             End If
-        Next
-        If Width > 0 Then
-            Poll = Width
-        Else
-            Poll = Length
         End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
 End Function
 
 Public Sub Pinch(ByVal Offset As Long, ByVal Width As Long) ' _
 Removes a section of the stream that is in the middle having portions of the stream before and after it resulting as continuous, least the pinched Width.
-    Dim lSize As Long
-    lSize = Length
-    If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
-        Length = (lSize + (Width * 2))
-        RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal Pointer + 4 + Offset + Width, (-lSize + -Width + (lSize * 2))
-        lSize = (lSize - Width)
-        WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
-        EndOfStream lSize
-        Length = lSize
+    If Behave <> Nothings_Initialized Then
+        Dim lSize As Long
+        lSize = Length
+        If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
+            Length = (lSize + (Width * 2))
+            RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal Pointer + 4 + Offset + Width, (-lSize + -Width + (lSize * 2))
+            lSize = (lSize - Width)
+            WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+            EndOfStream lSize
+            Length = lSize
+        ElseIf Offset = 0 And Width = lSize Then
+            Reset
+        ElseIf Offset = 0 Then
+            Push Width
+        ElseIf Offset + Width = lSize Then
+            Length = Length - Width
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+        End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
 End Sub
 
-Public Sub Pyramid(ByRef SubStream As Stream, ByVal Offset As Long, ByVal Width As Long) ' _
+Public Sub Pyramid(ByRef SubStream As IStream, ByVal Offset As Long, ByVal Width As Long) ' _
 Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
-    Dim lSize As Long
-    lSize = Length
-    If Offset >= 0 And Offset + Width <= lSize Then
-        Dim lSize2 As Long
-        lSize2 = SubStream.Length
-        If lSize2 > 0 Then
-            If (Width - lSize2) > 0 Then
-                Length = (lSize + Width + lSize2)
-                RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address + 4, lSize2
-                RtlMoveMemory ByVal Pointer + 4 + (Offset + lSize2), ByVal Pointer + 4 + (Offset + lSize2) + (Width - lSize2), lSize
-                lSize = (lSize - (Width - lSize2))
-                WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
-                EndOfStream lSize
-                Length = lSize
-            ElseIf (Width - lSize2) < 0 Then
-                Length = (lSize + Width + lSize2) + (Width - lSize2)
-                RtlMoveMemory ByVal Pointer + 4 + (Offset + lSize2), ByVal Pointer + 4 + (Offset + lSize2) + (Width - lSize2), lSize
-                RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address + 4, lSize2
-                lSize = (lSize - (Width - lSize2))
-                WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
-                EndOfStream lSize
-                Length = lSize
+    If Behave <> Nothings_Initialized Then
+        Dim lSize As Long
+        lSize = Length
+        If Offset >= 0 And Offset + Width <= lSize Then
+            Dim lSize2 As Long
+            lSize2 = SubStream.Length
+            If lSize2 > 0 Then
+                If (Width - lSize2) > 0 Then
+                    Length = (lSize + Width + lSize2)
+                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+                    RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
+                    lSize = (lSize - (Width - lSize2))
+                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+                    EndOfStream lSize
+                    Length = lSize
+                ElseIf (Width - lSize2) < 0 Then
+                    Length = (lSize + Width + lSize2) + (Width - lSize2)
+                    RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
+                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+                    lSize = (lSize - (Width - lSize2))
+                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+                    EndOfStream lSize
+                    Length = lSize
+                Else
+                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+                    WroteToStream Partial(Offset, lSize2), Offset, lSize2
+                End If
             Else
-                RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address + 4, lSize2
-                WroteToStream Partial(Offset, lSize2), Offset, lSize2
+                Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
             End If
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
 End Sub
 
 Public Function Peek(Optional ByVal Offset As Long = 0) As Byte ' _
 Gets the first byte in the data stream, optionally excluding Offset number of bytes retruning the immediate byte after Offset.
-    If Offset = -1 Then Offset = Length
-    If Offset > 0 And Offset < Length Then
-        RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + 4 + (Offset + 1), 1
+    If Behave <> Nothings_Initialized Then
+        If Offset = -1 Then Offset = Length
+        If Offset >= 0 And Offset < Length Then
+            RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + 4 + Offset, 1
+            WroteToStream Partial(Offset, 1), Offset, 1
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+        End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
 End Function
+
+Public Sub Plot(ByVal Offset As Long, ByVal RHS As Byte)   ' _
+Sets a byte in the data stream, optionally excluding Offset number of bytes setting the immediate byte after Offset.
+    If Behave <> Nothings_Initialized Then
+        If Offset >= 0 And Offset < Length Then
+            RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal VarPtr(RHS), 1
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+        End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
+    End If
+End Sub
 
 '###############################################################################
 '###############################################################################
@@ -1067,7 +1136,7 @@ Private Function IStream_Address(Optional ByVal Offset As Long = 0&) As Long
     IStream_Address = Me.Address(Offset)
 End Function
 
-Private Sub IStream_Clone(Origin As Stream, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&)
+Private Sub IStream_Clone(Origin As IStream, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&)
     Me.Clone Origin, Offset, Width
 End Sub
 
@@ -1099,6 +1168,10 @@ Private Sub IStream_PlaceAt(RHS() As Byte, Optional ByVal Offset As Long = 0&, O
     Me.PlaceAt RHS, Offset, Width
 End Sub
 
+Private Sub IStream_Plot(ByVal Offset As Long, ByVal RHS As Byte)
+    Me.Plot Offset, RHS
+End Sub
+
 Private Function IStream_Poll(ByVal Data As Byte, ByVal Ballot As Long, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&) As Long
     IStream_Poll = Me.Poll(Data, Ballot, Offset, Width)
 End Function
@@ -1107,7 +1180,7 @@ Private Function IStream_Peek(Optional ByVal Offset As Long = 0&) As Byte
     IStream_Peek = Me.Peek(Offset)
 End Function
 
-Private Sub IStream_Post(RHS() As Byte)
+Private Sub IStream_Post(RHS As Byte)
     Me.Post RHS
 End Sub
 

@@ -28,13 +28,13 @@ Attribute Address.VB_Description = "Retrieves the address numberical value where
 
 End Function
 
-Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Public Sub Clone(ByRef Origin As IStream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
 Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning.
 Attribute Clone.VB_Description = "Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning."
 
 End Sub
 
-Public Sub Post(ByRef RHS() As Byte) ' _
+Public Sub Post(ByRef RHS As Byte) ' _
 Appends RHS bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by RHS. Psudonym to Concat()
 Attribute Post.VB_Description = "Appends RHS bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by RHS. Psudonym to Concat()"
 
@@ -123,6 +123,13 @@ Gets the first byte in the data stream, optionally excluding Offset number of by
 Attribute Peek.VB_Description = "Gets the first byte in the data stream, optionally excluding Offset number of bytes retruning the immediate byte after Offset."
 
 End Function
+
+
+Public Sub Plot(ByVal Offset As Long, ByVal RHS As Byte) ' _
+Sets a byte in the data stream immediatly after Offset.
+Attribute Plot.VB_Description = "Sets a byte in the data stream immediatly after Offset."
+
+End Sub
 
 
 

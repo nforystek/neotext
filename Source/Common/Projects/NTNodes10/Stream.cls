@@ -100,15 +100,16 @@ Private Sub MemoryModify(Optional ByVal Size As Long = 0)
     End If
 End Sub
 
-Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Public Sub Clone(ByRef Origin As IStream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
 Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning.
     Reset ScopeAs
     If Origin.Length > 0 Then Concat Origin.Partial(Offset, Width)
 End Sub
 
-Public Sub Post(ByRef RHS() As Byte) ' _
+Public Sub Post(ByRef RHS As Byte) ' _
 Appends RHS bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by RHS. Psudonym to Concat()
-    Concat RHS
+    Length = Length + 1
+    Plot Length - 1, RHS
 End Sub
 
 Public Sub Concat(ByRef RHS() As Byte) ' _
@@ -121,6 +122,8 @@ Appends RHS bytes onto the stream at the end of the stream increasing it's size 
         lSize = Length
         MemoryModify (nSize + lSize)
         RtlMoveMemory ByVal Pointer + lSize, ByVal VarPtr(RHS(LBound(RHS))), nSize
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
@@ -148,6 +151,8 @@ Sets the amount of bytes with in this instance of the stream object, least the c
         MemoryModify RHS
     ElseIf (RHS = 0) Then
         Reset ScopeAs
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Property
 
@@ -164,6 +169,8 @@ Places contents of memory byte array RHS into the stream excluding Offset number
     ElseIf (Width > 0) Then
         Concat RHS
         Length = Width
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
@@ -212,6 +219,8 @@ Shifts the entire container of the stream by Offset to the left, truncating the 
         End If
     ElseIf (Offset = lSize) Then
         Reset ScopeAs
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
@@ -227,6 +236,8 @@ Shifts the entire container of the stream by Offset to the right, truncating the
         End If
     ElseIf (Offset = lSize) Then
         Reset ScopeAs
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
@@ -258,7 +269,7 @@ Preforms a poll for Data returning the offset up to the numerical Ballot's occur
             If bPart(lPos) = Data Then
                 Poll = Poll + 1
                 If Poll = Ballot Then
-                    Poll = lPos - LBound(bPart)
+                    Poll = lPos + LBound(bPart)
                     Exit Function
                 End If
                 
@@ -269,6 +280,8 @@ Preforms a poll for Data returning the offset up to the numerical Ballot's occur
         Else
             Poll = Length
         End If
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Function
 
@@ -280,10 +293,12 @@ Removes a section of the stream that is in the middle having portions of the str
         MemoryModify (lSize + (Width * 2))
         RtlMoveMemory ByVal Pointer + Offset, ByVal Pointer + Offset + Width, (-lSize + -Width + (lSize * 2))
         MemoryModify (lSize - Width)
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
-Public Sub Pyramid(ByRef SubStream As Stream, ByVal Offset As Long, ByVal Width As Long) ' _
+Public Sub Pyramid(ByRef SubStream As IStream, ByVal Offset As Long, ByVal Width As Long) ' _
 Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
     Dim lSize As Long
     lSize = Length
@@ -304,7 +319,11 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
             Else
                 RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
             End If
+        Else
+            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
@@ -312,14 +331,27 @@ Public Function Peek(Optional ByVal Offset As Long = 0) As Byte ' _
 Gets the first byte in the data stream, optionally excluding Offset number of bytes retruning the immediate byte after Offset.
     If Offset >= 0 And Offset < Length Then
         RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + Offset, 1
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Function
+
+Public Sub Plot(ByVal RHS As Byte, ByVal Offset As Long)   ' _
+Sets a byte in the data stream immediatly after Offset.
+
+    If Offset >= 0 And Offset < Length Then
+        RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(RHS), 1
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+    End If
+
+End Sub
 
 Private Function IStream_Address(Optional ByVal Offset As Long = 0&) As Long
     IStream_Address = Me.Address(Offset)
 End Function
 
-Private Sub IStream_Clone(Origin As Stream, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&)
+Private Sub IStream_Clone(Origin As IStream, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&)
     Me.Clone Origin, Offset, Width
 End Sub
 
@@ -351,6 +383,10 @@ Private Sub IStream_PlaceAt(RHS() As Byte, Optional ByVal Offset As Long = 0&, O
     Me.PlaceAt RHS, Offset, Width
 End Sub
 
+Private Sub IStream_Plot(ByVal Offset As Long, ByVal RHS As Byte)
+    Me.Plot Offset, RHS
+End Sub
+
 Private Function IStream_Poll(ByVal Data As Byte, ByVal Ballot As Long, Optional ByVal Offset As Long = 0&, Optional ByVal Width As Long = -1&) As Long
     IStream_Poll = Me.Poll(Data, Ballot, Offset, Width)
 End Function
@@ -359,7 +395,7 @@ Private Function IStream_Peek(Optional ByVal Offset As Long = 0&) As Byte
     IStream_Peek = Me.Peek(Offset)
 End Function
 
-Private Sub IStream_Post(RHS() As Byte)
+Private Sub IStream_Post(RHS As Byte)
     Me.Post RHS
 End Sub
 
