@@ -27,7 +27,7 @@ Public Enum Behaviors
 '    CommitFirms = 1 'commits the creating so future access keeps
 '    'this can be in memoryaccess and/or mirroraccess sequential
 
-    ScopeNormal = 0
+    scopeNormal = 0
     ScopeLocale = 4
     ScopeGlobal = -4
 
@@ -74,7 +74,7 @@ Private Sub Class_Initialize()
     PathFileName = MirrorPath_None
     Behave = Nothings_Initialized
     ReDim Breaks(0 To 0) As Long
-    Change ScopeNormal
+    Change scopeNormal
 End Sub
 
 Private Sub Class_Terminate()
@@ -85,7 +85,7 @@ Private Sub Class_Terminate()
             If Left(PathFileName, 6) = MirrorPath_Temp Then Kill Mid(PathFileName, 7)
         End If
         PathFileName = MirrorPath_None
-        Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+        Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
             Case Behaviors.ScopeGlobal
                 GlobalUnlock Pointer
                 GlobalFree Pointer
@@ -139,7 +139,7 @@ Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As
         Dim lSize As Long
         ReDim Breaks(0 To 0) As Long
         lSize = 0
-        Select Case Behavior And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+        Select Case Behavior And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
             Case Behaviors.ScopeGlobal
                 ScopeAs = MemoryScopes.Global
                 Pointer = ObjPtr(Me)
@@ -611,11 +611,11 @@ Attribute Reset.VB_Description = "Reset the stream object freeing up any allocat
     ElseIf Scopes And MemoryScopes.Global = MemoryScopes.Global Then
         Me.Behavior = ScopeLocale
     Else
-        Me.Behavior = ScopeNormal
+        Me.Behavior = scopeNormal
     End If
     If Behave <> Nothings_Initialized Then
         Dim lSize As Long: lSize = 0
-        Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+        Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
             Case Behaviors.ScopeGlobal
                 If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
                 GlobalFree Pointer
@@ -667,7 +667,7 @@ End Property
 Public Property Let Length(ByVal RHS As Long)
     If Behave <> Nothings_Initialized Then
         If (RHS > -1) Then
-            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
                 Case Behaviors.ScopeGlobal
                     If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
                     Pointer = GlobalReAlloc(Pointer, RHS + 4, modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
@@ -699,7 +699,7 @@ Attribute Push.VB_Description = "Shifts the entire container of the stream by Of
         lSize = Length
         If (Offset < lSize) Then
             RtlMoveMemory ByVal (Pointer + 4), ByVal (Pointer + 4) + Offset, (-lSize + -Offset + (lSize * 2))
-            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
                 Case Behaviors.ScopeGlobal
                     If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
                     Pointer = GlobalReAlloc(Pointer, (lSize - Offset) + 4, modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
@@ -732,7 +732,7 @@ Attribute Pull.VB_Description = "Shifts the entire container of the stream by Of
         lSize = Length
         If (Offset < lSize) Then
             RtlMoveMemory ByVal (Pointer + 4) + Offset, ByVal (Pointer + 4), (-lSize + -Offset + (lSize * 2))
-            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
                 Case Behaviors.ScopeGlobal
                     If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
                     Pointer = GlobalReAlloc(Pointer, (lSize - Offset) + 4, modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
@@ -769,7 +769,6 @@ Attribute Prepend.VB_Description = "Places Data() bytes at the beginning of the 
             Length = Length + (nSize * 2)
             Pull nSize
             PlaceAt Data, 0, nSize
-            WroteToStream Partial, 0, Length
          End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -785,15 +784,27 @@ Duplicates the Origin Stream object truning the calling instances stream data to
     If Offset < lSize And Offset >= 0 And Offset + Width <= lSize And Width > 0 Then
         Length = Width
         RtlMoveMemory ByVal Pointer + 4, ByVal Origin.Address + 4 + Offset, Width
+        WroteToStream Origin.Partial, 0, Width
+        EndOfStream Width
     End If
 End Sub
 
 Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
     If Behave <> Nothings_Initialized Then
-        If (nSize > 0) And UBound(Data) > -1 Then
+        If UBound(Data) > -1 Then
+            ConcatNoFile = ConcatNoFile2(VarPtr(Data(LBound(Data))), nSize)
+        End If
+    Else
+        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
+    End If
+End Function
+
+Private Function ConcatNoFile2(ByVal Data As Long, ByVal nSize As Long) As Long
+    If Behave <> Nothings_Initialized Then
+        If (nSize > 0) Then
             Dim lSize As Long
             RtlMoveMemory lSize, ByVal Pointer, 4
-            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
                 Case Behaviors.ScopeGlobal
                     If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
                     Pointer = GlobalReAlloc(Pointer, (nSize + lSize) + 4, modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
@@ -806,8 +817,8 @@ Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
                     Pointer = HeapReAlloc(GetProcessHeap, 0, Pointer, (nSize + lSize) + 4)
             End Select
             RtlMoveMemory ByVal Pointer, (nSize + lSize), 4
-            RtlMoveMemory ByVal (Pointer + 4) + lSize, ByVal VarPtr(Data(LBound(Data))), nSize
-            ConcatNoFile = lSize
+            RtlMoveMemory ByVal (Pointer + 4) + lSize, ByVal Data, nSize
+            ConcatNoFile2 = lSize
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -820,6 +831,7 @@ Appends RHS byte onto the stream at the end of the stream increasing it's size b
     Plot Length - 1, RHS
 End Sub
 
+
 Public Sub Concat(ByRef Data() As Byte) ' _
 Appends Data() bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data().
 Attribute Concat.VB_Description = "Appends Data() bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data()."
@@ -830,7 +842,7 @@ Attribute Concat.VB_Description = "Appends Data() bytes onto the stream at the e
             Dim lSize As Long
             lSize = ConcatNoFile(Data, nSize)
             WroteToStream Data, lSize, nSize
-            EndOfStream nSize
+            EndOfStream nSize + lSize
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -995,7 +1007,6 @@ Gets the first byte in the data stream, optionally excluding Offset number of by
         If Offset = -1 Then Offset = Length
         If Offset >= 0 And Offset < Length Then
             RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + 4 + Offset, 1
-            WroteToStream Partial(Offset, 1), Offset, 1
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -1009,6 +1020,7 @@ Sets a byte in the data stream, optionally excluding Offset number of bytes sett
     If Behave <> Nothings_Initialized Then
         If Offset >= 0 And Offset < Length Then
             RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal VarPtr(RHS), 1
+            WroteToStream Partial(Offset, 1), Offset, 1
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -1049,6 +1061,31 @@ Private Sub WroteToStream(ByRef RHS() As Byte, ByVal Offset As Long, ByVal Width
             End If
     End Select
 End Sub
+
+'
+'Private Sub WroteToStream2(ByRef RHS As Strands, ByVal Offset As Long, ByVal Width As Long)
+'    Select Case Left(PathFileName, 6)
+'        Case MirrorPath_None
+'        Case Else
+'            If Width > 0 And (UBound(RHS) > -1) Then
+'                Dim pos As Long
+'                Dim ol As OVERLAPPED
+'                pos = Offset
+'                ol.Offset = LoWord(pos)
+'                ol.OffsetHigh = HiWord(pos)
+'                Offset = 0
+'                Do
+'                    hWriteFile PathHandle, ByVal RHS.Address + 4, Width, Offset, ol
+'                    Width = Width - Offset
+'                    pos = pos + Offset
+'                    ol.Offset = LoWord(pos)
+'                    ol.OffsetHigh = HiWord(pos)
+'                    Offset = Width
+'                Loop Until Width = 0
+'            End If
+'    End Select
+'End Sub
+
 Private Sub EndOfStream(ByVal Size As Long)
     Select Case Left(PathFileName, 6)
         Case MirrorPath_None

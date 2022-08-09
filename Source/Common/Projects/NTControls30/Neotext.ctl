@@ -304,11 +304,11 @@ Public Sub Undo()
 
         Debug.Print "Undo Entry"
         Debug.Print "xUndoActs(" & xUndoStage & ").CodePage=" & xUndoActs(xUndoStage).CodePage
-        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.Partial)
+        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.partial)
         Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StartPos=" & xUndoActs(xUndoStage).PriorSelRange.StartPos
         Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StopPos=" & xUndoActs(xUndoStage).PriorSelRange.StopPos
 
-        Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.Partial)
+        Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.partial)
         Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StartPos=" & xUndoActs(xUndoStage).AfterSelRange.StartPos
         Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StopPos=" & xUndoActs(xUndoStage).AfterSelRange.StopPos
 
@@ -331,11 +331,11 @@ Public Sub Redo()
         
         Debug.Print "Redo Entry"
         Debug.Print "xUndoActs(" & xUndoStage & ").CodePage=" & xUndoActs(xUndoStage).CodePage
-        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.Partial)
+        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.partial)
         Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StartPos=" & xUndoActs(xUndoStage).PriorSelRange.StartPos
         Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StopPos=" & xUndoActs(xUndoStage).PriorSelRange.StopPos
         
-        Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.Partial)
+        Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.partial)
         Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StartPos=" & xUndoActs(xUndoStage).AfterSelRange.StartPos
         Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StopPos=" & xUndoActs(xUndoStage).AfterSelRange.StopPos
 
@@ -499,7 +499,7 @@ Clears all the text on the current code page.
         xUndoActs(0).AfterTextData.Reset
         
         If pText.Length > 0 Then
-            xUndoActs(0).PriorTextData.Concat pText.Partial
+            xUndoActs(0).PriorTextData.Concat pText.partial
         End If
         xUndoActs(0).AfterTextData.Concat Convert(Chr(48))
         
@@ -694,7 +694,7 @@ Attribute MultipleLines.VB_Description = "Sets whehter or not this text control 
     '        pText = Replace(pText, vbLf, "")
             Dim tText As New Strands
            
-            tText.Concat Convert(Replace(Replace(Convert(pText.Partial), vbCrLf, vbLf), vbLf, ""))
+            tText.Concat Convert(Replace(Replace(Convert(pText.partial), vbCrLf, vbLf), vbLf, ""))
     
             If tText.Length > 0 Then
                 pText.Clone tText
@@ -741,7 +741,7 @@ Private Function VisibleText() As String
         tmp2 = pText.poll(Asc(vbLf), tmp2 + UsercontrolHeight \ TextHeight + 1)
         
         If tmp2 - tmp > 0 Then
-            VisibleText = Convert(pText.Partial(tmp, tmp2 - tmp))
+            VisibleText = Convert(pText.partial(tmp, tmp2 - tmp))
         End If
     End If
 End Function
@@ -943,9 +943,9 @@ Gets the selected text, the portion of text that is highlighted.
 Attribute SelText.VB_Description = "Gets the selected text, the portion of text that is highlighted."
     If pText.Length > 0 Then
         If pSel.StopPos < pSel.StartPos And (pSel.StartPos - pSel.StopPos) > 0 Then
-            SelText = Convert(pText.Partial(pSel.StopPos, (pSel.StartPos - pSel.StopPos)))
+            SelText = Convert(pText.partial(pSel.StopPos, (pSel.StartPos - pSel.StopPos)))
         ElseIf pSel.StopPos >= pSel.StartPos And (pSel.StopPos - pSel.StartPos) > 0 Then
-            SelText = Convert(pText.Partial(pSel.StartPos, (pSel.StopPos - pSel.StartPos)))
+            SelText = Convert(pText.partial(pSel.StartPos, (pSel.StopPos - pSel.StartPos)))
         End If
     End If
     SelText = Replace(SelText, vbLf, vbCrLf)
@@ -963,13 +963,13 @@ Attribute SelText.VB_Description = "Sets the selected text, the portion of text 
     'pText = Left(pText, pSel.StartPos) & RHS & Mid(pText, pSel.StopPos + 1)
     
     If pSel.StartPos > 0 And pText.Length > pSel.StartPos Then
-        tText.Concat pText.Partial(0, pSel.StartPos)
+        tText.Concat pText.partial(0, pSel.StartPos)
     End If
     
     tText.Concat Convert(Replace(RHS, vbCrLf, vbLf))
     
     If pText.Length > pSel.StopPos Then
-        tText.Concat pText.Partial(pSel.StopPos)
+        tText.Concat pText.partial(pSel.StopPos)
     End If
 
     If tText.Length > 0 Then
@@ -1052,7 +1052,7 @@ Attribute Text.VB_Description = "Sets the text contents of the control in the NT
             If RHS.Length > 0 Then
                 If RHS.Pass(3) > 0 Then ircColors = True
                 ResetColors
-                pText.Concat Convert(Replace(Replace(Convert(RHS.Partial), vbCrLf, vbLf), vbLf, IIf(pMultiLine, vbLf, "")))
+                pText.Concat Convert(Replace(Replace(Convert(RHS.partial), vbCrLf, vbLf), vbLf, IIf(pMultiLine, vbLf, "")))
                 ResetUndoRedo
                 RaiseEventChange True
             End If
@@ -1210,12 +1210,12 @@ Private Sub Timer1_Timer()
     
     Dim newloc As POINTAPI
     newloc = CaretLocation
+    Dim clr As Long
     
     If ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
         If insertMode Then
-            
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pForecolor, False
-            'ClipPrintText lastLoc.X, lastLoc.Y, IIf(Mid(pText, pSel.StartPos + 1, 1) = vbLf, " ", Mid(pText, pSel.StartPos + 1, 1)), GetSysColor(COLOR_WINDOWTEXT), False
+            clr = LocateColorRecord(pSel.StartPos)
+            ClipPrintByte lastLoc.X, lastLoc.Y, pText.peek(pSel.StartPos), pColorRanges(clr).Forecolor, pColorRanges(clr).BackColor, False
         Else
             ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
         End If
@@ -1234,16 +1234,16 @@ Private Sub Timer1_Timer()
     
     If (((cursorBlink Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y))) And hasFocus)) And Enabled Then
         If insertMode Then
-            ClipPrintText newloc.X, newloc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pForecolor, True
-            'ClipPrintText newloc.X, newloc.Y, IIf(Mid(pText, pSel.StartPos + 1, 1) = vbLf, " ", Mid(pText, pSel.StartPos + 1, 1)), GetSysColor(COLOR_WINDOWTEXT), True
+            clr = LocateColorRecord(pSel.StartPos)
+            ClipPrintByte newloc.X, newloc.Y, pText.peek(pSel.StartPos), pColorRanges(clr).BackColor, pForecolor, True
         Else
             ClipLineDraw newloc.X, newloc.Y, newloc.X, (newloc.Y + TextHeight), pForecolor
         End If
         
     ElseIf ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
         If insertMode Then
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pForecolor, False
-            'ClipPrintText lastLoc.X, lastLoc.Y, IIf(Mid(pText, pSel.StartPos + 1, 1) = vbLf, " ", Mid(pText, pSel.StartPos + 1, 1)), GetSysColor(COLOR_WINDOWTEXT), False
+            clr = LocateColorRecord(pSel.StartPos)
+            ClipPrintByte lastLoc.X, lastLoc.Y, pText.peek(pSel.StartPos), pColorRanges(clr).Forecolor, pColorRanges(clr).BackColor, False
         Else
             ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
         End If
@@ -1325,31 +1325,59 @@ Private Function ClippingWouldDraw(ByRef rct1 As RECT, ByRef rct2 As RECT, Optio
     End If
 End Function
 
-Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal StrText As String, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Long
-    StrText = Replace(StrText, Chr(9), TabSpace)
-    ClipPrintText = Me.TextWidth(StrText)
+Private Function ClipPrintByte(ByVal X1 As Single, ByVal Y1 As Single, ByVal StrText As Byte, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Long
+    'StrText = Replace(StrText, Chr(9), TabSpace)
+    ClipPrintByte = Me.TextWidth(Chr(StrText))
     If Not IsMissing(bColor) Then
         If bColor <> pBackcolor Then
-            If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
-                pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+            If ClipLineDraw(X1, Y1, (ClipPrintByte + X1), (Me.TextHeight + Y1), bColor, True) Then
+                pBackBuffer.DrawByte X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+            Else
+                ClipPrintByte = 0
+            End If
+        Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+            pBackBuffer.DrawByte X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        'Else
+        '    ClipPrintText = 0
+        End If
+    ElseIf BoxFill Then
+        If ClipLineDraw(X1, Y1, (ClipPrintByte + X1), (Me.TextHeight + Y1), bColor, True) Then
+            pBackBuffer.DrawByte X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        Else
+            ClipPrintByte = 0
+        End If
+    Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+        pBackBuffer.DrawByte X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+    'Else
+    '    ClipPrintText = 0
+    End If
+End Function
+
+Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByRef StrText As Strands, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Long
+    'StrText = Replace(StrText, Chr(9), TabSpace)
+    ClipPrintText = Me.TextWidth * StrText.Length
+    If Not IsMissing(bColor) Then
+        If bColor <> pBackcolor Then
+            If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight + Y1), bColor, True) Then
+                pBackBuffer.DrawStrands X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
             Else
                 ClipPrintText = 0
             End If
-        ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        Else
-            ClipPrintText = 0
+        Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+            pBackBuffer.DrawStrands X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        'Else
+        '    ClipPrintText = 0
         End If
     ElseIf BoxFill Then
-        If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
-            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight + Y1), bColor, True) Then
+            pBackBuffer.DrawStrands X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
         Else
             ClipPrintText = 0
         End If
-    ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-        pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-    Else
-        ClipPrintText = 0
+    Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+        pBackBuffer.DrawStrands X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+    'Else
+    '    ClipPrintText = 0
     End If
 End Function
 
@@ -1555,16 +1583,17 @@ Private Sub CleanColorRecords(ByVal StartPos As Long, ByVal StopPos As Long)
     Loop
 End Sub
 
-Private Function CheckNumeric(ByRef StrText() As Byte, ByVal loc As Long) As Boolean
-    If loc <= UBound(StrText) Then
-        If IsNumeric(Chr(StrText(loc))) Then
+
+Private Function CheckNumeric(ByRef StrText As Strands, ByVal loc As Long) As Boolean
+    If loc < StrText.Length Then
+        If IsNumeric(Chr(StrText.peek(loc))) Then
             CheckNumeric = True
         End If
     End If
 End Function
-Private Function CheckComma(ByRef StrText() As Byte, ByVal loc As Long) As Boolean
-    If loc <= UBound(StrText) Then
-        If Chr(StrText(loc)) = "," Then
+Private Function CheckComma(ByRef StrText As Strands, ByVal loc As Long) As Boolean
+    If loc < StrText.Length Then
+        If Chr(StrText.peek(loc)) = "," Then
             CheckComma = True
         End If
     End If
@@ -1585,8 +1614,8 @@ Private Function LocateColorRecord(ByVal loc As Long) As Long
     End If
 End Function
 
-Private Function SubClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText As String, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
-    If StrText <> "" Then
+Private Function SubClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText As Strands, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
+    If StrText.Length > 0 Then
 
         If Not IsMissing(fColor) Then
             X1 = X1 + ClipPrintText(X1, Y1, StrText, fColor, bColor, (bColor <> pBackcolor))
@@ -1595,27 +1624,25 @@ Private Function SubClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, B
             X1 = X1 + ClipPrintText(X1, Y1, StrText, pBackBuffer.Forecolor, pBackBuffer.BackColor, (pBackBuffer.BackColor <> pBackcolor))
         End If
 
-        StrText = ""
+        StrText.Reset
     End If
 End Function
 
-Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText() As Byte, ByVal Offset As Long, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
+Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText As Strands, ByVal Offset As Long, ByVal Width As Long, ByVal VisOffset As Long, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
     
     Dim cnt As Long
     Dim runCnt As Long
     Dim line As Long
     Dim rmvCnt As Long
     Dim newClrRec As Boolean
-    Dim ircText() As Byte
-    ReDim ircText(LBound(StrText) To UBound(StrText)) As Byte
-    Dim nextPrint As String
+    Dim ircText As Strands
+    Dim nextPrint As New Strands
 
     pColorRanges(0).BackColor = pBackcolor
     pColorRanges(0).Forecolor = pForecolor
     
-    If Offset > 0 Then
-        runCnt = LocateColorRecord(Offset)
-    ElseIf UBound(pColorRanges) > 0 Then
+    runCnt = LocateColorRecord(Offset)
+    If UBound(pColorRanges) > 0 And runCnt = 0 Then
         runCnt = 1
     End If
 
@@ -1634,26 +1661,29 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
     line = LineFirstVisible
 
     RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
-                
-    'RaiseEvent ColorLine(line) 'users can colortext to content, we will handle over laps
     
-    cnt = LBound(StrText)
+    cnt = Offset
     
-    Do While cnt <= UBound(StrText)
+    Do While cnt < Offset + Width
 
-        Select Case StrText(cnt)
+        Select Case StrText.peek(cnt)
             
             Case 3 'convert IRC color codes to permanent color records in our system as they are seen
                     'we wont be handling them in the background for the overall controls hidden health
                     'a property maybe made that can return the text with IRC style color coding put back
-                    
+                                    
+                If Not newClrRec Then
+                    newClrRec = True
+                    Set ircText = New Strands
+                End If
+                
+                If nextPrint.Length > 0 Then ircText.Concat nextPrint.partial
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-                If Not newClrRec Then newClrRec = True
                 
                 runCnt = runCnt + 1
                 AddColorRange runCnt
 
-                pColorRanges(runCnt).StartMark = (-rmvCnt + cnt) + Offset
+                pColorRanges(runCnt).StartMark = (-rmvCnt + cnt) + LineOffset(LineFirstVisible)
                 cnt = cnt + 1
 
                 If CheckNumeric(StrText, cnt) Then
@@ -1662,12 +1692,12 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                     If CheckNumeric(StrText, cnt) Then
                         'two digit forecolor
                         cnt = cnt + 1
-                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), True)
+                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText.peek(cnt - 2)) & Chr(StrText.peek(cnt - 1)))), True)
                         rmvCnt = rmvCnt + 3
                         'cnt = cnt + 2
                     Else
                         'one digit forecolor
-                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), True)
+                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText.peek(cnt - 1)))), True)
                         rmvCnt = rmvCnt + 2
                     End If
                 End If
@@ -1681,11 +1711,11 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                         If CheckNumeric(StrText, cnt) Then
                             'two digit back color
                             cnt = cnt + 1
-                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), False)
+                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText.peek(cnt - 2)) & Chr(StrText.peek(cnt - 1)))), False)
                             rmvCnt = rmvCnt + 3
                         Else
                             'one digit back color
-                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), False)
+                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText.peek(cnt - 1)))), False)
                             rmvCnt = rmvCnt + 2
                         End If
                     End If
@@ -1696,9 +1726,11 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 pBackBuffer.BackColor = pColorRanges(runCnt).BackColor
                 
             Case 10
-                ircText(cnt - rmvCnt) = StrText(cnt)
-                rmvCnt = rmvCnt + 1
-                
+
+                If Not ircText Is Nothing Then
+                    If nextPrint.Length > 0 Then ircText.Concat nextPrint.partial
+                    ircText.Post 10
+                End If
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
                 X1 = pOffsetX + LineColumnWidth
@@ -1709,12 +1741,14 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
 
             Case Else
-                ircText(cnt - rmvCnt) = StrText(cnt)
-                
+
                 If runCnt < UBound(pColorRanges) Then
                 
-                    If (-rmvCnt + cnt) + Offset >= pColorRanges(runCnt + 1).StartMark Then
-                    
+                    If (-rmvCnt + cnt) + LineOffset(LineFirstVisible) >= pColorRanges(runCnt + 1).StartMark Then
+
+                        If Not ircText Is Nothing Then
+                            If nextPrint.Length > 0 Then ircText.Concat nextPrint.partial
+                        End If
                         SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
                         runCnt = runCnt + 1
@@ -1723,6 +1757,11 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                     
                     End If
                 ElseIf runCnt = UBound(pColorRanges) Then
+
+                    If Not ircText Is Nothing Then
+                        If nextPrint.Length > 0 Then ircText.Concat nextPrint.partial
+                    End If
+                    SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
                 
                     runCnt = runCnt + 1
                     pBackBuffer.BackColor = pColorRanges(UBound(pColorRanges)).BackColor
@@ -1730,23 +1769,24 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                         
                 End If
                     
-                nextPrint = nextPrint & IIf(StrText(cnt) = 9, TabSpace, Chr(StrText(cnt)))
+                nextPrint.Post StrText.peek(cnt)
                     
         End Select
         
         cnt = cnt + 1
     Loop
     
+    If Not ircText Is Nothing Then
+        If nextPrint.Length > 0 Then ircText.Concat nextPrint.partial
+    End If
     SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
     If newClrRec Then ' we had IRC style coloring so add the final record, remove the control characters and clean the block
         
-        ReDim Preserve ircText(LBound(ircText) To cnt - rmvCnt) As Byte
-        pText.Pyramid Strands(ircText), Offset, cnt
+        pText.Pyramid ircText, Offset, Width
         ClipPrintTextBlock = True
 
     End If
-    'DebugDraw
 
 End Function
 
@@ -1928,10 +1968,10 @@ Attribute LineText.VB_Description = "Returns the text with-in a line, specified 
         LineIndex = LineOffset(LineIndex)
         If LineIndex > 0 Then
             'LineText = Mid(pText, LineIndex, lPos)
-            LineText = Convert(pText.Partial(LineIndex, lpos))
+            LineText = Convert(pText.partial(LineIndex, lpos))
         Else
             'LineText = Mid(pText, 1, lPos)
-            LineText = Convert(pText.Partial(0, lpos))
+            LineText = Convert(pText.partial(0, lpos))
         End If
     End If
 End Function
@@ -2030,9 +2070,9 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     'pText = Left(pText, pSel.StartPos) & vbLf & Mid(pText, pSel.StartPos + 1)
                     
                     Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
+                    If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
                     tText.Concat Convert(vbLf)
-                    If pSel.StartPos < pText.Length Then tText.Concat pText.Partial(pSel.StartPos)
+                    If pSel.StartPos < pText.Length Then tText.Concat pText.partial(pSel.StartPos)
 
                     If tText.Length > 0 Then
                         pText.Clone tText
@@ -2051,9 +2091,9 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     'pText = Left(pText, pSel.StartPos) & vbLf & Mid(pText, pSel.StopPos + 1)
 
                     Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
+                    If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
                     tText.Concat Convert(vbLf)
-                    If pSel.StopPos < pText.Length Then tText.Concat pText.Partial(pSel.StopPos)
+                    If pSel.StopPos < pText.Length Then tText.Concat pText.partial(pSel.StopPos)
 
                     If tText.Length > 0 Then
                         pText.Clone tText
@@ -2097,8 +2137,8 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                         'pText = Left(pText, pSel.StartPos - 1) & Mid(pText, pSel.StartPos + 1)
     
                         Set tText = New Strands
-                        If pSel.StartPos - 1 > 0 Then tText.Concat pText.Partial(0, pSel.StartPos - 1)
-                        If pSel.StartPos < pText.Length Then tText.Concat pText.Partial(pSel.StartPos)
+                        If pSel.StartPos - 1 > 0 Then tText.Concat pText.partial(0, pSel.StartPos - 1)
+                        If pSel.StartPos < pText.Length Then tText.Concat pText.partial(pSel.StartPos)
 
                         If tText.Length > 0 Then
                             pText.Clone tText
@@ -2112,8 +2152,8 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                         'pText = Left(pText, pSel.StartPos) & Mid(pText, pSel.StartPos + 2)
 
                         Set tText = New Strands
-                        If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                        If pSel.StartPos + 1 < pText.Length Then tText.Concat pText.Partial(pSel.StartPos + 1)
+                        If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
+                        If pSel.StartPos + 1 < pText.Length Then tText.Concat pText.partial(pSel.StartPos + 1)
 
                         If tText.Length > 0 Then
                             pText.Clone tText
@@ -2136,8 +2176,8 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     'pText = Left(pText, pSel.StartPos) & Mid(pText, pSel.StopPos + 1)
 
                     Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                    If pSel.StopPos < pText.Length Then tText.Concat pText.Partial(pSel.StopPos)
+                    If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
+                    If pSel.StopPos < pText.Length Then tText.Concat pText.partial(pSel.StopPos)
 
                     If tText.Length > 0 Then
                         pText.Clone tText
@@ -2395,11 +2435,11 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
             If insertMode Then
 
                 Set tText = New Strands
-                If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
+                If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
                 tText.Concat Convert(Chr(KeyAscii))
                 If pSel.StartPos + 1 < pText.Length Then
-                    xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, 1)
-                    tText.Concat pText.Partial(pSel.StartPos + 1)
+                    xUndoActs(0).PriorTextData.Concat pText.partial(pSel.StartPos, 1)
+                    tText.Concat pText.partial(pSel.StartPos + 1)
                 End If
 
                 If tText.Length > 0 Then
@@ -2416,25 +2456,25 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                 Set tText = New Strands
                 If pSel.StartPos > pSel.StopPos Then
                     ExpandColorRecords pSel.StopPos, 1
-                    If pSel.StopPos > 0 Then tText.Concat pText.Partial(0, pSel.StopPos)
+                    If pSel.StopPos > 0 Then tText.Concat pText.partial(0, pSel.StopPos)
                     tText.Concat Convert(Chr(KeyAscii))
                     If pSel.StartPos < pText.Length Then
                         If pSel.StartPos - pSel.StopPos > 0 Then
-                            xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StopPos, pSel.StartPos - pSel.StopPos)
+                            xUndoActs(0).PriorTextData.Concat pText.partial(pSel.StopPos, pSel.StartPos - pSel.StopPos)
                         End If
-                        tText.Concat pText.Partial(pSel.StartPos)
+                        tText.Concat pText.partial(pSel.StartPos)
                     End If
                     pSel.StartPos = pSel.StopPos
                     
                 Else
                     ExpandColorRecords pSel.StartPos, 1
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
+                    If pSel.StartPos > 0 Then tText.Concat pText.partial(0, pSel.StartPos)
                     tText.Concat Convert(Chr(KeyAscii))
                     If pSel.StopPos < pText.Length Then
                         If pSel.StopPos - pSel.StartPos > 0 Then
-                            xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
+                            xUndoActs(0).PriorTextData.Concat pText.partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
                         End If
-                        tText.Concat pText.Partial(pSel.StopPos)
+                        tText.Concat pText.partial(pSel.StopPos)
                     End If
                 End If
                                 
@@ -2657,9 +2697,9 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
             xUndoActs(0).PriorTextData.Reset
             xUndoActs(0).AfterTextData.Reset
         
-            xUndoActs(0).AfterTextData.Concat dText.Partial
+            xUndoActs(0).AfterTextData.Concat dText.partial
             ExpandColorRecords SelStart, dText.Length
-            SelText = Convert(dText.Partial)
+            SelText = Convert(dText.partial)
             
             Cancel = False
             
@@ -2832,41 +2872,42 @@ Public Static Sub Refresh()
     
                     Static lastPos As RangeType
                     If lastPos.StartPos <> bpos Or lastPos.StopPos <> epos - bpos Then
-                        tText.Reset
-                        tText.Concat pText.Partial(bpos, epos - bpos)
+                        tText.Clone pText, bpos, epos - bpos
+                        'tText.Reset
+                        'tText.Concat pText.Partial(bpos, epos - bpos)
                     End If
     
                     lastPos.StartPos = bpos
                     lastPos.StopPos = epos - bpos
     
                     If ((tmpSel.StartPos <= bpos) And (tmpSel.StopPos >= epos)) Then
-                        If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(0, epos - bpos), LineOffset(lastFirstLine), GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
+                        If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText, 0, (epos - bpos), bpos, GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
                     ElseIf ((tmpSel.StartPos > bpos) And (tmpSel.StopPos < epos)) Then
-                        If (tmpSel.StartPos - bpos) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(0, (tmpSel.StartPos - bpos)), LineOffset(lastFirstLine), , , False)
-                        If ((tmpSel.StopPos - bpos) - (tmpSel.StartPos - bpos)) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText.Partial(tmpSel.StartPos - bpos, ((tmpSel.StopPos - bpos) - (tmpSel.StartPos - bpos))), LineOffset(lastFirstLine) + (tmpSel.StartPos - bpos), GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
-                        If tText.Length - (tmpSel.StopPos - bpos) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText.Partial(tmpSel.StopPos - bpos), LineOffset(lastFirstLine) + (tmpSel.StopPos - bpos), , , False)
+                        If (tmpSel.StartPos - bpos) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText, 0, (tmpSel.StartPos - bpos), 0, , , False)
+                        If ((tmpSel.StopPos - bpos) - (tmpSel.StartPos - bpos)) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText, (tmpSel.StartPos - bpos), ((tmpSel.StopPos - bpos) - (tmpSel.StartPos - bpos)), bpos, GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
+                        If tText.Length - (tmpSel.StopPos - bpos) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText, (tmpSel.StopPos - bpos), (tText.Length - (tmpSel.StopPos - bpos)), bpos + (tmpSel.StartPos - bpos), , , False)
                     ElseIf ((tmpSel.StartPos > bpos) And (tmpSel.StopPos >= epos)) Then
-                        If (tmpSel.StartPos - bpos) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(0, (tmpSel.StartPos - bpos)), LineOffset(lastFirstLine), , , False)
-                        If tText.Length - (tmpSel.StartPos - bpos) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText.Partial((tmpSel.StartPos - bpos)), LineOffset(lastFirstLine) + (tmpSel.StartPos - bpos), GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
+                        If (tmpSel.StartPos - bpos) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText, 0, (tmpSel.StartPos - bpos), 0, , , False)
+                        If tText.Length - (tmpSel.StartPos - bpos) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText, (tmpSel.StartPos - bpos), (tText.Length - (tmpSel.StartPos - bpos)), bpos, GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
                     ElseIf ((tmpSel.StartPos <= bpos) And (tmpSel.StopPos < epos)) Then
-                        If ((epos - bpos) - (epos - tmpSel.StopPos)) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(0, ((epos - bpos) - (epos - tmpSel.StopPos))), LineOffset(lastFirstLine), GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
-                        If tText.Length - ((epos - bpos) - (epos - tmpSel.StopPos)) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText.Partial(((epos - bpos) - (epos - tmpSel.StopPos))), LineOffset(lastFirstLine) + ((epos - bpos) - (epos - tmpSel.StopPos)), , , False)
+                        If ((epos - bpos) - (epos - tmpSel.StopPos)) > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText, 0, ((epos - bpos) - (epos - tmpSel.StopPos)), 0, GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
+                        If tText.Length - ((epos - bpos) - (epos - tmpSel.StopPos)) > 0 Then reClean = reClean Or ClipPrintTextBlock(curX, curY, tText, ((epos - bpos) - (epos - tmpSel.StopPos)), (tText.Length - ((epos - bpos) - (epos - tmpSel.StopPos))), bpos + ((epos - bpos) - (epos - tmpSel.StopPos)), , , False)
                     End If
     
                 Else
-                    If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, , , False)
+                    If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText, bpos, (epos - bpos), bpos, , , False)
                 End If
     
                 RaiseEvent ColorEnd
                 colorOpen = False
     
             Else
-                If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
+                If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText, bpos, (epos - bpos), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
             End If
-    '        If reClean Then 'irc codes happened
-    '
-    '            CleanColorRecords bpos, epos
-    '        End If
+            If reClean Then 'irc codes happened
+    
+                CleanColorRecords bpos, epos
+            End If
             
         Else
             firstRun = False
@@ -3047,7 +3088,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "Fontname", UserControl.Font.name, "Lucida Console"
     PropBag.WriteProperty "Fontsize", UserControl.Font.Size, 9
     If pText.Length > 0 Then
-        PropBag.WriteProperty "Text", Convert(pText.Partial), ""
+        PropBag.WriteProperty "Text", Convert(pText.partial), ""
     Else
         PropBag.WriteProperty "Text", "", ""
     End If
