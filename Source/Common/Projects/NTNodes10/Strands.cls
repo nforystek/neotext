@@ -532,14 +532,16 @@ Attribute Pop.VB_Description = "Removes a line at the very beginning of the stra
             Temp = Current
             Pop = Partial(0, Breaks(1))
             Push Breaks(1)
-            Breaks(0) = Breaks(1)
-            If UBound(Breaks) >= 2 Then
-                Dim cnt As Long
-                For cnt = 1 To UBound(Breaks) - 1
-                    Breaks(cnt) = Breaks(cnt + 1) - Breaks(0)
-                Next
+            If UBound(Breaks) > 0 Then
+                Breaks(0) = Breaks(1)
+                If UBound(Breaks) >= 2 Then
+                    Dim cnt As Long
+                    For cnt = 1 To UBound(Breaks) - 1
+                        Breaks(cnt) = Breaks(cnt + 1) - Breaks(0)
+                    Next
+                End If
+                ReDim Preserve Breaks(LBound(Breaks) To UBound(Breaks) - 1) As Long
             End If
-            ReDim Preserve Breaks(LBound(Breaks) To UBound(Breaks) - 1) As Long
             Breaks(0) = Temp
         End If
     Else
@@ -769,39 +771,31 @@ Attribute Prepend.VB_Description = "Places Data() bytes at the beginning of the 
             Length = Length + (nSize * 2)
             Pull nSize
             PlaceAt Data, 0, nSize
+            WroteToStream Partial, 0, Length
          End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
 End Sub
 
-Public Sub Clone(ByRef Origin As IStream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
-Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning.
+Public Sub Clone(ByRef Origin As Strands, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, or same as a portion of the Origin strean, optionally defined by the Offset and Width.
     Dim lSize As Long
+    Behavior = Origin.Behavior
     lSize = Origin.Length
-    If Width = -1 Then Width = lSize
-    Reset ScopeAs
+    If Width = -1 Or lSize - Offset < Width Then Width = lSize - Offset
     If Offset < lSize And Offset >= 0 And Offset + Width <= lSize And Width > 0 Then
+    
         Length = Width
-        RtlMoveMemory ByVal Pointer + 4, ByVal Origin.Address + 4 + Offset, Width
-        WroteToStream Origin.Partial, 0, Width
-        EndOfStream Width
+        RtlMoveMemory ByVal Pointer + 4, ByVal Origin.Address(4 + Offset), Width
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
 Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
     If Behave <> Nothings_Initialized Then
-        If UBound(Data) > -1 Then
-            ConcatNoFile = ConcatNoFile2(VarPtr(Data(LBound(Data))), nSize)
-        End If
-    Else
-        Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
-    End If
-End Function
-
-Private Function ConcatNoFile2(ByVal Data As Long, ByVal nSize As Long) As Long
-    If Behave <> Nothings_Initialized Then
-        If (nSize > 0) Then
+        If (nSize > 0) And UBound(Data) > -1 Then
             Dim lSize As Long
             RtlMoveMemory lSize, ByVal Pointer, 4
             Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
@@ -817,8 +811,8 @@ Private Function ConcatNoFile2(ByVal Data As Long, ByVal nSize As Long) As Long
                     Pointer = HeapReAlloc(GetProcessHeap, 0, Pointer, (nSize + lSize) + 4)
             End Select
             RtlMoveMemory ByVal Pointer, (nSize + lSize), 4
-            RtlMoveMemory ByVal (Pointer + 4) + lSize, ByVal Data, nSize
-            ConcatNoFile2 = lSize
+            RtlMoveMemory ByVal (Pointer + 4) + lSize, ByVal VarPtr(Data(LBound(Data))), nSize
+            ConcatNoFile = lSize
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -831,7 +825,6 @@ Appends RHS byte onto the stream at the end of the stream increasing it's size b
     Plot Length - 1, RHS
 End Sub
 
-
 Public Sub Concat(ByRef Data() As Byte) ' _
 Appends Data() bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data().
 Attribute Concat.VB_Description = "Appends Data() bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data()."
@@ -843,8 +836,8 @@ Attribute Concat.VB_Description = "Appends Data() bytes onto the stream at the e
             lSize = ConcatNoFile(Data, nSize)
             WroteToStream Data, lSize, nSize
             EndOfStream nSize + lSize
-        Else
-            Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+        'Else
+        '    Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
@@ -877,12 +870,10 @@ Places Width many bytes of Data() in the stream just after Offset amount of byte
 Attribute PlaceAt.VB_Description = "Places Width many bytes of Data() in the stream just after Offset amount of bytes, does not alter the stream size, nor place more then Data() amounts of bytes."
     If Behave <> Nothings_Initialized Then
         Dim lSize As Long
-        lSize = (UBound(Data) + -CInt(Not CBool(-LBound(Data))))
-        If (Width = -1) Or ((Width > lSize) And (lSize > 0)) Then Width = lSize
-        RtlMoveMemory lSize, ByVal Pointer, 4
-        lSize = (lSize - Offset)
-        If (Width > lSize) And (lSize > 0) Then Width = lSize
-        If ((Width > 0) And (Pointer <> 0)) And (lSize > 0) Then
+        lSize = Length
+        If Width = -1 Then Width = UBound(Data) + -CInt(Not CBool(-LBound(Data)))
+        If ((lSize - Offset) <= Width) Then Width = lSize - Offset
+        If (Width > 0) And lSize >= (Offset + Width) Then
             RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal VarPtr(Data(LBound(Data))), Width
             WroteToStream Data, Offset, Width
         Else
@@ -941,12 +932,18 @@ Removes a section of the stream that is in the middle having portions of the str
         Dim lSize As Long
         lSize = Length
         If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
-            Length = (lSize + (Width * 2))
-            RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal Pointer + 4 + Offset + Width, (-lSize + -Width + (lSize * 2))
-            lSize = (lSize - Width)
+
+            Dim N As New Strands
+            
+            N.Concat Partial(0, Offset)
+            N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+            Clone N
+            
+            Set N = Nothing
+        
             WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
             EndOfStream lSize
-            Length = lSize
+            
         ElseIf Offset = 0 And Width = lSize Then
             Reset
         ElseIf Offset = 0 Then
@@ -961,7 +958,7 @@ Removes a section of the stream that is in the middle having portions of the str
     End If
 End Sub
 
-Public Sub Pyramid(ByRef SubStream As IStream, ByVal Offset As Long, ByVal Width As Long) ' _
+Public Sub Pyramid(ByRef SubStream As Strands, ByVal Offset As Long, ByVal Width As Long) ' _
 Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
     If Behave <> Nothings_Initialized Then
         Dim lSize As Long
@@ -970,26 +967,38 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
             Dim lSize2 As Long
             lSize2 = SubStream.Length
             If lSize2 > 0 Then
-                If (Width - lSize2) > 0 Then
-                    Length = (lSize + Width + lSize2)
-                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-                    RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
-                    lSize = (lSize - (Width - lSize2))
-                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
-                    EndOfStream lSize
-                    Length = lSize
-                ElseIf (Width - lSize2) < 0 Then
-                    Length = (lSize + Width + lSize2) + (Width - lSize2)
-                    RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
-                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-                    lSize = (lSize - (Width - lSize2))
-                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
-                    EndOfStream lSize
-                    Length = lSize
-                Else
-                    RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-                    WroteToStream Partial(Offset, lSize2), Offset, lSize2
-                End If
+    
+                Dim N As New Strands
+    
+                N.Concat Partial(0, Offset)
+                N.Concat SubStream.Partial
+                N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+                Clone N
+                
+                WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+                EndOfStream lSize
+
+                Set N = Nothing
+'                If (Width - lSize2) > 0 Then
+'                    Length = (lSize + Width + lSize2)
+'                    RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address(4), lSize2
+'                    RtlMoveMemory ByVal Pointer + 4 + (Offset + lSize2), ByVal Pointer + 4 + (Offset + lSize2) + (Width - lSize2), lSize
+'                    lSize = (lSize - (Width - lSize2))
+'                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+'                    EndOfStream lSize
+'                    Length = lSize
+'                ElseIf (Width - lSize2) < 0 Then
+'                    Length = (lSize + Width + lSize2) + (Width - lSize2)
+'                    RtlMoveMemory ByVal Pointer + 4 + (Offset + lSize2), ByVal Pointer + 4 + (Offset + lSize2) + (Width - lSize2), lSize
+'                    RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address(4), lSize2
+'                    lSize = (lSize - (Width - lSize2))
+'                    WroteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+'                    EndOfStream lSize
+'                    Length = lSize
+'                Else
+'                    RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal SubStream.Address(4), lSize2
+'                    WroteToStream Partial(Offset, lSize2), Offset, lSize2
+'                End If
             Else
                 Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
             End If
@@ -1007,6 +1016,7 @@ Gets the first byte in the data stream, optionally excluding Offset number of by
         If Offset = -1 Then Offset = Length
         If Offset >= 0 And Offset < Length Then
             RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + 4 + Offset, 1
+            WroteToStream Partial(Offset, 1), Offset, 1
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -1020,7 +1030,6 @@ Sets a byte in the data stream, optionally excluding Offset number of bytes sett
     If Behave <> Nothings_Initialized Then
         If Offset >= 0 And Offset < Length Then
             RtlMoveMemory ByVal Pointer + 4 + Offset, ByVal VarPtr(RHS), 1
-            WroteToStream Partial(Offset, 1), Offset, 1
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -1061,31 +1070,6 @@ Private Sub WroteToStream(ByRef RHS() As Byte, ByVal Offset As Long, ByVal Width
             End If
     End Select
 End Sub
-
-'
-'Private Sub WroteToStream2(ByRef RHS As Strands, ByVal Offset As Long, ByVal Width As Long)
-'    Select Case Left(PathFileName, 6)
-'        Case MirrorPath_None
-'        Case Else
-'            If Width > 0 And (UBound(RHS) > -1) Then
-'                Dim pos As Long
-'                Dim ol As OVERLAPPED
-'                pos = Offset
-'                ol.Offset = LoWord(pos)
-'                ol.OffsetHigh = HiWord(pos)
-'                Offset = 0
-'                Do
-'                    hWriteFile PathHandle, ByVal RHS.Address + 4, Width, Offset, ol
-'                    Width = Width - Offset
-'                    pos = pos + Offset
-'                    ol.Offset = LoWord(pos)
-'                    ol.OffsetHigh = HiWord(pos)
-'                    Offset = Width
-'                Loop Until Width = 0
-'            End If
-'    End Select
-'End Sub
-
 Private Sub EndOfStream(ByVal Size As Long)
     Select Case Left(PathFileName, 6)
         Case MirrorPath_None

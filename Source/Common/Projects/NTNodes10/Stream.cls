@@ -34,6 +34,10 @@ Attribute Address.VB_Description = "Retrieves the address numberical value where
     RtlMoveMemory ByVal VarPtr(Address), (Pointer + Offset), 4
 End Function
 
+Friend Property Get Scope() As MemoryScopes
+    Scope = ScopeAs
+End Property
+
 Private Sub Class_Initialize()
     vbaObjSet Me, ObjPtr(IStream)
     ScopeAs = MemoryScopes.Heap
@@ -100,10 +104,18 @@ Private Sub MemoryModify(Optional ByVal Size As Long = 0)
     End If
 End Sub
 
-Public Sub Clone(ByRef Origin As IStream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
-Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, but does not change the scope of the object cloning the Origin, to do so, use Reset before cloning.
-    Reset ScopeAs
-    If Origin.Length > 0 Then Concat Origin.Partial(Offset, Width)
+Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, or same as a portion of the Origin strean, optionally defined by the Offset and Width.
+    Dim lSize As Long
+    Reset Origin.Scope
+    lSize = Origin.Length
+    If Width = -1 Or lSize - Offset < Width Then Width = lSize - Offset
+    If Offset < lSize And Offset >= 0 And Offset + Width <= lSize And Width > 0 Then
+        Length = Width
+        RtlMoveMemory ByVal Pointer, ByVal Origin.Address(Offset), Width
+    Else
+        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+    End If
 End Sub
 
 Public Sub Post(ByRef RHS As Byte) ' _
@@ -163,16 +175,14 @@ Places contents of memory byte array RHS into the stream excluding Offset number
     Dim lSize As Long
     lSize = Length
     If Width = -1 Then Width = UBound(RHS) + -CInt(Not CBool(-LBound(RHS)))
-    If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    If (Width > 0) And (Pointer <> 0) Then
+    If ((lSize - Offset) <= Width) Then Width = lSize - Offset
+    If (Width > 0) And (Pointer <> 0) And lSize >= (Offset + Width) Then
         RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(RHS(LBound(RHS))), Width
-    ElseIf (Width > 0) Then
-        Concat RHS
-        Length = Width
     Else
         Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
+
 
 
 Public Function Partial(Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Byte() ' _
@@ -286,19 +296,30 @@ Preforms a poll for Data returning the offset up to the numerical Ballot's occur
 End Function
 
 Public Sub Pinch(ByVal Offset As Long, ByVal Width As Long) ' _
-Removes a section of the stream that is in the middle having portions of the stream before and after it resulting as continuous, least the pinched Width.
+Removes a portion of the stream defined by Offset and Width.
     Dim lSize As Long
     lSize = Length
     If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
-        MemoryModify (lSize + (Width * 2))
-        RtlMoveMemory ByVal Pointer + Offset, ByVal Pointer + Offset + Width, (-lSize + -Width + (lSize * 2))
-        MemoryModify (lSize - Width)
+        Dim N As New Stream
+        
+        N.Concat Partial(0, Offset)
+        N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+        Clone N
+        
+        Set N = Nothing
+        
+    ElseIf Offset = 0 And Width = lSize Then
+        Reset
+    ElseIf Offset = 0 Then
+        Push Width
+    ElseIf Offset + Width = lSize Then
+        Length = Length - Width
     Else
         Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Sub
 
-Public Sub Pyramid(ByRef SubStream As IStream, ByVal Offset As Long, ByVal Width As Long) ' _
+Public Sub Pyramid(ByRef SubStream As Stream, ByVal Offset As Long, ByVal Width As Long) ' _
 Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
     Dim lSize As Long
     lSize = Length
@@ -306,19 +327,27 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
         Dim lSize2 As Long
         lSize2 = SubStream.Length
         If lSize2 > 0 Then
-            If (Width - lSize2) > 0 Then
-                MemoryModify (lSize + Width + lSize2)
-                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-                RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
-                MemoryModify (lSize - (Width - lSize2))
-            ElseIf (Width - lSize2) < 0 Then
-                MemoryModify (lSize + Width + lSize2) + (Width - lSize2)
-                RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
-                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-                MemoryModify (lSize - (Width - lSize2))
-            Else
-                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
-            End If
+            Dim N As New Stream
+            
+            N.Concat Partial(0, Offset)
+            N.Concat SubStream.Partial
+            N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+            Clone N
+            
+            Set N = Nothing
+'            If (Width - lSize2) > 0 Then
+'                MemoryModify (lSize + Width + lSize2)
+'                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+'                RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
+'                MemoryModify (lSize - (Width - lSize2))
+'            ElseIf (Width - lSize2) < 0 Then
+'                MemoryModify (lSize + Width + lSize2) + (Width - lSize2)
+'                RtlMoveMemory ByVal Pointer + (Offset + lSize2), ByVal Pointer + (Offset + lSize2) + (Width - lSize2), lSize
+'                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+'                MemoryModify (lSize - (Width - lSize2))
+'            Else
+'                RtlMoveMemory ByVal Pointer + Offset, ByVal SubStream.Address, lSize2
+'            End If
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
