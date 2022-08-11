@@ -5,3 +5,4 @@ Windows Desktop Utility Titles; Max-FTP, RemindMe, To-Doster, Creata-Tree, Ident
 
 Windows Desktop Game Titles; Blacklawn, Maxland, HouseOfGlass, Sequencer
 
+IDE Tools; BasicNeotext (VB6 Addon)
