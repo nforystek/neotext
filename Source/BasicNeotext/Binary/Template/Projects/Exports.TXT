@@ -1,0 +1,4 @@
+    
+    NOTE: A Class file maybe visible in the project that is nessisary and needs to be empty.
+          A .DEF file is also included that defines the exports just like in C, if you peek
+          at it the file is not difficult to udnerstand what is going on with name exports.

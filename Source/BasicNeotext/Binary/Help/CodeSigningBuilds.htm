@@ -1,0 +1,227 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="CodeSigningBuilds_files/filelist.xml">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>95</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoNormal>Under the “Tools” menu in Visual Basic 6.0 <span
+class=SpellE>BasicNeotext</span> has added two menu items, one of these of
+which is the “Code Signing”&nbsp;menu item.<span style='mso-spacerun:yes'>  
+</span>Choose this menu will open a dialog window that has various setup and options
+pertaining to code signing and building of projects or groups.<span
+style='mso-spacerun:yes'>  </span>In order to code sign your projects you will
+need to address this dialog thoroughly.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>Starting with the first test entry is the Sign Tool
+location.<span style='mso-spacerun:yes'>  </span>In this text entry you need to
+specify the location of your Microsoft Authenticode “signtool.exe” usually
+found with Windows SDK in the bin folder.<span style='mso-spacerun:yes'> 
+</span>For instance, “C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\signtool.exe”
+is an example of the location to put in the text entry.<span
+style='mso-spacerun:yes'>  </span>Windows SDK can be downloaded from Microsoft downloads,
+and it is not only limited to Windows 7.0, with a little seeking and information,
+it can even be used on older systems such as Windows XP with SP3 and hot fix KB968730.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>The next text entry is the location of your certificate
+file.<span style='mso-spacerun:yes'>  </span>Simply any file that signtool.exe
+allows will do for this file location entry.<span style='mso-spacerun:yes'> 
+</span>Note<span class=GramE>,</span> if you’re using a PFX and/or P12 there is
+three options of increased conduct with decreased performance.<span
+style='mso-spacerun:yes'>  </span>Of course the option is to just specify the
+certificate file in it of itself and be right as ray.<span
+style='mso-spacerun:yes'>  </span>There are two further extended options of
+these certificate types in unison.<span style='mso-spacerun:yes'>  </span>By
+specifying either in the entry but at the same file location having both the P12
+and PFX named with the same file title and in the same location the first
+option is to have the double signing bonus activated.<span
+style='mso-spacerun:yes'>  </span>Note: in order for PFX and P12 signing to
+occur while using a password they both need to be exported with matching
+passwords, it is a good idea to destroy the keys and keep then from installed
+on the system for added support of loss trails.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>In it of itself, having both files and selecting the
+checkbox “PFX and P12” will cause the <span class=SpellE>BasicNeotext</span>
+when prompted to sign, to first sign using the PFX and no timestamp, then sign
+using the P12 with the specified timestamp URL.<span style='mso-spacerun:yes'> 
+</span>Leaving the URL for time stamping blank will cause normal signing to
+occur with which ever certificate you specify.<span style='mso-spacerun:yes'> 
+</span>However, not only is there a double signing bonus, there is a triple.<span
+style='mso-spacerun:yes'>  </span>Selecting the “PFX and P12” check box, and
+also specifying a Timestamp URL also an <span class=SpellE>Xstamp</span> URL (a
+second different timestamp URL then the first, for instance, using two
+different parties such as Symantec and <span class=SpellE>DigiCert</span>) will
+cause the signing to occur a chain of three actions and a total of three
+signatures per signing.<span style='mso-spacerun:yes'>  </span>First, the PFX
+will be used to sign with the to be final timestamp responders URL, then again
+the PFX will be used for signing over again, with the <span class=SpellE>Xstamp</span>
+parties timestamp responder URL, and finally, the P12 will be signed over the
+previous two with the initial Timestamp responders URL.<span
+style='mso-spacerun:yes'>  </span>These extra options of over signatures are
+literally for crossing back or forward tracks and raising the curve of code
+signatures.<span style='mso-spacerun:yes'>  </span>In it of itself, a code signature
+is only as good as it may be compiled again, to be signed, ensuring a route,
+with out the compile, the file is best form it’s source unaltered by a lousy
+signature that will never reach nothing but pointless editing with out a compile
+ever coming once again in time, ever more.<span style='mso-spacerun:yes'> 
+</span>These <span class=SpellE>criss</span>-cross added timestamp and <span
+class=SpellE>Xstamp</span> with URL’s and the PFX 12:00 hour P12 file make for
+a very trashy over variance use of conduct that is simply expressive and well
+fortified in following, designated to the machine of conduct, in it of itself,
+to again be compiled, making the effort real.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>Below the certificate entry two fields for password entry to
+the certificate.<span style='mso-spacerun:yes'>  </span>All of which this
+windows information is kept based on the Windows user and held in the registry in
+a cryptic manor.<span style='mso-spacerun:yes'>  </span>Only one password is
+allowed entry, PFX and P12 certificates should only shadow passwords and cause
+time Confucius’s having the PFX not crossed would be a strong named brute entry
+argument in shoulder passing the “second entry box” for a password.<span
+style='mso-spacerun:yes'>  </span>For instance, in a CSR key pair or PGP there
+is logic to enter your info and a password, and not having a second entry to
+match it because that’s not what matters in the case instance, that it should be
+remembered.<span style='mso-spacerun:yes'>  </span>Rather that it should be
+coupled with the info entry in basic truth of dialect loose the password.<span
+style='mso-spacerun:yes'>  </span>Certificates also have a feature similar
+which is the exporting and deleting of the key after creation.<span
+style='mso-spacerun:yes'>  </span>Similar to deleting all certificate traces of
+a particular certificate with a key conducts the loss of the key.<span
+style='mso-spacerun:yes'>  </span>This window password entry however is most
+like any other, the second box is just to get it correct, and then you will not
+have to enter it again nor will it bring it up but only once.<span
+style='mso-spacerun:yes'>   </span>Should you want to change it, then you’ll
+need to enter it twice.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>After the password entry, is three entries pertaining to URL’s.<span
+style='mso-spacerun:yes'>  </span>The first, of the first two, is your normal
+timestamp URL location that would be the same as if you were sending it with
+command line to signtool.exe, and signtool.exe ultimately verifies the proper
+or improper URL, resulting in the file being signed or failing to do so.<span
+style='mso-spacerun:yes'>  </span>The <span class=SpellE>Xstamp</span> is the
+same as the Timestamp, but should be a different URL then the timestamp.<span
+style='mso-spacerun:yes'>  </span>Two URL’s that are common among my own use
+are <span class=SpellE>VeriSign’s</span> original timestamp URL that is now
+supported by Symantec, that URL is <a
+href="http://timestamp.verisign.com/scripts/timstamp.dll.">http://timestamp.verisign.com/scripts/timstamp.dll</a>
+<span style='mso-spacerun:yes'> </span>Another is such as the one my
+certificate provider has for use by anyone whom uses it, (all timestamp URL’s
+are in favor of the signature independently, it wont matter, but it does make a
+presentation statement coming from root to be consistent with the certificate
+provider, and/or the root authority of the technology by creationism, <span
+class=SpellE>VeriSign</span>) <a href="http://timestamp.digicert.com/">http://timestamp.digicert.com</a>
+The third entry is for a description URL, so far as I know, this is simply your
+web location ad if you care to provide one to the information on the signature
+where as anyone reviewing it can location more information or contact.<span
+style='mso-spacerun:yes'>  </span><o:p></o:p></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>The next two options in Code Signing setup are “Active
+signing with every Build Project Release menu use” and “Active signing with
+every Command Line build of projects.”<span style='mso-spacerun:yes'> 
+</span>These two options off will inform <span class=SpellE>BasicNeotext</span>
+not to sign anything unless directly specified by command line switch of /sign
+to the VBN.EXE.<span style='mso-spacerun:yes'>  </span>With the first check box
+checked, the use of the “Build Project Release” menu item under the “File” menu
+will cause the code to be signed immediately after compiling.<span
+style='mso-spacerun:yes'>  </span>This option must be prompted by the user’s
+interaction with the Visual Basic 6.0 interface.<span
+style='mso-spacerun:yes'>  </span>The second check box checked will cause every
+use of “/<span class=SpellE>signmake</span>” through the command line compiling
+option to sign after the compile.</p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal>Finally there is an optional “NSIS Make” location text entry.<span
+style='mso-spacerun:yes'>  </span>This is only going to be effective when you
+use the “/make” command line directly to VBN.EXE specifying an NSI file as the
+project.<span style='mso-spacerun:yes'>  </span>It will do the similar as if it
+was a Visual Basic Project, first using the location of your “makensis.exe”
+preinstalled from <span class=SpellE>Nullsoft’s</span> Installation System Installer
+and also it will sign the output of the NSI file after the make is complete,
+just the same as if using makensis.exe in place of VB6.EXE.<o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+
+Include
+	Folder
+
+		Project
+
+			Source
+
+				Binary
+				Working
+				Include
+
+		NSIS
+
+			Source
+
+				Binary
+				Working
+				Include
+	Group
+
+		NSIS
+		Project
+

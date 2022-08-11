@@ -1,0 +1,56 @@
+Type=OleDll
+Object={E7BC34A0-BA86-11CF-84B1-CBC2DA68BF6C}#1.0#0; ntsvc.ocx
+Class=Controller; BasicService\Controller.cls
+Class=LegacyOS; BasicService\LegacyOS.cls
+Module=modService; BasicService\modService.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Class=FormHWnd; BasicService\FormHWnd.cls
+Module=modWindow; ..\..\Shared\modWindow.bas
+Module=modRegistry; ..\..\Shared\modRegistry.bas
+Module=modMain; BasicService\modMain.bas
+Form=BasicService\frmService.frm
+IconForm="frmService"
+Startup="Sub Main"
+HelpFile=""
+Title="BasicService"
+ExeName32="BasicService.dll"
+Path32="..\Binary"
+Command32=""
+Name="BasicService"
+HelpContextID="0"
+Description="Neotext Windows Service Object 2.0 (VBN)"
+CompatibleMode="1"
+CompatibleEXE32="..\Binary\BasicService.dll"
+MajorVer=2
+MinorVer=0
+RevisionVer=2
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="http://www.neotext.org"
+VersionCompanyName="Neotext"
+VersionFileDescription="Program executable belonging to the product."
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="BasicNeotext"
+CondComp="BasicService=-1:Controller=-1:LegacyOS=-1:modService=-1:modCommon=-1:modProcess=-1:FormHWnd=-1:modWindow=-1:modRegistry=-1:modMain=-1:frmService=-1:VBIDE=0"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=-1
+StartMode=1
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modService=-1:modCommon=-1:modWindow=-1:modRegistry=-1:modMain=-1"

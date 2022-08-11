@@ -1,0 +1,63 @@
+Type=Exe
+Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; comdlg32.ocx
+Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; richtx32.ocx
+Object={C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1355.0#0; NTControls22.ocx
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{00020905-0000-0000-C000-000000000046}#8.2#0#..\..\..\..\Program Files\Microsoft Office\Office10\MSWORD.OLB#Microsoft Word 10.0 Object Library
+Form=BasicNotable\frmMain.frm
+Form=BasicNotable\frmFind.frm
+Form=BasicNotable\frmSpellCheck.frm
+Form=BasicNotable\frmAbout.frm
+Module=modMain; BasicNotable\modMain.bas
+Form=BasicNotable\frmGoto.frm
+Form=BasicNotable\frmBatch.frm
+Module=modProcess; ..\..\Shared\modProcess.bas
+Module=modRegistry; ..\..\Shared\modRegistry.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Form=BasicNotable\frmScriptColors.frm
+Class=clsAssembly; BasicNotable\clsAssembly.cls
+Class=clsASM; BasicNotable\clsASM.cls
+Module=modASM; BasicNotable\modASM.bas
+IconForm="frmMain"
+Startup="Sub Main"
+HelpFile=""
+Title="BasicNotable"
+ExeName32="SINK.exe"
+Path32="..\Binary"
+Command32=""
+Name="BasicNotable"
+HelpContextID="0"
+Description="Notable Ink Application"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=225
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="http://www.neotext.org"
+VersionFileDescription="BasicNeotext Notable Ink"
+VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
+VersionProductName="BasicNeotext Handler"
+CondComp="BasicNotable=-1:VBIDE=-1:modMain=-1:MODPROCESS=-1:modRegistry=-1:modCommon=-1:modEditor=-1:modASM=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modMain=-1:modProcess=-1:modRegistry=-1:modCommon=-1:modASM=-1"
