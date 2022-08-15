@@ -16,7 +16,6 @@ Module=modFactory; ..\..\Shared\modFactory.bas
 Form=NTNodes10\frmTemp.frm
 Class=Serializer; NTNodes10\Serializer.cls
 Class=Helper; NTNodes10\Helper.cls
-Class=IStream; NTNodes10\IStream.cls
 Startup="Sub Main"
 HelpFile=""
 Title="NTNodes10"

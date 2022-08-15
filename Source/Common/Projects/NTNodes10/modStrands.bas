@@ -251,21 +251,21 @@ End Property
 
 Public Function GetWinDir() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(MAX_PATH, Chr(0))
-    Ret = GetWindowsDirectory(winDir, MAX_PATH)
+    ret = GetWindowsDirectory(winDir, MAX_PATH)
     winDir = Trim(Replace(winDir, Chr(0), ""))
-    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.Path
+    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.path
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     GetWinDir = winDir
 End Function
 
 Public Function GetWinTempDir() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(255, Chr(0))
-    Ret = GetTempPath(255, winDir)
-    If (Ret <> 16) And (Ret <> 34) Then
+    ret = GetTempPath(255, winDir)
+    If (ret <> 16) And (ret <> 34) Then
         winDir = GetWinDir()
         If LCase(Dir(winDir & "TEMP", vbDirectory)) = "" Then
             MkDir winDir + "TEMP"
@@ -280,14 +280,14 @@ End Function
 
 Public Function GetTemporaryFile() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(255, Chr(0))
-    Ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
-    If Ret = 0 Then
+    ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
+    If ret = 0 Then
         winDir = GetWinTempDir & "\" & Left(Left(App.Title, 3) & Hex(CLng(Mid(CStr(Rnd), 3))), 14) & ".tmp"
-        Ret = FreeFile
-        Open winDir For Output As #Ret
-        Close #Ret
+        ret = FreeFile
+        Open winDir For Output As #ret
+        Close #ret
     Else
         winDir = Trim(Replace(winDir, Chr(0), ""))
     End If
@@ -295,9 +295,9 @@ Public Function GetTemporaryFile() As String
 End Function
 
 Public Function Char(Optional ByVal Value As Byte = 10) As Byte()
-    Dim TMP(0 To 0) As Byte
-    TMP(0) = Value
-    Char = TMP
+    Dim tmp(0 To 0) As Byte
+    tmp(0) = Value
+    Char = tmp
 End Function
 
 Public Function ArraySize(InArray, Optional ByVal InBytes As Boolean = False) As Long
@@ -329,34 +329,34 @@ dimerror:
 End Function
 
 Public Function Convert(Info)
-    Dim n As Long
+    Dim N As Long
     Dim out() As Byte
-    Dim Ret As String
+    Dim ret As String
     Select Case VBA.TypeName(Info)
         Case "String"
             If Len(Info) > 0 Then
                 ReDim out(0 To Len(Info) - 1) As Byte
-                For n = 0 To Len(Info) - 1
-                    out(n) = Asc(Mid(Info, n + 1, 1))
+                For N = 0 To Len(Info) - 1
+                    out(N) = Asc(Mid(Info, N + 1, 1))
                 Next
             End If
             Convert = out
         Case "Byte()"
             If (ArraySize(Info) > 0) Then
                 On Error GoTo dimcheck
-                For n = LBound(Info) To UBound(Info)
-                    Ret = Ret & Chr(Info(n))
+                For N = LBound(Info) To UBound(Info)
+                    ret = ret & Chr(Info(N))
                 Next
             End If
-            Convert = Ret
+            Convert = ret
     End Select
     Exit Function
 dimcheck:
     If Err Then Err.Clear
-    For n = LBound(Info, 2) To UBound(Info, 2)
-        Ret = Ret & Chr(Info(0, n))
+    For N = LBound(Info, 2) To UBound(Info, 2)
+        ret = ret & Chr(Info(0, N))
     Next
-    Convert = Ret
+    Convert = ret
 End Function
 
 

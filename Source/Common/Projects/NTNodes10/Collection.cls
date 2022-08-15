@@ -15,6 +15,8 @@ Option Explicit
 
 Option Compare Binary
 
+'An attempt to be no different the VBA.Collection interface use except fot the following additions:
+'Exists property (accepts Key or Index), Key/Index properties (reverse lookup) Clear/Clone methods.
 
 Private lptrList As VBA.Collection
 Private propList As VBA.Collection
