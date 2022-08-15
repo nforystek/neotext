@@ -182,7 +182,7 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
     If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
     Dim ret() As Byte
     If (Width > 0) And (Pointer <> 0) Then
-        ReDim ret(1 To Width) As Byte
+        ReDim ret(0 To Width - 1) As Byte
         RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + Offset, Width
     Else
         ReDim ret(-1 To -1) As Byte
@@ -277,8 +277,8 @@ Preforms a poll for Data returning the offset up to the numerical Ballot's occur
         Else
             Poll = Length
         End If
-    Else
-        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
+ '   Else
+'        Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
     End If
 End Function
 

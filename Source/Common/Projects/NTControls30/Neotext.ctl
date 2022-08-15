@@ -892,9 +892,9 @@ Changes the color of existing text in the control specified by the optional Offs
             startClr = startClr + 1
         End If
 
-        AddColorRange stopClr
+        AddColorRange startClr, Offset
 
-        AddColorRange startClr
+        AddColorRange stopClr, Offset + Width
         cnt = startClr + 1
         
         Do While cnt < stopClr
@@ -916,14 +916,7 @@ Changes the color of existing text in the control specified by the optional Offs
             .StartMark = Offset
         End With
         
-        If Not startClr = stopClr Then
-
-            With pColorRanges(stopClr)
-                .Forecolor = tmpFore
-                .BackColor = tmpBack
-                .StartMark = Offset + Width
-            End With
-        ElseIf Width > 0 Then
+        If (Not startClr = stopClr) Or (Width > 0) Then
 
             With pColorRanges(stopClr)
                 .Forecolor = tmpFore
@@ -1261,39 +1254,39 @@ Private Sub Timer1_Timer()
         End If
     End If
 End Sub
-Private Function MakeCaretVisible(ByRef loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
+Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
     If Enabled Then
-        If pScrollToCaret And (Not ClippingWouldDraw(DrawableRect, RECT(loc.X, loc.Y, loc.X + TextWidth, loc.Y + TextHeight), True)) Then
-            If loc.X < 1 Then
+        If pScrollToCaret And (Not ClippingWouldDraw(DrawableRect, RECT(Loc.X, Loc.Y, Loc.X + TextWidth, Loc.Y + TextHeight), True)) Then
+            If Loc.X < 1 Then
                 If LargeJump Then
-                    pOffsetX = ((pOffsetX + LineColumnWidth) + ((1 - loc.X) + (UsercontrolWidth / 2)))
+                    pOffsetX = ((pOffsetX + LineColumnWidth) + ((1 - Loc.X) + (UsercontrolWidth / 2)))
                 Else
-                    pOffsetX = (pOffsetX + ((1 - loc.X) + ScrollBar2.SmallChange))
+                    pOffsetX = (pOffsetX + ((1 - Loc.X) + ScrollBar2.SmallChange))
                 End If
                 If ScrollBar2.Visible And ScrollBar2.Value <> -pOffsetX Then ScrollBar2.Value = -pOffsetX
                 MakeCaretVisible = True
-            ElseIf loc.X > UsercontrolWidth Or loc.X + TextWidth > UsercontrolWidth Then
+            ElseIf Loc.X > UsercontrolWidth Or Loc.X + TextWidth > UsercontrolWidth Then
                 If LargeJump Then
-                    pOffsetX = (pOffsetX - ((loc.X - UsercontrolWidth) + (UsercontrolWidth / 2)))
+                    pOffsetX = (pOffsetX - ((Loc.X - UsercontrolWidth) + (UsercontrolWidth / 2)))
                 Else
-                    pOffsetX = (pOffsetX - ((loc.X - UsercontrolWidth) + ScrollBar2.SmallChange))
+                    pOffsetX = (pOffsetX - ((Loc.X - UsercontrolWidth) + ScrollBar2.SmallChange))
                 End If
                 If ScrollBar2.Visible And ScrollBar2.Value <> -pOffsetX Then ScrollBar2.Value = -pOffsetX
                 MakeCaretVisible = True
             End If
-            If loc.Y < 1 Then
+            If Loc.Y < 1 Then
                 If LargeJump Then
-                    pOffsetY = (pOffsetY + (((((1 - loc.Y) + (UsercontrolHeight / 2)) \ TextHeight)) * TextHeight))
+                    pOffsetY = (pOffsetY + (((((1 - Loc.Y) + (UsercontrolHeight / 2)) \ TextHeight)) * TextHeight))
                 Else
-                    pOffsetY = (pOffsetY + (((((1 - loc.Y) + ScrollBar1.SmallChange) \ TextHeight)) * TextHeight))
+                    pOffsetY = (pOffsetY + (((((1 - Loc.Y) + ScrollBar1.SmallChange) \ TextHeight)) * TextHeight))
                 End If
                 If ScrollBar1.Visible And ScrollBar1.Value <> -pOffsetY Then ScrollBar1.Value = -pOffsetY
                 MakeCaretVisible = True
-            ElseIf loc.Y > UsercontrolHeight Or loc.Y + TextHeight > UsercontrolHeight Then
+            ElseIf Loc.Y > UsercontrolHeight Or Loc.Y + TextHeight > UsercontrolHeight Then
                 If LargeJump Then
-                    pOffsetY = (pOffsetY - (((((loc.Y - UsercontrolHeight) + (UsercontrolHeight / 2)) \ TextHeight)) * TextHeight))
+                    pOffsetY = (pOffsetY - (((((Loc.Y - UsercontrolHeight) + (UsercontrolHeight / 2)) \ TextHeight)) * TextHeight))
                 Else
-                    pOffsetY = (pOffsetY - (((((loc.Y - UsercontrolHeight) + ScrollBar1.SmallChange) \ TextHeight)) * TextHeight))
+                    pOffsetY = (pOffsetY - (((((Loc.Y - UsercontrolHeight) + ScrollBar1.SmallChange) \ TextHeight)) * TextHeight))
                 End If
                 If ScrollBar1.Visible And ScrollBar1.Value <> -pOffsetY Then ScrollBar1.Value = -pOffsetY
                 MakeCaretVisible = True
@@ -1335,10 +1328,10 @@ Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal Str
             Else
                 ClipPrintText = 0
             End If
-        ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+        Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
             pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        Else
-            ClipPrintText = 0
+        'Else
+        '    ClipPrintText = 0
         End If
     ElseIf BoxFill Then
         If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
@@ -1346,10 +1339,10 @@ Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal Str
         Else
             ClipPrintText = 0
         End If
-    ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
+    Else 'If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
         pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-    Else
-        ClipPrintText = 0
+    'Else
+    '    ClipPrintText = 0
     End If
 End Function
 
@@ -1492,10 +1485,10 @@ Private Function GetIRCColor(ByVal RGBColorNum As Long, ByVal ForeElseBack As Bo
     End Select
 End Function
 
-Private Sub AddColorRange(ByRef Index As Long)
+Private Sub AddColorRange(ByRef Index As Long, ByVal Loc As Long)
     Dim cnt As Long
     ReDim Preserve pColorRanges(0 To UBound(pColorRanges) + 1) As ColorRange
-    If Index >= UBound(pColorRanges) Then
+    If Index >= UBound(pColorRanges) Or Index = 0 Then
         Index = UBound(pColorRanges)
     Else
         For cnt = UBound(pColorRanges) - 1 To Index Step -1
@@ -1503,6 +1496,18 @@ Private Sub AddColorRange(ByRef Index As Long)
         Next
     End If
 End Sub
+
+'Private Sub AddColorRange(ByRef Index As Long, ByVal Loc As Long)
+'    Dim cnt As Long
+'    ReDim Preserve pColorRanges(0 To UBound(pColorRanges) + 1) As ColorRange
+'    If Index >= UBound(pColorRanges) Then
+'        Index = UBound(pColorRanges)
+'    Else
+'        For cnt = UBound(pColorRanges) - 1 To Index Step -1
+'            pColorRanges(cnt + 1) = pColorRanges(cnt)
+'        Next
+'    End If
+'End Sub
 Private Sub DelColorRange(ByVal Index As Long)
     Dim cnt As Long
     For cnt = Index To UBound(pColorRanges) - 1
@@ -1512,32 +1517,41 @@ Private Sub DelColorRange(ByVal Index As Long)
 End Sub
 
 Private Sub ExpandColorRecords(ByVal StartPos As Long, ByVal ExpandWidth As Long)
-    StartPos = LocateColorRecord(StartPos) + 1
-    Do While StartPos <= UBound(pColorRanges)
-        pColorRanges(StartPos).StartMark = pColorRanges(StartPos).StartMark + ExpandWidth
-        StartPos = StartPos + 1
+    Dim cnt As Long
+    
+    Do While cnt <= UBound(pColorRanges)
+        If pColorRanges(cnt).StartMark >= StartPos Then
+            pColorRanges(cnt).StartMark = pColorRanges(cnt).StartMark + ExpandWidth
+        End If
+        cnt = cnt + 1
     Loop
+
+'    StartPos = LocateColorRecord(StartPos)+1
+'    Do While StartPos <= UBound(pColorRanges)
+'        pColorRanges(StartPos).StartMark = pColorRanges(StartPos).StartMark + ExpandWidth
+'        StartPos = StartPos + 1
+'    Loop
 End Sub
 Private Sub DepleetColorRecords(ByVal StartPos As Long, ByVal DepleetWidth As Long, Optional ByVal ExcludeRecord As Long = 0)
-    Dim loc As Long
-    loc = LocateColorRecord(StartPos) + 1
-    Do While loc <= UBound(pColorRanges)
-        If StartPos <= pColorRanges(loc).StartMark Then
-            If loc < UBound(pColorRanges) Then
-                If pColorRanges(loc).StartMark - pColorRanges(loc - 1).StartMark <= DepleetWidth Then
-                    DelColorRange loc - 1
-                    loc = -(loc - 1)
+    Dim Loc As Long
+    Loc = LocateColorRecord(StartPos) + 1
+    Do While Loc <= UBound(pColorRanges)
+        If StartPos <= pColorRanges(Loc).StartMark Then
+            If Loc < UBound(pColorRanges) Then
+                If pColorRanges(Loc).StartMark - pColorRanges(Loc - 1).StartMark <= DepleetWidth Then
+                    DelColorRange Loc - 1
+                    Loc = -(Loc - 1)
                 End If
-            ElseIf loc = UBound(pColorRanges) And DepleetWidth >= Length - pColorRanges(loc).StartMark Then
-                DelColorRange loc - 1
-                loc = -(loc - 1)
+            ElseIf Loc = UBound(pColorRanges) And DepleetWidth >= Length - pColorRanges(Loc).StartMark Then
+                DelColorRange Loc - 1
+                Loc = -(Loc - 1)
             End If
         End If
-        If loc > 0 Then pColorRanges(loc).StartMark = pColorRanges(loc).StartMark - DepleetWidth
-        If loc >= 0 Then
-            loc = loc + 1
+        If Loc > 0 Then pColorRanges(Loc).StartMark = pColorRanges(Loc).StartMark - DepleetWidth
+        If Loc >= 0 Then
+            Loc = Loc + 1
         Else
-            loc = -loc
+            Loc = -Loc
         End If
     Loop
 End Sub
@@ -1546,40 +1560,43 @@ Private Sub CleanColorRecords(ByVal StartPos As Long, ByVal StopPos As Long)
     Dim cnt As Long
     cnt = 1
     Do While cnt < UBound(pColorRanges)
-        If pColorRanges(cnt).StartMark = pColorRanges(cnt + 1).StartMark Or _
-            pColorRanges(cnt).StartMark + 1 = pColorRanges(cnt + 1).StartMark Then
+        If (pColorRanges(cnt).StartMark = pColorRanges(cnt + 1).StartMark) Or _
+            (pColorRanges(cnt).StartMark + 1 = pColorRanges(cnt + 1).StartMark) Then
             DelColorRange cnt
         Else
             cnt = cnt + 1
         End If
     Loop
+    If (pColorRanges(cnt).StartMark >= pText.Length) Then
+        DelColorRange cnt
+    End If
 End Sub
 
-Private Function CheckNumeric(ByRef StrText() As Byte, ByVal loc As Long) As Boolean
-    If loc <= UBound(StrText) Then
-        If IsNumeric(Chr(StrText(loc))) Then
+Private Function CheckNumeric(ByRef StrText() As Byte, ByVal Loc As Long) As Boolean
+    If Loc <= UBound(StrText) Then
+        If IsNumeric(Chr(StrText(Loc))) Then
             CheckNumeric = True
         End If
     End If
 End Function
-Private Function CheckComma(ByRef StrText() As Byte, ByVal loc As Long) As Boolean
-    If loc <= UBound(StrText) Then
-        If Chr(StrText(loc)) = "," Then
+Private Function CheckComma(ByRef StrText() As Byte, ByVal Loc As Long) As Boolean
+    If Loc <= UBound(StrText) Then
+        If Chr(StrText(Loc)) = "," Then
             CheckComma = True
         End If
     End If
 End Function
 
-Private Function LocateColorRecord(ByVal loc As Long) As Long
+Private Function LocateColorRecord(ByVal Loc As Long) As Long
     If UBound(pColorRanges) > 0 Then
         Dim cnt As Long
-        For cnt = 1 To UBound(pColorRanges) - 1
-            If loc >= pColorRanges(cnt).StartMark And loc < pColorRanges(cnt + 1).StartMark Then
+        For cnt = 0 To UBound(pColorRanges) - 1
+            If Loc >= pColorRanges(cnt).StartMark And Loc < pColorRanges(cnt + 1).StartMark Then
                 LocateColorRecord = cnt
                 Exit Function
             End If
         Next
-        If loc >= pColorRanges(UBound(pColorRanges)).StartMark Then
+        If Loc >= pColorRanges(UBound(pColorRanges)).StartMark Then
             LocateColorRecord = UBound(pColorRanges)
         End If
     End If
@@ -1612,31 +1629,24 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
 
     pColorRanges(0).BackColor = pBackcolor
     pColorRanges(0).Forecolor = pForecolor
+    runCnt = LocateColorRecord(Offset)
     
-    If Offset > 0 Then
-        runCnt = LocateColorRecord(Offset)
-    ElseIf UBound(pColorRanges) > 0 Then
-        runCnt = 1
-    End If
-
     If Not IsMissing(fColor) Then
         pBackBuffer.Forecolor = fColor
-    ElseIf UBound(pColorRanges) > 1 Then
+    Else
         pBackBuffer.Forecolor = pColorRanges(runCnt).Forecolor
     End If
     
     If Not IsMissing(bColor) Then
         pBackBuffer.BackColor = bColor
-    ElseIf UBound(pColorRanges) > 1 Then
+    Else
         pBackBuffer.BackColor = pColorRanges(runCnt).BackColor
     End If
     
     line = LineFirstVisible
 
     RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
-                
-    'RaiseEvent ColorLine(line) 'users can colortext to content, we will handle over laps
-    
+
     cnt = LBound(StrText)
     
     Do While cnt <= UBound(StrText)
@@ -1651,9 +1661,9 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 If Not newClrRec Then newClrRec = True
                 
                 runCnt = runCnt + 1
-                AddColorRange runCnt
+                AddColorRange runCnt, (cnt - rmvCnt) + Offset
 
-                pColorRanges(runCnt).StartMark = (-rmvCnt + cnt) + Offset
+                pColorRanges(runCnt).StartMark = (cnt - rmvCnt) + Offset
                 cnt = cnt + 1
 
                 If CheckNumeric(StrText, cnt) Then
@@ -1697,7 +1707,6 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 
             Case 10
                 ircText(cnt - rmvCnt) = StrText(cnt)
-                'rmvCnt = rmvCnt - 1
                 
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
@@ -1713,7 +1722,7 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 
                 If runCnt < UBound(pColorRanges) Then
                 
-                    If (-rmvCnt + cnt) + Offset >= pColorRanges(runCnt + 1).StartMark Then
+                    If (cnt - rmvCnt) + Offset >= pColorRanges(runCnt + 1).StartMark Then
                     
                         SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
@@ -1723,7 +1732,9 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                     
                     End If
                 ElseIf runCnt = UBound(pColorRanges) Then
-                
+                    
+                    SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
+                        
                     runCnt = runCnt + 1
                     pBackBuffer.BackColor = pColorRanges(UBound(pColorRanges)).BackColor
                     pBackBuffer.Forecolor = pColorRanges(UBound(pColorRanges)).Forecolor
@@ -1746,7 +1757,6 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
         ClipPrintTextBlock = True
 
     End If
-    'DebugDraw
 
 End Function
 
@@ -1905,8 +1915,9 @@ Public Function LineOffset(ByVal LineIndex As Long) As Long ' _
 Returns the offset amount of characters upto a line, specified by the zero based LineIndex. Example, LineOffset(0)=0.
 Attribute LineOffset.VB_Description = "Returns the offset amount of characters upto a line, specified by the zero based LineIndex. Example, LineOffset(0)=0."
     If pText.Length > 0 Then
-        LineOffset = pText.poll(Asc(vbLf), LineIndex)
-        If LineIndex > 0 Then LineOffset = LineOffset + 1
+        'LineOffset = pText.poll(Asc(vbLf), LineIndex)
+        'If LineIndex > 0 Then LineOffset = LineOffset + 1
+        LineOffset = pText.Offset(LineIndex + 1)
     End If
 End Function
 
@@ -1914,8 +1925,9 @@ Public Function LineLength(ByVal LineIndex As Long) As Long ' _
 Returns the length of characters with-in a line, specifiied by the zero based LineIndex.
 Attribute LineLength.VB_Description = "Returns the length of characters with-in a line, specifiied by the zero based LineIndex."
     If pText.Length > 0 Then
-        LineLength = (pText.poll(Asc(vbLf), LineIndex + 1) - pText.poll(Asc(vbLf), LineIndex))
-        If LineIndex > 0 Then LineLength = LineLength - 1
+        'LineLength = (pText.poll(Asc(vbLf), LineIndex + 1) - pText.poll(Asc(vbLf), LineIndex))
+        'If LineIndex > 0 Then LineLength = LineLength - 1
+        LineLength = pText.Offset(LineIndex + 2) - pText.Offset(LineIndex + 1)
     End If
 End Function
 
@@ -1950,7 +1962,8 @@ Public Function LineCount() As Long ' _
 Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text.
 Attribute LineCount.VB_Description = "Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text."
     If pText.Length > 0 Then
-        LineCount = pText.Pass(Asc(vbLf)) + 1
+        'LineCount = pText.Pass(Asc(vbLf)) + 1
+        LineCount = pText.count
     End If
 End Function
 
@@ -2539,12 +2552,12 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             
         End If
 
-        Dim loc As POINTAPI
-        loc = CaretLocation
+        Dim Loc As POINTAPI
+        Loc = CaretLocation
 
         Dim newloc As POINTAPI
-        newloc.X = loc.X
-        newloc.Y = loc.Y
+        newloc.X = Loc.X
+        newloc.Y = Loc.Y
 
         If X < 0 Then
             If (-X < (UsercontrolWidth / 2)) Then 'slow
@@ -2575,7 +2588,7 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             End If
         End If
 
-        If loc.X <> newloc.X Or loc.Y <> newloc.Y Then
+        If Loc.X <> newloc.X Or Loc.Y <> newloc.Y Then
             MakeCaretVisible newloc, False
         End If
 
@@ -2597,8 +2610,8 @@ End Sub
 
 Friend Sub InvalidateCursor()
     Timer1.Enabled = False
-    Timer1_Timer
-   ' If Not Cancel Then Timer1_Timer
+    'Timer1_Timer
+    If Not Cancel Then Timer1_Timer
 End Sub
 
 Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = False)
@@ -2863,10 +2876,10 @@ Public Static Sub Refresh()
             Else
                 If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
             End If
-    '        If reClean Then 'irc codes happened
-    '
-    '            CleanColorRecords bpos, epos
-    '        End If
+            If reClean Then 'irc codes happened
+    
+                CleanColorRecords bpos, epos
+            End If
             
         Else
             firstRun = False
@@ -2909,11 +2922,12 @@ Public Static Sub Refresh()
 End Sub
 
 Friend Sub PaintBuffer()
-    
-    ScrollBar1.Backbuffer.Paint (ScrollBar1.Left / Screen.TwipsPerPixelX), (ScrollBar1.Top / Screen.TwipsPerPixelY), ((ScrollBar1.Left + ScrollBar1.Width) / Screen.TwipsPerPixelX), ((ScrollBar1.Top + ScrollBar1.Height) / Screen.TwipsPerPixelY)
-    ScrollBar2.Backbuffer.Paint (ScrollBar2.Left / Screen.TwipsPerPixelX), (ScrollBar2.Top / Screen.TwipsPerPixelY), ((ScrollBar2.Left + ScrollBar2.Width) / Screen.TwipsPerPixelX), ((ScrollBar2.Top + ScrollBar2.Height) / Screen.TwipsPerPixelY)
+    If Not Cancel Then
+        ScrollBar1.Backbuffer.Paint (ScrollBar1.Left / Screen.TwipsPerPixelX), (ScrollBar1.Top / Screen.TwipsPerPixelY), ((ScrollBar1.Left + ScrollBar1.Width) / Screen.TwipsPerPixelX), ((ScrollBar1.Top + ScrollBar1.Height) / Screen.TwipsPerPixelY)
+        ScrollBar2.Backbuffer.Paint (ScrollBar2.Left / Screen.TwipsPerPixelX), (ScrollBar2.Top / Screen.TwipsPerPixelY), ((ScrollBar2.Left + ScrollBar2.Width) / Screen.TwipsPerPixelX), ((ScrollBar2.Top + ScrollBar2.Height) / Screen.TwipsPerPixelY)
 
-    pBackBuffer.Paint 0, 0, ((UsercontrolWidth + LineColumnWidth) / Screen.TwipsPerPixelX), (UsercontrolHeight / Screen.TwipsPerPixelY)
+        pBackBuffer.Paint 0, 0, ((UsercontrolWidth + LineColumnWidth) / Screen.TwipsPerPixelX), (UsercontrolHeight / Screen.TwipsPerPixelY)
+    End If
 
 End Sub
 

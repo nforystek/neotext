@@ -19,7 +19,7 @@ Implements Stream
 
 Public Enum Behaviors
 
-    ScopeNormal = 0
+    scopeNormal = 0
     ScopeLocale = 4
     ScopeGlobal = -4
 
@@ -45,7 +45,7 @@ Private Sub Class_Initialize()
     PathFileName = MirrorPath_None
     Behave = Nothings_Initialized
     ReDim Breaks(0 To 0) As Long
-    Change ScopeNormal
+    Change scopeNormal
 End Sub
 
 Private Sub Class_Terminate()
@@ -109,7 +109,7 @@ Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As
         Dim lSize As Long
         ReDim Breaks(0 To 0) As Long
         lSize = 0
-        Select Case Behavior And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
+        Select Case Behavior And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
             Case Behaviors.ScopeGlobal
                 Stream.Reset MemoryScopes.Global
             Case Behaviors.ScopeLocale
@@ -627,7 +627,7 @@ Attribute Reset.VB_Description = "Reset the stream object freeing up any allocat
     ElseIf ScopeAs And MemoryScopes.Global = MemoryScopes.Global Then
         Me.Behavior = ScopeLocale
     Else
-        Me.Behavior = ScopeNormal
+        Me.Behavior = scopeNormal
     End If
     If Behave <> Nothings_Initialized Then
         Stream.Reset ScopeAs
@@ -879,14 +879,14 @@ Public Sub RebreakStream()
     For cnt = LBound(Data) To UBound(Data)
         If Data(cnt) = Asc(vbLf) Then
             If cnt2 > UBound(Breaks) Then ReDim Preserve Breaks(0 To cnt2) As Long
-            Breaks(cnt2) = cnt '+ 1
+            Breaks(cnt2) = cnt + -CInt(Not CBool(-LBound(Data)))
             cnt2 = cnt2 + 1
         End If
     Next
     If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
     If Breaks(UBound(Breaks)) < Length Then
         ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-        Breaks(UBound(Breaks)) = Length '+ 1
+        Breaks(UBound(Breaks)) = Length '+ -CInt(Not CBool(-LBound(Data)))
     End If
 End Sub
 
