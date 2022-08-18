@@ -384,6 +384,8 @@ Gets the number of bytes existing before the line expressed by the Number argume
                 If (Number > 1) Then
                     Offset = Breaks(Number - 1)
                 End If
+            Else
+                Offset = Stream.Length
             End If
       '  Else
            ' Err.Raise 8, App.Title, "The number, or current line number, is invalid or no line exist."
