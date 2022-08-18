@@ -358,8 +358,6 @@ Public Sub Redo()
     
         xUndoStage = xUndoStage + 1
         
-        CodePage = xUndoActs(xUndoStage).CodePage
-        
 '        Debug.Print "Redo Entry"
 '        Debug.Print "xUndoActs(" & xUndoStage & ").CodePage=" & xUndoActs(xUndoStage).CodePage
 '        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.Partial)
@@ -382,6 +380,8 @@ Public Sub Redo()
         xUndoActs(xUndoStage).AfterSelRange = tmp2
         
         Undo
+    
+        xUndoStage = xUndoStage + 1
 
         Set tmp1 = xUndoActs(xUndoStage).PriorTextData
         Set xUndoActs(xUndoStage).PriorTextData = xUndoActs(xUndoStage).AfterTextData
@@ -390,8 +390,6 @@ Public Sub Redo()
         tmp2 = xUndoActs(xUndoStage).PriorSelRange
         xUndoActs(xUndoStage).PriorSelRange = xUndoActs(xUndoStage).AfterSelRange
         xUndoActs(xUndoStage).AfterSelRange = tmp2
-    
-        xUndoStage = xUndoStage + 1
 
     End If
 End Sub
