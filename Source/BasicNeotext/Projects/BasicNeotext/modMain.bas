@@ -104,31 +104,58 @@ Public Sub InitialSetup()
     Path1 = GetSetting("BasicNeotext", "Options", "VisBasic")
     Path2 = GetSetting("BasicNeotext", "Options", "MakeNSIS")
     Path3 = GetSetting("BasicNeotext", "Options", "SignTool")
+    
     If (Path1 = "") Or (Path2 = "") Or (Path3 = "") Then
         Dim Path4 As String
-        Path4 = SearchPath("vb6.exe" & vbCrLf & "makensis.exe" & vbCrLf & "signtool.exe", , "\Program Files", MatchFlags.ExactMatch, , vbDirectory Or vbNormal)
+        
+        If (PathExists(Left(AppPath, 2) & "\Program Files", False)) Then
+            Path4 = Path4 & SearchPath("vb6.exe" & vbCrLf & "makensis.exe" & vbCrLf & "signtool.exe", , Left(AppPath, 2) & "\Program Files", MatchFlags.ExactMatch, , vbDirectory Or vbNormal)
+        End If
+        
+        If (PathExists(Left(AppPath, 2) & "\Program Files (x86)", False)) Then
+            Path4 = Path4 & SearchPath("vb6.exe" & vbCrLf & "makensis.exe" & vbCrLf & "signtool.exe", , Left(AppPath, 2) & "\Program Files (x86)", MatchFlags.ExactMatch, , vbDirectory Or vbNormal)
+        End If
+    
         Do Until (Path4 = "")
             If (InStr(1, LCase(NextArg(Path4, vbCrLf)), "vb6.exe", vbTextCompare) > 0) Then
                 Path1 = NextArg(Path4, vbCrLf)
                 SaveSetting "BasicNeotext", "Options", "VisBasic", Path1
-                If Left(Path1, 1) = "\" Then Path1 = Left(CurDir, 2) & Path1
             ElseIf (InStr(1, LCase(NextArg(Path4, vbCrLf)), "makensis.exe", vbTextCompare) > 0) Then
                 Path2 = NextArg(Path4, vbCrLf)
-                If Left(Path2, 1) = "\" Then Path2 = Left(CurDir, 2) & Path2
             ElseIf (InStr(1, LCase(NextArg(Path4, vbCrLf)), "signtool.exe", vbTextCompare) > 0) Then
                 Path3 = NextArg(Path4, vbCrLf)
-                If Left(Path3, 1) = "\" Then Path3 = Left(CurDir, 2) & Path3
             End If
             RemoveNextArg Path4, vbCrLf
         Loop
-        SaveSetting "BasicNeotext", "Options", "VisBasic", IIf(Path1 = "", "", Path1)
-        SaveSetting "BasicNeotext", "Options", "MakeNSIS", IIf(Path2 = "", "", Path2)
-        SaveSetting "BasicNeotext", "Options", "SignTool", IIf(Path3 = "", "", Path3)
+
+        SaveSetting "BasicNeotext", "Options", "VisBasic", IIf(Path1 = "", "(not found)", Path1)
+        SaveSetting "BasicNeotext", "Options", "MakeNSIS", IIf(Path2 = "", "(not found)", Path2)
+        SaveSetting "BasicNeotext", "Options", "SignTool", IIf(Path3 = "", "(not found)", Path3)
+
     End If
-    Paths.Add Path1, "VisBasic"
-    Paths.Add Path2, "MakeNSIS"
-    Paths.Add Path3, "SignTool"
+        
+    Paths.Add IIf(Path1 = "(not found)", "", Path1), "VisBasic"
+    Paths.Add IIf(Path2 = "(not found)", "", Path2), "MakeNSIS"
+    Paths.Add IIf(Path3 = "(not found)", "", Path3), "SignTool"
 End Sub
+
+Sub ShowDriveList()
+    Dim fs, d, dc, s, n
+    Set fs = CreateObject("Scripting.FileSystemObject")
+    Set dc = fs.Drives
+    For Each d In dc
+        s = s & d.DriveLetter & " - "
+        If d.DriveType = 3 Then
+            n = d.ShareName
+        Else
+            n = d.VolumeName
+        End If
+        s = s & n & vbCrLf
+    Next
+    MsgBox s
+End Sub
+
+
 
 Private Sub InstallSetup()
     If (Paths("VisBasic") <> "") Then
