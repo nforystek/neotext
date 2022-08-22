@@ -1,11 +1,11 @@
 VERSION 5.00
 Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect 
-   ClientHeight    =   10020
+   ClientHeight    =   9675
    ClientLeft      =   1740
    ClientTop       =   1545
-   ClientWidth     =   23265
-   _ExtentX        =   41037
-   _ExtentY        =   17674
+   ClientWidth     =   23115
+   _ExtentX        =   40772
+   _ExtentY        =   17066
    _Version        =   393216
    Description     =   "Enhancements for Visual Basic 6.0"
    DisplayName     =   "VB 6 Neotext Basic"
@@ -68,6 +68,10 @@ Attribute cmdMenuButton6.VB_VarHelpID = -1
 Private cmdButton7 As CommandBarButton 'make project group
 Private WithEvents cmdMenuButton7 As CommandBarEvents
 Attribute cmdMenuButton7.VB_VarHelpID = -1
+
+Private cmdButton8 As CommandBarButton 'stop the executable
+Private WithEvents cmdMenuButton8 As CommandBarEvents
+Attribute cmdMenuButton8.VB_VarHelpID = -1
 
 '##################Menu Objects and events (either new or existing built in + some built mocked of built in)
 
@@ -361,7 +365,11 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     cmdButton2.ToolTipText = "Start With Full Compile"
     cmdButton2.Style = msoButtonIcon
     cmdButton2.faceid = 539
-    
+    Set cmdButton8 = CmdBar.Controls.Add(msoControlButton)
+    cmdButton8.Caption = "Stop the E&xecutable"
+    cmdButton8.ToolTipText = "Stop the E&xecutable"
+    cmdButton8.Style = msoButtonIcon
+    cmdButton8.faceid = 348
         
 '    Set cmdBarBtn1 = VBInstance.CommandBars("Run").Controls("&Start").Copy(CmdBar)
 '    cmdBarBtn1.BeginGroup = True
@@ -397,6 +405,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set cmdMenuButton5 = VBInstance.Events.CommandBarEvents(cmdButton5)
     Set cmdMenuButton6 = VBInstance.Events.CommandBarEvents(cmdButton6)
 '    Set cmdMenuButton7 = VBInstance.Events.CommandBarEvents(cmdButton7)
+    Set cmdMenuButton8 = VBInstance.Events.CommandBarEvents(cmdButton8)
     
     Dim cbNextCommand As Office.CommandBarControl
     Dim cbMenu As Office.CommandBar
@@ -524,6 +533,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     If Not cmdMenuButton5 Is Nothing Then Set cmdMenuButton5 = Nothing
     If Not cmdMenuButton6 Is Nothing Then Set cmdMenuButton6 = Nothing
     If Not cmdMenuButton7 Is Nothing Then Set cmdMenuButton7 = Nothing
+    If Not cmdMenuButton8 Is Nothing Then Set cmdMenuButton8 = Nothing
     
     If Not MenuHandler7 Is Nothing Then Set MenuHandler9 = Nothing
     If Not MenuHandler8 Is Nothing Then Set MenuHandler8 = Nothing
@@ -571,6 +581,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     If Not cmdButton5 Is Nothing Then cmdButton5.Delete
     If Not cmdButton6 Is Nothing Then cmdButton6.Delete
     If Not cmdButton7 Is Nothing Then cmdButton7.Delete
+    If Not cmdButton8 Is Nothing Then cmdButton8.Delete
     
     Set cmdButton1 = Nothing
     Set cmdButton2 = Nothing
@@ -720,6 +731,10 @@ Private Sub cmdMenuButton6_Click(ByVal CommandBarControl As Object, handled As B
     RemakeProject CommandBarControl, handled, CancelDefault
 End Sub
 
+Private Sub cmdMenuButton8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+    StopExecutable CommandBarControl, handled, CancelDefault
+End Sub
+
 Private Sub MenuHandler1_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
     StartFullCompile CommandBarControl, handled, CancelDefault
 End Sub
@@ -779,8 +794,7 @@ Private Sub StartFullCompile(ByVal CommandBarControl As Object, handled As Boole
     
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
         If PathExists(VBInstance.ActiveVBProject.BuildFileName, True) Then
-            VBInstance.ActiveVBProject.MakeCompiledFile
-            RunProcessEx VBInstance.ActiveVBProject.BuildFileName, Projs.CmdLine
+            If ProcessMake Then RunProcessEx VBInstance.ActiveVBProject.BuildFileName, Projs.CmdLine
         End If
     End If
    
@@ -800,6 +814,68 @@ Private Sub MakeDialog(ByVal CommandBarControl As Object, handled As Boolean, Ca
     If Err Then Err.Clear
 End Sub
 
+Private Function ShowMessage(ByVal Title As String, ByVal Message As String, ByVal IncludeCancel As Boolean) As Long
+    Static onetatime As Boolean
+    If Not onetatime Then
+        onetatime = True
+        Dim frm As New frmHelp
+        frm.Command2.Caption = "&Yes"
+        frm.Command1.Caption = "&No"
+        frm.Command3.Caption = "&Cancel"
+        If IncludeCancel Then frm.Command3.Visible = True
+        frm.Command2.Visible = True
+        frm.Label26.Visible = False
+        frm.Frame1.Visible = False
+        frm.Label3.Visible = False
+        frm.Command2.Top = 1020 ' frm.Frame1.Top
+        frm.Height = 1935 'frm.Frame1.Top + frm.Command2.Height + (frm.Height - (frm.Command2.Top + frm.Command2.Height))
+        frm.Command1.Top = 1020 ' frm.Frame1.Top
+        frm.Command3.Top = 1020 ' frm.Frame1.Top
+        frm.Label2.Caption = Message
+        frm.Image1.Visible = True
+        frm.Caption = Title
+        frm.Label2.Width = frm.Label2.Width - 2000
+        frm.Command1.Left = frm.Command1.Left - 2000
+        frm.Command2.Left = frm.Command2.Left - 2000
+        frm.Command3.Left = frm.Command3.Left - 2000
+        If Not IncludeCancel Then
+            frm.Command1.Left = frm.Command3.Left
+            frm.Command2.Left = frm.Command1.Left
+        End If
+        frm.Width = frm.Width - 3000
+        frm.Tag = 0
+        frm.Show
+        TopMostForm frm, True, True
+        Do Until frm.Tag <> 0
+            DoTasks
+        Loop
+        ShowMessage = frm.Tag
+        Unload frm
+        onetatime = False
+    End If
+End Function
+Private Function ProcessMake() As Boolean
+    If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then
+        Dim tmp As Long
+        If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
+            
+            tmp = ShowMessage("Permission denied", "The process is already running, do you want to" & vbCrLf & _
+                              "terminate it and continue to make the executable?", True)
+            If tmp = vbCancel Then
+                Exit Function
+            End If
+        Else
+            tmp = vbYes
+        End If
+        If tmp = vbYes Then
+            KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+        End If
+    End If
+    On Error Resume Next
+    On Local Error Resume Next
+    VBInstance.ActiveVBProject.MakeCompiledFile
+    ProcessMake = True
+End Function
 Private Sub BuildRelease(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"&Build Project Release"-184
 '''    '   Same as Remake but sets the
@@ -808,11 +884,33 @@ Private Sub BuildRelease(ByVal CommandBarControl As Object, handled As Boolean, 
     
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
         If PathExists(VBInstance.ActiveVBProject.BuildFileName, True) Then
-            VBInstance.ActiveVBProject.MakeCompiledFile
-            SignTool VBInstance.ActiveVBProject.BuildFileName, SignAndStamp
+            If ProcessMake() Then SignTool VBInstance.ActiveVBProject.BuildFileName, SignAndStamp
         End If
     End If
     
+
+End Sub
+
+Private Sub StopExecutable(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+'''    '"Stop The E&xecutable"-348
+'''    '   kills the running process
+'''    '   (if it is running of course)
+    
+    If Not (VBInstance.ActiveVBProject Is Nothing) Then
+        If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then
+
+            If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
+                Dim tmp As Long
+                tmp = ShowMessage("Process is Running", "Are you sure you want to terminate it?", False)
+                If tmp = vbYes Then
+                    KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+                End If
+            Else
+                KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+            End If
+
+        End If
+    End If
 
 End Sub
 
@@ -835,7 +933,8 @@ Private Sub RemakeProject(ByVal CommandBarControl As Object, handled As Boolean,
 '''    '   Automatically rebuild the executable with out
 '''    '   prompting for location (must been already built)
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        VBInstance.ActiveVBProject.MakeCompiledFile
+        If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+        ProcessMake
     End If
 
 End Sub

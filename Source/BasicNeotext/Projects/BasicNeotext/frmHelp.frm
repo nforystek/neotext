@@ -1,4 +1,3 @@
-
 VERSION 5.00
 Begin VB.Form frmHelp 
    BorderStyle     =   1  'Fixed Single
@@ -9,17 +8,43 @@ Begin VB.Form frmHelp
    ClientWidth     =   9000
    ClipControls    =   0   'False
    Icon            =   "frmHelp.frx":0000
-   LockControls    =   -1  'True
    MaxButton       =   0   'False
    MinButton       =   0   'False
    ScaleHeight     =   7725
    ScaleWidth      =   9000
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
+   Begin VB.CommandButton Command3 
+      Caption         =   "&OK"
+      Height          =   360
+      Left            =   5670
+      TabIndex        =   31
+      Top             =   7230
+      Visible         =   0   'False
+      Width           =   1170
+   End
+   Begin VB.CommandButton Command2 
+      Caption         =   "&OK"
+      Height          =   360
+      Left            =   2820
+      TabIndex        =   30
+      Top             =   7230
+      Visible         =   0   'False
+      Width           =   1170
+   End
    Begin VB.Timer Timer1 
       Interval        =   100
       Left            =   492
       Top             =   345
+   End
+   Begin VB.CommandButton Command1 
+      Caption         =   "&OK"
+      Default         =   -1  'True
+      Height          =   360
+      Left            =   4245
+      TabIndex        =   1
+      Top             =   7224
+      Width           =   1170
    End
    Begin VB.Frame Frame1 
       Caption         =   "Options"
@@ -317,15 +342,6 @@ Begin VB.Form frmHelp
          Width           =   1695
       End
    End
-   Begin VB.CommandButton Command1 
-      Caption         =   "&OK"
-      Default         =   -1  'True
-      Height          =   360
-      Left            =   4245
-      TabIndex        =   1
-      Top             =   7224
-      Width           =   1170
-   End
    Begin VB.Label Label26 
       Alignment       =   2  'Center
       Caption         =   $"frmHelp.frx":2AE8
@@ -347,10 +363,10 @@ Begin VB.Form frmHelp
    Begin VB.Label Label2 
       BackStyle       =   0  'Transparent
       Caption         =   $"frmHelp.frx":2CA6
-      Height          =   588
+      Height          =   585
       Left            =   1320
       TabIndex        =   3
-      Top             =   96
+      Top             =   90
       Width           =   7572
    End
    Begin VB.Image Image1 
@@ -380,7 +396,39 @@ Option Explicit
 Option Compare Binary
 
 
+
 Private Sub Command1_Click()
-    Unload Me
+    If Command1.Caption = "&No" Then
+        Me.Tag = vbNo
+        Me.Hide
+    Else
+        Unload Me
+    End If
 End Sub
 
+Private Sub Command2_Click()
+    Me.Tag = vbYes
+    Me.Hide
+End Sub
+
+Private Sub Command3_Click()
+    Me.Tag = vbCancel
+    Me.Hide
+End Sub
+
+Private Sub Form_Load()
+
+End Sub
+
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    If (Command1.Caption = "&No" And UnloadMode = 0) Then
+        Cancel = True
+        Me.Tag = vbCancel
+        Me.Hide
+    End If
+    
+End Sub
+
+Private Sub Label2_Click()
+
+End Sub

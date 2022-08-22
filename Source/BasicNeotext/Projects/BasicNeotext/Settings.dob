@@ -1,17 +1,32 @@
 VERSION 5.00
 Begin VB.UserDocument Settings 
-   ClientHeight    =   3660
+   ClientHeight    =   4140
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   5340
    ClipControls    =   0   'False
    ContinuousScroll=   0   'False
    HScrollSmallChange=   225
-   LockControls    =   -1  'True
-   ScaleHeight     =   3660
+   ScaleHeight     =   4140
    ScaleWidth      =   5340
    ScrollBars      =   0  'None
    VScrollSmallChange=   225
+   Begin VB.CommandButton Command1 
+      Caption         =   "?"
+      Height          =   270
+      Left            =   2955
+      TabIndex        =   21
+      Top             =   3255
+      Width           =   315
+   End
+   Begin VB.CheckBox Check5 
+      Caption         =   "Automatically deattach terminate the  running process when rebuilding the process EXE."
+      Height          =   420
+      Left            =   60
+      TabIndex        =   20
+      Top             =   3615
+      Width           =   3660
+   End
    Begin VB.TextBox Text7 
       Height          =   300
       Left            =   1140
@@ -25,7 +40,7 @@ Begin VB.UserDocument Settings
       Left            =   45
       TabIndex        =   11
       Top             =   3165
-      Width           =   3360
+      Width           =   2790
    End
    Begin VB.TextBox Text6 
       Height          =   300
@@ -184,6 +199,14 @@ Implements ISettings
 Public WithEvents FCE As FileControlEvents
 Attribute FCE.VB_VarHelpID = -1
 
+
+Private Sub Command1_Click()
+    MsgBox "On any header that begins a block of code of which may have descriptions," & vbCrLf & _
+            "i.e. ""Sub MySub()"" followed by a comment character, space, and underscore," & vbCrLf & _
+            "then makes for the next line as a comment. Those BasicNeotext will recognize" & vbCrLf & _
+            "as descriptions and auto populate the hidden info attribute for the compiler.", vbInformation, vbOKOnly
+End Sub
+
 Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
     If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
         If PathExists(FileName, True) Then
@@ -233,6 +256,11 @@ End Sub
 Private Sub Check4_Click()
     Command3.Enabled = (Check4.Value)
     If Text2(1).Tag <> -1 Then SaveSetting "BasicNeotext", "Options", "RestrictOnly", Check4.Value
+End Sub
+
+
+Private Sub Check5_Click()
+    If Text2(1).Tag <> -1 Then SaveSetting "BasicNeotext", "Options", "KillBeforeMake", Check5.Value
 End Sub
 
 Private Sub Command3_Click()
@@ -333,13 +361,6 @@ Private Sub Text6_Change()
     End If
 End Sub
 
-Private Sub Timer1_Timer()
-'    If ProcessRunning("VB6.EXE") = 0 Then
-'        KillApp "VBN.EXE"
-'    End If
-    
-End Sub
-
 Private Sub UserDocument_Initialize()
 
     Text2(1).Tag = -1
@@ -355,6 +376,7 @@ Private Sub UserDocument_Initialize()
     Check2.Value = CLng(GetSetting("BasicNeotext", "Options", "ActiveOnLine", 0))
     Check3.Value = CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0))
     Check4.Value = CLng(GetSetting("BasicNeotext", "Options", "RestrictOnly", 0))
+    Check5.Value = CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0))
     
     Dim txt As String
     txt = GetSetting("BasicNeotext", "Options", "Password", "")
