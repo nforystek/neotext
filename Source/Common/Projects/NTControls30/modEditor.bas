@@ -156,44 +156,44 @@ Public Const VK_LSHIFT = &HA0
 Public Const VK_RSHIFT = &HA1
 
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-Public Declare Function GetWindowRect Lib "USER32" (ByVal hWnd As Long, lpRect As RECT) As Long
-Public Declare Function GetClientRect Lib "USER32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Public Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
+Public Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 
-Public Declare Function GetParent Lib "USER32" (ByVal hWnd As Long) As Long
+Public Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
 
-Public Declare Function GetAsyncKeyState Lib "USER32" (ByVal vKey As Long) As Integer 'Gets state of one key
+Public Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer 'Gets state of one key
 
-Public Declare Function GetCaretPos Lib "USER32" (lpPoint As POINTAPI) As Long
-Public Declare Function GetCursorPos Lib "USER32" (lpPoint As POINTAPI) As Long
+Public Declare Function GetCaretPos Lib "user32" (lpPoint As POINTAPI) As Long
+Public Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 
-Public Declare Function GetScrollPos Lib "USER32" (ByVal hWnd As Long, ByVal nBar As Long) As Long
+Public Declare Function GetScrollPos Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long) As Long
 
-Public Declare Function SendMessageString Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As String) As Long
-Public Declare Function SendMessageStruct Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
-Public Declare Function SendMessageLngPtr Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Public Declare Function SendMessageMemory Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, wParam As Any) As Variant
+Public Declare Function SendMessageString Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As String) As Long
+Public Declare Function SendMessageStruct Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Public Declare Function SendMessageLngPtr Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function SendMessageMemory Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, wParam As Any) As Variant
 
-Public Declare Function SendMessage Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Any) As Long
+Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Any) As Long
 
-Public Declare Function IntersectRect Lib "USER32" (lpDestRect As RECT, lpSrc1Rect As RECT, lpSrc2Rect As RECT) As Long
+Public Declare Function IntersectRect Lib "user32" (lpDestRect As RECT, lpSrc1Rect As RECT, lpSrc2Rect As RECT) As Long
 'Public Declare Function PtInRect Lib "user32" (lpRect As Rect, ByVal lLeft As Long, ByVal lTop As Long) As Long
-Public Declare Function PtInRect Lib "USER32" (lpRect As RECT, ByVal lLeft As Long, ByVal lTop As Long) As Long
+Public Declare Function PtInRect Lib "user32" (lpRect As RECT, ByVal lLeft As Long, ByVal lTop As Long) As Long
 
 
 Public Declare Function RectInRegion Lib "gdi32" (ByVal hRgn As Long, lpRect As RECT) As Long
 
-Public Declare Function CallWindowProc Lib "USER32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Public Declare Function DefWindowProc Lib "USER32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Public Declare Function SetWindowLong Lib "USER32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Public Declare Function GetWindowLong Lib "USER32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Public Declare Function GetActiveWindow Lib "USER32" () As Long
-Public Declare Function LockWindowUpdate Lib "USER32" (ByVal hwndLock As Long) As Long
-Public Declare Function KillTimer Lib "USER32" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
-Public Declare Function SetTimer Lib "USER32" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Any) As Long
+Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Public Declare Function GetActiveWindow Lib "user32" () As Long
+Public Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
+Public Declare Function KillTimer Lib "user32" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
+Public Declare Function SetTimer Lib "user32" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Any) As Long
 
 Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef Source As Any, ByVal Length As Long)
 
-Public Declare Function SystemParametersInfo Lib "USER32" Alias "SystemParametersInfoA" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
+Public Declare Function SystemParametersInfo Lib "user32" Alias "SystemParametersInfoA" (ByVal uAction As Long, ByVal uParam As Long, ByRef lpvParam As Any, ByVal fuWinIni As Long) As Long
 Public Const SPI_GETKEYBOARDSPEED = 10
 Public Const SPI_GETKEYBOARDDELAY = 22
 Public Const SPI_SETKEYBOARDSPEED = 11
@@ -215,22 +215,22 @@ Public Const SIF_TRACKPOS = &H10
 Public Const SIF_ALL = (SIF_RANGE Or SIF_PAGE Or SIF_POS Or SIF_TRACKPOS)
 
 
-Public Declare Function SetScrollPos Lib "USER32" (ByVal hWnd As Long, ByVal nBar As Long, ByVal nPos As Long, ByVal bRedraw As Long) As Long
-Public Declare Function GetScrollInfo Lib "USER32" (ByVal hWnd As Long, ByVal N As Long, lpScrollInfo As SCROLLINFO) As Long
-Public Declare Function GetScrollRange Lib "USER32" (ByVal hWnd As Long, ByVal nBar As Long, lpMinPos As Long, lpMaxPos As Long) As Long
-Public Declare Function SetScrollInfo Lib "USER32" (ByVal hWnd As Long, ByVal N As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
-Public Declare Function SetScrollRange Lib "USER32" (ByVal hWnd As Long, ByVal nBar As Long, ByVal nMinPos As Long, ByVal nMaxPos As Long, ByVal bRedraw As Long) As Long
-Public Declare Function ScrollWindow Lib "USER32" (ByVal hWnd As Long, ByVal XAmount As Long, ByVal YAmount As Long, lpRect As RECT, lpClipRect As RECT) As Long
+Public Declare Function SetScrollPos Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long, ByVal nPos As Long, ByVal bRedraw As Long) As Long
+Public Declare Function GetScrollInfo Lib "user32" (ByVal hWnd As Long, ByVal N As Long, lpScrollInfo As SCROLLINFO) As Long
+Public Declare Function GetScrollRange Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long, lpMinPos As Long, lpMaxPos As Long) As Long
+Public Declare Function SetScrollInfo Lib "user32" (ByVal hWnd As Long, ByVal N As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
+Public Declare Function SetScrollRange Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long, ByVal nMinPos As Long, ByVal nMaxPos As Long, ByVal bRedraw As Long) As Long
+Public Declare Function ScrollWindow Lib "user32" (ByVal hWnd As Long, ByVal XAmount As Long, ByVal YAmount As Long, lpRect As RECT, lpClipRect As RECT) As Long
 
 
-Public Declare Function GetSystemMetrics Lib "USER32" (ByVal nIndex As Long) As Long
+Public Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Public Const MOUSE_MOVED = &H1
 
 Public Declare Function GetDeviceCaps Lib "gdi32" (ByVal hdc As Long, ByVal nIndex As Long) As Long
-Public Declare Function GetSysColor Lib "USER32" (ByVal nIndex As Long) As Long
+Public Declare Function GetSysColor Lib "user32" (ByVal nIndex As Long) As Long
 
-Private Declare Function ReleaseDC Lib "USER32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
-Private Declare Function GetDC Lib "USER32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 
 Public Const LOGPIXELSX = 88
 Private Const POINTS_PER_INCH As Long = 100
@@ -430,6 +430,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
         Dim str As String
                             
         Dim cnt As Long
+
         
         For cnt = 1 To SubClassed.count
         
@@ -651,10 +652,8 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
                                 End If
                                 
                                 frm3.Cancel = False
-                                
-                                If (Not ((st.flags And ST_KEEPUNDO) = ST_KEEPUNDO)) Then
-                                    frm3.RaiseEventChange
-                                End If
+
+                                frm3.RaiseEventChange ((st.flags And ST_KEEPUNDO) = ST_KEEPUNDO)
                                 
                                 lDispatch = False
                                 

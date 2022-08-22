@@ -16,20 +16,20 @@ Begin VB.UserControl Neotext
       Left            =   285
       Top             =   2655
       Width           =   2280
-      _extentx        =   4022
-      _extenty        =   556
-      orientation     =   1
-      autoredraw      =   0   'False
+      _ExtentX        =   4022
+      _ExtentY        =   556
+      Orientation     =   1
+      AutoRedraw      =   0   'False
    End
    Begin NTControls30.ScrollBar ScrollBar1 
       Height          =   2655
       Left            =   3510
       Top             =   270
       Width           =   330
-      _extentx        =   953
-      _extenty        =   4683
-      orientation     =   0
-      autoredraw      =   0   'False
+      _ExtentX        =   953
+      _ExtentY        =   4683
+      Orientation     =   0
+      AutoRedraw      =   0   'False
    End
    Begin VB.Timer Timer1 
       Left            =   810
@@ -299,9 +299,37 @@ Public Sub Undo()
     If CanUndo Then
 
         CodePage = xUndoActs(xUndoStage).CodePage
-'        If Not Cancel Then
+        
+        With xUndoActs(xUndoStage)
+            Dim tmp As Long
+            Dim swapPrior As Boolean
+            Dim swapAfter As Boolean
+           
+            xUndoActs(0).PriorSelRange = .AfterSelRange
+            xUndoActs(0).AfterSelRange = .PriorSelRange
+            xUndoActs(0).AfterTextData.Clone .AfterTextData
+            xUndoActs(0).PriorTextData.Clone .PriorTextData
+            
+            If .AfterSelRange.StartPos > .AfterSelRange.StopPos Then
+                swapAfter = True
+                tmp = .AfterSelRange.StopPos
+                .AfterSelRange.StopPos = .AfterSelRange.StartPos
+                .AfterSelRange.StartPos = tmp
+            End If
+            
+            If .PriorSelRange.StartPos > .PriorSelRange.StopPos Then
+                swapPrior = True
+                tmp = .PriorSelRange.StopPos
+                .PriorSelRange.StopPos = .PriorSelRange.StartPos
+                .PriorSelRange.StartPos = tmp
+            End If
+            
+'            If Cancel Then
+'                Debug.Print "Redo Entry"
+'            Else
+'                Debug.Print "Undo Entry"
+'            End If
 '
-'            Debug.Print "Undo Entry"
 '            Debug.Print "xUndoActs(" & xUndoStage & ").CodePage=" & xUndoActs(xUndoStage).CodePage
 '            Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.Partial)
 '            Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StartPos=" & xUndoActs(xUndoStage).PriorSelRange.StartPos
@@ -310,30 +338,15 @@ Public Sub Undo()
 '            Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.Partial)
 '            Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StartPos=" & xUndoActs(xUndoStage).AfterSelRange.StartPos
 '            Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StopPos=" & xUndoActs(xUndoStage).AfterSelRange.StopPos
-'
-'        End If
-        
-        With xUndoActs(xUndoStage)
-            Dim tmp As Long
-            
-            xUndoActs(0).PriorSelRange = .AfterSelRange
-            xUndoActs(0).AfterSelRange = .PriorSelRange
-            
-            If .PriorTextData.Peek() <> 8 Then
-            
-                If .AfterTextData.Peek() = 8 Then
+          
+            If .PriorTextData.Length > 0 Then
+                If .AfterTextData.Length = 0 Then
                     pText.Pyramid .PriorTextData, IIf(.PriorSelRange.StartPos < .AfterSelRange.StartPos, .PriorSelRange.StartPos, .AfterSelRange.StartPos), _
                          IIf(.PriorSelRange.StopPos - .PriorSelRange.StartPos < .AfterSelRange.StopPos - .AfterSelRange.StartPos, _
                         .PriorSelRange.StopPos - .PriorSelRange.StartPos, .AfterSelRange.StopPos - .AfterSelRange.StartPos)
-                    'If .AfterSelRange.StartPos < .PriorSelRange.StartPos Then
-                    '    pSel = .AfterSelRange
-                    'Else
-                        pSel = .PriorSelRange
-                    'End If
                 Else
-                    pText.Pinch IIf(.PriorSelRange.StartPos < .PriorSelRange.StopPos, .PriorSelRange.StartPos, .PriorSelRange.StopPos), .AfterTextData.Length
-                    pText.Pyramid .PriorTextData, IIf(.PriorSelRange.StartPos < .PriorSelRange.StopPos, .PriorSelRange.StartPos, .PriorSelRange.StopPos), 0
-                    pSel = .PriorSelRange
+                    pText.Pinch IIf(.AfterSelRange.StartPos < .PriorSelRange.StartPos, .AfterSelRange.StartPos, .PriorSelRange.StartPos), .AfterTextData.Length
+                    pText.Pyramid .PriorTextData, IIf(.AfterSelRange.StartPos < .PriorSelRange.StartPos, .AfterSelRange.StartPos, .PriorSelRange.StartPos), 0
                 End If
             Else
                 If .AfterSelRange.StopPos - .PriorSelRange.StartPos > 0 Then
@@ -341,13 +354,27 @@ Public Sub Undo()
                 Else
                     pText.Pinch .AfterSelRange.StartPos, .PriorSelRange.StopPos - .AfterSelRange.StartPos
                 End If
-                pSel = .PriorSelRange
             End If
-        
-        End With
 
-        xUndoStage = xUndoStage - 1
-        RaiseEventChange True
+            If swapAfter Then
+                tmp = .AfterSelRange.StopPos
+                .AfterSelRange.StopPos = .AfterSelRange.StartPos
+                .AfterSelRange.StartPos = tmp
+            End If
+            
+            If swapPrior Then
+                tmp = .PriorSelRange.StopPos
+                .PriorSelRange.StopPos = .PriorSelRange.StartPos
+                .PriorSelRange.StartPos = tmp
+            End If
+
+            pSel = .PriorSelRange
+                                 
+            xUndoStage = xUndoStage - 1
+            If Not Cancel Then
+                RaiseEventChange False
+            End If
+        End With
         
     End If
 End Sub
@@ -357,24 +384,15 @@ Public Sub Redo()
     If CanRedo Then
     
         xUndoStage = xUndoStage + 1
+        Cancel = True
         
-'        Debug.Print "Redo Entry"
-'        Debug.Print "xUndoActs(" & xUndoStage & ").CodePage=" & xUndoActs(xUndoStage).CodePage
-'        Debug.Print "xUndoActs(" & xUndoStage & ").PriorTextData=" & Convert(xUndoActs(xUndoStage).PriorTextData.Partial)
-'        Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StartPos=" & xUndoActs(xUndoStage).PriorSelRange.StartPos
-'        Debug.Print "xUndoActs(" & xUndoStage & ").PriorSelRange.StopPos=" & xUndoActs(xUndoStage).PriorSelRange.StopPos
-'
-'        Debug.Print "xUndoActs(" & xUndoStage & ").AfterTextData=" & Convert(xUndoActs(xUndoStage).AfterTextData.Partial)
-'        Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StartPos=" & xUndoActs(xUndoStage).AfterSelRange.StartPos
-'        Debug.Print "xUndoActs(" & xUndoStage & ").AfterSelRange.StopPos=" & xUndoActs(xUndoStage).AfterSelRange.StopPos
-
         Dim tmp1 As Strands
         Dim tmp2 As RangeType
-        
+
         Set tmp1 = xUndoActs(xUndoStage).PriorTextData
         Set xUndoActs(xUndoStage).PriorTextData = xUndoActs(xUndoStage).AfterTextData
         Set xUndoActs(xUndoStage).AfterTextData = tmp1
-        
+
         tmp2 = xUndoActs(xUndoStage).PriorSelRange
         xUndoActs(xUndoStage).PriorSelRange = xUndoActs(xUndoStage).AfterSelRange
         xUndoActs(xUndoStage).AfterSelRange = tmp2
@@ -382,15 +400,17 @@ Public Sub Redo()
         Undo
     
         xUndoStage = xUndoStage + 1
-
+        
         Set tmp1 = xUndoActs(xUndoStage).PriorTextData
         Set xUndoActs(xUndoStage).PriorTextData = xUndoActs(xUndoStage).AfterTextData
         Set xUndoActs(xUndoStage).AfterTextData = tmp1
-        
+
         tmp2 = xUndoActs(xUndoStage).PriorSelRange
         xUndoActs(xUndoStage).PriorSelRange = xUndoActs(xUndoStage).AfterSelRange
         xUndoActs(xUndoStage).AfterSelRange = tmp2
 
+        Cancel = False
+        RaiseEventChange False
     End If
 End Sub
 
@@ -478,14 +498,23 @@ Preforms a removal of any selected text and puts it in the clipboard.
             xUndoActs(0).PriorTextData.Reset
             xUndoActs(0).AfterTextData.Reset
             
-            DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
-            If SelLength > 0 Then
-                xUndoActs(0).PriorTextData.Concat Convert(SelText)
+            If pSel.StartPos > pSel.StopPos Then
+                Dim tmp As Long
+                tmp = pSel.StartPos
+                pSel.StartPos = pSel.StopPos
+                pSel.StopPos = tmp
             End If
-            xUndoActs(0).AfterTextData.Concat Convert(Chr(48))
             
-            Clipboard.SetText SelText
-            SelText = ""
+            DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
+
+            xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
+
+            'xUndoActs(0).AfterTextData.Concat Convert(Chr(8))
+            
+            Clipboard.SetText Replace(SelText, vbCrLf, vbLf)
+            pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
+            
+            pSel.StopPos = pSel.StartPos
             
             Cancel = False
             RaiseEventChange
@@ -502,6 +531,7 @@ Places any selected text into the clipboard.
         End If
     End If
 End Sub
+
 Public Sub Paste() ' _
 Inserts into the text at the current selection any text data contained in the clipboard.
     If Not Locked And Enabled Then
@@ -513,25 +543,30 @@ Inserts into the text at the current selection any text data contained in the cl
             xUndoActs(0).AfterTextData.Reset
             
             If SelLength > 0 Then
-                xUndoActs(0).PriorTextData.Concat Convert(SelText)
+                xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
             End If
-            Dim clipText As String
-            clipText = Clipboard.GetText(ClipBoardConstants.vbCFText)
-            If SelLength - Len(clipText) > 0 Then
-                DepleetColorRecords pSel.StartPos, SelLength 'pSel.StopPos - (SelLength - Len(clipText))
-            ElseIf SelLength - Len(clipText) < 0 Then
-                ExpandColorRecords pSel.StartPos, pSel.StopPos - (Len(clipText) - SelLength)
-            End If
-            SelText = clipText
             
-            xUndoActs(0).AfterTextData.Concat Convert(SelText)
-            
-            If pSel.StartPos < pSel.StopPos Then
+            Dim clipText() As Byte
+            clipText = Convert(Replace(Clipboard.GetText(ClipBoardConstants.vbCFText), vbCrLf, vbLf))
+                        
+            Dim tText As Strands
+            Set tText = New Strands
+            tText.Concat clipText
+            If pSel.StartPos > pSel.StopPos Then
+                ExpandColorRecords pSel.StopPos, SelLength
+                pText.Pyramid tText, pSel.StopPos, pSel.StartPos - pSel.StopPos
+                pSel.StopPos = pSel.StopPos + (pSel.StartPos - pSel.StopPos) - ((pSel.StartPos - pSel.StopPos) - tText.Length)
                 pSel.StartPos = pSel.StopPos
             Else
+                ExpandColorRecords pSel.StartPos, SelLength
+                pText.Pyramid tText, pSel.StartPos, pSel.StopPos - pSel.StartPos
+                pSel.StartPos = pSel.StartPos + (pSel.StopPos - pSel.StartPos) - ((pSel.StopPos - pSel.StartPos) - tText.Length)
                 pSel.StopPos = pSel.StartPos
             End If
-        
+            Set tText = Nothing
+            
+            xUndoActs(0).AfterTextData.Concat clipText
+            
             Cancel = False
             RaiseEventChange
         End If
@@ -549,7 +584,7 @@ Clears all the text on the current code page.
         If pText.Length > 0 Then
             xUndoActs(0).PriorTextData.Concat pText.Partial
         End If
-        xUndoActs(0).AfterTextData.Concat Convert(Chr(48))
+        'xUndoActs(0).AfterTextData.Concat Convert(Chr(48))
         
         pSel.StartPos = 0
         pSel.StopPos = 0
@@ -1074,7 +1109,7 @@ Attribute Text.VB_Description = "Sets the text contents of the control by String
         ResetColors
         pText.Concat Convert(Replace(Replace(RHS, vbCrLf, vbLf), vbLf, IIf(pMultiLine, vbLf, "")))
         ResetUndoRedo
-        RaiseEventChange True
+        RaiseEventChange False
 
     End If
     
@@ -1090,7 +1125,7 @@ Attribute Text.VB_Description = "Sets the text contents of the control in the NT
                 ResetColors
                 pText.Concat Convert(Replace(Replace(Convert(RHS.Partial), vbCrLf, vbLf), vbLf, IIf(pMultiLine, vbLf, "")))
                 ResetUndoRedo
-                RaiseEventChange True
+                RaiseEventChange False
             End If
     End Select
     
@@ -1257,7 +1292,7 @@ Private Sub Timer1_Timer()
     
     Static lastSel As RangeType
     If (lastSel.StartPos <> pSel.StartPos Or lastSel.StopPos <> pSel.StopPos) Then
-
+        
         MakeCaretVisible newloc, True
         cursorBlink = False
     End If
@@ -1693,7 +1728,7 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
     Do While cnt <= UBound(StrText)
 
         Select Case StrText(cnt)
-            Case 0
+            Case 0, 13
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
                 If Not newClrRec Then newClrRec = True
                 
@@ -2101,10 +2136,11 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                         pText.Reset
                     End If
                     Set tText = Nothing
-                    
+
+                   ' xUndoActs(0).PriorTextData.Post 8
                 Else
                     'DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
-                    xUndoActs(0).PriorTextData.Concat Convert(SelText)
+                    xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
                     
                     If pSel.StartPos > pSel.StopPos Then
                         Swap pSel.StartPos, pSel.StopPos
@@ -2191,7 +2227,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     End If
                 Else 'delete or backspace
                     
-                    xUndoActs(0).PriorTextData.Concat Convert(SelText)
+                    xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
 
                     If pSel.StartPos > pSel.StopPos Then
                         Swap pSel.StartPos, pSel.StopPos
@@ -2213,7 +2249,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     
                 End If
                 
-                xUndoActs(0).AfterTextData.Concat Convert(Chr(8))
+                'xUndoActs(0).AfterTextData.Concat Convert(Chr(8))
                 
                 pSel.StopPos = pSel.StartPos
                 
@@ -2224,15 +2260,14 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 
                 xUndoActs(0).PriorTextData.Reset
                 xUndoActs(0).AfterTextData.Reset
-                xUndoActs(0).PriorSelRange = pSel
+                
                 
                 If SelLength > 0 Then
                 
 '                    lIndex = LineOffset(LineIndex(pSel.StartPos))
 '                    temp = LineOffset(LineIndex(pSel.StopPos))
 '                    If temp > lIndex Then
-            
-                        xUndoActs(0).PriorTextData.Concat Convert(SelText)
+
                         Dim tmpSel As Long
                         If Shift = 0 Then
                             
@@ -2245,14 +2280,16 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                             Indenting SelStart, SelLength, Chr(9) & Chr(8), True
                             DepleetColorRecords pSel.StartPos, pSel.StopPos - (pSel.StartPos + tmpSel)
                         End If
-                
-                        xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyCode))
-                
+                        
                         KeyCode = 0
                         
                         RaiseEventChange
+                
+
+                        
 '                    End Ife
                 Else
+                    'xUndoActs(0).PriorTextData.Post 8
                     xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyCode))
                     ExpandColorRecords SelStart, Len(TabSpace)
                 End If
@@ -2329,8 +2366,9 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
     Dim txt As String
     Dim temp As Long
     Dim newtxt As String
-
+    Dim hasLF As Boolean
     Dim tmpSel As RangeType
+    Dim txtLines As String
     
     If CharStr = "" Then CharStr = Chr(9) & Chr(8)
     
@@ -2352,30 +2390,68 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
     End If
     pSel.StartPos = tmpSel.StartPos
     pSel.StopPos = tmpSel.StopPos
+
+    xUndoActs(0).PriorSelRange = pSel
+    xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
+    txtLines = SelText
     
     For temp = LineIndex(tmpSel.StartPos) To LineIndex(tmpSel.StopPos)
-
-        txt = LineText(temp)
-
+    
+    
+        hasLF = InStr(txtLines, vbLf) > 0
+        txt = RemoveNextArg(txtLines, vbLf)
+        
+        If hasLF Then tmpSel.StopPos = tmpSel.StopPos - 1
+        
+        
+        txt = Replace(txt, vbLf, "")
         If Len(txt) > 0 Then
             If InStr(CharStr, Chr(8)) = 0 Then
                 txt = CharStr & txt
-                tmpSel.StopPos = tmpSel.StopPos + 1
+                tmpSel.StopPos = tmpSel.StopPos + Len(CharStr)
             Else
                 If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
                     txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
-                    tmpSel.StopPos = tmpSel.StopPos - Len(Replace(CharStr, Chr(8), ""))
+                    tmpSel.StopPos = tmpSel.StopPos - Len(CharStr)
                 End If
             End If
         End If
-
-        newtxt = newtxt & txt & vbLf
-
+        
+        
+'        txt = Replace(LineText(temp), vbLf, "")
+'
+'        If Len(txt) > 0 Then
+'            If InStr(CharStr, Chr(8)) = 0 Then
+'                txt = CharStr & txt
+'                tmpSel.StopPos = tmpSel.StopPos + 1
+'            Else
+'                If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
+'                    txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
+'                    tmpSel.StopPos = tmpSel.StopPos - Len(Replace(CharStr, Chr(8), ""))
+'                End If
+'            End If
+'        End If
+'
+        newtxt = newtxt & txt & IIf(hasLF, vbLf, "")
+        
     Next
+   ' pSel.StartPos = tmpSel.StartPos
+    'pSel.StopPos = tmpSel.StopPos
 
-    SelText = RTrimStrip(newtxt, vbLf)
+    SelText = newtxt
     
-    If pSel.StartPos > pSel.StopPos Then modCommon.Swap pSel.StartPos, pSel.StopPos
+    pSel.StartPos = tmpSel.StartPos
+    pSel.StopPos = tmpSel.StopPos
+    
+   ' pSel.StartPos = LineOffset(LineIndex(tmpSel.StartPos))
+    'pSel.StopPos = tmpSel.StartPos + Len(newtxt) ' LineOffset(LineIndex(tmpSel.StopPos)) + LineLength(LineIndex(tmpSel.StopPos))
+
+    xUndoActs(0).AfterTextData.Concat Convert(newtxt) ' Convert(Chr(KeyCode))
+    xUndoActs(0).AfterSelRange = pSel
+
+    'SelText = newtxt
+    
+    'If pSel.StartPos > pSel.StopPos Then modCommon.Swap pSel.StartPos, pSel.StopPos
 
 End Sub
 Friend Sub KeyPageUp(ByRef Shift As Integer)
@@ -2457,10 +2533,7 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
 
             xUndoActs(0).PriorTextData.Reset
             xUndoActs(0).AfterTextData.Reset
-            xUndoActs(0).PriorSelRange = pSel
-            
-            xUndoActs(0).PriorTextData.Reset
-            xUndoActs(0).PriorTextData.post 8
+
                     
             Dim tText As Strands
             If insertMode Then
@@ -2672,7 +2745,7 @@ Friend Sub InvalidateCursor()
     If Not Cancel Then Timer1_Timer
 End Sub
 
-Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = False)
+Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = True)
   
     RaiseEventSelChange KeepUndo
     
@@ -2681,7 +2754,7 @@ Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = False)
     If Not Cancel Then
         Cancel = True
         
-        If Not KeepUndo Then
+        If KeepUndo Then
             AddUndo
         End If
         
@@ -2689,7 +2762,7 @@ Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = False)
         
         Cancel = False
         
-        If KeepUndo Then
+        If Not KeepUndo Then
             InvalidateCursor
         Else
             UserControl_Paint
@@ -2700,14 +2773,16 @@ Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = False)
 End Sub
 Private Function RaiseEventSelChange(Optional ByVal KeepUndo As Boolean = False) As Boolean
     
-    If (pLastSel.StartPos <> pSel.StartPos Or pLastSel.StopPos <> pSel.StopPos) Or KeepUndo Then
+    If KeepUndo Then
+        xUndoActs(0).PriorSelRange.StartPos = xUndoActs(0).AfterSelRange.StartPos
+        xUndoActs(0).PriorSelRange.StopPos = xUndoActs(0).AfterSelRange.StopPos
+        xUndoActs(0).AfterSelRange.StartPos = pSel.StartPos
+        xUndoActs(0).AfterSelRange.StopPos = pSel.StopPos
+    End If
+    
+    If (pLastSel.StartPos <> pSel.StartPos Or pLastSel.StopPos <> pSel.StopPos) Then
         
-        If Not KeepUndo Then
-            xUndoActs(0).PriorSelRange.StartPos = xUndoActs(0).AfterSelRange.StartPos
-            xUndoActs(0).PriorSelRange.StopPos = xUndoActs(0).AfterSelRange.StopPos
-            xUndoActs(0).AfterSelRange.StartPos = pSel.StartPos
-            xUndoActs(0).AfterSelRange.StopPos = pSel.StopPos
-        End If
+
         
         CanvasValidate
         SetScrollBars
@@ -2977,7 +3052,7 @@ Public Static Sub Refresh()
         Cancel = False
     End If
     
-    RaiseEventSelChange
+    RaiseEventSelChange True
     
 End Sub
 
