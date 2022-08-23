@@ -13,3 +13,14 @@ as you move around there are EARTH, WIND, WATER and FIRE written at the bottom o
 under them, and the goal is to turn each element word from white to terqouise based on whatever interactions
 
 you can find or think up of which are notably occuring to the IVX, until you lock in a word and all four wins.
+
+
+On another note:  The dll floating around in my DirectX projects for HouseOfGlass and MaxLand, which is called
+
+MaxLandLib.dll I unfortunately don't have the code for anymore.  I don't often use C++ and so the default save
+
+when I did use it for that dll which is 3D collision and culling, was not with my routine VB backups and the
+
+drive crashed as it sat in the Document and Settings folder under my user name.  Thankfully, I had it to the
+
+point of some really precise collission and semi descent to really well culling that is used in the VB6 apps.
