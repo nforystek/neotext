@@ -817,8 +817,9 @@ Removes a section of the stream that is in the middle having portions of the str
         Dim lSize As Long
         lSize = Length
         Stream.Pinch Offset, Width
-        If Length - Offset > 0 Then WriteToStream Partial(Offset, Length - Offset), Offset, Length - Offset
-        EndOfStream Length
+        lSize = (lSize - Width)
+        If lSize - Offset > 0 Then WriteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+        EndOfStream lSize
         RebreakStream
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."

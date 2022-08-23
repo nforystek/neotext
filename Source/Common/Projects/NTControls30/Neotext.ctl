@@ -2120,7 +2120,6 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                 
                 xUndoActs(0).PriorTextData.Reset
                 xUndoActs(0).AfterTextData.Reset
-                xUndoActs(0).PriorSelRange = pSel
                 
                 If pSel.StartPos = pSel.StopPos Then
                     'pText = Left(pText, pSel.StartPos) & vbLf & Mid(pText, pSel.StartPos + 1)
@@ -2183,7 +2182,6 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                 
                 xUndoActs(0).PriorTextData.Reset
                 xUndoActs(0).AfterTextData.Reset
-                xUndoActs(0).PriorSelRange = pSel
                 
                 If pSel.StartPos = pSel.StopPos Then
                 
@@ -2249,20 +2247,22 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     
                 End If
                 
-                'xUndoActs(0).AfterTextData.Concat Convert(Chr(8))
-                
                 pSel.StopPos = pSel.StartPos
                 
                 RaiseEventChange
                 
             Case 9 'tab
                 If pLocked Then Exit Sub
-
-                xUndoActs(0).PriorTextData.Reset
-                xUndoActs(0).AfterTextData.Reset
                 
-                
-                If SelLength > 0 Then
+                If pSel.StartPos = pSel.StopPos Then
+                    xUndoActs(0).PriorTextData.Reset
+                    xUndoActs(0).AfterTextData.Reset
+                    xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyCode))
+                    
+                    ExpandColorRecords SelStart, 1
+                    
+                    RaiseEventChange
+                Else
                 
 '                    lIndex = LineOffset(LineIndex(pSel.StartPos))
 '                    temp = LineOffset(LineIndex(pSel.StopPos))
@@ -2282,18 +2282,13 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                         End If
                         
                         KeyCode = 0
-                        
-                        RaiseEventChange
-                
-
-                        
+  
 '                    End Ife
-                Else
-                    'xUndoActs(0).PriorTextData.Post 8
-                    xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyCode))
-                    ExpandColorRecords SelStart, Len(TabSpace)
+
+
                 End If
                 
+                        
             Case 36 'home
                 temp = LineIndex(pSel.StartPos)
                 lIndex = LineLength(temp) - Len(LTrimStrip(LTrimStrip(LineText(temp), vbTab), " "))
@@ -2391,7 +2386,9 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
     pSel.StartPos = tmpSel.StartPos
     pSel.StopPos = tmpSel.StopPos
 
-    xUndoActs(0).PriorSelRange = pSel
+    xUndoActs(0).PriorTextData.Reset
+    xUndoActs(0).AfterTextData.Reset
+                
     xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
     txtLines = SelText
     
@@ -2447,7 +2444,7 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
     'pSel.StopPos = tmpSel.StartPos + Len(newtxt) ' LineOffset(LineIndex(tmpSel.StopPos)) + LineLength(LineIndex(tmpSel.StopPos))
 
     xUndoActs(0).AfterTextData.Concat Convert(newtxt) ' Convert(Chr(KeyCode))
-    xUndoActs(0).AfterSelRange = pSel
+
 
     'SelText = newtxt
     
@@ -2537,13 +2534,23 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                     
             Dim tText As Strands
             If insertMode Then
-
+                If pSel.StartPos > pSel.StopPos Then
+                    Swap pSel.StartPos, pSel.StopPos
+                End If
+                    
                 Set tText = New Strands
                 If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
                 tText.Concat Convert(Chr(KeyAscii))
                 If pSel.StartPos + 1 < pText.Length Then
-                    xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos)
-                    tText.Concat pText.Partial(pSel.StartPos + 1)
+                
+                    If pSel.StartPos = pSel.StopPos Then
+                        xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, 1)
+                        tText.Concat pText.Partial(pSel.StartPos + 1)
+                    Else
+                        xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
+                        tText.Concat pText.Partial(pSel.StartPos + (pSel.StopPos - pSel.StartPos))
+                    End If
+                    
                 End If
 
                 If tText.Length > 0 Then
@@ -2552,9 +2559,7 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                     pText.Reset
                 End If
                 Set tText = Nothing
-                
-                xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyAscii))
-        
+            
             ElseIf pSel.StartPos < pText.Length Then
 
                 Set tText = New Strands
@@ -2805,14 +2810,24 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
             xUndoActs(0).PriorTextData.Reset
             xUndoActs(0).AfterTextData.Reset
         
+            If pSel.StartPos > pSel.StopPos Then
+                ExpandColorRecords pSel.StopPos, dText.Length
+                pText.Pyramid dText, pSel.StopPos, pSel.StartPos - pSel.StopPos
+                pSel.StartPos = pSel.StopPos + dText.Length
+            Else
+                ExpandColorRecords pSel.StartPos, dText.Length
+                pText.Pyramid dText, pSel.StartPos, pSel.StopPos - pSel.StartPos
+                pSel.StopPos = pSel.StartPos + dText.Length
+                
+            End If
+
             xUndoActs(0).AfterTextData.Concat dText.Partial
-            ExpandColorRecords SelStart, dText.Length
-            SelText = Convert(dText.Partial)
             
+            Set dText = Nothing
             Cancel = False
             
             RaiseEventChange
-            Set dText = Nothing
+            
         Else
             Dim lpos As Long
             lpos = CaretFromPoint(X, Y)
@@ -2869,7 +2884,7 @@ Private Sub UserControl_OLEDragOver(Data As DataObject, Effect As Long, Button A
     If Data.GetFormat(ClipBoardConstants.vbCFText) Then
         If dText Is Nothing Then
             Set dText = New NTNodes10.Strands
-            dText.Concat Convert(Data.GetData(ClipBoardConstants.vbCFText))
+            dText.Concat Convert(Replace(Data.GetData(ClipBoardConstants.vbCFText), vbCrLf, vbLf))
         End If
         
     End If
@@ -2887,7 +2902,7 @@ End Sub
 Private Sub UserControl_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
     Data.SetData SelText, ClipBoardConstants.vbCFText
     Set dText = New NTNodes10.Strands
-    dText.Concat Convert(SelText)
+    dText.Concat Convert(Replace(SelText, vbCrLf, vbLf))
     RaiseEvent OLEStartDrag(Data, AllowedEffects)
 End Sub
 
