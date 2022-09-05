@@ -94,7 +94,6 @@ Attribute VB_Exposed = True
 Option Explicit
 Implements IControl
 
-
 Public Enum vbScrollBars
     Auto = -1
     None = 0
@@ -151,7 +150,7 @@ Private pScrollBars As vbScrollBars
 Private pTabSpace As String
 Private pCodePage As Long
 Private pPageBreaks() As Long
-Private pColorRanges() As ColorRange
+Private pColorRecords() As ColorRange
 
 Private pOldProc As Long
 
@@ -508,8 +507,6 @@ Preforms a removal of any selected text and puts it in the clipboard.
             DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
 
             xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
-
-            'xUndoActs(0).AfterTextData.Concat Convert(Chr(8))
             
             Clipboard.SetText Replace(SelText, vbCrLf, vbLf)
             pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
@@ -549,8 +546,7 @@ Inserts into the text at the current selection any text data contained in the cl
             Dim clipText() As Byte
             clipText = Convert(Replace(Clipboard.GetText(ClipBoardConstants.vbCFText), vbCrLf, vbLf))
                         
-            Dim tText As Strands
-            Set tText = New Strands
+            Dim tText As New Strands
             tText.Concat clipText
             If pSel.StartPos > pSel.StopPos Then
                 ExpandColorRecords pSel.StopPos, SelLength
@@ -584,7 +580,6 @@ Clears all the text on the current code page.
         If pText.Length > 0 Then
             xUndoActs(0).PriorTextData.Concat pText.Partial
         End If
-        'xUndoActs(0).AfterTextData.Concat Convert(Chr(48))
         
         pSel.StartPos = 0
         pSel.StopPos = 0
@@ -600,9 +595,9 @@ Friend Sub ClearSeperators()
     pPageBreaks(0) = 0
 End Sub
 Private Sub ResetColors()
-    ReDim pColorRanges(0 To 0) As ColorRange
-    pColorRanges(0).Forecolor = pForecolor
-    pColorRanges(0).BackColor = pBackcolor
+    ReDim pColorRecords(0 To 0) As ColorRange
+    pColorRecords(0).Forecolor = pForecolor
+    pColorRecords(0).BackColor = pBackcolor
 End Sub
 Public Sub Reset() ' _
 Resets the control to the default state of properties.
@@ -611,11 +606,8 @@ Resets the control to the default state of properties.
     
     ClearSeperators
     ResetUndoRedo
-    Set xUndoActs(0).AfterTextData = Nothing
-    Set xUndoActs(0).PriorTextData = Nothing
 
     Set tText = Nothing
-    'Set pText = Nothing
     Set dText = Nothing
     Dim cnt As Long
     For cnt = LBound(aText) To UBound(aText)
@@ -702,7 +694,7 @@ Friend Property Let hProc(ByVal RHS As Long)
 End Property
 
 Private Function DrawableRect() As RECT
-    DrawableRect = RECT(LineColumnWidth, 0, UsercontrolWidth, UsercontrolHeight)
+    DrawableRect = RECT(LineColumnWidth, 0, UsercontrolWidth + LineColumnWidth, UsercontrolHeight)
 End Function
 Private Static Property Get UsercontrolWidth(Optional ByVal Recalc As Boolean = False) As Long
     Static pUserControlWidth As Long
@@ -774,11 +766,13 @@ Attribute MultipleLines.VB_Description = "Sets whehter or not this text control 
     If pMultiLine <> RHS Then
         pMultiLine = RHS
         If Not pMultiLine Then
-    '        pText = Replace(pText, vbLf, "")
+
             Dim tText As New Strands
-           
-            tText.Concat Convert(Replace(Replace(Convert(pText.Partial), vbCrLf, vbLf), vbLf, ""))
-    
+            If pText.Length > 0 Then
+            
+                tText.Concat Convert(Replace(Replace(Convert(pText.Partial), vbCrLf, vbLf), vbLf, ""))
+            End If
+            
             If tText.Length > 0 Then
                 pText.Clone tText
             Else
@@ -904,8 +898,6 @@ Private Sub CanvasValidate(Optional ByVal RecalcSizeOf As Boolean = True)
     If pOffsetX > 0 Or UsercontrolWidth(RecalcSizeOf) > GetCanvasWidth(RecalcSizeOf) Then pOffsetX = 0
     If pOffsetY > 0 Or UsercontrolHeight(RecalcSizeOf) > GetCanvasHeight(RecalcSizeOf) Then pOffsetY = 0
 
-   ' If pOffsetX < -(CanvasWidth - UsercontrolWidth)  Then pOffsetX = -(CanvasWidth - UsercontrolWidth)
-   ' If pOffsetY < -(CanvasHeight - UsercontrolHeight) Then pOffsetY = -(CanvasHeight - UsercontrolHeight)
 End Sub
 
 Public Property Get Forecolor() As OLE_COLOR ' _
@@ -946,63 +938,63 @@ Public Sub ColorText(ByVal Forecolor As Variant, Optional BackColor As Variant, 
 Changes the color of existing text in the control specified by the optional Offset and Width, when omitted, the entire text color is changed.
     If colorOpen Then
         
-        Dim startClr As Long
-        Dim stopClr As Long
-        Dim cnt As Long
-        Dim tmpBack As Long
-        Dim tmpFore As Long
-        Dim tmpMark As Long
-
-        If Width = -1 Then Width = Length - Offset
-        startClr = LocateColorRecord(Offset)
-        stopClr = LocateColorRecord(Offset + Width)
-        
-        tmpBack = pColorRanges(stopClr).BackColor
-        tmpFore = pColorRanges(stopClr).Forecolor
-        tmpMark = pColorRanges(stopClr).StartMark
-    
-        If CLng(pColorRanges(startClr).Forecolor) = IIf(IsMissing(Forecolor), pForecolor, CLng(Forecolor)) And _
-            CLng(pColorRanges(startClr).BackColor) = IIf(IsMissing(BackColor), pBackcolor, CLng(BackColor)) And _
-            pColorRanges(startClr).StartMark = Offset And _
-            pColorRanges(stopClr).StartMark = Offset + Width Then Exit Sub
-        
-        If Not pColorRanges(startClr).StartMark = Offset Then
-            startClr = startClr + 1
-        End If
-
-        AddColorRange startClr, Offset
-
-        AddColorRange stopClr, Offset + Width
-        cnt = startClr + 1
-        
-        Do While cnt < stopClr
-            DelColorRange cnt
-            stopClr = stopClr - 1
-        Loop
-        
-        With pColorRanges(startClr)
-            If Not IsMissing(Forecolor) Then
-                .Forecolor = Forecolor
-            Else
-                .Forecolor = pForecolor
-            End If
-            If Not IsMissing(BackColor) Then
-                .BackColor = BackColor
-            Else
-                .BackColor = pBackcolor
-            End If
-            .StartMark = Offset
-        End With
-        
-        If (Not startClr = stopClr) Or (Width > 0) Then
-
-            With pColorRanges(stopClr)
-                .Forecolor = tmpFore
-                .BackColor = tmpBack
-                .StartMark = Offset + Width
-            End With
-
-        End If
+'        Dim startClr As Long
+'        Dim stopClr As Long
+'        Dim cnt As Long
+'        Dim tmpBack As Long
+'        Dim tmpFore As Long
+'        Dim tmpMark As Long
+'
+'        If Width = -1 Then Width = Length - Offset
+'        startClr = LocateColorRecord(Offset)
+'        stopClr = LocateColorRecord(Offset + Width)
+'
+'        tmpBack = pColorRecords(stopClr).BackColor
+'        tmpFore = pColorRecords(stopClr).Forecolor
+'        tmpMark = pColorRecords(stopClr).StartLoc
+'
+'        If CLng(pColorRecords(startClr).Forecolor) = IIf(IsMissing(Forecolor), pForecolor, CLng(Forecolor)) And _
+'            CLng(pColorRecords(startClr).BackColor) = IIf(IsMissing(BackColor), pBackcolor, CLng(BackColor)) And _
+'            pColorRecords(startClr).StartLoc = Offset And _
+'            pColorRecords(stopClr).StartLoc = Offset + Width Then Exit Sub
+'
+'        If Not pColorRecords(startClr).StartLoc = Offset Then
+'            startClr = startClr + 1
+'        End If
+'
+'        ClrRec = AddColorRecord(startClr, Offset)
+'
+'        AddColorRange stopClr, Offset + Width
+'        cnt = startClr + 1
+'
+'        Do While cnt < stopClr
+'            DelColorRange cnt
+'            stopClr = stopClr - 1
+'        Loop
+'
+'        With pColorRecords(startClr)
+'            If Not IsMissing(Forecolor) Then
+'                .Forecolor = Forecolor
+'            Else
+'                .Forecolor = pForecolor
+'            End If
+'            If Not IsMissing(BackColor) Then
+'                .BackColor = BackColor
+'            Else
+'                .BackColor = pBackcolor
+'            End If
+'            .StartLoc = Offset
+'        End With
+'
+'        If (Not startClr = stopClr) Or (Width > 0) Then
+'
+'            With pColorRecords(stopClr)
+'                .Forecolor = tmpFore
+'                .BackColor = tmpBack
+'                .StartLoc = Offset + Width
+'            End With
+'
+'        End If
 
     Else
         Err.Raise 8, , "The ColorText function must be used with in the ColorBegin, ColorLine or ColorEnd events and can not be used otherwise."
@@ -1031,23 +1023,19 @@ Attribute SelText.VB_Description = "Sets the selected text, the portion of text 
     If pSel.StartPos > pSel.StopPos Then
         Swap pSel.StartPos, pSel.StopPos
     End If
-    'pText = Left(pText, pSel.StartPos) & RHS & Mid(pText, pSel.StopPos + 1)
-    
-    If pSel.StartPos > 0 And pText.Length > pSel.StartPos Then
-        tText.Concat pText.Partial(0, pSel.StartPos)
-    End If
-    
-    tText.Concat Convert(Replace(RHS, vbCrLf, vbLf))
-    
-    If pText.Length > pSel.StopPos Then
-        tText.Concat pText.Partial(pSel.StopPos)
-    End If
 
-    If tText.Length > 0 Then
-        pText.Clone tText
-    Else
-        pText.Reset
+    If Len(RHS) > 0 Then
+        tText.Concat Convert(Replace(RHS, vbCrLf, vbLf))
     End If
+    
+    If pSel.StartPos >= 0 And pText.Length > pSel.StopPos And pSel.StopPos - pSel.StartPos > 0 Then
+        pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
+    End If
+    
+    If tText.Length > 0 Then
+        pText.Pyramid tText, pSel.StartPos, 0
+    End If
+    
     Set tText = Nothing
     
     pSel.StopPos = pSel.StartPos + Len(Replace(RHS, vbCrLf, vbLf))
@@ -1146,12 +1134,6 @@ Attribute Font.VB_Description = "Sets the font that the text is displayed in."
 resetfont:
 
     Set UserControl.Font = newVal
-    'UserControl.FontBold = UserControl.Font.Bold
-    'UserControl.FontItalic = UserControl.Font.Italic
-    'UserControl.FontName = UserControl.Font.name
-    'UserControl.FontSize = UserControl.Font.Size
-    'UserControl.FontStrikethru = UserControl.Font.Strikethrough
-    'UserControl.FontUnderline = UserControl.Font.Underline
     Set pBackBuffer.Font = UserControl.Font
     
 '    If widthMatch Then
@@ -1277,14 +1259,14 @@ End Function
 Private Sub Timer1_Timer()
     Static cursorBlink As Boolean
     Static lastLoc As POINTAPI
-    Dim clrRec As Long
+    Dim ClrRec As Long
     Dim newloc As POINTAPI
     newloc = CaretLocation
     
     If ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
         If insertMode Then
-            clrRec = LocateColorRecord(pSel.StartPos)
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRanges(clrRec).Forecolor, pColorRanges(clrRec).BackColor, False
+            ClrRec = LocateColorRecord(pSel.StartPos)
+            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
         Else
             ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
         End If
@@ -1310,8 +1292,8 @@ Private Sub Timer1_Timer()
         
     ElseIf ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
         If insertMode Then
-            clrRec = LocateColorRecord(pSel.StartPos)
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRanges(clrRec).Forecolor, pColorRanges(clrRec).BackColor, False
+            ClrRec = LocateColorRecord(pSel.StartPos)
+            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
         Else
             ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
         End If
@@ -1399,87 +1381,36 @@ Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal Str
         If bColor <> pBackcolor Then
             If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
                 pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-            Else
-                ClipPrintText = 0
+            'Else
+            '    ClipPrintText = 0
             End If
         ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        Else
-            ClipPrintText = 0
+            If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
+                pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+            'Else
+            '    ClipPrintText = 0
+            End If
+            'pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        'Else
+        '    ClipPrintText = 0
         End If
     ElseIf BoxFill Then
         If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
             pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        Else
-            ClipPrintText = 0
+        'Else
+        '    ClipPrintText = 0
         End If
     ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-        pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-    Else
-        ClipPrintText = 0
+        If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
+            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+        'Else
+        '    ClipPrintText = 0
+        End If
+        'pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
+    'Else
+    '    ClipPrintText = 0
     End If
 End Function
-
-'Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal StrText As String, Optional Color As Variant, Optional ByVal BoxFill As Boolean = False, Optional BackColor As Variant) As Long
-'    StrText = Replace(StrText, Chr(9), TabSpace)
-'    If BoxFill Then
-'        If ClipLineDraw(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1), Color, True) Then
-'            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, pBackcolor
-'            ClipPrintText = Me.TextWidth(StrText)
-'        End If
-'    ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-'        If Not IsMissing(BackColor) Then
-'            If ClipLineDraw(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1), BackColor, True) Then
-'                pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, Color
-'                ClipPrintText = Me.TextWidth(StrText)
-'            End If
-'        Else
-'            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, Color
-'            ClipPrintText = Me.TextWidth(StrText)
-'        End If
-'    End If
-'End Function
-
-'Private Function ClipPrintText2(ByVal X1 As Single, ByVal Y1 As Single, ByVal StrText As String, Optional Color As Variant, Optional ByVal BoxFill As Boolean = False, Optional BackColor As Variant) As Long
-'
-'    If BoxFill Then
-'        If ClipLineDraw(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1), Color, True) Then
-'            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, pBackcolor
-'        End If
-'    ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
-'        If Not IsMissing(BackColor) Then
-'            If ClipLineDraw(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1), BackColor, True) Then
-'                pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, Color
-'            End If
-'        Else
-'            pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, Color
-'        End If
-'    End If
-'    ClipPrintText2 = Me.TextWidth(StrText)
-'
-'End Function
-
-'
-'Private Function ClipPrintTextBlock(ByVal X1 As Single, ByVal Y1 As Single, ByVal StrText As String, Optional Color As Variant, Optional ByVal BoxFill As Boolean = False) As POINTAPI
-'    With ClipPrintTextBlock
-'        .X = X1
-'        .Y = Y1
-'        Dim outLine As String
-'        If StrText <> "" Then
-'            Do While InStr(StrText, vbLf) > 0
-'                outLine = RemoveNextArg(StrText, vbLf)
-'                ClipPrintText .X, .Y, outLine, Color, BoxFill
-'                .X = pOffsetX + LineColumnWidth
-'                .Y = .Y + Me.TextHeight(outLine)
-'            Loop
-'            If StrText <> "" Then
-'                ClipPrintText .X, .Y, StrText, Color, BoxFill
-'                .X = .X + Me.TextWidth(StrText)
-'            End If
-'        End If
-'    End With
-'End Function
-
 
 Private Function GetRGBColor(ByVal IRCColorNum As Long, ByVal ForeElseBack As Boolean) As Long
     Select Case IRCColorNum
@@ -1515,8 +1446,177 @@ Private Function GetRGBColor(ByVal IRCColorNum As Long, ByVal ForeElseBack As Bo
             GetRGBColor = RGB(127, 127, 127)
         Case 15 '- 15 - Light Grey.
             GetRGBColor = RGB(210, 210, 210)
+
+        Case 16
+            GetRGBColor = RGB(Val("&H47"), Val("&H00"), Val("&H00"))
+        Case 17
+            GetRGBColor = RGB(Val("&H47"), Val("&H21"), Val("&H00"))
+        Case 18
+            GetRGBColor = RGB(Val("&H47"), Val("&H47"), Val("&H00"))
+        Case 19
+            GetRGBColor = RGB(Val("&H32"), Val("&H47"), Val("&H00"))
+        Case 20
+            GetRGBColor = RGB(Val("&H00"), Val("&H47"), Val("&H00"))
+        Case 21
+            GetRGBColor = RGB(Val("&H00"), Val("&H47"), Val("&H2c"))
+        Case 22
+            GetRGBColor = RGB(Val("&H00"), Val("&H47"), Val("&H47"))
+        Case 23
+            GetRGBColor = RGB(Val("&H00"), Val("&H27"), Val("&H47"))
+        Case 24
+            GetRGBColor = RGB(Val("&H00"), Val("&H00"), Val("&H47"))
+        Case 25
+            GetRGBColor = RGB(Val("&H2e"), Val("&H00"), Val("&H47"))
+        Case 26
+            GetRGBColor = RGB(Val("&H47"), Val("&H00"), Val("&H47"))
+        Case 27
+            GetRGBColor = RGB(Val("&H47"), Val("&H00"), Val("&H2a"))
+        Case 28
+            GetRGBColor = RGB(Val("&H74"), Val("&H00"), Val("&H00"))
+        Case 29
+            GetRGBColor = RGB(Val("&H74"), Val("&H3a"), Val("&H00"))
+        Case 30
+            GetRGBColor = RGB(Val("&H74"), Val("&H74"), Val("&H00"))
+        Case 31
+            GetRGBColor = RGB(Val("&H51"), Val("&H74"), Val("&H00"))
+        Case 32
+            GetRGBColor = RGB(Val("&H00"), Val("&H74"), Val("&H00"))
+        Case 33
+            GetRGBColor = RGB(Val("&H00"), Val("&H74"), Val("&H49"))
+        Case 34
+            GetRGBColor = RGB(Val("&H00"), Val("&H74"), Val("&H74"))
+        Case 35
+            GetRGBColor = RGB(Val("&H00"), Val("&H40"), Val("&H74"))
+        Case 36
+            GetRGBColor = RGB(Val("&H00"), Val("&H00"), Val("&H74"))
+        Case 37
+            GetRGBColor = RGB(Val("&H40"), Val("&H00"), Val("&H74"))
+        Case 38
+            GetRGBColor = RGB(Val("&H74"), Val("&H00"), Val("&H74"))
+        Case 39
+            GetRGBColor = RGB(Val("&H74"), Val("&H00"), Val("&H45"))
+        Case 40
+            GetRGBColor = RGB(Val("&Hb5"), Val("&H00"), Val("&H00"))
+        Case 41
+            GetRGBColor = RGB(Val("&Hb5"), Val("&H63"), Val("&H00"))
+        Case 42
+            GetRGBColor = RGB(Val("&Hb5"), Val("&Hb5"), Val("&H00"))
+        Case 43
+            GetRGBColor = RGB(Val("&H7d"), Val("&Hb5"), Val("&H00"))
+        Case 44
+            GetRGBColor = RGB(Val("&H00"), Val("&Hb5"), Val("&H00"))
+        Case 45
+            GetRGBColor = RGB(Val("&H00"), Val("&Hb5"), Val("&H71"))
+        Case 46
+            GetRGBColor = RGB(Val("&H00"), Val("&Hb5"), Val("&Hb5"))
+        Case 47
+            GetRGBColor = RGB(Val("&H00"), Val("&H63"), Val("&Hb5"))
+        Case 48
+            GetRGBColor = RGB(Val("&H00"), Val("&H00"), Val("&Hb5"))
+        Case 49
+            GetRGBColor = RGB(Val("&H75"), Val("&H00"), Val("&Hb5"))
+        Case 50
+            GetRGBColor = RGB(Val("&Hb5"), Val("&H00"), Val("&Hb5"))
+        Case 51
+            GetRGBColor = RGB(Val("&Hb5"), Val("&H00"), Val("&H6b"))
+        Case 52
+            GetRGBColor = RGB(Val("&Hff"), Val("&H00"), Val("&H00"))
+        Case 53
+            GetRGBColor = RGB(Val("&Hff"), Val("&H8c"), Val("&H00"))
+        Case 54
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hff"), Val("&H00"))
+        Case 55
+            GetRGBColor = RGB(Val("&Hb2"), Val("&Hff"), Val("&H00"))
+        Case 56
+            GetRGBColor = RGB(Val("&H00"), Val("&Hff"), Val("&H00"))
+        Case 57
+            GetRGBColor = RGB(Val("&H00"), Val("&Hff"), Val("&Ha0"))
+        Case 58
+            GetRGBColor = RGB(Val("&H00"), Val("&Hff"), Val("&Hff"))
+        Case 59
+            GetRGBColor = RGB(Val("&H00"), Val("&H8c"), Val("&Hff"))
+        Case 60
+            GetRGBColor = RGB(Val("&H00"), Val("&H00"), Val("&Hff"))
+        Case 61
+            GetRGBColor = RGB(Val("&Ha5"), Val("&H00"), Val("&Hff"))
+        Case 62
+            GetRGBColor = RGB(Val("&Hff"), Val("&H00"), Val("&Hff"))
+        Case 63
+            GetRGBColor = RGB(Val("&Hff"), Val("&H00"), Val("&H98"))
+        Case 64
+            GetRGBColor = RGB(Val("&Hff"), Val("&H59"), Val("&H59"))
+        Case 65
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hb4"), Val("&H59"))
+        Case 66
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hff"), Val("&H71"))
+        Case 67
+            GetRGBColor = RGB(Val("&Hcf"), Val("&Hff"), Val("&H60"))
+        Case 68
+            GetRGBColor = RGB(Val("&H6f"), Val("&Hff"), Val("&H6f"))
+        Case 69
+            GetRGBColor = RGB(Val("&H65"), Val("&Hff"), Val("&Hc9"))
+        Case 70
+            GetRGBColor = RGB(Val("&H6d"), Val("&Hff"), Val("&Hff"))
+        Case 71
+            GetRGBColor = RGB(Val("&H59"), Val("&Hb4"), Val("&Hff"))
+        Case 72
+            GetRGBColor = RGB(Val("&H59"), Val("&H59"), Val("&Hff"))
+        Case 73
+            GetRGBColor = RGB(Val("&Hc4"), Val("&H59"), Val("&Hff"))
+        Case 74
+            GetRGBColor = RGB(Val("&Hff"), Val("&H66"), Val("&Hff"))
+        Case 75
+            GetRGBColor = RGB(Val("&Hff"), Val("&H59"), Val("&Hbc"))
+        Case 76
+            GetRGBColor = RGB(Val("&Hff"), Val("&H9c"), Val("&H9c"))
+        Case 77
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hd3"), Val("&H9c"))
+        Case 78
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hff"), Val("&H9c"))
+        Case 79
+            GetRGBColor = RGB(Val("&He2"), Val("&Hff"), Val("&H9c"))
+        Case 80
+            GetRGBColor = RGB(Val("&H9c"), Val("&Hff"), Val("&H9c"))
+        Case 81
+            GetRGBColor = RGB(Val("&H9c"), Val("&Hff"), Val("&Hdb"))
+        Case 82
+            GetRGBColor = RGB(Val("&H9c"), Val("&Hff"), Val("&Hff"))
+        Case 83
+            GetRGBColor = RGB(Val("&H9c"), Val("&Hd3"), Val("&Hff"))
+        Case 84
+            GetRGBColor = RGB(Val("&H9c"), Val("&H9c"), Val("&Hff"))
+        Case 85
+            GetRGBColor = RGB(Val("&Hdc"), Val("&H9c"), Val("&Hff"))
+        Case 86
+            GetRGBColor = RGB(Val("&Hff"), Val("&H9c"), Val("&Hff"))
+        Case 87
+            GetRGBColor = RGB(Val("&Hff"), Val("&H94"), Val("&Hd3"))
+        Case 88
+            GetRGBColor = RGB(Val("&H00"), Val("&H00"), Val("&H00"))
+        Case 89
+            GetRGBColor = RGB(Val("&H13"), Val("&H13"), Val("&H13"))
+        Case 90
+            GetRGBColor = RGB(Val("&H28"), Val("&H28"), Val("&H28"))
+        Case 91
+            GetRGBColor = RGB(Val("&H36"), Val("&H36"), Val("&H36"))
+        Case 92
+            GetRGBColor = RGB(Val("&H4d"), Val("&H4d"), Val("&H4d"))
+        Case 93
+            GetRGBColor = RGB(Val("&H65"), Val("&H65"), Val("&H65"))
+        Case 94
+            GetRGBColor = RGB(Val("&H81"), Val("&H81"), Val("&H81"))
+        Case 95
+            GetRGBColor = RGB(Val("&H9f"), Val("&H9f"), Val("&H9f"))
+        Case 96
+            GetRGBColor = RGB(Val("&Hbc"), Val("&Hbc"), Val("&Hbc"))
+        Case 97
+            GetRGBColor = RGB(Val("&He2"), Val("&He2"), Val("&He2"))
+        Case 98
+            GetRGBColor = RGB(Val("&Hff"), Val("&Hff"), Val("&Hff"))
+
         Case 99 '- 99 - Default Foreground/Background - Not universally supported.
             GetRGBColor = IIf(ForeElseBack, pForecolor, pBackcolor)
+        
     End Select
 End Function
 
@@ -1554,99 +1654,282 @@ Private Function GetIRCColor(ByVal RGBColorNum As Long, ByVal ForeElseBack As Bo
             GetIRCColor = "14"
         Case RGB(210, 210, 210) '- 15 - Light Grey.
             GetIRCColor = "15"
+            
+        Case RGB(Val("&H47"), Val("&H00"), Val("&H00"))
+            GetIRCColor = "16"
+        Case RGB(Val("&H47"), Val("&H21"), Val("&H00"))
+            GetIRCColor = "17"
+        Case RGB(Val("&H47"), Val("&H47"), Val("&H00"))
+            GetIRCColor = "18"
+        Case RGB(Val("&H32"), Val("&H47"), Val("&H00"))
+            GetIRCColor = "19"
+        Case RGB(Val("&H00"), Val("&H47"), Val("&H00"))
+            GetIRCColor = "20"
+        Case RGB(Val("&H00"), Val("&H47"), Val("&H2c"))
+            GetIRCColor = "21"
+        Case RGB(Val("&H00"), Val("&H47"), Val("&H47"))
+            GetIRCColor = "22"
+        Case RGB(Val("&H00"), Val("&H27"), Val("&H47"))
+            GetIRCColor = "23"
+        Case RGB(Val("&H00"), Val("&H00"), Val("&H47"))
+            GetIRCColor = "24"
+        Case RGB(Val("&H2e"), Val("&H00"), Val("&H47"))
+            GetIRCColor = "25"
+        Case RGB(Val("&H47"), Val("&H00"), Val("&H47"))
+            GetIRCColor = "26"
+        Case RGB(Val("&H47"), Val("&H00"), Val("&H2a"))
+            GetIRCColor = "27"
+        Case RGB(Val("&H74"), Val("&H00"), Val("&H00"))
+            GetIRCColor = "28"
+        Case RGB(Val("&H74"), Val("&H3a"), Val("&H00"))
+            GetIRCColor = "29"
+        Case RGB(Val("&H74"), Val("&H74"), Val("&H00"))
+            GetIRCColor = "30"
+        Case RGB(Val("&H51"), Val("&H74"), Val("&H00"))
+            GetIRCColor = "31"
+        Case RGB(Val("&H00"), Val("&H74"), Val("&H00"))
+            GetIRCColor = "32"
+        Case RGB(Val("&H00"), Val("&H74"), Val("&H49"))
+            GetIRCColor = "33"
+        Case RGB(Val("&H00"), Val("&H74"), Val("&H74"))
+            GetIRCColor = "34"
+        Case RGB(Val("&H00"), Val("&H40"), Val("&H74"))
+            GetIRCColor = "35"
+        Case RGB(Val("&H00"), Val("&H00"), Val("&H74"))
+            GetIRCColor = "36"
+        Case RGB(Val("&H40"), Val("&H00"), Val("&H74"))
+            GetIRCColor = "37"
+        Case RGB(Val("&H74"), Val("&H00"), Val("&H74"))
+            GetIRCColor = "38"
+        Case RGB(Val("&H74"), Val("&H00"), Val("&H45"))
+            GetIRCColor = "39"
+        Case RGB(Val("&Hb5"), Val("&H00"), Val("&H00"))
+            GetIRCColor = "40"
+        Case RGB(Val("&Hb5"), Val("&H63"), Val("&H00"))
+            GetIRCColor = "41"
+        Case RGB(Val("&Hb5"), Val("&Hb5"), Val("&H00"))
+            GetIRCColor = "42"
+        Case RGB(Val("&H7d"), Val("&Hb5"), Val("&H00"))
+            GetIRCColor = "43"
+        Case RGB(Val("&H00"), Val("&Hb5"), Val("&H00"))
+            GetIRCColor = "44"
+        Case RGB(Val("&H00"), Val("&Hb5"), Val("&H71"))
+            GetIRCColor = "45"
+        Case RGB(Val("&H00"), Val("&Hb5"), Val("&Hb5"))
+            GetIRCColor = "46"
+        Case RGB(Val("&H00"), Val("&H63"), Val("&Hb5"))
+            GetIRCColor = "47"
+        Case RGB(Val("&H00"), Val("&H00"), Val("&Hb5"))
+            GetIRCColor = "48"
+        Case RGB(Val("&H75"), Val("&H00"), Val("&Hb5"))
+            GetIRCColor = "48"
+        Case RGB(Val("&Hb5"), Val("&H00"), Val("&Hb5"))
+            GetIRCColor = "50"
+        Case RGB(Val("&Hb5"), Val("&H00"), Val("&H6b"))
+            GetIRCColor = "51"
+        Case RGB(Val("&Hff"), Val("&H00"), Val("&H00"))
+            GetIRCColor = "52"
+        Case RGB(Val("&Hff"), Val("&H8c"), Val("&H00"))
+            GetIRCColor = "53"
+        Case RGB(Val("&Hff"), Val("&Hff"), Val("&H00"))
+            GetIRCColor = "54"
+        Case RGB(Val("&Hb2"), Val("&Hff"), Val("&H00"))
+            GetIRCColor = "55"
+        Case RGB(Val("&H00"), Val("&Hff"), Val("&H00"))
+            GetIRCColor = "56"
+        Case RGB(Val("&H00"), Val("&Hff"), Val("&Ha0"))
+            GetIRCColor = "57"
+        Case RGB(Val("&H00"), Val("&Hff"), Val("&Hff"))
+            GetIRCColor = "58"
+        Case RGB(Val("&H00"), Val("&H8c"), Val("&Hff"))
+            GetIRCColor = "59"
+        Case RGB(Val("&H00"), Val("&H00"), Val("&Hff"))
+            GetIRCColor = "60"
+        Case RGB(Val("&Ha5"), Val("&H00"), Val("&Hff"))
+            GetIRCColor = "61"
+        Case RGB(Val("&Hff"), Val("&H00"), Val("&Hff"))
+            GetIRCColor = "62"
+        Case RGB(Val("&Hff"), Val("&H00"), Val("&H98"))
+            GetIRCColor = "63"
+        Case RGB(Val("&Hff"), Val("&H59"), Val("&H59"))
+            GetIRCColor = "64"
+        Case RGB(Val("&Hff"), Val("&Hb4"), Val("&H59"))
+            GetIRCColor = "65"
+        Case RGB(Val("&Hff"), Val("&Hff"), Val("&H71"))
+            GetIRCColor = "66"
+        Case RGB(Val("&Hcf"), Val("&Hff"), Val("&H60"))
+            GetIRCColor = "67"
+        Case RGB(Val("&H6f"), Val("&Hff"), Val("&H6f"))
+            GetIRCColor = "68"
+        Case RGB(Val("&H65"), Val("&Hff"), Val("&Hc9"))
+            GetIRCColor = "69"
+        Case RGB(Val("&H6d"), Val("&Hff"), Val("&Hff"))
+            GetIRCColor = "70"
+        Case RGB(Val("&H59"), Val("&Hb4"), Val("&Hff"))
+            GetIRCColor = "71"
+        Case RGB(Val("&H59"), Val("&H59"), Val("&Hff"))
+            GetIRCColor = "72"
+        Case RGB(Val("&Hc4"), Val("&H59"), Val("&Hff"))
+            GetIRCColor = "73"
+        Case RGB(Val("&Hff"), Val("&H66"), Val("&Hff"))
+            GetIRCColor = "74"
+        Case RGB(Val("&Hff"), Val("&H59"), Val("&Hbc"))
+            GetIRCColor = "75"
+        Case RGB(Val("&Hff"), Val("&H9c"), Val("&H9c"))
+            GetIRCColor = "76"
+        Case RGB(Val("&Hff"), Val("&Hd3"), Val("&H9c"))
+            GetIRCColor = "77"
+        Case RGB(Val("&Hff"), Val("&Hff"), Val("&H9c"))
+            GetIRCColor = "78"
+        Case RGB(Val("&He2"), Val("&Hff"), Val("&H9c"))
+            GetIRCColor = "79"
+        Case RGB(Val("&H9c"), Val("&Hff"), Val("&H9c"))
+            GetIRCColor = "80"
+        Case RGB(Val("&H9c"), Val("&Hff"), Val("&Hdb"))
+            GetIRCColor = "81"
+        Case RGB(Val("&H9c"), Val("&Hff"), Val("&Hff"))
+            GetIRCColor = "82"
+        Case RGB(Val("&H9c"), Val("&Hd3"), Val("&Hff"))
+            GetIRCColor = "83"
+        Case RGB(Val("&H9c"), Val("&H9c"), Val("&Hff"))
+            GetIRCColor = "84"
+        Case RGB(Val("&Hdc"), Val("&H9c"), Val("&Hff"))
+            GetIRCColor = "85"
+        Case RGB(Val("&Hff"), Val("&H9c"), Val("&Hff"))
+            GetIRCColor = "86"
+        Case RGB(Val("&Hff"), Val("&H94"), Val("&Hd3"))
+            GetIRCColor = "87"
+        Case RGB(Val("&H00"), Val("&H00"), Val("&H00"))
+            GetIRCColor = "88"
+        Case RGB(Val("&H13"), Val("&H13"), Val("&H13"))
+            GetIRCColor = "89"
+        Case RGB(Val("&H28"), Val("&H28"), Val("&H28"))
+            GetIRCColor = "90"
+        Case RGB(Val("&H36"), Val("&H36"), Val("&H36"))
+            GetIRCColor = "91"
+        Case RGB(Val("&H4d"), Val("&H4d"), Val("&H4d"))
+            GetIRCColor = "92"
+        Case RGB(Val("&H65"), Val("&H65"), Val("&H65"))
+            GetIRCColor = "93"
+        Case RGB(Val("&H81"), Val("&H81"), Val("&H81"))
+            GetIRCColor = "94"
+        Case RGB(Val("&H9f"), Val("&H9f"), Val("&H9f"))
+            GetIRCColor = "95"
+        Case RGB(Val("&Hbc"), Val("&Hbc"), Val("&Hbc"))
+            GetIRCColor = "96"
+        Case RGB(Val("&He2"), Val("&He2"), Val("&He2"))
+            GetIRCColor = "97"
+        Case RGB(Val("&Hff"), Val("&Hff"), Val("&Hff"))
+            GetIRCColor = "98"
+            
         Case IIf(ForeElseBack, pForecolor, pBackcolor) '- 99 - Default Foreground/Background - Not universally supported.
             GetIRCColor = "99"
+                        
     End Select
 End Function
 
-Private Sub AddColorRange(ByRef Index As Long, ByVal Loc As Long)
-    Dim cnt As Long
-    ReDim Preserve pColorRanges(0 To UBound(pColorRanges) + 1) As ColorRange
-    If Index >= UBound(pColorRanges) Or Index = 0 Then
-        Index = UBound(pColorRanges)
+
+Private Sub DepleetColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
+    Dim Index As Long
+    Index = LocateColorRecord(CursorLoc)
+    Do While Index <= UBound(pColorRecords)
+        If pColorRecords(Index).StartLoc > CursorLoc Then
+            pColorRecords(Index).StartLoc = pColorRecords(Index).StartLoc - Width
+        End If
+        Index = Index + 1
+    Loop
+End Sub
+
+Private Sub ExpandColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
+    Dim Index As Long
+    Index = LocateColorRecord(CursorLoc)
+    Do While Index <= UBound(pColorRecords)
+        If pColorRecords(Index).StartLoc > CursorLoc Then
+            pColorRecords(Index).StartLoc = pColorRecords(Index).StartLoc + Width
+        End If
+        Index = Index + 1
+    Loop
+End Sub
+
+Private Sub CleanColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
+    'remove any color record whose width is 0 or less, with-in parameters ranges
+    Dim Index As Long
+    Index = LocateColorRecord(CursorLoc)
+    Do While Index <= UBound(pColorRecords)
+        If pColorRecords(Index).StartLoc < CursorLoc + Width Then
+            If WidthOfColorRecord(Index) = 0 Then
+                DelColorRecord Index
+            Else
+                Index = Index + 1
+            End If
+        Else
+            Exit Do
+        End If
+    Loop
+End Sub
+
+Private Function AddColorRecord(ByVal CursorLoc As Long, Optional ByVal Width As Long = 0) As Long
+    Dim Index As Long
+    Index = LocateColorRecord(CursorLoc)
+    ReDim Preserve pColorRecords(0 To UBound(pColorRecords) + 1) As ColorRange
+    If Index = 0 Then
+        Index = UBound(pColorRecords)
     Else
-        For cnt = UBound(pColorRanges) - 1 To Index Step -1
-            pColorRanges(cnt + 1) = pColorRanges(cnt)
+        Dim cnt As Long
+        For cnt = UBound(pColorRecords) - 1 To Index Step -1
+            pColorRecords(cnt).StartLoc = pColorRecords(cnt).StartLoc + Width
+            pColorRecords(cnt + 1) = pColorRecords(cnt)
         Next
     End If
-End Sub
+    pColorRecords(Index).StartLoc = CursorLoc
+    AddColorRecord = Index
+End Function
 
-'Private Sub AddColorRange(ByRef Index As Long, ByVal Loc As Long)
-'    Dim cnt As Long
-'    ReDim Preserve pColorRanges(0 To UBound(pColorRanges) + 1) As ColorRange
-'    If Index >= UBound(pColorRanges) Then
-'        Index = UBound(pColorRanges)
-'    Else
-'        For cnt = UBound(pColorRanges) - 1 To Index Step -1
-'            pColorRanges(cnt + 1) = pColorRanges(cnt)
-'        Next
-'    End If
-'End Sub
-Private Sub DelColorRange(ByVal Index As Long)
+Private Sub DelColorRecord(ByVal Index As Long)
     Dim cnt As Long
-    For cnt = Index To UBound(pColorRanges) - 1
-        pColorRanges(cnt) = pColorRanges(cnt + 1)
+    Dim Width As Long
+    Width = WidthOfColorRecord(Index)
+    For cnt = Index To UBound(pColorRecords) - 1
+        pColorRecords(cnt) = pColorRecords(cnt + 1)
+        pColorRecords(cnt).StartLoc = pColorRecords(cnt).StartLoc - Width
     Next
-    ReDim Preserve pColorRanges(0 To UBound(pColorRanges) - 1) As ColorRange
+    ReDim Preserve pColorRecords(0 To UBound(pColorRecords) - 1) As ColorRange
 End Sub
 
-Private Sub ExpandColorRecords(ByVal StartPos As Long, ByVal ExpandWidth As Long)
-    Dim cnt As Long
-    
-    Do While cnt <= UBound(pColorRanges)
-        If pColorRanges(cnt).StartMark >= StartPos Then
-            pColorRanges(cnt).StartMark = pColorRanges(cnt).StartMark + ExpandWidth
-        End If
-        cnt = cnt + 1
-    Loop
-
-'    StartPos = LocateColorRecord(StartPos)+1
-'    Do While StartPos <= UBound(pColorRanges)
-'        pColorRanges(StartPos).StartMark = pColorRanges(StartPos).StartMark + ExpandWidth
-'        StartPos = StartPos + 1
-'    Loop
-End Sub
-Private Sub DepleetColorRecords(ByVal StartPos As Long, ByVal DepleetWidth As Long, Optional ByVal ExcludeRecord As Long = 0)
-    Dim Loc As Long
-    Loc = LocateColorRecord(StartPos) + 1
-    Do While Loc <= UBound(pColorRanges)
-        If StartPos <= pColorRanges(Loc).StartMark Then
-            If Loc < UBound(pColorRanges) Then
-                If pColorRanges(Loc).StartMark - pColorRanges(Loc - 1).StartMark <= DepleetWidth Then
-                    DelColorRange Loc - 1
-                    Loc = -(Loc - 1)
-                End If
-            ElseIf Loc = UBound(pColorRanges) And DepleetWidth >= Length - pColorRanges(Loc).StartMark Then
-                DelColorRange Loc - 1
-                Loc = -(Loc - 1)
+Private Function LocateColorRecord(ByVal CursorLoc As Long) As Long
+    If UBound(pColorRecords) > 0 Then
+        Dim cnt As Long
+        For cnt = 0 To UBound(pColorRecords) - 1
+            If CursorLoc >= pColorRecords(cnt).StartLoc And CursorLoc < pColorRecords(cnt + 1).StartLoc Then
+                'seeking the inbetween marker, exit if found
+                LocateColorRecord = cnt
+                Exit Function
+            ElseIf pColorRecords(cnt).StartLoc = pColorRecords(cnt + 1).StartLoc Then
+                LocateColorRecord = cnt + 1
             End If
+        Next
+        
+        'didn't find inbetween so check the last record
+        If CursorLoc >= pColorRecords(UBound(pColorRecords)).StartLoc Then
+            LocateColorRecord = UBound(pColorRecords)
+            Exit Function
         End If
-        If Loc > 0 Then pColorRanges(Loc).StartMark = pColorRanges(Loc).StartMark - DepleetWidth
-        If Loc >= 0 Then
-            Loc = Loc + 1
-        Else
-            Loc = -Loc
-        End If
-    Loop
-End Sub
-
-Private Sub CleanColorRecords(ByVal StartPos As Long, ByVal StopPos As Long)
-    Dim cnt As Long
-    cnt = 1
-    Do While cnt < UBound(pColorRanges)
-        If (pColorRanges(cnt).StartMark = pColorRanges(cnt + 1).StartMark) Or _
-            (pColorRanges(cnt).StartMark + 1 = pColorRanges(cnt + 1).StartMark) Then
-            DelColorRange cnt
-        Else
-            cnt = cnt + 1
-        End If
-    Loop
-    If cnt < UBound(pColorRanges) Then
-        If (pColorRanges(cnt).StartMark >= pText.Length) Then
-            DelColorRange cnt
-        End If
+        
     End If
-End Sub
+End Function
+
+Private Function WidthOfColorRecord(ByVal Index As Long) As Long
+    'colorrecord 0 is special, it contains the defaults and spans the entire contents,
+    'when colorrecords are used, it is not used beyond the color record at index 0
+    If Index > 0 And Index < UBound(pColorRecords) Then
+        WidthOfColorRecord = (pColorRecords(Index + 1).StartLoc - pColorRecords(Index).StartLoc)
+    ElseIf Index > 0 And Index = UBound(pColorRecords) Then
+        WidthOfColorRecord = (pText.Length - pColorRecords(Index).StartLoc)
+    ElseIf Index = 0 Then
+        WidthOfColorRecord = pText.Length
+    End If
+End Function
+
 
 Private Function CheckNumeric(ByRef StrText() As Byte, ByVal Loc As Long) As Boolean
     If Loc <= UBound(StrText) Then
@@ -1663,20 +1946,10 @@ Private Function CheckComma(ByRef StrText() As Byte, ByVal Loc As Long) As Boole
     End If
 End Function
 
-Private Function LocateColorRecord(ByVal Loc As Long) As Long
-    If UBound(pColorRanges) > 0 Then
-        Dim cnt As Long
-        For cnt = 0 To UBound(pColorRanges) - 1
-            If Loc >= pColorRanges(cnt).StartMark And Loc < pColorRanges(cnt + 1).StartMark Then
-                LocateColorRecord = cnt
-                Exit Function
-            End If
-        Next
-        If Loc >= pColorRanges(UBound(pColorRanges)).StartMark Then
-            LocateColorRecord = UBound(pColorRanges)
-        End If
-    End If
-End Function
+
+
+
+
 
 Private Function SubClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText As String, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
     If StrText <> "" Then
@@ -1695,7 +1968,7 @@ End Function
 Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText() As Byte, ByVal Offset As Long, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
     
     Dim cnt As Long
-    Dim runCnt As Long
+    Dim ClrRec As Long
     Dim line As Long
     Dim rmvCnt As Long
     Dim newClrRec As Boolean
@@ -1703,26 +1976,29 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
     ReDim ircText(LBound(StrText) To UBound(StrText)) As Byte
     Dim nextPrint As String
 
-    pColorRanges(0).BackColor = pBackcolor
-    pColorRanges(0).Forecolor = pForecolor
-    runCnt = LocateColorRecord(Offset)
+
+    pColorRecords(0).BackColor = pBackcolor
+    pColorRecords(0).Forecolor = pForecolor
+    
+    ClrRec = LocateColorRecord(Offset)
     
     If Not IsMissing(fColor) Then
         pBackBuffer.Forecolor = fColor
     Else
-        pBackBuffer.Forecolor = pColorRanges(runCnt).Forecolor
+        pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
     End If
     
     If Not IsMissing(bColor) Then
         pBackBuffer.BackColor = bColor
     Else
-        pBackBuffer.BackColor = pColorRanges(runCnt).BackColor
+        pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
     End If
     
     line = LineFirstVisible
 
     RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
 
+    
     cnt = LBound(StrText)
     
     Do While cnt <= UBound(StrText)
@@ -1741,90 +2017,107 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
                 If Not newClrRec Then newClrRec = True
                 
-                runCnt = runCnt + 1
-                AddColorRange runCnt, (cnt - rmvCnt) + Offset
+                ClrRec = AddColorRecord((cnt - rmvCnt) + Offset)
 
-                pColorRanges(runCnt).StartMark = (cnt - rmvCnt) + Offset
-                cnt = cnt + 1
+                cnt = cnt + 1 'pass the chr(3)
+                rmvCnt = rmvCnt + 1
 
+                
                 If CheckNumeric(StrText, cnt) Then
-                    cnt = cnt + 1
+                    cnt = cnt + 1 'pass first digit
+                    rmvCnt = rmvCnt + 1
                     'at least forecolor
                     If CheckNumeric(StrText, cnt) Then
                         'two digit forecolor
-                        cnt = cnt + 1
-                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), True)
-                        rmvCnt = rmvCnt + 3
-                        'cnt = cnt + 2
+                        cnt = cnt + 1 'pass second digit
+                        rmvCnt = rmvCnt + 1
+                        pColorRecords(ClrRec).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), True)
+                        
                     Else
                         'one digit forecolor
-                        pColorRanges(runCnt).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), True)
-                        rmvCnt = rmvCnt + 2
+                        pColorRecords(ClrRec).Forecolor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), True)
                     End If
-                End If
-
-                If CheckComma(StrText, cnt) Then
-                    'may have back color
-                    cnt = cnt + 1
-                    
-                    If CheckNumeric(StrText, cnt) Then
-                        cnt = cnt + 1
+                
+                    If CheckComma(StrText, cnt) Then
+                        'may have back color
+                        cnt = cnt + 1 'pass the comma
+                        rmvCnt = rmvCnt + 1
+                        
                         If CheckNumeric(StrText, cnt) Then
-                            'two digit back color
-                            cnt = cnt + 1
-                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), False)
-                            rmvCnt = rmvCnt + 3
-                        Else
-                            'one digit back color
-                            pColorRanges(runCnt).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), False)
-                            rmvCnt = rmvCnt + 2
+                            cnt = cnt + 1 'pass first digit
+                            rmvCnt = rmvCnt + 1
+                            'at least forecolor
+                            If CheckNumeric(StrText, cnt) Then
+                                'two digit forecolor
+                                cnt = cnt + 1 'pass second digit
+                                rmvCnt = rmvCnt + 1
+                                pColorRecords(ClrRec).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 2)) & Chr(StrText(cnt - 1)))), False)
+    
+                            Else
+                                'one digit forecolor
+                                pColorRecords(ClrRec).BackColor = GetRGBColor(CLng(CStr(Chr(StrText(cnt - 1)))), False)
+                            End If
                         End If
-                    End If
-                End If
 
-                cnt = cnt - 1
-                pBackBuffer.Forecolor = pColorRanges(runCnt).Forecolor
-                pBackBuffer.BackColor = pColorRanges(runCnt).BackColor
+                    End If
+                    
+                End If
+                
+                cnt = cnt - 1 'skip a beat comming next in the loop
+                
+                pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+                pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
                 
             Case 10
                 ircText(cnt - rmvCnt) = StrText(cnt)
                 
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-
+                
                 X1 = pOffsetX + LineColumnWidth
                 Y1 = Y1 + Me.TextHeight()
 
                 line = line + 1
 
                 RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
+                    
 
             Case Else
 
                 ircText(cnt - rmvCnt) = StrText(cnt)
                 
-                If runCnt < UBound(pColorRanges) Then
-                
-                    If (cnt - rmvCnt) + Offset >= pColorRanges(runCnt + 1).StartMark Then
-                    
+                If ClrRec < UBound(pColorRecords) Then
+
+                    If (cnt - rmvCnt) + Offset = pColorRecords(ClrRec + 1).StartLoc Then
+
                         SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
 
-                        runCnt = runCnt + 1
-                        pBackBuffer.BackColor = pColorRanges(runCnt).BackColor
-                        pBackBuffer.Forecolor = pColorRanges(runCnt).Forecolor
-                    
+                        ClrRec = ClrRec + 1
+                        pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+                        pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+                        
+'                    ElseIf (cnt - rmvCnt) + Offset > pColorRecords(ClrRec).StartLoc Then
+'
+'
+'                        pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+'                        pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+'
+'                        SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
+
                     End If
-                ElseIf runCnt = UBound(pColorRanges) Then
-                    
+
+                ElseIf ClrRec = UBound(pColorRecords) Then
+
                     SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-                        
-                    runCnt = runCnt + 1
-                    pBackBuffer.BackColor = pColorRanges(UBound(pColorRanges)).BackColor
-                    pBackBuffer.Forecolor = pColorRanges(UBound(pColorRanges)).Forecolor
-                        
+
+                    pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+                    pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+                    ClrRec = ClrRec + 1
+
                 End If
                     
                 nextPrint = nextPrint & IIf(StrText(cnt) = 9, TabSpace, Chr(StrText(cnt)))
-                    
+
+                
         End Select
         
         cnt = cnt + 1
@@ -1835,7 +2128,9 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
     If newClrRec Then  ' we had IRC style coloring so add the final record, remove the control characters and clean the block
         
         ReDim Preserve ircText(LBound(ircText) To cnt - rmvCnt) As Byte
+
         pText.Pyramid Strands(ircText), Offset, cnt
+        
         ClipPrintTextBlock = True
 
     End If
@@ -1846,10 +2141,8 @@ Private Function ClipLineDraw(ByVal X1 As Single, ByVal Y1 As Single, ByVal X2 A
     If ClippingWouldDraw(DrawableRect, RECT(X1, Y1, X2, Y2)) Then
         If BoxFill Then
             pBackBuffer.DrawLine X1 / Screen.TwipsPerPixelX, Y1 / Screen.TwipsPerPixelY, X2 / Screen.TwipsPerPixelX, Y2 / Screen.TwipsPerPixelY, Color, bf
-            'UserControl.Line (X1, Y1)-(X2, Y2), Color, BF
         Else
             pBackBuffer.DrawLine X1 / Screen.TwipsPerPixelX, Y1 / Screen.TwipsPerPixelY, X2 / Screen.TwipsPerPixelX, Y2 / Screen.TwipsPerPixelY, Color
-            'UserControl.Line (X1, Y1)-(X2, Y2), Color
         End If
         ClipLineDraw = True
     End If
@@ -1997,8 +2290,6 @@ Public Function LineOffset(ByVal LineIndex As Long) As Long ' _
 Returns the offset amount of characters upto a line, specified by the zero based LineIndex. Example, LineOffset(0)=0.
 Attribute LineOffset.VB_Description = "Returns the offset amount of characters upto a line, specified by the zero based LineIndex. Example, LineOffset(0)=0."
     If pText.Length > 0 Then
-        'LineOffset = pText.poll(Asc(vbLf), LineIndex)
-        'If LineIndex > 0 Then LineOffset = LineOffset + 1
         LineOffset = pText.Offset(LineIndex + 1)
     End If
 End Function
@@ -2007,8 +2298,6 @@ Public Function LineLength(ByVal LineIndex As Long) As Long ' _
 Returns the length of characters with-in a line, specifiied by the zero based LineIndex.
 Attribute LineLength.VB_Description = "Returns the length of characters with-in a line, specifiied by the zero based LineIndex."
     If pText.Length > 0 Then
-        'LineLength = (pText.poll(Asc(vbLf), LineIndex + 1) - pText.poll(Asc(vbLf), LineIndex))
-        'If LineIndex > 0 Then LineLength = LineLength - 1
         LineLength = pText.Offset(LineIndex + 2) - pText.Offset(LineIndex + 1)
     End If
 End Function
@@ -2021,10 +2310,8 @@ Attribute LineText.VB_Description = "Returns the text with-in a line, specified 
     If lpos > 0 Then
         LineIndex = LineOffset(LineIndex)
         If LineIndex > 0 Then
-            'LineText = Mid(pText, LineIndex, lPos)
             LineText = Convert(pText.Partial(LineIndex, lpos))
         Else
-            'LineText = Mid(pText, 1, lPos)
             LineText = Convert(pText.Partial(0, lpos))
         End If
     End If
@@ -2035,7 +2322,6 @@ Returns the zero based index line number of which the given zero based character
 Attribute LineIndex.VB_Description = "Returns the zero based index line number of which the given zero based character index falls upon with-in Text."
     If CharIndex = -1 Then CharIndex = pSel.StartPos
     If CharIndex > 0 Then
-        'LineIndex = CountWord(Left(pText, CharIndex), vbLf)
         LineIndex = pText.Pass(Asc(vbLf), 0, CharIndex)
     End If
 End Function
@@ -2044,7 +2330,6 @@ Public Function LineCount() As Long ' _
 Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text.
 Attribute LineCount.VB_Description = "Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text."
     If pText.Length > 0 Then
-        'LineCount = pText.Pass(Asc(vbLf)) + 1
         LineCount = pText.count
     End If
 End Function
@@ -2120,45 +2405,21 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                 
                 xUndoActs(0).PriorTextData.Reset
                 xUndoActs(0).AfterTextData.Reset
+
+                If pSel.StartPos > pSel.StopPos Then
+                    Swap pSel.StartPos, pSel.StopPos
+                End If
                 
-                If pSel.StartPos = pSel.StopPos Then
-                    'pText = Left(pText, pSel.StartPos) & vbLf & Mid(pText, pSel.StartPos + 1)
-                    
-                    Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                    tText.Concat Convert(vbLf)
-                    If pSel.StartPos < pText.Length Then tText.Concat pText.Partial(pSel.StartPos)
-
-                    If tText.Length > 0 Then
-                        pText.Clone tText
-                    Else
-                        pText.Reset
-                    End If
-                    Set tText = Nothing
-
-                   ' xUndoActs(0).PriorTextData.Post 8
-                Else
-                    'DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
+                If pSel.StartPos <> pSel.StopPos Then
                     xUndoActs(0).PriorTextData.Concat Convert(Replace(SelText, vbCrLf, vbLf))
-                    
-                    If pSel.StartPos > pSel.StopPos Then
-                        Swap pSel.StartPos, pSel.StopPos
-                    End If
-                    'pText = Left(pText, pSel.StartPos) & vbLf & Mid(pText, pSel.StopPos + 1)
-
-                    Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                    tText.Concat Convert(vbLf)
-                    If pSel.StopPos < pText.Length Then tText.Concat pText.Partial(pSel.StopPos)
-
-                    If tText.Length > 0 Then
-                        pText.Clone tText
-                    Else
-                        pText.Reset
-                    End If
-                    Set tText = Nothing
+                    pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
                     
                 End If
+
+                Set tText = New Strands
+                tText.Concat Convert(vbLf)
+                pText.Pyramid tText, pSel.StartPos, 0
+                Set tText = Nothing
                 
                 xUndoActs(0).AfterTextData.Concat Convert(vbLf)
                     
@@ -2185,43 +2446,19 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                 
                 If pSel.StartPos = pSel.StopPos Then
                 
-                    If KeyCode = 46 Then
-                        xUndoActs(0).PriorTextData.Concat Convert(pText.Partial(pSel.StartPos, 1))
-                        DepleetColorRecords pSel.StartPos, 1
-                    Else
+                    If KeyCode = 8 And pSel.StartPos - 1 >= 0 And pSel.StartPos <= pText.Length Then  'backspace
+                    
                         xUndoActs(0).PriorTextData.Concat Convert(pText.Partial(pSel.StartPos - 1, 1))
                         DepleetColorRecords pSel.StartPos - 1, 1
-                    End If
-                    If KeyCode = 8 And pSel.StartPos > 0 Then 'backspace
-                        'pText = Left(pText, pSel.StartPos - 1) & Mid(pText, pSel.StartPos + 1)
-    
-                        Set tText = New Strands
-                        If pSel.StartPos - 1 > 0 Then tText.Concat pText.Partial(0, pSel.StartPos - 1)
-                        If pSel.StartPos < pText.Length Then tText.Concat pText.Partial(pSel.StartPos)
-
-                        If tText.Length > 0 Then
-                            pText.Clone tText
-                        Else
-                            pText.Reset
-                        End If
-                        Set tText = Nothing
-                        
+                        pText.Pinch pSel.StartPos - 1, 1
                         pSel.StartPos = pSel.StartPos - 1
-                    ElseIf KeyCode = 46 Then 'delete
-                        'pText = Left(pText, pSel.StartPos) & Mid(pText, pSel.StartPos + 2)
-
-                        Set tText = New Strands
-                        If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                        If pSel.StartPos + 1 < pText.Length Then tText.Concat pText.Partial(pSel.StartPos + 1)
-
-                        If tText.Length > 0 Then
-                            pText.Clone tText
-                        Else
-                            pText.Reset
-                        End If
-                        Set tText = Nothing
                         
-                        pSel.StartPos = pSel.StartPos
+                    ElseIf KeyCode = 46 And pSel.StartPos >= 0 And pSel.StartPos < pText.Length Then 'delete
+
+                        xUndoActs(0).PriorTextData.Concat Convert(pText.Partial(pSel.StartPos, 1))
+                        DepleetColorRecords pSel.StartPos, 1
+                        pText.Pinch pSel.StartPos, 1
+
                     End If
                 Else 'delete or backspace
                     
@@ -2232,21 +2469,13 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     End If
                     
                     DepleetColorRecords pSel.StartPos, pSel.StopPos - pSel.StartPos
-                    'pText = Left(pText, pSel.StartPos) & Mid(pText, pSel.StopPos + 1)
 
-                    Set tText = New Strands
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                    If pSel.StopPos < pText.Length Then tText.Concat pText.Partial(pSel.StopPos)
-
-                    If tText.Length > 0 Then
-                        pText.Clone tText
-                    Else
-                        pText.Reset
+                    If pSel.StartPos > 0 And pSel.StopPos < pText.Length Then
+                        pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
                     End If
-                    Set tText = Nothing
                     
+
                 End If
-                
                 pSel.StopPos = pSel.StartPos
                 
                 RaiseEventChange
@@ -2394,12 +2623,10 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
     
     For temp = LineIndex(tmpSel.StartPos) To LineIndex(tmpSel.StopPos)
     
-    
         hasLF = InStr(txtLines, vbLf) > 0
         txt = RemoveNextArg(txtLines, vbLf)
         
         If hasLF Then tmpSel.StopPos = tmpSel.StopPos - 1
-        
         
         txt = Replace(txt, vbLf, "")
         If Len(txt) > 0 Then
@@ -2413,42 +2640,16 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
                 End If
             End If
         End If
-        
-        
-'        txt = Replace(LineText(temp), vbLf, "")
-'
-'        If Len(txt) > 0 Then
-'            If InStr(CharStr, Chr(8)) = 0 Then
-'                txt = CharStr & txt
-'                tmpSel.StopPos = tmpSel.StopPos + 1
-'            Else
-'                If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
-'                    txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
-'                    tmpSel.StopPos = tmpSel.StopPos - Len(Replace(CharStr, Chr(8), ""))
-'                End If
-'            End If
-'        End If
-'
+
         newtxt = newtxt & txt & IIf(hasLF, vbLf, "")
         
     Next
-   ' pSel.StartPos = tmpSel.StartPos
-    'pSel.StopPos = tmpSel.StopPos
-
     SelText = newtxt
     
     pSel.StartPos = tmpSel.StartPos
     pSel.StopPos = tmpSel.StopPos
     
-   ' pSel.StartPos = LineOffset(LineIndex(tmpSel.StartPos))
-    'pSel.StopPos = tmpSel.StartPos + Len(newtxt) ' LineOffset(LineIndex(tmpSel.StopPos)) + LineLength(LineIndex(tmpSel.StopPos))
-
-    xUndoActs(0).AfterTextData.Concat Convert(newtxt) ' Convert(Chr(KeyCode))
-
-
-    'SelText = newtxt
-    
-    'If pSel.StartPos > pSel.StopPos Then modCommon.Swap pSel.StartPos, pSel.StopPos
+    xUndoActs(0).AfterTextData.Concat Convert(newtxt)
 
 End Sub
 Friend Sub KeyPageUp(ByRef Shift As Integer)
@@ -2530,75 +2731,50 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
 
             xUndoActs(0).PriorTextData.Reset
             xUndoActs(0).AfterTextData.Reset
-
-                    
+            If pSel.StartPos > pSel.StopPos Then
+                Swap pSel.StartPos, pSel.StopPos
+            End If
+                
             Dim tText As Strands
             If insertMode Then
-                If pSel.StartPos > pSel.StopPos Then
-                    Swap pSel.StartPos, pSel.StopPos
-                End If
-                    
-                Set tText = New Strands
-                If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                tText.Concat Convert(Chr(KeyAscii))
-                If pSel.StartPos + 1 < pText.Length Then
                 
+                If pSel.StartPos + 1 < pText.Length Then
+                    Set tText = New Strands
+                    tText.Concat Convert(Chr(KeyAscii))
                     If pSel.StartPos = pSel.StopPos Then
                         xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, 1)
-                        tText.Concat pText.Partial(pSel.StartPos + 1)
+                        pText.Pyramid tText, pSel.StartPos, 1
                     Else
                         xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
-                        tText.Concat pText.Partial(pSel.StartPos + (pSel.StopPos - pSel.StartPos))
+                        pText.Pyramid tText, pSel.StartPos, pSel.StopPos - pSel.StartPos
                     End If
-                    
-                End If
-
-                If tText.Length > 0 Then
-                    pText.Clone tText
+                    Set tText = Nothing
                 Else
-                    pText.Reset
+                    pText.post CByte(KeyAscii)
                 End If
-                Set tText = Nothing
             
             ElseIf pSel.StartPos < pText.Length Then
 
                 Set tText = New Strands
-                If pSel.StartPos > pSel.StopPos Then
-                    ExpandColorRecords pSel.StopPos, 1
-                    If pSel.StopPos > 0 Then tText.Concat pText.Partial(0, pSel.StopPos)
-                    tText.Concat Convert(Chr(KeyAscii))
-                    If pSel.StartPos < pText.Length Then
-                        If pSel.StartPos - pSel.StopPos > 0 Then
-                            xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StopPos, pSel.StartPos - pSel.StopPos)
-                        End If
-                        tText.Concat pText.Partial(pSel.StartPos)
+
+                ExpandColorRecords pSel.StartPos, 1
+
+                tText.Concat Convert(Chr(KeyAscii))
+                If pSel.StopPos < pText.Length Then
+                    If pSel.StopPos - pSel.StartPos > 0 Then
+                        xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
                     End If
-                    pSel.StartPos = pSel.StopPos
-                    
-                Else
-                    ExpandColorRecords pSel.StartPos, 1
-                    If pSel.StartPos > 0 Then tText.Concat pText.Partial(0, pSel.StartPos)
-                    tText.Concat Convert(Chr(KeyAscii))
-                    If pSel.StopPos < pText.Length Then
-                        If pSel.StopPos - pSel.StartPos > 0 Then
-                            xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
-                        End If
-                        tText.Concat pText.Partial(pSel.StopPos)
-                    End If
+
+                    pText.Pyramid tText, pSel.StartPos, pSel.StopPos - pSel.StartPos
                 End If
-                                
-                If tText.Length > 0 Then
-                    pText.Clone tText
-                Else
-                    pText.Reset
-                End If
+
                 Set tText = Nothing
             Else
                 ExpandColorRecords pText.Length, 1
-                pText.Concat Convert(Chr(KeyAscii))
+                pText.post CByte(KeyAscii)
             End If
             
-            xUndoActs(0).AfterTextData.Concat Convert(Chr(KeyAscii))
+            xUndoActs(0).AfterTextData.post CByte(KeyAscii)
             
             pSel.StartPos = pSel.StartPos + 1
             pSel.StopPos = pSel.StartPos
@@ -2746,7 +2922,6 @@ End Sub
 
 Friend Sub InvalidateCursor()
     Timer1.Enabled = False
-    'Timer1_Timer
     If Not Cancel Then Timer1_Timer
 End Sub
 
@@ -2786,8 +2961,6 @@ Private Function RaiseEventSelChange(Optional ByVal KeepUndo As Boolean = False)
     End If
     
     If (pLastSel.StartPos <> pSel.StartPos Or pLastSel.StopPos <> pSel.StopPos) Then
-        
-
         
         CanvasValidate
         SetScrollBars
@@ -3195,11 +3368,13 @@ End Sub
 Private Sub UserControl_Terminate()
     Unhook Me
     Reset
+    Set xUndoActs(0).AfterTextData = Nothing
+    Set xUndoActs(0).PriorTextData = Nothing
     Set aText(0) = Nothing
     Erase xUndoActs
     Erase aText
     Erase pPageBreaks
-    Erase pColorRanges
+    Erase pColorRecords
 End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
