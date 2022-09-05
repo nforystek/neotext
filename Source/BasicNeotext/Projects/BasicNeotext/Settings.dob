@@ -204,7 +204,7 @@ Private Sub Command1_Click()
     MsgBox "On any header that begins a block of code of which may have descriptions," & vbCrLf & _
             "i.e. ""Sub MySub()"" followed by a comment character, space, and underscore," & vbCrLf & _
             "then makes for the next line as a comment. Those BasicNeotext will recognize" & vbCrLf & _
-            "as descriptions and auto populate the hidden info attribute for the compiler.", vbInformation, vbOKOnly
+            "as descriptions and auto populate the hidden info attribute for the compiler.", vbInformation, "Commented Descriptions", vbOKOnly
 End Sub
 
 Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
@@ -413,9 +413,12 @@ Private Sub UserDocument_Resize()
     Else
         Command3.Left = Check2.Width + (Screen.TwipsPerPixelX * 8)
     End If
-    
-    Check3.Width = UserDocument.ScaleWidth - (Screen.TwipsPerPixelX * 4) - Check3.Left
-    
+
+    Command1.Left = UserDocument.ScaleWidth - (Screen.TwipsPerPixelX * 4) - Command1.Width
+    Check3.Width = Command1.Left - (Screen.TwipsPerPixelX * 4) - Check3.Left
+
+    Check5.Width = UserDocument.ScaleWidth - (Screen.TwipsPerPixelX * 4)
+  
     If Err Then Err.Clear
     On Error GoTo 0
 End Sub

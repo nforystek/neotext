@@ -785,16 +785,56 @@ Public Sub EndEvent(ByVal CommandBarControl As Object, handled As Boolean, Cance
 '''    '   catch all hook for the stop of project run
 
 End Sub
+Private Function StartupProjectEXE(ByVal BinPath As String) As String
+
+    Dim i2 As Project
+    Dim i As Project
+
+    If modMain.Projs.Includes.count > 0 Then
+        For Each i In modMain.Projs.Includes
+            If UCase(Right(i.Compiled, 4)) = ".EXE" Then
+                If i.Includes.count > 0 Then
+                    For Each i2 In i.Includes
+                        If LCase(i2.Compiled) = LCase(BinPath) Then
+                            StartupProjectEXE = i.Compiled
+                        End If
+                    Next
+                End If
+            End If
+        Next
+    End If
+    If StartupProjectEXE = "" And UCase(Right(BinPath, 4)) = ".EXE" Then
+        StartupProjectEXE = BinPath
+    End If
+
+End Function
+
+Private Function StartupProject() As VBProject
+    Dim vbp
+    For Each vbp In VBInstance.VBProjects
+    'Debug.Print vbp.StartMode & " " & vbp.BuildFileName
+        If vbp.StartMode = 0 Then
+            Set StartupProject = vbp
+            Exit Function
+        End If
+    Next
+End Function
 
 
 Private Sub StartFullCompile(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"Start With &Full Compile"-539
 '''    '   Same as the BuiltIn menu item
 '''    '   but we want this hook options
+                    
+    Dim p As Project
+    Set p = modMain.Projs
+    Dim startexe As String
+
+    startexe = StartupProjectEXE(StartupProject.BuildFileName)
     
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        If PathExists(VBInstance.ActiveVBProject.BuildFileName, True) Then
-            If ProcessMake Then RunProcessEx VBInstance.ActiveVBProject.BuildFileName, Projs.CmdLine
+        If PathExists(startexe, True) Then
+            If ProcessMake() Then RunProcessEx startexe, Projs.CmdLine
         End If
     End If
    
@@ -809,8 +849,11 @@ Private Sub MakeDialog(ByVal CommandBarControl As Object, handled As Boolean, Ca
     On Error Resume Next
     On Local Error Resume Next
     
-    cbMenuCommandBar4.Execute
-
+    If StopProcess Then
+    
+        cbMenuCommandBar4.Execute
+    
+    End If
     If Err Then Err.Clear
 End Sub
 
@@ -839,8 +882,8 @@ Private Function ShowMessage(ByVal Title As String, ByVal Message As String, ByV
         frm.Command2.Left = frm.Command2.Left - 2000
         frm.Command3.Left = frm.Command3.Left - 2000
         If Not IncludeCancel Then
-            frm.Command1.Left = frm.Command3.Left
             frm.Command2.Left = frm.Command1.Left
+            frm.Command1.Left = frm.Command3.Left
         End If
         frm.Width = frm.Width - 3000
         frm.Tag = 0
@@ -854,75 +897,154 @@ Private Function ShowMessage(ByVal Title As String, ByVal Message As String, ByV
         onetatime = False
     End If
 End Function
-Private Function ProcessMake() As Boolean
-    If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then
-        Dim tmp As Long
-        If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
-            
-            tmp = ShowMessage("Permission denied", "The process is already running, do you want to" & vbCrLf & _
-                              "terminate it and continue to make the executable?", True)
-            If tmp = vbCancel Then
-                Exit Function
-            End If
-        Else
-            tmp = vbYes
-        End If
-        If tmp = vbYes Then
-            KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
-        End If
-    End If
+Private Function ProcessMake(Optional ByRef UseProject As VBProject = Nothing) As Boolean
+
+'    Dim killexe As String
+'    If StartEXE = "" Then
+'        killexe = StartupProjectEXE
+'    Else
+'        killexe = StartEXE
+'    End If
+'
+'    If IsProccessEXERunning(GetFileName(killexe)) Then
+'        Dim tmp As Long
+'        If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
+'
+'            tmp = ShowMessage("Permission denied", "The process is already running, do you want to" & vbCrLf & _
+'                              "terminate it and continue to make the executable?", True)
+'            If tmp = vbCancel Then
+'                Exit Function
+'            End If
+'        Else
+'            tmp = vbYes
+'        End If
+'        If tmp = vbYes Then
+'            KillApp GetFileName(killexe)
+'        End If
+'    End If
+    If UseProject Is Nothing Then Set UseProject = StartupProject
+    
     On Error Resume Next
     On Local Error Resume Next
-    VBInstance.ActiveVBProject.MakeCompiledFile
-    ProcessMake = True
+    If StopProcess Then
+        DoMakeProj UseProject
+        ProcessMake = True
+    End If
 End Function
 Private Sub BuildRelease(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"&Build Project Release"-184
 '''    '   Same as Remake but sets the
 '''    '   VBIDE condcomp flag to 0 and
 '''    '   signs when enabled to do so
+    Dim buildexe As String
+    buildexe = StartupProjectEXE(VBInstance.ActiveVBProject.BuildFileName)
     
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        If PathExists(VBInstance.ActiveVBProject.BuildFileName, True) Then
-            If ProcessMake() Then SignTool VBInstance.ActiveVBProject.BuildFileName, SignAndStamp
+        If PathExists(buildexe, True) Then
+            If ProcessMake() Then SignTool buildexe, SignAndStamp
         End If
     End If
     
 
 End Sub
 
-Private Sub StopExecutable(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
-'''    '"Stop The E&xecutable"-348
-'''    '   kills the running process
-'''    '   (if it is running of course)
-    
+Private Function StopProcess(Optional ByVal startexe As String = "") As Boolean
+    Dim stopexe As String
+    If startexe = "" Then
+        stopexe = StartupProjectEXE(StartupProject.BuildFileName)
+    Else
+        stopexe = startexe
+    End If
+
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then
+        If IsProccessEXERunning(GetFileName(stopexe)) Then
 
             If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
                 Dim tmp As Long
                 tmp = ShowMessage("Process is Running", "Are you sure you want to terminate it?", False)
                 If tmp = vbYes Then
-                    KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+                    Do While IsProccessEXERunning(GetFileName(stopexe))
+                        KillApp GetFileName(stopexe)
+                    Loop
+                    
+                    StopProcess = True
                 End If
             Else
-                KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+                Do While IsProccessEXERunning(GetFileName(stopexe))
+                    KillApp GetFileName(stopexe)
+                Loop
+                StopProcess = True
             End If
-
+        Else
+            StopProcess = True
         End If
     End If
+    '(Not IsProccessEXERunning(GetFileName(stopexe)))
+    
+End Function
+Private Sub StopExecutable(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+'''    '"Stop The E&xecutable"-348
+'''    '   kills the running process
+'''    '   (if it is running of course)
+
+    StopProcess
+'    Dim stopexe As String
+'    stopexe = StartupProjectEXE(VBInstance.ActiveVBProject.BuildFileName)
+'
+'    If Not (VBInstance.ActiveVBProject Is Nothing) Then
+'        If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then
+'
+'            If CLng(GetSetting("BasicNeotext", "Options", "KillBeforeMake", 0)) = 0 Then
+'                Dim tmp As Long
+'                tmp = ShowMessage("Process is Running", "Are you sure you want to terminate it?", False)
+'                If tmp = vbYes Then
+'                    KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+'                End If
+'            Else
+'                KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+'            End If
+'
+'        End If
+'    End If
 
 End Sub
+Private Sub DoMakeProj(ByRef vbp As VBProject)
+    On Error Resume Next
+    On Local Error Resume Next
+    
+    vbp.MakeCompiledFile
+    
+    If Err.Number <> 0 Then
 
+        If Err.Number <> 0 Then
+            MsgBox Err.Description, vbCritical, "Error " & Err.Number
+        End If
+    
+        Err.Clear
+    End If
+    
+End Sub
 Private Sub StartExecutable(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"Start &The Executable"-459
 '''    '   Run the current executable
 '''    '   with out compiling it first
 '''    '   (must been already built)
     
+    
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        If PathExists(VBInstance.ActiveVBProject.BuildFileName, True) Then
-            RunProcessEx VBInstance.ActiveVBProject.BuildFileName, Projs.CmdLine
+        Dim startexe As String
+        startexe = StartupProjectEXE(StartupProject.BuildFileName)
+        If startexe = "" Then
+            Dim tmp As Long
+            tmp = ShowMessage("Process Not Compiled", "This process has not been compiled, do you want to compile it?", False)
+            If tmp = vbYes Then
+                DoMakeProj StartupProject
+            Else
+                Exit Sub
+            End If
+        End If
+        If PathExists(startexe, True) Then
+            RunProcessEx startexe, Projs.CmdLine
         End If
     End If
 
@@ -933,8 +1055,11 @@ Private Sub RemakeProject(ByVal CommandBarControl As Object, handled As Boolean,
 '''    '   Automatically rebuild the executable with out
 '''    '   prompting for location (must been already built)
     If Not (VBInstance.ActiveVBProject Is Nothing) Then
-        If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
-        ProcessMake
+        If StopProcess Then
+        
+        'If IsProccessEXERunning(GetFileName(VBInstance.ActiveVBProject.BuildFileName)) Then KillApp GetFileName(VBInstance.ActiveVBProject.BuildFileName)
+            ProcessMake VBInstance.ActiveVBProject
+        End If
     End If
 
 End Sub
@@ -947,8 +1072,10 @@ Private Sub MakeGroup(ByVal CommandBarControl As Object, handled As Boolean, Can
     On Error Resume Next
     On Local Error Resume Next
     
-    If Not handled Then
-        VBInstance.CommandBars("File").Controls("Make Project &Group...").Execute
+    If StopProcess Then
+        If Not handled Then
+            VBInstance.CommandBars("File").Controls("Make Project &Group...").Execute
+        End If
     End If
     
     If Err Then Err.Clear
@@ -970,7 +1097,7 @@ Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Bool
 '''    '"Prop&erties..." from menu, this should happen
 '''    '   if the project properties dialog is invoked
 
-
+  '  MsgBox "OK"
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
