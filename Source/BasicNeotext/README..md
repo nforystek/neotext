@@ -21,3 +21,5 @@ compile directives to accomodate the -1 but there isn't a great way of acheievem
 the spaces back in automatically. so VBIDE=-1 vs. VBIDE = -1 solves the entry door way the comprise compiles #defines.
 
 KNowing their converted to a C linker, escape code the #define with a space, cut'em, then -1 is allowed to be true again!
+
+My system kicks in with like 3 or 4 VBIDE open with the continuous loop, but it's a great measrue to try and ease that.
