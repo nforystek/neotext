@@ -11,6 +11,11 @@ Begin VB.UserControl Neotext
    ScaleHeight     =   3330
    ScaleWidth      =   4155
    ToolboxBitmap   =   "Neotext.ctx":0152
+   Begin VB.Timer Timer2 
+      Interval        =   1
+      Left            =   1050
+      Top             =   1590
+   End
    Begin NTControls30.ScrollBar ScrollBar2 
       Height          =   345
       Left            =   285
@@ -125,6 +130,8 @@ Public Event ColorBegin()
 Public Event ColorLine(ByVal LineIndex As Long, ByVal LineOffset As Long, ByVal LineLength As Long)
 Public Event ColorEnd()
 
+Private FlashClr As Integer
+
 Private dragStart As Integer
 Private keySpeed As Long
 Private hasFocus As Boolean
@@ -169,6 +176,41 @@ Private xUndoBuffer As Long
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
 
+Public Property Get ColorPalette() As String
+    Dim txt As String
+    Dim tmp As Long
+    Dim cnt As Long
+    txt = txt & " "
+    For cnt = 0 To 15
+        tmp = CLng(InvertNum(cnt + 1, 16))
+        txt = txt & Chr(3) & IIf(tmp <= 9, "0" & CStr(tmp), CStr(tmp)) & "," & IIf(cnt <= 9, "0" & CStr(cnt), CStr(cnt)) & IIf(cnt <= 9, CStr(cnt), CStr(cnt))
+    Next
+    txt = txt & vbLf
+    tmp = 98
+    For cnt = 16 To 87
+        If cnt <= 51 Then
+            tmp = 98
+        Else
+            tmp = 89
+        End If
+
+        txt = txt & Chr(3) & IIf(tmp <= 9, "0" & CStr(tmp), CStr(tmp)) & "," & CStr(cnt) & CStr(cnt)
+        If (cnt - 15) Mod 12 = 0 Then
+            txt = txt & vbLf
+        End If
+    Next
+
+    For cnt = 88 To 98
+        
+        txt = txt & Chr(3) & CStr(CLng(InvertNum(cnt - 87, 18)) + 98 - 17) & "," & CStr(cnt + 1) & CStr(cnt)
+        If (cnt - 15) Mod 12 = 0 Then
+            txt = txt & vbLf
+        End If
+    Next
+    txt = txt & Chr(3) & "16,9999"
+
+    ColorPalette = txt
+End Property
 Friend Property Get pText() As NTNodes10.Strands
     Set pText = aText(pCodePage)
 End Property
@@ -1831,12 +1873,20 @@ End Function
 
 Private Sub DepleetColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
     Dim Index As Long
+    Dim cnt As Long
     Index = LocateColorRecord(CursorLoc)
     Do While Index <= UBound(pColorRecords)
-        If pColorRecords(Index).StartLoc > CursorLoc Then
-            pColorRecords(Index).StartLoc = pColorRecords(Index).StartLoc - Width
+        If CursorLoc <= pColorRecords(Index).StartLoc And CursorLoc + Width >= pColorRecords(Index).StartLoc + WidthOfColorRecord(Index) Then
+            For cnt = Index To UBound(pColorRecords) - 1
+                pColorRecords(cnt) = pColorRecords(cnt + 1)
+            Next
+            ReDim Preserve pColorRecords(0 To UBound(pColorRecords) - 1) As ColorRange
+        Else
+            If pColorRecords(Index).StartLoc > CursorLoc Then
+                pColorRecords(Index).StartLoc = pColorRecords(Index).StartLoc - Width
+            End If
+            Index = Index + 1
         End If
-        Index = Index + 1
     Loop
 End Sub
 
@@ -1872,14 +1922,14 @@ Private Function AddColorRecord(ByVal CursorLoc As Long, Optional ByVal Width As
     Dim Index As Long
     Index = LocateColorRecord(CursorLoc)
     ReDim Preserve pColorRecords(0 To UBound(pColorRecords) + 1) As ColorRange
-    If Index = 0 Then
-        Index = UBound(pColorRecords)
-    Else
+    If (UBound(pColorRecords) - 1) - Index > 0 Then
         Dim cnt As Long
         For cnt = UBound(pColorRecords) - 1 To Index Step -1
             pColorRecords(cnt).StartLoc = pColorRecords(cnt).StartLoc + Width
             pColorRecords(cnt + 1) = pColorRecords(cnt)
         Next
+    Else
+        Index = UBound(pColorRecords)
     End If
     pColorRecords(Index).StartLoc = CursorLoc
     AddColorRecord = Index
@@ -1923,10 +1973,10 @@ Private Function WidthOfColorRecord(ByVal Index As Long) As Long
     'when colorrecords are used, it is not used beyond the color record at index 0
     If Index > 0 And Index < UBound(pColorRecords) Then
         WidthOfColorRecord = (pColorRecords(Index + 1).StartLoc - pColorRecords(Index).StartLoc)
-    ElseIf Index > 0 And Index = UBound(pColorRecords) Then
+    Else 'If Index > 0 And Index = UBound(pColorRecords) Then
         WidthOfColorRecord = (pText.Length - pColorRecords(Index).StartLoc)
-    ElseIf Index = 0 Then
-        WidthOfColorRecord = pText.Length
+    'ElseIf Index = 0 Then
+    '    WidthOfColorRecord = pText.Length
     End If
 End Function
 
@@ -1945,11 +1995,6 @@ Private Function CheckComma(ByRef StrText() As Byte, ByVal Loc As Long) As Boole
         End If
     End If
 End Function
-
-
-
-
-
 
 Private Function SubClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRef StrText As String, Optional fColor As Variant, Optional bColor As Variant, Optional ByVal BoxFill As Boolean = False) As Boolean
     If StrText <> "" Then
@@ -1976,18 +2021,20 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
     ReDim ircText(LBound(StrText) To UBound(StrText)) As Byte
     Dim nextPrint As String
 
-
+    
+    cnt = LBound(StrText)
+    
+    
     pColorRecords(0).BackColor = pBackcolor
     pColorRecords(0).Forecolor = pForecolor
     
-    ClrRec = LocateColorRecord(Offset)
+    ClrRec = LocateColorRecord(cnt + Offset)
     
     If Not IsMissing(fColor) Then
         pBackBuffer.Forecolor = fColor
     Else
         pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
     End If
-    
     If Not IsMissing(bColor) Then
         pBackBuffer.BackColor = bColor
     Else
@@ -1998,8 +2045,7 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
 
     RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
 
-    
-    cnt = LBound(StrText)
+
     
     Do While cnt <= UBound(StrText)
 
@@ -2072,48 +2118,69 @@ Private Function ClipPrintTextBlock(ByRef X1 As Single, ByRef Y1 As Single, ByRe
                 ircText(cnt - rmvCnt) = StrText(cnt)
                 
                 SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-                
+
+                ClrRec = LocateColorRecord((cnt - rmvCnt) + Offset + 1)
+                If Not IsMissing(fColor) Then
+                    pBackBuffer.Forecolor = fColor
+               Else
+                    pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+                End If
+                If Not IsMissing(bColor) Then
+                    pBackBuffer.BackColor = bColor
+                Else
+                    pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+                End If
+    
                 X1 = pOffsetX + LineColumnWidth
                 Y1 = Y1 + Me.TextHeight()
 
                 line = line + 1
 
                 RaiseEvent ColorLine(line, LineOffset(line), LineLength(line))
-                    
 
             Case Else
 
                 ircText(cnt - rmvCnt) = StrText(cnt)
                 
-                If ClrRec < UBound(pColorRecords) Then
-
-                    If (cnt - rmvCnt) + Offset = pColorRecords(ClrRec + 1).StartLoc Then
-
+                If ClrRec <= UBound(pColorRecords) Then
+                    If (cnt - rmvCnt) + Offset >= pColorRecords(ClrRec).StartLoc Then
                         SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-
-                        ClrRec = ClrRec + 1
-                        pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
-                        pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
                         
-'                    ElseIf (cnt - rmvCnt) + Offset > pColorRecords(ClrRec).StartLoc Then
+                        
+                        'If ClrRec <= UBound(pColorRecords) Then
+                            pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+                            pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+'                        Else
+'                            pBackBuffer.BackColor = pBackcolor
+'                            pBackBuffer.Forecolor = pForecolor
+'                        End If
+                        
+                        ClrRec = ClrRec + 1
+                        
+                    End If
+                End If
+                
+'                If ClrRec < UBound(pColorRecords) Then
 '
+'                    If (cnt - rmvCnt) + Offset = pColorRecords(ClrRec + 1).StartLoc Then
 '
+'                        SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
+'
+'                        ClrRec = ClrRec + 1
 '                        pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
 '                        pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
 '
-'                        SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-
-                    End If
-
-                ElseIf ClrRec = UBound(pColorRecords) Then
-
-                    SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
-
-                    pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
-                    pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
-                    ClrRec = ClrRec + 1
-
-                End If
+'                    End If
+'
+'                ElseIf ClrRec = UBound(pColorRecords) Then
+'
+'                    SubClipPrintTextBlock X1, Y1, nextPrint, fColor, bColor, BoxFill
+'
+'                    pBackBuffer.BackColor = pColorRecords(ClrRec).BackColor
+'                    pBackBuffer.Forecolor = pColorRecords(ClrRec).Forecolor
+'                    ClrRec = ClrRec + 1
+'
+'                End If
                     
                 nextPrint = nextPrint & IIf(StrText(cnt) = 9, TabSpace, Chr(StrText(cnt)))
 
@@ -2147,6 +2214,11 @@ Private Function ClipLineDraw(ByVal X1 As Single, ByVal Y1 As Single, ByVal X2 A
         ClipLineDraw = True
     End If
 End Function
+
+Private Sub Timer2_Timer()
+    FlashClr = FlashClr + 1
+    If FlashClr = 3 Then FlashClr = 0
+End Sub
 
 Private Sub UserControl_Click()
     dragStart = 0
@@ -3127,8 +3199,11 @@ Public Static Sub Refresh()
             If bpos > 0 Then bpos = bpos + 1
             epos = pText.poll(Asc(vbLf), lastFirstLine + (UsercontrolHeight \ TextHeight) + 1)
             
+            
             lastPolls.StartPos = bpos
             lastPolls.StopPos = epos
+            
+            CleanColorRecords bpos, epos
         Else
             bpos = lastPolls.StartPos
             epos = lastPolls.StopPos
@@ -3199,7 +3274,7 @@ Public Static Sub Refresh()
             Else
                 If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
             End If
-            If reClean Then 'irc codes happened
+            If reClean And pText.Length > 0 Then 'irc codes happened
     
                 CleanColorRecords bpos, epos
             End If
