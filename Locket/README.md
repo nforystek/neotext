@@ -1,7 +1,4 @@
-# neotext
-Neotext Software
-
-Windows Desktop Utility Titles; Locket
+# Locket
 
 A pretty strong in encryption, all be it the concept rather outdated, password locket to hold passwords and files.
 
