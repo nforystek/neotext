@@ -14,3 +14,5 @@ at the first login window.  Images and such that you view don't go on the system
 I just rnoticed it still has blue certificate rep.  I vowed not to compile it ever again after I felt I was intruded.
 
 The encryption uses all three RC/DS and NC together.  I named it after the USB I put on a necklace that was my locket.
+
+I bought an actual USB of a major card/flash drive brand and have both on the USB, it seems their's stopped working.
