@@ -12,6 +12,6 @@ on the system your running it on, idle auto closes.  I just rnoticed it still ha
 
 to compile it ever again after I felt I was intruded. The encryption uses all three RC/DS and NC together.  I named
 
-it after the USB I put on a necklace that was my locket.  I bought an actual USB of a major card/flash drive brand
+it after the USB I put on a necklace that was my locket.  I bought a similar program with an actual USB drive of a
 
-and have both on the USB, it seems their's stopped working.
+major card/flash drive brand and have both theirs and mine running on the USB, it seems their's stopped working.
