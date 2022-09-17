@@ -16,7 +16,7 @@ Option Explicit
 Option Compare Binary
 
 Public Enum MemoryScopes
-    Heap = 0
+    heap = 0
     Locking = 1
     [Local] = 2
     [Global] = 4
@@ -37,7 +37,8 @@ Retrieves the type of memory functionally this stream is utilizing, Heap, Lockin
 End Property
 
 Private Sub Class_Initialize()
-    pScope = MemoryScopes.Heap
+    pScope = MemoryScopes.heap
+    'pScope = MemoryScopes.[Local] Or MemoryScopes.Locking
 End Sub
 
 Private Sub Class_Terminate()
@@ -45,25 +46,26 @@ Private Sub Class_Terminate()
 End Sub
 
 Private Sub MemoryModify(Optional ByVal Size As Long = 0)
-'    If (Pointer <> 0) Then
-'        If ((ScopeAs And MemoryScopes.Locking) = MemoryScopes.Locking) And (Not (Length = 0)) Then
-'            If ((ScopeAs And MemoryScopes.Local) = MemoryScopes.Local) Then
-'                If LocalUnlock(Pointer) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
-'            ElseIf ((ScopeAs And MemoryScopes.Global) = MemoryScopes.Global) Then
-'                If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
-'            ElseIf ((ScopeAs And MemoryScopes.Heap) = MemoryScopes.Heap) Then
-'                If HeapUnlock(GetProcessHeap) = 0 Then Err.Raise 8, App.Title, "Heap memory unlock failure."
-'            End If
-'        End If
-'    End If
 
+    If (Pointer <> 0) Then
+        If ((Scope And MemoryScopes.Locking) = MemoryScopes.Locking) And (Not (Length = 0)) Then
+            If ((Scope And MemoryScopes.Local) = MemoryScopes.Local) Then
+                If LocalUnlock(Pointer) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
+            ElseIf ((Scope And MemoryScopes.Global) = MemoryScopes.Global) Then
+                If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
+            ElseIf ((Scope And MemoryScopes.heap) = MemoryScopes.heap) Then
+                If HeapUnlock(GetProcessHeap) = 0 Then Err.Raise 8, App.Title, "Heap memory unlock failure."
+            End If
+        End If
+    End If
+    
     If (Size = 0) Then
         If (Pointer <> 0) And (Not (Length = 0)) Then
             If ((pScope And MemoryScopes.Local) = MemoryScopes.Local) Then
                 LocalFree Pointer
             ElseIf ((pScope And MemoryScopes.Global) = MemoryScopes.Global) Then
                 GlobalFree Pointer
-            ElseIf ((pScope And MemoryScopes.Heap) = MemoryScopes.Heap) Then
+            ElseIf ((pScope And MemoryScopes.heap) = MemoryScopes.heap) Then
                 HeapFree GetProcessHeap, 0, ByVal Pointer
             End If
             Pointer = 0
@@ -74,7 +76,7 @@ Private Sub MemoryModify(Optional ByVal Size As Long = 0)
                 Pointer = LocalAlloc(LMEM_MOVEABLE And VarPtr(Pointer), Size)
             ElseIf ((pScope And MemoryScopes.Global) = MemoryScopes.Global) Then
                 Pointer = GlobalAlloc(modStrands.GMEM_MOVEABLE And VarPtr(Pointer), Size)
-            ElseIf ((pScope And MemoryScopes.Heap) = MemoryScopes.Heap) Then
+            ElseIf ((pScope And MemoryScopes.heap) = MemoryScopes.heap) Then
                 Pointer = HeapAlloc(GetProcessHeap, 0, Size)
             End If
         Else
@@ -82,23 +84,24 @@ Private Sub MemoryModify(Optional ByVal Size As Long = 0)
                 Pointer = LocalReAlloc(Pointer, Size, LMEM_MOVEABLE Or lPtr)
             ElseIf ((pScope And MemoryScopes.Global) = MemoryScopes.Global) Then
                 Pointer = GlobalReAlloc(Pointer, Size, modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
-            ElseIf ((pScope And MemoryScopes.Heap) = MemoryScopes.Heap) Then
+            ElseIf ((pScope And MemoryScopes.heap) = MemoryScopes.heap) Then
                 Pointer = HeapReAlloc(GetProcessHeap, 0, ByVal Pointer, Size)
             End If
         End If
     End If
 
-'    If (Pointer <> 0) Then
-'        If ((ScopeAs And MemoryScopes.Locking) = MemoryScopes.Locking) And (Not (Length = 0)) Then
-'            If ((ScopeAs And MemoryScopes.Local) = MemoryScopes.Local) Then
-'                If Pointer <> LocalLock(Pointer) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
-'            ElseIf ((ScopeAs And MemoryScopes.Global) = MemoryScopes.Global) Then
-'                If Pointer <> GlobalLock(Pointer) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
-'            ElseIf ((ScopeAs And MemoryScopes.Heap) = MemoryScopes.Heap) Then
-'                If HeapLock(GetProcessHeap) = 0 Then Err.Raise 8, App.Title, "Heap memory lock mismatch."
-'            End If
-'        End If
-'    End If
+    If (Pointer <> 0) Then
+        If ((Scope And MemoryScopes.Locking) = MemoryScopes.Locking) And (Not (Length = 0)) Then
+            If ((Scope And MemoryScopes.Local) = MemoryScopes.Local) Then
+                If Pointer <> LocalLock(Pointer) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+            ElseIf ((Scope And MemoryScopes.Global) = MemoryScopes.Global) Then
+                If Pointer <> GlobalLock(Pointer) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+            ElseIf ((Scope And MemoryScopes.heap) = MemoryScopes.heap) Then
+                If HeapLock(GetProcessHeap) = 0 Then Err.Raise 8, App.Title, "Heap memory lock mismatch."
+            End If
+        End If
+    End If
+
 End Sub
 
 Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) ' _
@@ -141,7 +144,7 @@ Attribute Length.VB_Description = "Gets or sets the amount of bytes with in this
             Length = LocalSize(Pointer)
         ElseIf ((pScope And MemoryScopes.Global) = MemoryScopes.Global) Then
             Length = GlobalSize(Pointer)
-        ElseIf ((pScope And MemoryScopes.Heap) = MemoryScopes.Heap) Then
+        ElseIf ((pScope And MemoryScopes.heap) = MemoryScopes.heap) Then
             Length = HeapSize(GetProcessHeap, 0, ByVal Pointer)
         End If
     Else
@@ -299,6 +302,7 @@ Removes a portion of the stream defined by Offset and Width.
         Reset
     ElseIf Offset = 0 Then
         Push Width
+        'Length = Length - Width
     ElseIf Offset + Width = lSize Then
         Length = Length - Width
     Else
@@ -316,9 +320,9 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
         If lSize2 > 0 Then
             Dim N As New Stream
             
-            N.Concat Partial(0, Offset)
+            If Offset > 0 Then N.Concat Partial(0, Offset)
             N.Concat SubStream.Partial
-            N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+            If lSize - (Offset + Width) > 0 Then N.Concat Partial(Offset + Width, lSize - (Offset + Width))
             Clone N
             
             Set N = Nothing

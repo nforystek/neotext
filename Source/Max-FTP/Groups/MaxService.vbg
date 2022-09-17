@@ -1,0 +1,4 @@
+VBGROUP 5.0
+StartupProject=..\Projects\MaxService.vbp
+Project=..\..\Common\Projects\NTService20.vbp
+Project=..\..\Common\Projects\NTSchedule20.vbp

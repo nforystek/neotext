@@ -773,11 +773,12 @@ Public Sub StartEvent(ByVal CommandBarControl As Object, handled As Boolean, Can
 '''    '   catch all hook for the start of project and
 '''    '   VBIDE condcomp should be -1, all spaces out
     AdjustHeaders
+
 End Sub
 Public Sub BreakEvent(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"Brea&k" from menu and/or toolbar this should be
 '''    '   catch all hook for the break of project run
-    
+
 End Sub
 
 Public Sub EndEvent(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
@@ -1097,7 +1098,6 @@ Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Bool
 '''    '"Prop&erties..." from menu, this should happen
 '''    '   if the project properties dialog is invoked
 
-  '  MsgBox "OK"
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)

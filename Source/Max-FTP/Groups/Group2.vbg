@@ -1,0 +1,3 @@
+VBGROUP 5.0
+StartupProject=..\Projects\MaxIDE.vbp
+Project=..\..\Common\Projects\NTControls22.vbp

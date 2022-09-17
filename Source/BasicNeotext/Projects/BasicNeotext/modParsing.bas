@@ -95,7 +95,7 @@ Public Sub ParseCommand()
             If (action <> "") Then
                 If (cnt = 0) Then Paths.Add "", action & "1"
                 Execs.Add action & " " & Trim(arg), action
-            ElseIf Execs.Count = 0 And cnt > 0 Then
+            ElseIf Execs.count = 0 And cnt > 0 Then
                 If (cnt = 0) Then Paths.Add "", Trim(CStr(cnt))
                 Execs.Add "default " & Trim(arg), "default"
             End If
@@ -133,10 +133,13 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
     Dim inText As String
     Dim inLine As String
     Dim inPath As String
+    Dim inName As String
+    
     inText = Self.Contents
     Do Until inText = ""
         inLine = RemoveNextArg(inText, vbCrLf)
-        Select Case LCase(RemoveNextArg(inLine, "="))
+        inName = LCase(RemoveNextArg(inLine, "="))
+        Select Case inName
             Case "reference", "object"
                 Do Until inLine = ""
                     If InStr(NextArg(inLine, "#"), "..\") > 0 Then
@@ -156,10 +159,10 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                     If Mid(inLine, 2, 1) = "\" And Mid(inLine, 4, 2) = ".." Or Mid(inLine, 5, 1) = ":" And (Not Left(inLine, 1) = ".") Then
                         inLine = Mid(inLine, 3)
                     End If
-                    If PathExists(MapPaths(, NextArg(inLine, "#")), True) Then
-                        inLine = MapPaths(, NextArg(inLine, "#"))
-                    ElseIf PathExists(MapPaths(, NextArg(inLine, "#"), Self.Location), True) Then
+                    If PathExists(MapPaths(, NextArg(inLine, "#"), Self.Location), True) Then
                         inLine = MapPaths(, NextArg(inLine, "#"), Self.Location)
+                    ElseIf PathExists(MapPaths(, NextArg(inLine, "#")), True) Then
+                        inLine = MapPaths(, NextArg(inLine, "#"))
                     End If
                     If InStr(1, ParseProject, inLine, vbTextCompare) = 0 Then
                         ParseProject = ParseProject & inLine & vbCrLf
@@ -168,10 +171,10 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                 End If
             Case "designer", "module", "class", "userdocument", "form", "relateddoc", "usercontrol"
                 If InStr(inLine, ";") > 0 Then inLine = RemoveArg(inLine, ";")
-                If PathExists(MapPaths(, inLine), True) Then
-                    inLine = MapPaths(, inLine)
-                ElseIf PathExists(MapPaths(, inLine, Self.Location), True) Then
+                If PathExists(MapPaths(, inLine, Self.Location), True) Then
                     inLine = MapPaths(, inLine, Self.Location)
+                ElseIf PathExists(MapPaths(, inLine), True) Then
+                    inLine = MapPaths(, inLine)
                 Else
                     inLine = ""
                 End If
@@ -192,6 +195,13 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                 Self.CondComp = RemoveQuotedArg(inLine, """", """")
             Case "command32"
                 Self.CmdLine = RemoveQuotedArg(inLine, """", """")
+            Case "type", "resfile32", "iconform", "startup", "helpfile", "title", "name", "helpcontextid", "description", "compatiblemode", "compcond"
+            Case "majorver", "minorver", "revisionver", "autoincrementver", "serversupportfiles", "versioncomments", "versioncompanyname", "versionlegaltrademarks"
+            Case "versionfiledescription", "versionlegalcopyright", "versionproductname", "versioncompatible32", "compilationtype", "optimizationtype", "favorpentiumpro(tm)", "removeunusedcontrolinfo"
+            Case "codeviewdebuginfo", "noaliasing", "boundscheck", "overflowcheck", "flpointcheck", "fdivcheck", "unroundedfp", "startmode", "unattended", "threadingmodel"
+            Case "retained", "threadperobject", "maxnumberofthreads", "debugstartupoption", "[ms transaction server]", "autorefresh", "", "[neotext]", "useexistingbrowser"
+            
+
         End Select
     Loop
 

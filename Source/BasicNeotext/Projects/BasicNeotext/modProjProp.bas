@@ -1,6 +1,6 @@
+Attribute VB_Name = "modProjProp"
 #Const [True] = -1
 #Const [False] = 0
-Attribute VB_Name = "modProjProp"
 Option Explicit
 
 Private Type RangeType
@@ -179,10 +179,10 @@ Public Function ItterateDialogs() As Boolean
                 FixConditionalCompile hWndUp
             Else
                 hWndUp = 0
-                ItterateDialogs = True
+               ' ItterateDialogs = True
             End If
         End If
-
+        ItterateDialogs = True
     End If
 End Function
 

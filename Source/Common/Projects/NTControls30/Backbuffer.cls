@@ -351,7 +351,6 @@ End Sub
 Public Sub Paint(Optional ByVal X1 As Long = 1, Optional ByVal Y1 As Long = 1, Optional ByVal X2 As Long = -1, Optional ByVal Y2 As Long = -1)
     If X2 = -1 Then X2 = Screen.Width / Screen.TwipsPerPixelX
     If Y1 = -1 Then Y1 = Screen.Height / Screen.TwipsPerPixelY
-
     
     BitBlt pHDC, X1, Y1, X2, Y2, myBackBuffer, 0, 0, vbSrcCopy
     

@@ -93,8 +93,11 @@ Public Sub Main()
     
 End Sub
 
-Public Sub soSweetPaserPresets()
 
+Public Sub soSweetPaserPresets()
+    'hoop and wrap are aliased for nesting in plurals of the same
+    'Line and ream as aliased
+    '
     ParserMessages(ParserCodes.ErrMsg_00) = "Expecting HOOPS statement above and before all."
     ParserMessages(ParserCodes.ErrMsg_01) = "Invalid SWEET color entity for HOOPS base."
     ParserMessages(ParserCodes.ErrMsg_02) = "Improper WRAP statement or HOOP arrangement."
@@ -114,7 +117,7 @@ Public Sub soSweetPaserPresets()
     ParserMessages(ParserCodes.ErrMsg_16) = "Markers for the WORDS statement invoked REAM incorrectly."
     ParserMessages(ParserCodes.ErrMsg_17) = "Markers for the RAINS statement invoked REAM incorrectly."
     ParserMessages(ParserCodes.ErrMsg_18) = "Markers for the DIGIT statement invoked REAM incorrectly."
-    ParserMessages(ParserCodes.ErrMsg_19) = "Execution of the script preformed with out problems."
+    ParserMessages(ParserCodes.ErrMsg_19) = "Execution of the script preformed with syntax errors."
     ParserMessages(ParserCodes.ErrMsg_20) = "External errors prevented the script's execution."
     
     ParserMessages(ParserCodes.Stages_00) = "Parser recognized the HOOPS stage has statements."

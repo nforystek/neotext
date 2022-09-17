@@ -2,7 +2,7 @@ Attribute VB_Name = "modStrands"
 #Const modStrands = -1
 Option Explicit
 Option Compare Binary
-Option Private Module
+
 
 Public Type MemInfo
     MemP As Long

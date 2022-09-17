@@ -192,6 +192,7 @@ End Sub
 
 Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
     If RootPath = "" Then RootPath = Left(CurDir, 2) & "\"
+   ' Debug.Print Replace(RootPath & "\", "\\", "\")
     
     Dim nxt As String
     nxt = FindText
@@ -216,7 +217,7 @@ Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As
         'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
 
             nxt = Dir(Replace(RootPath & "\", "\\", "\"), flags)
-'Debug.Print Replace(RootPath & "\", "\\", "\")
+
             If Err Then
                 Err.Clear
             ElseIf Abs(Recursive) > 0 Then
@@ -286,9 +287,9 @@ End Function
 Public Function GetSystem32Folder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim Ret As Long
+        Dim ret As Long
         winDir = String(45, Chr(0))
-        Ret = GetSystemDirectory(winDir, 45)
+        ret = GetSystemDirectory(winDir, 45)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -298,9 +299,9 @@ End Function
 Public Function GetWindowsFolder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim Ret As Long
+        Dim ret As Long
         winDir = String(260, Chr(0))
-        Ret = GetWindowsDirectory(winDir, 260)
+        ret = GetWindowsDirectory(winDir, 260)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -310,10 +311,10 @@ End Function
 Public Function GetWindowsTempFolder(Optional ByVal UseWin As Boolean = False) As String
 
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(260, Chr(0))
-    Ret = GetTempPath(260, winDir)
-    If (Not ((Ret = 16) And UseWin)) And (Not ((Ret = 34) And Not UseWin)) Then
+    ret = GetTempPath(260, winDir)
+    If (Not ((ret = 16) And UseWin)) And (Not ((ret = 34) And Not UseWin)) Then
         If PathExists(GetWindowsFolder() + "TEMP") Then
             winDir = GetWindowsFolder() + "TEMP\"
         Else
@@ -601,8 +602,9 @@ Public Function MapPaths(Optional ByVal inRoot As String = "", Optional ByVal in
     Dim outPath As String
     Dim outBlanket As Boolean
     Dim outSplit As Boolean
+    
     outPath = Replace(inRelative, """", "")
-    If (Not Mid(inRoot, 2, 2) = ":\") And (inRoot = "") Then inRoot = CurDir
+    If (Not Mid(inRoot, 2, 2) = ":\") And (inRoot = "") Then inRoot = IIf(inReroot <> "", inReroot, inRoot)
     If Not Right(inRoot, 1) = "\" Then inRoot = inRoot & "\.\"
     If (Not Left(inRoot, 1) = "\") And (Not Mid(inRoot, 2, 2) = ":\") Then inRoot = ".\" & inRoot
     If (Mid(inReroot, 2, 2) = ":\") Then
@@ -643,6 +645,7 @@ Public Function MapPaths(Optional ByVal inRoot As String = "", Optional ByVal in
     Loop
     If outBlanket Then
         outPath = Replace(outPath, inRoot, inReroot, , , vbTextCompare)
+        
         If Left(outPath, 1) = "\" And Mid(inReroot, 2, 1) = ":" Then outPath = Left(inReroot, 2) & outPath
     Else
         If Left(outPath, 1) = "\" And Mid(inRoot, 2, 1) = ":" Then outPath = Left(inRoot, 2) & outPath

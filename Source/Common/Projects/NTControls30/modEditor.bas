@@ -12,7 +12,7 @@ Public Type TextRange
 End Type
 
 Public Type ColorRange
-    StartMark As Long
+    StartLoc As Long
     Forecolor As Long
     BackColor As Long
 End Type

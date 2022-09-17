@@ -91,18 +91,18 @@ Public Property Let Behavior(ByVal RHS As Behaviors)
     End If
 End Property
 
-Public Property Get Filename() As String ' _
+Public Property Get FileName() As String ' _
 Gets or sets the filename path that the objects to be mirrored of, any text file lines are loaded, and object edits are real time written.
-Attribute Filename.VB_Description = "Gets or sets the filename path that the objects to be mirrored of, any text file lines are loaded, and object edits are real time written."
-    Filename = PathFileName
+Attribute FileName.VB_Description = "Gets or sets the filename path that the objects to be mirrored of, any text file lines are loaded, and object edits are real time written."
+    FileName = PathFileName
 End Property
-Public Property Let Filename(ByVal RHS As String)
+Public Property Let FileName(ByVal RHS As String)
     Dim bh As Behaviors
     bh = Behave
     Change bh, RHS
 End Property
 
-Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As String = MirrorPath_None)
+Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As String = "(None)")
     Terminate
     If Behave = Nothings_Initialized Then
         Dim sc As SECURITY_ATTRIBUTES
@@ -115,7 +115,7 @@ Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As
             Case Behaviors.ScopeLocale
                 Stream.Reset MemoryScopes.Local
             Case Else
-                Stream.Reset MemoryScopes.Heap
+                Stream.Reset MemoryScopes.heap
         End Select
         Behave = Behavior
         Select Case Left(MirrorFilePath, 6)
@@ -835,9 +835,10 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
         lSize2 = SubStream.Length
         
         Stream.Pyramid SubStream, Offset, Width
-                
-        If Length - Offset > 0 Then WriteToStream Partial(Offset, Length - Offset), Offset, Length - Offset
-        EndOfStream Length
+        
+        lSize = Length
+        If lSize > Offset Then WriteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+        EndOfStream lSize
         RebreakStream
 
     Else

@@ -3,7 +3,7 @@ Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; comdlg32.ocx
 Reference=*\G{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}#1.0#0#..\..\..\..\Program Files\Common Files\Designer\MSADDNDR.DLL#Add-In Designer/Instance Control Library
 Reference=*\G{EF404E00-EDA6-101A-8DAF-00DD010F7EBB}#5.3#0#..\..\..\..\Program Files\Microsoft Visual Studio\VB98\VB6EXT.OLB#Microsoft Visual Basic 6.0 Extensibility
 Reference=*\G{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}#2.2#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\Office10\MSO.DLL#Microsoft Office 10.0 Object Library
-Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#11.0#0#L:\Development\Neotext\Common\Binary\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#11.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
 Designer=BasicNeotext\Connect.Dsr
 Module=modCommon; ..\..\Shared\modCommon.bas
 Class=Registry; ..\..\Shared\Registry.cls
@@ -37,7 +37,7 @@ HelpFile=""
 Title="VB 6 Neotext Basic"
 ExeName32="VBN.EXE"
 Path32="..\Binary"
-Command32=""C:\Development\Neotext\Common\Projects\NTControls30\Test\Group1.vbg""
+Command32="/copy "C:\Development\Neotext" "L:\Development\Neotext""
 Name="BasicNeotext"
 HelpContextID="0"
 Description="VB 6 Neotext Basic"
@@ -69,8 +69,7 @@ Unattended=0
 Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
-DebugStartupOption=2
-DebugStartupComponent=C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE
+DebugStartupOption=0
 
 [MS Transaction Server]
 AutoRefresh=0

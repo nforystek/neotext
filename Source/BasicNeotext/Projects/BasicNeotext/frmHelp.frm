@@ -416,10 +416,6 @@ Private Sub Command3_Click()
     Me.Hide
 End Sub
 
-Private Sub Form_Load()
-
-End Sub
-
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     If (Command1.Caption = "&No" And UnloadMode = 0) Then
         Cancel = True
@@ -429,6 +425,3 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     
 End Sub
 
-Private Sub Label2_Click()
-
-End Sub

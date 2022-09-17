@@ -1,0 +1,9 @@
+VBGROUP 5.0
+StartupProject=..\Projects\MaxFTP.vbp
+Project=..\..\Common\Projects\NTAdvFTP61.vbp
+Project=..\..\Common\Projects\NTPopup21.vbp
+Project=..\..\Common\Projects\NTSchedule20.vbp
+Project=..\..\Common\Projects\NTNodes10.vbp
+Project=..\..\Common\Projects\NTCipher10.vbp
+Project=..\..\Common\Projects\NTControls22.vbp
+Project=..\..\Common\Projects\NTSound20.vbp

@@ -120,25 +120,28 @@ Public Sub Populate(ByVal URI As String)
                     Set i = Nothing
                 End If
             Loop
-            
-            fldrs = SearchPath("*.tmp", 1, URI, FindAll)
-            Do Until fldrs = ""
-                fldr = RemoveNextArg(fldrs, vbCrLf)
-                If PathExists(fldr, True) Then
-                    On Error Resume Next
-                    Kill fldr
-                    On Error GoTo 0
-                End If
-            Loop
-            fldrs = SearchPath("*.obj", 1, URI, FindAll)
-            Do Until fldrs = ""
-                fldr = RemoveNextArg(fldrs, vbCrLf)
-                If PathExists(fldr, True) Then
-                    On Error Resume Next
-                    Kill fldr
-                    On Error GoTo 0
-                End If
-            Loop
+            Select Case GetFileExt(pLocation, True, True)
+                Case "vbp"
+        
+                    fldrs = SearchPath("*.tmp", 1, URI, FindAll)
+                    Do Until fldrs = ""
+                        fldr = RemoveNextArg(fldrs, vbCrLf)
+                        If PathExists(fldr, True) Then
+                            On Error Resume Next
+                            Kill fldr
+                            On Error GoTo 0
+                        End If
+                    Loop
+                    fldrs = SearchPath("*.obj", 1, URI, FindAll)
+                    Do Until fldrs = ""
+                        fldr = RemoveNextArg(fldrs, vbCrLf)
+                        If PathExists(fldr, True) Then
+                            On Error Resume Next
+                            Kill fldr
+                            On Error GoTo 0
+                        End If
+                    Loop
+            End Select
         ElseIf PathExists(URI, True) Then
             Select Case GetFileExt(URI, True, True)
                 Case "ocx", "dll", "exe", "tlb", "cab"
@@ -156,6 +159,9 @@ Public Sub Populate(ByVal URI As String)
                             Set i = Nothing
                         End If
                     Loop
+                Case "bas", "ctl", "frm", "cls", "dsr", "dob", "pag"
+                    pLocation = URI
+                    pContents = ReadFile(URI)
                 Case "vbp"
                     fldrs = ParseProject(Me, URI)
                     Do Until fldrs = ""
@@ -180,7 +186,7 @@ Public Sub Populate(ByVal URI As String)
                             Set i = Nothing
                         End If
                     Loop
-                    Do Until v.Count = 0
+                    Do Until v.count = 0
                         v.Remove 1
                     Loop
                     Set v = Nothing
@@ -222,33 +228,36 @@ Public Sub Cleanup()
     
     Dim fldr As String
     Dim fldrs As String
-    If PathExists(pLocation, False) Then
-        fldrs = SearchPath("*.tmp", 1, pLocation, FindAll)
-        Do Until fldrs = ""
-            fldr = RemoveNextArg(fldrs, vbCrLf)
-            On Error Resume Next
-            Kill fldr
-            On Error GoTo 0
-        Loop
-    ElseIf PathExists(pLocation, True) Then
-        fldrs = SearchPath("*.tmp", 1, GetFilePath(pLocation), FindAll)
-        Do Until fldrs = ""
-            fldr = RemoveNextArg(fldrs, vbCrLf)
-            On Error Resume Next
-            Kill fldr
-            On Error GoTo 0
-        Loop
-    End If
-    If PathExists(GetFilePath(pCompiled), False) Then
-        fldrs = SearchPath("*.obj", -1, GetFilePath(pCompiled), FindAll)
-        Do Until fldrs = ""
-            fldr = RemoveNextArg(fldrs, vbCrLf)
-            On Error Resume Next
-            Kill fldr
-            On Error GoTo 0
-        Loop
-    End If
-    Do Until pIncludes.Count = 0
+    Select Case GetFileExt(pLocation, True, True)
+        Case "vbp"
+            If PathExists(pLocation, False) Then
+                fldrs = SearchPath("*.tmp", 1, pLocation, FindAll)
+                Do Until fldrs = ""
+                    fldr = RemoveNextArg(fldrs, vbCrLf)
+                    On Error Resume Next
+                    Kill fldr
+                    On Error GoTo 0
+                Loop
+            ElseIf PathExists(pLocation, True) Then
+                fldrs = SearchPath("*.tmp", 1, GetFilePath(pLocation), FindAll)
+                Do Until fldrs = ""
+                    fldr = RemoveNextArg(fldrs, vbCrLf)
+                    On Error Resume Next
+                    Kill fldr
+                    On Error GoTo 0
+                Loop
+            End If
+            If PathExists(GetFilePath(pCompiled), False) Then
+                fldrs = SearchPath("*.obj", -1, GetFilePath(pCompiled), FindAll)
+                Do Until fldrs = ""
+                    fldr = RemoveNextArg(fldrs, vbCrLf)
+                    On Error Resume Next
+                    Kill fldr
+                    On Error GoTo 0
+                Loop
+            End If
+    End Select
+    Do Until pIncludes.count = 0
         pIncludes.Remove 1
     Loop
     pLocation = ""
