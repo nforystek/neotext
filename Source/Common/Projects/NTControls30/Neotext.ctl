@@ -123,11 +123,11 @@ Public Event SelChange()
 
 Public Event ColorText(ByVal ViewOffset As Long, ByVal ViewWidth As Long)
 
-Private dragStart As Integer
+Private dragStart As Long
 Private keySpeed As Long
 Private hasFocus As Boolean
 Private insertMode As Boolean
-Private firstRun As Boolean
+'Private firstRun As Boolean
 Private colorOpen As Boolean
 Private ircColors As Boolean
 
@@ -166,6 +166,43 @@ Private xUndoBuffer As Long
 
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
+
+Public Function FindText(ByVal Text As String, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Long
+    Dim idx As Long
+    Dim cnt As Long
+    Dim cnt2 As Long
+    Dim Max As Long
+    FindText = -1
+    If Text <> "" Then
+        If Width = -1 Then Width = pText.Length - Offset
+        'Max = pText.Pass(Asc(Left(Text, 1)), Offset, Width)
+        'If Max > 0 Then
+            cnt = 1
+            Do
+                idx = pText.poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
+                If Offset + idx <= Offset + Width Then
+                    For cnt2 = 0 To (Len(Text) - 2)
+                        If Offset + idx + cnt2 < Offset + Width Then
+                            If Not (pText.Peek(Offset + idx + cnt2) = Asc(Mid(Text, cnt2 + 2, 1))) Then
+                                idx = -idx
+                                Exit For
+                            End If
+                        Else
+                            idx = -idx
+                            Exit For
+                        End If
+                    Next
+                    If idx >= 0 And idx <= Offset + Width Then
+                        FindText = Offset + idx - 1
+                        Exit Function
+                    End If
+                    cnt = cnt + 1
+                End If
+            Loop While idx < 0 'And cnt <= Max
+            
+        'End If
+    End If
+End Function
 
 Public Property Get ColorPalette() As String
     Dim txt As String
@@ -1075,7 +1112,8 @@ Attribute SelText.VB_Description = "Sets the selected text, the portion of text 
     pSel.StopPos = pSel.StartPos + Len(Replace(RHS, vbCrLf, vbLf))
     Swap pSel.StartPos, pSel.StopPos
     InvalidateCursor
-
+    MakeCaretVisible CaretLocation, True
+    SetScrollBarsReverse
 End Property
 
 Public Property Get SelStart() As Long ' _
@@ -1095,7 +1133,10 @@ Attribute SelStart.VB_Description = "Sets the selection start of the highlighted
     Else
         pSel.StartPos = RHS
     End If
+    
     InvalidateCursor
+    MakeCaretVisible CaretLocation, True
+    SetScrollBarsReverse
 End Property
 Public Property Get SelLength() As Long ' _
 Gets the selection length of the highlighted portion of text.
@@ -1115,6 +1156,8 @@ Attribute SelLength.VB_Description = "Sets the selection length of the highlight
         pSel.StopPos = pSel.StartPos + RHS
     End If
     InvalidateCursor
+    MakeCaretVisible CaretLocation, True
+    SetScrollBarsReverse
 End Property
 
 Public Property Get Text() ' _
@@ -2952,8 +2995,6 @@ Friend Sub RaiseEventChange(Optional ByVal KeepUndo As Boolean = True)
   
     RaiseEventSelChange KeepUndo
     
-    firstRun = False
-    
     If Not Cancel Then
         Cancel = True
         
@@ -3139,7 +3180,7 @@ Public Static Sub Refresh()
         Dim tmpSel As RangeType
         lastColumnWidth = LineColumnWidth
         
-        If lastFirstLine <> LineFirstVisible Or lastOffsets.StartPos <> pOffsetX Or lastOffsets.StopPos <> pOffsetY Or (Not firstRun) Then
+       ' If lastFirstLine <> LineFirstVisible Or lastOffsets.StartPos <> pOffsetX Or lastOffsets.StopPos <> pOffsetY Or (Not firstRun) Then
             
             lastFirstLine = LineFirstVisible
             
@@ -3150,15 +3191,14 @@ Public Static Sub Refresh()
             If bpos > 0 Then bpos = bpos + 1
             epos = pText.poll(Asc(vbLf), lastFirstLine + (UsercontrolHeight \ TextHeight) + 1)
             
-            
             lastPolls.StartPos = bpos
             lastPolls.StopPos = epos
             
             CleanColorRecords bpos, epos
-        Else
-            bpos = lastPolls.StartPos
-            epos = lastPolls.StopPos
-        End If
+'        Else
+'            bpos = lastPolls.StartPos
+'            epos = lastPolls.StopPos
+'        End If
             
         curX = pOffsetX + lastColumnWidth
         curY = pOffsetY + (lastFirstLine * TextHeight)
@@ -3239,8 +3279,8 @@ Public Static Sub Refresh()
                 CleanColorRecords bpos, epos
             End If
             
-        Else
-            firstRun = False
+'        Else
+'            firstRun = False
         End If
         
         If pLineNumbers Then
@@ -3342,6 +3382,10 @@ Private Sub ScrollBar2_Scroll()
     If ScrollBar2.Visible Then OffsetX = -ScrollBar2.Value
 End Sub
 
+Friend Sub SetScrollBarsReverse()
+    ScrollBar2.Value = -OffsetX
+    ScrollBar1.Value = -OffsetY
+End Sub
 Friend Sub SetScrollBars()
 
     Dim I As Integer
@@ -3371,20 +3415,21 @@ Friend Sub SetScrollBars()
         Else
             ScrollBar2.Enabled = Enabled
         End If
-
+        ScrollBar1.Max = (CanvasHeight - UsercontrolHeight)
+        ScrollBar1.SmallChange = TextHeight
+        ScrollBar1.LargeChange = ScrollBar1.SmallChange * 4
         If ScrollBar1.Visible Then
-            ScrollBar1.Max = (CanvasHeight - UsercontrolHeight)
-            ScrollBar1.SmallChange = TextHeight
-            ScrollBar1.LargeChange = ScrollBar1.SmallChange * 4
+
             If ScrollBar1.Top <> 0 Then ScrollBar1.Top = 0
             If ScrollBar1.Width <> Screen.TwipsPerPixelX ^ 2 Then ScrollBar1.Width = Screen.TwipsPerPixelX ^ 2
             If ScrollBar1.Left <> UsercontrolWidth + LineColumnWidth Then ScrollBar1.Left = UsercontrolWidth + LineColumnWidth
             If ScrollBar1.Height <> UsercontrolHeight Then ScrollBar1.Height = UsercontrolHeight
         End If
+        ScrollBar2.Max = (CanvasWidth - UsercontrolWidth)
+        ScrollBar2.SmallChange = TextWidth
+        ScrollBar2.LargeChange = ScrollBar2.SmallChange * 4
         If ScrollBar2.Visible Then
-            ScrollBar2.Max = (CanvasWidth - UsercontrolWidth)
-            ScrollBar2.SmallChange = TextWidth
-            ScrollBar2.LargeChange = ScrollBar2.SmallChange * 4
+
             If ScrollBar2.Left <> 0 Then ScrollBar2.Left = 0
             If ScrollBar2.Height <> Screen.TwipsPerPixelY ^ 2 Then ScrollBar2.Height = Screen.TwipsPerPixelY ^ 2
             If ScrollBar2.Top <> UsercontrolHeight Then ScrollBar2.Top = UsercontrolHeight
