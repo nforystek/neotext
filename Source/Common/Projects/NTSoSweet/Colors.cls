@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Sweets"
+Attribute VB_Name = "Colors"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -23,7 +23,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Sweet"
+    Typename = "Color"
 End Property
 
 Public Property Get Count() As Long

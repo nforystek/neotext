@@ -19,7 +19,7 @@ Option Compare Binary
 Private sMushes As Mushes
 Private sRushes As Rushes
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 Private xRawvalue As String
 Private xEndvalue As String
@@ -32,12 +32,12 @@ Public Property Get Typename() As String
     Typename = "Wrap"
 End Property
 
-Public Property Get Sweet() As Sweet
-    Set Sweet = xSweet
+Public Property Get Color() As Color
+    Set Color = xColor
 End Property
 
-Public Property Set Sweet(ByRef newVal As Sweet)
-    Set xSweet = newVal
+Public Property Set Color(ByRef newVal As Color)
+    Set xColor = newVal
 End Property
 
 Public Property Get Identity() As Long
@@ -81,6 +81,6 @@ End Sub
 Private Sub Class_Terminate()
     Set sRushes = Nothing
     Set sMushes = Nothing
-    Set xSweet = Nothing
+    Set xColor = Nothing
 End Sub
 

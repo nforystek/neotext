@@ -6,7 +6,7 @@ Option Explicit
 'TOP DOWN
 Option Compare Binary
 
-Private xSweetnerInc As Sweet
+Private xColornerInc As Color
 Private xIdentityInc As Long
 
 Public Const StateErrors = 0
@@ -99,68 +99,68 @@ Public Sub soSweetPaserPresets()
     'Line and ream as aliased
     '
     ParserMessages(ParserCodes.ErrMsg_00) = "Expecting HOOPS statement above and before all."
-    ParserMessages(ParserCodes.ErrMsg_01) = "Invalid SWEET color entity for HOOPS base."
+    ParserMessages(ParserCodes.ErrMsg_01) = "Invalid COLOR color entity for HOOPS base."
     ParserMessages(ParserCodes.ErrMsg_02) = "Improper WRAP statement or HOOP arrangement."
     ParserMessages(ParserCodes.ErrMsg_03) = "Improper PUSH or MUSH statement in HOOP arrangement."
-    ParserMessages(ParserCodes.ErrMsg_04) = "Invalid SWEET color entity for this HOOP line lace."
-    ParserMessages(ParserCodes.ErrMsg_05) = "Invalid SWEET color entity for following HOOP marker."
+    ParserMessages(ParserCodes.ErrMsg_04) = "Invalid COLOR color entity for this HOOP line lace."
+    ParserMessages(ParserCodes.ErrMsg_05) = "Invalid COLOR color entity for following HOOP marker."
     ParserMessages(ParserCodes.ErrMsg_06) = "Markers for the WORDS statement invoked HOOP incorrectly."
-    ParserMessages(ParserCodes.ErrMsg_07) = "Markers for the RAINS statement invoked HOOP incorrectly."
+    ParserMessages(ParserCodes.ErrMsg_07) = "Markers for the LETTERS statement invoked HOOP incorrectly."
     ParserMessages(ParserCodes.ErrMsg_08) = "Markers for the DIGIT statement invoked HOOP incorrectly."
-    ParserMessages(ParserCodes.ErrMsg_09) = "Expecting SWEET or other valid HOOPS continuations."
+    ParserMessages(ParserCodes.ErrMsg_09) = "Expecting COLOR or other valid HOOPS continuations."
     ParserMessages(ParserCodes.ErrMsg_10) = "Expecting REAMS statement as the partition half."
-    ParserMessages(ParserCodes.ErrMsg_11) = "Invalid SWEET color entity for REAMS partition half."
+    ParserMessages(ParserCodes.ErrMsg_11) = "Invalid COLOR color entity for REAMS partition half."
     ParserMessages(ParserCodes.ErrMsg_12) = "Improper RUSH or MUSH statement in REAM arrangement."
     ParserMessages(ParserCodes.ErrMsg_13) = "Improper PUSH or MUSH statement in REAM arrangement."
-    ParserMessages(ParserCodes.ErrMsg_14) = "Invalid SWEET color entity for this REAM line lace."
-    ParserMessages(ParserCodes.ErrMsg_15) = "Invalid SWEET color entity for following REAM marker."
+    ParserMessages(ParserCodes.ErrMsg_14) = "Invalid COLOR color entity for this REAM line lace."
+    ParserMessages(ParserCodes.ErrMsg_15) = "Invalid COLOR color entity for following REAM marker."
     ParserMessages(ParserCodes.ErrMsg_16) = "Markers for the WORDS statement invoked REAM incorrectly."
-    ParserMessages(ParserCodes.ErrMsg_17) = "Markers for the RAINS statement invoked REAM incorrectly."
+    ParserMessages(ParserCodes.ErrMsg_17) = "Markers for the LETTERS statement invoked REAM incorrectly."
     ParserMessages(ParserCodes.ErrMsg_18) = "Markers for the DIGIT statement invoked REAM incorrectly."
     ParserMessages(ParserCodes.ErrMsg_19) = "Execution of the script preformed with syntax errors."
     ParserMessages(ParserCodes.ErrMsg_20) = "External errors prevented the script's execution."
     
     ParserMessages(ParserCodes.Stages_00) = "Parser recognized the HOOPS stage has statements."
-    ParserMessages(ParserCodes.Stages_01) = "Parser recognized HOOPS level SWEET one statement."
+    ParserMessages(ParserCodes.Stages_01) = "Parser recognized HOOPS level COLOR one statement."
     ParserMessages(ParserCodes.Stages_02) = "Parser traversal of HOOP lace WRAP statement."
     ParserMessages(ParserCodes.Stages_03) = "Parser traversal of HOOP lace PUSH or MUSH statement."
-    ParserMessages(ParserCodes.Stages_04) = "Parser recognized HOOPS level SWEET two statement."
-    ParserMessages(ParserCodes.Stages_05) = "Parser recognized HOOPS level SWEET three statement."
+    ParserMessages(ParserCodes.Stages_04) = "Parser recognized HOOPS level COLOR two statement."
+    ParserMessages(ParserCodes.Stages_05) = "Parser recognized HOOPS level COLOR three statement."
     ParserMessages(ParserCodes.Stages_06) = "Parser traversal at HOOPS level of WORDS markers."
-    ParserMessages(ParserCodes.Stages_07) = "Parser traversal at HOOPS level of RAINS markers."
+    ParserMessages(ParserCodes.Stages_07) = "Parser traversal at HOOPS level of LETTERS markers."
     ParserMessages(ParserCodes.Stages_08) = "Parser traversal at HOOPS level of DIGIT markers."
     ParserMessages(ParserCodes.Stages_09) = "Parser recognized futher traversal of HOOPS level."
     ParserMessages(ParserCodes.Stages_10) = "Parser recognized the REAMS statement partition."
-    ParserMessages(ParserCodes.Stages_11) = "Parser recognized REAMS level SWEET one statement."
+    ParserMessages(ParserCodes.Stages_11) = "Parser recognized REAMS level COLOR one statement."
     ParserMessages(ParserCodes.Stages_12) = "Parser traversal of REAM lace RUSH or MUSH statement."
     ParserMessages(ParserCodes.Stages_13) = "Parser traversal of REAM lace PUSH or MUSH statement."
-    ParserMessages(ParserCodes.Stages_14) = "Parser recognized REAMS level SWEET two statement."
-    ParserMessages(ParserCodes.Stages_15) = "Parser recognized REAMS level SWEET three statement."
+    ParserMessages(ParserCodes.Stages_14) = "Parser recognized REAMS level COLOR two statement."
+    ParserMessages(ParserCodes.Stages_15) = "Parser recognized REAMS level COLOR three statement."
     ParserMessages(ParserCodes.Stages_16) = "Parser traversal at REAMS level of WORDS markers."
-    ParserMessages(ParserCodes.Stages_17) = "Parser traversal at REAMS level of RAINS markers."
+    ParserMessages(ParserCodes.Stages_17) = "Parser traversal at REAMS level of LETTERS markers."
     ParserMessages(ParserCodes.Stages_18) = "Parser traversal at REAMS level of DIGIT markers."
     ParserMessages(ParserCodes.Stages_19) = "Parser recognized futher traversal of REAMS level."
     ParserMessages(ParserCodes.Stages_20) = "Parser has interpreted all phases of the script."
     
-    ParserMessages(ParserCodes.Syntax_00) = "Syntax: hoops [sweet <color>]; Example: hoops"
-    ParserMessages(ParserCodes.Syntax_01) = "Syntax: sweet <color>; Example: sweet #FF00FF"
-    ParserMessages(ParserCodes.Syntax_02) = "Syntax: wrap ? hoop ? [sweet <color>]; Example: wrap "" hoop """
-    ParserMessages(ParserCodes.Syntax_03) = "Syntax: push ? mush ? hoop ? [sweet <color>]; Example: push ' hoop '"
-    ParserMessages(ParserCodes.Syntax_04) = "Syntax: sweet <color>; Example: ...hoop eol sweet background"
-    ParserMessages(ParserCodes.Syntax_05) = "Syntax: sweet <color>; Example: sweet B2A4C6 words..."
-    ParserMessages(ParserCodes.Syntax_06) = "Syntax: [sweet <color>] words ? ?...; word ?; Example: words con cat bit"
-    ParserMessages(ParserCodes.Syntax_07) = "Syntax: [sweet <color>] rains ! !...; rain !; Example: rains & % # 1 a b"
-    ParserMessages(ParserCodes.Syntax_08) = "Syntax: [sweet <color>] digits # ##...; digit ##; Example: digits 1 48 4800"
-    ParserMessages(ParserCodes.Syntax_09) = "Syntax: ... hoop; Example: wrap ' mush '' hoop ' sweet #00FF00"
-    ParserMessages(ParserCodes.Syntax_10) = "Syntax: reams [sweet <color>]; Example: reams sweet White"
-    ParserMessages(ParserCodes.Syntax_11) = "Syntax: sweet <color>; Example: sweet &H124"
-    ParserMessages(ParserCodes.Syntax_12) = "Syntax: rush ? [push ?] hoop ? [sweet <color>]; Example: rush /* hoop */"
-    ParserMessages(ParserCodes.Syntax_13) = "Syntax: push ? [mush ?] hoop ? [sweet <color>]; Example: push * mush ** hoop *"
-    ParserMessages(ParserCodes.Syntax_14) = "Syntax: sweet <color>; Example: ...ream sweet 0x052"
-    ParserMessages(ParserCodes.Syntax_15) = "Syntax: sweet <color>; Example: sweet 2762 digit..."
-    ParserMessages(ParserCodes.Syntax_16) = "Syntax: [sweet <color>] words ? ?...; word ?; Example: word isoneword"
-    ParserMessages(ParserCodes.Syntax_17) = "Syntax: [sweet <color>] rains ! !...; rain !; Example: rain !"
-    ParserMessages(ParserCodes.Syntax_18) = "Syntax: [sweet <color>] digits ## #...; digit #; Example: digit 0"
+    ParserMessages(ParserCodes.Syntax_00) = "Syntax: hoops [color <color>]; Example: hoops"
+    ParserMessages(ParserCodes.Syntax_01) = "Syntax: color <color>; Example: color #FF00FF"
+    ParserMessages(ParserCodes.Syntax_02) = "Syntax: wrap ? hoop ? [color <color>]; Example: wrap "" hoop """
+    ParserMessages(ParserCodes.Syntax_03) = "Syntax: push ? mush ? hoop ? [color <color>]; Example: push ' hoop '"
+    ParserMessages(ParserCodes.Syntax_04) = "Syntax: color <color>; Example: ...hoop eol color background"
+    ParserMessages(ParserCodes.Syntax_05) = "Syntax: color <color>; Example: color B2A4C6 words..."
+    ParserMessages(ParserCodes.Syntax_06) = "Syntax: [color <color>] words ? ?...; word ?; Example: words con cat bit"
+    ParserMessages(ParserCodes.Syntax_07) = "Syntax: [color <color>] letters ! !...; letter !; Example: letters & % # 1 a b"
+    ParserMessages(ParserCodes.Syntax_08) = "Syntax: [color <color>] digits # ##...; digit ##; Example: digits 1 48 4800"
+    ParserMessages(ParserCodes.Syntax_09) = "Syntax: ... hoop; Example: wrap ' mush '' hoop ' color #00FF00"
+    ParserMessages(ParserCodes.Syntax_10) = "Syntax: reams [color <color>]; Example: reams color White"
+    ParserMessages(ParserCodes.Syntax_11) = "Syntax: color <color>; Example: color &H124"
+    ParserMessages(ParserCodes.Syntax_12) = "Syntax: rush ? [push ?] hoop ? [color <color>]; Example: rush /* hoop */"
+    ParserMessages(ParserCodes.Syntax_13) = "Syntax: push ? [mush ?] hoop ? [color <color>]; Example: push * mush ** hoop *"
+    ParserMessages(ParserCodes.Syntax_14) = "Syntax: color <color>; Example: ...ream color 0x052"
+    ParserMessages(ParserCodes.Syntax_15) = "Syntax: color <color>; Example: color 2762 digit..."
+    ParserMessages(ParserCodes.Syntax_16) = "Syntax: [color <color>] words ? ?...; word ?; Example: word isoneword"
+    ParserMessages(ParserCodes.Syntax_17) = "Syntax: [color <color>] letters ! !...; letter !; Example: letter !"
+    ParserMessages(ParserCodes.Syntax_18) = "Syntax: [color <color>] digits ## #...; digit #; Example: digit 0"
     ParserMessages(ParserCodes.Syntax_19) = "Syntax: ... ream; Example: rush [ push < push > ream ]"
     ParserMessages(ParserCodes.Syntax_20) = "Syntax: eol; eof; Example: words to express like eol"
 
@@ -208,22 +208,22 @@ Public Function GetNewIdentity() As Long
     GetNewIdentity = xIdentityInc
 End Function
 
-Public Function GetNewSweetner(Optional ByVal Rawvalue As String = "", Optional ByVal Background As Boolean = False) As Object
-    If xSweetnerInc Is Nothing Then
-        Set GetNewSweetner = New Sweet
+Public Function GetNewColorner(Optional ByVal Rawvalue As String = "", Optional ByVal Background As Boolean = False) As Object
+    If xColornerInc Is Nothing Then
+        Set GetNewColorner = New Color
         If (Rawvalue = "") Then
-            GetNewSweetner.Rawvalue = "#000000"
+            GetNewColorner.Rawvalue = "#000000"
         Else
-            GetNewSweetner.Rawvalue = Rawvalue
+            GetNewColorner.Rawvalue = Rawvalue
         End If
-    ElseIf (Not (Rawvalue = "")) Or (((Rawvalue <> xSweetnerInc.Rawvalue) And Background) Or Not Background) Then
+    ElseIf (Not (Rawvalue = "")) Or (((Rawvalue <> xColornerInc.Rawvalue) And Background) Or Not Background) Then
         If Background Then
-            Set xSweetnerInc = New Sweet
-            xSweetnerInc.Rawvalue = Rawvalue
-            Set GetNewSweetner = xSweetnerInc
+            Set xColornerInc = New Color
+            xColornerInc.Rawvalue = Rawvalue
+            Set GetNewColorner = xColornerInc
         Else
-            Set GetNewSweetner = New Sweet
-            GetNewSweetner.Rawvalue = Rawvalue
+            Set GetNewColorner = New Color
+            GetNewColorner.Rawvalue = Rawvalue
         End If
     End If
     

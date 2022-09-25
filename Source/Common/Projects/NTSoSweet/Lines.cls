@@ -16,7 +16,7 @@ Option Explicit
 
 Option Compare Binary
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 Private xRawvalue As String
 Private xEndvalue As String

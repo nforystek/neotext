@@ -16,19 +16,19 @@ Option Explicit
 
 Option Compare Binary
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 Private xRawvalue As String
 Private xEndvalue As String
 
 Private List As VBA.Collection
 
-Public Property Get Sweet() As Sweet
-    Set Sweet = xSweet
+Public Property Get Color() As Color
+    Set Color = xColor
 End Property
 
-Public Property Set Sweet(ByRef newVal As Sweet)
-    Set xSweet = newVal
+Public Property Set Color(ByRef newVal As Color)
+    Set xColor = newVal
 End Property
 
 Public Property Get Basename() As String

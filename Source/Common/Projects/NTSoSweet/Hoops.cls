@@ -16,7 +16,7 @@ Option Explicit
 
 Option Compare Binary
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 
 Private List As VBA.Collection
@@ -29,12 +29,12 @@ Public Property Get Typename() As String
     Typename = "Hoops"
 End Property
 
-Public Property Get Sweet() As Sweet
-    Set Sweet = xSweet
+Public Property Get Color() As Color
+    Set Color = xColor
 End Property
 
-Public Property Set Sweet(ByRef newVal As Sweet)
-    Set xSweet = newVal
+Public Property Set Color(ByRef newVal As Color)
+    Set xColor = newVal
 End Property
 
 Public Property Get Identity() As Long
@@ -115,5 +115,5 @@ End Sub
 
 Private Sub Class_Terminate()
     ClearCollection List, True
-    Set xSweet = Nothing
+    Set xColor = Nothing
 End Sub

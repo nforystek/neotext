@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Sweet"
+Attribute VB_Name = "Color"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -16,7 +16,7 @@ Option Explicit
 
 Option Compare Binary
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 Private xRawvalue As String
 Private xEndvalue As String
@@ -31,7 +31,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Sweet"
+    Typename = "Color"
 End Property
 
 Public Property Get Index() As Long

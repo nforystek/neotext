@@ -87,7 +87,7 @@ Public Enum ParserCodes
     Syntax_20 = 62
 End Enum
 
-Private xSweet As Sweets
+Private xColor As Colors
 
 Private xHoops As Hoops
 Private xReams As Reams
@@ -137,8 +137,8 @@ Public Property Get Orderly(Optional ByVal Index As Long = 0)
     '    Err.Raise 8, App.EXEName, "Script host not loaded; use 0 for total count, -1 or count of Hoops, -2 for count of Reams."
     End If
 End Property
-Public Property Get Sweets() As Sweets
-    Set Sweets = xSweet
+Public Property Get Colors() As Colors
+    Set Colors = xColor
 End Property
 
 Public Property Get Hoops() As Hoops
@@ -175,8 +175,8 @@ Private Function StateFromLine(ByRef Items As Object, ByVal inLine As String) As
             StateMinor = 1
             RemoveNextArg inLine, " "
 
-            Set Hoops.Sweet = SweetFromLine(inLine, True)
-            Sweets.Add Hoops.Sweet
+            Set Hoops.Color = ColorFromLine(inLine, True)
+            Colors.Add Hoops.Color
             
             StateMinor = 2
             StateFromLine = True
@@ -188,8 +188,8 @@ Private Function StateFromLine(ByRef Items As Object, ByVal inLine As String) As
             StateMajor = 1
             StateMinor = 1
 
-            Set Reams.Sweet = SweetFromLine(RemoveArg(inLine, " "), True)
-            Sweets.Add Reams.Sweet
+            Set Reams.Color = ColorFromLine(RemoveArg(inLine, " "), True)
+            Colors.Add Reams.Color
             
             StateMinor = 2
         ElseIf (StateMinor = 2) Then
@@ -216,10 +216,10 @@ Private Function StateFromLine(ByRef Items As Object, ByVal inLine As String) As
     End If
 End Function
 
-Private Function SweetFromLine(ByRef inLine As String, Optional ByVal Background As Boolean = False) As Sweet
-    If LCase(NextArg(inLine, " ")) = "sweet" Then
+Private Function ColorFromLine(ByRef inLine As String, Optional ByVal Background As Boolean = False) As Color
+    If LCase(NextArg(inLine, " ")) = "color" Then
         RemoveNextArg inLine, " "
-        Set SweetFromLine = GetNewSweetner(RemoveNextArg(inLine, " "), Background)
+        Set ColorFromLine = GetNewColorner(RemoveNextArg(inLine, " "), Background)
     End If
 End Function
 
@@ -249,8 +249,8 @@ Private Function WrapFromLine(ByRef inLine As String) As Object
         If Wrap.Rawvalue = "bol" Then Wrap.Rawvalue = Chr(10)
         If Wrap.Endvalue = "eol" Then Wrap.Endvalue = Chr(13)
         If Wrap.Endvalue = "bol" Then Wrap.Endvalue = Chr(10)
-        Set Wrap.Sweet = SweetFromLine(inLine)
-        Sweets.Add Wrap.Sweet
+        Set Wrap.Color = ColorFromLine(inLine)
+        Colors.Add Wrap.Color
         Set WrapFromLine = W
         StateMinor = 4
     End If
@@ -284,8 +284,8 @@ Private Function LineFromLine(ByRef inLine As String) As Object
         If Line.Rawvalue = "bol" Then Line.Rawvalue = Chr(10)
         If Line.Endvalue = "eol" Then Line.Endvalue = Chr(13)
         If Line.Endvalue = "bol" Then Line.Endvalue = Chr(10)
-        Set Line.Sweet = SweetFromLine(inLine)
-        Sweets.Add Line.Sweet
+        Set Line.Color = ColorFromLine(inLine)
+        Colors.Add Line.Color
         Set LineFromLine = l
         StateMinor = 4
     End If
@@ -316,8 +316,8 @@ Private Function PushFromLine(ByRef inLine As String) As Object
         If Push.Rawvalue = "bol" Then Push.Rawvalue = Chr(10)
         If Push.Endvalue = "eol" Then Push.Endvalue = Chr(13)
         If Push.Endvalue = "bol" Then Push.Endvalue = Chr(10)
-        Set Push.Sweet = SweetFromLine(inLine)
-        Sweets.Add Push.Sweet
+        Set Push.Color = ColorFromLine(inLine)
+        Colors.Add Push.Color
         Set PushFromLine = P
         StateMinor = 4
     End If
@@ -348,8 +348,8 @@ Private Function RushFromLine(ByRef inLine As String) As Object
         If Rush.Rawvalue = "bol" Then Rush.Rawvalue = Chr(10)
         If Rush.Endvalue = "eol" Then Rush.Endvalue = Chr(13)
         If Rush.Endvalue = "bol" Then Rush.Endvalue = Chr(10)
-        Set Rush.Sweet = SweetFromLine(inLine)
-        Sweets.Add Rush.Sweet
+        Set Rush.Color = ColorFromLine(inLine)
+        Colors.Add Rush.Color
         Set RushFromLine = R
         StateMinor = 4
     End If
@@ -367,7 +367,7 @@ Private Function MushFromLine(ByRef inLine As String) As Object
             Mush.Rawvalue = RemoveNextArg(inLine, " ")
             If Mush.Rawvalue = "eol" Then Mush.Rawvalue = Chr(13)
             If Mush.Rawvalue = "bol" Then Mush.Rawvalue = Chr(10)
-            Set Mush.Sweet = Sweets(Sweets.Count)
+            Set Mush.Color = Colors(Colors.Count)
             m.Add Mush
             Set Mush = Nothing
         Loop Until FinishStateLines(inLine) Or (inLine = "")
@@ -379,25 +379,25 @@ End Function
 
 Private Function WordFromLine(ByRef inLine As String) As Boolean
     If (StrReverse(NextArg(StrReverse(inLine), " ")) = "words") Then
-        Sweets.Add SweetFromLine(inLine)
+        Colors.Add ColorFromLine(inLine)
         If LCase(RemoveNextArg(inLine, " ")) = "words" Then
             WordFromLine = True
         End If
     End If
 End Function
 
-Private Function RainFromLine(ByRef inLine As String) As Boolean
-    If (StrReverse(NextArg(StrReverse(inLine), " ")) = "rains") Then
-        Sweets.Add SweetFromLine(inLine)
-        If LCase(RemoveNextArg(inLine, " ")) = "rains" Then
-            RainFromLine = True
+Private Function LetterFromLine(ByRef inLine As String) As Boolean
+    If (StrReverse(NextArg(StrReverse(inLine), " ")) = "letters") Then
+        Colors.Add ColorFromLine(inLine)
+        If LCase(RemoveNextArg(inLine, " ")) = "letters" Then
+            LetterFromLine = True
         End If
     End If
 End Function
 
 Private Function DigitFromLine(ByRef inLine As String) As Boolean
     If (StrReverse(NextArg(StrReverse(inLine), " ")) = "digit") Then
-        Sweets.Add SweetFromLine(inLine)
+        Colors.Add ColorFromLine(inLine)
         If LCase(RemoveNextArg(inLine, " ")) = "digit" Then
             DigitFromLine = True
         End If
@@ -425,19 +425,19 @@ Private Sub DataFromLines(ByRef Items As Object, ByRef inLine As String)
                     iobj1.Endvalue = iobj1.Rawvalue
                 End If
             End If
-            Set iobj1.Sweet = Sweets(Sweets.Count)
+            Set iobj1.Color = Colors(Colors.Count)
             Items.Add iobj1
             Set iobj1 = Nothing
         Loop
 
     ElseIf StateMinor = 7 Then
-        Dim iobj2 As Rain
+        Dim iobj2 As Letter
         'many
         Do Until (Trim(inLine) = "")
-            Set iobj2 = New Rain
+            Set iobj2 = New Letter
             iobj2.Rawvalue = Left(inLine, 1)
             iobj2.Endvalue = iobj2.Rawvalue
-            Set iobj2.Sweet = Sweets(Sweets.Count)
+            Set iobj2.Color = Colors(Colors.Count)
             inLine = Mid(inLine, 2)
             Items.Add iobj2
             Set iobj2 = Nothing
@@ -449,7 +449,7 @@ Private Sub DataFromLines(ByRef Items As Object, ByRef inLine As String)
             Set iobj3 = New Digit
             iobj3.Rawvalue = RemoveNextArg(inLine, " ")
             iobj3.Endvalue = iobj3.Rawvalue
-            Set iobj3.Sweet = Sweets(Sweets.Count)
+            Set iobj3.Color = Colors(Colors.Count)
             Items.Add iobj3
             Set iobj3 = Nothing
         Loop
@@ -459,7 +459,7 @@ End Sub
 Private Function FinishStateLines(ByVal inLine As String) As Boolean
     If (StateMinor >= 6 And StateMinor <= 8) Or (StateMinor = 2) Or (StateMinor = 3) Then
         Select Case LCase(RemoveNextArg(inLine, " "))
-            Case "sweet", "reams", "ream", "hoop", "hoops", "eol", "eof", "words", "rains", "word", "rain", "digit", "wrap", "wraps", "lines", "line", "rush", "mush", "push", ""
+            Case "color", "reams", "ream", "hoop", "hoops", "eol", "eof", "words", "letters", "word", "letter", "digit", "wrap", "wraps", "lines", "line", "rush", "mush", "push", ""
                 FinishStateLines = True
         End Select
     End If
@@ -487,7 +487,7 @@ Friend Sub LoadFromText(ByVal Text As String)
     Reset
     Dim Items As Object
     Dim Obj As Object
-    Dim Rain As Rains
+    Dim Letter As Letters
     Dim Digit As Digits
     Dim inLine As String
     Text = Replace(Replace(Text, vbCrLf, vbLf), vbCr, "")
@@ -533,9 +533,9 @@ Friend Sub LoadFromText(ByVal Text As String)
                     Set Items = Nothing
                     Set Items = New Words
                     StateMinor = 6
-                ElseIf RainFromLine(inLine) Then
+                ElseIf LetterFromLine(inLine) Then
                     Set Items = Nothing
-                    Set Items = New Rains
+                    Set Items = New Letters
                     StateMinor = 7
                 ElseIf DigitFromLine(inLine) Then
                     Set Items = Nothing
@@ -564,7 +564,7 @@ Public Function Generate() As String
     Dim Obj As Object
     Dim tmp As Long
     Dim str As String
-    outText = outText & "hoops sweet " & Hoops.Sweet.Rawvalue & vbCrLf
+    outText = outText & "hoops color " & Hoops.Color.Rawvalue & vbCrLf
     Dim cnt As Long
     cnt = 1
     Do While cnt <= Hoops.Count
@@ -572,31 +572,31 @@ Public Function Generate() As String
         Select Case Typename(Obj)
             Case "Word", "Words"
                 If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "sweet " & Obj.Sweet & " words" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
                 Else
-                    outText = outText & "sweet " & Obj.Sweet & " words" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
                     If Obj.Rawvalue <> Obj.Endvalue Then
                         outText = outText & Obj.Rawvalue & " word " & Obj.Endvalue & vbCrLf
                     Else
                         outText = outText & Obj.Rawvalue & vbCrLf
                     End If
                 End If
-            Case "Rain", "Rains"
+            Case "Letter", "Letters"
                 If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "sweet " & Obj.Sweet & " rains" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " letters" & vbCrLf
                 Else
-                    outText = outText & "sweet " & Obj.Sweet & " rains" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " letters" & vbCrLf
                     If Obj.Rawvalue <> Obj.Endvalue Then
-                        outText = outText & Obj.Rawvalue & " rain " & Obj.Endvalue & vbCrLf
+                        outText = outText & Obj.Rawvalue & " letter " & Obj.Endvalue & vbCrLf
                     Else
                         outText = outText & Obj.Rawvalue & vbCrLf
                     End If
                 End If
             Case "Digit", "Digits"
                 If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "sweet " & Obj.Sweet & " digits" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
                 Else
-                    outText = outText & "sweet " & Obj.Sweet & " digits" & vbCrLf
+                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
                     If Obj.Rawvalue <> Obj.Endvalue Then
                         outText = outText & Obj.Rawvalue & " digit " & Obj.Endvalue & vbCrLf
                     Else
@@ -618,23 +618,23 @@ Public Function Generate() As String
                     cnt = tmp
                 End If
                 outText = outText & "hoop " & Obj.Rawvalue & " "
-                outText = outText & "sweet " & Obj.Sweet.Rawvalue & vbCrLf
+                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
             
         End Select
         cnt = cnt + 1
     Loop
-    outText = outText & "reams sweet " & Reams.Sweet.Rawvalue & vbCrLf
+    outText = outText & "reams color " & Reams.Color.Rawvalue & vbCrLf
     
     cnt = 1
     Do While cnt <= Reams.Count
         Set Obj = Reams(cnt)
         Select Case Typename(Obj)
-            Case "Word", "Rain", "Digit"
+            Case "Word", "Letter", "Digit"
                 str = Typename(Obj)
                 If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "sweet " & Obj.Sweet.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
+                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
                 Else
-                    outText = outText & "sweet " & Obj.Sweet.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
+                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
                 End If
                 
                 cnt = cnt + 1
@@ -672,7 +672,7 @@ Public Function Generate() As String
                     cnt = tmp
                 End If
                 outText = outText & "hoop " & Obj.Rawvalue & " "
-                outText = outText & "sweet " & Obj.Sweet.Rawvalue & vbCrLf
+                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
             Case Else
                 Debug.Print Typename(Obj)
                 cnt = cnt + 1
@@ -689,7 +689,7 @@ Public Sub Reset()
     LineNum = 0
     xReams.Clear
     xHoops.Clear
-    xSweet.Clear
+    xColor.Clear
     xWraps.Clear
     xLines.Clear
     ReDim xOrderly(0 To 0) As Long
@@ -700,13 +700,13 @@ Private Sub Class_Initialize()
     StateMinor = 0
     StateError = False
     ReDim xOrderly(0 To 0) As Long
-    Set xSweet = New Sweets
+    Set xColor = New Colors
     Set xHoops = New Hoops
     Set xReams = New Reams
     Set xWraps = New Wraps
     Set xLines = New Lines
-    LoadFromText "hoops sweet #000000" & vbCrLf & _
-                "reams sweet #000000" & vbCrLf & _
+    LoadFromText "hoops color #000000" & vbCrLf & _
+                "reams color #000000" & vbCrLf & _
                 "eof" & vbCrLf
 End Sub
 
@@ -715,7 +715,7 @@ Private Sub Class_Terminate()
     Set xHoops = Nothing
     Set xWraps = Nothing
     Set xLines = Nothing
-    Set xSweet = Nothing
+    Set xColor = Nothing
     Erase xOrderly
 End Sub
 

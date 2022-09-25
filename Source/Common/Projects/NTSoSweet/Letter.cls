@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Rain"
+Attribute VB_Name = "Letter"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -16,7 +16,7 @@ Option Explicit
 
 Option Compare Binary
 
-Private xSweet As Sweet
+Private xColor As Color
 Private xIdentity As Long
 Private xRawvalue As String
 Private xEndvalue As String
@@ -26,15 +26,15 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Rain"
+    Typename = "Letter"
 End Property
 
-Public Property Get Sweet() As Sweet
-    Set Sweet = xSweet
+Public Property Get Color() As Color
+    Set Color = xColor
 End Property
 
-Public Property Set Sweet(ByRef newVal As Sweet)
-    Set xSweet = newVal
+Public Property Set Color(ByRef newVal As Color)
+    Set xColor = newVal
 End Property
 
 Public Property Get Identity() As Long
@@ -70,5 +70,5 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    Set xSweet = Nothing
+    Set xColor = Nothing
 End Sub
