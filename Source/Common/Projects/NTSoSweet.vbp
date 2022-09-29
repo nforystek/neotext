@@ -22,6 +22,7 @@ Class=Digits; NTSoSweet\Digits.cls
 Class=Reams; NTSoSweet\Reams.cls
 Class=Line; NTSoSweet\Line.cls
 Class=Lines; NTSoSweet\Lines.cls
+RelatedDoc=NTSoSweet\SoSweet.doc
 Startup="Sub Main"
 HelpFile=""
 Title="NTSoSweet"
