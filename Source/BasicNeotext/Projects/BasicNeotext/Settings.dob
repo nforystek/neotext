@@ -198,7 +198,7 @@ Implements ISettings
 
 Public WithEvents FCE As FileControlEvents
 Attribute FCE.VB_VarHelpID = -1
-
+'Public VBInstance As VBIDE.VBE
 
 Private Sub Command1_Click()
     MsgBox "On any header that begins a block of code of which may have descriptions," & vbCrLf & _
@@ -225,7 +225,7 @@ Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() A
         For cnt = LBound(FileNames) To UBound(FileNames)
             If PathExists(FileNames(cnt), True) Then
                 If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
-                    
+
                 End If
                 BuildFileDescriptions FileNames(cnt), True
             End If
@@ -388,7 +388,6 @@ Private Sub UserDocument_Initialize()
 
 End Sub
 
-
 Private Sub UserDocument_Resize()
     On Error Resume Next
     
@@ -425,12 +424,11 @@ End Sub
 
 Private Sub UserDocument_Terminate()
     Set FCE = Nothing
-    If (chkElapse <> "WAIT") Then
+    If chkElapse <> "WAIT" Then
         SetBNSettings
     End If
     
 End Sub
-
 
 Private Sub VPE_ItemAdded(ByVal VBProject As VBIDE.VBProject)
 

@@ -1,5 +1,3 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modCodeHeaders"
 Option Explicit
 

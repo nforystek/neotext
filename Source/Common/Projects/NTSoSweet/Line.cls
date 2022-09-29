@@ -29,7 +29,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Wrap"
+    Typename = "Line"
 End Property
 
 Public Property Get Color() As Color

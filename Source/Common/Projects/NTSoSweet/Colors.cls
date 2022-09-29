@@ -23,7 +23,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Color"
+    Typename = "Colors"
 End Property
 
 Public Property Get Count() As Long
@@ -41,22 +41,22 @@ Attribute Item.VB_UserMemId = 0
     Set Item = List(IdxKey)
 End Property
 
-Public Sub Add(Obj As Object, Optional IdxKey As Variant)
-    If Not Obj Is Nothing Then
-        If Obj.Basename = "IListing" Or Obj.Typename = "IListing" Then
-            Do Until Obj.Count = 0
+Public Sub Add(obj As Object, Optional IdxKey As Variant)
+    If Not obj Is Nothing Then
+        If obj.Basename = "IListing" Or obj.Typename = "IListing" Then
+            Do Until obj.Count = 0
                 If Not IsMissing(IdxKey) Then
-                    List.Add Obj.Item(1), IdxKey
+                    List.Add obj.Item(1), IdxKey
                 Else
-                    List.Add Obj.Item(1)
+                    List.Add obj.Item(1)
                 End If
-                Obj.Remove 1
+                obj.Remove 1
             Loop
         Else
             If Not IsMissing(IdxKey) Then
-                List.Add Obj, IdxKey
+                List.Add obj, IdxKey
             Else
-                List.Add Obj
+                List.Add obj
             End If
         End If
     End If
@@ -67,18 +67,18 @@ Public Sub Remove(IdxKey As Variant)
 End Sub
 
 Public Function Exists(IdxKey As Variant) As Boolean
-    Dim Obj As Object
-    For Each Obj In List
-        If ObjPtr(Obj) = ObjPtr(IdxKey) Then
+    Dim obj As Object
+    For Each obj In List
+        If ObjPtr(obj) = ObjPtr(IdxKey) Then
             Exists = True
             Exit Function
-        ElseIf VarPtr(Obj) = VarPtr(IdxKey) Then
+        ElseIf VarPtr(obj) = VarPtr(IdxKey) Then
             Exists = True
             Exit Function
-        ElseIf Obj = IdxKey Then
+        ElseIf obj = IdxKey Then
             Exists = True
             Exit Function
-        ElseIf Obj Is IdxKey Then
+        ElseIf obj Is IdxKey Then
             Exists = True
             Exit Function
         End If

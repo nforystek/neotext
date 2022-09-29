@@ -1,6 +1,6 @@
 Type=Exe
-Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
 Object={E7BC34A0-BA86-11CF-84B1-CBC2DA68BF6C}#1.0#0; ntsvc.ocx
+Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
 Module=modMain; Ident\modMain.bas
 Class=clsIdent; Ident\clsIdent.cls
 Form=Ident\frmIdent.frm
@@ -40,7 +40,7 @@ VersionFileDescription="(RFC 1413 - Identification Protocol)"
 VersionLegalCopyright="© 1999,2006,2013 by Neotext"
 VersionLegalTrademarks="Neotext.org is a trademark of SoSouiX"
 VersionProductName="IdentProtocol"
-CondComp="Ident=-1:VBIDE=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modCommon=-1:modGuid=-1:modInternet=-1:modHosts=-1:modProcess=-1:modService=-1:modWindow=-1:modRegistry=-1:modMain=-1"
+CondComp="Ident=-1:VBIDE=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modCommon=-1:modGuid=-1:modInternet=-1:modProcess=-1:modService=-1:modWindow=-1:modRegistry=-1:modMain=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -57,10 +57,6 @@ Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
 DebugStartupOption=0
-
-[MS Transaction Server]
-AutoRefresh=1
-CondComp="Ident=-1:VBIDE=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modCommon=-1:modGuid=-1:modInternet=-1:modHosts=-1:modProcess=-1:modService=-1:modWindow=-1:modRegistry=-1:modMain=-1"
 
 [Neotext]
 CompCond="modMain=-1:modSockets=-1:modUserInfo=-1:modPortInfo=-1:modWin32Ver=-1:modCommon=-1:modGuid=-1:modInternet=-1:modProcess=-1:modService=-1:modWindow=-1:modRegistry=-1"

@@ -129,7 +129,13 @@ End Function
 Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As String
     
     Self.Location = GetFilePath(URI)
+    
     Self.Contents = ReadFile(URI)
+'    If InStr(Self.Contents, "[VERSION 6.0]" & vbCrLf) = 0 Then
+'        WriteFile URI, "[VERSION 6.0]" & vbCrLf & Self.Contents
+'        Self.Contents = ReadFile(URI)
+'    End If
+'
     Dim inText As String
     Dim inLine As String
     Dim inPath As String
@@ -195,11 +201,53 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                 Self.CondComp = RemoveQuotedArg(inLine, """", """")
             Case "command32"
                 Self.CmdLine = RemoveQuotedArg(inLine, """", """")
-            Case "type", "resfile32", "iconform", "startup", "helpfile", "title", "name", "helpcontextid", "description", "compatiblemode", "compcond"
-            Case "majorver", "minorver", "revisionver", "autoincrementver", "serversupportfiles", "versioncomments", "versioncompanyname", "versionlegaltrademarks"
-            Case "versionfiledescription", "versionlegalcopyright", "versionproductname", "versioncompatible32", "compilationtype", "optimizationtype", "favorpentiumpro(tm)", "removeunusedcontrolinfo"
-            Case "codeviewdebuginfo", "noaliasing", "boundscheck", "overflowcheck", "flpointcheck", "fdivcheck", "unroundedfp", "startmode", "unattended", "threadingmodel"
-            Case "retained", "threadperobject", "maxnumberofthreads", "debugstartupoption", "[ms transaction server]", "autorefresh", "", "[neotext]", "useexistingbrowser"
+            Case "type"
+            Case "resfile32"
+            Case "iconform"
+            Case "startup"
+            Case "helpfile"
+            Case "title"
+            Case "name"
+            Case "helpcontextid"
+            Case "description"
+            Case "compatiblemode"
+            Case "compcond"
+            Case "majorver"
+            Case "minorver"
+            Case "revisionver"
+            Case "autoincrementver"
+            Case "serversupportfiles"
+            Case "versioncomments"
+            Case "versioncompanyname"
+            Case "versionlegaltrademarks"
+            Case "versionfiledescription"
+            Case "versionlegalcopyright"
+            Case "versionproductname"
+            Case "versioncompatible32"
+            Case "compilationtype"
+            Case "optimizationtype"
+            Case "favorpentiumpro(tm)"
+            Case "removeunusedcontrolinfo"
+            Case "codeviewdebuginfo"
+            Case "noaliasing"
+            Case "boundscheck"
+            Case "overflowcheck"
+            Case "flpointcheck"
+            Case "fdivcheck"
+            Case "unroundedfp"
+            Case "startmode"
+            Case "unattended"
+            Case "threadingmodel"
+            Case "retained"
+            Case "threadperobject"
+            Case "maxnumberofthreads"
+            Case "debugstartupoption"
+            Case "useexistingbrowser"
+            Case "[ms transaction server]"
+            Case "autorefresh"
+            Case ""
+            Case "[neotext]"
+
             
 
         End Select

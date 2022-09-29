@@ -16,6 +16,9 @@ Public Paths As New VBA.Collection
 Public Hooks As New VBA.Collection
 Public RegEd As New Registry
 
+Public QuitCall As Boolean
+Public VBPID As Long
+Public LastRun As String
 
 Public Sub Main()
 
@@ -40,30 +43,7 @@ Public Sub Main()
 
                     Select Case func
                         Case "copy"
-                            'func =
-                            Dim ProjList As String
-                            Dim FileList As String
-                            If PathExists(Paths("copy1"), False) Then
-                            
-                                FileList = GatherFileList(Paths("copy1"), ProjList)
-    
-                                DoCleanUp ProjList, FileList
-                                
-                                ProjList = GatherFileList(Paths("copy2"))
-                                 
-                                DoCopyProject Paths("copy1"), Paths("copy2"), FileList, ProjList
-                                
-
-                                Do While ProjList <> ""
-                                    On Error Resume Next
-                                    Kill RemoveNextArg(ProjList, vbCrLf)
-                                Loop
-
-                                
-                            Else
-                                MsgBox "The /copy switch requires a source folder, followed by a destination folder.", vbInformation
-                            End If
-
+                            DoCleanCopy
                         Case "install"
                             InstallSetup
                         Case "uninstall"
@@ -311,26 +291,39 @@ Public Function GetBNSettings() As String
 End Function
 
 Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional ByVal Hide As Boolean = False, Optional ByVal Wait As Boolean = False)
-    Dim pId As Long
+
     If Trim(path) <> "" Then
-       ' chkRegSet = GetVBSettings()
-        'If GetBNSettings <> chkRegSet Then SetVBSettings
-        pId = Shell(Trim(Trim(path) & " " & Trim(Params)), IIf(Hide, vbHide, vbNormalFocus))
-        If (pId > 0) Then
+'        chkRegSet = GetVBSettings()
+'        If GetBNSettings <> chkRegSet Then SetVBSettings
+        LastRun = Trim(Trim(path) & " " & Trim(Params))
+        
+        VBPID = Shell(LastRun, IIf(Hide, vbHide, vbNormalFocus))
+        If (VBPID > 0) Then
             chkElapse = Now
             Dim latency As Single
 
-            Do While IsProccessIDRunning(pId) And Wait
+            Do While (IsProccessIDRunning(VBPID) Or QuitCall) And Wait
                 DoTasks
                 DoEvents
                 modCommon.Sleep 1
                 DoLoop
+
+                If QuitCall Then
+                    If Not IsProccessIDRunning(VBPID) Then
+                        VBPID = Shell(LastRun, vbNormalFocus)
+                        QuitCall = False
+                    End If
+                End If
+
                 If latency = 0 Or (Timer - latency) > 1 Then
                     ItterateDialogs
                     latency = Timer
                 End If
 
-                If ProcessRunning("VB6.EXE") = 0 Then KillApp "VBN.EXE"
+                If ProcessRunning("VB6.EXE") = 0 And (Not QuitCall) Then
+                    chkElapse = "WAIT"
+                    KillApp "VBN.EXE"
+                End If
             Loop
         End If
     End If
@@ -376,14 +369,14 @@ Private Function GatherFileList(ByVal Location As String, Optional ByRef ProjLis
 End Function
 Private Sub DoCleanUp(ByRef ProjList As String, ByRef FileListing As String)
 
-    Dim proj As String
+    Dim Proj As String
     Dim p As Project
     Dim i As Project
     
     Do While ProjList <> ""
-        proj = RemoveNextArg(ProjList, vbCrLf)
+        Proj = RemoveNextArg(ProjList, vbCrLf)
         Set p = New Project
-        p.Populate proj
+        p.Populate Proj
 
         For Each i In p.Includes
             Select Case GetFileExt(i.Location, True, True)
@@ -465,8 +458,52 @@ Private Sub DoFileCopy(ByVal Source As String, ByVal Dest As String)
     Else
         FileCopy Source, Dest
     End If
-    DoLoop
+    'DoLoop
 End Sub
+
+Private Function DoCleanCopy() As Boolean
+    
+    Dim ProjList As String
+    Dim FileList As String
+    DoCleanCopy = True
+    On Error Resume Next
+    ProjList = Paths("copy1")
+    FileList = Paths("copy2")
+    If Err.Number = 0 Then
+        
+        If PathExists(Paths("copy1"), False) Then
+            If PathExists(GetFilePath(Paths("copy2")), False) Then
+        
+                FileList = GatherFileList(Paths("copy1"), ProjList)
+        
+                DoCleanUp ProjList, FileList
+                
+                ProjList = GatherFileList(Paths("copy2"))
+                 
+                DoCopyProject Paths("copy1"), Paths("copy2"), FileList, ProjList
+        
+                Do While ProjList <> ""
+                    On Error Resume Next
+                    Kill RemoveNextArg(ProjList, vbCrLf)
+                Loop
+                
+            Else
+                DoCleanCopy = False
+            End If
+        Else
+            DoCleanCopy = False
+        End If
+    Else
+        Err.Clear
+        DoCleanCopy = False
+    End If
+    If Not DoCleanCopy Then
+        MsgBox "The /copy switch requires a source folder, followed by a destination folder." & vbCrLf & _
+                "All projects under the source path will be copied to the destination folder" & vbCrLf & _
+                "excluding any source file not with in projects, including everything else" & vbCrLf & _
+                "and the destination folder may be cleaned of files not in the source path.", vbInformation
+    End If
+End Function
 
 Public Static Sub DoLoop()
     Static Elapse As Single

@@ -1,6 +1,5 @@
 Attribute VB_Name = "modProjProp"
-#Const [True] = -1
-#Const [False] = 0
+
 Option Explicit
 
 Private Type RangeType
@@ -59,7 +58,7 @@ Private Const WM_GETTEXT = &HD
 Private Const WM_GETTEXTLENGTH = &HE
 
 Private Type POINTAPI
-        x As Long
+        X As Long
         Y As Long
 End Type
 
@@ -110,22 +109,15 @@ Private hWndUp As Long
 Private hPropCap As String
 
 
-Public Function ItterateDialogs2(ByVal pId As Long) As String
+Public Function ItterateDialogs2(ByVal pID As Long) As Boolean
+    
     If (hWndIDE = 0) Then
-        EnumWindows AddressOf ItterateDialogsWinEvents22, pId
+        EnumWindows AddressOf ItterateDialogsWinEvents22, pID
     End If
 
     If (hWndIDE <> 0) Then
-        Dim txt As String
-        Dim lSize As Long
-        txt = String(255, Chr(0)) 'Space$(255)
-        lSize = Len(txt)
-        Call GetWindowText(hWndIDE, txt, lSize)
-        txt = Replace(txt, Chr(0), "")
-        If lSize > 0 Then
-            txt = Left$(txt, lSize)
-        End If
-        ItterateDialogs2 = txt
+        ItterateDialogs2 = True
+        hWndIDE = 0
     End If
   
 End Function
@@ -155,7 +147,7 @@ Private Function SubCheckHwnds2(ByVal hwnd As Long, ByVal lParam As Long) As Boo
     If lSize > 0 Then
         txt = Left$(txt, lSize)
     End If
-    If InStr(txt, "Microsoft Visual Basic") > 0 Then
+    If InStr(txt, "- Project Properties") > 0 Then
         If GetWindowThreadProcessId(hwnd, lSize) Then
             If lSize = lParam Then hWndIDE = hwnd
         End If
@@ -169,36 +161,24 @@ Public Function ItterateDialogs() As Boolean
     End If
     
     If (hWndUp <> 0) Then
-
-        Dim hwnd As Long
-        hwnd = GetWindow(hWndUp, GW_HWNDPREV)
-        
-        If SubCheckHwnds(hwnd) Then
-            hWndUp = GetWindow(hwnd, GW_HWNDPREV)
-            If hWndUp > 0 Then
-                FixConditionalCompile hWndUp
-            Else
-                hWndUp = 0
-               ' ItterateDialogs = True
-            End If
-        End If
-        ItterateDialogs = True
+        FixConditionalCompile hWndUp
+        hWndUp = 0
     End If
 End Function
 
 Private Function ItterateDialogsWinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinEvents = Not SubCheckHwnds(hwnd)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    If ItterateDialogsWinEvents Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents1(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hwnd)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
+    If ItterateDialogsWinChildEvents1 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents2(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hwnd)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    If ItterateDialogsWinChildEvents2 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
 Private Function SubCheckHwnds(ByVal hwnd As Long) As Boolean
@@ -211,9 +191,11 @@ Private Function SubCheckHwnds(ByVal hwnd As Long) As Boolean
     If lSize > 0 Then
         txt = Left$(txt, lSize)
     End If
-    If (InStr(txt, "Con&ditional Compilation Arguments:") > 0) Then
-        hWndUp = GetWindow(hwnd, GW_HWNDNEXT)
-        If hWndUp <> 0 Then FixConditionalCompile hWndUp
+
+    If (InStr(txt, "Con&ditional Compilation Arguments:") > 0) And hWndUp = 0 And GetWindowThreadProcessId(hwnd, lSize) Then
+        If lSize = VBPID Then
+            hWndUp = GetWindow(hwnd, GW_HWNDNEXT)
+        End If
     End If
     SubCheckHwnds = (hWndUp <> 0)
 End Function
@@ -256,6 +238,8 @@ Private Sub FixConditionalCompile(ByVal hwnd As Long)
 
 End Sub
 
+
+
 Public Function GetCaption(ByVal hwnd As Long) As String
     Dim tlen As Long
     Dim wText As String
@@ -271,7 +255,6 @@ Private Function GetText(ByVal hwnd As Long) As String
     tlen = SendMessageStruct(hwnd, WM_GETTEXTLENGTH, 0&, 0&) + 1
     Text = Space(tlen)
     Call SendMessageString(hwnd, WM_GETTEXT, tlen, Text)
-     
     GetText = Left(Text, tlen)
 End Function
 

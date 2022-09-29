@@ -23,7 +23,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Color"
+    Typename = "Mushes"
 End Property
 
 Public Property Get Count() As Long

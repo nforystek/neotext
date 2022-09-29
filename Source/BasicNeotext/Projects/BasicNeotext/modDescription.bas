@@ -135,7 +135,7 @@ Private Sub BuildCondComp(ByRef vbp As VBPInfo)
     
     Dim Var As String
     Dim val As String
-    Dim Ret As String
+    Dim ret As String
     Dim tmp As String
 
     vbp.CondComp = Replace(vbp.CondComp, ":" & vbp.Name & "=-1", "")
@@ -389,19 +389,19 @@ Private Function NextQuotedArg(ByVal TheParams As String, Optional ByVal BeginQu
 End Function
 Private Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """") As String
     Dim retVal As String
-    Dim x As Long
-    x = InStr(1, TheParams, BeginQuote, vbTextCompare)
-    If (x > 0) And (x < Len(TheParams)) Then
-        If (InStr(x + Len(BeginQuote), TheParams, EndQuote, vbTextCompare) > 0) Then
+    Dim X As Long
+    X = InStr(1, TheParams, BeginQuote, vbTextCompare)
+    If (X > 0) And (X < Len(TheParams)) Then
+        If (InStr(X + Len(BeginQuote), TheParams, EndQuote, vbTextCompare) > 0) Then
             If True Or (EndQuote = BeginQuote) Then
-                retVal = Mid(TheParams, x + Len(BeginQuote))
-                TheParams = Left(TheParams, x - 1) & Mid(retVal, InStr(1, retVal, EndQuote, vbTextCompare) + Len(EndQuote))
+                retVal = Mid(TheParams, X + Len(BeginQuote))
+                TheParams = Left(TheParams, X - 1) & Mid(retVal, InStr(1, retVal, EndQuote, vbTextCompare) + Len(EndQuote))
                 retVal = Left(retVal, InStr(1, retVal, EndQuote, vbTextCompare) - 1)
             Else
                 Dim l As Long
                 Dim Y As Long
                 l = 1
-                Y = x
+                Y = X
                 Do Until l = 0
                     If (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, vbTextCompare) > 0) And (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, vbTextCompare) < InStr(Y + Len(BeginQuote), TheParams, EndQuote, vbTextCompare)) Then
                         l = l + 1
@@ -414,9 +414,9 @@ Private Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal Begin
                         l = 0
                     End If
                 Loop
-                retVal = Mid(TheParams, x + Len(BeginQuote))
-                TheParams = Left(TheParams, x - 1) & Mid(retVal, (Y - x) + Len(EndQuote))
-                retVal = Left(retVal, (Y - x) - 1)
+                retVal = Mid(TheParams, X + Len(BeginQuote))
+                TheParams = Left(TheParams, X - 1) & Mid(retVal, (Y - X) + Len(EndQuote))
+                retVal = Left(retVal, (Y - X) - 1)
             End If
         End If
     End If

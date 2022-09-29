@@ -1,5 +1,5 @@
 
-BasicNT - http://www.neotext.org/ipub/soft/Miscellaneous/BasicNeotext.exe
+BasicNT - http://www.neotext.org
 
 --------------------------------------------------------------------------------
 
@@ -21,6 +21,3 @@ BasicNT - http://www.neotext.org/ipub/soft/Miscellaneous/BasicNeotext.exe
 	as if it's not there, includes text editor able batch/script processor.
 
 --------------------------------------------------------------------------------
-
-For ANY information or comment
-Contact: nforystek@neotext.org 

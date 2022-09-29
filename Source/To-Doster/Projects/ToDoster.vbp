@@ -1,5 +1,5 @@
 Type=Exe
-Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0; MSCOMCTL.OCX
+Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0; MSCOMCTL.OCX
 Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\WINDOWS\system32\msado15.dll#Microsoft ActiveX Data Objects 2.8 Library
 Form=ToDoster\frmMain.frm
 Form=ToDoster\frmEntry.frm
@@ -12,6 +12,7 @@ Module=modMain; ToDoster\modMain.bas
 Form=ToDoster\frmProds.frm
 Module=modSettings; ToDoster\modSettings.bas
 Module=modInternet; ..\..\Shared\modInternet.bas
+[VERSION 6.0]
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

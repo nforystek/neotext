@@ -1,15 +1,14 @@
-#
-*.tmp
-*.log
-*.obj
-*.scc
+## Ignore some custom files and/or directories
 *.pwd
-#
+REG.BAK
+eagleisland*
 *Test*
 Test Project
 *Example*
+Backup*
 Temporary Backups
-Copy*of*
+Copy of*
+Copy (*
 Web*
 NTImag*
 NTDire*

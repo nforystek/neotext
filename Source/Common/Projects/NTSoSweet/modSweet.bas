@@ -358,18 +358,18 @@ Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQ
     If (X > 0) And (X < Len(TheParams)) Then
         If (InStr(X + 1, TheParams, EndQuote) > 0) Then
             If (Not Embeded) Or (EndQuote = BeginQuote) Then
-        
+
                 retVal = Mid(TheParams, X + 1)
                 TheParams = Left(TheParams, X - 1) & Mid(retVal, InStr(retVal, EndQuote) + 1)
                 retVal = Left(retVal, InStr(retVal, EndQuote) - 1)
-                    
+
             Else
                 Dim l As Long
                 Dim Y As Long
-                
+
                 l = 1
                 Y = X
-    
+
                 Do Until l = 0
                     If (InStr(Y + 1, TheParams, BeginQuote) > 0) And (InStr(Y + 1, TheParams, BeginQuote) < InStr(Y + 1, TheParams, EndQuote)) Then
                         l = l + 1
@@ -381,14 +381,14 @@ Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQ
                         Y = Len(TheParams)
                         l = 0
                     End If
-                    
+
                 Loop
-            
+
                 retVal = Mid(TheParams, X + 1)
                 TheParams = Left(TheParams, X - 1) & Mid(retVal, (Y - X) + 1)
                 retVal = Left(retVal, (Y - X) - 1)
             End If
-            
+
         End If
     End If
     RemoveQuotedArg = retVal

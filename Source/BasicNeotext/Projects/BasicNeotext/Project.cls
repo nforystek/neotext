@@ -163,6 +163,7 @@ Public Sub Populate(ByVal URI As String)
                     pLocation = URI
                     pContents = ReadFile(URI)
                 Case "vbp"
+                
                     fldrs = ParseProject(Me, URI)
                     Do Until fldrs = ""
                         fldr = RemoveNextArg(fldrs, vbCrLf)

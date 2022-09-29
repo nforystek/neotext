@@ -1,18 +1,18 @@
 VERSION 5.00
 Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect 
-   ClientHeight    =   9675
+   ClientHeight    =   11760
    ClientLeft      =   1740
    ClientTop       =   1545
-   ClientWidth     =   23115
-   _ExtentX        =   40772
-   _ExtentY        =   17066
+   ClientWidth     =   23025
+   _ExtentX        =   40614
+   _ExtentY        =   20743
    _Version        =   393216
    Description     =   "Enhancements for Visual Basic 6.0"
    DisplayName     =   "VB 6 Neotext Basic"
    AppName         =   "Visual Basic"
    AppVer          =   "Visual Basic 6.0"
-   LoadName        =   "Startup"
-   LoadBehavior    =   1
+   LoadName        =   "Command Line / Startup"
+   LoadBehavior    =   5
    RegLocation     =   "HKEY_CURRENT_USER\Software\Microsoft\Visual Basic\6.0"
    CmdLineSupport  =   -1  'True
 End
@@ -501,9 +501,11 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     VBWindow.Visible = GetSetting("BasicNeotext", "Options", "Settings_Visible", VBWindow.Visible)
     
     Set docSettings.FCE = VBInstance.Events.FileControlEvents(Nothing)
+    'Set docSettings.VBInstance = VBInstance
     
-'    Dim Ret As Long
-'    Ret = modHotKey.EnumThreadWindows(modHotKey.GetCurrentThreadId, AddressOf modHotKey.EnumThreadProc, ObjPtr(Me))
+    ''uncomment the following two lines to hook F5
+    'Dim ret As Long
+    'ret = modHotKey.EnumThreadWindows(modHotKey.GetCurrentThreadId, AddressOf modHotKey.EnumThreadProc, ObjPtr(Me))
 
 '''    docSettings.SetUIEvents Me
     
@@ -1097,6 +1099,12 @@ End Sub
 Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"Prop&erties..." from menu, this should happen
 '''    '   if the project properties dialog is invoked
+
+
+
+   ' QuitCall = True
+   ' VBInstance.Quit
+    
 
 End Sub
 

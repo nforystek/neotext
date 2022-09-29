@@ -479,18 +479,23 @@ Public Sub Interpreter(ByVal FileOrText As String)
     End If
 End Sub
 
-Friend Sub LoadFromFile(ByVal Filename As String)
-    LoadFromText ReadFile(Filename)
+Friend Sub LoadFromFile(ByVal FileName As String)
+    LoadFromText ReadFile(FileName)
 End Sub
 
 Friend Sub LoadFromText(ByVal Text As String)
     Reset
+    On Error GoTo ThrowException
+    
     Dim Items As Object
     Dim Obj As Object
     Dim Letter As Letters
     Dim Digit As Digits
     Dim inLine As String
     Text = Replace(Replace(Text, vbCrLf, vbLf), vbCr, "")
+    Do While InStr(Text, vbLf & vbLf) > 0
+        Text = Replace(Text, vbLf & vbLf, vbLf)
+    Loop
     Do Until (Text = "")
         inLine = RemoveNextArg(Text, vbLf)
         LineNum = LineNum + 1
@@ -549,6 +554,7 @@ Friend Sub LoadFromText(ByVal Text As String)
         End If
     Loop
     If (StateMajor = 0) Then
+ThrowException:
         Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
     Else
         RaiseEvent HostUpdate

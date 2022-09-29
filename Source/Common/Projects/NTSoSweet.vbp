@@ -1,6 +1,5 @@
 Type=OleDll
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
-Reference=*\G{7C0FFAB0-CD84-11D0-949A-00A0C91110ED}#1.0#0#..\..\..\..\WINDOWS\system32\msdatsrc.tlb#Microsoft Data Source Interfaces
 Class=ScriptHost; NTSoSweet\ScriptHost.cls
 Class=Color; NTSoSweet\Color.cls
 Class=Colors; NTSoSweet\Colors.cls
@@ -32,9 +31,8 @@ Command32=""
 Name="NTSoSweet"
 HelpContextID="0"
 Description="Neotext SoSweet Object Model 1.0"
-CompatibleMode="2"
+CompatibleMode="0"
 CompatibleEXE32="..\Binary\NTSoSweet.dll"
-VersionCompatible32="1"
 MajorVer=1
 MinorVer=1
 RevisionVer=254
@@ -45,6 +43,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext SoSweet Object Model"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Computer Science"
+CondComp="NTSoSweet=-1:VBIDE=-1:modSweet=-1:modCommon=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -61,10 +60,10 @@ Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
 ThreadingModel=0
+DebugStartupOption=0
 
 [MS Transaction Server]
 AutoRefresh=1
-CondComp="NTSoSweet=-1:VBIDE=0:modSweet=-1"
 
 [Neotext]
 CompCond="modSweet=-1"

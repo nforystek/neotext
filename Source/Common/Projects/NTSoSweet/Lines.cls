@@ -28,7 +28,7 @@ Public Property Get Basename() As String
 End Property
 
 Public Property Get Typename() As String
-    Typename = "Wraps"
+    Typename = "Lines"
 End Property
 
 Public Static Property Get Rawvalue() As String
