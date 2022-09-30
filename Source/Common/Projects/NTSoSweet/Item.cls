@@ -1,0 +1,74 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+  Persistable = 0  'NotPersistable
+  DataBindingBehavior = 0  'vbNone
+  DataSourceBehavior  = 0  'vbNone
+  MTSTransactionMode  = 0  'NotAnMTSObject
+END
+Attribute VB_Name = "Item"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = True
+Option Explicit
+'TOP DOWN
+
+Private propKey As Variant
+Private propType As Boolean
+Private propObject As Object
+Private propVariant As Variant
+Private propCollection As Collection
+
+Public Property Get Value()
+Attribute Value.VB_UserMemId = 0
+Attribute Value.VB_MemberFlags = "200"
+    If propType Then
+        Set Value = propObject
+    Else
+        Value = propVariant
+    End If
+End Property
+
+Friend Property Set Value(ByRef RHS As IUnknown)
+    propType = True
+    Set propObject = RHS
+    propVariant = Empty
+End Property
+
+Friend Property Let Value(ByVal RHS)
+    propType = False
+    Set propObject = Nothing
+    propVariant = RHS
+End Property
+
+Public Property Get Key() As Variant
+    Key = propKey
+End Property
+Friend Property Let Key(ByVal RHS As Variant)
+    propKey = RHS
+End Property
+
+Public Property Get Index() As Long
+    Dim Check As Object
+    For Each Check In Parent
+        Index = Index + 1
+        If ObjPtr(Check) = ObjPtr(Me) Then
+            Exit For
+        End If
+    Next
+End Property
+
+Friend Property Get Parent() As Collection
+    Set Parent = propCollection
+End Property
+Friend Property Set Parent(ByVal RHS As Collection)
+    Set propCollection = Parent
+End Property
+
+Private Sub Class_Terminate()
+    Set propCollection = Nothing
+    Set propObject = Nothing
+    propVariant = Empty
+End Sub
+

@@ -181,7 +181,7 @@ Private Function StateFromLine(ByRef Items As Object, ByVal inLine As String) As
             StateMinor = 2
             StateFromLine = True
         'Else
-        '    Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+        '    Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
         End If
     ElseIf StateMajor = 0 Then
         If (LCase(NextArg(inLine, " ")) = "reams") Or (LCase(NextArg(inLine, " ")) = "lines") Then
@@ -212,7 +212,7 @@ Private Function StateFromLine(ByRef Items As Object, ByVal inLine As String) As
         End If
         StateFromLine = True
     'Else
-    '    Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+    '    Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
     End If
 End Function
 
@@ -243,7 +243,7 @@ Private Function WrapFromLine(ByRef inLine As String) As Object
             RemoveNextArg inLine, " "
             Wrap.Endvalue = RemoveNextArg(inLine, " ")
         Else
-            Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+            Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
         End If
         If Wrap.Rawvalue = "eol" Then Wrap.Rawvalue = Chr(13)
         If Wrap.Rawvalue = "bol" Then Wrap.Rawvalue = Chr(10)
@@ -278,7 +278,7 @@ Private Function LineFromLine(ByRef inLine As String) As Object
             RemoveNextArg inLine, " "
             Line.Endvalue = RemoveNextArg(inLine, " ")
         Else
-            Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+            Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
         End If
         If Line.Rawvalue = "eol" Then Line.Rawvalue = Chr(13)
         If Line.Rawvalue = "bol" Then Line.Rawvalue = Chr(10)
@@ -310,7 +310,7 @@ Private Function PushFromLine(ByRef inLine As String) As Object
                 RemoveNextArg inLine, " "
                 Push.Endvalue = RemoveNextArg(inLine, " ")
             Case Else
-                Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+                Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
         End Select
         If Push.Rawvalue = "eol" Then Push.Rawvalue = Chr(13)
         If Push.Rawvalue = "bol" Then Push.Rawvalue = Chr(10)
@@ -342,7 +342,7 @@ Private Function RushFromLine(ByRef inLine As String) As Object
                 RemoveNextArg inLine, " "
                 Rush.Endvalue = RemoveNextArg(inLine, " ")
             Case Else
-                Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+                Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
         End Select
         If Rush.Rawvalue = "eol" Then Rush.Rawvalue = Chr(13)
         If Rush.Rawvalue = "bol" Then Rush.Rawvalue = Chr(10)
@@ -386,11 +386,11 @@ Private Function WordFromLine(ByRef inLine As String) As Boolean
     End If
 End Function
 
-Private Function LetterFromLine(ByRef inLine As String) As Boolean
-    If (StrReverse(NextArg(StrReverse(inLine), " ")) = "letters") Then
+Private Function RainFromLine(ByRef inLine As String) As Boolean
+    If (StrReverse(NextArg(StrReverse(inLine), " ")) = "rains") Then
         Colors.Add ColorFromLine(inLine)
-        If LCase(RemoveNextArg(inLine, " ")) = "letters" Then
-            LetterFromLine = True
+        If LCase(RemoveNextArg(inLine, " ")) = "rains" Then
+            RainFromLine = True
         End If
     End If
 End Function
@@ -431,10 +431,10 @@ Private Sub DataFromLines(ByRef Items As Object, ByRef inLine As String)
         Loop
 
     ElseIf StateMinor = 7 Then
-        Dim iobj2 As Letter
+        Dim iobj2 As Rain
         'many
         Do Until (Trim(inLine) = "")
-            Set iobj2 = New Letter
+            Set iobj2 = New Rain
             iobj2.Rawvalue = Left(inLine, 1)
             iobj2.Endvalue = iobj2.Rawvalue
             Set iobj2.Color = Colors(Colors.Count)
@@ -459,7 +459,7 @@ End Sub
 Private Function FinishStateLines(ByVal inLine As String) As Boolean
     If (StateMinor >= 6 And StateMinor <= 8) Or (StateMinor = 2) Or (StateMinor = 3) Then
         Select Case LCase(RemoveNextArg(inLine, " "))
-            Case "color", "reams", "ream", "hoop", "hoops", "eol", "eof", "words", "letters", "word", "letter", "digit", "wrap", "wraps", "lines", "line", "rush", "mush", "push", ""
+            Case "color", "reams", "ream", "hoop", "hoops", "eol", "eof", "words", "rains", "word", "rain", "digit", "wrap", "wraps", "lines", "line", "rush", "mush", "push", ""
                 FinishStateLines = True
         End Select
     End If
@@ -489,7 +489,7 @@ Friend Sub LoadFromText(ByVal Text As String)
     
     Dim Items As Object
     Dim Obj As Object
-    Dim Letter As Letters
+    Dim Rain As Rains
     Dim Digit As Digits
     Dim inLine As String
     Text = Replace(Replace(Text, vbCrLf, vbLf), vbCr, "")
@@ -531,16 +531,16 @@ Friend Sub LoadFromText(ByVal Text As String)
                     DataFromLines Items, inLine
                 End If
             End If
-            If Not StateFromLine(Items, inLine) Then Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+            If Not StateFromLine(Items, inLine) Then Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
             If Not (StateMinor >= 6 And StateMinor <= 8) Then
                 StateMinor = 5
                 If WordFromLine(inLine) Then
                     Set Items = Nothing
                     Set Items = New Words
                     StateMinor = 6
-                ElseIf LetterFromLine(inLine) Then
+                ElseIf RainFromLine(inLine) Then
                     Set Items = Nothing
-                    Set Items = New Letters
+                    Set Items = New Rains
                     StateMinor = 7
                 ElseIf DigitFromLine(inLine) Then
                     Set Items = Nothing
@@ -555,138 +555,139 @@ Friend Sub LoadFromText(ByVal Text As String)
     Loop
     If (StateMajor = 0) Then
 ThrowException:
-        Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " on Line " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
+        Err.Raise 1002, , "Syntax Error" & IIf(LineNum > 0, " in row " & LineNum & vbCrLf, vbCrLf) & ErrorMessage(inLine)
     Else
         RaiseEvent HostUpdate
     End If
 
 End Sub
 
-Public Function Generate() As String
-    StateMajor = -1
-    StateMinor = 0
-    StateError = False
-    Dim outText As String
-    Dim Obj As Object
-    Dim tmp As Long
-    Dim str As String
-    outText = outText & "hoops color " & Hoops.Color.Rawvalue & vbCrLf
-    Dim cnt As Long
-    cnt = 1
-    Do While cnt <= Hoops.Count
-        Set Obj = Hoops(cnt)
-        Select Case Typename(Obj)
-            Case "Word", "Words"
-                If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
-                Else
-                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
-                    If Obj.Rawvalue <> Obj.Endvalue Then
-                        outText = outText & Obj.Rawvalue & " word " & Obj.Endvalue & vbCrLf
-                    Else
-                        outText = outText & Obj.Rawvalue & vbCrLf
-                    End If
-                End If
-            Case "Letter", "Letters"
-                If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "color " & Obj.Color & " letters" & vbCrLf
-                Else
-                    outText = outText & "color " & Obj.Color & " letters" & vbCrLf
-                    If Obj.Rawvalue <> Obj.Endvalue Then
-                        outText = outText & Obj.Rawvalue & " letter " & Obj.Endvalue & vbCrLf
-                    Else
-                        outText = outText & Obj.Rawvalue & vbCrLf
-                    End If
-                End If
-            Case "Digit", "Digits"
-                If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
-                Else
-                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
-                    If Obj.Rawvalue <> Obj.Endvalue Then
-                        outText = outText & Obj.Rawvalue & " digit " & Obj.Endvalue & vbCrLf
-                    Else
-                        outText = outText & Obj.Rawvalue & vbCrLf
-                    End If
-                End If
-            Case "Wrap", "Hoop", "Rush"
-                outText = outText & Typename(Obj) & " " & Obj.Rawvalue & " "
-                If cnt <= Hoops.Count Then
-                    tmp = cnt
-                    Do While (Typename(Reams(cnt)) = "Push" Or _
-                             Typename(Reams(cnt)) = "Rush" Or _
-                             Typename(Reams(cnt)) = "Mush") And _
-                              (cnt <= Hoops.Count)
-                             
-                             outText = outText & LCase(Typename(Hoops(cnt))) & " " & Hoops(cnt).rawlvaue
-                        cnt = cnt + 1
-                    Loop
-                    cnt = tmp
-                End If
-                outText = outText & "hoop " & Obj.Rawvalue & " "
-                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
-            
-        End Select
-        cnt = cnt + 1
-    Loop
-    outText = outText & "reams color " & Reams.Color.Rawvalue & vbCrLf
-    
-    cnt = 1
-    Do While cnt <= Reams.Count
-        Set Obj = Reams(cnt)
-        Select Case Typename(Obj)
-            Case "Word", "Letter", "Digit"
-                str = Typename(Obj)
-                If InStr(Obj.Rawvalue, " ") > 0 Then
-                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
-                Else
-                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
-                End If
-                
-                cnt = cnt + 1
-                
-                If cnt <= Reams.Count Then
-                    Do While (cnt <= Reams.Count)
-                        If (Typename(Reams(cnt)) <> str) Then
-                            cnt = cnt - 1
-                            Exit Do
-                        End If
-                        If InStr(Reams(cnt).Rawvalue, " ") > 0 Then
-                            outText = outText & LCase(str) & " " & Reams(cnt).Rawvalue & vbCrLf
-                        Else
-                            If Reams(cnt).Rawvalue <> Reams(cnt).Endvalue And Not Reams(cnt).Endvalue = "" Then
-                                outText = outText & Reams(cnt).Rawvalue & " " & LCase(str) & " " & Reams(cnt).Endvalue & vbCrLf
-                            Else
-                                outText = outText & Reams(cnt).Rawvalue & vbCrLf
-                            End If
-                        End If
-                        cnt = cnt + 1
-                    Loop
-                End If
-
-            Case "Line", "Ream", "Rush", "Mush"
-                outText = outText & LCase(Typename(Reams(cnt))) & " " & Obj.Rawvalue & " "
-                If cnt < Reams.Count Then
-                    tmp = cnt
-                    Do While (Typename(Reams(cnt)) = "Push" Or _
-                             Typename(Reams(cnt)) = "Rush" Or _
-                             Typename(Reams(cnt)) = "Mush") And _
-                              (cnt < Reams.Count)
-                             outText = outText & LCase(Typename(Reams(cnt))) & " " & Reams(cnt).Rawvalue
-                        cnt = cnt + 1
-                    Loop
-                    cnt = tmp
-                End If
-                outText = outText & "hoop " & Obj.Rawvalue & " "
-                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
-            Case Else
-                Debug.Print Typename(Obj)
-                cnt = cnt + 1
-        End Select
-        cnt = cnt + 1
-    Loop
-    Generate = outText
-End Function
+'Public Function Generate() As String
+'    StateMajor = -1
+'    StateMinor = 0
+'    StateError = False
+'    Dim outText As String
+'    Dim Obj As Object
+'    Dim tmp As Long
+'    Dim str As String
+'    outText = outText & "hoops color " & Hoops.Color.Rawvalue & vbCrLf
+'    Dim cnt As Long
+'    cnt = 1
+'    Do While cnt <= Hoops.Count
+'        Set Obj = Hoops(cnt)
+'        Select Case Typename(Obj)
+'            Case "Word", "Words"
+'                If InStr(Obj.Rawvalue, " ") > 0 Then
+'                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
+'                Else
+'                    outText = outText & "color " & Obj.Color & " words" & vbCrLf
+'                    If Obj.Rawvalue <> Obj.Endvalue Then
+'                        outText = outText & Obj.Rawvalue & " word " & Obj.Endvalue & vbCrLf
+'                    Else
+'                        outText = outText & Obj.Rawvalue & vbCrLf
+'                    End If
+'                End If
+'            Case "Rain", "Rains"
+'                If InStr(Obj.Rawvalue, " ") > 0 Then
+'                    outText = outText & "color " & Obj.Color & " rains" & vbCrLf
+'                Else
+'                    outText = outText & "color " & Obj.Color & " rains" & vbCrLf
+'                    If Obj.Rawvalue <> Obj.Endvalue Then
+'                        outText = outText & Obj.Rawvalue & " rain " & Obj.Endvalue & vbCrLf
+'                    Else
+'                        outText = outText & Obj.Rawvalue & vbCrLf
+'                    End If
+'                End If
+'            Case "Digit", "Digits"
+'                If InStr(Obj.Rawvalue, " ") > 0 Then
+'                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
+'                Else
+'                    outText = outText & "color " & Obj.Color & " digits" & vbCrLf
+'                    If Obj.Rawvalue <> Obj.Endvalue Then
+'                        outText = outText & Obj.Rawvalue & " digit " & Obj.Endvalue & vbCrLf
+'                    Else
+'                        outText = outText & Obj.Rawvalue & vbCrLf
+'                    End If
+'                End If
+'            Case "Wrap", "Rush"
+'                outText = outText & LCase(Typename(Obj)) & " " & Obj.Rawvalue & " "
+'                If cnt < Hoops.Count Then
+'                    tmp = cnt
+'                    Do While (Typename(Reams(cnt)) = "Push" Or _
+'                             Typename(Reams(cnt)) = "Rush" Or _
+'                             Typename(Reams(cnt)) = "Mush") And _
+'                              (cnt <= Hoops.Count)
+'
+'                             outText = outText & LCase(Typename(Hoops(cnt))) & " " & Obj.Rawvalue 'Hoops(cnt).rawlvaue
+'                        cnt = cnt + 1
+'                    Loop
+'                    cnt = tmp
+'                End If
+'                outText = outText & "hoop " & Obj.Endvalue & " "
+'                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
+'
+'        End Select
+'        cnt = cnt + 1
+'    Loop
+'    outText = outText & "reams color " & Reams.Color.Rawvalue & vbCrLf
+'
+'
+'    cnt = 1
+'    Do While cnt <= Reams.Count
+'        Set Obj = Reams(cnt)
+'        Select Case Typename(Obj)
+''            Case "Word", "Rain", "Digit"
+''                str = Typename(Obj)
+''                If InStr(Obj.Rawvalue, " ") > 0 Then
+''                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
+''                Else
+''                    outText = outText & "color " & Obj.Color.Rawvalue & " " & LCase(str) & IIf(Typename(Obj) <> "Digit", "s", "") & vbCrLf
+''                End If
+''
+''                cnt = cnt + 1
+''
+''                If cnt <= Reams.Count Then
+''                    Do While (cnt <= Reams.Count)
+''                        If (Typename(Reams(cnt)) <> str) Then
+''                            cnt = cnt - 1
+''                            Exit Do
+''                        End If
+''                        If InStr(Reams(cnt).Rawvalue, " ") > 0 Then
+''                            outText = outText & LCase(str) & " " & Reams(cnt).Rawvalue & vbCrLf
+''                        Else
+''                            If Reams(cnt).Rawvalue <> Reams(cnt).Endvalue And Not Reams(cnt).Endvalue = "" Then
+''                                outText = outText & Reams(cnt).Rawvalue & " " & LCase(str) & " " & Reams(cnt).Endvalue & vbCrLf
+''                            Else
+''                                outText = outText & Reams(cnt).Rawvalue & vbCrLf
+''                            End If
+''                        End If
+''                        cnt = cnt + 1
+''                    Loop
+''                End If
+'
+'            Case "Line", "Rush", "Push"
+'                outText = outText & LCase(Typename(Reams(cnt))) & " " & Obj.Rawvalue & " "
+'                If cnt <= Reams.Count Then
+'                    tmp = cnt
+'                    Do While (Typename(Reams(cnt)) = "Push" Or _
+'                             Typename(Reams(cnt)) = "Rush" Or _
+'                             Typename(Reams(cnt)) = "Mush") And _
+'                              (cnt < Reams.Count)
+'                             outText = outText & LCase(Typename(Reams(cnt))) & " " & Reams(cnt).Rawvalue
+'                        cnt = cnt + 1
+'                    Loop
+'                    cnt = tmp
+'                End If
+'                outText = outText & "ream " & Obj.Endvalue & " "
+'                outText = outText & "color " & Obj.Color.Rawvalue & vbCrLf
+'            Case Else
+'                'Debug.Print Typename(Obj)
+'                cnt = cnt + 1
+'        End Select
+'        cnt = cnt + 1
+'    Loop
+'    Generate = outText
+'End Function
 
 Public Sub Reset()
     StateMajor = -1
