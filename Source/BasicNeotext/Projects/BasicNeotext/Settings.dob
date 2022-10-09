@@ -11,6 +11,12 @@ Begin VB.UserDocument Settings
    ScaleWidth      =   5340
    ScrollBars      =   0  'None
    VScrollSmallChange=   225
+   Begin VB.Timer Timer1 
+      Enabled         =   0   'False
+      Interval        =   5
+      Left            =   4035
+      Top             =   855
+   End
    Begin VB.CommandButton Command1 
       Caption         =   "?"
       Height          =   270
@@ -196,49 +202,13 @@ Option Explicit
 
 Implements ISettings
 
-Public WithEvents FCE As FileControlEvents
-Attribute FCE.VB_VarHelpID = -1
-'Public VBInstance As VBIDE.VBE
+Public VBInstance As VBIDE.VBE
 
 Private Sub Command1_Click()
     MsgBox "On any header that begins a block of code of which may have descriptions," & vbCrLf & _
             "i.e. ""Sub MySub()"" followed by a comment character, space, and underscore," & vbCrLf & _
             "then makes for the next line as a comment. Those BasicNeotext will recognize" & vbCrLf & _
             "as descriptions and auto populate the hidden info attribute for the compiler.", vbInformation, "Commented Descriptions", vbOKOnly
-End Sub
-
-Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
-    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-        If PathExists(FileName, True) Then
-            BuildFileDescriptions FileName, False
-        End If
-    Else
-        If GetFileExt(FileName, True, True) = "vbp" Then
-            BuildFileDescriptions FileName, False
-        End If
-    End If
-End Sub
-
-Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() As String)
-    Dim cnt As Long
-    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-        For cnt = LBound(FileNames) To UBound(FileNames)
-            If PathExists(FileNames(cnt), True) Then
-                If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
-
-                End If
-                BuildFileDescriptions FileNames(cnt), True
-            End If
-        Next
-    Else
-        For cnt = LBound(FileNames) To UBound(FileNames)
-            If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
-                If PathExists(FileNames(cnt), True) Then
-                    BuildFileDescriptions FileNames(cnt), True
-                End If
-            End If
-        Next
-    End If
 End Sub
 
 Private Sub Check1_Click()
@@ -250,7 +220,16 @@ Private Sub Check2_Click()
 End Sub
 
 Private Sub Check3_Click()
-    If Text2(1).Tag <> -1 Then SaveSetting "BasicNeotext", "Options", "ProcedureDesc", Check3.Value
+    If Text2(1).Tag <> -1 Then
+        SaveSetting "BasicNeotext", "Options", "ProcedureDesc", Check3.Value
+        On Error Resume Next
+        If Check3.Value Then
+            InsertDescriptions UserDocument.Parent.VBE.VBProjects
+        Else
+            DeleteDescriptions UserDocument.Parent.VBE.VBProjects
+        End If
+        If Err.Number <> 0 Then Err.Clear
+    End If
 End Sub
 
 Private Sub Check4_Click()
@@ -266,47 +245,6 @@ End Sub
 Private Sub Command3_Click()
     frmRestrict.Show 1, Me
 End Sub
-
-Private Sub FCE_RequestWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileName As String, Cancel As Boolean)
-        Dim vbproj As VBProject
-        
-'        For Each vbproj In ActiveVBProject.AllProject
-'
-'            If InStr(1, Replace(ReadFile(vbproj.FileName), " ", ""), "templateview=1", vbTextCompare) > 0 Then
-'                If Not App_Load Then Load frmIcon
-'
-'                If invar = "" Then
-'                    invar = ReadFile(App_Path & "Template\Projects\Exports.cls")
-'                    Do Until invar = ""
-'                        If Left(invar, 1) = "'" Then
-'                            inval = inval & RemoveNextArg(invar, vbCrLf) & vbCrLf
-'                        Else
-'                            RemoveNextArg invar, vbCrLf
-'                        End If
-'                    Loop
-'                End If
-'
-'                If vbproj.VBComponents.Count > 0 Then
-'                    Dim vbcom As VBComponent
-'
-'                    For Index = 1 To vbproj.VBComponents.Count
-'                        Set vbcom = vbproj.VBComponents.Item(Index)
-'                        If vbcom.CodeModule.CountOfLines > 0 Then
-'                            If Replace(vbcom.CodeModule.Lines(1, vbcom.CodeModule.CountOfLines), vbCrLf, "") = Replace(inval, vbCrLf, "") Then
-'                                found = True
-'                            End If
-'                        End If
-'                        Set vbcom = Nothing
-'                    Next
-'                    If Not found Then
-'                        vbproj.VBComponents.AddFile App_Path & "Template\Projects\Exports.cls"
-'                    End If
-'                End If
-'            End If
-'        Next
-
-End Sub
-
 Private Sub Text1_Change()
     If Text2(1).Tag <> -1 Then SaveSetting "BasicNeotext", "Options", "Certificate", CStr(Text1.Text)
 End Sub
@@ -361,6 +299,31 @@ Private Sub Text6_Change()
     End If
 End Sub
 
+Private Sub Timer1_Timer()
+    Timer1.Enabled = False
+    Dim elapse As Single
+    elapse = Timer
+    
+    On Error Resume Next
+    ItterateDialogs UserDocument.Parent.VBE.VBProjects
+    If Err.Number <> 0 Then Err.Clear
+    
+    elapse = Timer - elapse
+    
+    If QuitFail > -1 Then
+        elapse = elapse + MainLoopElapse + 5
+        If elapse > 500 Then
+            Timer1.Interval = 500
+        ElseIf elapse < 5 Then
+            Timer1.Interval = 5
+        Else
+            Timer1.Interval = elapse
+        End If
+        Timer1.Enabled = True
+    End If
+    
+End Sub
+
 Private Sub UserDocument_Initialize()
 
     Text2(1).Tag = -1
@@ -385,6 +348,8 @@ Private Sub UserDocument_Initialize()
     Text2(0).Tag = Text2(0).Text
     
     Text2(1).Tag = 0
+    
+    Timer1.Enabled = True
 
 End Sub
 
@@ -423,13 +388,5 @@ Private Sub UserDocument_Resize()
 End Sub
 
 Private Sub UserDocument_Terminate()
-    Set FCE = Nothing
-    If chkElapse <> "WAIT" Then
-        SetBNSettings
-    End If
-    
-End Sub
-
-Private Sub VPE_ItemAdded(ByVal VBProject As VBIDE.VBProject)
-
+    Timer1.Enabled = False
 End Sub

@@ -19,7 +19,14 @@ Private pContents As String
 Private pCompiled As String
 Private pCondComp As String
 Private pCmdLine As String
+Private pName As String
 
+Public Property Get Name() As String
+    Name = pName
+End Property
+Public Property Let Name(ByVal RHS As String)
+    pName = RHS
+End Property
 Public Property Get CmdLine() As String
     CmdLine = pCmdLine
 End Property

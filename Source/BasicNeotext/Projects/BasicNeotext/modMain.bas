@@ -9,6 +9,8 @@ Public Enum SignTypes
     StampOnly = 2
 End Enum
 
+Public VBPID As Long
+
 Public Projs As New Project
 Public Execs As New VBA.Collection
 Public Param As New VBA.Collection
@@ -17,8 +19,9 @@ Public Hooks As New VBA.Collection
 Public RegEd As New Registry
 
 Public QuitCall As Boolean
-Public VBPID As Long
-Public LastRun As String
+Public QuitFail As Single
+
+Public MainLoopElapse As Single
 
 Public Sub Main()
 
@@ -29,7 +32,7 @@ Public Sub Main()
         ParseCommand
 
         If Execs.count = 0 Then
-            RunProcessEx Paths("VisBasic"), "", , False
+            RunProcessEx Paths("VisBasic"), "", , True
         Else
             Dim func As String
             Dim switch As Variant
@@ -96,6 +99,7 @@ Public Sub Main()
             Next
             Set Projs = Nothing
         End If
+
     End If
 End Sub
 
@@ -144,24 +148,6 @@ Public Sub InitialSetup()
     Paths.Add IIf(Path2 = "(not found)", "", Path2), "MakeNSIS"
     Paths.Add IIf(Path3 = "(not found)", "", Path3), "SignTool"
 End Sub
-
-Sub ShowDriveList()
-    Dim fs, d, dc, S, N
-    Set fs = CreateObject("Scripting.FileSystemObject")
-    Set dc = fs.Drives
-    For Each d In dc
-        S = S & d.DriveLetter & " - "
-        If d.DriveType = 3 Then
-            N = d.ShareName
-        Else
-            N = d.VolumeName
-        End If
-        S = S & N & vbCrLf
-    Next
-    MsgBox S
-End Sub
-
-
 
 Private Sub InstallSetup()
     If (Paths("VisBasic") <> "") Then
@@ -255,8 +241,6 @@ Public Sub SignTool(ByVal BinaryFile As String, Optional ByVal SignType As SignT
             
 End Sub
 
-
-
 Public Sub SetVBSettings()
 
     Dim regKey As String
@@ -293,19 +277,17 @@ End Function
 Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional ByVal Hide As Boolean = False, Optional ByVal Wait As Boolean = False)
 
     If Trim(path) <> "" Then
-'        chkRegSet = GetVBSettings()
-'        If GetBNSettings <> chkRegSet Then SetVBSettings
+        Dim LastRun As String
+        Dim LoopLatency As Single
+        
         LastRun = Trim(Trim(path) & " " & Trim(Params))
         
         VBPID = Shell(LastRun, IIf(Hide, vbHide, vbNormalFocus))
-        If (VBPID > 0) Then
-            chkElapse = Now
-            Dim latency As Single
 
-            Do While (IsProccessIDRunning(VBPID) Or QuitCall) And Wait
-                DoTasks
-                DoEvents
-                modCommon.Sleep 1
+        If (VBPID > 0) Then
+
+            Do While ((IsProccessIDRunning(VBPID) Or QuitCall) And Wait) And (Not QuitFail = -1)
+                LoopLatency = Timer
                 DoLoop
 
                 If QuitCall Then
@@ -315,36 +297,39 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
                     End If
                 End If
 
-                If latency = 0 Or (Timer - latency) > 1 Then
-                    ItterateDialogs
-                    latency = Timer
+                If (Not QuitCall) Then
+                    If (ProcessRunning("VB6.EXE") = 0) Then
+                        If IsProccessIDRunning(VBPID) Then
+                            QuitFail = -1
+                            KillApp "VBN.EXE"
+                        End If
+                    End If
                 End If
-
-                If ProcessRunning("VB6.EXE") = 0 And (Not QuitCall) Then
-                    chkElapse = "WAIT"
-                    KillApp "VBN.EXE"
-                End If
+                MainLoopElapse = LoopLatency - Timer
+                
             Loop
+            
+
         End If
     End If
 End Sub
 
-Private Function GatherFileList(ByVal Location As String, Optional ByRef ProjList As String = "") As String
-    Static fso As Object
-    If fso Is Nothing Then Set fso = CreateObject("Scripting.FileSystemObject")
-    Dim f As Object
+Public Function GatherFileList(ByVal Location As String, Optional ByRef ProjList As String = "") As String
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Dim F As Object
     Dim fi As Object
     Dim sf As Object
     If PathExists(Location, True) Then
-        Set f = fso.getfolder(GetFilePath(Location))
+        Set F = fso.getfolder(GetFilePath(Location))
     Else
-        Set f = fso.getfolder(Location)
+        Set F = fso.getfolder(Location)
     End If
-    For Each sf In f.subfolders
+    For Each sf In F.subfolders
         GatherFileList = GatherFileList & GatherFileList(sf.path, ProjList)
     Next
-    For Each fi In f.Files
-        Select Case GetFileExt(fi.path, True, True)
+    For Each fi In F.Files
+        Select Case GetFileExt(fi.Name, True, True)
             Case "bas", "cls"
                 GatherFileList = GatherFileList & fi.path & vbCrLf
             Case "frm"
@@ -366,8 +351,9 @@ Private Function GatherFileList(ByVal Location As String, Optional ByRef ProjLis
                 ProjList = ProjList & fi.path & vbCrLf
         End Select
     Next
+    Set fso = Nothing
 End Function
-Private Sub DoCleanUp(ByRef ProjList As String, ByRef FileListing As String)
+Private Sub DoCleanUp(ByVal ProjList As String, ByRef FileListing As String)
 
     Dim Proj As String
     Dim p As Project
@@ -403,17 +389,17 @@ Private Function ExcludePath(ByVal path As String, ByVal cancelExp As String) As
     Loop
     
 End Function
-Private Sub DoCopyProject(ByVal Source As String, ByVal Dest As String, ByRef ExcludeList As String, ByRef FileList As String, Optional ByVal ExcludeExperssions As String)
-    Static fso As Object
-    If fso Is Nothing Then Set fso = CreateObject("Scripting.FileSystemObject")
+Private Sub DoCopyProject(ByVal Source As String, ByVal Dest As String, ByVal ExcludeList As String, ByRef DeleteList As String, Optional ByVal ExcludeExperssions As String)
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
 
-    Dim f As Object
+    Dim F As Object
     Dim fi As Object
     Dim sf As Object
 
     If Not ExcludePath(Source, ExcludeExperssions) Then
     
-        Set f = fso.getfolder(Source)
+        Set F = fso.getfolder(Source)
         
         Dim cancelExp As String
         If PathExists(Source & "\Exclude.txt", True) Then
@@ -422,37 +408,45 @@ Private Sub DoCopyProject(ByVal Source As String, ByVal Dest As String, ByRef Ex
 
         MakeFolder Dest
 
-        For Each sf In f.subfolders
-            DoCopyProject Source & "\" & sf.Name, Dest & "\" & sf.Name, ExcludeList, FileList, ExcludeExperssions & vbCrLf & cancelExp
+        For Each sf In F.subfolders
+            DoCopyProject Source & "\" & sf.Name, Dest & "\" & sf.Name, ExcludeList, DeleteList, ExcludeExperssions & vbCrLf & cancelExp
         Next
     
-        For Each fi In f.Files
-            If Not ExcludePath(fi.path, ExcludeExperssions & vbCrLf & cancelExp & vbCrLf & "Exclude.txt") Then
+        For Each fi In F.Files
+            If Not ExcludePath(Dest & "\" & fi.Name, ExcludeExperssions & vbCrLf & cancelExp & vbCrLf & "Exclude.txt") Then
                 
-                Select Case GetFileExt(fi.path, True, True)
+                Select Case GetFileExt(fi.Name, True, True)
                     Case "bas", "cls", "frm", "ctl", "dob", "dsr"
-                        If InStr(LCase(ExcludeList), LCase(fi.path) & vbCrLf) = 0 Then
-                            FileList = Replace(LCase(FileList), LCase(Dest & "\" & fi.Name & vbCrLf), "")
+                        
+                        If InStr(LCase(ExcludeList), Source & "\" & fi.Name & vbCrLf) = 0 Then
+                            DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name) & vbCrLf, "")
                             DoFileCopy fi.path, Dest & "\" & fi.Name
+                        Else
+                            DeleteList = DeleteList & Dest & "\" & fi.Name & vbCrLf
                         End If
                     Case Else
-                        FileList = Replace(LCase(FileList), LCase(Dest & "\" & fi.Name & vbCrLf), "")
+                        DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name & vbCrLf), "")
                         DoFileCopy fi.path, Dest & "\" & fi.Name
                 End Select
             Else
-                If PathExists(Dest & "\" & fi.Name, True) Then Kill Dest & "\" & fi.Name
+                If PathExists(Dest & "\" & fi.Name, True) Then
+                    SetAttr Dest & "\" & fi.Name, vbNormal
+                    Kill Dest & "\" & fi.Name
+                End If
             End If
         Next
+        
     Else
         If PathExists(Dest, False) Then RemovePath Dest
     End If
-
+    Set fso = Nothing
 End Sub
 
 Private Sub DoFileCopy(ByVal Source As String, ByVal Dest As String)
     If PathExists(Dest, True) Then
         If FileDateTime(Source) <> FileDateTime(Dest) Or _
             FileLen(Source) <> FileLen(Dest) Then
+            Kill Dest
             FileCopy Source, Dest
         End If
     Else
@@ -465,6 +459,8 @@ Private Function DoCleanCopy() As Boolean
     
     Dim ProjList As String
     Dim FileList As String
+    Dim UnusedList As String
+    
     DoCleanCopy = True
     On Error Resume Next
     ProjList = Paths("copy1")
@@ -473,18 +469,32 @@ Private Function DoCleanCopy() As Boolean
         
         If PathExists(Paths("copy1"), False) Then
             If PathExists(GetFilePath(Paths("copy2")), False) Then
-        
-                FileList = GatherFileList(Paths("copy1"), ProjList)
-        
-                DoCleanUp ProjList, FileList
+                ProjList = ""
+                FileList = ""
                 
-                ProjList = GatherFileList(Paths("copy2"))
-                 
-                DoCopyProject Paths("copy1"), Paths("copy2"), FileList, ProjList
-        
+                
+                FileList = GatherFileList(Paths("copy1"), ProjList)
+                'project files are in projlist, and their files are in filelist
+                UnusedList = FileList
+                
+                DoCleanUp ProjList, UnusedList
+                'filelist is now only files not in any project in projlist
+                
+                'projlist now contains all source files in projects at the dest
+                ProjList = ProjList & vbCrLf & FileList
+                ProjList = Replace(ProjList, Paths("copy1"), Paths("copy2"))
+                
+                'FileList is passed to be excluded in copying the projlist files
+                DoCopyProject Paths("copy1"), Paths("copy2"), UnusedList, ProjList
+
+                'any file in the paths not copied is now in projlist
+
+                'remove those in projlist as they are no longer in projects
                 Do While ProjList <> ""
                     On Error Resume Next
-                    Kill RemoveNextArg(ProjList, vbCrLf)
+                    UnusedList = RemoveNextArg(ProjList, vbCrLf)
+                    SetAttr UnusedList, vbNormal
+                    Kill UnusedList
                 Loop
                 
             Else
@@ -506,13 +516,17 @@ Private Function DoCleanCopy() As Boolean
 End Function
 
 Public Static Sub DoLoop()
-    Static Elapse As Single
+    DoTasks
+    DoEvents
+    modCommon.Sleep 1
+                    
+    Static elapse As Single
     Static latency As Single
     Static lastlat As Single
     Static multity As Long
-    If Elapse <> 0 Then
-        Elapse = Timer - Elapse
-        If Elapse > latency Then
+    If elapse <> 0 Then
+        elapse = Timer - elapse
+        If elapse > latency Then
             Select Case multity
                 Case 0, 4, 64, 1024
                     DoEvents
@@ -521,9 +535,9 @@ Public Static Sub DoLoop()
                 Case 2, 16, 32, 512
                     If lastlat < 1000 Then modCommon.Sleep lastlat
             End Select
-            lastlat = Elapse - latency
+            lastlat = elapse - latency
             multity = multity + 16
-        ElseIf Elapse < latency Then
+        ElseIf elapse < latency Then
             Select Case multity
                 Case 0, 4, 64, 1024
                     DoEvents
@@ -532,7 +546,7 @@ Public Static Sub DoLoop()
                 Case 2, 16, 32, 512
                     If lastlat < 1000 Then modCommon.Sleep lastlat
             End Select
-            lastlat = latency - Elapse
+            lastlat = latency - elapse
             multity = multity + 4
         ElseIf lastlat <> 0 Then
             Select Case multity
@@ -559,8 +573,8 @@ Public Static Sub DoLoop()
         ElseIf lastlat = 0 Then
             lastlat = 1
         End If
-        latency = Elapse
+        latency = elapse
     End If
-    Elapse = Timer
+    elapse = Timer
 End Sub
 

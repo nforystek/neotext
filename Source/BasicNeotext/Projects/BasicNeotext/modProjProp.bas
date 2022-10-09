@@ -58,7 +58,7 @@ Private Const WM_GETTEXT = &HD
 Private Const WM_GETTEXTLENGTH = &HE
 
 Private Type POINTAPI
-        X As Long
+        x As Long
         Y As Long
 End Type
 
@@ -101,104 +101,88 @@ Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVa
 Public Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
 
 
-Public chkElapse As String
-Public chkRegSet As String
-
-Private hWndIDE As Long
-Private hWndUp As Long
-Private hPropCap As String
+Private hWndProp As Long
+Private hWndCust As Long
+Private hWndProc As Long
 
 
-Public Function ItterateDialogs2(ByVal pID As Long) As Boolean
+Public Sub ItterateDialogs(ByRef VBProjects As VBProjects)
     
-    If (hWndIDE = 0) Then
-        EnumWindows AddressOf ItterateDialogsWinEvents22, pID
+    Dim flagCust As Boolean
+    Dim flagProc As Boolean
+    
+    If hWndProc <> 0 Then
+        flagProc = True
+        hWndProc = 0
+    End If
+    If hWndCust <> 0 Then
+        flagCust = True
+        hWndCust = 0
+    End If
+    
+    EnumWindows AddressOf ItterateDialogsWinEvents, VBPID
+    
+    If hWndCust = 0 And flagCust Then
+        SetBNSettings
+    End If
+    
+    If hWndProc = 0 And flagProc Then
+        UpdateAttributeToCommentDescriptions VBProjects
     End If
 
-    If (hWndIDE <> 0) Then
-        ItterateDialogs2 = True
-        hWndIDE = 0
+    If (hWndProp <> 0) Then
+        FixConditionalCompile hWndProp
+        hWndProp = 0
     End If
   
-End Function
+End Sub
 
-Private Function ItterateDialogsWinEvents22(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinEvents22 = Not SubCheckHwnds2(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents12, lParam
-End Function
-
-Private Function ItterateDialogsWinChildEvents12(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents12 = Not SubCheckHwnds2(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents22, lParam
-End Function
-
-Private Function ItterateDialogsWinChildEvents22(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents22 = Not SubCheckHwnds2(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents12, lParam
-End Function
-
-Private Function SubCheckHwnds2(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    Dim txt As String
-    Dim lSize As Long
-    txt = String(255, Chr(0)) 'Space$(255)
-    lSize = Len(txt)
-    Call GetWindowText(hwnd, txt, lSize)
-    txt = Replace(txt, Chr(0), "")
-    If lSize > 0 Then
-        txt = Left$(txt, lSize)
-    End If
-    If InStr(txt, "- Project Properties") > 0 Then
-        If GetWindowThreadProcessId(hwnd, lSize) Then
-            If lSize = lParam Then hWndIDE = hwnd
-        End If
-    End If
-    SubCheckHwnds2 = (hWndIDE <> 0)
-End Function
-
-Public Function ItterateDialogs() As Boolean
-    If (hWndUp = 0) Then
-        EnumWindows AddressOf ItterateDialogsWinEvents, 0
-    End If
-    
-    If (hWndUp <> 0) Then
-        FixConditionalCompile hWndUp
-        hWndUp = 0
-    End If
-End Function
 
 Private Function ItterateDialogsWinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinEvents = Not SubCheckHwnds(hwnd)
-    If ItterateDialogsWinEvents Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    ItterateDialogsWinEvents = Not SubCheckHwnds(hwnd, lParam)
+    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents1(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hwnd)
-    If ItterateDialogsWinChildEvents1 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
+    ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hwnd, lParam)
+    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents2(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hwnd)
-    If ItterateDialogsWinChildEvents2 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hwnd, lParam)
+    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
-Private Function SubCheckHwnds(ByVal hwnd As Long) As Boolean
+Private Function SubCheckHwnds(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     Dim txt As String
     Dim lSize As Long
     txt = String(255, Chr(0)) 'Space$(255)
     lSize = Len(txt)
     Call GetWindowText(hwnd, txt, lSize)
-    txt = Replace(txt, Chr(0), "")
-    If lSize > 0 Then
-        txt = Left$(txt, lSize)
-    End If
-
-    If (InStr(txt, "Con&ditional Compilation Arguments:") > 0) And hWndUp = 0 And GetWindowThreadProcessId(hwnd, lSize) Then
-        If lSize = VBPID Then
-            hWndUp = GetWindow(hwnd, GW_HWNDNEXT)
+    txt = Trim(Replace(txt, Chr(0), ""))
+'    If lSize > 0 Then
+'        txt = Left$(txt, lSize)
+'    End If
+    If GetWindowThreadProcessId(hwnd, lSize) Then
+        If lSize = lParam Then
+        
+            If (txt = "Con&ditional Compilation Arguments:") And hWndProp = 0 Then
+                hWndProp = GetWindow(hwnd, GW_HWNDNEXT)
+            End If
+        
+            If (txt = "Customize") And hWndCust = 0 Then
+                hWndCust = hwnd
+            End If
+        
+            If (txt = "Procedure Attributes") And hWndProc = 0 Then
+                hWndProc = hwnd
+            End If
+            
         End If
     End If
-    SubCheckHwnds = (hWndUp <> 0)
+    SubCheckHwnds = (hWndProp <> 0) Or (hWndCust <> 0) Or (hWndProc <> 0)
 End Function
+
 Private Sub FixConditionalCompile(ByVal hwnd As Long)
 
     Dim invar As String
@@ -238,24 +222,14 @@ Private Sub FixConditionalCompile(ByVal hwnd As Long)
 
 End Sub
 
-
-
-Public Function GetCaption(ByVal hwnd As Long) As String
-    Dim tlen As Long
-    Dim wText As String
-    tlen = GetWindowTextLength(hwnd)
-    wText = Space(tlen)
-    GetWindowText hwnd, wText, tlen
-    GetCaption = Left(wText, tlen)
-End Function
-
 Private Function GetText(ByVal hwnd As Long) As String
     Dim Text As String
     Dim tlen As Long
     tlen = SendMessageStruct(hwnd, WM_GETTEXTLENGTH, 0&, 0&) + 1
-    Text = Space(tlen)
+    Text = String(tlen, Chr(0)) 'Space(tlen)
     Call SendMessageString(hwnd, WM_GETTEXT, tlen, Text)
-    GetText = Left(Text, tlen)
+    'GetText = Left(Text, tlen)
+    GetText = Replace(Text, Chr(0), "")
 End Function
 
 Private Sub SetText(ByVal hwnd As Long, ByVal Text As String, ByVal OffsetsAt As Long)

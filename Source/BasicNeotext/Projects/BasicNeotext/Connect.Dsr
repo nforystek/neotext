@@ -100,6 +100,10 @@ Private cbMenuCommandBar5 As Office.CommandBarControl
 Private WithEvents MenuHandler8 As CommandBarEvents
 Attribute MenuHandler8.VB_VarHelpID = -1
 
+Private cbMenuCommandBar7 As Office.CommandBarControl 'Procedure Attributes...
+Private WithEvents MenuHandler10 As CommandBarEvents
+Attribute MenuHandler10.VB_VarHelpID = -1
+
 '#########Single event objects below from existing built-ins
 Private WithEvents cmdBarBtnEvents1 As CommandBarEvents 'start
 Attribute cmdBarBtnEvents1.VB_VarHelpID = -1
@@ -157,6 +161,46 @@ Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpCl
 
 Private Const guidPos = "{99179999-A05E-4A21-A9DB-C5614C53F992}"
 
+
+Public WithEvents FCE As FileControlEvents
+Attribute FCE.VB_VarHelpID = -1
+'Public VBInstance As VBIDE.VBE
+
+
+Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
+    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+        If PathExists(FileName, True) Then
+            BuildComments CommentsToAttribute, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileName))
+        End If
+    Else
+        If GetFileExt(FileName, True, True) = "vbp" Then
+            BuildProject FileName
+        End If
+    End If
+End Sub
+
+Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() As String)
+    Dim cnt As Long
+    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+        For cnt = LBound(FileNames) To UBound(FileNames)
+            If PathExists(FileNames(cnt), True) Then
+                If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
+
+                End If
+                BuildComments AttributeToComments, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileNames(cnt)))
+            End If
+        Next
+    Else
+        For cnt = LBound(FileNames) To UBound(FileNames)
+            If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
+                If PathExists(FileNames(cnt), True) Then
+                    BuildProject FileNames(cnt)
+                End If
+            End If
+        Next
+    End If
+End Sub
+
 Private Function GetUIState() As UIStates
     If InStr(VBInstance.MainWindow.Caption, "Microsoft Visual Basic [running]") > 0 Then
         GetUIState = UIStates.Running
@@ -168,6 +212,13 @@ Private Function GetUIState() As UIStates
         GetUIState = UIStates.Design
     End If
 End Function
+
+Public Sub AdjustHeaders()
+    'MsgBox "up"
+End Sub
+Public Sub UnAdjustHeaders()
+   ' MsgBox "out"
+End Sub
 
 Public Sub SetUIState(Optional ByVal NewState As UIStates = UIStates.None)
     
@@ -298,9 +349,7 @@ Private Sub AddinInstance_OnBeginShutdown(custom() As Variant)
     On Error GoTo exitthis
     On Local Error GoTo exitthis
     
-    
-    modHotKey.UnHook
-    
+
     Dim cP As Window
     For Each cP In VBInstance.Windows
         Select Case StrReverse(NextArg(StrReverse(cP.Caption), " "))
@@ -439,6 +488,16 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
             End If
         Next
     End If
+    Set cbMenu = VBInstance.CommandBars.Item("Tools")
+    If Not cbMenu Is Nothing Then
+        For Each cbNextCommand In cbMenu.Controls
+
+            If Right(Replace(cbNextCommand.Caption, "&", ""), 23) = "Procedure Attributes..." Then
+                Set cbMenuCommandBar7 = cbNextCommand
+                Set MenuHandler10 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar7)
+            End If
+        Next
+    End If
     
     Set cbMenu = VBInstance.CommandBars.Item("Run")
     If Not cbMenu Is Nothing Then
@@ -500,8 +559,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set VBWindow = VBInstance.Windows.CreateToolWindow(AddInInst, "BasicNeotext.Settings", "Compiler Settings", guidPos, docSettings)
     VBWindow.Visible = GetSetting("BasicNeotext", "Options", "Settings_Visible", VBWindow.Visible)
     
-    Set docSettings.FCE = VBInstance.Events.FileControlEvents(Nothing)
-    'Set docSettings.VBInstance = VBInstance
+    Set FCE = VBInstance.Events.FileControlEvents(Nothing)
     
     ''uncomment the following two lines to hook F5
     'Dim ret As Long
@@ -516,8 +574,7 @@ End Sub
 Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjects.ext_DisconnectMode, custom() As Variant)
     On Error GoTo exitthis
     On Local Error GoTo exitthis
-    
-    modHotKey.UnHook
+
     
     If Not CmdBar Is Nothing Then
         SaveSetting "BasicNeotext", "Options", "ToolBar_Position", CmdBar.Position
@@ -537,7 +594,8 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     If Not cmdMenuButton7 Is Nothing Then Set cmdMenuButton7 = Nothing
     If Not cmdMenuButton8 Is Nothing Then Set cmdMenuButton8 = Nothing
     
-    If Not MenuHandler7 Is Nothing Then Set MenuHandler9 = Nothing
+    If Not MenuHandler10 Is Nothing Then Set MenuHandler10 = Nothing
+    If Not MenuHandler9 Is Nothing Then Set MenuHandler9 = Nothing
     If Not MenuHandler8 Is Nothing Then Set MenuHandler8 = Nothing
     If Not MenuHandler7 Is Nothing Then Set MenuHandler7 = Nothing
     If Not MenuHandler6 Is Nothing Then Set MenuHandler6 = Nothing
@@ -574,6 +632,9 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     End If
     If Not cbMenuCommandBar6 Is Nothing Then
         Set cbMenuCommandBar6 = Nothing
+    End If
+    If Not cbMenuCommandBar7 Is Nothing Then
+        Set cbMenuCommandBar7 = Nothing
     End If
     
     If Not cmdButton1 Is Nothing Then cmdButton1.Delete
@@ -630,9 +691,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
 
     VBWindow.Close
     Set VBWindow = Nothing
-    
-    Set docSettings.FCE = Nothing
-    
+
     Set docSettings = Nothing
     
 exitthis:
@@ -642,11 +701,12 @@ exitthis:
 End Sub
 
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
-'
+    SetVBSettings
+    DescriptionsStartup VBInstance.VBProjects
 End Sub
 
 Private Sub AddinInstance_Terminate()
-    modHotKey.UnHook
+    Set FCE = Nothing
     
 End Sub
 
@@ -710,6 +770,7 @@ End Sub
 ''End Sub
 
 Private Sub cmdBarBtnEvents7_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+    SetBNSettings
     VBWindow.Visible = Not VBWindow.Visible
 End Sub
 
@@ -739,6 +800,10 @@ End Sub
 
 Private Sub MenuHandler1_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
     StartFullCompile CommandBarControl, handled, CancelDefault
+End Sub
+
+Private Sub MenuHandler10_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+    ProcedureAttributes CommandBarControl, handled, CancelDefault
 End Sub
 
 Private Sub MenuHandler2_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
@@ -1106,6 +1171,12 @@ Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Bool
    ' VBInstance.Quit
     
 
+End Sub
+
+Private Sub ProcedureAttributes(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
+'''    '"Procedure &Attributes..." from menu, this should happen
+'''    '   if the procedure attributes dialog is invoked
+    UpdateCommentToAttributeDescriptions VBInstance.VBProjects
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)

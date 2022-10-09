@@ -167,6 +167,17 @@ Private xUndoBuffer As Long
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
 
+Public Function SortText(ByRef FindText1 As String, ByRef FindText2 As String, ByRef FindPos1 As Long, ByVal FindPos2 As Long, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Boolean
+    FindPos1 = FindText(FindText1, Offset, Width)
+    FindPos2 = FindText(FindText2, Offset, Width)
+    If (((FindPos1 > FindPos2) Or (FindPos1 = -1)) And (FindPos2 > -1)) Then
+        Swap FindText1, FindText2
+        Swap FindPos1, FindPos2
+    End If
+    SortText = ((FindPos1 > -1) Or (FindPos2 > -1))
+End Function
+
+
 Public Function FindText(ByVal Text As String, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Long
     Dim idx As Long
     Dim cnt As Long
@@ -175,32 +186,28 @@ Public Function FindText(ByVal Text As String, Optional ByVal Offset As Long = 0
     FindText = -1
     If Text <> "" Then
         If Width = -1 Then Width = pText.Length - Offset
-        'Max = pText.Pass(Asc(Left(Text, 1)), Offset, Width)
-        'If Max > 0 Then
-            cnt = 1
-            Do
-                idx = pText.poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
-                If Offset + idx <= Offset + Width Then
-                    For cnt2 = 0 To (Len(Text) - 2)
-                        If Offset + idx + cnt2 < Offset + Width Then
-                            If Not (pText.Peek(Offset + idx + cnt2) = Asc(Mid(Text, cnt2 + 2, 1))) Then
-                                idx = -idx
-                                Exit For
-                            End If
-                        Else
+        cnt = 1
+        Do
+            idx = pText.poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
+            If Offset + idx <= Offset + Width Then
+                For cnt2 = 0 To (Len(Text) - 2)
+                    If Offset + idx + cnt2 < Offset + Width Then
+                        If Not (pText.Peek(Offset + idx + cnt2) = Asc(Mid(Text, cnt2 + 2, 1))) Then
                             idx = -idx
                             Exit For
                         End If
-                    Next
-                    If idx >= 0 And idx <= Offset + Width Then
-                        FindText = Offset + idx - 1
-                        Exit Function
+                    Else
+                        idx = -idx
+                        Exit For
                     End If
-                    cnt = cnt + 1
+                Next
+                If idx >= 0 And idx <= Offset + Width Then
+                    FindText = Offset + idx - 1
+                    Exit Function
                 End If
-            Loop While idx < 0 'And cnt <= Max
-            
-        'End If
+                cnt = cnt + 1
+            End If
+        Loop While idx < 0
     End If
 End Function
 
