@@ -1,5 +1,4 @@
 Attribute VB_Name = "modProjProp"
-
 Option Explicit
 
 Private Type RangeType
@@ -25,7 +24,6 @@ Private Const GW_HWNDPREV = 3
 Private Const GW_OWNER = 4
 Private Const GW_CHILD = 5
 Private Const GW_MAX = 5
-
 
 Private Declare Function IsWindowVisible Lib "user32" (ByVal hwnd As Long) As Long
 
@@ -100,13 +98,11 @@ Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long,
 Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lParam As Long) As Boolean
 Public Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
 
-
 Private hWndProp As Long
 Private hWndCust As Long
 Private hWndProc As Long
 
-
-Public Sub ItterateDialogs(ByRef VBProjects As VBProjects)
+Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     
     Dim flagCust As Boolean
     Dim flagProc As Boolean
@@ -127,7 +123,7 @@ Public Sub ItterateDialogs(ByRef VBProjects As VBProjects)
     End If
     
     If hWndProc = 0 And flagProc Then
-        UpdateAttributeToCommentDescriptions VBProjects
+        BuildComments AttributeToComments, VBInstance.ActiveCodePane.CodeModule
     End If
 
     If (hWndProp <> 0) Then
@@ -137,20 +133,19 @@ Public Sub ItterateDialogs(ByRef VBProjects As VBProjects)
   
 End Sub
 
-
 Private Function ItterateDialogsWinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinEvents = Not SubCheckHwnds(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    If Not ItterateDialogsWinEvents Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents1(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
+    If Not ItterateDialogsWinChildEvents1 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lParam
 End Function
 
 Private Function ItterateDialogsWinChildEvents2(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hwnd, lParam)
-    EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+    If Not ItterateDialogsWinChildEvents2 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lParam
 End Function
 
 Private Function SubCheckHwnds(ByVal hwnd As Long, ByVal lParam As Long) As Boolean

@@ -45,10 +45,8 @@ Public Function GetCodeModule(ByRef VBProjects As VBProjects, ByVal ProjectName 
     For Each vbproj In VBProjects
         If LCase(vbproj.Name) = LCase(ProjectName) Then
             For Each vbcomp In vbproj.VBComponents
-                'If vbcomp.Name = ModuleName Then
-                    Set GetCodeModule = GetCodeModule2(vbcomp)
-                    Exit Function
-                'End If
+                Set GetCodeModule = GetCodeModule2(vbcomp)
+                Exit Function
             Next
         End If
     Next
@@ -61,6 +59,7 @@ Public Sub DescriptionsStartup(ByRef VBProjects As VBProjects)
     For Each vbproj In VBProjects
         For Each vbcomp In vbproj.VBComponents
             If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+            
                 'If vbcomp.HasOpenDesigner Then
                     BuildComments InsertCommentDesc, GetCodeModule2(vbcomp)
                 'End If
@@ -80,9 +79,7 @@ Public Sub UpdateAttributeToCommentDescriptions(ByRef VBProjects As VBProjects)
         Dim Member As Member
         For Each vbproj In VBProjects
             For Each vbcomp In vbproj.VBComponents
-                'If vbcomp.HasOpenDesigner Then
-                    BuildComments AttributeToComments, GetCodeModule2(vbcomp)
-                'End If
+                BuildComments AttributeToComments, GetCodeModule2(vbcomp)
             Next
         Next
     End If
@@ -95,9 +92,7 @@ Public Sub UpdateCommentToAttributeDescriptions(ByRef VBProjects As VBProjects)
         Dim Member As Member
         For Each vbproj In VBProjects
             For Each vbcomp In vbproj.VBComponents
-                'If vbcomp.HasOpenDesigner Then
-                    BuildComments CommentsToAttribute, GetCodeModule2(vbcomp)
-                'End If
+                BuildComments CommentsToAttribute, GetCodeModule2(vbcomp)
             Next
         Next
     End If
@@ -145,67 +140,72 @@ Public Sub BuildComments(ByVal BuildFunc As BuildFunction, ByRef CodeModule As C
     
     If Not CodeModule Is Nothing Then
 
-        Dim ProcName As String
-        Dim ProcDeclare As String
-        Dim ProcDescription As String
+        If CodeModule.CodePane.Window.Visible Then
         
-        Dim startrow As Long
-        Dim startcol As Long
-        Dim endrow As Long
-        Dim endcol As Long
+            Dim ProcName As String
+            Dim ProcDeclare As String
+            Dim ProcDescription As String
+            
+            Dim startrow As Long
+            Dim startcol As Long
+            Dim endrow As Long
+            Dim endcol As Long
+            
+            CodeModule.CodePane.GetSelection startrow, startcol, endrow, endcol
         
-        CodeModule.CodePane.GetSelection startrow, startcol, endrow, endcol
-    
-        Dim Member As Member
-        For Each Member In CodeModule.Members
-            ProcName = Member.Name
-            ProcDeclare = RTrimStrip(CodeModule.Lines(Member.CodeLocation, 1), " ")
-            ProcDescription = Member.Description
-    
-            If (BuildFunc = AttributeToComments) Then
-                If Right(ProcDeclare, 3) = "' _" Then
-                    If ProcDescription = "" Then
-                        CodeModule.ReplaceLine Member.CodeLocation, Left(ProcDeclare, Len(ProcDeclare) - 3)
-                        CodeModule.DeleteLines Member.CodeLocation + 1
-                    Else
-                        CodeModule.ReplaceLine Member.CodeLocation + 1, ProcDescription
-                    End If
-                ElseIf ProcDescription <> "" Then
-                    CodeModule.ReplaceLine Member.CodeLocation, ProcDeclare & " ' _" & vbCrLf & ProcDescription
-                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-                End If
-            ElseIf (BuildFunc = CommentsToAttribute) Then
-                If Right(ProcDeclare, 3) = "' _" Then
-                    ProcDescription = CodeModule.Lines(Member.CodeLocation + 1, 1)
-                ElseIf ProcDescription <> "" Then
-                    CodeModule.ReplaceLine Member.CodeLocation, ProcDeclare & " ' _" & vbCrLf & ProcDescription
-                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-                End If
-                SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-            Else
+            Dim Member As Member
+            For Each Member In CodeModule.Members
+                ProcName = Member.Name
+                ProcDeclare = RTrimStrip(CodeModule.Lines(Member.CodeLocation, 1), " ")
                 ProcDescription = Member.Description
-                If (BuildFunc = DeleteCommentDesc) Then
+        
+                If (BuildFunc = AttributeToComments) Then
                     If Right(ProcDeclare, 3) = "' _" Then
-                        If CodeModule.Lines(Member.CodeLocation + 1, 1) = ProcDescription Then
+                        If ProcDescription = "" Then
                             CodeModule.ReplaceLine Member.CodeLocation, Left(ProcDeclare, Len(ProcDeclare) - 3)
                             CodeModule.DeleteLines Member.CodeLocation + 1
                         Else
-                            CodeModule.ReplaceLine Member.CodeLocation, Left(ProcDeclare, Len(ProcDeclare) - 3)
-                            CodeModule.ReplaceLine Member.CodeLocation + 1, "'" & CodeModule.Lines(Member.CodeLocation, 1)
+                            CodeModule.ReplaceLine Member.CodeLocation + 1, ProcDescription
                         End If
-                        SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-                    End If
-                ElseIf (BuildFunc = InsertCommentDesc) Then
-                    If Right(ProcDeclare, 3) <> "' _" And ProcDescription <> "" Then
+                    ElseIf ProcDescription <> "" Then
                         CodeModule.ReplaceLine Member.CodeLocation, ProcDeclare & " ' _" & vbCrLf & ProcDescription
-                        SetMemberDescription CodeModule.Members, ProcName, ProcDescription
+                        Member.Description = ProcDescription
+                        'SetMemberDescription CodeModule.Members, ProcName, ProcDescription
+                    End If
+                ElseIf (BuildFunc = CommentsToAttribute) Then
+                    If Right(ProcDeclare, 3) = "' _" Then
+                        ProcDescription = CodeModule.Lines(Member.CodeLocation + 1, 1)
+                    ElseIf ProcDescription <> "" Then
+                        CodeModule.ReplaceLine Member.CodeLocation, ProcDeclare & " ' _" & vbCrLf & ProcDescription
+                    End If
+                    Member.Description = ProcDescription
+                    'SetMemberDescription CodeModule.Members, ProcName, ProcDescription
+                Else
+                    ProcDescription = Member.Description
+                    If (BuildFunc = DeleteCommentDesc) Then
+                        If Right(ProcDeclare, 3) = "' _" Then
+                            If CodeModule.Lines(Member.CodeLocation + 1, 1) = ProcDescription Then
+                                CodeModule.ReplaceLine Member.CodeLocation, Left(ProcDeclare, Len(ProcDeclare) - 3)
+                                CodeModule.DeleteLines Member.CodeLocation + 1
+                            Else
+                                CodeModule.ReplaceLine Member.CodeLocation, Left(ProcDeclare, Len(ProcDeclare) - 3)
+                                CodeModule.ReplaceLine Member.CodeLocation + 1, "'" & CodeModule.Lines(Member.CodeLocation, 1)
+                            End If
+                            Member.Description = ProcDescription
+                            'SetMemberDescription CodeModule.Members, ProcName, ProcDescription
+                        End If
+                    ElseIf (BuildFunc = InsertCommentDesc) Then
+                        If Right(ProcDeclare, 3) <> "' _" And ProcDescription <> "" Then
+                            CodeModule.ReplaceLine Member.CodeLocation, ProcDeclare & " ' _" & vbCrLf & ProcDescription
+                            Member.Description = ProcDescription
+                            'SetMemberDescription CodeModule.Members, ProcName, ProcDescription
+                        End If
                     End If
                 End If
-            End If
-        Next
-        
-        CodeModule.CodePane.SetSelection startrow, startcol, endrow, endcol
-        
+            Next
+            
+            CodeModule.CodePane.SetSelection startrow, startcol, endrow, endcol
+        End If
     End If
     
     Exit Sub

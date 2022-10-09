@@ -559,6 +559,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set VBWindow = VBInstance.Windows.CreateToolWindow(AddInInst, "BasicNeotext.Settings", "Compiler Settings", guidPos, docSettings)
     VBWindow.Visible = GetSetting("BasicNeotext", "Options", "Settings_Visible", VBWindow.Visible)
     
+    Set docSettings.VBInstance = VBInstance
     Set FCE = VBInstance.Events.FileControlEvents(Nothing)
     
     ''uncomment the following two lines to hook F5
@@ -692,6 +693,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     VBWindow.Close
     Set VBWindow = Nothing
 
+    Set docSettings.VBInstance = Nothing
     Set docSettings = Nothing
     
 exitthis:
@@ -702,7 +704,7 @@ End Sub
 
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
     SetVBSettings
-    DescriptionsStartup VBInstance.VBProjects
+   ' DescriptionsStartup VBInstance.VBProjects
 End Sub
 
 Private Sub AddinInstance_Terminate()
@@ -1176,7 +1178,9 @@ End Sub
 Private Sub ProcedureAttributes(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '"Procedure &Attributes..." from menu, this should happen
 '''    '   if the procedure attributes dialog is invoked
-    UpdateCommentToAttributeDescriptions VBInstance.VBProjects
+  ' VBInstance.ActiveCodePane.CodeModule
+    BuildComments CommentsToAttribute, VBInstance.ActiveCodePane.CodeModule
+    'UpdateCommentToAttributeDescriptions VBInstance.VBProjects
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)

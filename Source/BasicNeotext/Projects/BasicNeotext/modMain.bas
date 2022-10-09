@@ -287,15 +287,19 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
         If (VBPID > 0) Then
 
             Do While ((IsProccessIDRunning(VBPID) Or QuitCall) And Wait) And (Not QuitFail = -1)
+                MainLoopElapse = Timer - LoopLatency
                 LoopLatency = Timer
+                
                 DoLoop
 
                 If QuitCall Then
-                    If Not IsProccessIDRunning(VBPID) Then
+                    If (Not IsProccessIDRunning(VBPID)) Then
                         VBPID = Shell(LastRun, vbNormalFocus)
                         QuitCall = False
                     End If
                 End If
+                
+                DoLoop
 
                 If (Not QuitCall) Then
                     If (ProcessRunning("VB6.EXE") = 0) Then
@@ -305,7 +309,7 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
                         End If
                     End If
                 End If
-                MainLoopElapse = LoopLatency - Timer
+                
                 
             Loop
             

@@ -305,15 +305,15 @@ Private Sub Timer1_Timer()
     elapse = Timer
     
     On Error Resume Next
-    ItterateDialogs UserDocument.Parent.VBE.VBProjects
+    ItterateDialogs UserDocument.Parent.VBE
     If Err.Number <> 0 Then Err.Clear
     
     elapse = Timer - elapse
     
     If QuitFail > -1 Then
         elapse = elapse + MainLoopElapse + 5
-        If elapse > 500 Then
-            Timer1.Interval = 500
+        If elapse > 1000 Then
+            Timer1.Interval = 100
         ElseIf elapse < 5 Then
             Timer1.Interval = 5
         Else
