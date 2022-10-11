@@ -169,8 +169,8 @@ Public Sub Populate(ByVal URI As String)
                 Case "bas", "ctl", "frm", "cls", "dsr", "dob", "pag"
                     pLocation = URI
                     pContents = ReadFile(URI)
+                    pName = NextArg(RemoveArg(pContents, "Attribute VB_Name = """), """")
                 Case "vbp"
-                
                     fldrs = ParseProject(Me, URI)
                     Do Until fldrs = ""
                         fldr = RemoveNextArg(fldrs, vbCrLf)
@@ -182,6 +182,7 @@ Public Sub Populate(ByVal URI As String)
                         End If
                     Loop
                     pLocation = URI
+                    
                 Case "nsi", "nsh"
                     Dim v As VBA.Collection
                     fldrs = ParseNSIScript(Me, URI, v)

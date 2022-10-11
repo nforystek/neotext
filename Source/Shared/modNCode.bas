@@ -1,7 +1,3 @@
-#Const [True] = -1
-#Const [False] = 0
-
-
 Attribute VB_Name = "modNCode"
 #Const modNCode = -1
 Option Explicit
@@ -54,40 +50,40 @@ Public Const Bit24 = 8388608
 Private Declare Sub CopyMem Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 
 Private Function HesEncodeData(ByVal d As String) As String
-    Dim s As String
+    Dim S As String
     Dim l As Long
     Dim i As Long
-    Dim n As String
+    Dim N As String
     l = Len(d)
     If l > 0 Then
         For i = 1 To l
-            n = Hex(Asc(Mid(d, i, 1)))
-            If Len(n) < 2 Then
-                s = s & "0" & n
+            N = Hex(Asc(Mid(d, i, 1)))
+            If Len(N) < 2 Then
+                S = S & "0" & N
             Else
-                s = s & n
+                S = S & N
             End If
         Next
     End If
-    HesEncodeData = s
+    HesEncodeData = S
 End Function
 
 Private Function HesDecodeData(ByVal d As String) As String
-    Dim s As String
+    Dim S As String
     Dim l As Long
     Dim i As Long
     l = Len(d)
     If l > 0 Then
         For i = 1 To l Step 2
-            s = s & Chr(val("&H" & Mid(d, i, 2)))
+            S = S & Chr(val("&H" & Mid(d, i, 2)))
         Next
     End If
-    HesDecodeData = s
+    HesDecodeData = S
 End Function
 
 Private Function IsHexidecimal(ByVal Text As String) As Boolean
     Dim cnt As Integer
-    Dim c2 As Integer
+    Dim C2 As Integer
     Dim retVal As Boolean
     retVal = True
     If (Len(Text) Mod 2) = 0 Then
@@ -102,12 +98,12 @@ Private Function IsHexidecimal(ByVal Text As String) As Boolean
             retVal = False
         End If
     End If
-    IsHexidecimal = retVal And (c2 <= 1)
+    IsHexidecimal = retVal And (C2 <= 1)
 End Function
 
 Private Function IsNexidecimal(ByVal Text As String) As Boolean
     Dim cnt As Integer
-    Dim c2 As Integer
+    Dim C2 As Integer
     Dim retVal As Boolean
     retVal = True
     If Len(Text) > 0 Then
@@ -120,7 +116,7 @@ Private Function IsNexidecimal(ByVal Text As String) As Boolean
     Else
         retVal = False
     End If
-    IsNexidecimal = retVal And (c2 <= 1)
+    IsNexidecimal = retVal And (C2 <= 1)
 End Function
 
 
@@ -533,4 +529,3 @@ End Function
 
 
 
-

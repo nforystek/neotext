@@ -63,7 +63,7 @@ Private Const KEY_QUERY_VALUE = &H1
 Private Const KEY_SET_VALUE = &H2
 Private Const KEY_ALL_ACCESS = ((STANDARD_RIGHTS_ALL Or KEY_QUERY_VALUE Or KEY_SET_VALUE Or KEY_CREATE_SUB_KEY Or KEY_ENUMERATE_SUB_KEYS Or KEY_NOTIFY Or KEY_CREATE_LINK) And (Not SYNCHRONIZE))
 
-Private Declare Function ArryVarPtr Lib "MSVBVM60.DLL" (var() As Any) As Long
+Private Declare Function ArryVarPtr Lib "msvbvm60.dll" (Var() As Any) As Long
 
 Private Type FILETIME
     dwLowDateTime As Long

@@ -1,7 +1,4 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modWin32Ver"
-
 #Const modWin32Ver = -1
 Option Explicit
 'TOP DOWN

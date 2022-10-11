@@ -1,6 +1,4 @@
 Attribute VB_Name = "modFolders"
-
-
 #Const modFolders = -1
 Option Explicit
 'TOP DOWN

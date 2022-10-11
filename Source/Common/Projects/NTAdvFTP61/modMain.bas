@@ -1,11 +1,4 @@
 Attribute VB_Name = "modMain"
-#Const [True] = -1
-#Const [False] = 0
-
-
-
-
-
 
 #Const modMain = -1
 Option Explicit

@@ -123,7 +123,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     End If
     
     If hWndProc = 0 And flagProc Then
-        BuildComments AttributeToComments, VBInstance.ActiveCodePane.CodeModule
+        BuildComments GetProjectFileName(VBInstance.ActiveVBProject.Name, VBInstance.ActiveCodePane.CodeModule.Parent.Name), AttributeToComments, VBInstance.ActiveCodePane.CodeModule
     End If
 
     If (hWndProp <> 0) Then

@@ -1,5 +1,4 @@
 Attribute VB_Name = "modMain"
-
 #Const modMain = -1
 Option Explicit
 
@@ -42,23 +41,28 @@ Public Sub Main()
                 func = RemoveNextArg(switch, " ")
                 Do Until (switch = "")
                     
-                    Projs.Populate Paths(RemoveNextArg(switch, " "))
-
                     Select Case func
                         Case "copy"
                             DoCleanCopy
+                            switch = ""
                         Case "install"
                             InstallSetup
+                            switch = ""
                         Case "uninstall"
                             UninstallSetup
+                            switch = ""
                         Case "runexit", "re"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             SetWorkingDir Projs
                             If (Projs.Location <> "") Then RunProcessEx Paths("VisBasic"), Trim("/runexit """ & Projs.Location & """ " & Projs.CondComp & "  " & Projs.CmdLine), False, True
-    
+                            Projs.Cleanup
                         Case "run", "r"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             SetWorkingDir Projs
                             If (Projs.Location <> "") Then RunProcessEx Paths("VisBasic"), Trim("/run """ & Projs.Location & """ " & Projs.CondComp & "  " & Projs.CmdLine), False, True
+                            Projs.Cleanup
                         Case "make", "m"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             If (Projs.Location <> "") Then
                                 SetWorkingDir Projs
                                 If (GetFileExt(Projs.Location, True, True) = "nsi") Then
@@ -67,8 +71,9 @@ Public Sub Main()
                                     RunProcessEx Paths("VisBasic"), Trim("/make """ & Projs.Location & """ " & Projs.CondComp), , True
                                 End If
                             End If
+                            Projs.Cleanup
                         Case "signmake", "makesign", "sm", "ms"
-                            
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             If (Projs.Location <> "") Then
                                 SetWorkingDir Projs
                                 If (GetFileExt(Projs.Location, True, True) = "nsi") Then
@@ -78,23 +83,32 @@ Public Sub Main()
                                 End If
                             End If
                             If (Projs.Compiled <> "") Then SignTool Projs.Compiled, SignAndStamp
+                            Projs.Cleanup
                         Case "sign", "signonly", "s", "so"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             If (Projs.Compiled <> "") Then SignTool Projs.Compiled, SignOnly
+                            Projs.Cleanup
                         Case "timestamp", "t", "to", "timeonly"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             If (Projs.Compiled <> "") Then SignTool Projs.Compiled, StampOnly
+                            Projs.Cleanup
                         Case "?", "/?", "-?", "--?", "help", "/help", "-help", "--help"
                             frmHelp.Show
+                            switch = ""
                         Case "d"
+                            switch = ""
                         Case "open", "o"
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             SetWorkingDir Projs
                             If (Projs.Location <> "") Then RunProcessEx Paths("VisBasic"), Trim("""" & Projs.Location & """"), , True
+                            Projs.Cleanup
                         Case Else
-
+                            Projs.Populate Paths(RemoveNextArg(switch, " "))
                             SetWorkingDir Projs
                             If func <> "" Then RunProcessEx Paths("VisBasic"), Command, , True
-
+                            Projs.Cleanup
                     End Select
-                    Projs.Cleanup
+                    
                 Loop
             Next
             Set Projs = Nothing
@@ -318,189 +332,79 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
     End If
 End Sub
 
-Public Function GatherFileList(ByVal Location As String, Optional ByRef ProjList As String = "") As String
-    Dim fso As Object
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Dim F As Object
-    Dim fi As Object
-    Dim sf As Object
-    If PathExists(Location, True) Then
-        Set F = fso.getfolder(GetFilePath(Location))
-    Else
-        Set F = fso.getfolder(Location)
-    End If
-    For Each sf In F.subfolders
-        GatherFileList = GatherFileList & GatherFileList(sf.path, ProjList)
-    Next
-    For Each fi In F.Files
-        Select Case GetFileExt(fi.Name, True, True)
-            Case "bas", "cls"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-            Case "frm"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".frx" & vbCrLf
-            Case "ctl"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".ctx" & vbCrLf
-            Case "dob"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".vbd" & vbCrLf
-            Case "dsr"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".dca" & vbCrLf
-            Case "pag"
-                GatherFileList = GatherFileList & fi.path & vbCrLf
-                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".pgx" & vbCrLf
-            Case "vbp"
-                ProjList = ProjList & fi.path & vbCrLf
-        End Select
-    Next
-    Set fso = Nothing
-End Function
-Private Sub DoCleanUp(ByVal ProjList As String, ByRef FileListing As String)
-
-    Dim Proj As String
-    Dim p As Project
-    Dim i As Project
-    
-    Do While ProjList <> ""
-        Proj = RemoveNextArg(ProjList, vbCrLf)
-        Set p = New Project
-        p.Populate Proj
-
-        For Each i In p.Includes
-            Select Case GetFileExt(i.Location, True, True)
-                Case "bas", "cls", "ctl", "ctx", "frm", "frx", "dsr", "dca", "dob", "vbd", "pag", "pgx"
-                    FileListing = Replace(LCase(FileListing), LCase(i.Location & vbCrLf), "")
-            End Select
-        Next
-        
-    Loop
-    
-End Sub
-Private Function ExcludePath(ByVal path As String, ByVal cancelExp As String) As Boolean
-
-    Dim line As String
-    
-    Do While cancelExp <> ""
-        line = RemoveNextArg(cancelExp, vbCrLf)
-        If Trim(line) <> "" Then
-            If InStr(LCase(path), LCase(line)) > 0 Then
-                ExcludePath = True
-                Exit Function
-            End If
-        End If
-    Loop
-    
-End Function
-Private Sub DoCopyProject(ByVal Source As String, ByVal Dest As String, ByVal ExcludeList As String, ByRef DeleteList As String, Optional ByVal ExcludeExperssions As String)
-    Dim fso As Object
-    Set fso = CreateObject("Scripting.FileSystemObject")
-
-    Dim F As Object
-    Dim fi As Object
-    Dim sf As Object
-
-    If Not ExcludePath(Source, ExcludeExperssions) Then
-    
-        Set F = fso.getfolder(Source)
-        
-        Dim cancelExp As String
-        If PathExists(Source & "\Exclude.txt", True) Then
-            cancelExp = ReadFile(Source & "\Exclude.txt")
-        End If
-
-        MakeFolder Dest
-
-        For Each sf In F.subfolders
-            DoCopyProject Source & "\" & sf.Name, Dest & "\" & sf.Name, ExcludeList, DeleteList, ExcludeExperssions & vbCrLf & cancelExp
-        Next
-    
-        For Each fi In F.Files
-            If Not ExcludePath(Dest & "\" & fi.Name, ExcludeExperssions & vbCrLf & cancelExp & vbCrLf & "Exclude.txt") Then
-                
-                Select Case GetFileExt(fi.Name, True, True)
-                    Case "bas", "cls", "frm", "ctl", "dob", "dsr"
-                        
-                        If InStr(LCase(ExcludeList), Source & "\" & fi.Name & vbCrLf) = 0 Then
-                            DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name) & vbCrLf, "")
-                            DoFileCopy fi.path, Dest & "\" & fi.Name
-                        Else
-                            DeleteList = DeleteList & Dest & "\" & fi.Name & vbCrLf
-                        End If
-                    Case Else
-                        DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name & vbCrLf), "")
-                        DoFileCopy fi.path, Dest & "\" & fi.Name
-                End Select
-            Else
-                If PathExists(Dest & "\" & fi.Name, True) Then
-                    SetAttr Dest & "\" & fi.Name, vbNormal
-                    Kill Dest & "\" & fi.Name
-                End If
-            End If
-        Next
-        
-    Else
-        If PathExists(Dest, False) Then RemovePath Dest
-    End If
-    Set fso = Nothing
-End Sub
-
-Private Sub DoFileCopy(ByVal Source As String, ByVal Dest As String)
-    If PathExists(Dest, True) Then
-        If FileDateTime(Source) <> FileDateTime(Dest) Or _
-            FileLen(Source) <> FileLen(Dest) Then
-            Kill Dest
-            FileCopy Source, Dest
-        End If
-    Else
-        FileCopy Source, Dest
-    End If
-    'DoLoop
-End Sub
-
 Private Function DoCleanCopy() As Boolean
-    
-    Dim ProjList As String
-    Dim FileList As String
-    Dim UnusedList As String
-    
+
     DoCleanCopy = True
     On Error Resume Next
-    ProjList = Paths("copy1")
-    FileList = Paths("copy2")
+    Dim File As String
+    File = Paths("copy1")
+    File = Paths("copy2")
     If Err.Number = 0 Then
-        
+
         If PathExists(Paths("copy1"), False) Then
             If PathExists(GetFilePath(Paths("copy2")), False) Then
-                ProjList = ""
-                FileList = ""
-                
-                
-                FileList = GatherFileList(Paths("copy1"), ProjList)
-                'project files are in projlist, and their files are in filelist
-                UnusedList = FileList
-                
-                DoCleanUp ProjList, UnusedList
-                'filelist is now only files not in any project in projlist
-                
-                'projlist now contains all source files in projects at the dest
-                ProjList = ProjList & vbCrLf & FileList
-                ProjList = Replace(ProjList, Paths("copy1"), Paths("copy2"))
-                
-                'FileList is passed to be excluded in copying the projlist files
-                DoCopyProject Paths("copy1"), Paths("copy2"), UnusedList, ProjList
 
-                'any file in the paths not copied is now in projlist
+                Dim tmp As String
+                tmp = GatherFileList(Paths("copy1"))
+                'WriteFile Paths("copy1") & "\FileList.txt", tmp
+                
+                Dim tmp2 As String
+                tmp2 = ApplyExclusions(tmp)
+                'WriteFile Paths("copy1") & "\FileListExcluding.txt", tmp2
+                
+                Dim tmp3 As String
+                tmp3 = GatherProjectList(tmp2)
+                'WriteFile Paths("copy1") & "\ProjList.txt", tmp3
+                
+                Dim tmp4 As String
+                tmp4 = GatherProjectCodeList(tmp3)
+                'WriteFile Paths("copy1") & "\ProjCodeList.txt", tmp4
+                
+                Dim tmp5 As String
+                tmp5 = GatherFileList(Paths("copy2"))
+                'WriteFile Paths("copy1") & "\DestList.txt", tmp5
+ 
+                Dim tmp6 As String
+                tmp6 = ApplyExclusions(tmp5, False, Replace(Replace(Replace(tmp3, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp6
 
-                'remove those in projlist as they are no longer in projects
-                Do While ProjList <> ""
-                    On Error Resume Next
-                    UnusedList = RemoveNextArg(ProjList, vbCrLf)
-                    SetAttr UnusedList, vbNormal
-                    Kill UnusedList
+                Dim tmp7 As String
+                tmp7 = ApplyExclusions(tmp6, False, Replace(Replace(Replace(tmp4, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp7
+                
+                Dim tmp8 As String
+                tmp8 = ApplyExclusions(tmp7, False, Replace(Replace(Replace(tmp2, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                
+                Dim tmp9 As String
+                tmp9 = tmp3 & tmp4 & tmp2
+
+                'delete dest files marked for delete
+                Do While tmp8 <> ""
+                    File = RemoveNextArg(tmp8, vbCrLf)
+                    If PathExists(File, True) Then 'ensure not folder
+                        SetAttr File, vbNormal 'kill fails on hiddens
+                        Kill File
+                    End If
                 Loop
-                
+
+                'copy files marked for copying
+                Do While tmp9 <> ""
+                    File = RemoveNextArg(tmp9, vbCrLf)
+                    If PathExists(File, True) Then 'ensure not folder
+                        DoFileCopy File, Replace(File, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
+                    End If
+                Loop
+
+                'remove any empty dest folders
+                Do While tmp5 <> ""
+                    File = RemoveNextArg(tmp5, vbCrLf)
+                    If PathExists(File, False) Then 'ensure only folders
+                        If Replace(Replace(SearchPath("*", True, File, FindAll), File & vbCrLf, ""), vbCrLf, "") = "" Then
+                            RemovePath File
+                        End If
+                    End If
+                Loop
+                                
             Else
                 DoCleanCopy = False
             End If
@@ -518,6 +422,291 @@ Private Function DoCleanCopy() As Boolean
                 "and the destination folder may be cleaned of files not in the source path.", vbInformation
     End If
 End Function
+
+Public Function GatherFileList(ByVal Location As String) As String
+    GatherFileList = SearchPath("*", True, Location, FindAll)
+End Function
+
+Public Function ApplyExclusions(ByVal FileListing As String, Optional ByVal UseExcludeFiles As Boolean = True, Optional ByVal Exclusions As String) As String
+    Dim line As String
+    Dim exez As String
+    Do Until FileListing = ""
+        line = RemoveNextArg(FileListing, vbCrLf)
+        If UseExcludeFiles And InStr(line, ".") = 0 Then
+            If PathExists(line & "\Exclude.txt", True) Then
+                exez = ReadFile(line & "\Exclude.txt") & vbCrLf & "*" & line & "\Exclude.txt*" & vbCrLf
+                Do Until exez = ""
+                    Exclusions = Exclusions & "*" & line & "\*" & RemoveNextArg(exez, vbCrLf) & "*" & vbCrLf
+                Loop
+                Do While InStr(Exclusions, vbCrLf & vbCrLf) > 0
+                    Exclusions = Replace(Exclusions, vbCrLf & vbCrLf, "")
+                Loop
+                line = ""
+            End If
+        End If
+        If line <> "" Then
+            exez = Exclusions
+            Do Until exez = ""
+                If (LCase(line) Like LCase(RemoveNextArg(exez, vbCrLf))) Then
+                    line = ""
+                    Exit Do
+                End If
+            Loop
+            If line <> "" Then ApplyExclusions = ApplyExclusions & line & vbCrLf
+        End If
+    Loop
+End Function
+
+Public Function GatherProjectList(ByVal FileListing As String) As String
+    Dim line As String
+    Do Until FileListing = ""
+        line = RemoveNextArg(FileListing, vbCrLf)
+        Select Case GetFileExt(line, True, True)
+            Case "vbp"
+                GatherProjectList = GatherProjectList & line & vbCrLf
+            Case "vbg"
+                GatherProjectList = GatherProjectList & line & vbCrLf
+        End Select
+    Loop
+End Function
+
+Public Function GatherProjectCodeList(ByVal PrjectList As String) As String
+    Dim proj As Project
+    Dim inc As Project
+    Dim line As String
+    Do Until PrjectList = ""
+        line = RemoveNextArg(PrjectList, vbCrLf)
+        Set proj = New Project
+        proj.Populate line
+        For Each inc In proj.Includes
+            Select Case GetFileExt(inc.Location, True, True)
+                Case "bas", "ctl", "frm", "cls", "dob", "pag", "dsr"
+                    If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                        GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                    End If
+            End Select
+        Next
+        Set proj = Nothing
+    Loop
+End Function
+
+Private Sub DoFileCopy(ByVal Source As String, ByVal Dest As String)
+    
+    If PathExists(Dest, True) Then
+        If FileDateTime(Source) <> FileDateTime(Dest) Or _
+            FileLen(Source) <> FileLen(Dest) Then
+            SetAttr Dest, vbNormal
+            Kill Dest
+            FileCopy Source, Dest
+        End If
+    Else
+        If Not PathExists(GetFilePath(Dest), False) Then
+            MakeFolder GetFilePath(Dest)
+        End If
+        FileCopy Source, Dest
+    End If
+End Sub
+
+'Public Function GatherFileList(ByVal Location As String, Optional ByRef ProjList As String = "") As String
+'    Dim fso As Object
+'    Set fso = CreateObject("Scripting.FileSystemObject")
+'    Dim F As Object
+'    Dim fi As Object
+'    Dim sf As Object
+'    If PathExists(Location, True) Then
+'        Set F = fso.getfolder(GetFilePath(Location))
+'    Else
+'        Set F = fso.getfolder(Location)
+'    End If
+'    For Each sf In F.subfolders
+'        GatherFileList = GatherFileList & GatherFileList(sf.path, ProjList)
+'    Next
+'    For Each fi In F.Files
+'        Select Case GetFileExt(fi.Name, True, True)
+'            Case "bas", "cls"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'            Case "frm"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".frx" & vbCrLf
+'            Case "ctl"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".ctx" & vbCrLf
+'            Case "dob"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".vbd" & vbCrLf
+'            Case "dsr"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".dca" & vbCrLf
+'            Case "pag"
+'                GatherFileList = GatherFileList & fi.path & vbCrLf
+'                GatherFileList = GatherFileList & GetFilePath(fi.path) & "\" & GetFileTitle(fi.path) & ".pgx" & vbCrLf
+'            Case "vbp"
+'                ProjList = ProjList & fi.path & vbCrLf
+'        End Select
+'    Next
+'    Set fso = Nothing
+'End Function
+'Private Sub DoCleanUp(ByVal ProjList As String, ByRef FileListing As String)
+'
+'    Dim proj As String
+'    Dim p As Project
+'    Dim i As Project
+'
+'    Do While ProjList <> ""
+'        proj = RemoveNextArg(ProjList, vbCrLf)
+'        Set p = New Project
+'        p.Populate proj
+'
+'        For Each i In p.Includes
+'            Select Case GetFileExt(i.Location, True, True)
+'                Case "bas", "cls", "ctl", "ctx", "frm", "frx", "dsr", "dca", "dob", "vbd", "pag", "pgx"
+'                    FileListing = Replace(LCase(FileListing), LCase(i.Location & vbCrLf), "")
+'            End Select
+'        Next
+'
+'    Loop
+'
+'End Sub
+'Private Function ExcludePath(ByVal path As String, ByVal cancelExp As String) As Boolean
+'
+'    Dim line As String
+'
+'    Do While cancelExp <> ""
+'        line = RemoveNextArg(cancelExp, vbCrLf)
+'        If Trim(line) <> "" Then
+'            If InStr(LCase(path), LCase(line)) > 0 Then
+'                ExcludePath = True
+'                Exit Function
+'            End If
+'        End If
+'    Loop
+'
+'End Function
+'Private Sub DoCopyProject(ByVal Source As String, ByVal Dest As String, ByVal ExcludeList As String, ByRef DeleteList As String, Optional ByVal ExcludeExperssions As String)
+'    Dim fso As Object
+'    Set fso = CreateObject("Scripting.FileSystemObject")
+'
+'    Dim F As Object
+'    Dim fi As Object
+'    Dim sf As Object
+'
+'    If Not ExcludePath(Source, ExcludeExperssions) Then
+'
+'        Set F = fso.getfolder(Source)
+'
+'        Dim cancelExp As String
+'        If PathExists(Source & "\Exclude.txt", True) Then
+'            cancelExp = ReadFile(Source & "\Exclude.txt")
+'        End If
+'
+'        MakeFolder Dest
+'
+'        For Each sf In F.subfolders
+'            DoCopyProject Source & "\" & sf.Name, Dest & "\" & sf.Name, ExcludeList, DeleteList, ExcludeExperssions & vbCrLf & cancelExp
+'        Next
+'
+'        For Each fi In F.Files
+'            If Not ExcludePath(Dest & "\" & fi.Name, ExcludeExperssions & vbCrLf & cancelExp & vbCrLf & "Exclude.txt") Then
+'
+'                Select Case GetFileExt(fi.Name, True, True)
+'                    Case "bas", "cls", "frm", "ctl", "dob", "dsr"
+'
+'                        If InStr(LCase(ExcludeList), Source & "\" & fi.Name & vbCrLf) = 0 Then
+'                            DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name) & vbCrLf, "")
+'                            DoFileCopy fi.path, Dest & "\" & fi.Name
+'                        Else
+'                            DeleteList = DeleteList & Dest & "\" & fi.Name & vbCrLf
+'                        End If
+'                    Case Else
+'                        DeleteList = Replace(LCase(DeleteList), LCase(Dest & "\" & fi.Name & vbCrLf), "")
+'                        DoFileCopy fi.path, Dest & "\" & fi.Name
+'                End Select
+'            Else
+'                If PathExists(Dest & "\" & fi.Name, True) Then
+'                    SetAttr Dest & "\" & fi.Name, vbNormal
+'                    Kill Dest & "\" & fi.Name
+'                End If
+'            End If
+'        Next
+'
+'    Else
+'        If PathExists(Dest, False) Then RemovePath Dest
+'    End If
+'    Set fso = Nothing
+'End Sub
+'
+'Private Sub DoFileCopy(ByVal Source As String, ByVal Dest As String)
+'    If PathExists(Dest, True) Then
+'        If FileDateTime(Source) <> FileDateTime(Dest) Or _
+'            FileLen(Source) <> FileLen(Dest) Then
+'            Kill Dest
+'            FileCopy Source, Dest
+'        End If
+'    Else
+'        FileCopy Source, Dest
+'    End If
+'    'DoLoop
+'End Sub
+'
+'Private Function DoCleanCopy() As Boolean
+'
+'    Dim ProjList As String
+'    Dim FileList As String
+'    Dim UnusedList As String
+'
+'    DoCleanCopy = True
+'    On Error Resume Next
+'    ProjList = Paths("copy1")
+'    FileList = Paths("copy2")
+'    If Err.Number = 0 Then
+'
+'        If PathExists(Paths("copy1"), False) Then
+'            If PathExists(GetFilePath(Paths("copy2")), False) Then
+'                ProjList = ""
+'                FileList = ""
+'
+'
+'                FileList = GatherFileList(Paths("copy1"), ProjList)
+'                'project files are in projlist, and their files are in filelist
+'                UnusedList = FileList
+'
+'                DoCleanUp ProjList, UnusedList
+'                'filelist is now only files not in any project in projlist
+'
+'                'projlist now contains all source files in projects at the dest
+'                ProjList = ProjList & vbCrLf & FileList
+'                ProjList = Replace(ProjList, Paths("copy1"), Paths("copy2"))
+'
+'                'FileList is passed to be excluded in copying the projlist files
+'                DoCopyProject Paths("copy1"), Paths("copy2"), UnusedList, ProjList
+'
+'                'any file in the paths not copied is now in projlist
+'
+'                'remove those in projlist as they are no longer in projects
+'                Do While ProjList <> ""
+'                    On Error Resume Next
+'                    UnusedList = RemoveNextArg(ProjList, vbCrLf)
+'                    SetAttr UnusedList, vbNormal
+'                    Kill UnusedList
+'                Loop
+'
+'            Else
+'                DoCleanCopy = False
+'            End If
+'        Else
+'            DoCleanCopy = False
+'        End If
+'    Else
+'        Err.Clear
+'        DoCleanCopy = False
+'    End If
+'    If Not DoCleanCopy Then
+'        MsgBox "The /copy switch requires a source folder, followed by a destination folder." & vbCrLf & _
+'                "All projects under the source path will be copied to the destination folder" & vbCrLf & _
+'                "excluding any source file not with in projects, including everything else" & vbCrLf & _
+'                "and the destination folder may be cleaned of files not in the source path.", vbInformation
+'    End If
+'End Function
 
 Public Static Sub DoLoop()
     DoTasks

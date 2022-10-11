@@ -143,7 +143,7 @@ Public Event DataProgress(ByVal ProgressType As ProgressTypes, ByVal ReceivedByt
 Event that is called during a data socket transfering data and has progressed.
 Attribute DataProgress.VB_Description = "Event that is called during a data socket transfering data and has progressed."
 Public Event DataComplete(ByVal ProgressType As ProgressTypes) ' _
-Event that is called when the data socket has finished transfering and has closed. ' _
+Event that is called when the data socket has finished transfering and has closed.
 
 Private myObj As Client
 Private myServerObj As Client

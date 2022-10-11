@@ -1,0 +1,39 @@
+Type=Exe
+Reference=*\G{420B2830-E718-11CF-893D-00A0C9054228}#1.0#0#..\..\..\..\WINDOWS\system32\scrrun.dll#Microsoft Scripting Runtime
+Module=modMain; Includes\modMain.bas
+Module=modCommon; ..\..\Shared\modCommon.bas
+Module=modFileInfo; Includes\modFileInfo.bas
+Startup="Sub Main"
+HelpFile=""
+Title="Includes"
+ExeName32="Includes.exe"
+Path32="..\Binary"
+Command32="/license off"
+Name="Includes"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Neotext Software"
+CondComp="Includes=-1:VBIDE=0:modMain=-1:modCommon=-1:modFileInfo=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+
+[Neotext]
+CompCond="modMain=-1:modCommon=-1:modFileInfo=-1"

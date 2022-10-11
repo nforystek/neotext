@@ -1,7 +1,4 @@
 Attribute VB_Name = "modMemory"
-#Const [True] = -1
-#Const [False] = 0
-
 Option Explicit
 'TOP DOWN
 Option Compare Binary

@@ -1,7 +1,7 @@
 Type=OleDll
 Reference=*\G{420B2830-E718-11CF-893D-00A0C9054228}#1.0#0#..\..\..\..\WINDOWS\system32\scrrun.dll#Microsoft Scripting Runtime
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
-Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#82.0#0#L:\Development\Neotext\Common\Binary\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#82.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
 Reference=*\G{BD26B198-EE42-4725-9B23-AFA912434229}#2.1#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\CAPICOM\CapiCom.dll#CAPICOM v2.1 Type Library
 Module=modSockets; ..\..\Shared\modSockets.bas
 Module=modMain; NTAdvFTP61\modMain.bas
@@ -50,7 +50,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Advanced FTP Object"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Max-FTP 6.1"
-CondComp="NTAdvFTP61=-1:VBIDE=0:modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:MODPROCESS=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modCrypto=-1:modGuid=-1"
+CondComp="NTAdvFTP61 = -1 : VBIDE = 0 : modSockets = -1 : modMain = -1 : modWindow = -1 : modWinProc = -1 : modWildCard = -1 : MODPROCESS = -1 : modCommon = -1 : modMemory = -1 : modBitValue = -1 : modFileSys = -1 : modStream = -1 : modDoTasks = -1 : modCrypto = -1 : modGuid = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

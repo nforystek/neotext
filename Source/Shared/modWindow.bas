@@ -1,7 +1,4 @@
 Attribute VB_Name = "modWindow"
-#Const [True] = -1
-#Const [False] = 0
-
 
 #Const modWindow = -1
 Option Explicit

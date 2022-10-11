@@ -170,7 +170,8 @@ Attribute FCE.VB_VarHelpID = -1
 Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
     If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
         If PathExists(FileName, True) Then
-            BuildComments CommentsToAttribute, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileName))
+            'BuildComments CommentsToAttribute, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileName))
+            BuildFileDescriptions FileName, False
         End If
     Else
         If GetFileExt(FileName, True, True) = "vbp" Then
@@ -187,7 +188,8 @@ Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() A
                 If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
 
                 End If
-                BuildComments AttributeToComments, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileNames(cnt)))
+                BuildFileDescriptions FileNames(cnt), True
+                'BuildComments AttributeToComments, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileNames(cnt)))
             End If
         Next
     Else
@@ -467,11 +469,11 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
                     Set MenuHandler2 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar4)
                 Case "Make Project &Group...", "Make Project Group..."
                     Set MenuHandler6 = VBInstance.Events.CommandBarEvents(cbNextCommand)
-                    Set cbMenuCommandBar2 = cbMenu.Controls.Add(1, , , cbNextCommand.Index)
+                    Set cbMenuCommandBar2 = cbMenu.Controls.Add(1, , , cbNextCommand.index)
                     cbMenuCommandBar2.Caption = "&Build Project Release"
                     cbMenuCommandBar2.Tag = "&Build Project Release"
                     Set MenuHandler3 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar2)
-                    Set cbMenuCommandBar3 = cbMenu.Controls.Add(1, , , cbMenuCommandBar2.Index)
+                    Set cbMenuCommandBar3 = cbMenu.Controls.Add(1, , , cbMenuCommandBar2.index)
                     cbMenuCommandBar3.Caption = "Remake Pro&ject Build"
                     cbMenuCommandBar3.Tag = "Remake Pro&ject Build"
                     Set MenuHandler5 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar3)
@@ -505,7 +507,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
             Select Case cbNextCommand.Caption
                 Case "Start With &Full Compile"
                     Set MenuHandler1 = VBInstance.Events.CommandBarEvents(cbNextCommand)
-                    Set cbMenuCommandBar1 = cbMenu.Controls.Add(1, , , cbNextCommand.Index, False)
+                    Set cbMenuCommandBar1 = cbMenu.Controls.Add(1, , , cbNextCommand.index, False)
                     cbMenuCommandBar1.Caption = "Start &The Executable"
                     cbMenuCommandBar1.Tag = "Start &The Executable"
                     Set MenuHandler4 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar1)
@@ -534,7 +536,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
                     NxtPos = True
                 Case Else
                     If NxtPos And cbNextCommand.BeginGroup Then
-                        Set cbMenuCommandBar5 = cbMenu.Controls.Add(1, , , cbNextCommand.Index, False)
+                        Set cbMenuCommandBar5 = cbMenu.Controls.Add(1, , , cbNextCommand.index, False)
                         cbMenuCommandBar5.BeginGroup = True
                         cbMenuCommandBar5.Caption = LayoutCaption
                         Set MenuHandler8 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar5)
@@ -562,6 +564,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set docSettings.VBInstance = VBInstance
     Set FCE = VBInstance.Events.FileControlEvents(Nothing)
     
+    docSettings.StartTimer
     ''uncomment the following two lines to hook F5
     'Dim ret As Long
     'ret = modHotKey.EnumThreadWindows(modHotKey.GetCurrentThreadId, AddressOf modHotKey.EnumThreadProc, ObjPtr(Me))
@@ -576,6 +579,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     On Error GoTo exitthis
     On Local Error GoTo exitthis
 
+    docSettings.StopTimer
     
     If Not CmdBar Is Nothing Then
         SaveSetting "BasicNeotext", "Options", "ToolBar_Position", CmdBar.Position
@@ -704,7 +708,7 @@ End Sub
 
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
     SetVBSettings
-   ' DescriptionsStartup VBInstance.VBProjects
+    DescriptionsStartup VBInstance.VBProjects
 End Sub
 
 Private Sub AddinInstance_Terminate()
@@ -1014,7 +1018,6 @@ Private Sub BuildRelease(ByVal CommandBarControl As Object, handled As Boolean, 
             If ProcessMake() Then SignTool buildexe, SignAndStamp
         End If
     End If
-    
 
 End Sub
 
@@ -1152,7 +1155,6 @@ Private Sub MakeGroup(ByVal CommandBarControl As Object, handled As Boolean, Can
 End Sub
 
 Private Sub SignExecutable(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
-'''    '"Sign Executable"-30
 '''    '   Signs the project's executable
 '''    '   indpendent of command line or
 '''    '   build release, must be in list
@@ -1164,7 +1166,6 @@ Private Sub SignExecutable(ByVal CommandBarControl As Object, handled As Boolean
 End Sub
 
 Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
-'''    '"Prop&erties..." from menu, this should happen
 '''    '   if the project properties dialog is invoked
 
 
@@ -1176,16 +1177,13 @@ Private Sub ProjectProperties(ByVal CommandBarControl As Object, handled As Bool
 End Sub
 
 Private Sub ProcedureAttributes(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
-'''    '"Procedure &Attributes..." from menu, this should happen
 '''    '   if the procedure attributes dialog is invoked
   ' VBInstance.ActiveCodePane.CodeModule
-    BuildComments CommentsToAttribute, VBInstance.ActiveCodePane.CodeModule
+    BuildComments GetProjectFileName(VBInstance.ActiveVBProject.Name, VBInstance.ActiveCodePane.CodeModule.Parent.Name), CommentsToAttribute, VBInstance.ActiveCodePane.CodeModule
     'UpdateCommentToAttributeDescriptions VBInstance.VBProjects
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
-    On Error GoTo exitthis
-    On Local Error GoTo exitthis
     
     If PathExists(GetFilePath(AppEXE(False)) & "\REG.BAK", True) Then
         Kill GetFilePath(AppEXE(False)) & "\REG.BAK"

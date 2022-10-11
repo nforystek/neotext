@@ -1,8 +1,4 @@
 Attribute VB_Name = "modDoTasks"
-#Const [True] = -1
-#Const [False] = 0
-
-
 
 #Const modDoTasks = -1
 Option Explicit

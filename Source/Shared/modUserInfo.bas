@@ -1,7 +1,4 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modUserInfo"
-
 #Const modUserInfo = -1
 Option Explicit
 'TOP DOWN
@@ -59,7 +56,7 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (pTo As Any,
 Private Declare Function GetLengthSid Lib "ADVAPI32.DLL" (ByRef pSid As Long) As Long
 
 Private Declare Function ConvertSidToStringSidA Lib "ADVAPI32.DLL" (ByVal lpSid As Long, lpString As Long) As Long
-Private Declare Function LocalAlloc Lib "kernel32" (ByVal Flags As Long, ByVal size As Long) As Long
+Private Declare Function LocalAlloc Lib "kernel32" (ByVal flags As Long, ByVal size As Long) As Long
 Private Declare Function LocalFree Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
 
@@ -87,7 +84,7 @@ Private Const TOKEN_READ                    As Long = &H20008
 
 Private Declare Function LookupAccountName Lib "ADVAPI32.DLL" Alias "LookupAccountNameA" (ByVal lpSystemName As String, ByVal lpAccountName As String, Sid As Long, cbSID As Long, ByVal ReferencedDomainName As String, cbReferencedDomainName As Long, peUse As Integer) As Long
 
-Private Declare Function LookupAccountSid Lib "advapi32" Alias "LookupAccountSidA" (ByVal lpSystemName As String, ByVal Sid As Long, ByVal name As String, cbName As Long, ByVal ReferencedDomainName As String, cbReferencedDomainName As Long, peUse As Long) As Long
+Private Declare Function LookupAccountSid Lib "advapi32" Alias "LookupAccountSidA" (ByVal lpSystemName As String, ByVal Sid As Long, ByVal Name As String, cbName As Long, ByVal ReferencedDomainName As String, cbReferencedDomainName As Long, peUse As Long) As Long
 
 Private Declare Function GetUserName Lib "advapi32" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
 Private Declare Function GetCompName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
@@ -112,7 +109,7 @@ Public Function GetNetworkName() As String
     Dim objDomain As Object
     Set objNameSpace = GetObject("WinNT:")
     For Each objDomain In objNameSpace
-        sBuffer = objDomain.name
+        sBuffer = objDomain.Name
         Exit For
     Next
     If sBuffer = "" Then sBuffer = "Unknown"
@@ -133,7 +130,7 @@ Public Function GetMachineName() As String
     GetMachineName = sBuffer
 End Function
 
-Public Function SIDByUserName(ByVal name As String) As Long
+Public Function SIDByUserName(ByVal Name As String) As Long
     Dim lpSystemName As String
     Dim cbName As Long
     Dim ReferencedDomainName As String
@@ -141,17 +138,17 @@ Public Function SIDByUserName(ByVal name As String) As Long
     Dim peUse As Integer
     Dim Sid As Long
     lpSystemName = GetMachineName
-    cbName = Len(name)
-    If InStr(name, "\") > 0 Then
-        ReferencedDomainName = Left(name, InStr(name, "\") - 1)
-        cbReferencedDomainName = Len(name)
-        name = Mid(name, InStr(name, "\") + 1)
+    cbName = Len(Name)
+    If InStr(Name, "\") > 0 Then
+        ReferencedDomainName = Left(Name, InStr(Name, "\") - 1)
+        cbReferencedDomainName = Len(Name)
+        Name = Mid(Name, InStr(Name, "\") + 1)
     End If
     
-     Debug.Print LookupAccountName(lpSystemName, name, Sid, LenB(Sid), ReferencedDomainName, cbReferencedDomainName, peUse)
+     Debug.Print LookupAccountName(lpSystemName, Name, Sid, LenB(Sid), ReferencedDomainName, cbReferencedDomainName, peUse)
     
     ReferencedDomainName = String(cbReferencedDomainName, Chr(0))
-    Debug.Print LookupAccountName(lpSystemName, name, Sid, LenB(Sid), ReferencedDomainName, cbReferencedDomainName, peUse)
+    Debug.Print LookupAccountName(lpSystemName, Name, Sid, LenB(Sid), ReferencedDomainName, cbReferencedDomainName, peUse)
 
 '    Name = Replace(Name, Chr(0), "")
 '    ReferencedDomainName = Replace(ReferencedDomainName, Chr(0), "")
@@ -162,21 +159,21 @@ End Function
 
 Private Function UserNameBySID(ByVal Sid As Long) As String
     Dim lpSystemName As String
-    Dim name As String
+    Dim Name As String
     Dim cbName As Long
     Dim ReferencedDomainName As String
     Dim cbReferencedDomainName As Long
     Dim peUse As Long
     
-    LookupAccountSid lpSystemName, Sid, name, cbName, ReferencedDomainName, cbReferencedDomainName, peUse
-    name = String(cbName, Chr(0))
+    LookupAccountSid lpSystemName, Sid, Name, cbName, ReferencedDomainName, cbReferencedDomainName, peUse
+    Name = String(cbName, Chr(0))
     ReferencedDomainName = String(cbReferencedDomainName, Chr(0))
-    LookupAccountSid lpSystemName, Sid, name, cbName, ReferencedDomainName, cbReferencedDomainName, peUse
-    name = Replace(name, Chr(0), "")
+    LookupAccountSid lpSystemName, Sid, Name, cbName, ReferencedDomainName, cbReferencedDomainName, peUse
+    Name = Replace(Name, Chr(0), "")
     ReferencedDomainName = Replace(ReferencedDomainName, Chr(0), "")
     If ReferencedDomainName = "" Then ReferencedDomainName = GetMachineName
-    If name = "" Then name = GetUserLoginName
-    UserNameBySID = Replace(ReferencedDomainName, Chr(0), "") & "\" & Replace(name, Chr(0), "")
+    If Name = "" Then Name = GetUserLoginName
+    UserNameBySID = Replace(ReferencedDomainName, Chr(0), "") & "\" & Replace(Name, Chr(0), "")
 End Function
 
 Public Function GetSidString(ByVal Sid As Long) As String

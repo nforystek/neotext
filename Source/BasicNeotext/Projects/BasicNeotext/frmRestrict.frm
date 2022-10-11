@@ -2,22 +2,22 @@ VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Begin VB.Form frmRestrict 
    Caption         =   "Restrictions"
-   ClientHeight    =   3288
+   ClientHeight    =   3285
    ClientLeft      =   60
-   ClientTop       =   348
+   ClientTop       =   345
    ClientWidth     =   9600
    Icon            =   "frmRestrict.frx":0000
    LinkTopic       =   "Form1"
    MinButton       =   0   'False
-   ScaleHeight     =   3288
+   ScaleHeight     =   3285
    ScaleWidth      =   9600
    ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Begin MSComDlg.CommonDialog CommonDialog1 
       Left            =   5880
       Top             =   1680
-      _ExtentX        =   677
-      _ExtentY        =   677
+      _ExtentX        =   688
+      _ExtentY        =   688
       _Version        =   393216
    End
    Begin VB.CommandButton Command3 
@@ -45,7 +45,7 @@ Begin VB.Form frmRestrict
       Width           =   1080
    End
    Begin VB.ListBox List1 
-      Height          =   624
+      Height          =   450
       Left            =   60
       TabIndex        =   0
       Top             =   60

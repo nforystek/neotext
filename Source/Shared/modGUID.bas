@@ -1,5 +1,4 @@
 Attribute VB_Name = "modGuid"
-
 Option Explicit
 Option Compare Binary
 Option Private Module

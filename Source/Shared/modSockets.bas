@@ -28,42 +28,42 @@ Public Declare Function getservbyname Lib "ws2_32.dll" (ByVal serv_Name As Strin
 'Public Declare Function getprotobynumber Lib "ws2_32.dll" (ByVal proto As Long) As Long
 'Public Declare Function getprotobyname Lib "ws2_32.dll" (ByVal proto_Name As String) As Long
 'Public Declare Function getservbyport Lib "ws2_32.dll" (ByVal Port As Integer, ByVal proto As Long) As Long
-Public Declare Function getsockname Lib "ws2_32.dll" (ByVal s As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
-Public Declare Function getpeername Lib "ws2_32.dll" (ByVal s As Long, ByRef name As Any, ByRef namelen As Long) As Long
-Public Declare Function SocketAccept Lib "ws2_32.dll" Alias "accept" (ByVal s As Long, Addr As Any, addrlen As Long) As Long
-Public Declare Function Bind Lib "ws2_32.dll" Alias "bind" (ByVal s As Long, Addr As sockaddr, ByVal namelen As Long) As Long
-Public Declare Function socketclose Lib "ws2_32.dll" Alias "closesocket" (ByVal s As Long) As Long
-Public Declare Function SocketConnect Lib "ws2_32.dll" Alias "connect" (ByVal s As Long, ByRef Addr As Any, ByVal namelen As Long) As Long
+Public Declare Function getsockname Lib "ws2_32.dll" (ByVal S As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
+Public Declare Function getpeername Lib "ws2_32.dll" (ByVal S As Long, ByRef name As Any, ByRef namelen As Long) As Long
+Public Declare Function SocketAccept Lib "ws2_32.dll" Alias "accept" (ByVal S As Long, Addr As Any, addrlen As Long) As Long
+Public Declare Function Bind Lib "ws2_32.dll" Alias "bind" (ByVal S As Long, Addr As sockaddr, ByVal namelen As Long) As Long
+Public Declare Function socketclose Lib "ws2_32.dll" Alias "closesocket" (ByVal S As Long) As Long
+Public Declare Function SocketConnect Lib "ws2_32.dll" Alias "connect" (ByVal S As Long, ByRef Addr As Any, ByVal namelen As Long) As Long
 Public Declare Function gethostbyaddr Lib "ws2_32.dll" (Addr As Long, addrlen As Long, addrtype As Long) As Long
 Public Declare Function GetHostByName Lib "ws2_32.dll" Alias "gethostbyname" (ByVal host_name As String) As Long
 Public Declare Function gethostname Lib "ws2_32.dll" (ByVal host_name As String, ByVal namelen As Long) As Long
-Public Declare Function SocketListen Lib "ws2_32.dll" Alias "listen" (ByVal s As Long, ByVal backlog As Long) As Long
-Public Declare Function SocketRecvLngPtr Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long 'removed ByVal from buf
+Public Declare Function SocketListen Lib "ws2_32.dll" Alias "listen" (ByVal S As Long, ByVal backlog As Long) As Long
+Public Declare Function SocketRecvLngPtr Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long 'removed ByVal from buf
 'Public Declare Function recvfrom Lib "ws2_32.dll" (ByVal s As Long, buf As Any, ByVal buflen As Long, ByVal flags As Long, ByRef fromaddr As sockaddr, ByRef fromlen As Long) As Long
-Public Declare Function SocketSendLngPtr Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketSendLngPtr Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long
 'Public Declare Function sendto Lib "ws2_32.dll" (ByVal s As Long, buf As Any, ByVal buflen As Long, ByVal flags As Long, toaddr As sockaddr, ByVal tolen As Long) As Long
-Public Declare Function setsockopt Lib "ws2_32.dll" (ByVal s As Long, ByVal Level As Long, ByVal optname As Long, ByRef optval As Long, ByVal optlen As Long) As Long
-Public Declare Function getsockopt Lib "ws2_32.dll" (ByVal s As Long, ByVal Level As Long, ByVal optname As Long, ByVal optval As Long, optlen As Long) As Long
+Public Declare Function setsockopt Lib "ws2_32.dll" (ByVal S As Long, ByVal Level As Long, ByVal optname As Long, ByRef optval As Long, ByVal optlen As Long) As Long
+Public Declare Function getsockopt Lib "ws2_32.dll" (ByVal S As Long, ByVal Level As Long, ByVal optname As Long, ByVal optval As Long, optlen As Long) As Long
 'Public Declare Function shutdown Lib "ws2_32.dll" (ByVal s As Long, ByVal how As Long) As Long
 Public Declare Function Socket Lib "ws2_32.dll" Alias "socket" (ByVal af As Long, ByVal s_type As Long, ByVal Protocol As Long) As Long
-Public Declare Function SocketSendString Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
-Public Declare Function SocketRecvString Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketSendString Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketRecvString Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
 
 
 
 'Reciving and sending data on winsock functions
-Public Declare Function WSARecv Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
-Public Declare Function WSASend Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function WSARecv Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function WSASend Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
 
 'Winsock API functions to create a listening server
-Public Declare Function WSABind Lib "ws2_32.dll" Alias "bind" (ByVal s As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
-Public Declare Function WSAListen Lib "ws2_32.dll" Alias "listen" (ByVal s As Long, ByVal backlog As Long) As Long
-Public Declare Function WSAAccept Lib "ws2_32.dll" Alias "accept" (ByVal s As Long, ByRef Addr As sockaddr, ByRef addrlen As Long) As Long
+Public Declare Function WSABind Lib "ws2_32.dll" Alias "bind" (ByVal S As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
+Public Declare Function WSAListen Lib "ws2_32.dll" Alias "listen" (ByVal S As Long, ByVal backlog As Long) As Long
+Public Declare Function WSAAccept Lib "ws2_32.dll" Alias "accept" (ByVal S As Long, ByRef Addr As sockaddr, ByRef addrlen As Long) As Long
 
 Public Declare Function WSAStartup Lib "ws2_32.dll" (ByVal wVR As Long, lpWSAD As WSADATA) As Long
 Public Declare Function WSACleanup Lib "ws2_32.dll" () As Long
 Public Declare Function WSAGetLastError Lib "ws2_32.dll" () As Long
-Public Declare Function WSAAsyncSelect Lib "ws2_32.dll" (ByVal s As Long, ByVal hwnd As Long, ByVal wMsg As Long, ByVal lEvent As Long) As Long
+Public Declare Function WSAAsyncSelect Lib "ws2_32.dll" (ByVal S As Long, ByVal hwnd As Long, ByVal wMsg As Long, ByVal lEvent As Long) As Long
 
 
 
@@ -78,7 +78,7 @@ Public Declare Function ntohl Lib "ws2_32.dll" (ByVal netlong As Long) As Long
 Public Declare Function htons Lib "ws2_32.dll" (ByVal hostshort As Long) As Integer
 Public Declare Function ntohs Lib "ws2_32.dll" (ByVal netshort As Long) As Integer
 
-Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal s As Long, ByVal cmd As Long, argp As Long) As Long '
+Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal S As Long, ByVal cmd As Long, argp As Long) As Long '
 
 ''Public Declare Function gethostbyName Lib "wsock32.dll" (ByVal host_Name As String) As Long
 'Public Declare Function gethostname Lib "wsock32.dll" Alias "gethostName" (ByVal host_name As String, ByVal namelen As Long) As Long
@@ -678,12 +678,12 @@ On Error GoTo catch
     Dim IPList As New Collection
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
             
         Dim phe As Long
         Dim heDestHost As hostent
@@ -700,13 +700,13 @@ On Error GoTo catch
         If Domain = "" Then
             HostName = Space(256)
             If gethostname(HostName, 256) = Socket_ERROR Then
-                retval = 1
+                retVal = 1
             Else
                 HostName = Trim$(HostName)
                 Hostent_addr = GetHostByName(HostName)
     
                 If Hostent_addr = 0 Then
-                    retval = 2
+                    retVal = 2
                 Else
                     
                     CopyMemoryHost Host, Hostent_addr, LenB(Host)
@@ -763,7 +763,7 @@ On Error GoTo catch
         End If
         
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -780,12 +780,12 @@ End Function
 Public Function ResolveIP(ByVal Host As String) As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         Dim phe As Long
         Dim heDestHost As hostent
@@ -826,7 +826,7 @@ Public Function ResolveIP(ByVal Host As String) As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -837,12 +837,12 @@ End Function
 Public Function Resolve(ByVal Host As String) As Long
    
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
         
         Dim phe As Long
         Dim heDestHost As hostent
@@ -866,7 +866,7 @@ Public Function Resolve(ByVal Host As String) As Long
         End If
             
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If
@@ -877,12 +877,12 @@ End Function
 Public Function LocalHost() As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         
         Dim Buf As String
@@ -897,7 +897,7 @@ Public Function LocalHost() As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If

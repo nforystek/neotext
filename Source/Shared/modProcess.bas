@@ -1,7 +1,4 @@
 Attribute VB_Name = "modProcess"
-#Const [True] = -1
-#Const [False] = 0
-
 #Const modProcess = -1
 Option Explicit
 'TOP DOWN
@@ -75,13 +72,13 @@ Private Const SW_MAX = 10
     Private Const GW_CHILD = 5
     Private Const GW_MAX = 5
 
-    Private Declare Function GetWindow Lib "user32" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
-    Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+    Private Declare Function GetWindow Lib "user32" (ByVal hwnd As Long, ByVal wCmd As Long) As Long
+    Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
 
 #End If
 
-Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function GetTopWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function GetTopWindow Lib "user32" (ByVal hwnd As Long) As Long
 
 #If Not modShared Then
 
@@ -91,10 +88,10 @@ Private Declare Function GetTopWindow Lib "user32" (ByVal hWnd As Long) As Long
 
 #If Not modCommon Then
 
-    Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
+    Private Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
     Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
 
-    Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+    Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
     
     Private Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lParam As Long) As Boolean
     Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
@@ -104,7 +101,7 @@ Private Declare Function ProcessFirst Lib "kernel32" Alias "Process32First" (ByV
 Private Declare Function ProcessNext Lib "kernel32" Alias "Process32Next" (ByVal hSnapshot As Long, uProcess As PROCESSENTRY32) As Long
 Private Declare Function CreateToolhelpSnapshot Lib "kernel32" Alias "CreateToolhelp32Snapshot" (ByVal lFlags As Long, lProcessID As Long) As Long
 Private Declare Function RegGetValueEx Lib "advapi32" Alias "RegGetValueExA" (ByVal hKey As Long, ByVal lpValueName As String, ByVal Reserved As Long, ByVal dwType As Long, ByVal lpData As String, ByVal cbData As Long) As Long
-Private Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Private Declare Function ShellExecute Lib "shell32" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 Public Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As Long
 Public Declare Function OpenProcess Lib "kernel32" (ByVal dwAccess As Long, ByVal fInherit As Integer, ByVal hObject As Long) As Long
@@ -144,12 +141,12 @@ End Function
 
 #If Not modWindow Then
 
-    Public Function WindowText(ByVal hWnd As Long) As String
+    Public Function WindowText(ByVal hwnd As Long) As String
         Dim sBuffer As String
         Dim lSize As Long
         sBuffer = Space$(255)
         lSize = Len(sBuffer)
-        Call GetWindowText(hWnd, sBuffer, lSize)
+        Call GetWindowText(hwnd, sBuffer, lSize)
         If lSize > 0 Then
             WindowText = Trim(Replace(Left$(sBuffer, lSize), Chr(0), ""))
         End If

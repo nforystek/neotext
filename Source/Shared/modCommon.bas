@@ -271,7 +271,7 @@ End Function
 Public Function Convert(Info)
     Dim N As Long
     Dim out() As Byte
-    Dim Ret As String
+    Dim ret As String
     Select Case VBA.TypeName(Info)
         Case "String"
             If Len(Info) > 0 Then
@@ -287,18 +287,18 @@ Public Function Convert(Info)
             If (ArraySize(Info) > 0) Then
                 On Error GoTo dimcheck
                 For N = LBound(Info) To UBound(Info)
-                    Ret = Ret & Chr(Info(N))
+                    ret = ret & Chr(Info(N))
                 Next
             End If
-            Convert = Ret
+            Convert = ret
     End Select
     Exit Function
 dimcheck:
     If Err Then Err.Clear
     For N = LBound(Info, 2) To UBound(Info, 2)
-        Ret = Ret & Chr(Info(0, N))
+        ret = ret & Chr(Info(0, N))
     Next
-    Convert = Ret
+    Convert = ret
 End Function
 #End If
 
@@ -680,9 +680,9 @@ End Sub
 
 Public Function SysPath() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(45, Chr(0))
-    Ret = GetSystemDirectory(winDir, 45)
+    ret = GetSystemDirectory(winDir, 45)
     winDir = Trim(Replace(winDir, Chr(0), ""))
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     SysPath = winDir
@@ -792,7 +792,7 @@ End Function
 Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
     'seeks for the projects running status parent, which during running or debugging
     'is the application itself, not nested compiled modules, is in the VBIDE started
-    Static Ret As Integer
+    Static ret As Integer
     'If ret = 0 Then
         Dim nLen As String
         Dim lpTemp As String
@@ -800,7 +800,7 @@ Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
         nLen = GetModuleFileName(0&, lpTemp, Len(lpTemp))
         lpTemp = Left(lpTemp, nLen)
         If (InStrRev(LCase(lpTemp), "vb6.exe") > 0) Then
-            Ret = -2
+            ret = -2
             If AppTitle = "" Then AppTitle = App.Title
             If AppTitle <> "" Then
                 IsDebugState = AppTitle & " - Microsoft Visual Basic"
@@ -817,13 +817,13 @@ Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
                         TmpHwnds = ""
                     End If
                 Loop
-                Ret = CInt(CBool((IsDebugState = "TRUE"))) - 1
+                ret = CInt(CBool((IsDebugState = "TRUE"))) - 1
             End If
         Else
-            Ret = -1
+            ret = -1
         End If
    'End If
-    IsDebugger = CBool(Ret + 1)
+    IsDebugger = CBool(ret + 1)
 End Function
 
 'Public Function Toggler(ByRef Value As Variant, Optional ByVal Inverse As Boolean = False, Optional ByVal Whole As Long = 1) As Variant
@@ -1003,7 +1003,7 @@ Public Function IsAlphaNumeric(ByVal Text As String) As Boolean
 End Function
 
 Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant = Empty) As Boolean
-    Dim Ret As Boolean
+    Dim ret As Boolean
     
     If Left(URL, 2) = "\\" Then GoTo altcheck
     If Left(LCase(URL), 7) = "file://" Then
@@ -1036,31 +1036,31 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
             Do
                 If VBA.TypeName(IsFile) = "Empty" Then
                     chk1 = Dir(URL, attr)
-                    If chk1 <> "" And Not Ret Then
+                    If chk1 <> "" And Not ret Then
                         If InStr(URL, "*") > 0 Then
-                            Ret = True
+                            ret = True
                         Else
                             If Len(URL) > Len(chk1) Then
-                                Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                             Else
-                                Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                             End If
                         End If
                     End If
-                    If Not Ret Then
+                    If Not ret Then
                         chk1 = Dir(URL, attr + vbDirectory)
                         If chk1 <> "" Then
                             If InStr(URL, "*") > 0 Then
-                                Ret = True
+                                ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                    ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                                 Else
-                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
-                                If Ret Then
+                                If ret Then
                                     If Not (GetAttr(URL) And vbDirectory) = vbDirectory Then
-                                        Ret = False
+                                        ret = False
                                     End If
                                 End If
                             End If
@@ -1069,32 +1069,32 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
                 Else
                     If Not IsFile Then
                         chk1 = Dir(URL, attr + vbDirectory)
-                        If chk1 <> "" And Not Ret Then
+                        If chk1 <> "" And Not ret Then
                             If InStr(URL, "*") > 0 Then
-                                Ret = True
+                                ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                    ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                                 Else
-                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
-                                If Ret Then
+                                If ret Then
                                     If Not (GetAttr(URL) And vbDirectory) = vbDirectory Then
-                                        Ret = False
+                                        ret = False
                                     End If
                                 End If
                             End If
                         End If
                     Else
                         chk1 = Dir(URL, attr)
-                        If chk1 <> "" And Not Ret Then
+                        If chk1 <> "" And Not ret Then
                             If InStr(URL, "*") > 0 Then
-                                Ret = True
+                                ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    Ret = (LCase(Right(URL, Len(chk1))) = LCase(chk1))
+                                    ret = (LCase(Right(URL, Len(chk1))) = LCase(chk1))
                                 Else
-                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
                             End If
                         End If
@@ -1118,8 +1118,8 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
                     Case vbSystem + vbReadOnly
                         attr = vbNormal
                 End Select
-            Loop Until Ret Or attr = vbNormal
-            PathExists = Ret
+            Loop Until ret Or attr = vbNormal
+            PathExists = ret
         End If
     End If
 

@@ -223,11 +223,7 @@ Private Sub Check3_Click()
     If Text2(1).Tag <> -1 Then
         SaveSetting "BasicNeotext", "Options", "ProcedureDesc", Check3.Value
         On Error Resume Next
-        If Check3.Value Then
-            InsertDescriptions UserDocument.Parent.VBE.VBProjects
-        Else
-            DeleteDescriptions UserDocument.Parent.VBE.VBProjects
-        End If
+        DescriptionsStartup UserDocument.Parent.VBE.VBProjects
         If Err.Number <> 0 Then Err.Clear
     End If
 End Sub
@@ -348,9 +344,15 @@ Private Sub UserDocument_Initialize()
     Text2(0).Tag = Text2(0).Text
     
     Text2(1).Tag = 0
-    
-    Timer1.Enabled = True
 
+End Sub
+
+Public Sub StartTimer()
+    Timer1.Enabled = True
+End Sub
+
+Public Sub StopTimer()
+    Timer1.Enabled = False
 End Sub
 
 Private Sub UserDocument_Resize()
@@ -385,8 +387,4 @@ Private Sub UserDocument_Resize()
   
     If Err Then Err.Clear
     On Error GoTo 0
-End Sub
-
-Private Sub UserDocument_Terminate()
-    Timer1.Enabled = False
 End Sub

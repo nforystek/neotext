@@ -1,6 +1,4 @@
 Attribute VB_Name = "modParsing"
-
-
 Option Explicit
 
 'parsing functions set the self properties and return further
@@ -201,13 +199,15 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                 Self.CondComp = RemoveQuotedArg(inLine, """", """")
             Case "command32"
                 Self.CmdLine = RemoveQuotedArg(inLine, """", """")
+            Case "name"
+                Self.Name = RemoveQuotedArg(inLine, """", """")
             Case "type"
             Case "resfile32"
             Case "iconform"
             Case "startup"
             Case "helpfile"
             Case "title"
-            Case "name"
+
             Case "helpcontextid"
             Case "description"
             Case "compatiblemode"

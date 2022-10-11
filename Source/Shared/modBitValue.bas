@@ -1,6 +1,4 @@
 Attribute VB_Name = "modBitValue"
-#Const [True] = -1
-#Const [False] = 0
 
 Option Explicit
 'TOP DOWN

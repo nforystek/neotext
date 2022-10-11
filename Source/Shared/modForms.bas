@@ -1,9 +1,4 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modForms"
-
-
-
 #Const modForms = -1
 Option Explicit
 'TOP DOWN
