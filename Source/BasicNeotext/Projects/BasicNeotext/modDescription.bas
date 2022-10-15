@@ -667,6 +667,14 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As St
         If pos > -1 Then
             FindNextHeader = FindNextHeader & Left(txt, pos + 1)
             txt = Mid(txt, pos + 2)
+            
+            If InStr(txt, "' _" & vbCrLf) = InStr(txt, "_" & vbCrLf) - 1 And InStr(txt, "_" & vbCrLf) > 0 Then
+                pos = InStr(txt, "_" & vbCrLf)
+                Do While pos > 0 And pos < InStr(txt, vbCrLf)
+                    txt = NextArg(txt, "_" & vbCrLf) & RemoveArg(txt, "_" & vbCrLf)
+                Loop
+            End If
+            
             head = RTrimStrip(RemoveNextArg(txt, vbCrLf), " ") & vbCrLf
             If ValidHeader(head) Then
             
@@ -690,9 +698,24 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As St
             FindNextHeader = FindNextHeader & txt
             txt = ""
         End If
-            
     Loop
 
+End Function
+Private Function FindLineStart(ByVal txt As String, ByVal pos As Long) As Long
+    Do
+        FindLineStart = pos
+        pos = InStrRev(txt, vbCrLf, pos)
+        If pos - 1 > 1 And InStrRev(txt, """", FindLineStart) < pos Then
+            If Mid(txt, pos - 1, 3) = "_" & vbCrLf Then
+                pos = InStrRev(txt, vbCrLf, pos - 1)
+                If InStrRev(txt, """", FindLineStart) < pos Then
+                    FindLineStart = 0
+                End If
+            End If
+        ElseIf pos = 1 Then
+            FindLineStart = 1
+        End If
+    Loop While FindLineStart = 0
 End Function
 Private Function FindNextLine(ByVal txt As String) As Long
     Dim pos1 As Long
@@ -708,13 +731,17 @@ Private Function FindNextLine(ByVal txt As String) As Long
         pos4 = InStr(IIf(pos5 > 0, pos5, 1), txt, "Sub ")
         pos5 = InStr(IIf(pos5 > 0, pos5, 1), txt, """")
         If pos1 > 0 And pos1 < pos2 And pos1 < pos3 And pos1 < pos4 And pos1 < pos5 Then
-            FindNextLine = InStrRev(txt, vbCrLf, pos1)
+            'FindNextLine = InStrRev(txt, vbCrLf, pos1)
+            FindNextLine = FindLineStart(txt, pos1)
         ElseIf pos2 > 0 And pos2 < pos1 And pos2 < pos3 And pos2 < pos4 And pos2 < pos5 Then
-            FindNextLine = InStrRev(txt, vbCrLf, pos1)
+            'FindNextLine = InStrRev(txt, vbCrLf, pos2)
+            FindNextLine = FindLineStart(txt, pos2)
         ElseIf pos3 > 0 And pos3 < pos1 And pos3 < pos2 And pos3 < pos4 And pos3 < pos5 Then
-            FindNextLine = InStrRev(txt, vbCrLf, pos1)
+            'FindNextLine = InStrRev(txt, vbCrLf, pos3)
+            FindNextLine = FindLineStart(txt, pos3)
         ElseIf pos4 > 0 And pos4 < pos1 And pos4 < pos3 And pos4 < pos2 And pos4 < pos5 Then
-            FindNextLine = InStrRev(txt, vbCrLf, pos1)
+            'FindNextLine = InStrRev(txt, vbCrLf, pos4)
+            FindNextLine = FindLineStart(txt, pos4)
         ElseIf pos5 > 0 And pos5 < pos1 And pos5 < pos3 And pos5 < pos2 And pos5 < pos4 Then
             Do While Mid(txt, pos5 + 1, 1) = """"
                 pos5 = pos5 + 2
