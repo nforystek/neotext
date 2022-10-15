@@ -1,10 +1,10 @@
 Type=OleDll
 Reference=*\G{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}#2.0#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\Office10\MSO.DLL#Microsoft Office 8.0 Object Library
-Reference=*\G{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}#1.0#0#..\..\..\..\Program Files\Common Files\Designer\MSADDNDR.DLL#Add-In Designer/Instance Control Library
+Reference=*\G{AC0714F2-3D04-11D1-AE7D-00A0C90F26F4}#1.0#0#..\..\..\..\Program Files\Common Files\designer\MSADDNDR.TLB#Add-In Designer/Instance Control Library
 Reference=*\G{EF404E00-EDA6-101A-8DAF-00DD010F7EBB}#5.3#0#..\..\..\..\Program Files\Microsoft Visual Studio\VB98\VB6EXT.OLB#Microsoft Visual Basic 6.0 Extensibility
-Designer=BasicNeotext\Scroller.Dsr
 Module=modMWheel; BasicNeotext\modMWheel.bas
 RelatedDoc=BasicNeotext\OUTLINE.TXT
+Designer=BasicNeotext\Scroller.Dsr
 Startup="(None)"
 HelpFile=""
 Title="VB 6 Neotext Basic"
@@ -26,7 +26,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="BasicNeotext"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="BasicNeotext"
-CondComp="BasicNeotext=-1:VBIDE=-1:modMWheel=-1"
+CondComp="BasicNeotext = -1 : VBIDE = -1 : modMWheel = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -43,6 +43,7 @@ Retained=0
 ThreadPerObject=-1
 MaxNumberOfThreads=1
 ThreadingModel=1
+DebugStartupOption=0
 
 [MS Transaction Server]
 AutoRefresh=0

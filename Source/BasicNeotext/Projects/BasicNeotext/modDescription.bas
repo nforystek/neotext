@@ -372,7 +372,7 @@ Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As For
     '                        Debug.Print
     '                        Debug.Print "FULL NEXT HEADER INFORMATION"
     '                        Debug.Print head
-    '                        Debug.Print "DECLARE: " & GetDeclareLine(head)
+    '                        Debug.Print "DECLARE: " & GetDeclareLine(head,false)
     '                        Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
     '                        Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
     '                        If GetUserDefined(head) = "DataComplete" Then
@@ -391,10 +391,10 @@ Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As For
                                 
                                 If desc <> "" Then
 
-                                    out = out & GetDeclareLine(head) & " ' _" & vbCrLf & desc & vbCrLf & _
+                                    out = out & GetDeclareLine(head, True) & " ' _" & vbCrLf & desc & vbCrLf & _
                                         "Attribute " & GetUserDefined(head, Attributed) & ".VB_Description = """ & desc & """" & vbCrLf
                                 Else
-                                    out = out & GetDeclareLine(head) & vbCrLf
+                                    out = out & GetDeclareLine(head, True) & vbCrLf
                                 End If
                             ElseIf BuildFunc = CommentsToAttribute Then
                                 If GetDescription(head, Commented) = "" And GetDescription(head, Attributed) <> "" Then
@@ -407,13 +407,13 @@ Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As For
                                 End If
                                 
                                 If desc <> "" Then
-                                    out = out & GetDeclareLine(head) & " ' _" & vbCrLf & desc & vbCrLf & _
+                                    out = out & GetDeclareLine(head, True) & " ' _" & vbCrLf & desc & vbCrLf & _
                                         "Attribute " & GetUserDefined(head, Declared) & ".VB_Description = """ & desc & """" & vbCrLf
                                 Else
-                                    out = out & GetDeclareLine(head) & vbCrLf
+                                    out = out & GetDeclareLine(head, True) & vbCrLf
                                 End If
                             Else
-                                out = out & GetDeclareLine(head) & vbCrLf
+                                out = out & GetDeclareLine(head, True) & vbCrLf
                             End If
                             
                         Else
@@ -611,24 +611,21 @@ Public Sub BuildFileDescriptions(ByVal FileName As String, ByVal LoadElseSave As
             Do Until txt = ""
                 out = out & FindNextHeader(txt, head)
                  If GetUserDefined(head) <> "" Then
-'                    Debug.Print
-'                    Debug.Print "FULL NEXT HEADER INFORMATION"
-'                    Debug.Print head
-'                    Debug.Print "DECLARE: " & GetDeclareLine(head)
-'                    Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
-'                    Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
-                   ' If GetUserDefined(head) = "DataComplete" Then
- '                   Stop
-                    'End If
-                  ' Stop
+                    Debug.Print
+                    Debug.Print "FULL NEXT HEADER INFORMATION"
+                    Debug.Print head
+                    Debug.Print "DECLARE: " & GetDeclareLine(head, False)
+                    Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
+                    Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
+
                     If LoadElseSave Then
-                        If CountWord(head, vbCrLf) = 2 Then
-                            head = head & "Attribute " & GetUserDefined(head, Declared) & ".VB_Description = """ & GetDescription(head, Commented) & """" & vbCrLf
-                        End If
-                        out = out & GetDeclareLine(head) & " ' _" & vbCrLf & GetDescription(head, Attributed) & vbCrLf & _
+'                        If CountWord(head, vbCrLf) = 2 Then
+'                            head = head & "Attribute " & GetUserDefined(head, Declared) & ".VB_Description = """ & GetDescription(head, Commented) & """" & vbCrLf
+'                        End If
+                        out = out & GetDeclareLine(head, True) & " ' _" & vbCrLf & GetDescription(head, Attributed) & vbCrLf & _
                             "Attribute " & GetUserDefined(head, Attributed) & ".VB_Description = """ & GetDescription(head, Attributed) & """" & vbCrLf
                     Else
-                        out = out & GetDeclareLine(head) & " ' _" & vbCrLf & GetDescription(head, Commented) & vbCrLf & _
+                        out = out & GetDeclareLine(head, True) & " ' _" & vbCrLf & GetDescription(head, Commented) & vbCrLf & _
                             "Attribute " & GetUserDefined(head, Declared) & ".VB_Description = """ & GetDescription(head, Commented) & """" & vbCrLf
                     End If
                 Else
@@ -646,6 +643,7 @@ nochanges:
 End Sub
 
 Private Function SortText(ByVal Text As String, ByRef FindText1 As String, ByRef FindText2 As String, ByRef FindLoc1 As Long, ByRef FindLoc2 As Long) As Boolean
+    'sorts two findtext strings and their findloc as order of found with in text and returns true if any of either is found
     FindLoc1 = InStr(Text, FindText1)
     FindLoc2 = InStr(Text, FindText2)
     
@@ -658,6 +656,15 @@ Private Function SortText(ByVal Text As String, ByRef FindText1 As String, ByRef
 End Function
 
 Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As String
+    'searches txt for headers, returning any txt before the next header found
+    'placing the header in head, altering txt to be all txt after a found header
+    'if no header is found, the return is all of txt, and txt and head are blank
+    '
+    'a head is defined by any declaritive code that vb compiles hidden text
+    'descriptions for, that are shown in the saved file when viewed as text
+    'for our purpose, a comment trailing with underscore is also to be used
+    'as description entered on the next line after the declaration, dually
+    'then adaptive to the hidden text header with VB, to edit descriptions
     
     Dim pos As Long
     head = ""
@@ -665,34 +672,37 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As St
     Do While txt <> ""
         pos = FindNextLine(txt)
         If pos > -1 Then
-            FindNextHeader = FindNextHeader & Left(txt, pos + 1)
-            txt = Mid(txt, pos + 2)
+            FindNextHeader = FindNextHeader & Left(txt, pos - 1)
+            txt = Mid(txt, pos)
             
-            If InStr(txt, "' _" & vbCrLf) = InStr(txt, "_" & vbCrLf) - 1 And InStr(txt, "_" & vbCrLf) > 0 Then
-                pos = InStr(txt, "_" & vbCrLf)
-                Do While pos > 0 And pos < InStr(txt, vbCrLf)
-                    txt = NextArg(txt, "_" & vbCrLf) & RemoveArg(txt, "_" & vbCrLf)
-                Loop
-            End If
+            'remove any intro vbcrlf off the header
+            Do While Left(txt, 2) = vbCrLf
+                FindNextHeader = FindNextHeader & vbCrLf
+                txt = Mid(txt, 3)
+            Loop
             
-            head = RTrimStrip(RemoveNextArg(txt, vbCrLf), " ") & vbCrLf
-            If ValidHeader(head) Then
-            
+            pos = FindLineEnd(txt)
+            If pos > 0 Then
+                head = Left(txt, pos)
+                txt = Mid(txt, pos + 1)
+               ' Stop
+                'comment descriptions and attribute descriptions may only be one line
                 If Right(head, 5) = "' _" & vbCrLf Then
-                    head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf), " ") & vbCrLf
-                    If Left(txt, 10) = "Attribute " Then
-                        head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf), " ") & vbCrLf
+                    head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
+                    If Left(LCase(txt), 10) = "attribute " Then
+                        head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
                     End If
                 Else
-                    If Left(txt, 10) = "Attribute " Then
-                        head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf), " ") & vbCrLf
+                    If Left(LCase(txt), 10) = "attribute " Then
+                        head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
                     End If
                 End If
+
                 
                 Exit Do
             Else
-                FindNextHeader = FindNextHeader & head
-                head = ""
+                FindNextHeader = FindNextHeader & txt
+                txt = ""
             End If
         Else
             FindNextHeader = FindNextHeader & txt
@@ -702,10 +712,15 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As St
 
 End Function
 Private Function FindLineStart(ByVal txt As String, ByVal pos As Long) As Long
+    'accepts txt and pos with in txt where possible delcarative statements
+    'are found, and then traces to the beginning of the line, returning pos
+    'adbiding outside quotes and lines ending wtih underscares carrying over
+    
     Do
         FindLineStart = pos
         pos = InStrRev(txt, vbCrLf, pos)
         If pos - 1 > 1 And InStrRev(txt, """", FindLineStart) < pos Then
+            FindLineStart = pos
             If Mid(txt, pos - 1, 3) = "_" & vbCrLf Then
                 pos = InStrRev(txt, vbCrLf, pos - 1)
                 If InStrRev(txt, """", FindLineStart) < pos Then
@@ -714,10 +729,43 @@ Private Function FindLineStart(ByVal txt As String, ByVal pos As Long) As Long
             End If
         ElseIf pos = 1 Then
             FindLineStart = 1
+        Else
+            FindLineStart = InStrRev(txt, """", FindLineStart) + 1
         End If
     Loop While FindLineStart = 0
 End Function
+
+Private Function GetFullLine(ByRef txt As String) As String
+
+    'sew up any end of line carry overs
+    'to find the end of the declarative
+    Do While ((InStr(txt, "_" & vbCrLf) > 0) And (InStr(txt, "_" & vbCrLf) < InStr(txt, vbCrLf))) And (Not _
+        ((InStr(txt, "' _" & vbCrLf) = (InStr(txt, "_" & vbCrLf) - 2)) And (InStr(txt, "_" & vbCrLf) > 0)))
+        txt = NextArg(txt, "_" & vbCrLf, , False) & RemoveArg(txt, "_" & vbCrLf, , False)
+    Loop
+
+    
+    GetFullLine = RemoveNextArg(txt, vbCrLf, , False)
+            
+End Function
+
+Private Function FindLineEnd(ByVal txt As String) As Long
+
+    FindLineEnd = Len(txt)
+    'check the header to the full line
+    If ValidHeader(GetFullLine(txt)) Then
+        'return it's size
+        FindLineEnd = FindLineEnd - Len(txt)
+    Else
+        FindLineEnd = 0
+    End If
+            
+End Function
+
 Private Function FindNextLine(ByVal txt As String) As Long
+    'searches txt for description supported line definitions
+    'abiding outside of quotes, and returns a possible pos of
+    
     Dim pos1 As Long
     Dim pos2 As Long
     Dim pos3 As Long
@@ -725,24 +773,20 @@ Private Function FindNextLine(ByVal txt As String) As Long
     Dim pos5 As Long
     
     Do
-        pos1 = InStr(IIf(pos5 > 0, pos5, 1), txt, "Event ")
-        pos2 = InStr(IIf(pos5 > 0, pos5, 1), txt, "Property ")
-        pos3 = InStr(IIf(pos5 > 0, pos5, 1), txt, "Function ")
-        pos4 = InStr(IIf(pos5 > 0, pos5, 1), txt, "Sub ")
-        pos5 = InStr(IIf(pos5 > 0, pos5, 1), txt, """")
-        If pos1 > 0 And pos1 < pos2 And pos1 < pos3 And pos1 < pos4 And pos1 < pos5 Then
-            'FindNextLine = InStrRev(txt, vbCrLf, pos1)
+        pos1 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "event ")
+        pos2 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "property ")
+        pos3 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "function ")
+        pos4 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "sub ")
+        pos5 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), """")
+        If (pos1 > 0) And (pos1 < pos2 Or pos2 = 0) And (pos1 < pos3 Or pos3 = 0) And (pos1 < pos4 Or pos4 = 0) And (pos1 < pos5 Or pos5 = 0) Then
             FindNextLine = FindLineStart(txt, pos1)
-        ElseIf pos2 > 0 And pos2 < pos1 And pos2 < pos3 And pos2 < pos4 And pos2 < pos5 Then
-            'FindNextLine = InStrRev(txt, vbCrLf, pos2)
+        ElseIf (pos2 > 0) And (pos2 < pos1 Or pos1 = 0) And (pos2 < pos3 Or pos3 = 0) And (pos2 < pos4 Or pos4 = 0) And (pos2 < pos5 Or pos5 = 0) Then
             FindNextLine = FindLineStart(txt, pos2)
-        ElseIf pos3 > 0 And pos3 < pos1 And pos3 < pos2 And pos3 < pos4 And pos3 < pos5 Then
-            'FindNextLine = InStrRev(txt, vbCrLf, pos3)
+        ElseIf (pos3 > 0) And (pos3 < pos1 Or pos1 = 0) And (pos3 < pos2 Or pos2 = 0) And (pos3 < pos4 Or pos4 = 0) And (pos3 < pos5 Or pos5 = 0) Then
             FindNextLine = FindLineStart(txt, pos3)
-        ElseIf pos4 > 0 And pos4 < pos1 And pos4 < pos3 And pos4 < pos2 And pos4 < pos5 Then
-            'FindNextLine = InStrRev(txt, vbCrLf, pos4)
+        ElseIf (pos4 > 0) And (pos4 < pos1 Or pos1 = 0) And (pos4 < pos3 Or pos3 = 0) And (pos4 < pos2 Or pos2 = 0) And (pos4 < pos5 Or pos5 = 0) Then
             FindNextLine = FindLineStart(txt, pos4)
-        ElseIf pos5 > 0 And pos5 < pos1 And pos5 < pos3 And pos5 < pos2 And pos5 < pos4 Then
+        ElseIf (pos5 > 0) And (pos5 < pos1 Or pos1 = 0) And (pos5 < pos3 Or pos3 = 0) And (pos5 < pos2 Or pos2 = 0) And (pos5 < pos4 Or pos4 = 0) Then
             Do While Mid(txt, pos5 + 1, 1) = """"
                 pos5 = pos5 + 2
             Loop
@@ -755,11 +799,14 @@ Private Function FindNextLine(ByVal txt As String) As Long
     
 End Function
 Private Function ValidHeader(ByVal head As String) As Boolean
+    'accepts head information in a single line format and examines
+    'for validity returning true or false whehter or not it's valid
     ValidHeader = True
     Do
-        Select Case RemoveNextArg(head, " ")
-            Case "Public", "Private", "Global", "Friend", "Static", "WithEvents"
-            Case "Event", "Property", "Function", "Sub"
+        Select Case LCase(RemoveNextArg(head, " "))
+            Case "public", "private", "global", "friend", "static", "withevents"
+            'Case "dim", "const", "declare", "event", "type", "enum"
+            Case "event", "property", "function", "sub"
                 Exit Do
             Case Else
                 ValidHeader = False
@@ -768,440 +815,71 @@ Private Function ValidHeader(ByVal head As String) As Boolean
     Loop While head <> ""
 End Function
 
-'Private Function FindNextHeader(ByRef txt As String, ByRef head As String) As String
-'    'returns finished, removes head as well from txt, and head is found <> ""
-'    Dim pos1 As Long
-'    Dim pos2 As Long
-'    Dim pos3 As Long
-'    pos1 = InStr(1, txt, " ' _" & vbCrLf, vbTextCompare)
-'    pos2 = InStr(1, txt, vbCrLf & "Attribute ", vbTextCompare)
-'    Do Until pos2 = 0
-'        If NextArg(Mid(txt, pos2 + 2), vbCrLf) Like "*Attribute *.VB_Description*" Then Exit Do
-'        pos2 = InStr(pos2 + 1, txt, vbCrLf & "Attribute ", vbTextCompare)
-'    Loop
-'
-'    If pos1 < pos2 And pos1 > 1 Then
-'        pos1 = InStrRev(txt, vbCrLf, pos1 - 1, vbTextCompare)
-'    ElseIf pos2 < pos1 And pos2 > 1 Then
-'        pos1 = InStrRev(txt, vbCrLf, pos2 - 1, vbTextCompare)
-'    ElseIf pos1 > 0 Then
-'        pos1 = InStrRev(txt, vbCrLf, pos1 - 1, vbTextCompare)
-'
-'    End If
-'    If pos1 = 0 And pos2 = 0 Then
-'        FindNextHeader = txt
-'        txt = ""
-'        head = ""
-'    ElseIf pos1 = 0 Then
-'
-'        If pos2 > 0 Then
-'
-'            pos3 = InStr(pos2, txt, """" & vbCrLf, vbTextCompare)
-'            If pos3 > 0 Then
-'                pos1 = InStrRev(txt, vbCrLf, pos2, vbTextCompare)
-'                pos3 = pos3 + 3
-'            Else
-'                FindNextHeader = txt
-'                txt = ""
-'                head = ""
-'            End If
-'            If pos1 > 0 Then pos1 = pos1 + 1
-'        Else
-'            FindNextHeader = txt
-'            txt = ""
-'            head = ""
-'
-'        End If
-'    Else
-'        pos1 = pos1 + 1
-'        pos2 = InStr(pos1, txt, " ' _" & vbCrLf, vbTextCompare)
-'        pos3 = InStr(pos1, txt, vbCrLf & "Attribute ", vbTextCompare)
-'        If (pos3 < pos2) And (pos2 = 0) And (pos3 > 0) Then
-'
-'            pos3 = InStr(pos1, txt, """" & vbCrLf, vbTextCompare)
-'            If pos3 > 0 Then
-'                pos3 = pos3 + 3
-'            Else
-'                pos3 = pos2 + 6
-'            End If
-'        ElseIf pos3 > 0 Then
-'            pos3 = InStr(pos3, txt, """" & vbCrLf, vbTextCompare)
-'            If pos3 > 0 Then pos3 = pos3 + 3
-'        ElseIf pos2 > 0 Then
-'            pos2 = pos2 + 6
-'            pos3 = InStr(pos2, txt, vbCrLf, vbTextCompare) + 2
-'        Else
-'            pos3 = Len(txt)
-'        End If
-'    End If
-'
-'    If pos1 > 0 And pos3 > pos1 Then
-'        head = Replace(LTrimStrip(LTrimStrip(LTrimStrip(Mid(txt, pos1, (pos3 - pos1)), vbLf), vbCr), vbCrLf), vbCrLf & vbCrLf, vbCrLf)
-'        If Len(head) <> 0 Then
-'            Select Case CountWord(head, vbCrLf)
-'                Case 0, 1
-'                    head = NextArg(head, vbCrLf) & vbCrLf
-'                Case 1, 2
-'                    head = NextArg(head, vbCrLf) & vbCrLf & _
-'                            NextArg(RemoveArg(head, vbCrLf), vbCrLf) & vbCrLf
-'
-'                Case 3
-'                    head = NextArg(head, vbCrLf) & vbCrLf & _
-'                            NextArg(RemoveArg(head, vbCrLf), vbCrLf) & vbCrLf & _
-'                            NextArg(RemoveArg(RemoveArg(head, vbCrLf), vbCrLf), vbCrLf) & vbCrLf
-'                Case Else
-'                    If InStr(head, "' _" & vbCrLf) > 0 And InStr(head, "' _" & vbCrLf) < InStr(head, vbCrLf) Then
-'
-'
-'                        pos3 = InStr(InStr(pos1, txt, vbCrLf) + 2, txt, vbCrLf) + 2
-'                    ElseIf InStr(pos1, txt, vbCrLf & "Attribute ", vbTextCompare) > 0 And _
-'                        InStr(InStr(pos1, txt, vbCrLf, vbTextCompare) + 2, txt, vbCrLf) > InStr(pos1, txt, vbCrLf & "Attribute ", vbTextCompare) Then
-'
-'                        pos3 = InStr(InStr(pos1, txt, vbCrLf, vbTextCompare) + 2, txt, vbCrLf) + 2
-'
-'                    End If
-'
-''                    pos3 = InStr(pos2 + 5, txt, vbCrLf, vbTextCompare)
-''                    head = Left(head, pos3 + 2)
-''                    txt = Mid(txt, pos3 + 2)
-'
-'                    'head = Mid(txt, pos1, pos3 + 2 - pos1)
-'            End Select
-'        End If
-'        If Len(head) = 0 Then
-'            FindNextHeader = txt
-'            txt = ""
-'        Else
-'            FindNextHeader = Left(txt, pos1)
-'            If Len(head) > 0 Then
-'                txt = Mid(txt, pos1 + (pos3 - pos1))
-'            Else
-'                FindNextHeader = FindNextHeader & txt
-'                txt = ""
-'            End If
-'        End If
-'    End If
-'
-'End Function
 
-Private Function GetDeclareLine(ByVal head As String) As String
-    If InStr(head, "' _" & vbCrLf) > 0 Then
-        GetDeclareLine = RTrimStrip(NextArg(head, "' _" & vbCrLf), " ")
+Private Function GetDeclareLine(ByVal head As String, ByVal rawform As Boolean) As String
+    'gets only the declare line portion of a valid header
+
+    If rawform Then
+        'return it's size
+        GetDeclareLine = head
+        GetFullLine GetDeclareLine
+        GetDeclareLine = Left(head, Len(head) - Len(GetDeclareLine))
     Else
-        GetDeclareLine = NextArg(head, vbCrLf)
+        GetDeclareLine = GetFullLine(head)
     End If
+
+    If InStr(GetDeclareLine, "' _") > 0 Then
+        GetDeclareLine = RTrimStrip(NextArg(GetDeclareLine, "' _"), " ")
+    Else
+        GetDeclareLine = NextArg(GetDeclareLine, vbCrLf)
+    End If
+
 End Function
 Private Function GetDescription(ByVal head As String, Optional ByVal From As HeaderInfo = 0) As String
+    'gets the description portion of a valid header, with the option of returning the
+    'description with in the comment, or the description with in the hidden attribute
+    
     If From = Declared Or From = Commented Then
         If InStr(head, " ' _" & vbCrLf) > 0 Then
             GetDescription = NextArg(RemoveArg(head, " ' _" & vbCrLf), vbCrLf)
         End If
     Else
-        If InStr(head, vbCrLf & "Attribute ") > 0 Then
-            GetDescription = RemoveQuotedArg(head, ".VB_Description = """, """" & vbCrLf)
+        If InStr(LCase(head), vbCrLf & "attribute ") > 0 Then
+            GetDescription = RemoveQuotedArg(head, ".VB_Description = """, """" & vbCrLf, , vbTextCompare)
         End If
     End If
 End Function
 
 Private Function GetUserDefined(ByVal head As String, Optional ByVal From As HeaderInfo = 0) As String
+    'gets the "user defined name" portion of a valid header, with the option of returning the
+    '"user defined name" from the declaration, or the "user defined name" from the hidden attribute
+    If InStr(head, "' _" & vbCrLf) > 0 Then
+        head = GetFullLine(NextArg(head, "' _" & vbCrLf, , True)) & "' _" & vbCrLf & RemoveArg(head, "' _" & vbCrLf, , True)
+    ElseIf InStr(head, vbCrLf & "attribute ") > 0 Then
+        head = GetFullLine(NextArg(head, vbCrLf & "attribute ", , True)) & vbCrLf & "attribute " & RemoveArg(head, vbCrLf & "attribute ", , True)
+    Else
+        head = GetFullLine(head)
+    End If
     If From = Declared Or From = Commented Then
+        
         Do While GetUserDefined = "" And (head <> "")
-            Select Case NextArg(head, " ")
-                Case "Public", "Private", "Global", "Friend", "Static", "WithEvents"
-                Case "Dim", "Const", "Declare", "Event"
+            Select Case LCase(NextArg(head, " "))
+                Case "public", "private", "global", "friend", "static", "withevents"
+                Case "dim", "const", "declare", "event"
                     GetUserDefined = NextArg(NextArg(NextArg(RemoveArg(head, " "), " "), "("), ",")
-                Case "Type", "Enum"
+                Case "type", "enum"
                     GetUserDefined = NextArg(NextArg(RemoveArg(head, " "), " "), "(")
-                Case "Property"
+                Case "property"
                     GetUserDefined = NextArg(NextArg(RemoveArg(RemoveArg(head, " "), " "), " "), "(")
-                Case "Function", "Sub"
+                Case "function", "sub"
                     GetUserDefined = NextArg(NextArg(RemoveArg(head, " "), " "), "(")
             End Select
             RemoveNextArg head, " "
         Loop
     Else
-        If InStr(head, vbCrLf & "Attribute ") > 0 Then
-            GetUserDefined = RemoveQuotedArg(head, vbCrLf & "Attribute ", ".VB_Description = """)
+        If InStr(LCase(head), vbCrLf & "attribute ") > 0 Then
+            GetUserDefined = RemoveQuotedArg(head, vbCrLf & "Attribute ", ".VB_Description = """, , vbTextCompare)
         End If
     End If
 End Function
-
-            
-'            Dim ProcName As String
-'            Dim ProcDeclare As String
-'            Dim ProcDescription As String
-'
-'            Dim startrow As Long
-'            Dim startcol As Long
-'            Dim endrow As Long
-'            Dim endcol As Long
-'            Dim ln As Long
-'            Dim changed As Boolean
-'
-'            Dim txt As String
-'            Dim head As String
-'            Dim out As String
-'            Dim back As String
-'
-'            CodeModule.CodePane.GetSelection startrow, startcol, endrow, endcol
-'
-'            Dim mend As Long
-'            mend = 1
-'            back = CodeModule.Lines(1, CodeModule.CountOfLines)
-'
-'            txt = vbCrLf & back & vbCrLf
-'            Do Until txt = ""
-'                out = out & FindNextHeader(txt, head)
-'                ProcName = GetUserDefined(head)
-'                If ProcName <> "" Then
-'
-'
-'                    ProcDescription = GetMemberDescription(CodeModule.Members, ProcName, ln)
-'
-'                    ProcDeclare = GetDeclareLine(head)
-'
-'                    If InStr(" " & ProcDeclare, " Property Get ") > 0 Then
-'                        ln = CodeModule.ProcStartLine(ProcName, vbext_ProcKind.vbext_pk_Get)
-'                    ElseIf InStr(" " & ProcDeclare, " Property Let ") > 0 Then
-'                        ln = CodeModule.ProcStartLine(ProcName, vbext_ProcKind.vbext_pk_Let)
-'                    ElseIf InStr(" " & ProcDeclare, " Property Set ") > 0 Then
-'                        ln = CodeModule.ProcStartLine(ProcName, vbext_ProcKind.vbext_pk_Set)
-'                    ElseIf InStr(" " & ProcDeclare, " Sub ") > 0 Or InStr(ProcDeclare, "Function ") > 0 Then
-'                        ln = CodeModule.ProcStartLine(ProcName, vbext_ProcKind.vbext_pk_Proc)
-'                    End If
-'
-'                    ProcDeclare = CodeModule.Lines(ln, 1)
-'
-'
-'                    If ln > 0 Then
-'
-'                        If (BuildFunc = AttributeToComments) Then
-'                            If Right(ProcDeclare, 3) = "' _" Then
-'                                If ProcDescription = "" And ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                                    CodeModule.ReplaceLine ln, Left(ProcDeclare, Len(ProcDeclare) - 3)
-'                                    CodeModule.DeleteLines ln + 1
-'                                    changed = True
-'                                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                                ElseIf CodeModule.Lines(ln + 1, 1) <> ProcDescription Then
-'                                    CodeModule.ReplaceLine ln + 1, ProcDescription
-'                                    changed = True
-'                                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                                End If
-'                            ElseIf ProcDescription <> "" Then
-'                                CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                                CodeModule.InsertLines ln + 1, ProcDescription
-'                                changed = True
-'                                SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                            End If
-'
-'                        ElseIf (BuildFunc = CommentsToAttribute) Then
-'                            If Right(ProcDeclare, 3) = "' _" Then
-'                                ProcDescription = CodeModule.Lines(ln + 1, 1)
-'                            ElseIf ProcDescription <> "" And ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                                CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                                CodeModule.InsertLines ln + 1, ProcDescription
-'                                changed = True
-'                            End If
-'                            SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                        Else
-'                            If (BuildFunc = DeleteCommentDesc) Then
-'                                If Right(ProcDeclare, 3) = "' _" Then
-'                                    If ProcDescription = "" And CodeModule.Lines(ln + 1, 1) <> "" Then
-'                                        ProcDescription = CodeModule.Lines(ln + 1, 1)
-'                                    End If
-'                                    CodeModule.ReplaceLine ln, Left(ProcDeclare, Len(ProcDeclare) - 3)
-'                                    CodeModule.DeleteLines ln + 1
-'                                    changed = True
-'                                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                                End If
-'                            ElseIf (BuildFunc = InsertCommentDesc) Then
-'                                If Right(ProcDeclare, 3) <> "' _" Then
-'                                    If ProcDescription <> "" Then
-'                                        CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                                        CodeModule.InsertLines ln + 1, ProcDescription
-'                                        changed = True
-'                                        SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                                    End If
-'                                ElseIf ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                                    If ProcDescription = "" Then
-'                                     ProcDescription = IIf(ProcDescription = "", CodeModule.Lines(ln + 1, 1), ProcDescription)
-'                                     CodeModule.DeleteLines ln + 1
-'                                    ' CodeModule.InsertLines ln + 1, IIf(ProcDescription = "", CodeModule.Lines(ln + 1, 1), ProcDescription)
-'
-'                                     CodeModule.InsertLines ln + 1, ProcDescription
-'                                    End If
-'                                    changed = True
-'                                    SetMemberDescription CodeModule.Members, ProcName, CodeModule.Lines(ln + 1, 1)
-'                                End If
-'
-'                            End If
-'                        End If
-'                    End If
-'                End If
-'            Loop
-'            If changed Then
-'                CodeModule.CodePane.SetSelection startrow, startcol, endrow, endcol
-'            End If
-            
-            
-'            Dim txt As String
-'            Dim out As String
-'            Dim back As String
-'            Dim line As String
-'            Dim head As String
-'
-'            Dim DLHead As String
-'            Dim UDHead As String
-'            Dim DEHead As String
-'
-'            Dim UDComm As String
-'            Dim UDAttr As String
-'            Dim DEComm As String
-'            Dim DEAttr As String
-'            Dim endup As String
-'
-'
-'            If CodeModule.CountOfLines = 0 Then Exit Sub
-'
-'            out = ""
-'            back = CodeModule.Lines(1, CodeModule.CountOfLines)
-'
-'            txt = vbCrLf & back & vbCrLf
-'            Do Until txt = ""
-'                out = out & FindNextHeader(txt, head)
-'                UDHead = GetUserDefined(head)
-'                 If UDHead <> "" Then
-'
-'                    DLHead = GetDeclareLine(head)
-'                    DEHead = GetUserDefined(head, Declared)
-'                    UDComm = GetUserDefined(head, Commented)
-'                    UDAttr = UDHead 'GetUserDefined(head, Attributed)
-'                    DEComm = GetDescription(head, Commented)
-'                    DEAttr = GetMemberDescription(CodeModule.Members, UDHead) 'GetDescription(head, Attributed)
-'
-'                    Debug.Print
-'                    Debug.Print "FULL NEXT HEADER INFORMATION"
-'                    Debug.Print head
-'                    Debug.Print "DECLARE: " & DLHead
-'                    Debug.Print "USERDEFINED FROM DECLARE: "; UDComm; " USER DEFINED FROM ATTRIBUTE: " & UDAttr
-'                    Debug.Print "COMMENTED DESCRIPTION: "; DEComm; " ATTRIBUTE DESCRIPTION: " & DEAttr
-'
-'                    If (BuildFunc = AttributeToComments) Or (BuildFunc = InsertCommentDesc) Then
-'                        If CountWord(head, vbCrLf) >= 2 Then 'for properties
-'                            head = head & "Attribute " & DEHead & ".VB_Description = """ & IIf(DEAttr <> "", DEAttr, DEComm) & """" & vbCrLf
-'                            DLHead = GetDeclareLine(head)
-'                            DEAttr = GetDescription(head, Attributed)
-'                            UDAttr = GetUserDefined(head, Attributed)
-'                        End If
-'
-'                        line = DLHead & " ' _" & vbCrLf & IIf(DEAttr <> "", DEAttr, DEComm) & vbCrLf '& _
-'                            IIf(InStr(DLHead, "Event ") = 0, "Attribute " & UDAttr & ".VB_Description = """ & IIf(DEAttr <> "", DEAttr, DEComm) & """" & vbCrLf, "")
-'                        SetMemberDescription CodeModule.Members, UDHead, IIf(DEAttr <> "", DEAttr, DEComm)
-'                    ElseIf (BuildFunc = CommentsToAttribute) Then
-'                        line = DLHead & " ' _" & vbCrLf & IIf(DEComm <> "", DEComm, DEAttr) & vbCrLf '& _
-'                            IIf(InStr(DLHead, "Event ") = 0, "Attribute " & DEHead & ".VB_Description = """ & IIf(DEComm <> "", DEComm, DEAttr) & """" & vbCrLf, "")
-'
-'                        SetMemberDescription CodeModule.Members, UDHead, IIf(DEComm <> "", DEComm, DEAttr)
-'                    Else
-'                        line = DLHead & vbCrLf '& _
-'                            IIf(InStr(DLHead, "Event ") = 0, "Attribute " & UDAttr & ".VB_Description = """ & IIf(DEAttr = "", DEComm, DEAttr) & """" & vbCrLf, "")
-'                        SetMemberDescription CodeModule.Members, UDHead, IIf(DEAttr = "", DEComm, DEAttr)
-'                    End If
-'                    If head <> line Then changed = True
-'
-'                    out = out & line
-'
-'                Else
-'                    out = out & head
-'                End If
-'            Loop
-'            out = out & endup
-'            If Mid(out, 3, Len(out) - 4) <> back Then
-'                CodeModule.DeleteLines 1, CodeModule.CountOfLines
-'                CodeModule.InsertLines 1, Mid(out, 3, Len(out) - 4)
-'                'CodeModule.AddFromString Mid(out, 3, Len(out) - 4)
-'            End If
-
-            
-            
-            
-            
-            
-            
-            
-'            CodeModule.CodePane.GetSelection startrow, startcol, endrow, endcol
-'            Dim mend As Long
-'            mend = 1
-'            Do While mend <= CodeModule.Members.count
-'
-'                ProcName = CodeModule.Members(mend).Name
-'                ln = CodeModule.Members(mend).CodeLocation
-'                Do
-'                    ProcDeclare = RTrimStrip(CodeModule.Lines(ln, 1), " ")
-'                    ln = ln + 1
-'                Loop While ProcDeclare = ""
-'                ln = ln - 1
-'
-'                ProcDescription = CodeModule.Members(mend).Description
-'
-'                If (BuildFunc = AttributeToComments) Then
-'                    If Right(ProcDeclare, 3) = "' _" Then
-'                        If ProcDescription = "" And ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                            CodeModule.ReplaceLine ln, Left(ProcDeclare, Len(ProcDeclare) - 3)
-'                            CodeModule.DeleteLines ln + 1
-'                            changed = True
-'                            SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                        ElseIf CodeModule.Lines(ln + 1, 1) <> ProcDescription Then
-'                            CodeModule.ReplaceLine ln + 1, ProcDescription
-'                            changed = True
-'                            SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                        End If
-'                    ElseIf ProcDescription <> "" Then
-'                        CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                        CodeModule.InsertLines ln + 1, ProcDescription
-'                        changed = True
-'                        SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                    End If
-'
-'                ElseIf (BuildFunc = CommentsToAttribute) Then
-'                    If Right(ProcDeclare, 3) = "' _" Then
-'                        ProcDescription = CodeModule.Lines(ln + 1, 1)
-'                    ElseIf ProcDescription <> "" And ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                        CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                        CodeModule.InsertLines ln + 1, ProcDescription
-'                        changed = True
-'                    End If
-'                    SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                Else
-'                    If (BuildFunc = DeleteCommentDesc) Then
-'                        If Right(ProcDeclare, 3) = "' _" Then
-'                            If ProcDescription = "" And CodeModule.Lines(ln + 1, 1) <> "" Then
-'                                ProcDescription = CodeModule.Lines(ln + 1, 1)
-'                            End If
-'                            CodeModule.ReplaceLine ln, Left(ProcDeclare, Len(ProcDeclare) - 3)
-'                            CodeModule.DeleteLines ln + 1
-'                            changed = True
-'                            SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                        End If
-'                    ElseIf (BuildFunc = InsertCommentDesc) Then
-'                        If Right(ProcDeclare, 3) <> "' _" Then
-'                            If ProcDescription <> "" Then
-'                                CodeModule.ReplaceLine ln, ProcDeclare & " ' _"
-'                                CodeModule.InsertLines ln + 1, ProcDescription
-'                                changed = True
-'                                SetMemberDescription CodeModule.Members, ProcName, ProcDescription
-'                            End If
-'                        ElseIf ProcDescription <> CodeModule.Lines(ln + 1, 1) Then
-'                            CodeModule.InsertLines ln + 1, IIf(ProcDescription = "", CodeModule.Lines(ln + 1, 1), ProcDescription)
-'                            changed = True
-'                            SetMemberDescription CodeModule.Members, ProcName, CodeModule.Lines(ln + 1, 1)
-'                        End If
-'
-'                    End If
-'                End If
-'                mend = mend + 1
-'            Loop
-'            If changed Then
-'                CodeModule.CodePane.SetSelection startrow, startcol, endrow, endcol
-'            End If
 
