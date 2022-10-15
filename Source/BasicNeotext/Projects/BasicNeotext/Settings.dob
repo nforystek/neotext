@@ -223,7 +223,11 @@ Private Sub Check3_Click()
     If Text2(1).Tag <> -1 Then
         SaveSetting "BasicNeotext", "Options", "ProcedureDesc", Check3.Value
         On Error Resume Next
+      
+  
         DescriptionsStartup UserDocument.Parent.VBE.VBProjects
+
+
         If Err.Number <> 0 Then Err.Clear
     End If
 End Sub

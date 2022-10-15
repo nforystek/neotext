@@ -1,5 +1,4 @@
-Attribute VB_Name = "modMWheel"
-#Const modMWheel = -1
+Attribute VB_Name = "modVBHook"
 Option Explicit
 'TOP DOWN
 Option Compare Text
@@ -13,24 +12,24 @@ Private Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent _
     As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
 
 Private Declare Function GetClassName Lib "user32" Alias "GetClassNameA" _
-    (ByVal hWnd As Long, ByVal lpClassName As String, _
+    (ByVal hwnd As Long, ByVal lpClassName As String, _
     ByVal nMaxCount As Long) As Long
 
 Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" _
-    (ByVal hWnd As Long, ByVal lpString As String, _
+    (ByVal hwnd As Long, ByVal lpString As String, _
     ByVal cch As Long) As Long
 
 Private Declare Function CallWindowProc Lib "user32" Alias _
     "CallWindowProcA" _
-    (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, _
+    (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, _
     ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
-    (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) _
+    (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) _
     As Long
     
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" _
-    (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As _
+    (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As _
     Long, ByVal lParam As Long) As Long
 
 Private Declare Function WindowFromPointXY Lib "user32" _
@@ -44,12 +43,12 @@ Private Declare Function SystemParametersInfo Lib "user32" _
     lpvParam As Any, _
     ByVal fuWinIni As Long) As Long
 
-Private Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hWnd As Long, _
+Private Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hwnd As Long, _
     ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
         
 Private Declare Function WindowFromPoint Lib "user32" (pt As POINTAPI) As Long
 
-Private Declare Function GetWindowInfo Lib "user32" (ByVal hWnd As Long, ByRef pwi As WINDOWINFO) As Boolean
+Private Declare Function GetWindowInfo Lib "user32" (ByVal hwnd As Long, ByRef pwi As WINDOWINFO) As Boolean
 
 Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
 
@@ -83,7 +82,7 @@ End Type
 
 Private Type MOUSEHOOKSTRUCT
     pt As POINTAPI
-    hWnd As Long
+    hwnd As Long
     wHitTestCode As Long
     dwExtraInfo As Long
 End Type
@@ -116,8 +115,6 @@ Private Const WM_USER = &H400
 
 Private Const WM_KEYDOWN = &H100
 Private Const WM_KEYUP = &H101
-
-Private Const WM_PAINT = &HF
 
 Private Const VK_F1 = &H70
 Private Const VK_F2 = &H71
@@ -233,13 +230,6 @@ Global gVBInstance  As VBIDE.VBE
 Global gwinWindow   As VBIDE.Window
 Global gblMouseClick As Integer
 
-Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-'Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-'Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-'Private Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
-
-
-
 Function GetFromIni(strSectionHeader As String, strVariableName As String, strFileName As String) As String
     Dim strReturn As String
     strReturn = String(255, Chr(0))
@@ -256,15 +246,15 @@ Public Function FileExists(strFile As String) As String
 End Function
 
 
-Private Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, _
+Private Function WindowProc(ByVal hwnd As Long, ByVal uMsg As Long, _
                            ByVal wParam As Long, ByVal lParam As Long) _
                            As Long
     On Error GoTo exitthis
     On Local Error GoTo exitthis
-    Dim skip As Boolean
+    Form1.Cls
     
+    Form1.Print CStr(uMsg)
     Select Case uMsg
-
       Case WM_MOUSEWHEEL
         nKeys = wParam And 65535
         Delta = wParam / 65536 / WHEEL_DELTA
@@ -280,8 +270,8 @@ Private Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, _
         
     End Select
 
-    If OriginalWindowProc <> 0 And Not skip Then
-        WindowProc = CallWindowProc(OriginalWindowProc, hWnd, uMsg, wParam, lParam)
+    If OriginalWindowProc <> 0 Then
+        WindowProc = CallWindowProc(OriginalWindowProc, hwnd, uMsg, wParam, lParam)
     End If
     
 exitthis:
@@ -293,7 +283,7 @@ End Function
 Public Sub UnHook()
     On Error GoTo exitthis
     On Local Error GoTo exitthis
-
+    
     'Ensures that you don't try to unsubclass the window when
     'it is not subclassed.
     If OriginalWindowProc = 0 Then Exit Sub
@@ -369,8 +359,7 @@ Function EnumChildProc(ByVal lhWnd As Long, ByVal lParam As Long) _
    WinClass = StripNulls(WinClassBuf)  ' remove extra Nulls & spaces
    retVal = GetWindowText(lhWnd, WinTitleBuf, 255)
    WinTitle = StripNulls(WinTitleBuf)
-
-            
+   
    ' see the Windows Class and Title for each Child Window enumerated
    'Debug.Print "   hWnd = " & Hex(lhWnd) & " Child Class = "; WinClass; ", Title = "; WinTitle
    ' You can find any type of Window by searching for its WinClass
@@ -382,7 +371,6 @@ Function EnumChildProc(ByVal lhWnd As Long, ByVal lParam As Long) _
    ' that are children of the current window
    Dim wi As WINDOWINFO
    wi.cbSize = Len(wi)
-
    If GetWindowInfo(lhWnd, wi) And WinClass <> "MDIClient" Then
         If IsVerticalScrollBar(lhWnd) = True And wi.rcWindow.Top < YPos And wi.rcWindow.Bottom > YPos Then    ' TextBox Window
           
@@ -477,14 +465,14 @@ Public Function StripNulls(OriginalStr As String) As String
    StripNulls = OriginalStr
 End Function
 
-Public Function IsVerticalScrollBar(hWnd As Long) As Boolean
+Public Function IsVerticalScrollBar(hwnd As Long) As Boolean
 
     ' Check the style of the window specified by hWnd to see if it's a vertical scrollbar
 
     Dim wi As WINDOWINFO
     wi.cbSize = Len(wi)
     
-    If GetWindowInfo(hWnd, wi) Then
+    If GetWindowInfo(hwnd, wi) Then
         If (wi.dwStyle And WS_VISIBLE) > 0 And (wi.dwStyle And SBS_VERT) > 0 Then
             IsVerticalScrollBar = True
             Exit Function
@@ -495,14 +483,14 @@ Public Function IsVerticalScrollBar(hWnd As Long) As Boolean
 
 End Function
 
-Public Function IsHorizontalScrollBar(hWnd As Long) As Boolean
+Public Function IsHorizontalScrollBar(hwnd As Long) As Boolean
 
     ' Check the style of the window specified by hWnd to see if it's a horizontal scrollbar
 
     Dim wi As WINDOWINFO
     wi.cbSize = Len(wi)
     
-    If GetWindowInfo(hWnd, wi) Then
+    If GetWindowInfo(hwnd, wi) Then
         If (wi.dwStyle And WS_VISIBLE) > 0 And (wi.dwStyle And SBS_HORZ) > 0 Then
             IsHorizontalScrollBar = True
             Exit Function
@@ -603,6 +591,8 @@ End Function
 Private Function HighWord(ByVal inDWord As Long) As Integer
     HighWord = LowWord(((inDWord And &HFFFF0000) \ &H10000) And &HFFFF&)
 End Function
+
+
 
 
 

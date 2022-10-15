@@ -395,8 +395,6 @@ Option Explicit
 'TOP DOWN
 Option Compare Binary
 
-
-
 Private Sub Command1_Click()
     If Command1.Caption = "&No" Then
         Me.Tag = vbNo

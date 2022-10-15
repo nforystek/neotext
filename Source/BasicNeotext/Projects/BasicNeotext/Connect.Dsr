@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect 
-   ClientHeight    =   11760
+   ClientHeight    =   9615
    ClientLeft      =   1740
    ClientTop       =   1545
-   ClientWidth     =   23025
-   _ExtentX        =   40614
-   _ExtentY        =   20743
+   ClientWidth     =   18540
+   _ExtentX        =   32703
+   _ExtentY        =   16960
    _Version        =   393216
-   Description     =   "Enhancements for Visual Basic 6.0"
+   Description     =   "VB 6 Neotext Basic - Enhancements for Visual Basic 6.0"
    DisplayName     =   "VB 6 Neotext Basic"
    AppName         =   "Visual Basic"
    AppVer          =   "Visual Basic 6.0"
@@ -161,6 +161,7 @@ Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpCl
 
 Private Const guidPos = "{99179999-A05E-4A21-A9DB-C5614C53F992}"
 
+Public MSWHeelObject As VBIDE.AddIn
 
 Public WithEvents FCE As FileControlEvents
 Attribute FCE.VB_VarHelpID = -1
@@ -343,7 +344,8 @@ End Function
 
 Private Sub AddinInstance_OnAddInsUpdate(custom() As Variant)
    
-   SetUIState
+    SetUIState
+
     
 End Sub
 
@@ -351,14 +353,16 @@ Private Sub AddinInstance_OnBeginShutdown(custom() As Variant)
     On Error GoTo exitthis
     On Local Error GoTo exitthis
     
-
-    Dim cP As Window
-    For Each cP In VBInstance.Windows
-        Select Case StrReverse(NextArg(StrReverse(cP.Caption), " "))
-            Case "(UserControl)", "(Form)", "(UserDocument)", "(AddInDesigner)"
-                cP.Close
-        End Select
-    Next
+    docSettings.StopTimer
+    
+'    Dim cP As Window
+'    For Each cP In VBInstance.Windows
+'
+'        Select Case StrReverse(NextArg(StrReverse(cP.Caption), " "))
+'            Case "(UserControl)", "(Form)", "(UserDocument)", "(AddInDesigner)", "(Code)"
+'                cP.Close
+'        End Select
+'    Next
     
 exitthis:
     If Err Then Err.Clear
@@ -383,12 +387,12 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set cmdButton1 = CmdBar.Controls.Add(msoControlButton)
     cmdButton1.Caption = "Sign"
     cmdButton1.ToolTipText = "Code Sign Executable"
-    cmdButton1.Style = msoButtonIcon
+    cmdButton1.style = msoButtonIcon
     cmdButton1.faceid = 30 '20
     Set cmdBarBtn4 = CmdBar.Controls.Add(msoControlButton)
     cmdBarBtn4.Caption = "Options"
     cmdBarBtn4.ToolTipText = "Options"
-    cmdBarBtn4.Style = msoButtonIcon
+    cmdBarBtn4.style = msoButtonIcon
     cmdBarBtn4.faceid = 162
 '    Set cmdBarBtn5 = CmdBar.Controls.Add(msoControlButton)
 '    cmdBarBtn5.Caption = "Sign"
@@ -399,27 +403,27 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     cmdButton6.BeginGroup = True
     cmdButton6.Caption = "Remake Pro&ject Build"
     cmdButton6.ToolTipText = "Remake Project Executable"
-    cmdButton6.Style = msoButtonIcon
+    cmdButton6.style = msoButtonIcon
     cmdButton6.faceid = 37
     Set cmdButton5 = CmdBar.Controls.Add(msoControlButton)
     cmdButton5.Caption = "Start &The Executable"
     cmdButton5.ToolTipText = "Start the Executable Only"
-    cmdButton5.Style = msoButtonIcon
+    cmdButton5.style = msoButtonIcon
     cmdButton5.faceid = 459
     Set cmdButton3 = CmdBar.Controls.Add(msoControlButton)
     cmdButton3.Caption = "Make..."
     cmdButton3.ToolTipText = "Make Project Dialog"
-    cmdButton3.Style = msoButtonIcon
+    cmdButton3.style = msoButtonIcon
     cmdButton3.faceid = 215
     Set cmdButton2 = CmdBar.Controls.Add(msoControlButton)
     cmdButton2.Caption = "Start With &Full Compile"
     cmdButton2.ToolTipText = "Start With Full Compile"
-    cmdButton2.Style = msoButtonIcon
+    cmdButton2.style = msoButtonIcon
     cmdButton2.faceid = 539
     Set cmdButton8 = CmdBar.Controls.Add(msoControlButton)
     cmdButton8.Caption = "Stop the E&xecutable"
     cmdButton8.ToolTipText = "Stop the E&xecutable"
-    cmdButton8.Style = msoButtonIcon
+    cmdButton8.style = msoButtonIcon
     cmdButton8.faceid = 348
         
 '    Set cmdBarBtn1 = VBInstance.CommandBars("Run").Controls("&Start").Copy(CmdBar)
@@ -469,11 +473,11 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
                     Set MenuHandler2 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar4)
                 Case "Make Project &Group...", "Make Project Group..."
                     Set MenuHandler6 = VBInstance.Events.CommandBarEvents(cbNextCommand)
-                    Set cbMenuCommandBar2 = cbMenu.Controls.Add(1, , , cbNextCommand.index)
+                    Set cbMenuCommandBar2 = cbMenu.Controls.Add(1, , , cbNextCommand.Index)
                     cbMenuCommandBar2.Caption = "&Build Project Release"
                     cbMenuCommandBar2.Tag = "&Build Project Release"
                     Set MenuHandler3 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar2)
-                    Set cbMenuCommandBar3 = cbMenu.Controls.Add(1, , , cbMenuCommandBar2.index)
+                    Set cbMenuCommandBar3 = cbMenu.Controls.Add(1, , , cbMenuCommandBar2.Index)
                     cbMenuCommandBar3.Caption = "Remake Pro&ject Build"
                     cbMenuCommandBar3.Tag = "Remake Pro&ject Build"
                     Set MenuHandler5 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar3)
@@ -507,7 +511,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
             Select Case cbNextCommand.Caption
                 Case "Start With &Full Compile"
                     Set MenuHandler1 = VBInstance.Events.CommandBarEvents(cbNextCommand)
-                    Set cbMenuCommandBar1 = cbMenu.Controls.Add(1, , , cbNextCommand.index, False)
+                    Set cbMenuCommandBar1 = cbMenu.Controls.Add(1, , , cbNextCommand.Index, False)
                     cbMenuCommandBar1.Caption = "Start &The Executable"
                     cbMenuCommandBar1.Tag = "Start &The Executable"
                     Set MenuHandler4 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar1)
@@ -536,7 +540,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
                     NxtPos = True
                 Case Else
                     If NxtPos And cbNextCommand.BeginGroup Then
-                        Set cbMenuCommandBar5 = cbMenu.Controls.Add(1, , , cbNextCommand.index, False)
+                        Set cbMenuCommandBar5 = cbMenu.Controls.Add(1, , , cbNextCommand.Index, False)
                         cbMenuCommandBar5.BeginGroup = True
                         cbMenuCommandBar5.Caption = LayoutCaption
                         Set MenuHandler8 = VBInstance.Events.CommandBarEvents(cbMenuCommandBar5)
@@ -566,20 +570,14 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     
     docSettings.StartTimer
     ''uncomment the following two lines to hook F5
-    'Dim ret As Long
-    'ret = modHotKey.EnumThreadWindows(modHotKey.GetCurrentThreadId, AddressOf modHotKey.EnumThreadProc, ObjPtr(Me))
-
-'''    docSettings.SetUIEvents Me
     
-
+    
 End Sub
 
 
 Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjects.ext_DisconnectMode, custom() As Variant)
     On Error GoTo exitthis
     On Local Error GoTo exitthis
-
-    docSettings.StopTimer
     
     If Not CmdBar Is Nothing Then
         SaveSetting "BasicNeotext", "Options", "ToolBar_Position", CmdBar.Position
@@ -708,12 +706,13 @@ End Sub
 
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
     SetVBSettings
+
     DescriptionsStartup VBInstance.VBProjects
 End Sub
 
 Private Sub AddinInstance_Terminate()
+
     Set FCE = Nothing
-    
 End Sub
 
 Private Function LayoutCaption() As String
@@ -935,39 +934,39 @@ Private Function ShowMessage(ByVal Title As String, ByVal Message As String, ByV
     Static onetatime As Boolean
     If Not onetatime Then
         onetatime = True
-        Dim frm As New frmHelp
-        frm.Command2.Caption = "&Yes"
-        frm.Command1.Caption = "&No"
-        frm.Command3.Caption = "&Cancel"
-        If IncludeCancel Then frm.Command3.Visible = True
-        frm.Command2.Visible = True
-        frm.Label26.Visible = False
-        frm.Frame1.Visible = False
-        frm.Label3.Visible = False
-        frm.Command2.Top = 1020 ' frm.Frame1.Top
-        frm.Height = 1935 'frm.Frame1.Top + frm.Command2.Height + (frm.Height - (frm.Command2.Top + frm.Command2.Height))
-        frm.Command1.Top = 1020 ' frm.Frame1.Top
-        frm.Command3.Top = 1020 ' frm.Frame1.Top
-        frm.Label2.Caption = Message
-        frm.Image1.Visible = True
-        frm.Caption = Title
-        frm.Label2.Width = frm.Label2.Width - 2000
-        frm.Command1.Left = frm.Command1.Left - 2000
-        frm.Command2.Left = frm.Command2.Left - 2000
-        frm.Command3.Left = frm.Command3.Left - 2000
+        Dim Frm As New frmHelp
+        Frm.Command2.Caption = "&Yes"
+        Frm.Command1.Caption = "&No"
+        Frm.Command3.Caption = "&Cancel"
+        If IncludeCancel Then Frm.Command3.Visible = True
+        Frm.Command2.Visible = True
+        Frm.Label26.Visible = False
+        Frm.Frame1.Visible = False
+        Frm.Label3.Visible = False
+        Frm.Command2.Top = 1020 ' frm.Frame1.Top
+        Frm.Height = 1935 'frm.Frame1.Top + frm.Command2.Height + (frm.Height - (frm.Command2.Top + frm.Command2.Height))
+        Frm.Command1.Top = 1020 ' frm.Frame1.Top
+        Frm.Command3.Top = 1020 ' frm.Frame1.Top
+        Frm.Label2.Caption = Message
+        Frm.Image1.Visible = True
+        Frm.Caption = Title
+        Frm.Label2.Width = Frm.Label2.Width - 2000
+        Frm.Command1.Left = Frm.Command1.Left - 2000
+        Frm.Command2.Left = Frm.Command2.Left - 2000
+        Frm.Command3.Left = Frm.Command3.Left - 2000
         If Not IncludeCancel Then
-            frm.Command2.Left = frm.Command1.Left
-            frm.Command1.Left = frm.Command3.Left
+            Frm.Command2.Left = Frm.Command1.Left
+            Frm.Command1.Left = Frm.Command3.Left
         End If
-        frm.Width = frm.Width - 3000
-        frm.Tag = 0
-        frm.Show
-        TopMostForm frm, True, True
-        Do Until frm.Tag <> 0
+        Frm.Width = Frm.Width - 3000
+        Frm.Tag = 0
+        Frm.Show
+        TopMostForm Frm, True, True
+        Do Until Frm.Tag <> 0
             DoTasks
         Loop
-        ShowMessage = frm.Tag
-        Unload frm
+        ShowMessage = Frm.Tag
+        Unload Frm
         onetatime = False
     End If
 End Function
@@ -1179,8 +1178,8 @@ End Sub
 Private Sub ProcedureAttributes(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
 '''    '   if the procedure attributes dialog is invoked
   ' VBInstance.ActiveCodePane.CodeModule
-    BuildComments GetProjectFileName(VBInstance.ActiveVBProject.Name, VBInstance.ActiveCodePane.CodeModule.Parent.Name), CommentsToAttribute, VBInstance.ActiveCodePane.CodeModule
-    'UpdateCommentToAttributeDescriptions VBInstance.VBProjects
+    'BuildComments CommentsToAttribute, VBInstance.ActiveVBProject.Name, VBInstance.ActiveCodePane.CodeModule
+    UpdateCommentToAttributeDescriptions VBInstance.VBProjects
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)
