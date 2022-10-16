@@ -707,7 +707,7 @@ End Sub
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
     SetVBSettings
 
-    DescriptionsStartup VBInstance.VBProjects
+    DescriptionsStartup VBInstance
 End Sub
 
 Private Sub AddinInstance_Terminate()
@@ -1179,7 +1179,7 @@ Private Sub ProcedureAttributes(ByVal CommandBarControl As Object, handled As Bo
 '''    '   if the procedure attributes dialog is invoked
   ' VBInstance.ActiveCodePane.CodeModule
     'BuildComments CommentsToAttribute, VBInstance.ActiveVBProject.Name, VBInstance.ActiveCodePane.CodeModule
-    UpdateCommentToAttributeDescriptions VBInstance.VBProjects
+    UpdateCommentToAttributeDescriptions VBInstance
 End Sub
 
 Private Sub MenuHandler8_Click(ByVal CommandBarControl As Object, handled As Boolean, CancelDefault As Boolean)

@@ -344,43 +344,44 @@ Private Function DoCleanCopy() As Boolean
         If PathExists(Paths("copy1"), False) Then
             If PathExists(GetFilePath(Paths("copy2")), False) Then
 
-                Dim tmp As String
-                tmp = GatherFileList(Paths("copy1"))
+                Dim ListAllSourceFiles As String
+                ListAllSourceFiles = GatherFileList(Paths("copy1"))
                 'WriteFile Paths("copy1") & "\FileList.txt", tmp
                 
-                Dim tmp2 As String
-                tmp2 = ApplyExclusions(tmp)
+                Dim InclusionSourceFiles As String
+                InclusionSourceFiles = ApplyExclusions(ListAllSourceFiles)
                 'WriteFile Paths("copy1") & "\FileListExcluding.txt", tmp2
                 
-                Dim tmp3 As String
-                tmp3 = GatherProjectList(tmp2)
+                Dim ProjectSourceFiles As String
+                ProjectSourceFiles = ApplyExclusions(GatherProjectList(InclusionSourceFiles))
                 'WriteFile Paths("copy1") & "\ProjList.txt", tmp3
                 
-                Dim tmp4 As String
-                tmp4 = GatherProjectCodeList(tmp3)
+                Dim CodeSourceFiles As String
+                CodeSourceFiles = ApplyExclusions(GatherProjectCodeList(ProjectSourceFiles))
                 'WriteFile Paths("copy1") & "\ProjCodeList.txt", tmp4
                 
-                Dim tmp5 As String
-                tmp5 = GatherFileList(Paths("copy2"))
+                Dim ListAllDestFiles As String
+                ListAllDestFiles = GatherFileList(Paths("copy2"))
                 'WriteFile Paths("copy1") & "\DestList.txt", tmp5
  
-                Dim tmp6 As String
-                tmp6 = ApplyExclusions(tmp5, False, Replace(Replace(Replace(tmp3, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                Dim MasterDeleteList As String
+                MasterDeleteList = ApplyExclusions(ListAllDestFiles, False, Replace(Replace(Replace(ProjectSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
                 'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp6
 
-                Dim tmp7 As String
-                tmp7 = ApplyExclusions(tmp6, False, Replace(Replace(Replace(tmp4, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(CodeSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
                 'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp7
                 
-                Dim tmp8 As String
-                tmp8 = ApplyExclusions(tmp7, False, Replace(Replace(Replace(tmp2, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(InclusionSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
                 
-                Dim tmp9 As String
-                tmp9 = tmp3 & tmp4 & tmp2
-
+                Dim MasterCopyList As String
+                MasterCopyList = ProjectSourceFiles & CodeSourceFiles & InclusionSourceFiles
+                
+                
+                Dim Iterator As String
+                Iterator = MasterDeleteList
                 'delete dest files marked for delete
-                Do While tmp8 <> ""
-                    File = RemoveNextArg(tmp8, vbCrLf)
+                Do While Iterator <> ""
+                    File = RemoveNextArg(Iterator, vbCrLf)
                     If PathExists(File, True) Then 'ensure not folder
                         SetAttr File, vbNormal 'kill fails on hiddens
                         Kill File
@@ -388,23 +389,53 @@ Private Function DoCleanCopy() As Boolean
                 Loop
 
                 'copy files marked for copying
-                Do While tmp9 <> ""
-                    File = RemoveNextArg(tmp9, vbCrLf)
+                Iterator = MasterCopyList
+                Do While Iterator <> ""
+                    File = RemoveNextArg(Iterator, vbCrLf)
                     If PathExists(File, True) Then 'ensure not folder
                         DoFileCopy File, Replace(File, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
                     End If
                 Loop
 
+                
+                Dim ProjectDestFiles As String
+                ProjectDestFiles = GatherProjectList(ListAllDestFiles)
+                'WriteFile Paths("copy1") & "\ProjList.txt", tmp3
+                
+                Dim CodeDestFiles As String
+                CodeDestFiles = GatherProjectCodeList(ProjectDestFiles)
+                'WriteFile Paths("copy1") & "\ProjCodeList.txt", tmp4
+                
+                MasterDeleteList = ApplyExclusions(ListAllDestFiles, False, Replace(Replace(Replace(ProjectSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp6
+
+                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(CodeSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp7
+                
+                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(InclusionSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                                
+                Iterator = MasterDeleteList
+                'delete dest files marked for delete
+                Do While Iterator <> ""
+                    File = RemoveNextArg(Iterator, vbCrLf)
+                    If PathExists(File, True) Then 'ensure not folder
+                        SetAttr File, vbNormal 'kill fails on hiddens
+                        Kill File
+                    End If
+                Loop
+                
+
+
                 'remove any empty dest folders
-                Do While tmp5 <> ""
-                    File = RemoveNextArg(tmp5, vbCrLf)
+                Iterator = ListAllDestFiles
+                Do While Iterator <> ""
+                    File = RemoveNextArg(Iterator, vbCrLf)
                     If PathExists(File, False) Then 'ensure only folders
                         If Replace(Replace(SearchPath("*", True, File, FindAll), File & vbCrLf, ""), vbCrLf, "") = "" Then
                             RemovePath File
                         End If
                     End If
                 Loop
-                                
             Else
                 DoCleanCopy = False
             End If

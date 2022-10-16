@@ -39,6 +39,29 @@ Public Function GetCodeModule2(ByRef vbcomp As VBComponent) As CodeModule
     Set GetCodeModule2 = vbcomp.CodeModule
     If Err.Number <> 0 Then Err.Clear
 End Function
+Public Function GetCodeModuleByCaption(ByRef VBInstance As VBE, ByVal Caption As String) As CodeModule
+    Dim vbproj As VBProject
+    Dim vbcomp As VBComponent
+    Dim cm As CodeModule
+    
+    Dim Member As Member
+    For Each vbproj In VBInstance.VBProjects
+        For Each vbcomp In vbproj.VBComponents
+            If InStr(Caption, " " & vbcomp.Name & " ") > 0 Then
+                Set cm = GetCodeModule2(vbcomp)
+                If Not cm Is Nothing Then
+                    If cm.CodePane.Window.Caption = Caption Then
+                        Set GetCodeModuleByCaption = cm
+                        Set cm = Nothing
+                        Exit Function
+                    End If
+                End If
+                Set cm = Nothing
+            End If
+            
+        Next
+    Next
+End Function
 'Public Function GetCodeModule(ByRef VBProjects As VBProjects, ByVal ProjectName As String, ByVal ModuleName As String) As CodeModule
 '    Dim vbproj As VBProject
 '    Dim vbcomp As VBComponent
@@ -72,16 +95,17 @@ Public Function GetProjectNameByCodeModule(ByRef CodeModule As CodeModule) As St
     End If
 End Function
 
-Public Sub DescriptionsStartup(ByRef VBProjects As VBProjects) ', Optional ByVal InitialLoad As Boolean = False)
+Public Sub DescriptionsStartup(ByRef VBInstance As VBIDE.VBE) ', Optional ByVal InitialLoad As Boolean = False)
 
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-
-            If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-                BuildComments InsertCommentDesc, Hooks(cnt)
-            Else
-                BuildComments DeleteCommentDesc, Hooks(cnt)
+            If IsWindowVisible(Hooks(cnt).hWnd) Then
+                If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+                    BuildComments VBInstance, InsertCommentDesc, Hooks(cnt)
+                Else
+                    BuildComments VBInstance, DeleteCommentDesc, Hooks(cnt)
+                End If
             End If
         Next
 
@@ -113,13 +137,15 @@ Public Sub DescriptionsStartup(ByRef VBProjects As VBProjects) ', Optional ByVal
 '    Next
 End Sub
 
-Public Sub UpdateAttributeToCommentDescriptions(ByRef VBProjects As VBProjects)
+Public Sub UpdateAttributeToCommentDescriptions(ByRef VBInstance As VBIDE.VBE)
     If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
     
         If Hooks.count > 0 Then
             Dim cnt As Long
             For cnt = 1 To Hooks.count
-                BuildComments AttributeToComments, Hooks(cnt)
+                If IsWindowVisible(Hooks(cnt).hWnd) Then
+                    BuildComments VBInstance, AttributeToComments, Hooks(cnt)
+                End If
             Next
         End If
     
@@ -139,13 +165,15 @@ Public Sub UpdateAttributeToCommentDescriptions(ByRef VBProjects As VBProjects)
     End If
 End Sub
 
-Public Sub UpdateCommentToAttributeDescriptions(ByRef VBProjects As VBProjects)
+Public Sub UpdateCommentToAttributeDescriptions(ByRef VBInstance As VBIDE.VBE)
     If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
 
         If Hooks.count > 0 Then
             Dim cnt As Long
             For cnt = 1 To Hooks.count
-                BuildComments CommentsToAttribute, Hooks(cnt)
+                If IsWindowVisible(Hooks(cnt).hWnd) Then
+                    BuildComments VBInstance, CommentsToAttribute, Hooks(cnt)
+                End If
             Next
         End If
         
@@ -165,12 +193,14 @@ Public Sub UpdateCommentToAttributeDescriptions(ByRef VBProjects As VBProjects)
     End If
 End Sub
 
-Public Sub InsertDescriptions(ByRef VBProjects As VBProjects)
+Public Sub InsertDescriptions(ByRef VBInstance As VBIDE.VBE)
 
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-            BuildComments InsertCommentDesc, Hooks(cnt)
+            If IsWindowVisible(Hooks(cnt).hWnd) Then
+                BuildComments VBInstance, InsertCommentDesc, Hooks(cnt)
+            End If
         Next
     End If
     
@@ -190,12 +220,14 @@ Public Sub InsertDescriptions(ByRef VBProjects As VBProjects)
 '    Next
 End Sub
 
-Public Sub DeleteDescriptions(ByRef VBProjects As VBProjects)
+Public Sub DeleteDescriptions(ByRef VBInstance As VBIDE.VBE)
 
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-            BuildComments DeleteCommentDesc, Hooks(cnt)
+            If IsWindowVisible(Hooks(cnt).hWnd) Then
+                BuildComments VBInstance, DeleteCommentDesc, Hooks(cnt)
+            End If
         Next
     End If
     
@@ -291,13 +323,18 @@ Public Function GetTemporaryFile() As String
     GetTemporaryFile = winDir
 End Function
 
-Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As FormHWnd) As Boolean
+Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As BuildFunction, ByRef Frm As FormHWnd) As Boolean
    'On Error GoTo nochanges
    'On Local Error GoTo nochanges
    
     With Frm
         
-        If Not .CodeModule Is Nothing Then
+        If IsWindowVisible(Frm.hWnd) Then
+            If .CodeModule Is Nothing Then
+                Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(Frm.hWnd))
+            End If
+            
+            If .CodeModule Is Nothing Then Exit Function
         
             Dim vbcomp As VBComponent
             Set vbcomp = .CodeModule.Parent
@@ -376,21 +413,26 @@ Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As For
     '                        Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
     '                        Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
     '                        If GetUserDefined(head) = "DataComplete" Then
-    '                            Stop
+                            '    Stop
     '                        End If
  
                             If (BuildFunc = AttributeToComments Or BuildFunc = InsertCommentDesc) Then
-                                If GetDescription(head, Attributed) = "" And GetDescription(head, Commented) <> "" Then
-                                    desc = GetDescription(head, Commented)
-                                Else
-                                    desc = GetDescription(head, Attributed)
-                                End If
+
+
+                                
+
+                                    If GetDescription(head, Attributed) = "" And GetDescription(head, Commented) <> "" Then
+                                        desc = GetDescription(head, Commented)
+                                    Else
+                                        desc = GetDescription(head, Attributed)
+                                    End If
+
                                 If desc = "" Then
                                     desc = GetMemberDescription(.CodeModule.Members, GetUserDefined(head))
                                 End If
                                 
+                                
                                 If desc <> "" Then
-
                                     out = out & GetDeclareLine(head, True) & " ' _" & vbCrLf & desc & vbCrLf & _
                                         "Attribute " & GetUserDefined(head, Attributed) & ".VB_Description = """ & desc & """" & vbCrLf
                                 Else
@@ -462,7 +504,20 @@ Public Function BuildComments(ByVal BuildFunc As BuildFunction, ByRef Frm As For
 nochanges:
     Err.Clear
 End Function
-
+'Public Function GetCodeModule(ByRef VBProjects As VBProjects, ByVal ProjectName As String, ByVal ModuleName As String) As CodeModule
+'    Dim vbproj As VBProject
+'    Dim vbcomp As VBComponent
+'    Dim Member As Member
+'
+'    For Each vbproj In VBProjects
+'        If LCase(vbproj.Name) = LCase(ProjectName) Then
+'            For Each vbcomp In vbproj.VBComponents
+'                Set GetCodeModule = GetCodeModule2(vbcomp)
+'                Exit Function
+'            Next
+'        End If
+'    Next
+'End Function
 Public Sub BuildProject(ByVal FileName As String)
     On Error GoTo nochanges
     On Local Error GoTo nochanges

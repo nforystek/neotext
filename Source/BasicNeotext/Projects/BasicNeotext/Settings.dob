@@ -225,7 +225,7 @@ Private Sub Check3_Click()
         On Error Resume Next
       
   
-        DescriptionsStartup UserDocument.Parent.VBE.VBProjects
+        DescriptionsStartup UserDocument.Parent.VBE
 
 
         If Err.Number <> 0 Then Err.Clear

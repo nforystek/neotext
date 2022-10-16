@@ -185,29 +185,6 @@ Public Sub MSVBRedraw(ByVal IsEnabled As Boolean)
 
 End Sub
 
-Private Function FinCodeModuleByCaption(ByRef VBInstance As VBE, ByVal Caption As String) As CodeModule
-    Dim vbproj As VBProject
-    Dim vbcomp As VBComponent
-    Dim cm As CodeModule
-    
-    Dim Member As Member
-    For Each vbproj In VBInstance.VBProjects
-        For Each vbcomp In vbproj.VBComponents
-            If InStr(Caption, " " & vbcomp.Name & " ") > 0 Then
-                Set cm = GetCodeModule2(vbcomp)
-                If Not cm Is Nothing Then
-                    If cm.CodePane.Window.Caption = Caption Then
-                        Set FinCodeModuleByCaption = cm
-                        Set cm = Nothing
-                        Exit Function
-                    End If
-                End If
-                Set cm = Nothing
-            End If
-            
-        Next
-    Next
-End Function
 
 Private Sub CleanHooks()
     
@@ -254,7 +231,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     End If
     
     If hWndProc = 0 And flagProc Then
-        UpdateAttributeToCommentDescriptions VBInstance.VBProjects
+        UpdateAttributeToCommentDescriptions VBInstance
         CleanHooks
     End If
 
@@ -272,7 +249,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
             
             If Frm.CodeModule Is Nothing Then
                 
-                Set Frm.CodeModule = FinCodeModuleByCaption(VBInstance, GetCaption(Frm.hWnd))
+                Set Frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(Frm.hWnd))
 
             End If
 
