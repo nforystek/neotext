@@ -340,7 +340,7 @@ End Enum
 
 Public Const CP_UNICODE As Long = 1200&
     
-Private Const HWND_MESSAGE As Long = -3
+Public Const HWND_MESSAGE As Long = -3
 
 Public Declare Function GetWindow Lib "user32" (ByVal hwnd As Long, ByVal wCmd As Long) As Long
 Public Const GW_HWNDFIRST = 0
@@ -466,7 +466,8 @@ End Sub
 
 Public Function WindowInitialize(Optional ByVal lpWndProc As Long = -1, Optional ByVal ClassName As String = "", Optional ByVal WindowName As String = "") As Long
 
-'    Dim Class As WNDCLASS
+   ' Dim Class As WNDCLASS
+
 '
 '    Class.style = WS_DISABLED
 '    If lpWndProc = -1 Then
@@ -481,7 +482,7 @@ Public Function WindowInitialize(Optional ByVal lpWndProc As Long = -1, Optional
     
        '  RegisterClass
         Dim hwnd As Long
-        hwnd = CreateWindowEx(ByVal 0&, ClassName, WindowName, 0&, 0&, 0&, 0&, 0&, 0&, 0&, App.hInstance, ByVal 0&)          ' DecaultClassName, WindowName, WS_DISABLED, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, App.hInstance, ByVal 0&)
+        hwnd = CreateWindowEx(ByVal 0&, ClassName, WindowName, 0&, 0&, 0&, 0&, 0&, 0&, 0&, App.hInstance, ByVal 0&)            ' DecaultClassName, WindowName, WS_DISABLED, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, App.hInstance, ByVal 0&)
         
         If lpWndProc = -1 Then
             SetWindowLong hwnd, GWL_WNDPROC, AddressOf WindowDefaultProc

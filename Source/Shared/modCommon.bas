@@ -11,7 +11,7 @@ Private Type POINTAPI
 End Type
 
 Private Type Msg
-    hwnd As Long
+    hWnd As Long
     Message As Long
     wParam As Long
     lParam As Long
@@ -25,8 +25,8 @@ Private Const PM_NOYIELD = &H2
 
 Private Declare Function TranslateMessage Lib "user32" (lpMsg As Msg) As Long
 Private Declare Function DispatchMessage Lib "user32" Alias "DispatchMessageA" (lpMsg As Msg) As Long
-Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hwnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
-Private Declare Function GetMessage Lib "user32" Alias "GetMessageA" (lpMsg As Msg, ByVal hwnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
+Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
+Private Declare Function GetMessage Lib "user32" Alias "GetMessageA" (lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
 
 Public Declare Function GetCurrentThreadId Lib "kernel32" () As Long
 
@@ -35,17 +35,17 @@ Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long,
 Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lParam As Long) As Boolean
 
 Public Declare Function GetCurrentProcessId Lib "kernel32" () As Long
-Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
+Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
 Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal path As String, ByVal cbBytes As Long) As Long
 Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameA" (ByVal hModule As Long, ByVal lpFileName As String, ByVal nSize As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetCurrentProcess Lib "kernel32" () As Long
 
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-Private Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
 
 Private Declare Function IsWow64Process Lib "kernel32" (ByVal hProc As Long, ByRef bWow64Process As Boolean) As Long
-Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleA" (ByVal lpModuleName As String) As Long
 
 Private doStack As Long
@@ -467,25 +467,25 @@ Public Function IsBreakMode() As Boolean
     IsBreakMode = (IsDebugState = 4)
 End Function
 
-Private Function IsDebuggingWinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
+Private Function IsDebuggingWinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
     
     Dim txt As String
     Dim lSize As Long
     txt = VBA.Space$(255)
     lSize = Len(txt)
-    Call GetWindowText(hwnd, txt, lSize)
+    Call GetWindowText(hWnd, txt, lSize)
     If lSize > 0 Then
         txt = Trim(Replace(Left$(txt, lSize), Chr(0), ""))
     End If
    'Debug.Print txt
-    IsDebugHwnds = IsDebugHwnds & hwnd & " "
+    IsDebugHwnds = IsDebugHwnds & hWnd & " "
     If VBA.TypeName(IsDebugState) = "String" Then
         If (InStr(1, txt, IsDebugState, vbTextCompare) > 0) Then
             IsDebugState = "TRUE"
         Else
             IsDebuggingWinEvents = (Not (IsDebugState = "TRUE"))
             If Not IsDebuggingWinEvents Then
-                EnumChildWindows hwnd, AddressOf IsDebuggingWinChildEvents1, lParam
+                EnumChildWindows hWnd, AddressOf IsDebuggingWinChildEvents1, lParam
             End If
         End If
     ElseIf (InStr(1, txt, "Microsoft Visual Basic [design]", vbTextCompare) > 0) Then
@@ -499,22 +499,22 @@ Private Function IsDebuggingWinEvents(ByVal hwnd As Long, ByVal lParam As Long) 
     Else
         IsDebuggingWinEvents = (Not (IsDebugState <> 0))
         If Not IsDebuggingWinEvents Then
-            EnumChildWindows hwnd, AddressOf IsDebuggingWinChildEvents1, lParam
+            EnumChildWindows hWnd, AddressOf IsDebuggingWinChildEvents1, lParam
         End If
     End If
 
 End Function
-Private Function IsDebuggingWinChildEvents1(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
+Private Function IsDebuggingWinChildEvents1(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
     
     Dim txt As String
     Dim lSize As Long
     txt = VBA.Space$(255)
     lSize = Len(txt)
-    Call GetWindowText(hwnd, txt, lSize)
+    Call GetWindowText(hWnd, txt, lSize)
     If lSize > 0 Then
         txt = Trim(Replace(Left$(txt, lSize), Chr(0), ""))
     End If
-    IsDebugHwnds = IsDebugHwnds & hwnd & " "
+    IsDebugHwnds = IsDebugHwnds & hWnd & " "
     If VBA.TypeName(IsDebugState) = "String" Then
         If (InStr(1, txt, IsDebugState, vbTextCompare) > 0) Then
             IsDebugState = "TRUE"
@@ -609,7 +609,7 @@ Public Sub DoTasks()
             EnumWindows AddressOf WinEvents, GetCurrentProcessId
             Do While PeekMessage(dMsg, 0, 0, 0, PM_REMOVE + PM_NOYIELD)
                 TranslateMessage dMsg
-                DispatchMessage dMsg
+                 DispatchMessage dMsg
                  EnumWindows AddressOf WinEvents, GetCurrentProcessId
             Loop
             EnumWindows AddressOf WinEvents, -4
@@ -624,11 +624,11 @@ Public Sub DoTasks()
     
 End Sub
 
-Private Function WinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
+Private Function WinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
     Dim pId As Long
     Static wMsg As Msg
     If (lParam <= 0) And (lParam >= -3) Then
-        If PeekMessage(wMsg, hwnd, 0, 0, PM_REMOVE + PM_NOYIELD) Then
+        If PeekMessage(wMsg, hWnd, 0, 0, PM_REMOVE + PM_NOYIELD) Then
             Do
                 TranslateMessage wMsg
                 DispatchMessage wMsg
@@ -644,18 +644,18 @@ Private Function WinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
             If PeekMessage(wMsg, 0, 0, 0, PM_NOREMOVE + PM_NOYIELD) Then
                 Do
                     Sleep 0
-                Loop While PeekMessage(wMsg, hwnd, 0, 0, PM_NOREMOVE + PM_NOYIELD)
+                Loop While PeekMessage(wMsg, hWnd, 0, 0, PM_NOREMOVE + PM_NOYIELD)
             End If
         End If
     Else
         Dim nMsg As Msg
-        GetWindowThreadProcessId hwnd, pId
-        If (pId = lParam) And IsWindow(hwnd) Then
+        GetWindowThreadProcessId hWnd, pId
+        If (pId = lParam) And IsWindow(hWnd) Then
             If PeekMessage(nMsg, 0, 0, 0, PM_REMOVE + PM_NOYIELD) Then
                 Do
                     TranslateMessage nMsg
                     DispatchMessage nMsg
-                Loop While PeekMessage(nMsg, hwnd, 0, 0, PM_REMOVE + PM_NOYIELD)
+                Loop While PeekMessage(nMsg, hWnd, 0, 0, PM_REMOVE + PM_NOYIELD)
             End If
             WinEvents = True
         End If

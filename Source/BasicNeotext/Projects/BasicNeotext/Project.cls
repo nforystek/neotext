@@ -107,7 +107,7 @@ Public Sub Populate(ByVal URI As String)
     On Error GoTo failit
     On Local Error GoTo failit
     
-    Cleanup
+    Reset
     
     If Not URI = "" Then
         
@@ -172,6 +172,7 @@ Public Sub Populate(ByVal URI As String)
                     pName = NextArg(RemoveArg(pContents, "Attribute VB_Name = """), """")
                 Case "vbp"
                     fldrs = ParseProject(Me, URI)
+                    
                     Do Until fldrs = ""
                         fldr = RemoveNextArg(fldrs, vbCrLf)
                         If PathExists(fldr, True) Then
@@ -201,9 +202,13 @@ Public Sub Populate(ByVal URI As String)
                     Set v = Nothing
                     pLocation = URI
                 Case "bat"
+                Case Else
+                    pLocation = URI
             End Select
         End If
     End If
+        
+    Cleanup
     
     Dim cc As Variant
     
@@ -266,14 +271,18 @@ Public Sub Cleanup()
                 Loop
             End If
     End Select
+
+End Sub
+
+Public Sub Reset()
     Do Until pIncludes.count = 0
         pIncludes.Remove 1
     Loop
     pLocation = ""
     pContents = ""
     pCompiled = ""
-
 End Sub
+
 Private Sub Class_Initialize()
     Set pIncludes = New VBA.Collection
 End Sub

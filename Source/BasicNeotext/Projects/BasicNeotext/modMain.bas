@@ -158,9 +158,9 @@ Public Sub InitialSetup()
 
     End If
         
-    Paths.Add IIf(Path1 = "(not found)", "", Path1), "VisBasic"
-    Paths.Add IIf(Path2 = "(not found)", "", Path2), "MakeNSIS"
-    Paths.Add IIf(Path3 = "(not found)", "", Path3), "SignTool"
+    Paths.add IIf(Path1 = "(not found)", "", Path1), "VisBasic"
+    Paths.add IIf(Path2 = "(not found)", "", Path2), "MakeNSIS"
+    Paths.add IIf(Path3 = "(not found)", "", Path3), "SignTool"
 End Sub
 
 Private Sub InstallSetup()
@@ -345,38 +345,25 @@ Private Function DoCleanCopy() As Boolean
             If PathExists(GetFilePath(Paths("copy2")), False) Then
 
                 Dim ListAllSourceFiles As String
-                ListAllSourceFiles = GatherFileList(Paths("copy1"))
-                'WriteFile Paths("copy1") & "\FileList.txt", tmp
-                
-                Dim InclusionSourceFiles As String
-                InclusionSourceFiles = ApplyExclusions(ListAllSourceFiles)
-                'WriteFile Paths("copy1") & "\FileListExcluding.txt", tmp2
-                
-                Dim ProjectSourceFiles As String
-                ProjectSourceFiles = ApplyExclusions(GatherProjectList(InclusionSourceFiles))
-                'WriteFile Paths("copy1") & "\ProjList.txt", tmp3
-                
-                Dim CodeSourceFiles As String
-                CodeSourceFiles = ApplyExclusions(GatherProjectCodeList(ProjectSourceFiles))
-                'WriteFile Paths("copy1") & "\ProjCodeList.txt", tmp4
+                ListAllSourceFiles = ApplyExclusionFiles(GatherFileList(Paths("copy1")))
                 
                 Dim ListAllDestFiles As String
                 ListAllDestFiles = GatherFileList(Paths("copy2"))
-                'WriteFile Paths("copy1") & "\DestList.txt", tmp5
- 
-                Dim MasterDeleteList As String
-                MasterDeleteList = ApplyExclusions(ListAllDestFiles, False, Replace(Replace(Replace(ProjectSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
-                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp6
-
-                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(CodeSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
-                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp7
                 
-                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(InclusionSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
+                Dim ProjectSourceFileList As String
+                ProjectSourceFileList = GatherProjectList(ListAllSourceFiles)
+
+                Dim CodeSourceFileList As String
+                CodeSourceFileList = GatherProjectCodeList(ProjectSourceFileList)
                 
                 Dim MasterCopyList As String
-                MasterCopyList = ProjectSourceFiles & CodeSourceFiles & InclusionSourceFiles
-                
-                
+                Dim MasterDeleteList As String
+
+                MasterDeleteList = ApplyExclusionFilters(ApplyInclusionFilters(ListAllDestFiles, FilterListing(VisualBasicFilesFilter)), FilterListing(ProjectSourceFileList & CodeSourceFileList))
+                MasterDeleteList = MasterDeleteList & ApplyExclusionFilters(ApplyExclusionFilters(ListAllDestFiles, _
+                                    FilterListing(VisualBasicFilesFilter)), FilterListing(ListAllSourceFiles))
+                MasterCopyList = ApplyExclusionFilters(ListAllSourceFiles, VisualBasicFilesFilter) & ProjectSourceFileList & CodeSourceFileList
+
                 Dim Iterator As String
                 Iterator = MasterDeleteList
                 'delete dest files marked for delete
@@ -393,38 +380,10 @@ Private Function DoCleanCopy() As Boolean
                 Do While Iterator <> ""
                     File = RemoveNextArg(Iterator, vbCrLf)
                     If PathExists(File, True) Then 'ensure not folder
-                        DoFileCopy File, Replace(File, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
+                        DoFileCopy Replace(File, Paths("copy2"), Paths("copy1"), , , vbTextCompare), _
+                                Replace(File, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
                     End If
                 Loop
-
-                
-                Dim ProjectDestFiles As String
-                ProjectDestFiles = GatherProjectList(ListAllDestFiles)
-                'WriteFile Paths("copy1") & "\ProjList.txt", tmp3
-                
-                Dim CodeDestFiles As String
-                CodeDestFiles = GatherProjectCodeList(ProjectDestFiles)
-                'WriteFile Paths("copy1") & "\ProjCodeList.txt", tmp4
-                
-                MasterDeleteList = ApplyExclusions(ListAllDestFiles, False, Replace(Replace(Replace(ProjectSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
-                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp6
-
-                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(CodeSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
-                'WriteFile Paths("copy1") & "\DestDeleteList.txt", tmp7
-                
-                MasterDeleteList = ApplyExclusions(MasterDeleteList, False, Replace(Replace(Replace(InclusionSourceFiles, Left(Paths("copy1"), 2), "??"), "[", "[[]"), "#", "[#]"))
-                                
-                Iterator = MasterDeleteList
-                'delete dest files marked for delete
-                Do While Iterator <> ""
-                    File = RemoveNextArg(Iterator, vbCrLf)
-                    If PathExists(File, True) Then 'ensure not folder
-                        SetAttr File, vbNormal 'kill fails on hiddens
-                        Kill File
-                    End If
-                Loop
-                
-
 
                 'remove any empty dest folders
                 Iterator = ListAllDestFiles
@@ -454,48 +413,184 @@ Private Function DoCleanCopy() As Boolean
     End If
 End Function
 
+Public Function FilterListing(ByVal Listing As String) As String
+    FilterListing = Replace(Listing, Paths("copy1"), Paths("copy2"))
+End Function
 Public Function GatherFileList(ByVal Location As String) As String
     GatherFileList = SearchPath("*", True, Location, FindAll)
 End Function
 
-Public Function ApplyExclusions(ByVal FileListing As String, Optional ByVal UseExcludeFiles As Boolean = True, Optional ByVal Exclusions As String) As String
+Public Function VisualBasicFilesFilter() As String
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.vbg" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.vbp" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.vbw" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.bas" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.cls" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.frm" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.frx" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.ctl" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.ctx" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.pag" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.pgx" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.dob" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.vbd" & vbCrLf
+    
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.dsr" & vbCrLf
+    VisualBasicFilesFilter = VisualBasicFilesFilter & "*.dca" & vbCrLf
+End Function
+
+Public Function ApplyExclusionFiles(ByVal FileListing As String) As String
     Dim line As String
     Dim exez As String
+    Dim backedup As String
+    Dim backedup2 As String
+    Dim Exclusions As String
+    backedup = FileListing
     Do Until FileListing = ""
         line = RemoveNextArg(FileListing, vbCrLf)
-        If UseExcludeFiles And InStr(line, ".") = 0 Then
-            If PathExists(line & "\Exclude.txt", True) Then
-                exez = ReadFile(line & "\Exclude.txt") & vbCrLf & "*" & line & "\Exclude.txt*" & vbCrLf
-                Do Until exez = ""
-                    Exclusions = Exclusions & "*" & line & "\*" & RemoveNextArg(exez, vbCrLf) & "*" & vbCrLf
-                Loop
-                Do While InStr(Exclusions, vbCrLf & vbCrLf) > 0
-                    Exclusions = Replace(Exclusions, vbCrLf & vbCrLf, "")
-                Loop
-                line = ""
-            End If
+        If PathExists(line & "\exclude.txt", True) Then
+            exez = "exclude.txt" & vbCrLf & ReadFile(line & "\exclude.txt")
+            If Not Right(exez, 2) = vbCrLf Then exez = exez & vbCrLf
         End If
+        If PathExists(line & "\.gitignore", True) Then
+            exez = exez & ".gitignore" & vbCrLf & ReadFile(line & "\.gitignore")
+        End If
+        If PathExists(line, False) Then
+            Do Until exez = ""
+                Exclusions = Exclusions & line & "\" & RemoveNextArg(exez, vbCrLf) & vbCrLf
+            Loop
+            Do While InStr(Exclusions, vbCrLf & vbCrLf) > 0
+                Exclusions = Replace(Exclusions, vbCrLf & vbCrLf, vbCrLf)
+            Loop
+        End If
+    Loop
+    ApplyExclusionFiles = ApplyExclusionFilters(backedup, Exclusions)
+End Function
+
+Public Function ApplyExclusionFilters(ByVal FileListing As String, ByVal Exclusions As String) As String
+    Dim line As String
+    Dim exez As String
+    Dim expr As String
+    Dim fldr As String
+    Dim test As String
+    Exclusions = Replace(Replace(Replace(Replace(Exclusions, "[", "[[]"), "#", "[#]"), "(", "[(]"), ")", "[)]")
+    Do Until FileListing = ""
+        line = RemoveNextArg(FileListing, vbCrLf)
         If line <> "" Then
             exez = Exclusions
             Do Until exez = ""
-                If (LCase(line) Like LCase(RemoveNextArg(exez, vbCrLf))) Then
-                    line = ""
-                    Exit Do
+                expr = LCase(RemoveNextArg(exez, vbCrLf))
+                fldr = GetFilePath(expr)
+                If fldr & "\" = LCase(Left(line, Len(fldr) + 1)) Then
+                    test = Replace(LCase(line), fldr & "\", "")
+                Else
+                    test = line
                 End If
+                Do Until test = ""
+                    If (LCase(RemoveNextArg(test, "\")) Like GetFileName(expr)) Then
+                        line = ""
+                        Exit Do
+                    End If
+                Loop
+                If line = "" Then Exit Do
             Loop
-            If line <> "" Then ApplyExclusions = ApplyExclusions & line & vbCrLf
+            If (line <> "") Then ApplyExclusionFilters = ApplyExclusionFilters & line & vbCrLf
         End If
     Loop
+    Do While InStr(ApplyExclusionFilters, vbCrLf & vbCrLf) > 0
+        ApplyExclusionFilters = Replace(ApplyExclusionFilters, vbCrLf & vbCrLf, vbCrLf)
+    Loop
 End Function
+
+
+Public Function ApplyInclusionFilters(ByVal FileListing As String, ByVal Inclusions As String) As String
+    Dim line As String
+    Dim exez As String
+    Dim expr As String
+    Dim fldr As String
+    Dim test As String
+    Inclusions = Replace(Replace(Replace(Replace(Inclusions, "[", "[[]"), "#", "[#]"), "(", "[(]"), ")", "[)]")
+    Do Until FileListing = ""
+        line = RemoveNextArg(FileListing, vbCrLf)
+        If line <> "" Then
+            exez = Inclusions
+            Do Until exez = ""
+                expr = LCase(RemoveNextArg(exez, vbCrLf))
+                fldr = GetFilePath(expr)
+                If fldr & "\" = LCase(Left(line, Len(fldr) + 1)) Then
+                    test = Replace(LCase(line), fldr & "\", "")
+                Else
+                    test = line
+                End If
+                Do Until test = ""
+                    If (LCase(RemoveNextArg(test, "\")) Like GetFileName(expr)) Then
+                        ApplyInclusionFilters = ApplyInclusionFilters & line & vbCrLf
+                        line = ""
+                        Exit Do
+                    End If
+                Loop
+                If line = "" Then Exit Do
+            Loop
+        End If
+    Loop
+    Do While InStr(ApplyInclusionFilters, vbCrLf & vbCrLf) > 0
+        ApplyInclusionFilters = Replace(ApplyInclusionFilters, vbCrLf & vbCrLf, vbCrLf)
+    Loop
+End Function
+
+
+'Public Function ApplyExclusionFilters(ByVal FileListing As String, ByVal Exclusions As String) As String
+'    Dim line As String
+'    Dim exez As String
+'    Do Until FileListing = ""
+'        line = RemoveNextArg(FileListing, vbCrLf)
+'        If line <> "" Then
+'            exez = Replace(Replace(Replace(Replace(Exclusions, "[", "[[]"), "#", "[#]"), "(", "[(]"), ")", "[)]")
+'            Do Until exez = ""
+'                If (LCase(line) Like LCase(RemoveNextArg(exez, vbCrLf))) Then
+'                    line = ""
+'                    Exit Do
+'                End If
+'            Loop
+'            If (line <> "") Then ApplyExclusionFilters = ApplyExclusionFilters & line & vbCrLf
+'        End If
+'    Loop
+'    Do While InStr(ApplyExclusionFilters, vbCrLf & vbCrLf) > 0
+'        ApplyExclusionFilters = Replace(ApplyExclusionFilters, vbCrLf & vbCrLf, vbCrLf)
+'    Loop
+'End Function
+
+'Public Function ApplyInclusionFilters(ByVal FileListing As String, ByVal Inclusions As String) As String
+'    Dim line As String
+'    Dim incz As String
+'    Do Until FileListing = ""
+'        line = RemoveNextArg(FileListing, vbCrLf)
+'        If line <> "" Then
+'            incz = Replace(Replace(Replace(Replace(Inclusions, "[", "[[]"), "#", "[#]"), "(", "[(]"), ")", "[)]")
+'            Do Until incz = ""
+'                If (LCase(line) Like LCase(RemoveNextArg(incz, vbCrLf))) Then
+'                    ApplyInclusionFilters = ApplyInclusionFilters & line & vbCrLf
+'                    Exit Do
+'                End If
+'            Loop
+'        End If
+'    Loop
+'    Do While InStr(ApplyInclusionFilters, vbCrLf & vbCrLf) > 0
+'        ApplyInclusionFilters = Replace(ApplyInclusionFilters, vbCrLf & vbCrLf, vbCrLf)
+'    Loop
+'End Function
 
 Public Function GatherProjectList(ByVal FileListing As String) As String
     Dim line As String
     Do Until FileListing = ""
         line = RemoveNextArg(FileListing, vbCrLf)
         Select Case GetFileExt(line, True, True)
-            Case "vbp"
-                GatherProjectList = GatherProjectList & line & vbCrLf
-            Case "vbg"
+            Case "vbp", "vbg", "vbw"
                 GatherProjectList = GatherProjectList & line & vbCrLf
         End Select
     Loop
@@ -507,17 +602,56 @@ Public Function GatherProjectCodeList(ByVal PrjectList As String) As String
     Dim line As String
     Do Until PrjectList = ""
         line = RemoveNextArg(PrjectList, vbCrLf)
-        Set proj = New Project
-        proj.Populate line
-        For Each inc In proj.Includes
-            Select Case GetFileExt(inc.Location, True, True)
-                Case "bas", "ctl", "frm", "cls", "dob", "pag", "dsr"
-                    If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
-                        GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
-                    End If
-            End Select
-        Next
-        Set proj = Nothing
+        Select Case GetFileExt(line, True, True)
+            Case "vbg", "vbp"
+                Set proj = New Project
+                proj.Populate line
+                For Each inc In proj.Includes
+                    Select Case GetFileExt(inc.Location, True, True)
+                        Case "bas", "cls"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                            End If
+                        Case "frm"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                                If PathExists(Left(inc.Location, Len(inc.Location) - 4) & ".frx", True) Then
+                                    GatherProjectCodeList = GatherProjectCodeList & Left(inc.Location, Len(inc.Location) - 4) & ".frx" & vbCrLf
+                                End If
+                            End If
+                        Case "ctl"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                                If PathExists(Left(inc.Location, Len(inc.Location) - 4) & ".ctx", True) Then
+                                    GatherProjectCodeList = GatherProjectCodeList & Left(inc.Location, Len(inc.Location) - 4) & ".ctx" & vbCrLf
+                                End If
+                            End If
+                        Case "pag"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                                If PathExists(Left(inc.Location, Len(inc.Location) - 4) & ".pgx", True) Then
+                                    GatherProjectCodeList = GatherProjectCodeList & Left(inc.Location, Len(inc.Location) - 4) & ".pgx" & vbCrLf
+                                End If
+                            End If
+                        Case "dob"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                                If PathExists(Left(inc.Location, Len(inc.Location) - 4) & ".vbd", True) Then
+                                    GatherProjectCodeList = GatherProjectCodeList & Left(inc.Location, Len(inc.Location) - 4) & ".vbd" & vbCrLf
+                                End If
+                            End If
+                        Case "dsr"
+                            If InStr(GatherProjectCodeList, inc.Location & vbCrLf) = 0 Then
+                                GatherProjectCodeList = GatherProjectCodeList & inc.Location & vbCrLf
+                                If PathExists(Left(inc.Location, Len(inc.Location) - 4) & ".dca", True) Then
+                                    GatherProjectCodeList = GatherProjectCodeList & Left(inc.Location, Len(inc.Location) - 4) & ".dca" & vbCrLf
+                                End If
+                            End If
+                            
+                    End Select
+                Next
+                Set proj = Nothing
+        End Select
     Loop
 End Function
 
@@ -740,65 +874,65 @@ End Sub
 'End Function
 
 Public Static Sub DoLoop()
-    DoTasks
     DoEvents
+    DoTasks
     modCommon.Sleep 1
                     
-    Static elapse As Single
-    Static latency As Single
-    Static lastlat As Single
-    Static multity As Long
-    If elapse <> 0 Then
-        elapse = Timer - elapse
-        If elapse > latency Then
-            Select Case multity
-                Case 0, 4, 64, 1024
-                    DoEvents
-                Case 1, 8, 128, 256
-                    DoTasks
-                Case 2, 16, 32, 512
-                    If lastlat < 1000 Then modCommon.Sleep lastlat
-            End Select
-            lastlat = elapse - latency
-            multity = multity + 16
-        ElseIf elapse < latency Then
-            Select Case multity
-                Case 0, 4, 64, 1024
-                    DoEvents
-                Case 1, 8, 128, 256
-                    DoTasks
-                Case 2, 16, 32, 512
-                    If lastlat < 1000 Then modCommon.Sleep lastlat
-            End Select
-            lastlat = latency - elapse
-            multity = multity + 4
-        ElseIf lastlat <> 0 Then
-            Select Case multity
-                Case 0, 4, 64, 1024
-                    DoEvents
-                Case 1, 8, 128, 256
-                    DoTasks
-                Case 2, 16, 32, 512
-                    If lastlat < 1000 Then modCommon.Sleep lastlat
-            End Select
-            If lastlat > 0 Then
-                If Not multity = 0 Then
-                    multity = multity \ 2
-                Else
-                    multity = multity + 2
-                End If
-            ElseIf lastlat < 0 Then
-                If Not multity = 1024 Then
-                    multity = multity * 2
-                Else
-                    multity = multity - 2
-                End If
-            End If
-        ElseIf lastlat = 0 Then
-            lastlat = 1
-        End If
-        latency = elapse
-    End If
-    elapse = Timer
+'    Static elapse As Single
+'    Static latency As Single
+'    Static lastlat As Single
+'    Static multity As Long
+'    If elapse <> 0 Then
+'        elapse = Timer - elapse
+'        If elapse > latency Then
+'            Select Case multity
+'                Case 0, 4, 64, 1024
+'                    DoEvents
+'                Case 1, 8, 128, 256
+'                    DoTasks
+'                Case 2, 16, 32, 512
+'                    If lastlat < 1000 Then modCommon.Sleep lastlat
+'            End Select
+'            lastlat = elapse - latency
+'            multity = multity + 16
+'        ElseIf elapse < latency Then
+'            Select Case multity
+'                Case 0, 4, 64, 1024
+'                    DoEvents
+'                Case 1, 8, 128, 256
+'                    DoTasks
+'                Case 2, 16, 32, 512
+'                    If lastlat < 1000 Then modCommon.Sleep lastlat
+'            End Select
+'            lastlat = latency - elapse
+'            multity = multity + 4
+'        ElseIf lastlat <> 0 Then
+'            Select Case multity
+'                Case 0, 4, 64, 1024
+'                    DoEvents
+'                Case 1, 8, 128, 256
+'                    DoTasks
+'                Case 2, 16, 32, 512
+'                    If lastlat < 1000 Then modCommon.Sleep lastlat
+'            End Select
+'            If lastlat > 0 Then
+'                If Not multity = 0 Then
+'                    multity = multity \ 2
+'                Else
+'                    multity = multity + 2
+'                End If
+'            ElseIf lastlat < 0 Then
+'                If Not multity = 1024 Then
+'                    multity = multity * 2
+'                Else
+'                    multity = multity - 2
+'                End If
+'            End If
+'        ElseIf lastlat = 0 Then
+'            lastlat = 1
+'        End If
+'        latency = elapse
+'    End If
+'    elapse = Timer
 End Sub
 

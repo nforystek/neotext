@@ -173,7 +173,7 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
                     End If
                     inLine = ""
                 End If
-            Case "designer", "module", "class", "userdocument", "form", "relateddoc", "usercontrol"
+            Case "designer", "module", "class", "userdocument", "form", "relateddoc", "usercontrol", "resfile32"
                 If InStr(inLine, ";") > 0 Then inLine = RemoveArg(inLine, ";")
                 If PathExists(MapPaths(, inLine, Self.Location), True) Then
                     inLine = MapPaths(, inLine, Self.Location)
@@ -202,7 +202,6 @@ Public Function ParseProject(ByRef Self As Project, ByVal URI As String) As Stri
             Case "name"
                 Self.Name = RemoveQuotedArg(inLine, """", """")
             Case "type"
-            Case "resfile32"
             Case "iconform"
             Case "startup"
             Case "helpfile"
