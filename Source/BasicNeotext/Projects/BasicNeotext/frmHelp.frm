@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmHelp 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Neotext Basic"
-   ClientHeight    =   7725
+   ClientHeight    =   8280
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   9000
@@ -10,25 +10,25 @@ Begin VB.Form frmHelp
    Icon            =   "frmHelp.frx":0000
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   7725
+   ScaleHeight     =   8280
    ScaleWidth      =   9000
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
    Begin VB.CommandButton Command3 
       Caption         =   "&OK"
       Height          =   360
-      Left            =   5670
+      Left            =   5610
       TabIndex        =   31
-      Top             =   7230
+      Top             =   7830
       Visible         =   0   'False
       Width           =   1170
    End
    Begin VB.CommandButton Command2 
       Caption         =   "&OK"
       Height          =   360
-      Left            =   2820
+      Left            =   2760
       TabIndex        =   30
-      Top             =   7230
+      Top             =   7830
       Visible         =   0   'False
       Width           =   1170
    End
@@ -41,18 +41,34 @@ Begin VB.Form frmHelp
       Caption         =   "&OK"
       Default         =   -1  'True
       Height          =   360
-      Left            =   4245
+      Left            =   4185
       TabIndex        =   1
-      Top             =   7224
+      Top             =   7830
       Width           =   1170
    End
    Begin VB.Frame Frame1 
       Caption         =   "Options"
-      Height          =   5748
+      Height          =   6360
       Left            =   120
       TabIndex        =   2
       Top             =   510
       Width           =   8760
+      Begin VB.Label Label30 
+         Caption         =   $"frmHelp.frx":23E2
+         Height          =   645
+         Left            =   2010
+         TabIndex        =   33
+         Top             =   5655
+         Width           =   6465
+      End
+      Begin VB.Label Label29 
+         Caption         =   "/copy sourcefolder destfolder"
+         Height          =   405
+         Left            =   165
+         TabIndex        =   32
+         Top             =   5655
+         Width           =   1635
+      End
       Begin VB.Label Label28 
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
@@ -69,7 +85,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":23E2
+         Caption         =   $"frmHelp.frx":24E3
          ForeColor       =   &H80000008&
          Height          =   600
          Left            =   1995
@@ -81,7 +97,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":24F0
+         Caption         =   $"frmHelp.frx":25F1
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -105,7 +121,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":258F
+         Caption         =   $"frmHelp.frx":2690
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -129,7 +145,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":2649
+         Caption         =   $"frmHelp.frx":274A
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -153,7 +169,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":26FE
+         Caption         =   $"frmHelp.frx":27FF
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -177,7 +193,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":27B2
+         Caption         =   $"frmHelp.frx":28B3
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -201,7 +217,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":285B
+         Caption         =   $"frmHelp.frx":295C
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -249,7 +265,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":2913
+         Caption         =   $"frmHelp.frx":2A14
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -273,7 +289,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":29B0
+         Caption         =   $"frmHelp.frx":2AB1
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -321,7 +337,7 @@ Begin VB.Form frmHelp
          Appearance      =   0  'Flat
          BackColor       =   &H80000005&
          BackStyle       =   0  'Transparent
-         Caption         =   $"frmHelp.frx":2A3A
+         Caption         =   $"frmHelp.frx":2B3B
          ForeColor       =   &H80000008&
          Height          =   405
          Left            =   1995
@@ -344,35 +360,35 @@ Begin VB.Form frmHelp
    End
    Begin VB.Label Label26 
       Alignment       =   2  'Center
-      Caption         =   $"frmHelp.frx":2AE8
-      Height          =   888
-      Left            =   840
+      Caption         =   $"frmHelp.frx":2BE9
+      Height          =   885
+      Left            =   780
       TabIndex        =   27
-      Top             =   6348
-      Width           =   8148
+      Top             =   6945
+      Width           =   8145
    End
    Begin VB.Label Label3 
       BackStyle       =   0  'Transparent
       Caption         =   "VBN[.EXE]"
-      Height          =   336
-      Left            =   240
+      Height          =   330
+      Left            =   195
       TabIndex        =   4
-      Top             =   96
-      Width           =   876
+      Top             =   90
+      Width           =   870
    End
    Begin VB.Label Label2 
       BackStyle       =   0  'Transparent
-      Caption         =   $"frmHelp.frx":2CA6
+      Caption         =   $"frmHelp.frx":2DA7
       Height          =   585
-      Left            =   1320
+      Left            =   1215
       TabIndex        =   3
       Top             =   90
-      Width           =   7572
+      Width           =   7665
    End
    Begin VB.Image Image1 
       Height          =   480
       Left            =   225
-      Picture         =   "frmHelp.frx":2D83
+      Picture         =   "frmHelp.frx":2E94
       Top             =   330
       Visible         =   0   'False
       Width           =   480
@@ -395,7 +411,9 @@ Option Explicit
 'TOP DOWN
 Option Compare Binary
 
-Private Sub Command1_Click()
+Private Sub Command1_Click() ' _
+
+Attribute Command1_Click.VB_Description = ""
     If Command1.Caption = "&No" Then
         Me.Tag = vbNo
         Me.Hide
@@ -404,17 +422,23 @@ Private Sub Command1_Click()
     End If
 End Sub
 
-Private Sub Command2_Click()
+Private Sub Command2_Click() ' _
+
+Attribute Command2_Click.VB_Description = ""
     Me.Tag = vbYes
     Me.Hide
 End Sub
 
-Private Sub Command3_Click()
+Private Sub Command3_Click() ' _
+
+Attribute Command3_Click.VB_Description = ""
     Me.Tag = vbCancel
     Me.Hide
 End Sub
 
-Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer) ' _
+
+Attribute Form_QueryUnload.VB_Description = ""
     If (Command1.Caption = "&No" And UnloadMode = 0) Then
         Cancel = True
         Me.Tag = vbCancel

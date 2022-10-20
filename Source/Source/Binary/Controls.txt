@@ -1,0 +1,6 @@
+    On Error Resume Next
+    Licenses.Add "RICHTEXT.RichtextCtrl.1", " qhj ZtuQha;jdfn[iaetr "
+    Licenses.Add "MsComctlLib.TabStrip", "9368265E-85FE-11d1-8BE3-0000F8754DA1"
+    Licenses.Add "MsComctl2.DTPicker", "651A8940-87C5-11d1-8BE3-0000F8754DA1"
+    If Err Then Err.Clear
+    On Error GoTo 0

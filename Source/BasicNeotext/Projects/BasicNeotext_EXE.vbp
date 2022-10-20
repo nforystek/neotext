@@ -34,7 +34,7 @@ HelpFile=""
 Title="VB 6 Neotext Basic"
 ExeName32="VBN.EXE"
 Path32="..\Binary"
-Command32=" /copy "C:\Development\Neotext" "L:\Development\Neotext""
+Command32="/copy "C:\Development\Neotext" "L:\Development\Neotext""
 Name="BasicNeotext"
 HelpContextID="0"
 Description="VB 6 Neotext Basic"
@@ -64,7 +64,7 @@ UnroundedFP=-1
 StartMode=0
 Unattended=0
 Retained=0
-ThreadPerObject=-1
+ThreadPerObject=0
 MaxNumberOfThreads=1
 DebugStartupOption=0
 

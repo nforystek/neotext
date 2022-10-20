@@ -301,6 +301,7 @@ End Sub
 
 Private Sub Timer1_Timer()
     Timer1.Enabled = False
+    
     Dim elapse As Single
     elapse = Timer
     
@@ -308,18 +309,18 @@ Private Sub Timer1_Timer()
     ItterateDialogs UserDocument.Parent.VBE
     If Err.Number <> 0 Then Err.Clear
     
-    elapse = Timer - elapse
-    
+
+    TimerLoopElapse = (Timer - elapse) * 1000
+
     If QuitFail > -1 Then
-        elapse = elapse + MainLoopElapse + 5
-        If elapse > 1000 Then
-            Timer1.Interval = 100
-        ElseIf elapse < 5 Then
-            Timer1.Interval = 5
-        Else
-            Timer1.Interval = elapse
+
+        If TimerLoopElapse + MainLoopElapse >= 5 And TimerLoopElapse + MainLoopElapse <= 500 Then
+            Timer1.Interval = TimerLoopElapse + MainLoopElapse
         End If
-        Timer1.Enabled = True
+        
+        If Text2(1).Tag <> -2 Then
+            Timer1.Enabled = True
+        End If
     End If
     
 End Sub
@@ -357,6 +358,7 @@ End Sub
 
 Public Sub StopTimer()
     Timer1.Enabled = False
+    Text2(1).Tag = -2
 End Sub
 
 Private Sub UserDocument_Resize()

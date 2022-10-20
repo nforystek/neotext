@@ -95,7 +95,7 @@ Private pThumbY As Single
 
 'the containers for public properties
 Private pOrientation As vbOrientation
-'Private pProportionalThumb As Boolean
+Private pProportionalThumb As Boolean
 
 Private pSmallChange As Long
 Private pLargeChange As Long
@@ -122,12 +122,12 @@ Friend Property Let hProc(ByVal RHS As Long)
     pOldProc = RHS
 End Property
 
-'Public Property Get ProportionalThumb() As Boolean
-'    ProportionalThumb = pProportionalThumb
-'End Property
-'Public Property Let ProportionalThumb(ByVal RHS As Boolean)
-'    pProportionalThumb = RHS
-'End Property
+Public Property Get ProportionalThumb() As Boolean
+    ProportionalThumb = pProportionalThumb
+End Property
+Public Property Let ProportionalThumb(ByVal RHS As Boolean)
+    pProportionalThumb = RHS
+End Property
 
 Private Function IsHorizontal() As Boolean
     IsHorizontal = ((pOrientation = vbOrientation.OrientationAuto And UserControl.Height < UserControl.Width) Or pOrientation = vbOrientation.OrientationHorizontal)
@@ -173,6 +173,8 @@ End Sub
 
 Private Function GetSliderRect() As RECT
     Dim tmpRct As RECT
+    Dim tmpVal As Single
+    
     If IsHorizontal Then
 
         With tmpRct
@@ -180,21 +182,24 @@ Private Function GetSliderRect() As RECT
             .Right = rCanvas.Right - .Left
             .Bottom = .Left
             .Top = 0
-            
+            If pProportionalThumb Then
+                tmpVal = (pLargeChange * (rScroll.Right - rScroll.Left) / (pMax - pMin + 1))
+                If tmpVal < rCanvas.Bottom Then tmpVal = rCanvas.Bottom
+            Else
+                tmpVal = rCanvas.Bottom
+            End If
             If pThumbValue <> 0 Then 'draw at thumb locatoin
-                If .Left + (pThumbValue / Screen.TwipsPerPixelX) > .Right - rCanvas.Bottom Then
-                    .Left = (.Right - rCanvas.Bottom)
+                If .Left + (pThumbValue / Screen.TwipsPerPixelX) > .Right - tmpVal Then
+                    .Left = (.Right - tmpVal)
                 ElseIf Not (.Left + (pThumbValue / Screen.TwipsPerPixelX) < .Left) Then
                     .Left = (.Left + (pThumbValue / Screen.TwipsPerPixelX))
                 End If
-
             ElseIf ScrollAmount > 0 Then 'draw at value location
-                .Left = .Left + (((((.Right * Screen.TwipsPerPixelX) - ((rCanvas.Bottom * _
-                    Screen.TwipsPerPixelX) * 2)) / ScrollAmount) * pValue) / Screen.TwipsPerPixelX)
-            
+                .Left = .Left + (((((.Right * Screen.TwipsPerPixelX) - ((rCanvas.Bottom * Screen.TwipsPerPixelX) * 2)) / ScrollAmount) * pValue) / Screen.TwipsPerPixelX)
+                If .Left + (pThumbValue / Screen.TwipsPerPixelX) > .Right - tmpVal Then .Left = (.Right - tmpVal)
             End If
                 
-            .Right = .Left + rCanvas.Bottom
+            .Right = .Left + tmpVal
             
         End With
         If tmpRct.Left >= rButton1.Right And tmpRct.Right <= rButton2.Left Then
@@ -209,20 +214,25 @@ Private Function GetSliderRect() As RECT
             .Right = .Top
             .Bottom = rCanvas.Bottom - .Top
             .Left = 0
-            
+            If pProportionalThumb Then
+                tmpVal = (pLargeChange * (rScroll.Bottom - rScroll.Top) / (pMax - pMin + 1))
+                If tmpVal < rCanvas.Right Then tmpVal = rCanvas.Right
+            Else
+                tmpVal = rCanvas.Right
+            End If
+
             If pThumbValue <> 0 Then 'draw at thumb locatoin
-                If .Top + (pThumbValue / Screen.TwipsPerPixelY) > .Bottom - rCanvas.Right Then
-                    .Top = (.Bottom - rCanvas.Right)
+                If .Top + (pThumbValue / Screen.TwipsPerPixelY) > .Bottom - tmpVal Then
+                    .Top = (.Bottom - tmpVal)
                 ElseIf Not (.Top + (pThumbValue / Screen.TwipsPerPixelY) < .Top) Then
                     .Top = (.Top + (pThumbValue / Screen.TwipsPerPixelY))
                 End If
-                
             ElseIf ScrollAmount > 0 Then 'draw at value location
-                .Top = .Top + (((((.Bottom * Screen.TwipsPerPixelY) - ((rCanvas.Right * _
-                    Screen.TwipsPerPixelY) * 2)) / ScrollAmount) * pValue) / Screen.TwipsPerPixelY)
+                .Top = .Top + (((((.Bottom * Screen.TwipsPerPixelY) - ((rCanvas.Right * Screen.TwipsPerPixelY) * 2)) / ScrollAmount) * pValue) / Screen.TwipsPerPixelY)
+                If .Top + (pThumbValue / Screen.TwipsPerPixelY) > .Bottom - tmpVal Then .Top = (.Bottom - tmpVal)
             End If
                 
-            .Bottom = .Top + rCanvas.Right
+            .Bottom = .Top + tmpVal
         End With
         If tmpRct.Top >= rButton1.Bottom And tmpRct.Bottom <= rButton2.Top Then
             GetSliderRect = tmpRct
@@ -686,9 +696,11 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
                     SendScrollBarValue SB_THUMBPOSITION
 
                     rSlider = GetSliderRect
+                    
                     If ScrollAmount > 0 Then
                         Value = (((pThumbValue / (ScrollableSpace / ScrollAmount))) \ pSmallChange) * pSmallChange
                     End If
+                    
 
                     pThumbValue = 0
                 End If
@@ -845,7 +857,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     LargeChange = PropBag.ReadProperty("LargeChange", 4)
     AutoRedraw = PropBag.ReadProperty("AutoRedraw", True)
 
-    'ProportionalThumb = PropBag.ReadProperty("ProportionalThumb", True)
+    ProportionalThumb = PropBag.ReadProperty("ProportionalThumb", True)
 
     Paint
 End Sub
@@ -857,7 +869,7 @@ Private Sub UserControl_InitProperties()
     SmallChange = 1
     LargeChange = 4
     AutoRedraw = True
-    'ProportionalThumb = True
+    ProportionalThumb = False
 
     Paint
 End Sub
@@ -880,6 +892,6 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "LargeChange", LargeChange, 4
     PropBag.WriteProperty "AutoRedraw", AutoRedraw, True
     
-    'PropBag.WriteProperty "ProportionalThumb", ProportionalThumb
+    PropBag.WriteProperty "ProportionalThumb", ProportionalThumb
     
 End Sub
