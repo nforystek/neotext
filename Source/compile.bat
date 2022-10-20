@@ -229,7 +229,43 @@ echo Sesetting databses to clear test information for packing...
 "C:\Development\Neotext\RemindMe\Binary\Utility.exe" /setupreset
 rem "C:\Development\Neotext\KadPatch\Binary\KadPatch.exe" /setupreset
 
-echo Signing all EXE's and DLL's to be packed...
+
+echo Sign and time stamping all EXE's and DLL's to be packed...
+
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTCipher10.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTNodes10.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTSchedule20.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTPopup21.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTShell22.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTSound20.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTSoSweet.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTService20.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTAdvFTP61.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTControls22.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTControls30.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTImaging10.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Blacklawn\Projects\Blacklawn.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Blacklawn\Projects\BlkLServer.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\To-Doster\Projects\ToDoster.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Max-FTP\Projects\MaxIDE.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Max-FTP\Projects\MaxFTP.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Max-FTP\Projects\MaxService.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Max-FTP\Projects\MaxUtility.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\MaxLand\Projects\MaxLandApp.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\RemindMe\Projects\RmdMeSrv.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\RemindMe\Projects\RemindMe.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\RemindMe\Projects\Utility.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Creata-Tree\Projects\CreataTree.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Sequencer\Projects\SoSouiXSeq.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\IdentAuth\Projects\Reload.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\IdentAuth\Projects\Ident.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\CrayonStill\Projects\CrayonStall.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\CrayonStill\Projects\CrayonStiff.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\CrayonStill\Projects\CrayonStill.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\InstallerStar\Projects\Wizard.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\InstallerStar\Projects\Remove.vbp"
+
 
 
 "C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_DLL.vbp" /d VBIDE=0:modRegistry=-1
@@ -285,20 +321,20 @@ cd \Development\Neotext\InstallerStar\Binary
 Wizard.exe /compile IdentAuth
 
 
-rem echo 10. Packing KadPatch
-rem cd \Development\Neotext\InstallerStar\Binary
-rem Wizard.exe /compile KadPatch
-
-rem echo 11. Packing Schematical 
-rem cd \Development\Neotext\InstallerStar\Binary
-rem Wizard.exe /compile Schematical
-
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Max-FTP\Deploy\Max-FTP v6.1.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Blacklawn\Deploy\Blacklawn v1.1.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\HouseOfGlass\Deploy\HouseOfGlass v1.0.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Creata-Tree\Deploy\Creata-Tree v3.1.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\MaxLand\Deploy\MaxLand v2.2.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\RemindMe\Deploy\RemindMe v2.1.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\To-Doster\Deploy\To-Doster v1.2.0.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Sequencer\Deploy\Sequencer v5.0.5.exe"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\IdentAuth\Deploy\IdentAuth v7.1.0.exe"
 
 
 echo Done. 
 
 "C:\Program Files\NSIS\makensis.exe" /V1 "C:\Development\Neotext\BasicNeotext\Deploy\BasicNeotext v3.0.0.nsi"
-
 
 
 "C:\Program Files\Microsoft Visual Studio\VB98\Uninstall.exe" /S
