@@ -13,12 +13,9 @@ Module=modNCode; ..\..\Shared\modNCode.bas
 RelatedDoc=BasicNeotext\OUTLINE.TXT
 Module=modParsing; BasicNeotext\modParsing.bas
 Module=modGuid; ..\..\Shared\modGUID.bas
-Module=modProjProp; BasicNeotext\modProjProp.bas
-Module=modDescription; BasicNeotext\modDescription.bas
 Module=modRegistry; ..\..\Shared\modRegistry.bas
 Module=modMemory; ..\..\Shared\modMemory.bas
 Module=modForms; ..\..\Shared\modForms.bas
-Designer=BasicNeotext\Connect.Dsr
 Class=Registry; ..\..\Shared\Registry.cls
 UserDocument=BasicNeotext\Settings.dob
 Form=BasicNeotext\frmRestrict.frm
@@ -28,6 +25,9 @@ Class=ISettings; BasicNeotext\ISettings.cls
 Form=BasicNeotext\frmHelp.frm
 Class=FormHWnd; BasicNeotext\FormHWnd.cls
 Class=VBI; BasicNeotext\VBI.cls
+Module=modProjProp; BasicNeotext\modProjProp.bas
+Module=modDescription; BasicNeotext\modDescription.bas
+Designer=BasicNeotext\Connect.Dsr
 IconForm="frmHelp"
 Startup="Sub Main"
 HelpFile=""
@@ -50,7 +50,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="BasicNeotext"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="BasicNeotext"
-CondComp="BasicNeotext = -1 : VBIDE = 0 : modRegistry = -1 : modCommon = -1 : modMain = -1 : modProcess = -1 : modFolders = -1 : modUserInfo = -1 : modNCode = -1 : modParsing = -1 : modGuid = -1 : modDebug = -1 : modHotKey = -1 : modSendKeys = -1 : modWin32Ver = -1 : modDoTasks = -1 : modDescription = -1 : modProjPropAPI = -1 : modProjProp = -1 : modMemory = -1 : modCodeHeaders = -1 : modTimer = -1 : modWindow = -1 : modForms = -1"
+CondComp="BasicNeotext=-1:VBIDE=0:modRegistry=-1:modCommon=-1:modMain=-1:modProcess=-1:modFolders=-1:modUserInfo=-1:modNCode=-1:modParsing=-1:modGuid=-1:modDebug=-1:modHotKey=-1:modSendKeys=-1:modWin32Ver=-1:modDoTasks=-1:modDescription=-1:modProjPropAPI=-1:modProjProp=-1:modMemory=-1:modCodeHeaders=-1:modTimer=-1:modWindow=-1:modForms=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -72,4 +72,4 @@ DebugStartupOption=0
 AutoRefresh=0
 
 [Neotext]
-CompCond="modCommon=-1:modMain=-1:modProcess=-1:modFolders=-1:modUserInfo=-1:modNCode=-1:modParsing=-1:modGuid=-1:modProjProp=-1:modDescription=-1:modRegistry=-1:modMemory=-1:modForms=-1"
+CompCond="modCommon=-1:modMain=-1:modProcess=-1:modFolders=-1:modUserInfo=-1:modNCode=-1:modParsing=-1:modGuid=-1:modRegistry=-1:modMemory=-1:modForms=-1:modProjProp=-1:modDescription=-1"

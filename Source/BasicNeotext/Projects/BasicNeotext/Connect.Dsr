@@ -174,34 +174,28 @@ Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileTyp
             'BuildComments CommentsToAttribute, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileName))
             BuildFileDescriptions FileName, False
         End If
-    Else
-        If GetFileExt(FileName, True, True) = "vbp" Then
-            BuildProject FileName
-        End If
     End If
+    If GetFileExt(FileName, True, True) = "vbp" Then
+        BuildProject FileName
+    End If
+
 End Sub
 
 Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() As String)
     Dim cnt As Long
-    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-        For cnt = LBound(FileNames) To UBound(FileNames)
-            If PathExists(FileNames(cnt), True) Then
-                If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
-
-                End If
-                BuildFileDescriptions FileNames(cnt), True
-                'BuildComments AttributeToComments, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileNames(cnt)))
-            End If
-        Next
-    Else
-        For cnt = LBound(FileNames) To UBound(FileNames)
+    
+    For cnt = LBound(FileNames) To UBound(FileNames)
+        If PathExists(FileNames(cnt), True) Then
             If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
-                If PathExists(FileNames(cnt), True) Then
-                    BuildProject FileNames(cnt)
-                End If
+                BuildProject FileNames(cnt)
             End If
-        Next
-    End If
+            If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+                BuildFileDescriptions FileNames(cnt), True
+            End If
+            'BuildComments AttributeToComments, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileNames(cnt)))
+        End If
+    Next
+
 End Sub
 
 Private Function GetUIState() As UIStates
@@ -352,8 +346,8 @@ End Sub
 Private Sub AddinInstance_OnBeginShutdown(custom() As Variant)
     On Error GoTo exitthis
     On Local Error GoTo exitthis
-    
-    docSettings.StopTimer
+
+    MSVBRedraw True
     
 '    Dim cP As Window
 '    For Each cP In VBInstance.Windows
@@ -387,12 +381,12 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set cmdButton1 = CmdBar.Controls.Add(msoControlButton)
     cmdButton1.Caption = "Sign"
     cmdButton1.ToolTipText = "Code Sign Executable"
-    cmdButton1.style = msoButtonIcon
+    cmdButton1.Style = msoButtonIcon
     cmdButton1.faceid = 30 '20
     Set cmdBarBtn4 = CmdBar.Controls.Add(msoControlButton)
     cmdBarBtn4.Caption = "Options"
     cmdBarBtn4.ToolTipText = "Options"
-    cmdBarBtn4.style = msoButtonIcon
+    cmdBarBtn4.Style = msoButtonIcon
     cmdBarBtn4.faceid = 162
 '    Set cmdBarBtn5 = CmdBar.Controls.Add(msoControlButton)
 '    cmdBarBtn5.Caption = "Sign"
@@ -403,27 +397,27 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     cmdButton6.BeginGroup = True
     cmdButton6.Caption = "Remake Pro&ject Build"
     cmdButton6.ToolTipText = "Remake Project Executable"
-    cmdButton6.style = msoButtonIcon
+    cmdButton6.Style = msoButtonIcon
     cmdButton6.faceid = 37
     Set cmdButton5 = CmdBar.Controls.Add(msoControlButton)
     cmdButton5.Caption = "Start &The Executable"
     cmdButton5.ToolTipText = "Start the Executable Only"
-    cmdButton5.style = msoButtonIcon
+    cmdButton5.Style = msoButtonIcon
     cmdButton5.faceid = 459
     Set cmdButton3 = CmdBar.Controls.Add(msoControlButton)
     cmdButton3.Caption = "Make..."
     cmdButton3.ToolTipText = "Make Project Dialog"
-    cmdButton3.style = msoButtonIcon
+    cmdButton3.Style = msoButtonIcon
     cmdButton3.faceid = 215
     Set cmdButton2 = CmdBar.Controls.Add(msoControlButton)
     cmdButton2.Caption = "Start With &Full Compile"
     cmdButton2.ToolTipText = "Start With Full Compile"
-    cmdButton2.style = msoButtonIcon
+    cmdButton2.Style = msoButtonIcon
     cmdButton2.faceid = 539
     Set cmdButton8 = CmdBar.Controls.Add(msoControlButton)
     cmdButton8.Caption = "Stop the E&xecutable"
     cmdButton8.ToolTipText = "Stop the E&xecutable"
-    cmdButton8.style = msoButtonIcon
+    cmdButton8.Style = msoButtonIcon
     cmdButton8.faceid = 348
         
 '    Set cmdBarBtn1 = VBInstance.CommandBars("Run").Controls("&Start").Copy(CmdBar)
@@ -579,6 +573,8 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     On Error GoTo exitthis
     On Local Error GoTo exitthis
     
+    docSettings.StopTimer
+    
     If Not CmdBar Is Nothing Then
         SaveSetting "BasicNeotext", "Options", "ToolBar_Position", CmdBar.Position
         SaveSetting "BasicNeotext", "Options", "ToolBar_RowIndex", CmdBar.RowIndex
@@ -711,7 +707,7 @@ Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
 End Sub
 
 Private Sub AddinInstance_Terminate()
-
+    QuitFail = -1
     Set FCE = Nothing
 End Sub
 
@@ -934,39 +930,39 @@ Private Function ShowMessage(ByVal Title As String, ByVal Message As String, ByV
     Static onetatime As Boolean
     If Not onetatime Then
         onetatime = True
-        Dim Frm As New frmHelp
-        Frm.Command2.Caption = "&Yes"
-        Frm.Command1.Caption = "&No"
-        Frm.Command3.Caption = "&Cancel"
-        If IncludeCancel Then Frm.Command3.Visible = True
-        Frm.Command2.Visible = True
-        Frm.Label26.Visible = False
-        Frm.Frame1.Visible = False
-        Frm.Label3.Visible = False
-        Frm.Command2.Top = 1020 ' frm.Frame1.Top
-        Frm.Height = 1935 'frm.Frame1.Top + frm.Command2.Height + (frm.Height - (frm.Command2.Top + frm.Command2.Height))
-        Frm.Command1.Top = 1020 ' frm.Frame1.Top
-        Frm.Command3.Top = 1020 ' frm.Frame1.Top
-        Frm.Label2.Caption = Message
-        Frm.Image1.Visible = True
-        Frm.Caption = Title
-        Frm.Label2.Width = Frm.Label2.Width - 2000
-        Frm.Command1.Left = Frm.Command1.Left - 2000
-        Frm.Command2.Left = Frm.Command2.Left - 2000
-        Frm.Command3.Left = Frm.Command3.Left - 2000
+        Dim frm As New frmHelp
+        frm.Command2.Caption = "&Yes"
+        frm.Command1.Caption = "&No"
+        frm.Command3.Caption = "&Cancel"
+        If IncludeCancel Then frm.Command3.Visible = True
+        frm.Command2.Visible = True
+        frm.Label26.Visible = False
+        frm.Frame1.Visible = False
+        frm.Label3.Visible = False
+        frm.Command2.Top = 1020 ' frm.Frame1.Top
+        frm.Height = 1935 'frm.Frame1.Top + frm.Command2.Height + (frm.Height - (frm.Command2.Top + frm.Command2.Height))
+        frm.Command1.Top = 1020 ' frm.Frame1.Top
+        frm.Command3.Top = 1020 ' frm.Frame1.Top
+        frm.Label2.Caption = Message
+        frm.Image1.Visible = True
+        frm.Caption = Title
+        frm.Label2.Width = frm.Label2.Width - 2000
+        frm.Command1.Left = frm.Command1.Left - 2000
+        frm.Command2.Left = frm.Command2.Left - 2000
+        frm.Command3.Left = frm.Command3.Left - 2000
         If Not IncludeCancel Then
-            Frm.Command2.Left = Frm.Command1.Left
-            Frm.Command1.Left = Frm.Command3.Left
+            frm.Command2.Left = frm.Command1.Left
+            frm.Command1.Left = frm.Command3.Left
         End If
-        Frm.Width = Frm.Width - 3000
-        Frm.Tag = 0
-        Frm.Show
-        TopMostForm Frm, True, True
-        Do Until Frm.Tag <> 0
+        frm.Width = frm.Width - 3000
+        frm.Tag = 0
+        frm.Show
+        TopMostForm frm, True, True
+        Do Until frm.Tag <> 0
             DoTasks
         Loop
-        ShowMessage = Frm.Tag
-        Unload Frm
+        ShowMessage = frm.Tag
+        Unload frm
         onetatime = False
     End If
 End Function

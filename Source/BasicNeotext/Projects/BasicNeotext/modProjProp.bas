@@ -139,44 +139,18 @@ Private hWndCode As String
 
 Public Sub MSVBRedraw(ByVal IsEnabled As Boolean)
     Static DisHwnd As Long
-    Dim cnt As Long
     
     If (hWndMSVB <> 0) And ((Not IsEnabled) And (DisHwnd = 0)) Then
         DisHwnd = hWndMSVB
 
-        
-'        If Hooks.count > 0 Then
-'            For cnt = 1 To Hooks.count
-'                Hooks(cnt).SaveVisibility
-'               ' SendMessage Hooks(cnt).hWnd, WM_SETREDRAW, 0, ByVal 0&
-'            Next
-'        End If
-        
         SendMessage hWndMSVB, WM_SETREDRAW, 0, ByVal 0&
         
-        
     End If
+    
     If (hWndMSVB <> 0) And (IsEnabled And (DisHwnd <> 0)) Then
 
-
-'        If Hooks.count > 0 Then
-'            For cnt = 1 To Hooks.count
-'                If Hooks(cnt).Visible Then
-'                    Hooks(cnt).Show
-'                Else
-'                    Hooks(cnt).Hide
-'                End If
-'            Next
-'        End If
-
-        
         SendMessage hWndMSVB, WM_SETREDRAW, 1, ByVal 0&
-'        If Hooks.count > 0 Then
-'            For cnt = 1 To Hooks.count
-'                SendMessage Hooks(cnt).hWnd, WM_SETREDRAW, 1, ByVal 0&
-'            Next
-'        End If
-
+        
         RedrawWindow hWndMSVB, ByVal 0&, ByVal 0&, RDW_ALLCHILDREN Or RDW_ERASE Or RDW_FRAME Or RDW_INVALIDATE
 
         DisHwnd = 0
@@ -242,14 +216,14 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     
     If Hooks.count > 0 Then
 
-        Dim Frm As FormHWnd
-        For Each Frm In Hooks
+        Dim frm As FormHWnd
+        For Each frm In Hooks
 
-            Frm.SaveVisibility
+            frm.SaveVisibility
             
-            If Frm.CodeModule Is Nothing Then
+            If frm.CodeModule Is Nothing Then
                 
-                Set Frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(Frm.hWnd))
+                Set frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hWnd))
 
             End If
 
@@ -284,15 +258,15 @@ End Function
 
 Private Function SubCheckHwnds(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
 
-    Dim pid As Long
+    Dim pId As Long
     Dim txt As String
     txt = GetCaption(hWnd)
     
     Dim cls As String
     cls = GetClass(hWnd)
     
-    If GetWindowThreadProcessId(hWnd, pid) Then
-        If pid = VBPID Then
+    If GetWindowThreadProcessId(hWnd, pId) Then
+        If pId = VBPID Then
         
             If (txt = "Con&ditional Compilation Arguments:") And hWndProp = 0 Then
                 hWndProp = GetWindow(hWnd, GW_HWNDNEXT)
@@ -316,18 +290,18 @@ Private Function SubCheckHwnds(ByVal hWnd As Long, ByVal lParam As Long) As Bool
                 Dim VBI As VBI
                 Set VBI = PtrObj(lParam)
                 
-                Dim Frm As FormHWnd
-                Set Frm = New FormHWnd
+                Dim frm As FormHWnd
+                Set frm = New FormHWnd
                 
-                Frm.hWnd = hWnd
+                frm.hWnd = hWnd
                 
-                Frm.SaveVisibility
+                frm.SaveVisibility
                 
                 MSVBRedraw False
                 
-                Hooks.Add Frm, "h" & hWnd
+                Hooks.Add frm, "h" & hWnd
 
-                Set Frm = Nothing
+                Set frm = Nothing
                 Set VBI = Nothing
 
                 MSVBRedraw True

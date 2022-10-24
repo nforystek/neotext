@@ -8,7 +8,7 @@ Module=modMemory; ..\..\Shared\modMemory.bas
 Module=modGraphics; ..\..\Shared\modGraphics.bas
 Class=IControl; NTControls30\IControl.cls
 Module=modBitValue; ..\..\Shared\modBitValue.bas
-UserControl=NTControls30\Neotext.ctl
+UserControl=NTControls30\TextBox.ctl
 Class=Backbuffer; NTControls30\Backbuffer.cls
 UserControl=NTControls30\ScrollBar.ctl
 Startup="(None)"
@@ -32,7 +32,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Common Controls"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Computer Science"
-CondComp="NTControls30=-1:VBIDE=-1:Module1=-1:modCommon=-1:modEditor=-1:modMemory=-1:modColorMat=-1:modGraphics=-1:modBackBuffer=-1:modBitValue=-1"
+CondComp="NTControls30 = -1 : VBIDE = -1 : Module1 = -1 : modCommon = -1 : modEditor = -1 : modMemory = -1 : modColorMat = -1 : modGraphics = -1 : modBackBuffer = -1 : modBitValue = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -50,7 +50,7 @@ ThreadPerObject=0
 MaxNumberOfThreads=1
 ThreadingModel=1
 DebugStartupOption=1
-DebugStartupComponent=Neotext
+DebugStartupComponent=Textbox
 
 [MS Transaction Server]
 AutoRefresh=1

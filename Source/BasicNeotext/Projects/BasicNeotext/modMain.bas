@@ -296,13 +296,14 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
         Dim LoopLatency As Single
         LoopLatency = Timer
         
-        LastRun = Trim(Trim(path) & " " & Trim(Params))
+        LastRun = """" & Trim(Trim(path) & """ " & Trim(Params))
         
         VBPID = Shell(LastRun, IIf(Hide, vbHide, vbNormalFocus))
 
         If (VBPID > 0) Then
 
             Do While ((IsProccessIDRunning(VBPID) Or QuitCall) And Wait) And (Not QuitFail = -1)
+                
                 
                 MainLoopElapse = (Timer - LoopLatency) * 1000
                 If MainLoopElapse + TimerLoopElapse >= 5 And MainLoopElapse + TimerLoopElapse <= 500 Then
@@ -315,7 +316,7 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
                 
                 LoopLatency = Timer
                 
-                DoTasks
+                DoLoop
                 
                 If QuitCall Then
                     If (Not IsProccessIDRunning(VBPID)) Then
@@ -323,15 +324,13 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
                         QuitCall = False
                     End If
                 End If
-
-                DoTasks
                 
-                If (Not QuitCall) Then
+                If (Not QuitCall) And InStr(LCase(LastRun), "vb6.exe") > 0 Then
                     If (ProcessRunning("VB6.EXE") = 0) Then
-                        'If IsProccessIDRunning(VBPID) Then
+                        If IsProccessIDRunning(VBPID) Then
                             QuitFail = -1
                             KillApp "VBN.EXE"
-                        'End If
+                        End If
                     End If
                 End If
             Loop
@@ -344,9 +343,9 @@ Private Function DoCleanCopy() As Boolean
 
     DoCleanCopy = True
     On Error Resume Next
-    Dim file As String
-    file = Paths("copy1")
-    file = Paths("copy2")
+    Dim File As String
+    File = Paths("copy1")
+    File = Paths("copy2")
     If Err.Number = 0 Then
 
         If PathExists(Paths("copy1"), False) Then
@@ -384,30 +383,30 @@ Private Function DoCleanCopy() As Boolean
                 Iterator = MasterDeleteList
                 'delete dest files marked for delete
                 Do While Iterator <> ""
-                    file = RemoveNextArg(Iterator, vbCrLf)
-                    If PathExists(file, True) Then 'ensure not folder
-                        SetAttr file, vbNormal 'kill fails on hiddens
-                        Kill file
+                    File = RemoveNextArg(Iterator, vbCrLf)
+                    If PathExists(File, True) Then 'ensure not folder
+                        SetAttr File, vbNormal 'kill fails on hiddens
+                        Kill File
                     End If
                 Loop
 
                 'copy files marked for copying
                 Iterator = MasterCopyList
                 Do While Iterator <> ""
-                    file = RemoveNextArg(Iterator, vbCrLf)
-                    If PathExists(file, True) Then 'ensure not folder
-                        DoFileCopy Replace(file, Paths("copy2"), Paths("copy1"), , , vbTextCompare), _
-                                Replace(file, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
+                    File = RemoveNextArg(Iterator, vbCrLf)
+                    If PathExists(File, True) Then 'ensure not folder
+                        DoFileCopy Replace(File, Paths("copy2"), Paths("copy1"), , , vbTextCompare), _
+                                Replace(File, Paths("copy1"), Paths("copy2"), , , vbTextCompare)
                     End If
                 Loop
 
                 'remove any empty dest folders
                 Iterator = ListAllDestFiles
                 Do While Iterator <> ""
-                    file = RemoveNextArg(Iterator, vbCrLf)
-                    If PathExists(file, False) Then 'ensure only folders
-                        If Replace(Replace(SearchPath("*", True, file, FindAll), file & vbCrLf, ""), vbCrLf, "") = "" Then
-                            RemovePath file
+                    File = RemoveNextArg(Iterator, vbCrLf)
+                    If PathExists(File, False) Then 'ensure only folders
+                        If Replace(Replace(SearchPath("*", True, File, FindAll), File & vbCrLf, ""), vbCrLf, "") = "" Then
+                            RemovePath File
                         End If
                     End If
                 Loop
@@ -494,7 +493,7 @@ Public Function ApplyExclusionFilters(ByVal FileListing As String, ByVal Exclusi
     Dim expr As String
     Dim fldr As String
     Dim test As String
-    Dim file As String
+    Dim File As String
     Do Until FileListing = ""
         line = RemoveNextArg(FileListing, vbCrLf)
         If line <> "" Then
@@ -641,10 +640,10 @@ End Sub
 
 Public Static Sub DoLoop()
     
+    DoEvents
+    modCommon.Sleep 1
+    DoTasks
 
-    'DoTasks
-   ' DoEvents
-    'modCommon.Sleep 1
                     
 '    Static elapse As Single
 '    Static latency As Single

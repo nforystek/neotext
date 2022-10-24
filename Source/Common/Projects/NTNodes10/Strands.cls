@@ -831,8 +831,8 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
     If Behave <> Nothings_Initialized Then
         Dim lSize As Long
         lSize = Length
-        Dim lSize2 As Long
-        lSize2 = SubStream.Length
+'        Dim lSize2 As Long
+'        lSize2 = SubStream.Length
         
         Stream.Pyramid SubStream, Offset, Width
         
@@ -902,13 +902,13 @@ Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
             Stream.Length = (nSize + lSize)
 '            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
 '                Case Behaviors.ScopeGlobal
-'                    'If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
-'                    Stream.Address = GlobalReAlloc(Stream.Address, (nSize + lSize), modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
-'                    'If Pointer <> GlobalLock(Pointer) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+'                    If GlobalUnlock(Stream.Address) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
+'                    'Stream.Address = GlobalReAlloc(Stream.Address, (nSize + lSize), modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
+'                    If Pointer <> GlobalLock(Stream.Address) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
 '                Case Behaviors.ScopeLocale
-'                    'If LocalUnlock(Pointer) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
-'                    Stream.Address = LocalReAlloc(Stream.Address, (nSize + lSize), LMEM_MOVEABLE Or lPtr)
-'                    'If Pointer <> LocalLock(Pointer) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+'                    If LocalUnlock(Stream.Address) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
+'                    'Stream.Address = LocalReAlloc(Stream.Address, (nSize + lSize), LMEM_MOVEABLE Or lPtr)
+'                    If Pointer <> LocalLock(Stream.Address) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
 '                Case Else
 '                    Stream.Address = HeapReAlloc(GetProcessHeap, 0, Stream.Address, (nSize + lSize))
 '            End Select

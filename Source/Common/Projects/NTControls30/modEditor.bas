@@ -423,7 +423,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
     
     If SubClassed.count > 0 Then
         Dim frm2 As ScrollBar
-        Dim frm3 As Neotext
+        Dim frm3 As Textbox
         Dim pt As POINTAPI
         Dim st As SetTextEx
         Dim txt As TextRange
@@ -470,7 +470,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
                     End If
                     Set frm2 = Nothing
                     
-                ElseIf TypeName(SubClassed(cnt)) = "Neotext" Then
+                ElseIf TypeName(SubClassed(cnt)) = "Textbox" Then
                     
                     Set frm3 = SubClassed(cnt)
                     If frm3.hWnd = hWnd Then
