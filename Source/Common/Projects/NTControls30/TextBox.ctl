@@ -2400,7 +2400,7 @@ Private Sub UserControl_InitProperties()
     UserControl.BackColor = GetSysColor(COLOR_WINDOW)
     pScrollToCaret = True
     pHideSelection = True
-    UserControl.Font.name = "Lucida Console"
+    UserControl.Font.Name = "Lucida Console"
     Set pBackBuffer.Font = UserControl.Font
     pMultiLine = True
     pScrollBars = vbScrollBars.Both
@@ -2462,7 +2462,7 @@ Attribute LineCount.VB_Description = "Returns the numerical count of how many li
 End Function
 
 Private Function CaretLocation(Optional ByVal AtCharPos As Long = -1) As POINTAPI
-    Debug.Print LineIndex & " " & LineText(LineIndex(AtCharPos)) & " " & LineLength(LineIndex(AtCharPos))
+   ' Debug.Print LineIndex(AtCharPos) & " " & LineText(LineIndex(AtCharPos)) & " " & LineLength(LineIndex(AtCharPos))
     If pSel.StartPos <= 0 Then pSel.StartPos = 0
     If AtCharPos = -1 Then AtCharPos = pSel.StartPos
     If AtCharPos > 0 And AtCharPos <= pText.Length Then
@@ -2470,15 +2470,15 @@ Private Function CaretLocation(Optional ByVal AtCharPos As Long = -1) As POINTAP
         cnt = pText.Pass(Asc(vbLf), 0, AtCharPos)
         If cnt >= 0 Then
             CaretLocation.Y = (TextHeight * cnt) + pOffsetY '+ (LineFirstVisible * TextHeight)
-            'CaretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
+            'caretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
             Dim part As String
-            If LineIndex + 1 = LineCount Then
+'            If LineIndex + 1 = LineCount Then
                 part = Left(LineText(cnt), ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)))
-            Else
-            'If ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)) > 0 Then
-                part = Left(LineText(cnt), ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)))
-           ' End If
-           End If
+'            Else
+'            'If ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)) > 0 Then
+'               ' part = Left(LineText(cnt), (((pText.Length + 1) - LineOffset(cnt)) - ((pText.Length + 1) - AtCharPos)))
+'           ' End If
+'           End If
             CaretLocation.X = Me.TextWidth(part)
         Else
             CaretLocation.Y = pOffsetY '- (LineFirstVisible * TextHeight)
@@ -2524,7 +2524,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
     'Debug.Print "KeyDown "; Convert(Me.Text.Partial); Me.SelStart; Me.SelLength
     RaiseEvent KeyDown(KeyCode, Shift)
     If KeyCode <> 0 Then
-        Dim tText As Strands
+        Dim kText As Strands
         Dim lIndex As Long
         Dim txt As String
         Dim temp As Long
@@ -2549,10 +2549,18 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     
                 End If
 
-                Set tText = New Strands
-                tText.Concat Convert(vbLf)
-                pText.Pyramid tText, pSel.StartPos, 0
-                Set tText = Nothing
+                Set kText = New Strands
+                If pSel.StartPos > 0 Then
+                    kText.Concat pText.Partial(0, pSel.StartPos)
+                End If
+                kText.Concat Convert(vbLf)
+                If pText.Length - (pSel.StartPos) > 0 Then
+                    kText.Concat pText.Partial(pSel.StartPos)
+                End If
+
+                pText.Clone kText
+                
+                Set kText = Nothing
                 
                 xUndoActs(0).AfterTextData.Concat Convert(vbLf)
                     
@@ -3422,7 +3430,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     Forecolor = PropBag.ReadProperty("Forecolor", GetSysColor(COLOR_WINDOWTEXT))
     ScrollToCaret = PropBag.ReadProperty("ScrollToCaret", True)
     HideSelection = PropBag.ReadProperty("HideSelection", True)
-    UserControl.Font.name = PropBag.ReadProperty("Fontname", "Lucida Console")
+    UserControl.Font.Name = PropBag.ReadProperty("Fontname", "Lucida Console")
     UserControl.Font.Size = PropBag.ReadProperty("Fontsize", 9)
     Set pBackBuffer.Font = UserControl.Font
     Text = PropBag.ReadProperty("Text", "")
@@ -3545,7 +3553,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "ScrollToCaret", pScrollToCaret, True
     PropBag.WriteProperty "HideSelection", pHideSelection, True
     PropBag.WriteProperty "MultipleLines", pMultiLine, True
-    PropBag.WriteProperty "Fontname", UserControl.Font.name, "Lucida Console"
+    PropBag.WriteProperty "Fontname", UserControl.Font.Name, "Lucida Console"
     PropBag.WriteProperty "Fontsize", UserControl.Font.Size, 9
     If pText.Length > 0 Then
         PropBag.WriteProperty "Text", Convert(pText.Partial), ""

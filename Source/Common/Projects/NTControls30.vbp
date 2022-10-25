@@ -32,7 +32,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Common Controls"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Computer Science"
-CondComp="NTControls30 = -1 : VBIDE = -1 : Module1 = -1 : modCommon = -1 : modEditor = -1 : modMemory = -1 : modColorMat = -1 : modGraphics = -1 : modBackBuffer = -1 : modBitValue = -1"
+CondComp="NTControls30=-1:VBIDE=-1:Module1=-1:modCommon=-1:modEditor=-1:modMemory=-1:modColorMat=-1:modGraphics=-1:modBackBuffer=-1:modBitValue=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

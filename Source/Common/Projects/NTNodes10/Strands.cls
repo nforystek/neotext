@@ -837,7 +837,7 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
         Stream.Pyramid SubStream, Offset, Width
         
         lSize = Length
-        If lSize > Offset Then WriteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
+        WriteToStream Partial(Offset), Offset, lSize - Offset
         EndOfStream lSize
         RebreakStream
 
@@ -875,23 +875,35 @@ End Sub
 'that are based on the provided information and return to from the object relate
 '###############################################################################
 Public Sub RebreakStream()
-    Dim cnt As Long
-    Dim cnt2 As Long
-    Dim Data() As Byte
-    Data = Partial()
-    cnt2 = 1
-    For cnt = LBound(Data) To UBound(Data)
-        If Data(cnt) = Asc(vbLf) Then
-            If cnt2 > UBound(Breaks) Then ReDim Preserve Breaks(0 To cnt2) As Long
-            Breaks(cnt2) = cnt + -CInt(Not CBool(-LBound(Data)))
-            cnt2 = cnt2 + 1
-        End If
-    Next
-    If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
-    If Breaks(UBound(Breaks)) < Length Then
+    ReDim Preserve Breaks(0 To 0) As Long
+    Dim ret As Long
+    ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
+    Do While ret < Length
         ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-        Breaks(UBound(Breaks)) = Length '+ -CInt(Not CBool(-LBound(Data)))
-    End If
+        Breaks(UBound(Breaks)) = ret + 1
+        ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
+    Loop
+    ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
+    Breaks(UBound(Breaks)) = ret + 1
+    
+        
+'    Dim cnt As Long
+'    Dim cnt2 As Long
+'    Dim Data() As Byte
+'    Data = Partial()
+'    cnt2 = 1
+'    For cnt = LBound(Data) To UBound(Data)
+'        If Data(cnt) = Asc(vbLf) Then
+'            If cnt2 > UBound(Breaks) Then ReDim Preserve Breaks(0 To cnt2) As Long
+'            Breaks(cnt2) = cnt + -CInt(Not CBool(-LBound(Data)))
+'            cnt2 = cnt2 + 1
+'        End If
+'    Next
+'    If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
+'    If Breaks(UBound(Breaks)) < Length Then
+'        ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
+'        Breaks(UBound(Breaks)) = Length  '+ -CInt(Not CBool(-LBound(Data)))
+'    End If
 End Sub
 
 Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
