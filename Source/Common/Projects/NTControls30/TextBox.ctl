@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin VB.UserControl Textbox 
+Begin VB.UserControl TextBox 
    AutoRedraw      =   -1  'True
    ClientHeight    =   3330
    ClientLeft      =   0
@@ -20,7 +20,7 @@ Begin VB.UserControl Textbox
       _ExtentY        =   556
       Orientation     =   1
       AutoRedraw      =   0   'False
-      ProportionalThumb=   -1  'True
+      ProportionalThumb=   0   'False
    End
    Begin NTControls30.ScrollBar ScrollBar1 
       Height          =   2655
@@ -31,7 +31,7 @@ Begin VB.UserControl Textbox
       _ExtentY        =   4683
       Orientation     =   0
       AutoRedraw      =   0   'False
-      ProportionalThumb=   -1  'True
+      ProportionalThumb=   0   'False
    End
    Begin VB.Timer Timer1 
       Left            =   810
@@ -88,7 +88,7 @@ Begin VB.UserControl Textbox
       End
    End
 End
-Attribute VB_Name = "Textbox"
+Attribute VB_Name = "TextBox"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -223,7 +223,7 @@ Public Function FindText(ByVal Text As String, Optional ByVal Offset As Long = 0
         If Width = -1 Then Width = pText.Length - Offset
         cnt = 1
         Do
-            idx = pText.poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
+            idx = pText.Poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
             If Offset + idx <= Offset + Width Then
                 For cnt2 = 0 To (Len(Text) - 2)
                     If Offset + idx + cnt2 < Offset + Width Then
@@ -930,9 +930,9 @@ Private Function VisibleText() As String
     If pText.Length > 0 Then
         tmp2 = LineFirstVisible
         If tmp2 > 0 Then
-            tmp = pText.poll(Asc(vbLf), tmp2 + 1)
+            tmp = pText.Poll(Asc(vbLf), tmp2 + 1)
         End If
-        tmp2 = pText.poll(Asc(vbLf), tmp2 + UsercontrolHeight \ TextHeight + 1)
+        tmp2 = pText.Poll(Asc(vbLf), tmp2 + UsercontrolHeight \ TextHeight + 1)
         
         If tmp2 - tmp > 0 Then
             VisibleText = Convert(pText.Partial(tmp, tmp2 - tmp))
@@ -944,9 +944,9 @@ Private Function VisibleRange(Optional ByVal StartingLine As Long = -1) As Range
         If StartingLine = -1 Then
             StartingLine = LineFirstVisible
         End If
-        .StartPos = pText.poll(Asc(vbLf), StartingLine)
-        If .StartPos > 0 Then .StartPos = .StartPos + 1
-        .StopPos = pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1)
+        .StartPos = pText.Offset(StartingLine) ' pText.poll(Asc(vbLf), StartingLine)
+        'If .StartPos > 0 Then .StartPos = .StartPos '+ 1
+        .StopPos = pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight)) 'pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1)
     End With
 End Function
 
@@ -2304,11 +2304,11 @@ Private Sub UserControl_DblClick()
     lpos = pText.Pass(usechar, 0, SelStart)
 
     If lpos > 0 Then
-        lpos = pText.poll(usechar, lpos, 0, SelStart) + 1
+        lpos = pText.Poll(usechar, lpos, 0, SelStart) + 1
 
-        ltmp1 = pText.poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp2 = pText.poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp3 = pText.poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp1 = pText.Poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp2 = pText.Poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp3 = pText.Poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
         
         If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
             lend = ltmp1
@@ -2322,9 +2322,9 @@ Private Sub UserControl_DblClick()
         SelLength = ((lpos + 1) + lend) - lpos
     Else
 
-        ltmp1 = pText.poll(Asc(" "), 1, 0, pText.Length)
-        ltmp2 = pText.poll(Asc(vbTab), 1, 0, pText.Length)
-        ltmp3 = pText.poll(Asc(vbLf), 1, 0, pText.Length)
+        ltmp1 = pText.Poll(Asc(" "), 1, 0, pText.Length)
+        ltmp2 = pText.Poll(Asc(vbTab), 1, 0, pText.Length)
+        ltmp3 = pText.Poll(Asc(vbLf), 1, 0, pText.Length)
         lend = pText.Length
         
         If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
@@ -2898,7 +2898,7 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                     End If
                     Set tText = Nothing
                 Else
-                    pText.post CByte(KeyAscii)
+                    pText.Post CByte(KeyAscii)
                 End If
             
             ElseIf pSel.StartPos < pText.Length Then
@@ -2919,10 +2919,10 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                 Set tText = Nothing
             Else
                 ExpandColorRecords pText.Length, 1
-                pText.post CByte(KeyAscii)
+                pText.Post CByte(KeyAscii)
             End If
             
-            xUndoActs(0).AfterTextData.post CByte(KeyAscii)
+            xUndoActs(0).AfterTextData.Post CByte(KeyAscii)
             
             pSel.StartPos = pSel.StartPos + 1
             pSel.StopPos = pSel.StartPos

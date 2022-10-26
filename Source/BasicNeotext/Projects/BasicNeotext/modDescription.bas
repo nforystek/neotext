@@ -165,34 +165,57 @@ Public Function GetProjectFileName(ByVal ProjName As String, Optional ByVal Modu
 End Function
 
 Private Static Function GetMemberDescription(ByRef Members As Members, ByVal ProcName As String, Optional ByRef LineNum As Long = 0) As String
-    Static Index As Long
-    Dim count As Long
-    count = 0
-    Do
-        Index = Index + 1
-        If Index > Members.count Then Index = 1
-        If LCase(Members(Index).Name) = LCase(ProcName) Then
-            GetMemberDescription = Replace(Replace(Members(Index).Description, vbCrLf, vbLf), vbLf, "")
-            LineNum = Members(Index).CodeLocation
-            Exit Function
-        End If
-        count = count + 1
-    Loop Until count > Members.count * 2
+    On Error Resume Next
+    On Local Error Resume Next
+
+
+    GetMemberDescription = Members(ProcName).Description
+    If Err.Number = 0 Then
+        LineNum = Members(ProcName).CodeLocation
+    Else
+        Err.Clear
+        LineNum = ""
+        GetMemberDescription = ""
+    End If
+    On Error GoTo -1
+    On Local Error GoTo -1
+'    Static Index As Long
+'    Dim count As Long
+'    count = 0
+'    Do
+'        Index = Index + 1
+'        If Index > Members.count Then Index = 1
+'        If LCase(Members(Index).Name) = LCase(ProcName) Then
+'            GetMemberDescription = Replace(Replace(Members(Index).Description, vbCrLf, vbLf), vbLf, "")
+'            LineNum = Members(Index).CodeLocation
+'            Exit Function
+'        End If
+'        count = count + 1
+'    Loop Until count > Members.count * 2
 End Function
 
 Private Static Sub SetMemberDescription(ByRef Members As Members, ByVal ProcName As String, ByVal ProcDescription As String)
-    Static Index As Long
-    Dim count As Long
-    count = 0
-    Do
-        Index = Index + 1
-        If Index > Members.count Then Index = 1
-        If LCase(Members(Index).Name) = LCase(ProcName) Then
-            Members(Index).Description = ProcDescription
-            Exit Sub
-        End If
-        count = count + 1
-    Loop Until count > Members.count * 2
+    On Error Resume Next
+    On Local Error Resume Next
+
+    Members(ProcName).Description = ProcDescription
+    If Err.Number <> 0 Then Err.Clear
+
+    On Error GoTo -1
+    On Local Error GoTo -1
+    
+'    Static Index As Long
+'    Dim count As Long
+'    count = 0
+'    Do
+'        Index = Index + 1
+'        If Index > Members.count Then Index = 1
+'        If LCase(Members(Index).Name) = LCase(ProcName) Then
+'            Members(Index).Description = ProcDescription
+'            Exit Sub
+'        End If
+'        count = count + 1
+'    Loop Until count > Members.count * 2
 End Sub
 
 Public Function GetTemporaryFile() As String
@@ -224,14 +247,14 @@ Private Sub SumPropertyHeaders(ByRef txt As String, ByRef head As String, Option
     back = txt
     user = GetUserDefined(head)
     Do Until txt = ""
-        out = out & FindNextHeader(txt, head2, True)
+        out = out & FindNextHeader(txt, head2, user)
         If GetUserDefined(head2) = user Then
-            out = out & GetDeclareLine(head2, True) & vbCrLf & vbCrLf
+            out = out & GetDeclareLine(head2, True) & vbCrLf
             
             Do Until txt = ""
-                out = out & FindNextHeader(txt, head3, True)
+                out = out & FindNextHeader(txt, head3, user)
                 If GetUserDefined(head3) = user Then
-                    out = out & GetDeclareLine(head3, True) & vbCrLf & vbCrLf
+                    out = out & GetDeclareLine(head3, True) & vbCrLf
                     Exit Do
                 Else
                     out = out & head3
@@ -284,8 +307,8 @@ Private Sub SumPropertyHeaders(ByRef txt As String, ByRef head As String, Option
 End Sub
 
 Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As BuildFunction, ByRef frm As FormHWnd) As Boolean
-   On Error GoTo nochanges
-   On Local Error GoTo nochanges
+  ' On Error GoTo nochanges
+  ' On Local Error GoTo nochanges
    
     With frm
         
@@ -352,11 +375,17 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
             
             If SavedFile <> "" Then
                 If .CodeModule.CountOfLines > 0 Then
+                    Dim cap As String
+                    cap = GetCaption(frm.hWnd)
                     
                     UnsavedCode = .CodeModule.Lines(1, .CodeModule.CountOfLines)
                     
                     TempFile = GetTemporaryFile
+                    TempFile = GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(.CodeModule.Parent.FileNames(1))
+                    
                     .CodeModule.Parent.SaveAs TempFile
+                    
+                    Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hWnd))
    
                     out = ""
                     back = ReadFile(TempFile)
@@ -379,15 +408,12 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
                             
                             If user <> "" Then
                                 
-        '                        Debug.Print
-        '                        Debug.Print "FULL NEXT HEADER INFORMATION"
-        '                        Debug.Print head
-        '                        Debug.Print "DECLARE: " & GetDeclareLine(head,false)
-        '                        Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
-        '                        Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
-        '                        If GetUserDefined(head) = "DataComplete" Then
-                                '    Stop
-        '                        End If
+'                                Debug.Print
+'                                Debug.Print "FULL NEXT HEADER INFORMATION"
+'                                Debug.Print head
+'                                Debug.Print "DECLARE: " & GetDeclareLine(head, False)
+'                                Debug.Print "USERDEFINED FROM DECLARE: "; GetUserDefined(head, Commented); " USER DEFINED FROM ATTRIBUTE: " & GetUserDefined(head, Attributed)
+'                                Debug.Print "COMMENTED DESCRIPTION: "; GetDescription(head, Commented); " ATTRIBUTE DESCRIPTION: " & GetDescription(head, Attributed)
      
                                 If (BuildFunc = AttributeToComments Or BuildFunc = InsertCommentDesc) Then
                                     
@@ -437,30 +463,32 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
                     Loop
         
                     If Mid(out, 3, Len(out) - 4) <> back Then
+                                        
                         WriteFile TempFile, Mid(out, 3, Len(out) - 4)
                         changed = True
-                        
+
                     End If
-                    
+    
                     Set vbcomp = .CodeModule.Parent
                     
                     .CodeModule.Parent.Reload
-                    
+
                     Set .CodeModule = vbcomp.CodeModule
-    
+                    
                     .CodeModule.Parent.SaveAs SavedFile
                     
                     .CodeModule.Parent.Reload
-                    
+                        
                     WriteFile SavedFile, SavedCode
     
                     Kill TempFile
-                    If PathExists(SavedFile2, True) Then
-                        Kill GetFilePath(TempFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2)
+                    If PathExists(GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2), True) Then
+                        Kill GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2)
                     End If
                                     
                 End If
                 Set .CodeModule = vbcomp.CodeModule
+                
                 BuildComments = True
 
                 .CodeModule.CodePane.SetSelection startrow, startcol, endrow, endcol
@@ -532,7 +560,7 @@ Public Sub BuildFileDescriptions(ByVal FileName As String, ByVal LoadElseSave As
                                 "Attribute " & GetUserDefined(head, Declared) & ".VB_Description = """ & desc & """" & vbCrLf, vbCrLf)
                         End If
                     Else
-                        out = out & GetDeclareLine(head, True)
+                        out = out & head
                     End If
                 Else
                     out = out & head
@@ -696,7 +724,7 @@ Private Function SortText(ByVal Text As String, ByRef FindText1 As String, ByRef
     SortText = ((FindLoc1 <> 0) Or (FindLoc2 <> 0))
 End Function
 
-Private Function FindNextHeader(ByRef txt As String, ByRef head As String, Optional ByVal PropertyOnly As Boolean = False) As String
+Private Function FindNextHeader(ByRef txt As String, ByRef head As String, Optional ByVal PropertyName As String = "") As String
     'searches txt for headers, returning any txt before the next header found
     'placing the header in head, altering txt to be all txt after a found header
     'if no header is found, the return is all of txt, and txt and head are blank
@@ -711,7 +739,7 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String, Optio
     head = ""
     
     Do While txt <> ""
-        pos = FindNextLine(txt, PropertyOnly)
+        pos = FindNextLine(txt, PropertyName)
         If pos > -1 Then
             FindNextHeader = FindNextHeader & Left(txt, pos - 1)
             txt = Mid(txt, pos)
@@ -722,7 +750,7 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String, Optio
                 txt = Mid(txt, 3)
             Loop
             
-            pos = FindLineEnd(txt, PropertyOnly)
+            pos = FindLineEnd(txt, (PropertyName <> ""))
             If pos > 0 Then
                 head = Left(txt, pos)
                 txt = Mid(txt, pos + 1)
@@ -808,7 +836,7 @@ Private Function FindLineEnd(ByVal txt As String, Optional ByVal PropertyOnly As
             
 End Function
 
-Private Function FindNextLine(ByVal txt As String, Optional ByVal PropertyOnly As Boolean = False) As Long
+Private Function FindNextLine(ByVal txt As String, Optional ByVal PropertyName As String = "") As Long
     'searches txt for description supported line definitions
     'abiding outside of quotes, and returns a possible pos of
     
@@ -817,38 +845,37 @@ Private Function FindNextLine(ByVal txt As String, Optional ByVal PropertyOnly A
     Dim pos3 As Long
     Dim pos4 As Long
     Dim pos5 As Long
-    
+
     Do
-        pos1 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "property ")
-        If Not PropertyOnly Then
-            pos2 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "event ")
-            pos3 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "function ")
-            pos4 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), "sub ")
+        If PropertyName = "" Then
+            pos1 = InStr(pos5 + 1, LCase(txt), "property ")
+            pos2 = InStr(pos5 + 1, LCase(txt), "event ")
+            pos3 = InStr(pos5 + 1, LCase(txt), "function ")
+            pos4 = InStr(pos5 + 1, LCase(txt), "sub ")
         Else
-            pos2 = 0
-            pos3 = 0
+            pos1 = InStr(pos5 + 1, LCase(txt), "property get " & LCase(PropertyName) & "(")
+            pos2 = InStr(pos5 + 1, LCase(txt), "property let " & LCase(PropertyName) & "(")
+            pos3 = InStr(pos5 + 1, LCase(txt), "property set " & LCase(PropertyName) & "(")
             pos4 = 0
         End If
-        pos5 = InStr(IIf(pos5 > 0, pos5, 1), LCase(txt), """")
-        If (pos1 > 0) And (pos1 < pos2 Or pos2 = 0) And (pos1 < pos3 Or pos3 = 0) And (pos1 < pos4 Or pos4 = 0) And (pos1 < pos5 Or pos5 = 0) Then
+        If (pos1 > 0) And (pos1 < pos2 Or pos2 = 0) And (pos1 < pos3 Or pos3 = 0) And (pos1 < pos4 Or pos4 = 0) Then
+            pos5 = pos1
             FindNextLine = FindLineStart(txt, pos1)
-        ElseIf (pos2 > 0) And (pos2 < pos1 Or pos1 = 0) And (pos2 < pos3 Or pos3 = 0) And (pos2 < pos4 Or pos4 = 0) And (pos2 < pos5 Or pos5 = 0) Then
+        ElseIf (pos2 > 0) And (pos2 < pos1 Or pos1 = 0) And (pos2 < pos3 Or pos3 = 0) And (pos2 < pos4 Or pos4 = 0) Then
+            pos5 = pos2
             FindNextLine = FindLineStart(txt, pos2)
-        ElseIf (pos3 > 0) And (pos3 < pos1 Or pos1 = 0) And (pos3 < pos2 Or pos2 = 0) And (pos3 < pos4 Or pos4 = 0) And (pos3 < pos5 Or pos5 = 0) Then
+        ElseIf (pos3 > 0) And (pos3 < pos1 Or pos1 = 0) And (pos3 < pos2 Or pos2 = 0) And (pos3 < pos4 Or pos4 = 0) Then
+            pos5 = pos3
             FindNextLine = FindLineStart(txt, pos3)
-        ElseIf (pos4 > 0) And (pos4 < pos1 Or pos1 = 0) And (pos4 < pos3 Or pos3 = 0) And (pos4 < pos2 Or pos2 = 0) And (pos4 < pos5 Or pos5 = 0) Then
+        ElseIf (pos4 > 0) And (pos4 < pos1 Or pos1 = 0) And (pos4 < pos3 Or pos3 = 0) And (pos4 < pos2 Or pos2 = 0) Then
+            pos5 = pos4
             FindNextLine = FindLineStart(txt, pos4)
-        ElseIf (pos5 > 0) And (pos5 < pos1 Or pos1 = 0) And (pos5 < pos3 Or pos3 = 0) And (pos5 < pos2 Or pos2 = 0) And (pos5 < pos4 Or pos4 = 0) Then
-            Do While Mid(txt, pos5 + 1, 1) = """"
-                pos5 = pos5 + 2
-            Loop
-            pos5 = pos5 + 1
-            pos5 = InStr(pos5, txt, """") + 1
         Else
             FindNextLine = -1
         End If
+
     Loop Until FindNextLine <> 0
-    
+
 End Function
 Private Function ValidHeader(ByVal head As String, Optional ByVal PropertyOnly As Boolean = False) As Boolean
     'accepts head information in a single line format and examines

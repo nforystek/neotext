@@ -304,16 +304,7 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
 
             Do While ((IsProccessIDRunning(VBPID) Or QuitCall) And Wait) And (Not QuitFail = -1)
                 
-                
                 MainLoopElapse = (Timer - LoopLatency) * 1000
-                If MainLoopElapse + TimerLoopElapse >= 5 And MainLoopElapse + TimerLoopElapse <= 500 Then
-                    Sleep TimerLoopElapse + MainLoopElapse
-                ElseIf MainLoopElapse + TimerLoopElapse < 5 Then
-                    Sleep 5
-                ElseIf MainLoopElapse + TimerLoopElapse > 500 Then
-                    Sleep 500
-                End If
-                
                 LoopLatency = Timer
                 
                 DoLoop

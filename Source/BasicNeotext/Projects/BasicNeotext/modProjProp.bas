@@ -307,7 +307,9 @@ Private Function SubCheckHwnds(ByVal hWnd As Long, ByVal lParam As Long) As Bool
                 MSVBRedraw True
             End If
 
-            
+            If (cls = "#32770") Then
+                MSVBRedraw True
+            End If
         End If
     End If
     SubCheckHwnds = ((hWndProp <> 0) Or (hWndCust <> 0) Or (hWndProc <> 0)) And (hWndMSVB <> 0)

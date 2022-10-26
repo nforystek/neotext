@@ -676,7 +676,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
                             Case WM_PAINT
                                 
                                 If frm3.AutoRedraw Then
-                                   ' frm3.Paint
+                                    'frm3.Paint
                                     frm3.PaintBuffer
                                 End If
     

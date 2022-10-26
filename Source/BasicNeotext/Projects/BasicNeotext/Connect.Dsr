@@ -1,11 +1,11 @@
 VERSION 5.00
 Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect 
-   ClientHeight    =   9615
+   ClientHeight    =   9900
    ClientLeft      =   1740
    ClientTop       =   1545
-   ClientWidth     =   18540
-   _ExtentX        =   32703
-   _ExtentY        =   16960
+   ClientWidth     =   23415
+   _ExtentX        =   41301
+   _ExtentY        =   17463
    _Version        =   393216
    Description     =   "VB 6 Neotext Basic - Enhancements for Visual Basic 6.0"
    DisplayName     =   "VB 6 Neotext Basic"
@@ -169,6 +169,8 @@ Attribute FCE.VB_VarHelpID = -1
 
 
 Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
+    On Error Resume Next
+    On Local Error Resume Next
     If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
         If PathExists(FileName, True) Then
             'BuildComments CommentsToAttribute, GetCodeModule(VBInstance.VBProjects, VBProject.Name, GetModuleName(FileName))
@@ -182,6 +184,8 @@ Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileTyp
 End Sub
 
 Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() As String)
+    On Error Resume Next
+    On Local Error Resume Next
     Dim cnt As Long
     
     For cnt = LBound(FileNames) To UBound(FileNames)
@@ -702,8 +706,7 @@ End Sub
 
 Private Sub AddinInstance_OnStartupComplete(custom() As Variant)
     SetVBSettings
-
-    DescriptionsStartup VBInstance
+    'DescriptionsStartup VBInstance
 End Sub
 
 Private Sub AddinInstance_Terminate()
@@ -1079,6 +1082,10 @@ End Sub
 Private Sub DoMakeProj(ByRef vbp As VBProject)
     On Error Resume Next
     On Local Error Resume Next
+    
+    If PathExists(vbp.BuildFileName, True) Then
+        ChDir GetFilePath(vbp.BuildFileName)
+    End If
     
     vbp.MakeCompiledFile
     
