@@ -280,13 +280,13 @@ dimerror:
 End Function
 
 Public Sub Hook(ByRef UserControl As IControl)
-    If Not IsRunningMode Then
+    'If Not IsRunningMode Then
         If UserControl.hProc = 0 Then
             SubClassed.Add UserControl, "H" & UserControl.hWnd
             UserControl.hProc = GetWindowLong(UserControl.hWnd, GWL_WNDPROC)
             SetWindowLong UserControl.hWnd, GWL_WNDPROC, AddressOf WinProc
         End If
-    End If
+    'End If
 End Sub
 
 Public Sub Unhook(ByRef UserControl As IControl)
@@ -423,7 +423,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
     
     If SubClassed.count > 0 Then
         Dim frm2 As ScrollBar
-        Dim frm3 As Textbox
+        Dim frm3 As TextBox
         Dim pt As POINTAPI
         Dim st As SetTextEx
         Dim txt As TextRange
@@ -470,7 +470,7 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
                     End If
                     Set frm2 = Nothing
                     
-                ElseIf TypeName(SubClassed(cnt)) = "Textbox" Then
+                ElseIf TypeName(SubClassed(cnt)) = "TextBox" Then
                     
                     Set frm3 = SubClassed(cnt)
                     If frm3.hWnd = hWnd Then
@@ -676,11 +676,11 @@ Private Function WinProc(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As
                             Case WM_PAINT
                                 
                                 If frm3.AutoRedraw Then
-                                    'frm3.Paint
+                                   ' frm3.Paint
                                     frm3.PaintBuffer
                                 End If
     
-                                WinProc = 1
+                                WinProc = 0
                                 lDispatch = False
                                 DefWindowProc hWnd, wMsg, wParam, lParam
     

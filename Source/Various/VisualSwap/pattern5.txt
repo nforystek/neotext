@@ -1,0 +1,30 @@
+
+Swap C, F
+Swap A, B, C
+Swap A, B
+
+
+Swap B, E
+Swap C, D, E
+Swap C, D
+
+
+Swap D, G
+Swap H, A, G
+Swap H, A
+
+Swap G, A
+Swap E, F, G
+Swap E, F
+
+
+A Blue
+B Blue
+C Blue
+D Red
+E Red
+F Red
+G Green
+H Green
+I Black
+J Black

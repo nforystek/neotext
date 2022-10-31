@@ -1,0 +1,36 @@
+Swap H, G
+        Swap .C, F, E
+        Swap .D, .B, .C
+Pause
+Swap .E, F
+        Swap .b, .H, .G, .E, .D, .A
+        Swap .C, .D, .E
+        Swap .b, .C, .F, .D, .G, .H
+Pause
+Swap H, G
+        Swap .C, F, E
+Pause
+
+Swap H, G
+        Swap .C, F, E
+        Swap .D, .B, .C
+Pause
+Swap .E, F
+        Swap .b, .H, .G, .E, .D, .A
+        Swap .C, .D, .E
+        Swap .b, .C, .F, .D, .G, .H
+Pause
+Swap H, G
+        Swap .C, F, E
+Pause
+
+A Red
+B Red
+C red
+D Magenta
+E Magenta
+F Magenta
+G Blue
+H Blue
+I Green
+J Green

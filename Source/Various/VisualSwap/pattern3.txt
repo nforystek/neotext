@@ -1,0 +1,16 @@
+
+
+Swap B, H, G, E, D, A
+Swap C, D, E, F
+Swap B, C, F,D, G, H
+Pause
+
+
+A Blue
+B Blue
+C Blue
+D Red
+E Red
+F Red
+G Green
+H Green

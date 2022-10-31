@@ -480,7 +480,6 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
                     .CodeModule.Parent.Reload
                         
                     WriteFile SavedFile, SavedCode
-    
                     Kill TempFile
                     If PathExists(GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2), True) Then
                         Kill GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2)
@@ -503,6 +502,15 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
     Exit Function
 nochanges:
     Err.Clear
+    If PathExists(SavedFile, True) Then
+        WriteFile SavedFile, SavedCode
+    End If
+    
+    Kill TempFile
+    If PathExists(GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2), True) Then
+        Kill GetFilePath(SavedFile) & "\" & GetFileTitle(TempFile) & GetFileExt(SavedFile2)
+    End If
+    
     MSVBRedraw True
 End Function
 

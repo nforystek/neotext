@@ -1,0 +1,27 @@
+Swap H, G
+        Swap .C, F, E
+        Swap .D, .B, .C
+Swap .E, F
+        Swap .b, .H, .G, .E, .D, .A
+        Swap .C, .D, .E
+        Swap .b, .C, .F, .D, .G, .H
+Swap H, G
+        Swap .C, F, E
+pause
+
+
+
+
+
+Swap H, G
+        Swap .C, F, E
+
+pause
+
+        Swap .D, .B, .C
+Swap .E, F
+        Swap .b, .H, .G, .E, .D, .A
+        Swap .C, .D, .E
+        Swap .b, .C, .F, .D, .G, .H
+Swap H, G
+        Swap .C, F, E

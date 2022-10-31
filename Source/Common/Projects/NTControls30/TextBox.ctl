@@ -188,12 +188,10 @@ Private Sub BuildVisibleText()
         tText.Concat pText.Partial(tmpsel.StartPos, tmpsel.StopPos - tmpsel.StartPos)
     End If
 End Sub
-Public Property Get PasswordChar() As String ' _
-
+Public Property Get PasswordChar() As String
     PasswordChar = pPasswordChar
 End Property
-Public Property Let PasswordChar(ByVal RHS As String) ' _
-
+Public Property Let PasswordChar(ByVal RHS As String)
     pPasswordChar = RHS
     If pPasswordChar <> "" Then
         MultipleLines = False
@@ -289,11 +287,11 @@ Friend Property Set pText(ByRef RHS As NTNodes10.Strands)
 End Property
 
 Public Property Get CodePage() As Long ' _
-Gets the isolated code page number that the control is currently displaying and/or editing the text of.
+Gets the isolated code page number that the control is currently displaying and/or editing the text of., Sets the isolated code page number that the control is currently displaying and/or editing the text of.
+Attribute CodePage.VB_Description = "Gets the isolated code page number that the control is currently displaying and/or editing the text of., Sets the isolated code page number that the control is currently displaying and/or editing the text of."
     CodePage = (pCodePage + 1)
 End Property
-Public Property Let CodePage(ByVal RHS As Long) ' _
-Sets the isolated code page number that the control is currently displaying and/or editing the text of.
+Public Property Let CodePage(ByVal RHS As Long)
     If (RHS - 1) > UBound(aText) Then
         Dim cnt As Long
         ReDim Preserve aText(0 To (RHS - 1)) As Strands
@@ -306,11 +304,11 @@ Sets the isolated code page number that the control is currently displaying and/
 End Property
 
 Public Property Get Seperator(ByVal Number As Long) As Long ' _
-Gets the number of lines between the seperator Number and the one just before it.
+Gets the number of lines between the seperator Number and the one just before it., Sets the number of lines between the seperator Number and the one just before it.
+Attribute Seperator.VB_Description = "Gets the number of lines between the seperator Number and the one just before it., Sets the number of lines between the seperator Number and the one just before it."
     Seperator = pPageBreaks(Number - 1)
 End Property
-Public Property Let Seperator(ByVal Number As Long, ByVal RHS As Long) ' _
-Sets the number of lines between the seperator Number and the one just before it.
+Public Property Let Seperator(ByVal Number As Long, ByVal RHS As Long)
     If Number >= UBound(pPageBreaks) Then
         ReDim Preserve pPageBreaks(0 To Number - 1) As Long
     End If
@@ -318,11 +316,11 @@ Sets the number of lines between the seperator Number and the one just before it
 End Property
 
 Public Property Get UndoLimit() As Long ' _
-Gets the total number of undo entries that the control will keep track of in undo cache.
+Gets the total number of undo entries that the control will keep track of in undo cache., Sets the total number of undo entries that the control will keep track of in undo cache.  Setting this property resets the undo cache.
+Attribute UndoLimit.VB_Description = "Gets the total number of undo entries that the control will keep track of in undo cache., Sets the total number of undo entries that the control will keep track of in undo cache.  Setting this property resets the undo cache."
     UndoLimit = xUndoLimit
 End Property
-Public Property Let UndoLimit(ByVal RHS As Long) ' _
-Sets the total number of undo entries that the control will keep track of in undo cache.  Setting this property resets the undo cache.
+Public Property Let UndoLimit(ByVal RHS As Long)
     If RHS > -2 And xUndoLimit <> RHS Then
         xUndoLimit = RHS
         ResetUndoRedo
@@ -537,11 +535,11 @@ Friend Property Let Cancel(ByVal newVal As Boolean)
 End Property
 
 Public Property Get TabSpace() As String ' _
-Gets the character equivelent to a tab defined in spaces.
+Gets the character equivelent to a tab defined in spaces., Sets the character equivelent to a tab defined in spaces.
+Attribute TabSpace.VB_Description = "Gets the character equivelent to a tab defined in spaces., Sets the character equivelent to a tab defined in spaces."
     TabSpace = pTabSpace
 End Property
-Public Property Let TabSpace(ByVal RHS As String) ' _
-Sets the character equivelent to a tab defined in spaces.
+Public Property Let TabSpace(ByVal RHS As String)
     If Replace(RHS, " ", "") = "" And Len(RHS) > 0 Then
         pTabSpace = RHS
     End If
@@ -600,6 +598,7 @@ End Sub
 
 Public Sub Cut() ' _
 Preforms a removal of any selected text and puts it in the clipboard.
+Attribute Cut.VB_Description = "Preforms a removal of any selected text and puts it in the clipboard."
 
     If Not Locked And Enabled Then
 
@@ -634,6 +633,7 @@ Preforms a removal of any selected text and puts it in the clipboard.
 End Sub
 Public Sub Copy() ' _
 Places any selected text into the clipboard.
+Attribute Copy.VB_Description = "Places any selected text into the clipboard."
     If Enabled Then
         If SelLength > 0 Then
             Clipboard.SetText SelText
@@ -643,6 +643,7 @@ End Sub
 
 Public Sub Paste() ' _
 Inserts into the text at the current selection any text data contained in the clipboard.
+Attribute Paste.VB_Description = "Inserts into the text at the current selection any text data contained in the clipboard."
     If Not Locked And Enabled Then
 
         If Clipboard.GetFormat(ClipBoardConstants.vbCFText) Then
@@ -683,6 +684,7 @@ Inserts into the text at the current selection any text data contained in the cl
 End Sub
 Public Sub ClearAll() ' _
 Clears all the text on the current code page.
+Attribute ClearAll.VB_Description = "Clears all the text on the current code page."
     If Not Locked And Enabled Then
         Cancel = True
 
@@ -713,6 +715,7 @@ Private Sub ResetColors()
 End Sub
 Public Sub Reset() ' _
 Resets the control to the default state of properties.
+Attribute Reset.VB_Description = "Resets the control to the default state of properties."
 
     ResetColors
     
@@ -731,36 +734,32 @@ Resets the control to the default state of properties.
 End Sub
 
 Public Property Get LineNumbers() As Boolean ' _
-Gets whehter or not the control draws line numbers on the left margin.
+Gets whehter or not the control draws line numbers on the left margin., Sets whether or not the control draws line numbers on the left margin.
+Attribute LineNumbers.VB_Description = "Gets whehter or not the control draws line numbers on the left margin., Sets whether or not the control draws line numbers on the left margin."
     LineNumbers = pLineNumbers
 End Property
-Public Property Let LineNumbers(ByVal RHS As Boolean) ' _
-Sets whether or not the control draws line numbers on the left margin.
+Public Property Let LineNumbers(ByVal RHS As Boolean)
     If pLineNumbers <> RHS Then
         pLineNumbers = RHS
         UserControl_Paint
     End If
 End Property
 Public Property Get Enabled() As Boolean ' _
-Gets whether or not the text control accepts any interaction at all.
-Attribute Enabled.VB_Description = "Gets whether or not the text control accepts any interaction at all."
+Gets whether or not the text control accepts any interaction at all., Sets whether or not the text control accepts any interaction at all
+Attribute Enabled.VB_Description = "Gets whether or not the text control accepts any interaction at all., Sets whether or not the text control accepts any interaction at all"
     Enabled = pEnabled
 End Property
-Public Property Let Enabled(ByVal RHS As Boolean) ' _
-Sets whether or not the text control accepts any interaction at all
-Attribute Enabled.VB_Description = "Sets whether or not the text control accepts any interaction at all"
+Public Property Let Enabled(ByVal RHS As Boolean)
     pEnabled = RHS
     SetScrollBars
 End Property
 
 Public Property Get Locked() As Boolean ' _
-Gets whether or not the text contents may be altered by user input, or is read-only locked.
-Attribute Locked.VB_Description = "Gets whether or not the text contents may be altered by user input, or is read-only locked."
+Gets whether or not the text contents may be altered by user input, or is read-only locked., Sets whether or not the text contents may be altered by user input, or is read-only locked.
+Attribute Locked.VB_Description = "Gets whether or not the text contents may be altered by user input, or is read-only locked., Sets whether or not the text contents may be altered by user input, or is read-only locked."
     Locked = pLocked
 End Property
-Public Property Let Locked(ByVal RHS As Boolean) ' _
-Sets whether or not the text contents may be altered by user input, or is read-only locked.
-Attribute Locked.VB_Description = "Sets whether or not the text contents may be altered by user input, or is read-only locked."
+Public Property Let Locked(ByVal RHS As Boolean)
     pLocked = RHS
 End Property
 Public Function Length() As Long ' _
@@ -769,13 +768,11 @@ Attribute Length.VB_Description = "Returns the count of the number of characters
     Length = pText.Length
 End Function
 Public Property Get AutoRedraw() As Boolean ' _
-Gets whether or not the scroll bar automatically redraws itself.
-Attribute AutoRedraw.VB_Description = "Gets whether or not the scroll bar automatically redraws itself."
+Gets whether or not the scroll bar automatically redraws itself., Sets whether or not the scroll bar automaticall redraws itself.
+Attribute AutoRedraw.VB_Description = "Gets whether or not the scroll bar automatically redraws itself., Sets whether or not the scroll bar automaticall redraws itself."
     AutoRedraw = UserControl.AutoRedraw
 End Property
-Public Property Let AutoRedraw(ByVal RHS As Boolean) ' _
-Sets whether or not the scroll bar automaticall redraws itself.
-Attribute AutoRedraw.VB_Description = "Sets whether or not the scroll bar automaticall redraws itself."
+Public Property Let AutoRedraw(ByVal RHS As Boolean)
     If UserControl.AutoRedraw <> RHS Then
         UserControl.AutoRedraw = RHS
         UserControl_Paint
@@ -783,11 +780,11 @@ Attribute AutoRedraw.VB_Description = "Sets whether or not the scroll bar automa
 End Property
 
 Public Property Get Backbuffer() As Backbuffer ' _
-Gets the BackBuffer object associated with this control, in which it draws to first before displaying.
+Gets the BackBuffer object associated with this control, in which it draws to first before displaying., Sets the BackBuffer object associated with this control, in which it draws to first before displaying.
+Attribute Backbuffer.VB_Description = "Gets the BackBuffer object associated with this control, in which it draws to first before displaying., Sets the BackBuffer object associated with this control, in which it draws to first before displaying."
     Set Backbuffer = pBackBuffer
 End Property
-Public Property Set Backbuffer(ByRef RHS As Backbuffer) ' _
-Sets the BackBuffer object associated with this control, in which it draws to first before displaying.
+Public Property Set Backbuffer(ByRef RHS As Backbuffer)
     Set pBackBuffer = RHS
 End Property
 
@@ -843,13 +840,11 @@ Attribute hWnd.VB_Description = "Returns the standard windows handle of the cont
 End Property
 
 Public Property Get ScrollBars() As vbScrollBars ' _
-Gets the value that determines how scroll bars are used and displayed for the control.
-Attribute ScrollBars.VB_Description = "Gets the value that determines how scroll bars are used and displayed for the control."
+Gets the value that determines how scroll bars are used and displayed for the control., Sets the behavior of and whether or not scroll bars are used for the control.
+Attribute ScrollBars.VB_Description = "Gets the value that determines how scroll bars are used and displayed for the control., Sets the behavior of and whether or not scroll bars are used for the control."
     ScrollBars = pScrollBars
 End Property
-Public Property Let ScrollBars(ByVal RHS As vbScrollBars) ' _
-Sets the behavior of and whether or not scroll bars are used for the control.
-Attribute ScrollBars.VB_Description = "Sets the behavior of and whether or not scroll bars are used for the control."
+Public Property Let ScrollBars(ByVal RHS As vbScrollBars)
     If pScrollBars <> RHS Then
         pScrollBars = RHS
         SetScrollBars
@@ -868,13 +863,11 @@ Attribute TextWidth.VB_Description = "Returns the twip measurement width using t
     TextWidth = UserControl.TextWidth(Replace(StrText, Chr(9), TabSpace))
 End Property
 Public Property Get MultipleLines() As Boolean ' _
-Returns whether or not this text control allows multiple lines in Text, delimited by line feeds.
-Attribute MultipleLines.VB_Description = "Returns whether or not this text control allows multiple lines in Text, delimited by line feeds."
+Returns whether or not this text control allows multiple lines in Text, delimited by line feeds., Sets whehter or not this text control allows multiple lines in Text, delimited by line feeds.
+Attribute MultipleLines.VB_Description = "Returns whether or not this text control allows multiple lines in Text, delimited by line feeds., Sets whehter or not this text control allows multiple lines in Text, delimited by line feeds."
     MultipleLines = pMultiLine And (pPasswordChar = "")
 End Property
-Public Property Let MultipleLines(ByVal RHS As Boolean) ' _
-Sets whehter or not this text control allows multiple lines in Text, delimited by line feeds.
-Attribute MultipleLines.VB_Description = "Sets whehter or not this text control allows multiple lines in Text, delimited by line feeds."
+Public Property Let MultipleLines(ByVal RHS As Boolean)
     If pMultiLine <> RHS Then
         pMultiLine = RHS
         If Not MultipleLines Then
@@ -903,24 +896,20 @@ Attribute MultipleLines.VB_Description = "Sets whehter or not this text control 
     End If
 End Property
 Public Property Get HideSelection() As Boolean ' _
-Gets whether or not the selection highlight will be hidden when the control is not in focus.
-Attribute HideSelection.VB_Description = "Gets whether or not the selection highlight will be hidden when the control is not in focus."
+Gets whether or not the selection highlight will be hidden when the control is not in focus., Sets whether or not the selection highlight will be hidden when the control is not in focus.
+Attribute HideSelection.VB_Description = "Gets whether or not the selection highlight will be hidden when the control is not in focus., Sets whether or not the selection highlight will be hidden when the control is not in focus."
     HideSelection = pHideSelection
 End Property
-Public Property Let HideSelection(ByVal RHS As Boolean) ' _
-Sets whether or not the selection highlight will be hidden when the control is not in focus.
-Attribute HideSelection.VB_Description = "Sets whether or not the selection highlight will be hidden when the control is not in focus."
+Public Property Let HideSelection(ByVal RHS As Boolean)
     pHideSelection = RHS
 End Property
 
 Public Property Get ScrollToCaret() As Boolean ' _
-Gets whether or not the caret forces the scrolling to keep it with in visibility.
-Attribute ScrollToCaret.VB_Description = "Gets whether or not the caret forces the scrolling to keep it with in visibility."
+Gets whether or not the caret forces the scrolling to keep it with in visibility., Sets whether or not the caret forces the scrolling to keep it with in visibility.
+Attribute ScrollToCaret.VB_Description = "Gets whether or not the caret forces the scrolling to keep it with in visibility., Sets whether or not the caret forces the scrolling to keep it with in visibility."
     ScrollToCaret = pScrollToCaret
 End Property
-Public Property Let ScrollToCaret(ByVal RHS As Boolean) ' _
-Sets whether or not the caret forces the scrolling to keep it with in visibility.
-Attribute ScrollToCaret.VB_Description = "Sets whether or not the caret forces the scrolling to keep it with in visibility."
+Public Property Let ScrollToCaret(ByVal RHS As Boolean)
     pScrollToCaret = RHS
 End Property
 
@@ -993,13 +982,11 @@ Attribute CanvasHeight.VB_Description = "Gets the height of the textual space ne
 End Property
 
 Public Property Get OffsetX() As Long ' _
-Gets the current scroll bar offset of the horizontal canvas width drawn in visibility.
-Attribute OffsetX.VB_Description = "Gets the current scroll bar offset of the horizontal canvas width drawn in visibility."
+Gets the current scroll bar offset of the horizontal canvas width drawn in visibility., Sets the current scroll bar offset of the horizontal canvas width drawn in visibility.
+Attribute OffsetX.VB_Description = "Gets the current scroll bar offset of the horizontal canvas width drawn in visibility., Sets the current scroll bar offset of the horizontal canvas width drawn in visibility."
     OffsetX = pOffsetX
 End Property
-Public Property Let OffsetX(ByVal RHS As Long) ' _
-Sets the current scroll bar offset of the horizontal canvas width drawn in visibility.
-Attribute OffsetX.VB_Description = "Sets the current scroll bar offset of the horizontal canvas width drawn in visibility."
+Public Property Let OffsetX(ByVal RHS As Long)
     If pOffsetX <> RHS Then
         pOffsetX = RHS
         UserControl_Paint
@@ -1007,13 +994,11 @@ Attribute OffsetX.VB_Description = "Sets the current scroll bar offset of the ho
 End Property
 
 Public Property Get OffsetY() As Long ' _
-Gets the current scroll bar offset of the vertical canvas height drawn in visibility.
-Attribute OffsetY.VB_Description = "Gets the current scroll bar offset of the vertical canvas height drawn in visibility."
+Gets the current scroll bar offset of the vertical canvas height drawn in visibility., Sets the current scroll bar offset of the vertical canvas height drawn in visibility.
+Attribute OffsetY.VB_Description = "Gets the current scroll bar offset of the vertical canvas height drawn in visibility., Sets the current scroll bar offset of the vertical canvas height drawn in visibility."
     OffsetY = pOffsetY
 End Property
-Public Property Let OffsetY(ByVal RHS As Long) ' _
-Sets the current scroll bar offset of the vertical canvas height drawn in visibility.
-Attribute OffsetY.VB_Description = "Sets the current scroll bar offset of the vertical canvas height drawn in visibility."
+Public Property Let OffsetY(ByVal RHS As Long)
     If pOffsetY <> RHS Then
         pOffsetY = RHS
         UserControl_Paint
@@ -1028,13 +1013,11 @@ Private Sub CanvasValidate(Optional ByVal RecalcSizeOf As Boolean = True)
 End Sub
 
 Public Property Get Forecolor() As OLE_COLOR ' _
-Gets the default forecolor of the text display when a specific color table coloring is not used.
-Attribute Forecolor.VB_Description = "Gets the default forecolor of the text display when a specific color table coloring is not used."
+Gets the default forecolor of the text display when a specific color table coloring is not used., Sets the default forecolor of the text display when a specific color table coloring is not used.
+Attribute Forecolor.VB_Description = "Gets the default forecolor of the text display when a specific color table coloring is not used., Sets the default forecolor of the text display when a specific color table coloring is not used."
     Forecolor = pForecolor
 End Property
-Public Property Let Forecolor(ByVal RHS As OLE_COLOR) ' _
-Sets the default forecolor of the text display when a specific color table coloring is not used.
-Attribute Forecolor.VB_Description = "Sets the default forecolor of the text display when a specific color table coloring is not used."
+Public Property Let Forecolor(ByVal RHS As OLE_COLOR)
     If pForecolor <> RHS Then
         ReDim pForecolors(0 To 0) As ColorRange
         ReDim pBackcolors(0 To 0) As ColorRange
@@ -1045,13 +1028,11 @@ Attribute Forecolor.VB_Description = "Sets the default forecolor of the text dis
 End Property
 
 Public Property Get BackColor() As OLE_COLOR ' _
-Gets the default background color of the text display when a specific color table coloring is not used.
-Attribute BackColor.VB_Description = "Gets the default background color of the text display when a specific color table coloring is not used."
+Gets the default background color of the text display when a specific color table coloring is not used., Sets the default background color of the text display when a specific color table coloring is not used.
+Attribute BackColor.VB_Description = "Gets the default background color of the text display when a specific color table coloring is not used., Sets the default background color of the text display when a specific color table coloring is not used."
     BackColor = pBackcolor
 End Property
-Public Property Let BackColor(ByVal RHS As OLE_COLOR) ' _
-Sets the default background color of the text display when a specific color table coloring is not used.
-Attribute BackColor.VB_Description = "Sets the default background color of the text display when a specific color table coloring is not used."
+Public Property Let BackColor(ByVal RHS As OLE_COLOR)
     If pBackcolor <> RHS Then
         ReDim pForecolors(0 To 0) As ColorRange
         ReDim pBackcolors(0 To 0) As ColorRange
@@ -1063,6 +1044,7 @@ End Property
 
 Public Sub ColorText(ByVal Forecolor As Variant, Optional BackColor As Variant, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
 Changes the color of existing text in the control specified by the optional Offset and Width, when omitted, the entire text color is changed.
+Attribute ColorText.VB_Description = "Changes the color of existing text in the control specified by the optional Offset and Width, when omitted, the entire text color is changed."
      If colorOpen Then
 
         Dim startClr As Long
@@ -2400,7 +2382,7 @@ Private Sub UserControl_InitProperties()
     UserControl.BackColor = GetSysColor(COLOR_WINDOW)
     pScrollToCaret = True
     pHideSelection = True
-    UserControl.Font.Name = "Lucida Console"
+    UserControl.Font.name = "Lucida Console"
     Set pBackBuffer.Font = UserControl.Font
     pMultiLine = True
     pScrollBars = vbScrollBars.Both
@@ -3430,7 +3412,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     Forecolor = PropBag.ReadProperty("Forecolor", GetSysColor(COLOR_WINDOWTEXT))
     ScrollToCaret = PropBag.ReadProperty("ScrollToCaret", True)
     HideSelection = PropBag.ReadProperty("HideSelection", True)
-    UserControl.Font.Name = PropBag.ReadProperty("Fontname", "Lucida Console")
+    UserControl.Font.name = PropBag.ReadProperty("Fontname", "Lucida Console")
     UserControl.Font.Size = PropBag.ReadProperty("Fontsize", 9)
     Set pBackBuffer.Font = UserControl.Font
     Text = PropBag.ReadProperty("Text", "")
@@ -3553,7 +3535,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "ScrollToCaret", pScrollToCaret, True
     PropBag.WriteProperty "HideSelection", pHideSelection, True
     PropBag.WriteProperty "MultipleLines", pMultiLine, True
-    PropBag.WriteProperty "Fontname", UserControl.Font.Name, "Lucida Console"
+    PropBag.WriteProperty "Fontname", UserControl.Font.name, "Lucida Console"
     PropBag.WriteProperty "Fontsize", UserControl.Font.Size, 9
     If pText.Length > 0 Then
         PropBag.WriteProperty "Text", Convert(pText.Partial), ""

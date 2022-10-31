@@ -1,0 +1,5 @@
+        Swap .A, .B, .C
+        Swap .b, .H, .G, .E, .D, .A
+        Swap .C, .D, .E, .F
+        Swap .b, .C, .F, .D, .G, .H
+        Swap .D, .E, .F
