@@ -32,7 +32,7 @@ Private Function MyNow() As String
             Unload frmSync
             Set frmSync = Nothing
         #Else
-            gotDate = Month(Now) & "/" & Day(Now) & "/" & Year(Now) & " " & Hour(Now) & ":" & Minute(Now) & ":" & Second(Now)
+            gotDate = Month(nowDate) & "/" & Day(nowDate) & "/" & Year(nowDate) & " " & Hour(nowDate) & ":" & Minute(nowDate) & ":" & Second(nowDate)
         #End If
     End If
     MyNow = DateAdd("s", -DateDiff("s", gotDate, nowDate), gotDate)
@@ -95,7 +95,11 @@ Attribute Checksum.VB_Description = "Accepts arguments for the parallel and seed
         Checksum = True
     ElseIf Not (someOffset = "" Or someTiming = "") Then
         someOffset = DateDiff("s", MyNow, someTiming)
-        someTiming = DateAdd("s", ((Timer * 1000) - someOffset), MyNow)
+        If IsDate(someOffset) Then
+            someTiming = DateAdd("s", DateDiff("s", DateAdd("s", (Timer * 1000), someOffset), someOffset), MyNow)
+        Else
+            someTiming = DateAdd("s", ((Timer * 1000) - someOffset), MyNow)
+        End If
         someGlobal = modGuid.GUID
         Checksum = True
     End If
@@ -111,7 +115,11 @@ Attribute Checksum.VB_Description = "Accepts arguments for the parallel and seed
             someTiming = ""
         ElseIf someTiming = "" Then
             Checksum = True
-            someTiming = DateAdd("s", ((Timer * 1000) - someOffset), MyNow)
+            If IsDate(someOffset) Then
+                someTiming = DateAdd("s", DateDiff("s", DateAdd("s", (Timer * 1000), someOffset), someOffset), MyNow)
+            Else
+                someTiming = DateAdd("s", ((Timer * 1000) - someOffset), MyNow)
+            End If
             someOffset = ""
         End If
     End If
