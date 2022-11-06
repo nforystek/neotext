@@ -225,16 +225,20 @@ End Sub
 
 Private Sub Picture2_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 1 Then
-        If X > (Picture2.Width / 2) Then
-            Picture3.Tag = True
-            Picture3.Visible = True
-        
+        If Not Picture3.Visible Then
+            If X > (Picture2.Width / 2) Then
+                Picture3.Tag = True
+                Picture3.Visible = True
+            
+            Else
+                Picture3.Tag = False
+                Picture3.Visible = True
+            
+            End If
         Else
-            Picture3.Tag = False
-            Picture3.Visible = True
-        
+            Picture3.Visible = False
+            Picture3.Cls
         End If
-    
     End If
 End Sub
 

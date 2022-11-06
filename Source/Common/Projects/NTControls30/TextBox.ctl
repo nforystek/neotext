@@ -221,7 +221,7 @@ Public Function FindText(ByVal Text As String, Optional ByVal Offset As Long = 0
         If Width = -1 Then Width = pText.Length - Offset
         cnt = 1
         Do
-            idx = pText.Poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
+            idx = pText.poll(Asc(Left(Text, 1)), cnt, Offset, Width) + 1
             If Offset + idx <= Offset + Width Then
                 For cnt2 = 0 To (Len(Text) - 2)
                     If Offset + idx + cnt2 < Offset + Width Then
@@ -919,9 +919,9 @@ Private Function VisibleText() As String
     If pText.Length > 0 Then
         tmp2 = LineFirstVisible
         If tmp2 > 0 Then
-            tmp = pText.Poll(Asc(vbLf), tmp2 + 1)
+            tmp = pText.poll(Asc(vbLf), tmp2 + 1)
         End If
-        tmp2 = pText.Poll(Asc(vbLf), tmp2 + UsercontrolHeight \ TextHeight + 1)
+        tmp2 = pText.poll(Asc(vbLf), tmp2 + UsercontrolHeight \ TextHeight + 1)
         
         If tmp2 - tmp > 0 Then
             VisibleText = Convert(pText.Partial(tmp, tmp2 - tmp))
@@ -933,9 +933,9 @@ Private Function VisibleRange(Optional ByVal StartingLine As Long = -1) As Range
         If StartingLine = -1 Then
             StartingLine = LineFirstVisible
         End If
-        .StartPos = pText.Offset(StartingLine) ' pText.poll(Asc(vbLf), StartingLine)
-        'If .StartPos > 0 Then .StartPos = .StartPos '+ 1
-        .StopPos = pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight)) 'pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1)
+        .StartPos = pText.poll(Asc(vbLf), StartingLine) 'pText.Offset(StartingLine) '
+        If .StartPos > 0 Then .StartPos = .StartPos + 1
+        .StopPos = pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1) 'pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight))
     End With
 End Function
 
@@ -2286,11 +2286,11 @@ Private Sub UserControl_DblClick()
     lpos = pText.Pass(usechar, 0, SelStart)
 
     If lpos > 0 Then
-        lpos = pText.Poll(usechar, lpos, 0, SelStart) + 1
+        lpos = pText.poll(usechar, lpos, 0, SelStart) + 1
 
-        ltmp1 = pText.Poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp2 = pText.Poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp3 = pText.Poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp1 = pText.poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp2 = pText.poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
+        ltmp3 = pText.poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
         
         If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
             lend = ltmp1
@@ -2304,9 +2304,9 @@ Private Sub UserControl_DblClick()
         SelLength = ((lpos + 1) + lend) - lpos
     Else
 
-        ltmp1 = pText.Poll(Asc(" "), 1, 0, pText.Length)
-        ltmp2 = pText.Poll(Asc(vbTab), 1, 0, pText.Length)
-        ltmp3 = pText.Poll(Asc(vbLf), 1, 0, pText.Length)
+        ltmp1 = pText.poll(Asc(" "), 1, 0, pText.Length)
+        ltmp2 = pText.poll(Asc(vbTab), 1, 0, pText.Length)
+        ltmp3 = pText.poll(Asc(vbLf), 1, 0, pText.Length)
         lend = pText.Length
         
         If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
@@ -2451,17 +2451,19 @@ Private Function CaretLocation(Optional ByVal AtCharPos As Long = -1) As POINTAP
         Dim cnt As Long
         cnt = pText.Pass(Asc(vbLf), 0, AtCharPos)
         If cnt >= 0 Then
-            CaretLocation.Y = (TextHeight * cnt) + pOffsetY '+ (LineFirstVisible * TextHeight)
-            'caretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
-            Dim part As String
-'            If LineIndex + 1 = LineCount Then
-                part = Left(LineText(cnt), ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)))
-'            Else
-'            'If ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)) > 0 Then
-'               ' part = Left(LineText(cnt), (((pText.Length + 1) - LineOffset(cnt)) - ((pText.Length + 1) - AtCharPos)))
-'           ' End If
-'           End If
-            CaretLocation.X = Me.TextWidth(part)
+       ' Debug.Print LineFirstVisible
+        
+            CaretLocation.Y = (TextHeight * cnt) + pOffsetY '=+ (LineFirstVisible * TextHeight)
+            CaretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
+'            Dim part As String
+''            If LineIndex + 1 = LineCount Then
+'                part = Left(LineText(cnt), ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)))
+''            Else
+''            'If ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)) > 0 Then
+''               ' part = Left(LineText(cnt), (((pText.Length + 1) - LineOffset(cnt)) - ((pText.Length + 1) - AtCharPos)))
+''           ' End If
+''           End If
+'            CaretLocation.X = Me.TextWidth(part)
         Else
             CaretLocation.Y = pOffsetY '- (LineFirstVisible * TextHeight)
         End If

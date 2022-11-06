@@ -40,7 +40,7 @@ Attribute ArrayInsert.VB_Description = "    allocates a new element of the array
             lHandle = GlobalLock(Handle)
         #End If
         ArrayInsert = GlobalReAlloc(Handle, GlobalSize(Handle) + G32BIT_SIZE, GHND)
-        RtlMoveMemory ByVal ArrayInsert + G32BIT_SIZE, ByVal ArrayInsert, (-GlobalSize(ArrayInsert) + -G32BIT_SIZE + (GlobalSize(ArrayInsert) * GHILOW_SIZE))
+        RtlMoveMemory ByVal ArrayInsert, ByVal Handle, (-GlobalSize(ArrayInsert) + -G32BIT_SIZE + (GlobalSize(ArrayInsert) * GHILOW_SIZE))
         #If Locking Then
             GlobalUnlock lHandle
         #End If
@@ -60,7 +60,7 @@ Attribute ArrayRemove.VB_Description = "    re-moves from the array, disposing o
                 Dim lHandle As Long
                 lHandle = GlobalLock(Handle)
             #End If
-            RtlMoveMemory ByVal Handle, ByVal Handle + G32BIT_SIZE, (-GlobalSize(Handle) + -G32BIT_SIZE + (GlobalSize(Handle) * GHILOW_SIZE))
+            RtlMoveMemory ByVal Handle, ByVal Handle, (-GlobalSize(Handle) + -G32BIT_SIZE + (GlobalSize(Handle) * GHILOW_SIZE))
             ArrayRemove = GlobalReAlloc(Handle, GlobalSize(Handle) - G32BIT_SIZE, GHND)
             #If Locking Then
                 GlobalUnlock lHandle
@@ -150,11 +150,11 @@ End Property
 
 Private Sub DebugArray(ByVal Arry As Long)
     Debug.Print
-    Debug.Print "ArrayCount(" & Arry & ")=" & ArrayCount(Arry)
+    Debug.Print "Count=" & ArrayCount(Arry) & " ";
     If ArrayCount(Arry) > 0 Then
         Dim cnt As Long
         For cnt = 0 To ArrayCount(Arry) - 1
-            Debug.Print "ArrayItem(" & ArrayAddr(Arry, cnt) & ")=" & ArrayItem(Arry, cnt)
+            Debug.Print "Item(" & cnt & ")=" & ArrayItem(Arry, cnt) & " ";
         Next
     End If
     Debug.Print
@@ -164,33 +164,29 @@ Private Sub Main()
 
     Dim Arry As Long 'the array
 
-    Debug.Print ArrayAppend(Arry) & "=ArrayAppend(" & Arry & ")"
+    Debug.Print "ArrayAppend(" & Arry & ")=" & ArrayAppend(Arry)
+    Debug.Print "ArrayAppend(" & Arry & ")=" & ArrayAppend(Arry)
+    Debug.Print "ArrayAppend(" & Arry & ")=" & ArrayAppend(Arry)
+    Debug.Print "ArrayInsert(" & Arry & ")=" & ArrayInsert(Arry)
+
     ArrayItem(Arry, 0) = 0
     Debug.Print "ArrayItem(" & Arry & ", 0)=0"
-
-    Debug.Print ArrayAppend(Arry) & "=ArrayAppend(" & Arry & ")"
     ArrayItem(Arry, 1) = 1
     Debug.Print "ArrayItem(" & Arry & ", 1)=1"
-
-
-    Debug.Print ArrayAppend(Arry) & "=ArrayAppend(" & Arry & ")"
     ArrayItem(Arry, 2) = 2
     Debug.Print "ArrayItem(" & Arry & ", 2)=2"
-
-
-    Debug.Print ArrayInsert(Arry) & "=ArrayInsert(" & Arry & ")"
-    ArrayItem(Arry, 0) = 3
-    Debug.Print "ArrayItem(" & Arry & ", 0)=3"
+    ArrayItem(Arry, 3) = 3
+    Debug.Print "ArrayItem(" & Arry & ", 3)=3"
 
     DebugArray Arry
 
-    Debug.Print ArrayRemove(Arry) & "=ArrayRemove(" & Arry & ")"
+    Debug.Print "ArrayDelete(" & Arry & ")=" & ArrayDelete(Arry)
+    Debug.Print "ArrayRemove(" & Arry & ")=" & ArrayRemove(Arry)
 
-    Debug.Print ArrayDelete(Arry) & "=ArrayDelete(" & Arry & ")"
-
-    Debug.Print ArrayDelete(Arry) & "=ArrayDelete(" & Arry & ")"
-
-    Debug.Print ArrayDelete(Arry) & "=ArrayDelete(" & Arry & ")"
+    DebugArray Arry
+    
+    Debug.Print "ArrayDelete(" & Arry & ")=" & ArrayDelete(Arry)
+    Debug.Print "ArrayDelete(" & Arry & ")=" & ArrayDelete(Arry)
 
     DebugArray Arry
 

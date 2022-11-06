@@ -1,6 +1,6 @@
 Attribute VB_Name = "Module1"
 
-'Public Const BaseAddress = &H11000000
+Public Const BaseAddress = &H11000000
 
 
 'Public Declare Function GlobalHandle Lib "kernel32" (wMem As Any) As Long

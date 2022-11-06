@@ -82,7 +82,6 @@ Public Function Checksum(ByVal Para As String, ByVal Seed As String) As Boolean 
 Accepts arguments for the parallel and seeding value of another's object (or its self) and returns whether or not if the arguments passed validate prior Checksum combination calls in sequences.
 Attribute Checksum.VB_Description = "Accepts arguments for the parallel and seeding value of another's object (or its self) and returns whether or not if the arguments passed validate prior Checksum combination calls in sequences."
     Backup someGlobal, someTiming, someOffset
-    
     If (Seed = vbNullString) And someGlobal = "" Then someGlobal = modGuid.GUID
     If IsDate(Seed) And (someTiming = "") Then
         someOffset = DateDiff("s", MyNow, Seed)
@@ -103,7 +102,6 @@ Attribute Checksum.VB_Description = "Accepts arguments for the parallel and seed
         someGlobal = modGuid.GUID
         Checksum = True
     End If
-    
     If (someGlobal = Para) And (Para <> vbNullString) Then
         If someOffset = "" Then
             Checksum = True

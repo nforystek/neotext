@@ -359,7 +359,7 @@ Attribute Value.VB_Description = "Gets the current value of the scroll bar's sli
     If Enabled Then
 
         If pThumbValue <> 0 Then
-            Value = (((pThumbValue / (ScrollableSpace / ScrollAmount))) \ pSmallChange) * pSmallChange
+            Value = ((((pThumbValue / (ScrollableSpace / ScrollAmount))) \ pSmallChange) * pSmallChange)
         Else
             Value = pValue
         End If
