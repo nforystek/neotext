@@ -911,6 +911,10 @@ Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, By
             ApplyOrigin VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin), ApplyTo, Parent
             Set ApplyTo.Absolute.Origin = ApplyTo.Origin
         End If
+        If (Not ApplyTo.Absolute.Offset.Equals(ApplyTo.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
+            ApplyOffset VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset), ApplyTo, Parent
+            Set ApplyTo.Absolute.Offset = ApplyTo.Offset
+        End If
         If (Not ApplyTo.Absolute.Rotate.Equals(ApplyTo.Rotate)) And ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
             ApplyRotate AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate), ApplyTo, Parent
             Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
@@ -919,16 +923,10 @@ Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, By
             ApplyScaled VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled), ApplyTo, Parent
             Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
         End If
-        If (Not ApplyTo.Absolute.Offset.Equals(ApplyTo.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
-            ApplyOffset VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset), ApplyTo, Parent
-            Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-        End If
+
+        
         
         'relative positioning comes secondly, pending is there is any value not empty
-        If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
-            ApplyOffset VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset), ApplyTo, Parent
-            Set ApplyTo.Relative.Offset = Nothing
-        End If
         If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
             ApplyRotate AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate), ApplyTo, Parent
             Set ApplyTo.Relative.Rotate = Nothing
@@ -936,6 +934,10 @@ Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, By
         If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
             ApplyOrigin VectorAddition(ApplyTo.Relative.Origin, ApplyTo.Origin), ApplyTo, Parent
             Set ApplyTo.Relative.Origin = Nothing
+        End If
+        If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
+            ApplyOffset VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset), ApplyTo, Parent
+            Set ApplyTo.Relative.Offset = Nothing
         End If
         If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
             ApplyScaled VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled), ApplyTo, Parent
@@ -1055,7 +1057,7 @@ End Sub
 Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
     Static stacked As Integer
 
-    Dim matMat As D3DMATRIX
+    Static matMat As D3DMATRIX
 
     If stacked = 0 Then
         D3DXMatrixIdentity matMat
@@ -1068,16 +1070,18 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
     Dim matScale As D3DMATRIX
 
     If Not Camera.Planet Is Nothing Then
-        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
-        D3DXMatrixMultiply matMat, matPitch, matMat
+        
+        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
+        D3DXMatrixMultiply matMat, matRoll, matMat
 
         D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
         D3DXMatrixMultiply matMat, matYaw, matMat
-
-        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-        D3DXMatrixMultiply matMat, matRoll, matMat
+   
+        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
+        D3DXMatrixMultiply matMat, matPitch, matMat
         
         DDevice.SetTransform D3DTS_WORLD, matMat
+        
     End If
 
     D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
@@ -1169,7 +1173,6 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
 
     stacked = stacked + 1
     Dim m As Molecule
-
     For Each m In ApplyTo.Molecules
         Render m, ApplyTo
     Next

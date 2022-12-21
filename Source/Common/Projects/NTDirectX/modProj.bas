@@ -511,7 +511,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     
                     If onkey = p.Key Then
 
-'                        Orientate MakePoint(0.01, 0.01, 0.01), p
+'                       Orientate MakePoint(0.01, 0.01, 0.01), p
 '                       ' Orientate MakePoint(0.01, 0, 0), p
 '                        'Orientate MakePoint(0, 0.01, 0), p
 '                        'Orientate MakePoint(0, 0, 0.01), p
@@ -525,15 +525,16 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
                     DDevice.SetTransform D3DTS_WORLD, matPlane
                     
-                    D3DXMatrixRotationX matPitch, p.Rotate.X
-                    D3DXMatrixMultiply matPlane, matPitch, matPlane
+                    D3DXMatrixRotationZ matRoll, p.Rotate.z
+                    D3DXMatrixMultiply matPlane, matRoll, matPlane
+
 
                     D3DXMatrixRotationY matYaw, p.Rotate.Y
                     D3DXMatrixMultiply matPlane, matYaw, matPlane
                     
-                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                    D3DXMatrixMultiply matPlane, matRoll, matPlane
-                   
+                    D3DXMatrixRotationX matPitch, p.Rotate.X
+                    D3DXMatrixMultiply matPlane, matPitch, matPlane
+                    
                     D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                     D3DXMatrixMultiply matPlane, matScale, matPlane
 

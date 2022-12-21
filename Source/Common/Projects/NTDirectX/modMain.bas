@@ -104,18 +104,12 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             'BeginMirrors UserControl, Camera.Player
 
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color, 1, 0
-            
-            MainMatrixSetup UserControl, Camera.Player
+
 
             mod3DObj.Begin UserControl, Camera.Player
             
-            InputScene UserControl
-            
-                        'Orientate MakePoint(0.01, 0.01, 0.01), p
-                       ' Orientate MakePoint(0.01, 0, 0), p
-                        'Orientate MakePoint(0, 0.01, 0), p
-                        'Orientate MakePoint(0, 0, 0.01), p
-                        
+            MainMatrixSetup UserControl, Camera.Player
+                       
 
             DDevice.BeginScene
             
@@ -123,9 +117,17 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
             RenderPlanets UserControl, Camera.Player
             
-                       
+            
             mod3DObj.Finish UserControl, Camera.Player
 
+            
+            InputScene UserControl
+
+               '        Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
+               '         Orientate MakePoint(0.01, 0, 0), Planets("Earth")
+        '                Orientate MakePoint(0, 0.01, 0), Planets("Earth")
+         '               Orientate MakePoint(0, 0, 0.01), Planets("Earth")
+            
             
             If Not PauseGame Then
                 
@@ -207,7 +209,7 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
     If Not Camera.Player Is Nothing Then
 
         If Not Camera.Planet Is Nothing Then
-            
+
             D3DXMatrixRotationX matPitch, -MoleculeView.Absolute.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
@@ -216,6 +218,7 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
             D3DXMatrixRotationZ matRoll, -MoleculeView.Absolute.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
+
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
@@ -230,19 +233,22 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
             D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
 
+
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
+
             
        Else
-
+            
             D3DXMatrixRotationX matPitch, -MoleculeView.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -MoleculeView.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-
+            
             D3DXMatrixRotationZ matRoll, -MoleculeView.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
+
 
             DDevice.SetTransform D3DTS_VIEW, matView
             
