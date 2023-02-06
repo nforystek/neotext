@@ -39,7 +39,11 @@ Public Property Let z(ByVal RHS As Single)
 End Property
 
 Public Function Equals(ByRef Point As Point) As Boolean
-    Equals = (Coord.Equals(Point) And Point.z = z)
+    If Point Is Nothing Then
+        Equals = (Coord.Equals(Point) And z = 0)
+    Else
+        Equals = (Coord.Equals(Point) And Point.z = z)
+    End If
 End Function
 
 Public Property Get Serialize() As String
@@ -48,6 +52,7 @@ Attribute Serialize.VB_MemberFlags = "240"
     Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & ", " & Round(z, 6) & "]"
 End Property
 Public Property Let Serialize(ByVal RHS As String)
+
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","

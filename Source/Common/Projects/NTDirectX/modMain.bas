@@ -123,7 +123,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             
             InputScene UserControl
 
-               '        Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
+                       Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
                '         Orientate MakePoint(0.01, 0, 0), Planets("Earth")
         '                Orientate MakePoint(0, 0.01, 0), Planets("Earth")
          '               Orientate MakePoint(0, 0, 0.01), Planets("Earth")
@@ -219,10 +219,9 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
             D3DXMatrixRotationZ matRoll, -MoleculeView.Absolute.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
-
             DDevice.SetTransform D3DTS_VIEW, matView
-
             D3DXMatrixTranslation matPos, -MoleculeView.Absolute.Origin.X, -MoleculeView.Absolute.Origin.Y, -MoleculeView.Absolute.Origin.z
+            
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
@@ -232,7 +231,6 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
             D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-
 
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView

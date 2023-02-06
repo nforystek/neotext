@@ -19,12 +19,12 @@ Private pRotate As Point
 Private pScaled As Point
 Private pRanges As Range
 
-
 Public Visible As Boolean
 
 Private pParent As Orbit
 Private pRelative As Orbit
 Private pAbsolute As Orbit
+
 
 Friend Property Get Parent() As Orbit
     Set Parent = pParent

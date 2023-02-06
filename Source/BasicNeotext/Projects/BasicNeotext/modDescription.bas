@@ -113,7 +113,7 @@ Public Sub UpdateCommentToAttributeDescriptions(ByRef VBInstance As VBIDE.VBE)
             Dim cnt As Long
             For cnt = 1 To Hooks.count
                 If IsWindowVisible(Hooks(cnt).hWnd) Then
-                    BuildComments VBInstance, CommentsToAttribute, Hooks(cnt)
+               '     BuildComments VBInstance, CommentsToAttribute, Hooks(cnt)
                 End If
             Next
         End If

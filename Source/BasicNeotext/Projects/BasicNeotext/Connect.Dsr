@@ -192,6 +192,7 @@ Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() A
         If PathExists(FileNames(cnt), True) Then
             If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
                 BuildProject FileNames(cnt)
+               ' Stop
             End If
             If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
                 BuildFileDescriptions FileNames(cnt), True

@@ -251,6 +251,9 @@ Private Sub ScriptControl1_Error()
             If Not ConsoleVisible Then
                 ConsoleToggle
             End If
+            Debug.Print "echo An error " & Err.Number & " occurd in " & Err.Source & _
+                    vbCrLf & "Description: " & .Error.Description & vbCrLf & _
+                    "At line " & .Error.Line & " code sniplet; " & vbCrLf & .Error.Text
             Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
                     vbCrLf & "Description: " & .Error.Description & vbCrLf & _
                     "At line " & .Error.Line & " code sniplet; " & vbCrLf & .Error.Text

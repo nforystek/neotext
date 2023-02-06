@@ -31,7 +31,11 @@ Public Property Let Y(ByVal RHS As Single)
 End Property
 
 Public Function Equals(ByRef Point As Point) As Boolean
-    Equals = (Point.X = X And Point.Y = Y)
+    If Point Is Nothing Then
+        Equals = (X = 0 And Y = 0)
+    Else
+        Equals = (Point.X = X And Point.Y = Y)
+    End If
 End Function
 
 Public Property Get Serialize() As String

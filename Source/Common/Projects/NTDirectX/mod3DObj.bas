@@ -395,198 +395,85 @@ PROC_ERR:
 End Function
 
 
+Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
-Private Sub ApplyOrigin(ByRef Origin As Point, ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    If Origin Is Nothing Then Exit Sub
+    If Not Relative Then
+        Set ApplyTo.Origin = VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin)
+        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+    Else
+        Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
+        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+        Set ApplyTo.Relative.Origin = Nothing
+    End If
 
-'    Static vin As D3DVECTOR
-'    Static vout As D3DVECTOR
-'    Static matMesh As D3DMATRIX
 '    Static stacked As Integer
-'
-'    D3DXMatrixIdentity matMesh
-'    D3DXMatrixTranslation matMesh, -Origin.X, -Origin.Y, -Origin.z
-            
-    Set ApplyTo.Origin = Origin
-    Set ApplyTo.Absolute.Origin = ApplyTo.Origin
-
-'    If TypeName(ApplyTo) <> "Planet" Then
-'        Dim V As Matter
-'        For Each V In ApplyTo.Volume
-'
-'            vin.X = V.Point1.X
-'            vin.Y = V.Point1.Y
-'            vin.z = V.Point1.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point1.X = vout.X
-'            V.Point1.Y = vout.Y
-'            V.Point1.z = vout.z
-'
-'            vin.X = V.Point2.X
-'            vin.Y = V.Point2.Y
-'            vin.z = V.Point2.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point2.X = vout.X
-'            V.Point2.Y = vout.Y
-'            V.Point2.z = vout.z
-'
-'            vin.X = V.Point3.X
-'            vin.Y = V.Point3.Y
-'            vin.z = V.Point3.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point3.X = vout.X
-'            V.Point3.Y = vout.Y
-'            V.Point3.z = vout.z
-'
-'            'Set V.Normal = TriangleNormal(V.Point1, V.Point2, V.Point3)
-'
-'        Next
-'    End If
-    
-
 '    stacked = stacked + 1
-'
 '    Dim m As Molecule
 '    If TypeName(ApplyTo) = "Planet" Then
 '        For Each m In Molecules
 '            If ApplyTo.Ranges.W = -1 Then
-'                ApplyOrigin VectorAddition(ApplyTo.Origin, Origin), m, ApplyTo
+'                ApplyOrigin m, ApplyTo, Relative
 '            ElseIf ApplyTo.Ranges.W > 0 Then
 '                If ApplyTo.Ranges.W - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyOrigin VectorAddition(ApplyTo.Origin, Origin), m, ApplyTo
+'                    ApplyOrigin m, ApplyTo, Relative
 '                End If
 '            End If
 '        Next
 '    ElseIf TypeName(ApplyTo) = "Molecule" Then
 '        For Each m In ApplyTo.Molecules
-'            ApplyOrigin VectorAddition(ApplyTo.Origin, Origin), m, ApplyTo
+'            ApplyOrigin m, ApplyTo, Relative
 '        Next
 '    End If
-'
 '    stacked = stacked - 1
 End Sub
 
 
-Private Sub ApplyRotate(ByRef Degrees As Point, ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    If Degrees Is Nothing Then Exit Sub
+Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
-'    Dim vin As D3DVECTOR
-'    Dim vout As D3DVECTOR
-'    Static matMesh As D3DMATRIX
+    If Not Relative Then
+        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
+        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+    Else
+        Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
+        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+        Set ApplyTo.Relative.Rotate = Nothing
+    End If
+
 '    Static stacked As Integer
-'
-'    D3DXMatrixIdentity matMesh
-'    D3DXMatrixRotationYawPitchRoll matMesh, -Degrees.X, -Degrees.Y, -Degrees.z
-    
-    Set ApplyTo.Rotate = Degrees
-    Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-    
-'    If TypeName(ApplyTo) <> "Planet" Then
-'        Dim V As Matter
-'        For Each V In ApplyTo.Volume
-'
-'            vin.X = V.Point1.X
-'            vin.Y = V.Point1.Y
-'            vin.z = V.Point1.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point1.X = vout.X
-'            V.Point1.Y = vout.Y
-'            V.Point1.z = vout.z
-'
-'            vin.X = V.Point2.X
-'            vin.Y = V.Point2.Y
-'            vin.z = V.Point2.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point2.X = vout.X
-'            V.Point2.Y = vout.Y
-'            V.Point2.z = vout.z
-'
-'            vin.X = V.Point3.X
-'            vin.Y = V.Point3.Y
-'            vin.z = V.Point3.z
-'            D3DXVec3TransformCoord vout, vin, matMesh
-'            V.Point3.X = vout.X
-'            V.Point3.Y = vout.Y
-'            V.Point3.z = vout.z
-'
-'            'Set V.Normal = TriangleNormal(V.Point1, V.Point2, V.Point3)
-'
-'        Next
-'    End If
-
-
-    
 '    stacked = stacked + 1
 '    Dim m As Molecule
-'    For Each m In RangedMolecules(ApplyTo)
-'        ApplyRotate Degrees, m, ApplyTo
-'    Next
-'
 '    If TypeName(ApplyTo) = "Planet" Then
 '        For Each m In Molecules
 '            If ApplyTo.Ranges.W = -1 Then
-'                ApplyRotate Degrees, m, ApplyTo
+'                ApplyRotate m, ApplyTo, Relative
 '            ElseIf ApplyTo.Ranges.W > 0 Then
 '                If ApplyTo.Ranges.W - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyRotate Degrees, m, ApplyTo
+'                    ApplyRotate m, ApplyTo, Relative
 '                End If
 '            End If
 '        Next
 '    ElseIf TypeName(ApplyTo) = "Molecule" Then
 '        For Each m In ApplyTo.Molecules
-'            ApplyRotate Degrees, m, ApplyTo
+'            ApplyRotate m, ApplyTo, Relative
 '        Next
 '    End If
 '    stacked = stacked - 1
 
 End Sub
 
-Private Static Sub ApplyScaled(ByRef Scalar As Point, ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    If Scalar Is Nothing Then Exit Sub
+Private Static Sub ApplyScaled(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
-'    Dim vin As D3DVECTOR
-'    Dim vout As D3DVECTOR
-'    Dim matMesh As D3DMATRIX
+    If Not Relative Then
+        Set ApplyTo.Scaled = VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled)
+        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
+    Else
+        Set ApplyTo.Scaled = VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled)
+        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
+        Set ApplyTo.Relative.Scaled = Nothing
+    End If
+
 '    Static stacked As Integer
-'
-'    D3DXMatrixIdentity matMesh
-'    D3DXMatrixScaling matMesh, Scalar.X, Scalar.Y, Scalar.z
-
-    Set ApplyTo.Scaled = Scalar
-    Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
-
-'    Dim V As Matter
-'    For Each V In ApplyTo.Volume
-'
-'        vin.X = V.Point1.X
-'        vin.Y = V.Point1.Y
-'        vin.z = V.Point1.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point1.X = vout.X
-'        V.Point1.Y = vout.Y
-'        V.Point1.z = vout.z
-'
-'        vin.X = V.Point2.X
-'        vin.Y = V.Point2.Y
-'        vin.z = V.Point2.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point2.X = vout.X
-'        V.Point2.Y = vout.Y
-'        V.Point2.z = vout.z
-'
-'        vin.X = V.Point3.X
-'        vin.Y = V.Point3.Y
-'        vin.z = V.Point3.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point3.X = vout.X
-'        V.Point3.Y = vout.Y
-'        V.Point3.z = vout.z
-'
-'        Set V.Normal = TriangleNormal(V.Point1, V.Point2, V.Point3)
-'    Next
-
 '    stacked = stacked + 1
-'
 '    Dim m As Molecule
 '    If TypeName(ApplyTo) = "Planet" Then
 '        For Each m In Molecules
@@ -603,53 +490,22 @@ Private Static Sub ApplyScaled(ByRef Scalar As Point, ByRef ApplyTo As Molecule,
 '            ApplyScaled  VectorAddition(m.Scaled, Scalar), m, ApplyTo
 '        Next
 '    End If
-'
 '    stacked = stacked - 1
 End Sub
 
-Private Static Sub ApplyOffset(ByRef Offset As Point, ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    If Offset Is Nothing Then Exit Sub
+Private Static Sub ApplyOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
-'    Dim vin As D3DVECTOR
-'    Dim vout As D3DVECTOR
-'    Dim matMesh As D3DMATRIX
-'
-'    D3DXMatrixIdentity matMesh
-'    D3DXMatrixTranslation matMesh, -ApplyTo.Offset.X + Offset.X, -ApplyTo.Offset.Y + Offset.Y, -ApplyTo.Offset.z + Offset.z
+    If Not Relative Then
+        Set ApplyTo.Offset = VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset)
+        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
+    Else
+        Set ApplyTo.Offset = VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset)
+        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
+        Set ApplyTo.Relative.Offset = Nothing
+    End If
 
-    Set ApplyTo.Offset = Offset
-    Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-
-'    Dim V As Matter
-'    For Each V In ApplyTo.Volume
-'
-'        vin.X = V.Point1.X
-'        vin.Y = V.Point1.Y
-'        vin.z = V.Point1.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point1.X = vout.X
-'        V.Point1.Y = vout.Y
-'        V.Point1.z = vout.z
-'
-'        vin.X = V.Point2.X
-'        vin.Y = V.Point2.Y
-'        vin.z = V.Point2.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point2.X = vout.X
-'        V.Point2.Y = vout.Y
-'        V.Point2.z = vout.z
-'
-'        vin.X = V.Point3.X
-'        vin.Y = V.Point3.Y
-'        vin.z = V.Point3.z
-'        D3DXVec3TransformCoord vout, vin, matMesh
-'        V.Point3.X = vout.X
-'        V.Point3.Y = vout.Y
-'        V.Point3.z = vout.z
-'
-'        Set V.Normal = TriangleNormal(V.Point1, V.Point2, V.Point3)
-'    Next
-
+'    Static stacked As Integer
+'    stacked = stacked + 1
 '    Dim m As Molecule
 '    If TypeName(ApplyTo) = "Planet" Then
 '        For Each m In Molecules
@@ -666,7 +522,7 @@ Private Static Sub ApplyOffset(ByRef Offset As Point, ByRef ApplyTo As Molecule,
 '            ApplyOrigin  VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
 '        Next
 '    End If
-
+'    stacked = stacked - 1
 End Sub
 
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
@@ -701,21 +557,10 @@ Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional By
             Case "Planet", "Molecule"
                 CommitOrigin ApplyTo, Parent
                 If Relative Then
-'                    If Not Parent Is Nothing Then
-'                        Set ApplyTo.Relative.Origin = VectorRotateAxis(Origin, AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, Parent.Rotate), ApplyTo.Rotate))
-'                    ElseIf Not Camera.Planet Is Nothing Then
-'                        Set ApplyTo.Relative.Origin = VectorRotateAxis(Origin, AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, Camera.Planet.Rotate), ApplyTo.Rotate))
-'                    Else
-'                        Set ApplyTo.Relative.Origin = VectorRotateAxis(Origin, ApplyTo.Rotate)
-'                    End If
-
                     Set ApplyTo.Relative.Origin = Origin
                 Else
                     Set ApplyTo.Absolute.Origin = Origin
                 End If
-'                For Each m In RangedMolecules(ApplyTo)
-'                    LocPos Origin, Relative, m, ApplyTo
-'                Next
         End Select
     End If
 End Sub
@@ -751,23 +596,10 @@ Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional B
             Case "Planet", "Molecule"
                 CommitRotate ApplyTo, Parent
                 If Relative Then
-'                    If Not Parent Is Nothing Then
-'                        Set ApplyTo.Relative.Rotate = AngleAxisDeduction(AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, Parent.Rotate), Degrees), ApplyTo.Rotate)
-'                    ElseIf Not Camera.Planet Is Nothing Then
-'                        Set ApplyTo.Relative.Rotate = Degrees
-'                    Else
-'                        'Set ApplyTo.Relative.Rotate = AngleAxisDeduction(AngleAxisAddition(ApplyTo.Rotate, Degrees), ApplyTo.Rotate)
-'                        Set ApplyTo.Relative.Rotate = Degrees
-'                    End If
-
                     Set ApplyTo.Relative.Rotate = Degrees
                 Else
                     Set ApplyTo.Absolute.Rotate = Degrees
                 End If
-'                For Each m In RangedMolecules(ApplyTo)
-'                    RotOri Degrees, Relative, m, ApplyTo
-'                Next
-
         End Select
     End If
 End Sub
@@ -809,10 +641,6 @@ Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Scaled = Scalar
                 End If
-'                For Each m In RangedMolecules(ApplyTo)
-'                    ScaExp Scalar, Relative, m, ApplyTo
-'                Next
-
         End Select
     End If
 End Sub
@@ -855,33 +683,14 @@ Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Offset = Offset
                 End If
-
-'                For Each m In RangedMolecules(ApplyTo)
-'                    DisBal Offset, Relative, m, ApplyTo
-'                Next
         End Select
     End If
 End Sub
 
 Private Function RangedMolecules(ByRef ApplyTo As Molecule) As NTNodes10.Collection
     Set RangedMolecules = New NTNodes10.Collection
-
-'    If TypeName(ApplyTo) = "Planet" Then
-'        For Each m In Molecules
-'            If ApplyTo.Ranges.W = -1 Then
-'                ApplyScaled Scalar, m, ApplyTo
-'            ElseIf ApplyTo.Ranges.W > 0 Then
-'                If ApplyTo.Ranges.W - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyScaled Scalar, m, ApplyTo
-'                End If
-'            End If
-'        Next
-'    ElseIf TypeName(ApplyTo) = "Molecule" Then
-'        For Each m In ApplyTo.Molecules
-'            ApplyScaled Scalar, m, ApplyTo
-'        Next
-'    End If
     Dim m As Molecule
+
     Dim dist As Single
     For Each m In Molecules
         If ((m.Parent Is Nothing) And (Not TypeName(ApplyTo) = "Planet")) Or (TypeName(ApplyTo) = "Planet") Then
@@ -907,64 +716,84 @@ Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, By
         stacked = True
 
         'any absolute position comes first, pending is a difference from the actual
-        If (Not ApplyTo.Absolute.Origin.Equals(ApplyTo.Origin)) And ((DoOrigin And DoAbsolute) Or ((Not DoOrigin) And (Not DoAbsolute))) Then
-            ApplyOrigin VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin), ApplyTo, Parent
-            Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+        If Not ApplyTo.Absolute.Origin.Equals(Nothing) Then
+            If (Not ApplyTo.Origin.Equals(ApplyTo.Absolute.Origin)) And ((DoOrigin And DoAbsolute) Or ((Not DoOrigin) And (Not DoAbsolute))) Then
+                ApplyOrigin ApplyTo, Parent, False
+            End If
         End If
-        If (Not ApplyTo.Absolute.Offset.Equals(ApplyTo.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
-            ApplyOffset VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset), ApplyTo, Parent
-            Set ApplyTo.Absolute.Offset = ApplyTo.Offset
+        If Not ApplyTo.Absolute.Offset.Equals(Nothing) Then
+            If (Not ApplyTo.Offset.Equals(ApplyTo.Absolute.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
+                ApplyOffset ApplyTo, Parent, False
+            End If
         End If
-        If (Not ApplyTo.Absolute.Rotate.Equals(ApplyTo.Rotate)) And ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
-            ApplyRotate AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate), ApplyTo, Parent
-            Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+        If Not ApplyTo.Absolute.Rotate.Equals(Nothing) Then
+            If (Not ApplyTo.Rotate.Equals(ApplyTo.Absolute.Rotate)) And ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
+                ApplyRotate ApplyTo, Parent, False
+            End If
         End If
-        If (Not ApplyTo.Absolute.Scaled.Equals(ApplyTo.Scaled)) And ((DoScaled And DoAbsolute) Or ((Not DoScaled) And (Not DoAbsolute))) Then
-            ApplyScaled VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled), ApplyTo, Parent
-            Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
+        If Not ApplyTo.Absolute.Scaled.Equals(Nothing) Then
+            If (Not ApplyTo.Scaled.Equals(ApplyTo.Absolute.Scaled)) And ((DoScaled And DoAbsolute) Or ((Not DoScaled) And (Not DoAbsolute))) Then
+                ApplyScaled ApplyTo, Parent, False
+            End If
         End If
 
-        
-        
+
         'relative positioning comes secondly, pending is there is any value not empty
-        If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
-            ApplyRotate AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate), ApplyTo, Parent
-            Set ApplyTo.Relative.Rotate = Nothing
+        If Not ApplyTo.Relative.Rotate.Equals(Nothing) Then
+            If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
+                ApplyRotate ApplyTo, Parent, True
+            End If
         End If
-        If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
-            ApplyOrigin VectorAddition(ApplyTo.Relative.Origin, ApplyTo.Origin), ApplyTo, Parent
-            Set ApplyTo.Relative.Origin = Nothing
+        If Not ApplyTo.Relative.Origin.Equals(Nothing) Then
+            If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
+                ApplyOrigin ApplyTo, Parent, True
+            End If
         End If
-        If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
-            ApplyOffset VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset), ApplyTo, Parent
-            Set ApplyTo.Relative.Offset = Nothing
+        If Not ApplyTo.Relative.Offset.Equals(Nothing) Then
+            If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
+                ApplyOffset ApplyTo, Parent, True
+            End If
         End If
-        If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
-            ApplyScaled VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled), ApplyTo, Parent
-            Set ApplyTo.Relative.Scaled = Nothing
+        If Not ApplyTo.Relative.Scaled.Equals(Nothing) Then
+            If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
+                ApplyScaled ApplyTo, Parent, True
+            End If
         End If
+
         stacked = False
     End If
 End Sub
+Private Sub AllCommitRoutine(ByRef ApplyTo As Molecule, Optional ByRef Parent As Molecule = Nothing)
 
+    CommitRoutine ApplyTo, Parent, True, False, False, False, True, False
+    CommitRoutine ApplyTo, Parent, False, True, False, False, True, False
+    CommitRoutine ApplyTo, Parent, False, False, True, False, True, False
+    CommitRoutine ApplyTo, Parent, False, False, False, True, True, False
+
+    CommitRoutine ApplyTo, Parent, True, False, False, False, False, True
+    CommitRoutine ApplyTo, Parent, False, True, False, False, False, True
+    CommitRoutine ApplyTo, Parent, False, False, True, False, False, True
+    CommitRoutine ApplyTo, Parent, False, False, False, True, False, True
+
+    Set ApplyTo.Relative = Nothing
+End Sub
 Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
     'called once per frame committing changes the last frame has waiting in object properties in entirety
     Dim m As Molecule
     Dim p As Planet
+    Dim ms As NTNodes10.Collection
 
     For Each p In Planets
 
-        CommitRoutine p, Nothing, True, False, False, False, True, False
-        CommitRoutine p, Nothing, False, True, False, False, True, False
-        CommitRoutine p, Nothing, False, False, True, False, True, False
-        CommitRoutine p, Nothing, False, False, False, True, True, False
+        AllCommitRoutine p, Nothing
 
-        CommitRoutine p, Nothing, True, False, False, False, False, True
-        CommitRoutine p, Nothing, False, True, False, False, False, True
-        CommitRoutine p, Nothing, False, False, True, False, False, True
-        CommitRoutine p, Nothing, False, False, False, True, False, True
+        Set ms = RangedMolecules(p)
 
-        Set p.Relative = Nothing
+        For Each m In ms
+
+            AllCommitRoutine m, p
+
+        Next
 
     Next
 
@@ -972,23 +801,14 @@ Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecul
 
         If m.Parent Is Nothing Then
 
-            CommitRoutine m, Nothing, True, False, False, False, True, False
-            CommitRoutine m, Nothing, False, True, False, False, True, False
-            CommitRoutine m, Nothing, False, False, True, False, True, False
-            CommitRoutine m, Nothing, False, False, False, True, True, False
-
-            CommitRoutine m, Nothing, True, False, False, False, False, True
-            CommitRoutine m, Nothing, False, True, False, False, False, True
-            CommitRoutine m, Nothing, False, False, True, False, False, True
-            CommitRoutine m, Nothing, False, False, False, True, False, True
-
-            Set m.Relative = Nothing
+            AllCommitRoutine m, Nothing
 
         End If
 
     Next
 
 End Sub
+
 
 Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
     'called once per frame drawing the objects, with out any of the current frame object
@@ -1030,106 +850,170 @@ Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecu
     DDevice.SetTexture 0, Nothing
     DDevice.SetMaterial GenericMaterial
     DDevice.SetTexture 1, Nothing
-    
-    Dim p As Planet
-    For Each p In Planets
-        Iterate p.Molecules, False
-    Next
 
-    Iterate Molecules, True
-End Sub
+    Dim matMat As D3DMATRIX
 
-Private Sub Iterate(ByRef col As Object, ByVal NoParentOnly As Boolean)
-
-    Dim m As Molecule
-    For Each m In col
-        If NoParentOnly Then
-            If m.Parent Is Nothing Then
-                Render m, Nothing
-            End If
-        Else
-            Render m, m.Parent
-        End If
-    Next
-
-End Sub
-
-Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    Static stacked As Integer
-
-    Static matMat As D3DMATRIX
-
-    If stacked = 0 Then
-        D3DXMatrixIdentity matMat
-    End If
+    D3DXMatrixIdentity matMat
 
     Dim matRoll As D3DMATRIX
     Dim matPitch As D3DMATRIX
     Dim matYaw As D3DMATRIX
     Dim matPos As D3DMATRIX
-    Dim matScale As D3DMATRIX
 
     If Not Camera.Planet Is Nothing Then
-        
+
+        D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
+        D3DXMatrixMultiply matMat, matPos, matMat
+
         D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
         D3DXMatrixMultiply matMat, matRoll, matMat
 
         D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
         D3DXMatrixMultiply matMat, matYaw, matMat
-   
+
         D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
         D3DXMatrixMultiply matMat, matPitch, matMat
-        
+
         DDevice.SetTransform D3DTS_WORLD, matMat
-        
+
     End If
 
-    D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
-    D3DXMatrixMultiply matMat, matPos, matMat
-            
-    DDevice.SetTransform D3DTS_WORLD, matMat
+
+    Iterate Molecules, True
+
+    Dim p As Planet
+    For Each p In Planets
+        Iterate p.Molecules, False
+
+    Next
+
+
+End Sub
+
+Private Sub Iterate(ByRef col As Object, ByVal NoParentOnly As Boolean)
+    Dim matPos2 As D3DMATRIX
+    Dim matRoll2 As D3DMATRIX
+    Dim matYaw2 As D3DMATRIX
+    Dim matPitch2 As D3DMATRIX
+    Dim matScale2 As D3DMATRIX
+    D3DXMatrixIdentity matPos2
+    D3DXMatrixIdentity matRoll2
+    D3DXMatrixIdentity matYaw2
+    D3DXMatrixIdentity matPitch2
+    D3DXMatrixIdentity matScale2
+                
+    Dim m As Molecule
+    For Each m In col
+        If NoParentOnly Then
+            If m.Parent Is Nothing Then
+                Render m, Nothing, matPos2, matRoll2, matYaw2, matPitch2, matScale2
+            End If
+        Else
+            Render m, Nothing, matPos2, matRoll2, matYaw2, matPitch2, matScale2
+        End If
+        
+    Next
+
+End Sub
+
+
+Private Function CompoundOrbit(ByRef Orbit1 As Orbit, ByRef Orbit2 As Orbit) As Orbit
+    Set CompoundOrbit = New Orbit
+    With CompoundOrbit
+        .Origin.X = Orbit1.Origin.X + Orbit2.Origin.X
+        .Origin.Y = Orbit1.Origin.Y + Orbit2.Origin.Y
+        .Origin.z = Orbit1.Origin.z + Orbit2.Origin.z
+    End With
+End Function
+
+Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matPos As D3DMATRIX, ByRef matRoll As D3DMATRIX, ByRef matYaw As D3DMATRIX, ByRef matPitch As D3DMATRIX, ByRef matScale As D3DMATRIX)
+    Static stacked As Integer
+
+    Dim vout As D3DVECTOR
+
+    Dim matMat As D3DMATRIX
+
+    Dim matPos2 As D3DMATRIX
+    Dim matRoll2 As D3DMATRIX
+    Dim matYaw2 As D3DMATRIX
+    Dim matPitch2 As D3DMATRIX
+    Dim matScale2 As D3DMATRIX
+
+    D3DXMatrixIdentity matMat
+
+    If Parent Is Nothing Then
+        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
+        D3DXMatrixMultiply matPos2, matPos, matPos2
+        D3DXMatrixMultiply matMat, matPos2, matMat
+    Else
+        
+        D3DXMatrixTranslation matPos2, -Parent.Origin.X, -Parent.Origin.Y, -Parent.Origin.z
+        D3DXMatrixMultiply matPos2, matPos, matPos2
+        D3DXMatrixMultiply matMat, matPos2, matMat
+        
+        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
+        D3DXMatrixMultiply matPos2, matPos, matPos2
+        D3DXMatrixMultiply matMat, matPos2, matMat
+        
+    End If
+    D3DXMatrixRotationX matPitch2, ApplyTo.Rotate.X
+    D3DXMatrixMultiply matPitch2, matPitch, matPitch2
+    D3DXMatrixMultiply matMat, matPitch2, matMat
+
+    D3DXMatrixRotationY matYaw2, ApplyTo.Rotate.Y
+    D3DXMatrixMultiply matYaw2, matYaw, matYaw2
+    D3DXMatrixMultiply matMat, matYaw2, matMat
+
+    D3DXMatrixRotationZ matRoll2, ApplyTo.Rotate.z
+    D3DXMatrixMultiply matRoll2, matRoll, matRoll2
+    D3DXMatrixMultiply matMat, matRoll2, matMat
+
+    If Not Parent Is Nothing Then
+
+
+        D3DXMatrixTranslation matPos2, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z
+        D3DXMatrixMultiply matPos2, matPos, matPos2
+        D3DXMatrixMultiply matMat, matPos2, matMat
+
+        D3DXMatrixTranslation matPos2, -Parent.Origin.X, -Parent.Origin.Y, -Parent.Origin.z
+        D3DXMatrixMultiply matPos2, matPos, matPos2
+        D3DXMatrixMultiply matMat, matPos2, matMat
+
+    End If
     
-    D3DXMatrixRotationX matPitch, ApplyTo.Rotate.X
-    D3DXMatrixMultiply matMat, matPitch, matMat
-
-    D3DXMatrixRotationY matYaw, ApplyTo.Rotate.Y
-    D3DXMatrixMultiply matMat, matYaw, matMat
-
-    D3DXMatrixRotationZ matRoll, ApplyTo.Rotate.z
-    D3DXMatrixMultiply matMat, matRoll, matMat
-    
-    DDevice.SetTransform D3DTS_WORLD, matMat
-
     Dim V As Matter
     For Each V In ApplyTo.Volume
-        'update the directx and collision array's then render the object
-        VertexDirectX((V.TriangleIndex * 3) + 0).X = V.Point1.X '+ ApplyTo.Origin.X
-        VertexDirectX((V.TriangleIndex * 3) + 0).Y = V.Point1.Y '+ ApplyTo.Origin.Y
-        VertexDirectX((V.TriangleIndex * 3) + 0).z = V.Point1.z '+ ApplyTo.Origin.z
 
-        VertexDirectX((V.TriangleIndex * 3) + 1).X = V.Point2.X '+ ApplyTo.Origin.X
-        VertexDirectX((V.TriangleIndex * 3) + 1).Y = V.Point2.Y '+ ApplyTo.Origin.Y
-        VertexDirectX((V.TriangleIndex * 3) + 1).z = V.Point2.z '+ ApplyTo.Origin.z
+        D3DXVec3TransformCoord vout, ToVector(V.Point1), matMat
+        VertexDirectX((V.TriangleIndex * 3) + 0).X = vout.X
+        VertexDirectX((V.TriangleIndex * 3) + 0).Y = vout.Y
+        VertexDirectX((V.TriangleIndex * 3) + 0).z = vout.z
 
-        VertexDirectX((V.TriangleIndex * 3) + 2).X = V.Point3.X '+ ApplyTo.Origin.X
-        VertexDirectX((V.TriangleIndex * 3) + 2).Y = V.Point3.Y '+ ApplyTo.Origin.Y
-        VertexDirectX((V.TriangleIndex * 3) + 2).z = V.Point3.z '+ ApplyTo.Origin.z
+        D3DXVec3TransformCoord vout, ToVector(V.Point2), matMat
+        VertexDirectX((V.TriangleIndex * 3) + 1).X = vout.X
+        VertexDirectX((V.TriangleIndex * 3) + 1).Y = vout.Y
+        VertexDirectX((V.TriangleIndex * 3) + 1).z = vout.z
 
-        If Not Parent Is Nothing Then
+        D3DXVec3TransformCoord vout, ToVector(V.Point3), matMat
+        VertexDirectX((V.TriangleIndex * 3) + 2).X = vout.X
+        VertexDirectX((V.TriangleIndex * 3) + 2).Y = vout.Y
+        VertexDirectX((V.TriangleIndex * 3) + 2).z = vout.z
 
-            VertexDirectX((V.TriangleIndex * 3) + 0).X = VertexDirectX((V.TriangleIndex * 3) + 0).X + Parent.Origin.X
-            VertexDirectX((V.TriangleIndex * 3) + 0).Y = VertexDirectX((V.TriangleIndex * 3) + 0).Y + Parent.Origin.Y
-            VertexDirectX((V.TriangleIndex * 3) + 0).z = VertexDirectX((V.TriangleIndex * 3) + 0).z + Parent.Origin.z
-
-            VertexDirectX((V.TriangleIndex * 3) + 1).X = VertexDirectX((V.TriangleIndex * 3) + 1).X + Parent.Origin.X
-            VertexDirectX((V.TriangleIndex * 3) + 1).Y = VertexDirectX((V.TriangleIndex * 3) + 1).Y + Parent.Origin.Y
-            VertexDirectX((V.TriangleIndex * 3) + 1).z = VertexDirectX((V.TriangleIndex * 3) + 1).z + Parent.Origin.z
-
-            VertexDirectX((V.TriangleIndex * 3) + 2).X = VertexDirectX((V.TriangleIndex * 3) + 2).X + Parent.Origin.X
-            VertexDirectX((V.TriangleIndex * 3) + 2).Y = VertexDirectX((V.TriangleIndex * 3) + 2).Y + Parent.Origin.Y
-            VertexDirectX((V.TriangleIndex * 3) + 2).z = VertexDirectX((V.TriangleIndex * 3) + 2).z + Parent.Origin.z
-
-        End If
+'        If Not Parent Is Nothing Then
+'
+'            VertexDirectX((V.TriangleIndex * 3) + 0).X = VertexDirectX((V.TriangleIndex * 3) + 0).X + Parent.Origin.X
+'            VertexDirectX((V.TriangleIndex * 3) + 0).Y = VertexDirectX((V.TriangleIndex * 3) + 0).Y + Parent.Origin.Y
+'            VertexDirectX((V.TriangleIndex * 3) + 0).z = VertexDirectX((V.TriangleIndex * 3) + 0).z + Parent.Origin.z
+'
+'            VertexDirectX((V.TriangleIndex * 3) + 1).X = VertexDirectX((V.TriangleIndex * 3) + 1).X + Parent.Origin.X
+'            VertexDirectX((V.TriangleIndex * 3) + 1).Y = VertexDirectX((V.TriangleIndex * 3) + 1).Y + Parent.Origin.Y
+'            VertexDirectX((V.TriangleIndex * 3) + 1).z = VertexDirectX((V.TriangleIndex * 3) + 1).z + Parent.Origin.z
+'
+'            VertexDirectX((V.TriangleIndex * 3) + 2).X = VertexDirectX((V.TriangleIndex * 3) + 2).X + Parent.Origin.X
+'            VertexDirectX((V.TriangleIndex * 3) + 2).Y = VertexDirectX((V.TriangleIndex * 3) + 2).Y + Parent.Origin.Y
+'            VertexDirectX((V.TriangleIndex * 3) + 2).z = VertexDirectX((V.TriangleIndex * 3) + 2).z + Parent.Origin.z
+'
+'        End If
 
         VertexDirectX(V.TriangleIndex * 3 + 0).NX = V.Normal.X
         VertexDirectX(V.TriangleIndex * 3 + 0).NY = V.Normal.Y
@@ -1174,9 +1058,10 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
     stacked = stacked + 1
     Dim m As Molecule
     For Each m In ApplyTo.Molecules
-        Render m, ApplyTo
+        Render m, ApplyTo, matPos2, matRoll2, matYaw2, matPitch2, matScale2
     Next
     stacked = stacked - 1
+
 End Sub
 
 Private Function BuildArrays() As Long
