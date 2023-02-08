@@ -37,6 +37,8 @@ Private pImageIndex() As Long
 Private pFileIndex As Long
 
 Private pKey As String
+Private pSerialize As Boolean
+
 
 Public Property Get Parent() As Orbit
     Set Parent = Molecule.Parent
@@ -167,10 +169,10 @@ Public Property Set Ranges(ByRef RHS As Range)
 End Property
 
 Public Property Get Serialize() As Boolean
-    Serialize = Molecule.Serialize
+    Serialize = pSerialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
-    Molecule.Serialize = RHS
+    pSerialize = RHS
 End Property
 
 Public Property Get Visible() As Boolean
@@ -535,6 +537,7 @@ Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
     
     Molecule.Key = "M" & ObjPtr(Molecule)
+    pSerialize = True
 End Sub
 
 Private Sub Class_Terminate()

@@ -39,7 +39,6 @@ Public Function Equals(ByRef Point As Point) As Boolean
 End Function
 
 Public Property Get Serialize() As String
-Attribute Serialize.VB_UserMemId = 0
 Attribute Serialize.VB_MemberFlags = "240"
     Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & "]"
 End Property

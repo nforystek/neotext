@@ -178,7 +178,7 @@ End Sub
 
 Public Function DrawText(Text As String, X As Single, Y As Single)
 
-    Dim TextRect As RECT
+    Dim TextRect As DxVBLibA.RECT
     Dim Allignment As CONST_DTFLAGS
     Allignment = DT_TOP Or DT_LEFT
 
@@ -557,7 +557,7 @@ Public Function LoadTextureEx(ByVal FileName As String, ByRef Dimensions As ImgD
         Dim tmp As ImgDimType
         If BitmapDimensions(FileName, tmp, t) Then
             Set LoadTextureEx = D3DX.CreateTextureFromFileEx(DDevice, FileName, tmp.Width, tmp.Height, D3DX_FILTER_NONE, 0, _
-                D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
+                D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, modDecs.Transparent, ByVal 0, ByVal 0)
         End If
     End If
 

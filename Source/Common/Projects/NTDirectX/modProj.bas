@@ -17,13 +17,32 @@ Private Mirrors As NTNodes10.Collection
 Public worldRotate As New Point
 
 Public Sub CreateProj()
+    If frmMain.SerialStack = False Then
+        frmMain.SerialStack = True
+        
 
-    If ScriptRoot <> "" Then
+        
+        If ScriptRoot = "" Then
+            If PathExists(CurDir & "\Index.vbx") Then
+                ScriptRoot = CurDir
+            ElseIf PathExists(AppPath(False) & "Index.vbx") Then
+                ScriptRoot = Left(AppPath(False), Len(AppPath(False)) - 1)
+            ElseIf PathExists(AppPath(True) & "Index.vbx") Then
+                ScriptRoot = Left(AppPath(True), Len(AppPath(True)) - 1)
+            ElseIf PathExists(GetFilePath(AppEXE(False)) & "\Index.vbx") Then
+                ScriptRoot = GetFilePath(AppEXE(False))
+            End If
+            If ScriptRoot = "" Then
+                ScriptRoot = modFolders.SearchPath("Index.vbx", True, CurDir, FirstOnly)
+                If ScriptRoot <> "" Then ScriptRoot = GetFilePath(ScriptRoot)
+            End If
+        End If
+
         frmMain.Serialize ParseScript(ScriptRoot & "\Index.vbx")
-    Else
-        frmMain.Serialize ""
-    End If
 
+    
+        frmMain.SerialStack = False
+    End If
     
     
     
@@ -76,6 +95,7 @@ Public Sub CleanUpProj()
     End If
 
     If Not StopGame Then frmMain.Startup
+
 End Sub
 
 Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
@@ -452,9 +472,9 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
             End If
         End If
         
-        Debug.Print "Nearest: " & nearest.Key;
-        Debug.Print " Aimingat: " & aimingAt.Key;
-        Debug.Print " OnPlanet: " & onkey
+'        Debug.Print "Nearest: " & nearest.Key;
+'        Debug.Print " Aimingat: " & aimingAt.Key;
+'        Debug.Print " OnPlanet: " & onkey
         
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW

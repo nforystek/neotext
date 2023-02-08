@@ -9,7 +9,7 @@ Option Explicit
 Public ScriptRoot As String
 Public Include As New Include
 
-Public All As New ntnodes10.Collection
+Public All As New NTNodes10.Collection
 
 Public Brilliants As New Brilliants
 Public Molecules As New Molecules
@@ -19,7 +19,7 @@ Public Planets As New Planets
 
 Public Motions As New Motions
 
-Public OnEvents As New ntnodes10.Collection
+Public OnEvents As New NTNodes10.Collection
 Public Bindings As New Bindings
 Public Camera As New Camera
 
@@ -148,9 +148,9 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                         Select Case LCase(Include.SafeKey(child.baseName))
                             Case "datetime"
                                 'temporary start new each time
-                               ' If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
+                                If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
                                     GoTo exitout:
-                               'End If
+                                End If
                             Case "variables"
                                 For cnt = 0 To child.childNodes.Length - 1
                                     tmp = Replace(Replace(Include.URLDecode(child.childNodes(cnt).Text), """", """"""), vbCrLf, """ & vbCrLf & """)
@@ -163,10 +163,8 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                             Case "bindings"
                                 For cnt = 0 To child.childNodes.Length - 1
                                     retVal = retVal & "Bindings(" & GetBindingIndex(child.childNodes(cnt).baseName) & ") = Include.URLDecode(""" & child.childNodes(cnt).Text & """)" & vbCrLf
-                                    'Bindings(GetBindingIndex(child.childNodes(cnt).baseName)) = Include.URLDecode(child.childNodes(cnt).Text)
                                 Next
                                 retVal = retVal & "Bindings.Serialize = True" & vbCrLf
-                                'Bindings.Serialize = True
                             Case "camera"
                                 retVal = retVal & Include.URLDecode(child.childNodes(cnt).Text) & vbCrLf
                             Case "molecules", "brilliants", "planets", "billboards"
@@ -322,9 +320,12 @@ Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, By
 
         If inWith = "" Then
             frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
+        
         End If
 
-        frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & "s.Add All(""" & inName & """), """ & inName & """"
+        If Not frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & "s.Exists(""" & inName & """)") Then
+            frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & "s.Add All(""" & inName & """), """ & inName & """"
+        End If
         frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
 
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)", (LineNum - CountWord(inBlock, vbCrLf))
@@ -339,6 +340,7 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
             txt = ReadFile(txt)
             If PathExists(ScriptRoot & "\Serial.xml", True) Then
                 frmMain.AddCode ParseDeserialize(ReadFile(ScriptRoot & "\Serial.xml"))
+                'ParseScript = ParseScript & "Deserialize" & vbCrLf
             End If
         End If
     End If

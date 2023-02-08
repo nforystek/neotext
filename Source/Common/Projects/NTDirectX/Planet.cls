@@ -34,10 +34,10 @@ Private pImageIndex() As Long
 
 Private pFileIndex As Long
 
-Private pKey As String
-
 Private pColor As Color
 Private pFog As Single
+
+Private pKey As String
 
 Public Property Get Fog() As Single
     Fog = pFog
@@ -142,10 +142,10 @@ Public Property Set Ranges(ByRef RHS As Range)
 End Property
 
 Public Property Get Serialize() As Boolean
-    'Serialize = Molecule.Serialize
+    Serialize = Molecule.Serialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
-    'Molecule.Serialize = RHS
+    Molecule.Serialize = RHS
 End Property
 
 Public Property Get Visible() As Boolean
@@ -503,7 +503,7 @@ End Sub
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
-
+    Molecule.Serialize = True
 End Sub
 
 Private Sub Class_Terminate()

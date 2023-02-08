@@ -74,7 +74,7 @@ Public Property Let FileName(ByVal RHS As String)
     If RHS = "" And pFileName <> "" Then
         Volume.Clear
         pFileName = ""
-    ElseIf PathExists(RHS, True) Then
+    ElseIf PathExists(RHS, True) And LCase(RHS) <> LCase(pFileName) Then
         Volume.Clear
         pFileName = RHS
         Dim m As Molecule
@@ -159,7 +159,7 @@ End Property
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
-
+    pSerialize = True
 End Sub
 
 'Public Property Get NotEmpty() As Boolean

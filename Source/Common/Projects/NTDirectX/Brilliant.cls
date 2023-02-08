@@ -37,9 +37,55 @@ Attribute Specular.VB_VarHelpID = -1
 
 Public Attenuation As Point
 
+Private pKey As String
+
 Private pSerialize As Boolean
 
-Private pKey As String
+Public Property Get Serialize() As Boolean
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
+
+'Public Property Get Serialize() As String
+'    Serializer Serialize, "SunLight", SunLight
+'    Serializer Serialize, "LightBlink", LightBlink
+'    Serializer Serialize, "LightTimer", LightTimer
+'    Serializer Serialize, "LightIsOn", LightIsOn
+'    Serializer Serialize, "DiffuseRoll", DiffuseRoll
+'    Serializer Serialize, "DiffuseTimer", DiffuseTimer
+'    Serializer Serialize, "DIffuseMax", DIffuseMax
+'    Serializer Serialize, "DiffuseNow", DiffuseNow
+'
+'    Serializer Serialize, "Diffuse", Diffuse.Serialize
+'    Serializer Serialize, "Ambience", Ambience.Serialize
+'    Serializer Serialize, "Specular", Specular.Serialize
+'    Serializer Serialize, "Attenuation", Attenuation.Serialize
+'End Property
+'Public Property Let Serialize(ByVal RHS As String)
+'    RHS = Trim(RHS)
+'    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+'        RHS = Mid(RHS, 2, Len(RHS) - 2)
+'
+'        SunLight = Serializer(RHS, "SunLight", SunLight)
+'        LightBlink = Serializer(RHS, "LightBlink", LightBlink)
+'        LightTimer = Serializer(RHS, "LightTimer", LightTimer)
+'        LightIsOn = Serializer(RHS, "LightIsOn", LightIsOn)
+'        DiffuseRoll = Serializer(RHS, "DiffuseRoll", DiffuseRoll)
+'        DiffuseTimer = Serializer(RHS, "DiffuseTimer", DiffuseTimer)
+'        DIffuseMax = Serializer(RHS, "DIffuseMax", DIffuseMax)
+'        DiffuseNow = Serializer(RHS, "DiffuseNow", DiffuseNow)
+'
+'        Diffuse.Serialize = Serializer(RHS, "Diffuse", Diffuse.Serialize)
+'        Ambience.Serialize = Serializer(RHS, "Ambience", Ambience.Serialize)
+'        Specular.Serialize = Serializer(RHS, "Specular", Specular.Serialize)
+'        Attenuation.Serialize = Serializer(RHS, "Attenuation", Attenuation.Serialize)
+'
+'    End If
+'End Property
+
+
 Public Property Get Key() As String
     Key = pKey
 End Property
@@ -128,13 +174,6 @@ Public Property Let Visible(ByVal RHS As Boolean)
     Orbit.Visible = RHS
 End Property
 
-Public Property Get Serialize() As Boolean
-    Serialize = pSerialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    pSerialize = RHS
-End Property
-
 Public Property Get LightIndex() As Long
     LightIndex = pLightIndex
 End Property
@@ -221,6 +260,7 @@ Private Sub Class_Initialize()
     Set Ambience = New Color
     Set Specular = New Color
     Set Attenuation = New Point
+    pSerialize = True
 End Sub
 
 Private Sub Class_Terminate()

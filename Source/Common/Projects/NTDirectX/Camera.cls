@@ -35,17 +35,15 @@ Public Property Set Planet(ByRef RHS As Planet)
 End Property
 
 Public Property Get Serialize()
-Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "200"
     If pSerialize Then
         Serialize = ""
-        If Not Camera.Player Is Nothing Then
-            Serialize = Serialize & "Set Camera.Player = Molecules(""" & Player.Key & """)" & vbCrLf
-            Serialize = Serialize & "Camera.Player.Origin = """ & Camera.Player.Origin & """" & vbCrLf
-            Serialize = Serialize & "Camera.Player.Rotate = """ & Camera.Player.Rotate & """" & vbCrLf
+        If Not pPlayer Is Nothing Then
+            Serialize = Serialize & "Set Camera.Player = Molecules(""" & pPlayer.Key & """)" & vbCrLf
+            Serialize = Serialize & "Camera.Player.Origin = """ & pPlayer.Origin & """" & vbCrLf
+            Serialize = Serialize & "Camera.Player.Rotate = """ & pPlayer.Rotate & """" & vbCrLf
         End If
-        If Not Camera.Planet Is Nothing Then
-            Serialize = Serialize & "Set Camera.Planet = Planets(""" & Planet.Key & """)" & vbCrLf
+        If Not pPlanet Is Nothing Then
+            Serialize = Serialize & "Set Camera.Planet = Planets(""" & pPlanet.Key & """)" & vbCrLf
         End If
         Serialize = Serialize & "Camera.Color = " & pColor & vbCrLf
         Serialize = Serialize & "Camera.Serialize = True" & vbCrLf

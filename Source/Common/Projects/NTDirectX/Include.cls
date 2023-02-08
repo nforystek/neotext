@@ -41,7 +41,7 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
     Select Case LCase(TypeName(RHS))
         Case "molecules"
             Dim mol As Molecules
-            Set mol = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            Set mol = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
             All.Remove LCase(TypeName(RHS))
             If mol.Count > 0 Then
                 Dim m As Molecule
@@ -57,7 +57,7 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
             Set mol = Nothing
         Case "brilliants"
             Dim bril As Brilliants
-            Set bril = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            Set bril = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
             All.Remove LCase(TypeName(RHS))
             If bril.Count > 0 Then
                 Dim br As Brilliant
@@ -73,7 +73,7 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
             Set bril = Nothing
         Case "planets"
             Dim pla As Planets
-            Set pla = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            Set pla = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
             All.Remove LCase(TypeName(RHS))
             If pla.Count > 0 Then
                 Dim p As Planet
@@ -89,7 +89,7 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
             Set pla = Nothing
         Case "billboards"
             Dim bill As Billboards
-            Set bill = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            Set bill = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
             All.Remove LCase(TypeName(RHS))
             If bill.Count > 0 Then
                 Dim bi As Billboard
@@ -103,16 +103,17 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
                 Next
             End If
             Set bill = Nothing
+
     End Select
 End Property
 Public Property Get Serialize(Optional ByRef Indent As String = "")
     
     Serialize = Indent & "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
 
-    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
 
     If modParse.Camera.Serialize <> False Then
         Serialize = Serialize & Indent & "<Camera>" & Include.URLEncode(modParse.Camera.Serialize) & "</Camera>" & vbCrLf

@@ -75,7 +75,6 @@ Public Sub CleanUpObjs()
 
     Erase VertexDirectX
 
-
 End Sub
 
 Public Sub CreateObjs()
@@ -777,40 +776,45 @@ Private Sub AllCommitRoutine(ByRef ApplyTo As Molecule, Optional ByRef Parent As
 
     Set ApplyTo.Relative = Nothing
 End Sub
-Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
-    'called once per frame committing changes the last frame has waiting in object properties in entirety
+'Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
+'    'called once per frame committing changes the last frame has waiting in object properties in entirety
+'    Dim m As Molecule
+'    Dim p As Planet
+'    Dim ms As NTNodes10.Collection
+'
+'    For Each p In Planets
+'
+'        AllCommitRoutine p, Nothing
+'
+'        Set ms = RangedMolecules(p)
+'
+'        For Each m In ms
+'
+'            AllCommitRoutine m, p
+'
+'        Next
+'
+'    Next
+'
+'    For Each m In Molecules
+'
+'        If m.Parent Is Nothing Then
+'
+'            AllCommitRoutine m, Nothing
+'
+'        End If
+'
+'    Next
+'
+'End Sub
+
+
+Public Sub RenderOrbits(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
     Dim m As Molecule
     Dim p As Planet
     Dim ms As NTNodes10.Collection
 
-    For Each p In Planets
-
-        AllCommitRoutine p, Nothing
-
-        Set ms = RangedMolecules(p)
-
-        For Each m In ms
-
-            AllCommitRoutine m, p
-
-        Next
-
-    Next
-
-    For Each m In Molecules
-
-        If m.Parent Is Nothing Then
-
-            AllCommitRoutine m, Nothing
-
-        End If
-
-    Next
-
-End Sub
-
-
-Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
+    
     'called once per frame drawing the objects, with out any of the current frame object
     'properties modifying calls included for latent collision checking rollback
 
@@ -851,17 +855,24 @@ Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecu
     DDevice.SetMaterial GenericMaterial
     DDevice.SetTexture 1, Nothing
 
-    Dim matMat As D3DMATRIX
+    
+    RenderOrbit Molecules, True
 
-    D3DXMatrixIdentity matMat
-
-    Dim matRoll As D3DMATRIX
-    Dim matPitch As D3DMATRIX
-    Dim matYaw As D3DMATRIX
-    Dim matPos As D3DMATRIX
+    For Each p In Planets
+        RenderOrbit p.Molecules, False
+    Next
 
     If Not Camera.Planet Is Nothing Then
 
+        Dim matMat As D3DMATRIX
+    
+        D3DXMatrixIdentity matMat
+    
+        Dim matRoll As D3DMATRIX
+        Dim matPitch As D3DMATRIX
+        Dim matYaw As D3DMATRIX
+        Dim matPos As D3DMATRIX
+    
         D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
         D3DXMatrixMultiply matMat, matPos, matMat
 
@@ -878,19 +889,9 @@ Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecu
 
     End If
 
-
-    Iterate Molecules, True
-
-    Dim p As Planet
-    For Each p In Planets
-        Iterate p.Molecules, False
-
-    Next
-
-
 End Sub
 
-Private Sub Iterate(ByRef col As Object, ByVal NoParentOnly As Boolean)
+Private Sub RenderOrbit(ByRef col As Object, ByVal NoParentOnly As Boolean)
     Dim matPos2 As D3DMATRIX
     Dim matRoll2 As D3DMATRIX
     Dim matYaw2 As D3DMATRIX
@@ -969,7 +970,6 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef ma
     D3DXMatrixMultiply matMat, matRoll2, matMat
 
     If Not Parent Is Nothing Then
-
 
         D3DXMatrixTranslation matPos2, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z
         D3DXMatrixMultiply matPos2, matPos, matPos2

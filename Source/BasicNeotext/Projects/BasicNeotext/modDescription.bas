@@ -94,31 +94,31 @@ Public Sub DescriptionsStartup(ByRef VBInstance As VBIDE.VBE)
 End Sub
 
 Public Sub UpdateAttributeToCommentDescriptions(ByRef VBInstance As VBIDE.VBE)
-    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-        If Hooks.count > 0 Then
-            Dim cnt As Long
-            For cnt = 1 To Hooks.count
-                If IsWindowVisible(Hooks(cnt).hWnd) Then
-                    BuildComments VBInstance, AttributeToComments, Hooks(cnt)
-                End If
-            Next
-        End If
-
-    End If
+'    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+'        If Hooks.count > 0 Then
+'            Dim cnt As Long
+'            For cnt = 1 To Hooks.count
+'                If IsWindowVisible(Hooks(cnt).hWnd) Then
+'                    BuildComments VBInstance, AttributeToComments, Hooks(cnt)
+'                End If
+'            Next
+'        End If
+'
+'    End If
 End Sub
 
 Public Sub UpdateCommentToAttributeDescriptions(ByRef VBInstance As VBIDE.VBE)
-    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
-        If Hooks.count > 0 Then
-            Dim cnt As Long
-            For cnt = 1 To Hooks.count
-                If IsWindowVisible(Hooks(cnt).hWnd) Then
-               '     BuildComments VBInstance, CommentsToAttribute, Hooks(cnt)
-                End If
-            Next
-        End If
-
-    End If
+'    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+'        If Hooks.count > 0 Then
+'            Dim cnt As Long
+'            For cnt = 1 To Hooks.count
+'                If IsWindowVisible(Hooks(cnt).hWnd) Then
+'                    BuildComments VBInstance, CommentsToAttribute, Hooks(cnt)
+'                End If
+'            Next
+'        End If
+'
+'    End If
 End Sub
 
 Public Sub InsertDescriptions(ByRef VBInstance As VBIDE.VBE)
@@ -766,11 +766,11 @@ Private Function FindNextHeader(ByRef txt As String, ByRef head As String, Optio
                 'comment descriptions and attribute descriptions may only be one line
                 If Right(head, 5) = "' _" & vbCrLf Then
                     head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
-                    If Left(LCase(txt), 10) = "attribute " Then
+                    If Left(LCase(txt), 10) = "attribute " And InStr(LCase(txt), ".vb_description") > 0 Then
                         head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
                     End If
                 Else
-                    If Left(LCase(txt), 10) = "attribute " Then
+                    If Left(LCase(txt), 10) = "attribute " And InStr(LCase(txt), ".vb_description") > 0 Then
                         head = head & RTrimStrip(RemoveNextArg(txt, vbCrLf, , False), " ") & vbCrLf
                     End If
                 End If

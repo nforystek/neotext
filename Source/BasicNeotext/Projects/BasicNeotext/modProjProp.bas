@@ -18,6 +18,13 @@ Public Type RECT
         Bottom As Long
 End Type
 
+Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Private Declare Function ClientToScreen Lib "user32" (ByVal hwnd As Long, lpPoint As POINTAPI) As Long
+Private Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+Private Declare Sub mouse_event Lib "user32" (ByVal dwFlags As Long, ByVal dx As Long, ByVal dy As Long, ByVal cButtons As Long, ByVal dwExtraInfo As Long)
+
+Private Const MOUSEEVENTF_LEFTDOWN = &H2
+Private Const MOUSEEVENTF_LEFTUP = &H4
 
 Public Const ST_DEFAULT = 0
 Public Const ST_KEEPUNDO = 1
@@ -33,24 +40,24 @@ Private Const GW_OWNER = 4
 Private Const GW_CHILD = 5
 Private Const GW_MAX = 5
 
-Public Declare Function IsWindowVisible Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function IsWindowVisible Lib "user32" (ByVal hwnd As Long) As Long
 
-Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, lprcUpdate As Any, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
+Private Declare Function RedrawWindow Lib "user32" (ByVal hwnd As Long, lprcUpdate As Any, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 
 Private Const RDW_ALLCHILDREN = &H80
 Private Const RDW_ERASE = &H4
 Private Const RDW_FRAME = &H400
 Private Const RDW_INVALIDATE = &H1
 
-Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
 
-Private Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hWnd As Long) As Long
-Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Private Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hwnd As Long) As Long
+Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
 Private Declare Function GetClassName Lib "user32" Alias "GetClassNameA" _
-    (ByVal hWnd As Long, ByVal lpClassName As String, _
+    (ByVal hwnd As Long, ByVal lpClassName As String, _
     ByVal nMaxCount As Long) As Long
     
-Private Declare Function GetNextWindow Lib "user32" Alias "GetWindow" (ByVal hWnd As Long, ByVal wFlag As Long) As Long
+Private Declare Function GetNextWindow Lib "user32" Alias "GetWindow" (ByVal hwnd As Long, ByVal wFlag As Long) As Long
 
 Private Const WM_USER = &H400
 Private Const EM_EXSETSEL = (WM_USER + 55)
@@ -61,14 +68,15 @@ Private Const EM_HIDESELECTION = (WM_USER + 63)
 
 Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
 Private Declare Function FindWindowEx Lib "user32" Alias "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
-Private Declare Function SendMessageString Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As String) As Long
-Private Declare Function SendMessageStruct Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
-Private Declare Function SendMessageLngPtr Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, wParam As Any, lParam As Any) As Long
-Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SendMessageString Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lparam As String) As Long
+Private Declare Function SendMessageStruct Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lparam As Any) As Long
+Private Declare Function SendMessageLngPtr Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, wParam As Any, lparam As Any) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lparam As Long) As Long
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 
+Private Declare Function EnableWindow Lib "user32" (ByVal hwnd As Long, ByVal fEnable As Long) As Long
 
-Private Declare Function GetWindow Lib "user32" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
+Private Declare Function GetWindow Lib "user32" (ByVal hwnd As Long, ByVal wCmd As Long) As Long
 
 Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
@@ -77,16 +85,31 @@ Private Const WM_GETTEXT = &HD
 Private Const WM_GETTEXTLENGTH = &HE
 Private Const WM_SETREDRAW = &HB
 
+
+Private Const WM_ACTIVATE = &H6
+'
+'  WM_ACTIVATE state values
+
+Private Const WA_INACTIVE = 0
+Private Const WA_ACTIVE = 1
+Private Const WA_CLICKACTIVE = 2
+
+Private Const WM_SETCURSOR = &H20
+Private Const WM_MOUSEACTIVATE = &H21
+Private Const WM_CHILDACTIVATE = &H22
+
+
+
 Private Type POINTAPI
         x As Long
-        Y As Long
+        y As Long
 End Type
 
 Private Type Msg
-    hWnd As Long
+    hwnd As Long
     Message As Long
     wParam As Long
-    lParam As Long
+    lparam As Long
     time As Long
     pt As POINTAPI
 End Type
@@ -109,25 +132,26 @@ Private Const MSG_EMBED = 4
 
 Private Declare Function TranslateMessage Lib "user32" (lpMsg As Msg) As Long
 Private Declare Function DispatchMessage Lib "user32" Alias "DispatchMessageA" (lpMsg As Msg) As Long
-Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
+Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hwnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
+Private Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lparam As Long) As Long
 
 
 
 Public Declare Function GetCurrentProcessId Lib "kernel32" () As Long
 Public Declare Function GetCurrentThreadId Lib "kernel32" () As Long
-Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
 
-Public Declare Function EnumThreadWindows Lib "user32" (ByVal dwThreadId As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
-Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
-Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lParam As Long) As Boolean
-Public Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
+Public Declare Function EnumThreadWindows Lib "user32" (ByVal dwThreadId As Long, ByVal lpfn As Long, ByVal lparam As Long) As Long
+Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lparam As Long) As Long
+Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lparam As Long) As Boolean
+Public Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
 Private Const GWL_WNDPROC = -4
 
-Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lparam As Long) As Long
+Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lparam As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
 
 
 Private hWndProp As Long
@@ -167,8 +191,8 @@ Private Sub CleanHooks()
         cnt = 1
         Do While cnt <= Hooks.count
 
-            If IsWindowVisible(Hooks(cnt).hWnd) = 0 Then
-                hWndCode = Replace(hWndCode, "h" & Hooks(cnt).hWnd, "")
+            If IsWindowVisible(Hooks(cnt).hwnd) = 0 Then
+                hWndCode = Replace(hWndCode, "h" & Hooks(cnt).hwnd, "")
                 Hooks.Remove cnt
             Else
                 cnt = cnt + 1
@@ -178,6 +202,14 @@ Private Sub CleanHooks()
     End If
 
 End Sub
+
+Public Sub ProcWindowSets(Optional ByVal hwnd As Long = 0)
+    If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
+        If (Not SubCheckChildHwnds(-1)) Then
+            EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents3, 0
+        End If
+    End If
+End Sub
 Public Sub ItterateDialogs(ByRef VBInstance As VBE)
             
     Dim flagCust As Boolean
@@ -185,8 +217,10 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     
     If hWndProc <> 0 Then
         flagProc = True
+        ProcWindowSets hWndProc
         hWndProc = 0
     End If
+
     If hWndCust <> 0 Then
         flagCust = True
         hWndCust = 0
@@ -206,6 +240,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     
     If hWndProc = 0 And flagProc Then
         UpdateAttributeToCommentDescriptions VBInstance
+        SubCheckChildHwnds 0
         CleanHooks
     End If
 
@@ -223,7 +258,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
             
             If frm.CodeModule Is Nothing Then
                 
-                Set frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hWnd))
+                Set frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hwnd))
 
             End If
 
@@ -232,19 +267,72 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
     
 End Sub
 
-Private Function ItterateDialogsWinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinEvents = Not SubCheckHwnds(hWnd, lParam)
-    If ItterateDialogsWinEvents Then EnumChildWindows hWnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+Private Function ItterateDialogsWinEvents(ByVal hwnd As Long, ByVal lparam As Long) As Boolean
+    ItterateDialogsWinEvents = Not SubCheckHwnds(hwnd, lparam)
+    If ItterateDialogsWinEvents Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lparam
 End Function
 
-Private Function ItterateDialogsWinChildEvents1(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hWnd, lParam)
-    If ItterateDialogsWinChildEvents1 Then EnumChildWindows hWnd, AddressOf ItterateDialogsWinChildEvents2, lParam
+Private Function ItterateDialogsWinChildEvents1(ByVal hwnd As Long, ByVal lparam As Long) As Boolean
+    ItterateDialogsWinChildEvents1 = Not SubCheckHwnds(hwnd, lparam)
+    If ItterateDialogsWinChildEvents1 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents2, lparam
 End Function
 
-Private Function ItterateDialogsWinChildEvents2(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
-    ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hWnd, lParam)
-    If ItterateDialogsWinChildEvents2 Then EnumChildWindows hWnd, AddressOf ItterateDialogsWinChildEvents1, lParam
+Private Function ItterateDialogsWinChildEvents2(ByVal hwnd As Long, ByVal lparam As Long) As Boolean
+    ItterateDialogsWinChildEvents2 = Not SubCheckHwnds(hwnd, lparam)
+    If ItterateDialogsWinChildEvents2 Then EnumChildWindows hwnd, AddressOf ItterateDialogsWinChildEvents1, lparam
+End Function
+
+Private Function ItterateDialogsWinChildEvents3(ByVal hwnd As Long, ByVal lparam As Long) As Boolean
+    ItterateDialogsWinChildEvents3 = Not SubCheckChildHwnds(hwnd)
+End Function
+
+Private Function SubCheckChildHwnds(ByVal hwnd As Long) As Boolean
+    Static Check1 As Boolean
+    Static Check2 As Boolean
+
+    If hwnd = 0 Then
+        Check1 = False
+        Check2 = False
+    ElseIf hwnd > 0 Then
+        Dim pId As Long
+        Dim txt As String
+        txt = GetCaption(hwnd)
+        
+        Dim cls As String
+        cls = GetClass(hwnd)
+    
+        If GetWindowThreadProcessId(hwnd, pId) Then
+            If pId = VBPID Then
+            
+                If ((cls = "Button") And (txt = "Ad&vanced >>")) And (Not Check1) Then
+
+                    Dim at As POINTAPI
+                    Dim p As POINTAPI
+                    
+                    GetCursorPos at
+                    
+                    p.x = 0
+                    p.y = 0
+                    
+                    ClientToScreen hwnd, p
+                    SetCursorPos p.x, p.y
+                    mouse_event MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP, p.x, p.y, 0, 0
+                    
+                    SetCursorPos at.x, at.y
+
+                    Check1 = True
+                End If
+            
+                If ((cls = "Edit") And (txt = "")) And (Not Check2) Then
+                    EnableWindow hwnd, False
+                    Check2 = True
+                End If
+            
+            End If
+        End If
+    End If
+    SubCheckChildHwnds = Check1 And Check2
+
 End Function
 
 
@@ -256,50 +344,50 @@ Private Function PtrObj(ByRef lPtr As Long) As Object
     CopyMemory NewObj, lZero, 4&
 End Function
 
-Private Function SubCheckHwnds(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
+Private Function SubCheckHwnds(ByVal hwnd As Long, ByVal lparam As Long) As Boolean
 
     Dim pId As Long
     Dim txt As String
-    txt = GetCaption(hWnd)
+    txt = GetCaption(hwnd)
     
     Dim cls As String
-    cls = GetClass(hWnd)
+    cls = GetClass(hwnd)
     
-    If GetWindowThreadProcessId(hWnd, pId) Then
+    If GetWindowThreadProcessId(hwnd, pId) Then
         If pId = VBPID Then
         
             If (txt = "Con&ditional Compilation Arguments:") And hWndProp = 0 Then
-                hWndProp = GetWindow(hWnd, GW_HWNDNEXT)
+                hWndProp = GetWindow(hwnd, GW_HWNDNEXT)
             End If
         
             If (txt = "Customize") And hWndCust = 0 Then
-                hWndCust = hWnd
+                hWndCust = hwnd
             End If
         
             If (txt = "Procedure Attributes") And hWndProc = 0 Then
-                hWndProc = hWnd
+                hWndProc = hwnd
             End If
             
             If (InStr(txt, "Microsoft Visual Basic") > 0) And hWndMSVB = 0 Then
-                hWndMSVB = hWnd
+                hWndMSVB = hwnd
             End If
             
-            If (cls = "VbaWindow") And InStr(hWndCode, "h" & hWnd) = 0 Then
-                hWndCode = hWndCode & "h" & hWnd
+            If (cls = "VbaWindow") And InStr(hWndCode, "h" & hwnd) = 0 Then
+                hWndCode = hWndCode & "h" & hwnd
                 
                 Dim VBI As VBI
-                Set VBI = PtrObj(lParam)
+                Set VBI = PtrObj(lparam)
                 
                 Dim frm As FormHWnd
                 Set frm = New FormHWnd
                 
-                frm.hWnd = hWnd
+                frm.hwnd = hwnd
                 
                 frm.SaveVisibility
                 
                 MSVBRedraw False
                 
-                Hooks.Add frm, "h" & hWnd
+                Hooks.Add frm, "h" & hwnd
 
                 Set frm = Nothing
                 Set VBI = Nothing
@@ -315,7 +403,7 @@ Private Function SubCheckHwnds(ByVal hWnd As Long, ByVal lParam As Long) As Bool
     SubCheckHwnds = ((hWndProp <> 0) Or (hWndCust <> 0) Or (hWndProc <> 0)) And (hWndMSVB <> 0)
 End Function
 
-Private Sub FixConditionalCompile(ByVal hWnd As Long)
+Private Sub FixConditionalCompile(ByVal hwnd As Long)
 
     Dim invar As String
     Dim inval As String
@@ -323,7 +411,7 @@ Private Sub FixConditionalCompile(ByVal hWnd As Long)
     Dim inCC As String
     Dim atCC As String
 
-    atCC = GetText(hWnd)
+    atCC = GetText(hwnd)
     inCC = atCC
     Do Until inCC = ""
         If (InStr(inCC, "=") > 0) And ((InStr(inCC, "=") < InStr(inCC, ":")) Or (InStr(inCC, ":") = 0)) Then
@@ -342,55 +430,55 @@ Private Sub FixConditionalCompile(ByVal hWnd As Long)
 
     If Right(outCC, 1) = ":" And Not Right(atCC, 1) = ":" Then outCC = Left(outCC, Len(outCC) - 1)
 
-    inCC = GetText(hWnd)
+    inCC = GetText(hwnd)
     If ((Not (inCC = outCC)) And (Not (inCC = ""))) Then
         Dim offsetat As Long
         Do
             offsetat = offsetat + 1
         Loop While Mid(outCC, offsetat, 1) = Mid(inCC, offsetat, 1) And offsetat < Len(inCC)
             
-        SetText hWnd, outCC, offsetat
+        SetText hwnd, outCC, offsetat
     End If
 
 End Sub
-Private Function GetClass(ByVal hWnd As Long) As String
+Private Function GetClass(ByVal hwnd As Long) As String
     Dim cls As String
     Dim lSize As Long
     cls = String(255, Chr(0))
     lSize = Len(cls)
-    Call GetClassName(hWnd, cls, lSize)
+    Call GetClassName(hwnd, cls, lSize)
     GetClass = Trim(Replace(cls, Chr(0), ""))
 End Function
 
-Public Function GetCaption(ByVal hWnd As Long) As String
+Public Function GetCaption(ByVal hwnd As Long) As String
     Dim txt As String
     Dim lSize As Long
     txt = String(255, Chr(0))
     lSize = Len(txt)
-    Call GetWindowText(hWnd, txt, lSize)
+    Call GetWindowText(hwnd, txt, lSize)
     GetCaption = Trim(Replace(txt, Chr(0), ""))
 End Function
-Private Function GetText(ByVal hWnd As Long) As String
+Private Function GetText(ByVal hwnd As Long) As String
     Dim Text As String
     Dim tlen As Long
-    tlen = SendMessageStruct(hWnd, WM_GETTEXTLENGTH, 0&, 0&) + 1
+    tlen = SendMessageStruct(hwnd, WM_GETTEXTLENGTH, 0&, 0&) + 1
     Text = String(tlen, Chr(0)) 'Space(tlen)
-    Call SendMessageString(hWnd, WM_GETTEXT, tlen, Text)
+    Call SendMessageString(hwnd, WM_GETTEXT, tlen, Text)
     'GetText = Left(Text, tlen)
     GetText = Replace(Text, Chr(0), "")
 End Function
 
-Private Sub SetText(ByVal hWnd As Long, ByVal Text As String, ByVal OffsetsAt As Long)
+Private Sub SetText(ByVal hwnd As Long, ByVal Text As String, ByVal OffsetsAt As Long)
 
     Dim start As Long
     Dim endpos As Long
 
-    SendMessageLngPtr hWnd, EM_GETSEL, start, endpos
-    SendMessageLngPtr hWnd, EM_HIDESELECTION, True, 0
+    SendMessageLngPtr hwnd, EM_GETSEL, start, endpos
+    SendMessageLngPtr hwnd, EM_HIDESELECTION, True, 0
 
     Dim tlen As Long
     tlen = LenB(Text)
-    Call SendMessageString(hWnd, WM_SETTEXT, tlen, Text)
+    Call SendMessageString(hwnd, WM_SETTEXT, tlen, Text)
     If start >= OffsetsAt Then
         start = start - 1
         endpos = endpos - 1
@@ -398,8 +486,8 @@ Private Sub SetText(ByVal hWnd As Long, ByVal Text As String, ByVal OffsetsAt As
         endpos = endpos - 1
     End If
     
-    SendMessageLngPtr hWnd, EM_SETSEL, ByVal start, ByVal endpos
-    SendMessageLngPtr hWnd, EM_HIDESELECTION, False, 0
+    SendMessageLngPtr hwnd, EM_SETSEL, ByVal start, ByVal endpos
+    SendMessageLngPtr hwnd, EM_HIDESELECTION, False, 0
 
 End Sub
 

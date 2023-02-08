@@ -58,10 +58,14 @@ Option Explicit
 Public Function LoadFolder(ByVal PathName As String) As Boolean
     On Error GoTo failload
 
-    frmMain.Serialize ParseScript(PathName & "\Index.vbx")
-    
+    'If frmMain.SerialStack = False Then
+    '    frmMain.SerialStack = True
+     '   frmMain.Serialize ParseScript(PathName & "\Index.vbx")
+    '    frmMain.SerialStack = False
+    'End If
+
     'Debug.Print Planets.Count; Molecules.Count; All.Count
-    
+
     Exit Function
 failload:
     MsgBox "Unable to """ & PathName & "\Index.vbx""" & vbCrLf & Err.Description, vbCritical

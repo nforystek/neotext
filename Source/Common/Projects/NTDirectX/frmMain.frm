@@ -85,6 +85,7 @@ Option Compare Binary
 
 Public LastX As Long
 Public LastY As Long
+Public SerialStack As Boolean
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
@@ -104,7 +105,7 @@ Public Sub Startup()
         .AddObject "Include", modParse.Include, True
         'the rest are builds of and not code based
         .AddObject "All", modParse.All
-        '.AddObject "Camera", modParse.Camera
+        .AddObject "Camera", modParse.Camera
         .AddObject "Motions", modParse.Motions
         .AddObject "Brilliants", modParse.Brilliants
         .AddObject "Molecules", modParse.Molecules
@@ -122,10 +123,14 @@ Public Function Serialize(Optional ByVal Deserialize As Variant) As String
             Dim cnt As Long
             For cnt = 1 To .Procedures.Count
                 If ((Not IsMissing(Deserialize)) And (LCase(.Procedures.Item(cnt).Name) = "deserialize")) Then
-                    .Run "Deserialize"
-                    If Deserialize <> "" Then
-                        .ExecuteStatement Deserialize
-                    End If
+                    'If SerialStack = False Then
+                    '    SerialStack = True
+                        .Run "Deserialize"
+                        If Deserialize <> "" Then
+                            .ExecuteStatement Deserialize
+                        End If
+                    '    SerialStack = False
+                    'End If
                 ElseIf (IsMissing(Deserialize) And (LCase(.Procedures.Item(cnt).Name) = "serialize")) Then
                     Serialize = .Eval("Serialize")
                 End If
