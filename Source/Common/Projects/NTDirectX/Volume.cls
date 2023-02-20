@@ -17,7 +17,10 @@ Option Explicit
 'such as a Orbitis to Volume, only
 'their not recursive, like orbits
 Private this As NTNodes10.Collection
-Public Serialize As Boolean
+
+Public Property Get Serialize() As Boolean
+    Serialize = True
+End Property
 
 Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
@@ -78,7 +81,6 @@ End Sub
 
 Private Sub Class_Initialize()
     Set this = New NTNodes10.Collection
-    'Serialize = True
 End Sub
 
 Private Sub Class_Terminate()

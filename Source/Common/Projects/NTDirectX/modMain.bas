@@ -203,18 +203,18 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
         If Not Camera.Planet Is Nothing Then
 
-            D3DXMatrixRotationX matPitch, -MoleculeView.Absolute.Rotate.X
+            D3DXMatrixRotationX matPitch, -Camera.Player.Absolute.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -MoleculeView.Absolute.Rotate.Y
+            D3DXMatrixRotationY matYaw, -Camera.Player.Absolute.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -MoleculeView.Absolute.Rotate.z
+            D3DXMatrixRotationZ matRoll, -Camera.Player.Absolute.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
-            D3DXMatrixTranslation matPos, -MoleculeView.Absolute.Origin.X, -MoleculeView.Absolute.Origin.Y, -MoleculeView.Absolute.Origin.z
+            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
@@ -230,18 +230,18 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
        Else
 
-            D3DXMatrixRotationX matPitch, -MoleculeView.Rotate.X
+            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -MoleculeView.Rotate.Y
+            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -MoleculeView.Rotate.z
+            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
-            D3DXMatrixTranslation matPos, -MoleculeView.Origin.X, -MoleculeView.Origin.Y, -MoleculeView.Origin.z
+            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
         End If

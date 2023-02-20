@@ -39,6 +39,12 @@ Private pFileIndex As Long
 Private pKey As String
 Private pSerialize As Boolean
 
+Public Property Get Serialize() As Boolean
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 
 Public Property Get Parent() As Orbit
     Set Parent = Molecule.Parent
@@ -166,13 +172,6 @@ Public Property Get Ranges() As Range
 End Property
 Public Property Set Ranges(ByRef RHS As Range)
     Set Molecule.Ranges = RHS
-End Property
-
-Public Property Get Serialize() As Boolean
-    Serialize = pSerialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    pSerialize = RHS
 End Property
 
 Public Property Get Visible() As Boolean
@@ -537,7 +536,7 @@ Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
     
     Molecule.Key = "M" & ObjPtr(Molecule)
-    pSerialize = True
+
 End Sub
 
 Private Sub Class_Terminate()
@@ -650,7 +649,6 @@ End Property
 Private Property Get Molecule_Serialize() As Boolean
     Molecule_Serialize = Me.Serialize
 End Property
-
 
 Private Property Let Molecule_Visible(ByVal RHS As Boolean)
     Me.Visible = RHS

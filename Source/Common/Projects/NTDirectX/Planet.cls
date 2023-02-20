@@ -39,6 +39,15 @@ Private pFog As Single
 
 Private pKey As String
 
+Private pSerialize As Boolean
+
+Public Property Get Serialize() As Boolean
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
+
 Public Property Get Fog() As Single
     Fog = pFog
 End Property
@@ -141,12 +150,6 @@ Public Property Set Ranges(ByRef RHS As Range)
     Set Molecule.Ranges = RHS
 End Property
 
-Public Property Get Serialize() As Boolean
-    Serialize = Molecule.Serialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    Molecule.Serialize = RHS
-End Property
 
 Public Property Get Visible() As Boolean
     Visible = Molecule.Visible
@@ -503,7 +506,6 @@ End Sub
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
-    Molecule.Serialize = True
 End Sub
 
 Private Sub Class_Terminate()
@@ -616,7 +618,6 @@ End Property
 Private Property Get Molecule_Serialize() As Boolean
     Molecule_Serialize = Me.Serialize
 End Property
-
 
 Private Property Let Molecule_Visible(ByVal RHS As Boolean)
     Me.Visible = RHS

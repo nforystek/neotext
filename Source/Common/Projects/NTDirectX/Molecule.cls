@@ -17,9 +17,9 @@ Implements Orbit
 
 Private pVolume As Volume
 Private pMolecules As Molecules
-Private pSerialize As Boolean
 Private pFileName As String
 Private pKey As String
+Private pSerialize As Boolean
 
 Public Property Get Parent() As Orbit
     Set Parent = Orbit.Parent
@@ -142,12 +142,12 @@ Public Property Set Ranges(ByRef RHS As Range)
 End Property
 
 Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_UserMemId = 0
+Attribute Serialize.VB_MemberFlags = "600"
     Serialize = pSerialize
-    'Serialize = Orbit.Serialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
-    'Orbit.Serialize = RHS
 End Property
 
 Public Property Get Visible() As Boolean
@@ -159,7 +159,6 @@ End Property
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
-    pSerialize = True
 End Sub
 
 'Public Property Get NotEmpty() As Boolean
@@ -245,13 +244,12 @@ Private Property Set Orbit_Scaled(ByRef RHS As Point)
 End Property
 
 Private Property Get Orbit_Serialize() As String
-    Orbit_Serialize = Me.Serialize
+    Orbit_Serialize = Orbit.Serialize
 End Property
 
 Private Property Let Orbit_Serialize(ByVal RHS As String)
-    Me.Serialize = RHS
+    Orbit.Serialize = RHS
 End Property
-
 
 Private Property Get Orbit_Visible() As Boolean
     Orbit_Visible = Me.Visible

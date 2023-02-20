@@ -106,6 +106,7 @@ Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
 
     End Select
 End Property
+
 Public Property Get Serialize(Optional ByRef Indent As String = "")
     
     Serialize = Indent & "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
@@ -115,8 +116,8 @@ Public Property Get Serialize(Optional ByRef Indent As String = "")
     Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
 
-    If modParse.Camera.Serialize <> False Then
-        Serialize = Serialize & Indent & "<Camera>" & Include.URLEncode(modParse.Camera.Serialize) & "</Camera>" & vbCrLf
+    If modParse.Camera.Serialize Then
+        Serialize = Serialize & Indent & "<Camera>" & Include.URLEncode(modParse.Camera.ToString) & "</Camera>" & vbCrLf
     End If
     
     
@@ -129,91 +130,91 @@ Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal z As Single) A
     Point.z = z
 End Function
 
-Public Property Get Count() As Long
-'    Select Case LastCreateCall
-'        Case "Brilliant"
-'            Count = Brilliants.Count
-'        Case "Billboard"
-'            Count = Billboards.Count
-'        Case "Planet"
-'            Count = Planets.Count
-'        Case "Motion"
-'            Count = Motions.Count
-'        Case "Molecule"
-'            Count = Molecules.Count
-'        Case Else
-            Count = All.Count
-'    End Select
-End Property
-
-Public Property Get Item(ByVal Index As Variant) As Object
-'    Select Case LastCreateCall
-'        Case "Brilliant"
-'            Set Item = Brilliants(Index)
-'        Case "Billboard"
-'            Set Item = Billboards(Index)
-'        Case "Planet"
-'            Set Item = Planets(Index)
-'        Case "Motion"
-'            Set Item = Motions(Index)
-'        Case "Molecule"
-'            Set Item = Molecules(Index)
-'        Case Else
-            Set Item = All(Index)
-'    End Select
-End Property
-
-Public Function Add(ByRef NewObj, Optional ByVal Name As Variant = "") As String
-    If Name = "" Then Name = Unnamed(All)
-'    Select Case LastCreateCall
-'        Case "Brilliant"
-'            Brilliants.Add NewObj, Name
-'        Case "Billboard"
-'            Billboards.Add NewObj, Name
-'        Case "Planet"
-'            Planets.Add NewObj, Name
-'        Case "Motion"
-'            Motions.Add NewObj, Name
-'        Case "Molecule"
-'            Molecules.Add NewObj, Name
-'        Case Else
-            All.Add NewObj, Name
-'    End Select
-    Add = Name
-End Function
-
-Public Sub Remove(ByVal Name As Variant)
-'    Select Case LastCreateCall
-'        Case "Brilliant"
-'            Brilliants.Remove Name
-'        Case "Billboard"
-'            Billboards.Remove Name
-'        Case "Planet"
-'            Planets.Remove Name
-'        Case "Motion"
-'            Motions.Remove Name
-'        Case "Molecule"
-'            Molecules.Remove Name
-'        Case Else
-            All.Remove Name
-'    End Select
-End Sub
-Public Function Exists(ByVal Name As Variant) As Boolean
-'    Select Case LastCreateCall
-'        Case "Brilliant"
-'            Exists = Brilliants.Exists(Name)
-'        Case "Billboard"
-'            Exists = Billboards.Exists(Name)
-'        Case "Planet"
-'            Exists = Planets.Exists(Name)
-'        Case "Motion"
-'            Exists = Motions.Exists(Name)
-'        Case "Molecule"
-'            Exists = Molecules.Exists(Name)
-'        Case Else
-            Exists = All.Exists(Name)
-'    End Select
-End Function
+'Public Property Get Count() As Long
+''    Select Case LastCreateCall
+''        Case "Brilliant"
+''            Count = Brilliants.Count
+''        Case "Billboard"
+''            Count = Billboards.Count
+''        Case "Planet"
+''            Count = Planets.Count
+''        Case "Motion"
+''            Count = Motions.Count
+''        Case "Molecule"
+''            Count = Molecules.Count
+''        Case Else
+'            Count = All.Count
+''    End Select
+'End Property
+'
+'Public Property Get Item(ByVal Index As Variant) As Object
+''    Select Case LastCreateCall
+''        Case "Brilliant"
+''            Set Item = Brilliants(Index)
+''        Case "Billboard"
+''            Set Item = Billboards(Index)
+''        Case "Planet"
+''            Set Item = Planets(Index)
+''        Case "Motion"
+''            Set Item = Motions(Index)
+''        Case "Molecule"
+''            Set Item = Molecules(Index)
+''        Case Else
+'            Set Item = All(Index)
+''    End Select
+'End Property
+'
+'Public Function Add(ByRef NewObj, Optional ByVal Name As Variant = "") As String
+'    If Name = "" Then Name = Unnamed(All)
+''    Select Case LastCreateCall
+''        Case "Brilliant"
+''            Brilliants.Add NewObj, Name
+''        Case "Billboard"
+''            Billboards.Add NewObj, Name
+''        Case "Planet"
+''            Planets.Add NewObj, Name
+''        Case "Motion"
+''            Motions.Add NewObj, Name
+''        Case "Molecule"
+''            Molecules.Add NewObj, Name
+''        Case Else
+'            All.Add NewObj, Name
+''    End Select
+'    Add = Name
+'End Function
+'
+'Public Sub Remove(ByVal Name As Variant)
+''    Select Case LastCreateCall
+''        Case "Brilliant"
+''            Brilliants.Remove Name
+''        Case "Billboard"
+''            Billboards.Remove Name
+''        Case "Planet"
+''            Planets.Remove Name
+''        Case "Motion"
+''            Motions.Remove Name
+''        Case "Molecule"
+''            Molecules.Remove Name
+''        Case Else
+'            All.Remove Name
+''    End Select
+'End Sub
+'Public Function Exists(ByVal Name As Variant) As Boolean
+''    Select Case LastCreateCall
+''        Case "Brilliant"
+''            Exists = Brilliants.Exists(Name)
+''        Case "Billboard"
+''            Exists = Billboards.Exists(Name)
+''        Case "Planet"
+''            Exists = Planets.Exists(Name)
+''        Case "Motion"
+''            Exists = Motions.Exists(Name)
+''        Case "Molecule"
+''            Exists = Molecules.Exists(Name)
+''        Case Else
+'            Exists = All.Exists(Name)
+''    End Select
+'End Function
 
 Public Function URLDecode(ByVal encodedString As String) As String
 
@@ -415,7 +416,6 @@ Public Property Get Coupling() As CollisionTypes
     Coupling = CollisionTypes.Coupling
 End Property
 
-
 Public Property Get Visual() As ControllerModes
     Visual = ControllerModes.Visual
 End Property
@@ -436,16 +436,56 @@ Public Property Get Absolute() As CoordinateTypes
     Absolute = CoordinateTypes.Absolute
 End Property
 
+'#####################################################
+'########## Collections ##############################
+'#####################################################
+
 Public Property Get Camera() As Camera
     Set Camera = modParse.Camera
 End Property
-Public Property Set Camera(ByRef RHS As Molecule)
-    If TypeName(RHS) = "Planet" Then
-        Set modParse.Camera.Planet = RHS
-    Else
-        Set modParse.Camera.Player = RHS
-    End If
+Public Property Set Camera(ByRef RHS As Camera)
+    Set modParse.Camera = RHS
 End Property
+Public Property Get Motions() As Motions
+    Set Motions = modParse.Motions
+End Property
+Public Property Set Motions(ByRef RHS As Motions)
+    Set modParse.Motions = RHS
+End Property
+Public Property Get Brilliants() As Brilliants
+    Set Brilliants = modParse.Brilliants
+End Property
+Public Property Set Brilliants(ByRef RHS As Brilliants)
+    Set modParse.Brilliants = RHS
+End Property
+Public Property Get Molecules() As Molecules
+    Set Molecules = modParse.Molecules
+End Property
+Public Property Set Molecules(ByRef RHS As Molecules)
+    Set modParse.Molecules = RHS
+End Property
+Public Property Get Billboards() As Billboards
+    Set Billboards = modParse.Billboards
+End Property
+Public Property Set Billboards(ByRef RHS As Billboards)
+    Set modParse.Billboards = RHS
+End Property
+Public Property Get Bindings() As Bindings
+    Set Bindings = modParse.Bindings
+End Property
+Public Property Set Bindings(ByRef RHS As Bindings)
+    Set modParse.Bindings = RHS
+End Property
+Public Property Get Planets() As Planets
+    Set Planets = modParse.Planets
+End Property
+Public Property Set Planets(ByRef RHS As Planets)
+    Set modParse.Planets = RHS
+End Property
+
+'###################################################
+'########## Functions ##############################
+'###################################################
 
 Public Function CreateObjectPrivate(ByVal Class As String)
     Set CreateObjectPrivate = modFactory.CreateObjectPrivate(Class)

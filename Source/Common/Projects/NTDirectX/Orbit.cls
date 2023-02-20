@@ -42,7 +42,16 @@ Friend Property Set Relative(ByRef RHS As Orbit)
 End Property
 
 Friend Property Get Absolute() As Orbit
-    If pAbsolute Is Nothing Then Set pAbsolute = New Orbit
+    If pAbsolute Is Nothing Then
+        Set pAbsolute = New Orbit
+        With pAbsolute
+            Set .Offset = pOffset
+            Set .Origin = pOrigin
+            Set .Rotate = pRotate
+            Set .Scaled = pScaled
+            Set .Ranges = pRanges
+        End With
+    End If
     Set Absolute = pAbsolute
 End Property
 
@@ -74,7 +83,6 @@ Public Property Set Rotate(ByRef RHS As Point)
     Set pRotate = RHS
 End Property
 
-
 Public Property Get Scaled() As Point
     If pScaled Is Nothing Then
         Set pScaled = New Point
@@ -97,6 +105,8 @@ Public Property Set Ranges(ByRef RHS As Range)
 End Property
 
 Public Property Get Serialize() As String
+Attribute Serialize.VB_UserMemId = 0
+Attribute Serialize.VB_MemberFlags = "600"
     Serialize = "[" & Origin.Serialize & Offset.Serialize & Rotate.Serialize & Scaled.Serialize & Ranges.Serialize & "]"
 End Property
 Public Property Let Serialize(ByVal RHS As String)
@@ -124,9 +134,8 @@ Public Property Let Serialize(ByVal RHS As String)
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
     End If
+    
 End Property
-
-
 
 Private Sub Class_Terminate()
     Set pOrigin = Nothing

@@ -14,8 +14,11 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private this As New NTNodes10.Collection
-Public Serialize As Boolean
 Private pParent As Molecule
+
+Public Property Get Serialize() As Boolean
+    Serialize = True
+End Property
 
 Friend Property Get Parent() As Molecule
     Set Parent = pParent
@@ -87,7 +90,6 @@ End Sub
 
 Private Sub Class_Initialize()
     Set this = New NTNodes10.Collection
-    Serialize = True
 End Sub
 
 Private Sub Class_Terminate()

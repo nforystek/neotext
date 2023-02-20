@@ -48,7 +48,7 @@ End Function
 
 Public Property Get Serialize() As String
 Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "240"
+Attribute Serialize.VB_MemberFlags = "600"
     Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & ", " & Round(z, 6) & "]"
 End Property
 Public Property Let Serialize(ByVal RHS As String)

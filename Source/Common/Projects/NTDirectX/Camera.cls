@@ -17,10 +17,10 @@ Private pColor As Long
 Private pPlayer As Molecule
 Private pPlanet As Planet
 
-Private pSerialize As Boolean
+Public Serialize As Boolean
 
 Public Property Get Player() As Molecule
-    If pPlayer Is Nothing Then Set pPlayer = New Molecule
+    'If pPlayer Is Nothing Then Set pPlayer = New Molecule
     Set Player = pPlayer
 End Property
 Public Property Set Player(ByRef RHS As Molecule)
@@ -34,38 +34,24 @@ Public Property Set Planet(ByRef RHS As Planet)
     Set pPlanet = RHS
 End Property
 
-Public Property Get Serialize()
-    If pSerialize Then
-        Serialize = ""
-        If Not pPlayer Is Nothing Then
-            Serialize = Serialize & "Set Camera.Player = Molecules(""" & pPlayer.Key & """)" & vbCrLf
-            Serialize = Serialize & "Camera.Player.Origin = """ & pPlayer.Origin & """" & vbCrLf
-            Serialize = Serialize & "Camera.Player.Rotate = """ & pPlayer.Rotate & """" & vbCrLf
-        End If
+Public Property Get ToString() As String
+    If Serialize Then
+        ToString = ""
         If Not pPlanet Is Nothing Then
-            Serialize = Serialize & "Set Camera.Planet = Planets(""" & pPlanet.Key & """)" & vbCrLf
+            ToString = ToString & "Set Camera.Planet = Planets(""" & pPlanet.Key & """)" & vbCrLf
         End If
-        Serialize = Serialize & "Camera.Color = " & pColor & vbCrLf
-        Serialize = Serialize & "Camera.Serialize = True" & vbCrLf
-    Else
-        Serialize = False
-    End If
-End Property
-
-Public Property Let Serialize(ByVal RHS)
-    If TypeName(RHS) = "Boolean" Then
-        pSerialize = CBool(RHS)
+        If Not pPlayer Is Nothing Then
+            ToString = ToString & "Set Camera.Player = Molecules(""" & pPlayer.Key & """)" & vbCrLf
+            ToString = ToString & "Camera.Player.Origin = """ & pPlayer.Origin & """" & vbCrLf
+            ToString = ToString & "Camera.Player.Rotate = """ & pPlayer.Rotate & """" & vbCrLf
+        End If
+        ToString = ToString & "Camera.Color = " & pColor & vbCrLf
+        ToString = ToString & "Camera.Serialize = True" & vbCrLf
     End If
 End Property
 
 
-Public Property Set Serialize(ByRef RHS)
-    If TypeName(RHS) = "Molecule" Then
-        Set pPlayer = RHS
-    ElseIf TypeName(RHS) = "Planet" Then
-        Set pPlanet = RHS
-    End If
-End Property
+
 
 Public Property Let Color(ByVal RHS As Long)
     pColor = RHS

@@ -41,6 +41,7 @@ Private pKey As String
 
 Private pSerialize As Boolean
 
+
 Public Property Get Serialize() As Boolean
     Serialize = pSerialize
 End Property
@@ -260,7 +261,7 @@ Private Sub Class_Initialize()
     Set Ambience = New Color
     Set Specular = New Color
     Set Attenuation = New Point
-    pSerialize = True
+
 End Sub
 
 Private Sub Class_Terminate()
@@ -346,12 +347,12 @@ Private Property Set Orbit_Scaled(ByRef RHS As Point)
     Set Scaled = RHS
 End Property
 
-Private Property Get Orbit_Serialize() As String
-    Orbit_Serialize = Serialize
+Private Property Let Orbit_Serialize(ByVal RHS As String)
+    Me.Serialize = RHS
 End Property
 
-Private Property Let Orbit_Serialize(ByVal RHS As String)
-    Serialize = RHS
+Private Property Get Orbit_Serialize() As String
+    Orbit_Serialize = Me.Serialize
 End Property
 
 

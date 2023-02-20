@@ -51,7 +51,7 @@ End Function
 
 Public Property Get Serialize() As String
 Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "200"
+Attribute Serialize.VB_MemberFlags = "600"
     Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & ", " & Round(z, 6) & ", " & Round(W, 6) & "]"
 End Property
 Public Property Let Serialize(ByVal RHS As String)
@@ -72,7 +72,6 @@ End Property
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Point, ObjPtr(New Point)
-
 End Sub
 
 Private Function Point_Equals(Point As Point) As Boolean

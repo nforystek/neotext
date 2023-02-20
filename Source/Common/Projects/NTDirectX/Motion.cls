@@ -47,6 +47,41 @@ Public Property Let Form(ByRef RHS As Long)
     pForm = RHS
 End Property
 
+Public Property Get Serialize() As String
+    Serialize = "[" & pForm & "]"
+End Property
+Public Property Let Serialize(ByVal RHS As String)
+
+    RHS = Trim(RHS)
+    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
+        If InStr(RHS, ",") > 0 Then
+            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
+                X = CSng(Left(RHS, InStr(RHS, ",") - 1))
+            Else
+                X = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+            End If
+            RHS = Mid(RHS, InStr(RHS, ",") + 1)
+        End If
+        If InStr(RHS, ",") > 0 Then
+            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
+                Y = CSng(Left(RHS, InStr(RHS, ",") - 1))
+            Else
+                Y = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+            End If
+            RHS = Mid(RHS, InStr(RHS, ",") + 1)
+        End If
+        If InStr(RHS, ",") = 0 Then
+            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
+                z = CSng(Left(RHS, InStr(RHS, ",") - 1))
+            Else
+                z = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+            End If
+            RHS = Mid(RHS, InStr(RHS, ",") + 1)
+        End If
+    End If
+End Property
+
 Private Sub Class_Terminate()
     If pKey <> "" Then
         If Motions.Exists(pKey) Then Motions.Remove pKey

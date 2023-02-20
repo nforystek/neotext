@@ -75,8 +75,8 @@ Public Sub CleanUpProj()
         OnEvents.Remove 1
     Loop
     
-    Do While Include.Count > 0
-        Include.Remove 1
+    Do While All.Count > 0
+        All.Remove 1
     Loop
     Dim o As Long
     

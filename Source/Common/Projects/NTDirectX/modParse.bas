@@ -313,14 +313,13 @@ Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, By
 
         If inName = "" Then inName = Include.Unnamed(All)
 
-        If Not Include.Exists(inName) Then
+        If Not All.Exists(inName) Then
             If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
             All.Add Temporary, inName
         End If
 
         If inWith = "" Then
             frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
-        
         End If
 
         If Not frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & "s.Exists(""" & inName & """)") Then
@@ -339,7 +338,11 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
             ScriptRoot = GetFilePath(txt)
             txt = ReadFile(txt)
             If PathExists(ScriptRoot & "\Serial.xml", True) Then
-                frmMain.AddCode ParseDeserialize(ReadFile(ScriptRoot & "\Serial.xml"))
+                Dim tmp As String
+                tmp = ParseDeserialize(ReadFile(ScriptRoot & "\Serial.xml"))
+                Debug.Print tmp
+                frmMain.AddCode tmp
+                
                 'ParseScript = ParseScript & "Deserialize" & vbCrLf
             End If
         End If

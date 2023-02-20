@@ -865,14 +865,14 @@ Public Sub RenderOrbits(ByRef UserControl As Macroscopic, ByRef MoleculeView As 
     If Not Camera.Planet Is Nothing Then
 
         Dim matMat As D3DMATRIX
-    
+
         D3DXMatrixIdentity matMat
-    
+
         Dim matRoll As D3DMATRIX
         Dim matPitch As D3DMATRIX
         Dim matYaw As D3DMATRIX
         Dim matPos As D3DMATRIX
-    
+
         D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
         D3DXMatrixMultiply matMat, matPos, matMat
 
@@ -942,21 +942,30 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef ma
 
     D3DXMatrixIdentity matMat
 
-    If Parent Is Nothing Then
+'    If Parent Is Nothing Then
+'        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
+'        D3DXMatrixMultiply matPos2, matPos, matPos2
+'        D3DXMatrixMultiply matMat, matPos2, matMat
+'    Else
+'    If Not Parent Is Nothing Then
+'        D3DXMatrixRotationX matPitch2, -Parent.Rotate.X
+'        D3DXMatrixMultiply matPitch2, matPitch, matPitch2
+'        D3DXMatrixMultiply matMat, matPitch2, matMat
+'
+'        D3DXMatrixRotationY matYaw2, -Parent.Rotate.Y
+'        D3DXMatrixMultiply matYaw2, matYaw, matYaw2
+'        D3DXMatrixMultiply matMat, matYaw2, matMat
+'
+'        D3DXMatrixRotationZ matRoll2, -Parent.Rotate.z
+'        D3DXMatrixMultiply matRoll2, matRoll, matRoll2
+'        D3DXMatrixMultiply matMat, matRoll2, matMat
+'
+'    End If
+    
         D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
         D3DXMatrixMultiply matPos2, matPos, matPos2
         D3DXMatrixMultiply matMat, matPos2, matMat
-    Else
         
-        D3DXMatrixTranslation matPos2, -Parent.Origin.X, -Parent.Origin.Y, -Parent.Origin.z
-        D3DXMatrixMultiply matPos2, matPos, matPos2
-        D3DXMatrixMultiply matMat, matPos2, matMat
-        
-        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
-        D3DXMatrixMultiply matPos2, matPos, matPos2
-        D3DXMatrixMultiply matMat, matPos2, matMat
-        
-    End If
     D3DXMatrixRotationX matPitch2, ApplyTo.Rotate.X
     D3DXMatrixMultiply matPitch2, matPitch, matPitch2
     D3DXMatrixMultiply matMat, matPitch2, matMat
@@ -969,17 +978,16 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef ma
     D3DXMatrixMultiply matRoll2, matRoll, matRoll2
     D3DXMatrixMultiply matMat, matRoll2, matMat
 
-    If Not Parent Is Nothing Then
-
-        D3DXMatrixTranslation matPos2, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z
-        D3DXMatrixMultiply matPos2, matPos, matPos2
-        D3DXMatrixMultiply matMat, matPos2, matMat
-
-        D3DXMatrixTranslation matPos2, -Parent.Origin.X, -Parent.Origin.Y, -Parent.Origin.z
-        D3DXMatrixMultiply matPos2, matPos, matPos2
-        D3DXMatrixMultiply matMat, matPos2, matMat
-
-    End If
+'    If Not Parent Is Nothing Then
+''        D3DXMatrixTranslation matPos2, -ApplyTo.Origin.X * 2, -ApplyTo.Origin.Y * 2, -ApplyTo.Origin.z * 2
+''        D3DXMatrixMultiply matPos2, matPos, matPos2
+''        D3DXMatrixMultiply matMat, matPos2, matMat
+''
+'        D3DXMatrixTranslation matPos2, Parent.Origin.X, Parent.Origin.Y, Parent.Origin.z
+'        D3DXMatrixMultiply matPos2, matPos, matPos2
+'        D3DXMatrixMultiply matMat, matPos2, matMat
+''
+'    End If
     
     Dim V As Matter
     For Each V In ApplyTo.Volume
