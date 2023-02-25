@@ -15,6 +15,7 @@ Public PauseGame As Boolean
 Public ScreenSaver As Boolean
 Public TrapMouse As Boolean
 Public StopGame As Boolean
+Public ShowSetup As Boolean
 
 Public FPSTimer As Double
 Public FPSCount As Long
@@ -41,7 +42,7 @@ Public DSurface As D3DXRenderToSurface
 Public PixelShaderDefault As Long
 Public PixelShaderDiffuse As Long
 
-Public Sub ShowSetup(ByRef UserControl As Macroscopic)
+Public Sub ShowSetupForm(ByRef UserControl As Macroscopic)
 
     UserControl.PauseRendering
     frmSetup.Left = UserControl.Parent.Left + ((UserControl.Parent.Width / 2) - (frmSetup.Width / 2))
@@ -92,8 +93,6 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 DoTasks
             End If
             
-            If GetKeyState(VK_F1) = -128 Then ShowSetup UserControl
-            
         Else
     
 '            On Error GoTo Render
@@ -138,6 +137,13 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 End If
                     
             End If
+            
+            
+            If ShowSetup Then
+                ShowSetupForm UserControl
+                ShowSetup = False
+            End If
+            
         End If
         
         If D3DWindow.Windowed = 1 Then DoTasks
@@ -146,7 +152,8 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 Exit Sub
 nofocus:
     Err.Clear
-    DoPauseGame UserControl
+    UserControl.PauseRendering
+    'DoPauseGame UserControl
     
 'Exit Sub
 'Render:
@@ -418,13 +425,15 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     
 End Sub
 
-Public Sub DoPauseGame(ByRef UserControl As Macroscopic)
-
-    On Error Resume Next
-    PauseGame = True
-    TermGameData UserControl
-    TermDirectX UserControl
-End Sub
+'Public Sub DoPauseGame(ByRef UserControl As Macroscopic)
+'
+'    On Error Resume Next
+'    If Not PauseGame Then
+'        PauseGame = True
+'        TermGameData UserControl
+'        TermDirectX UserControl
+'    End If
+'End Sub
 
 Public Sub InitGameData(ByRef UserControl As Macroscopic)
 
@@ -512,7 +521,6 @@ Public Sub InitGameData(ByRef UserControl As Macroscopic)
 End Sub
 
 Public Sub TermGameData(ByRef UserControl As Macroscopic)
-
     
     CleanUpProj
     CleanUpObjs
@@ -541,7 +549,7 @@ Public Function TestDirectX(ByRef UserControl As Macroscopic) As Boolean
     On Error Resume Next
     InitDirectX UserControl
     TestDirectX = (Err.Number = 0)
-    If Err.Number Then Err.Clear
+    If Err.Number <> 0 Then Err.Clear
     On Error GoTo 0
 
 End Function

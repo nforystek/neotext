@@ -892,25 +892,28 @@ Public Sub RenderOrbits(ByRef UserControl As Macroscopic, ByRef MoleculeView As 
 End Sub
 
 Private Sub RenderOrbit(ByRef col As Object, ByVal NoParentOnly As Boolean)
-    Dim matPos2 As D3DMATRIX
-    Dim matRoll2 As D3DMATRIX
-    Dim matYaw2 As D3DMATRIX
-    Dim matPitch2 As D3DMATRIX
-    Dim matScale2 As D3DMATRIX
-    D3DXMatrixIdentity matPos2
-    D3DXMatrixIdentity matRoll2
-    D3DXMatrixIdentity matYaw2
-    D3DXMatrixIdentity matPitch2
-    D3DXMatrixIdentity matScale2
+'    Dim matPos2 As D3DMATRIX
+'    Dim matRoll2 As D3DMATRIX
+'    Dim matYaw2 As D3DMATRIX
+'    Dim matPitch2 As D3DMATRIX
+'    Dim matScale2 As D3DMATRIX
+'    D3DXMatrixIdentity matPos2
+'    D3DXMatrixIdentity matRoll2
+'    D3DXMatrixIdentity matYaw2
+'    D3DXMatrixIdentity matPitch2
+'    D3DXMatrixIdentity matScale2
+    
+    Dim matMat As D3DMATRIX
+    D3DXMatrixIdentity matMat
                 
     Dim m As Molecule
     For Each m In col
         If NoParentOnly Then
             If m.Parent Is Nothing Then
-                Render m, Nothing, matPos2, matRoll2, matYaw2, matPitch2, matScale2
+                Render m, Nothing, matMat 'matPos2, matRoll2, matYaw2, matPitch2, matScale2
             End If
         Else
-            Render m, Nothing, matPos2, matRoll2, matYaw2, matPitch2, matScale2
+            Render m, Nothing, matMat 'matPos2, matRoll2, matYaw2, matPitch2, matScale2
         End If
         
     Next
@@ -927,101 +930,58 @@ Private Function CompoundOrbit(ByRef Orbit1 As Orbit, ByRef Orbit2 As Orbit) As 
     End With
 End Function
 
-Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matPos As D3DMATRIX, ByRef matRoll As D3DMATRIX, ByRef matYaw As D3DMATRIX, ByRef matPitch As D3DMATRIX, ByRef matScale As D3DMATRIX)
-    Static stacked As Integer
+Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX)
 
     Dim vout As D3DVECTOR
 
-    Dim matMat As D3DMATRIX
+    Dim matPos As D3DMATRIX
+    Dim matRoll As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matScale As D3DMATRIX
 
-    Dim matPos2 As D3DMATRIX
-    Dim matRoll2 As D3DMATRIX
-    Dim matYaw2 As D3DMATRIX
-    Dim matPitch2 As D3DMATRIX
-    Dim matScale2 As D3DMATRIX
-
-    D3DXMatrixIdentity matMat
-
-'    If Parent Is Nothing Then
-'        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
-'        D3DXMatrixMultiply matPos2, matPos, matPos2
-'        D3DXMatrixMultiply matMat, matPos2, matMat
-'    Else
-'    If Not Parent Is Nothing Then
-'        D3DXMatrixRotationX matPitch2, -Parent.Rotate.X
-'        D3DXMatrixMultiply matPitch2, matPitch, matPitch2
-'        D3DXMatrixMultiply matMat, matPitch2, matMat
-'
-'        D3DXMatrixRotationY matYaw2, -Parent.Rotate.Y
-'        D3DXMatrixMultiply matYaw2, matYaw, matYaw2
-'        D3DXMatrixMultiply matMat, matYaw2, matMat
-'
-'        D3DXMatrixRotationZ matRoll2, -Parent.Rotate.z
-'        D3DXMatrixMultiply matRoll2, matRoll, matRoll2
-'        D3DXMatrixMultiply matMat, matRoll2, matMat
-'
-'    End If
     
-        D3DXMatrixTranslation matPos2, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
-        D3DXMatrixMultiply matPos2, matPos, matPos2
-        D3DXMatrixMultiply matMat, matPos2, matMat
-        
-    D3DXMatrixRotationX matPitch2, ApplyTo.Rotate.X
-    D3DXMatrixMultiply matPitch2, matPitch, matPitch2
-    D3DXMatrixMultiply matMat, matPitch2, matMat
+    D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
+    D3DXMatrixMultiply matMat, matPos, matMat
+    
+    D3DXMatrixRotationX matPitch, ApplyTo.Rotate.X
+    D3DXMatrixMultiply matMat, matPitch, matMat
 
-    D3DXMatrixRotationY matYaw2, ApplyTo.Rotate.Y
-    D3DXMatrixMultiply matYaw2, matYaw, matYaw2
-    D3DXMatrixMultiply matMat, matYaw2, matMat
+    D3DXMatrixRotationY matYaw, ApplyTo.Rotate.Y
+    D3DXMatrixMultiply matMat, matYaw, matMat
 
-    D3DXMatrixRotationZ matRoll2, ApplyTo.Rotate.z
-    D3DXMatrixMultiply matRoll2, matRoll, matRoll2
-    D3DXMatrixMultiply matMat, matRoll2, matMat
+    D3DXMatrixRotationZ matRoll, ApplyTo.Rotate.z
+    D3DXMatrixMultiply matMat, matRoll, matMat
 
-'    If Not Parent Is Nothing Then
-''        D3DXMatrixTranslation matPos2, -ApplyTo.Origin.X * 2, -ApplyTo.Origin.Y * 2, -ApplyTo.Origin.z * 2
-''        D3DXMatrixMultiply matPos2, matPos, matPos2
-''        D3DXMatrixMultiply matMat, matPos2, matMat
-''
-'        D3DXMatrixTranslation matPos2, Parent.Origin.X, Parent.Origin.Y, Parent.Origin.z
-'        D3DXMatrixMultiply matPos2, matPos, matPos2
-'        D3DXMatrixMultiply matMat, matPos2, matMat
-''
-'    End If
+    D3DXMatrixTranslation matPos, ApplyTo.Offset.X, ApplyTo.Offset.Y, ApplyTo.Offset.z
+    D3DXMatrixMultiply matMat, matPos, matMat
+    
+    D3DXMatrixScaling matScale, ApplyTo.Scaled.X, ApplyTo.Scaled.Y, ApplyTo.Scaled.z
+    D3DXMatrixMultiply matScale, matScale, matMat
+    
+    Dim m As Molecule
+    For Each m In ApplyTo.Molecules
+        Render m, ApplyTo, matMat
+    Next
+
     
     Dim V As Matter
     For Each V In ApplyTo.Volume
 
-        D3DXVec3TransformCoord vout, ToVector(V.Point1), matMat
+        D3DXVec3TransformCoord vout, ToVector(V.Point1), matScale
         VertexDirectX((V.TriangleIndex * 3) + 0).X = vout.X
         VertexDirectX((V.TriangleIndex * 3) + 0).Y = vout.Y
         VertexDirectX((V.TriangleIndex * 3) + 0).z = vout.z
 
-        D3DXVec3TransformCoord vout, ToVector(V.Point2), matMat
+        D3DXVec3TransformCoord vout, ToVector(V.Point2), matScale
         VertexDirectX((V.TriangleIndex * 3) + 1).X = vout.X
         VertexDirectX((V.TriangleIndex * 3) + 1).Y = vout.Y
         VertexDirectX((V.TriangleIndex * 3) + 1).z = vout.z
 
-        D3DXVec3TransformCoord vout, ToVector(V.Point3), matMat
+        D3DXVec3TransformCoord vout, ToVector(V.Point3), matScale
         VertexDirectX((V.TriangleIndex * 3) + 2).X = vout.X
         VertexDirectX((V.TriangleIndex * 3) + 2).Y = vout.Y
         VertexDirectX((V.TriangleIndex * 3) + 2).z = vout.z
-
-'        If Not Parent Is Nothing Then
-'
-'            VertexDirectX((V.TriangleIndex * 3) + 0).X = VertexDirectX((V.TriangleIndex * 3) + 0).X + Parent.Origin.X
-'            VertexDirectX((V.TriangleIndex * 3) + 0).Y = VertexDirectX((V.TriangleIndex * 3) + 0).Y + Parent.Origin.Y
-'            VertexDirectX((V.TriangleIndex * 3) + 0).z = VertexDirectX((V.TriangleIndex * 3) + 0).z + Parent.Origin.z
-'
-'            VertexDirectX((V.TriangleIndex * 3) + 1).X = VertexDirectX((V.TriangleIndex * 3) + 1).X + Parent.Origin.X
-'            VertexDirectX((V.TriangleIndex * 3) + 1).Y = VertexDirectX((V.TriangleIndex * 3) + 1).Y + Parent.Origin.Y
-'            VertexDirectX((V.TriangleIndex * 3) + 1).z = VertexDirectX((V.TriangleIndex * 3) + 1).z + Parent.Origin.z
-'
-'            VertexDirectX((V.TriangleIndex * 3) + 2).X = VertexDirectX((V.TriangleIndex * 3) + 2).X + Parent.Origin.X
-'            VertexDirectX((V.TriangleIndex * 3) + 2).Y = VertexDirectX((V.TriangleIndex * 3) + 2).Y + Parent.Origin.Y
-'            VertexDirectX((V.TriangleIndex * 3) + 2).z = VertexDirectX((V.TriangleIndex * 3) + 2).z + Parent.Origin.z
-'
-'        End If
 
         VertexDirectX(V.TriangleIndex * 3 + 0).NX = V.Normal.X
         VertexDirectX(V.TriangleIndex * 3 + 0).NY = V.Normal.Y
@@ -1062,14 +1022,22 @@ Private Sub Render(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef ma
              DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 1, VertexDirectX((V.TriangleIndex * 3)), Len(VertexDirectX(0))
          End If
     Next
+    
+    D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.z
+    D3DXMatrixMultiply matMat, matPos, matMat
 
-    stacked = stacked + 1
-    Dim m As Molecule
-    For Each m In ApplyTo.Molecules
-        Render m, ApplyTo, matPos2, matRoll2, matYaw2, matPitch2, matScale2
-    Next
-    stacked = stacked - 1
+    D3DXMatrixRotationZ matRoll, -ApplyTo.Rotate.z
+    D3DXMatrixMultiply matMat, matRoll, matMat
 
+    D3DXMatrixRotationY matYaw, -ApplyTo.Rotate.Y
+    D3DXMatrixMultiply matMat, matYaw, matMat
+    
+    D3DXMatrixRotationX matPitch, -ApplyTo.Rotate.X
+    D3DXMatrixMultiply matMat, matPitch, matMat
+    
+    D3DXMatrixTranslation matPos, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z
+    D3DXMatrixMultiply matMat, matPos, matMat
+    
 End Sub
 
 Private Function BuildArrays() As Long
@@ -2100,13 +2068,13 @@ Public Function PointCache(ByRef p As Point) As Long
     If Points.Count > 0 Then
         Dim i As Long
         For i = 1 To Points.Count
-            If Points(i).Serialize = p.Serialize Then
+            If Points(i).ToString = p.ToString Then
                 PointCache = i
                 Set p = Points(i)
                 Exit Function
             End If
         Next
     End If
-    Points.Add p, p.Serialize
+    Points.Add p, p.ToString
     PointCache = Points.Count
 End Function

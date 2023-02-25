@@ -126,7 +126,6 @@ Private Function ParseInWith(ByVal inLine As String, Optional ByVal inWith As St
 End Function
 
 Private Function ParseDeserialize(ByRef nXML As String) As String
-
     Dim xml As New MSXML.DOMDocument
     xml.async = "false"
     xml.loadXML nXML
@@ -141,13 +140,12 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
         Dim child As MSXML.IXMLDOMNode
         Dim serial As MSXML.IXMLDOMNode
         For Each serial In xml.childNodes
-            Select Case LCase(Include.SafeKey(serial.baseName))
+            Select Case Include.SafeKey(serial.baseName)
             
                 Case "serial"
                     For Each child In serial.childNodes
-                        Select Case LCase(Include.SafeKey(child.baseName))
+                        Select Case Include.SafeKey(child.baseName)
                             Case "datetime"
-                                'temporary start new each time
                                 If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
                                     GoTo exitout:
                                 End If
@@ -160,16 +158,11 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                                         retVal = retVal & child.childNodes(cnt).baseName & " = """ & tmp & """" & vbCrLf
                                     End If
                                 Next
-                            Case "bindings"
-                                For cnt = 0 To child.childNodes.Length - 1
-                                    retVal = retVal & "Bindings(" & GetBindingIndex(child.childNodes(cnt).baseName) & ") = Include.URLDecode(""" & child.childNodes(cnt).Text & """)" & vbCrLf
-                                Next
-                                retVal = retVal & "Bindings.Serialize = True" & vbCrLf
-                            Case "camera"
-                                retVal = retVal & Include.URLDecode(child.childNodes(cnt).Text) & vbCrLf
-                            Case "molecules", "brilliants", "planets", "billboards"
+                                
+                            Case "molecules", "brilliants", "planets", "billboards", "camera", "bindings"
                                 All.Add "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf & child.xml & vbCrLf & "</Serial>" & vbCrLf, Include.SafeKey(child.baseName)
                                 retVal = retVal & "Set Include.Serialize = " & Include.SafeKey(child.baseName) & vbCrLf
+
                         End Select
                     Next
             End Select
@@ -181,27 +174,38 @@ exitout:
     Set xml = Nothing
 End Function
 Private Function ParseSerialize(ByRef txt As String, Optional ByRef LineNum As Long = 0) As String
-    On Error Resume Next
+    'On Error Resume Next
     Dim retVal As String
     retVal = "Function Serialize()" & vbCrLf
+    retVal = retVal & "Serialize = ""<Serial>"" & vbCrLf" & vbCrLf
+    retVal = retVal & "Serialize = Serialize & Include.Serialize & vbCrLf" & vbCrLf
     
-    retVal = retVal & "Serialize = ""<?xml version=""""1.0""""?>"" & vbCrLf" & vbCrLf
-    retVal = retVal & "Serialize = Serialize & ""<Serial>"" & vbCrLf" & vbCrLf
-    retVal = retVal & "Serialize = Serialize & Include.Serialize(""    "")" & vbCrLf
-        
-    retVal = retVal & "Serialize = Serialize & ""    <Variables>"" & vbCrLf" & vbCrLf
+    retVal = retVal & "Serialize = Serialize & ""  <Variables>"" & vbCrLf" & vbCrLf
     txt = ParseWhiteSpace(txt)
     Do Until txt = ""
-        retVal = retVal & "Serialize = Serialize & ""        <" & NextArg(txt, vbCrLf) & ">"" & Include.URLEncode(" & NextArg(txt, vbCrLf) & ") & ""        </" & NextArg(txt, vbCrLf) & ">"" & vbCrLf" & vbCrLf
+        retVal = retVal & "Serialize = Serialize & ""        <" & NextArg(txt, vbCrLf) & ">"" & Include.URLEncode(" & NextArg(txt, vbCrLf) & ") & ""</" & NextArg(txt, vbCrLf) & ">"" & vbCrLf" & vbCrLf
         RemoveNextArg txt, vbCrLf
     Loop
-    retVal = retVal & "Serialize = Serialize & ""    </Variables>"" & vbCrLf" & vbCrLf
-    retVal = retVal & "Serialize = Replace(Serialize,""    <Variables>"" & vbCrLf & ""    </Variables>"" & vbCrLf ,"""")" & vbCrLf
-    
+    retVal = retVal & "Serialize = Serialize & ""  </Variables>"" & vbCrLf" & vbCrLf
+
     retVal = retVal & "If Bindings.Serialize Then" & vbCrLf
-    retVal = retVal & "Serialize = Serialize & Bindings.ToString(""    "")" & vbCrLf
+    retVal = retVal & "Serialize = Serialize & Bindings.ToString()" & vbCrLf
+    retVal = retVal & "End If" & vbCrLf
+
+    retVal = retVal & "If Camera.Serialize Then" & vbCrLf
+    retVal = retVal & "Serialize = Serialize & Camera.ToString()" & vbCrLf
     retVal = retVal & "End If" & vbCrLf
     
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Variables>"" & vbCrLf & ""  </Variables>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Bindings>"" & vbCrLf & "" </Bindings>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Billboards>"" & vbCrLf & ""  </Billboards>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Planets>"" & vbCrLf & ""  </Planets>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Brilliants>"" & vbCrLf & ""  </Brilliants>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Molecules>"" & vbCrLf & ""  </Molecules>"","""")" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize,""  <Camera>"" & vbCrLf & ""  </Camera>"","""")" & vbCrLf
+    retVal = retVal & "Do While Instr(Serialize,vbCrLf & vbCrLf)>0" & vbCrLf
+    retVal = retVal & "Serialize = Replace(Serialize, vbCrLf & vbCrLf, vbCrLf)" & vbCrLf
+    retVal = retVal & "Loop" & vbCrLf
     retVal = retVal & "Serialize = Serialize & ""</Serial>""" & vbCrLf
    
     retVal = retVal & "End Function" & vbCrLf
@@ -215,6 +219,7 @@ Private Function ParseSerialize(ByRef txt As String, Optional ByRef LineNum As L
         On Error GoTo 0
     End If
 End Function
+
 Private Sub ParseExecute(ByRef txt As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0)
     If GetFileExt(NextArg(txt, vbCrLf)) = ".vbx" Then
         If PathExists(NextArg(txt, vbCrLf), True) Then
@@ -289,7 +294,6 @@ Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, By
     'Debug.Print "Object: " & inLine
     inBlock = ParseBracketOff(ParseBracketOff(inBlock, "{", "}"), "[", "]")
     Dim inName As String
-    Dim Temporary As Object
     inName = ParseQuotedArg(inLine, "<", ">", , , False)
     inLine = ParseWhiteSpace(inLine)
     Dim inObj As String
@@ -308,28 +312,54 @@ Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, By
         ParseScript inBlock, inObj, (LineNum - CountWord(inBlock, vbCrLf))
     ElseIf ParseReservedWord(inObj) = 3 Then
 
+'        inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
+'        Set Temporary = CreateObjectPrivate(inObj)
+'
+'        If inName = "" Then inName = Include.Unnamed(All)
+'
+'        If Not All.Exists(inName) Then
+'            If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
+'            All.Add Temporary, inName
+'        End If
+'
+'        If inWith = "" Then
+'            frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
+'        End If
+'
+'        If Not frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & "s.Exists(""" & inName & """)") Then
+'            frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & "s.Add All(""" & inName & """), """ & inName & """"
+'        End If
+'        frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
+
+        Dim Temporary As Object
         inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
         Set Temporary = CreateObjectPrivate(inObj)
-
-        If inName = "" Then inName = Include.Unnamed(All)
-
-        If Not All.Exists(inName) Then
-            If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
-            All.Add Temporary, inName
-        End If
-
-        If inWith = "" Then
-            frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
-        End If
-
-        If Not frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & "s.Exists(""" & inName & """)") Then
-            frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & "s.Add All(""" & inName & """), """ & inName & """"
-        End If
-        frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
-
+    
+        ParseSetupObject Temporary, inObj, inWith, inName
+        
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)", (LineNum - CountWord(inBlock, vbCrLf))
     End If
 End Function
+Public Sub ParseSetupObject(ByRef Temporary As Object, ByRef inObj As String, Optional ByVal inWith As String = "", Optional ByRef inName As String)
+    
+    If inName = "" Then inName = Temporary.Key
+
+    If Not All.Exists(inName) Then
+        If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
+        All.Add Temporary, inName
+    End If
+
+    If inWith = "" Then
+        frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
+    End If
+
+    If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)") Then
+        frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Remove """ & inName & """"
+    End If
+    frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Add All(""" & inName & """), """ & inName & """"
+
+    frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
+End Sub
 
 Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String = "", Optional ByRef LineNum As Long = 0) As String
     On Error GoTo parseerror
@@ -338,12 +368,7 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
             ScriptRoot = GetFilePath(txt)
             txt = ReadFile(txt)
             If PathExists(ScriptRoot & "\Serial.xml", True) Then
-                Dim tmp As String
-                tmp = ParseDeserialize(ReadFile(ScriptRoot & "\Serial.xml"))
-                Debug.Print tmp
-                frmMain.AddCode tmp
-                
-                'ParseScript = ParseScript & "Deserialize" & vbCrLf
+                frmMain.AddCode ParseDeserialize(ReadFile(ScriptRoot & "\Serial.xml"))
             End If
         End If
     End If
@@ -392,6 +417,7 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
     Loop
     Exit Function
 parseerror:
+Resume
     Debug.Print "Error: "; Err.Number & " Line: " & (LineNum - CountWord(txt, vbCrLf)) & " Description: " & Err.Description
 End Function
 

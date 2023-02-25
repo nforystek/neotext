@@ -15,7 +15,7 @@ Option Explicit
 
 
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Location Origin, ApplyTo  'location is changing the origin to absolute
+    mod3DObj.Location Origin, ApplyTo   'location is changing the origin to absolute
 End Sub
 Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Position Origin, ApplyTo  'position is changing the origin relative
@@ -37,184 +37,57 @@ Public Sub Explode(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Explode Ratios, ApplyTo  'position is changing the origin relative
 End Sub
 
-Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
-    Select Case LCase(TypeName(RHS))
-        Case "molecules"
-            Dim mol As Molecules
-            Set mol = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
-            All.Remove LCase(TypeName(RHS))
-            If mol.Count > 0 Then
-                Dim m As Molecule
-                For Each m In mol
-                    If Molecules.Exists(m.Key) Then
-                        Molecules.Remove m.Key
-                        Molecules.Add m, m.Key
-                    Else
-                        Molecules.Add m, m.Key
-                    End If
-                Next
-            End If
-            Set mol = Nothing
-        Case "brilliants"
-            Dim bril As Brilliants
-            Set bril = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
-            All.Remove LCase(TypeName(RHS))
-            If bril.Count > 0 Then
-                Dim br As Brilliant
-                For Each br In bril
-                    If Brilliants.Exists(br.Key) Then
-                        Brilliants.Remove br.Key
-                        Brilliants.Add br, br.Key
-                    Else
-                        Brilliants.Add br, br.Key
-                    End If
-                Next
-            End If
-            Set bril = Nothing
-        Case "planets"
-            Dim pla As Planets
-            Set pla = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
-            All.Remove LCase(TypeName(RHS))
-            If pla.Count > 0 Then
-                Dim p As Planet
-                For Each p In pla
-                    If Planets.Exists(p.Key) Then
-                        Planets.Remove p.Key
-                        Planets.Add p, p.Key
-                    Else
-                        Planets.Add p, p.Key
-                    End If
-                Next
-            End If
-            Set pla = Nothing
-        Case "billboards"
-            Dim bill As Billboards
-            Set bill = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
-            All.Remove LCase(TypeName(RHS))
-            If bill.Count > 0 Then
-                Dim bi As Billboard
-                For Each bi In bill
-                    If Billboards.Exists(bi.Key) Then
-                        Billboards.Remove bi.Key
-                        Billboards.Add bi, bi.Key
-                    Else
-                        Billboards.Add bi, bi.Key
-                    End If
-                Next
-            End If
-            Set bill = Nothing
+Public Property Set Serialize(ByRef RHS)
 
+    Dim code As String
+    Dim line As String
+    Select Case LCase(TypeName(RHS))
+        Case "bindings", "camera"
+            If All.Exists(LCase(TypeName(RHS))) Then
+                code = RemoveQuotedArg(All(LCase(TypeName(RHS))), "<" & TypeName(RHS) & ">", "</" & TypeName(RHS) & ">")
+                All.Remove LCase(TypeName(RHS))
+                Do Until code = ""
+                    line = URLDecode(RemoveNextArg(code, vbCrLf))
+                    frmMain.ExecuteStatement line
+                Loop
+            End If
+        Case "molecules", "brilliants", "planets", "billboards"
+            If All.Exists(LCase(TypeName(RHS))) Then
+                Dim o As ntnodes10.Collection
+                Set o = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+                All.Remove LCase(TypeName(RHS))
+                If o.Count > 0 Then
+                    Dim m As Object
+                    For Each m In o
+                        m.Serialize = True
+                        If RHS.Exists(m.Key) Then RHS.Remove m.Key
+                        RHS.Add m, m.Key
+                        If All.Exists(m.Key) Then All.Remove m.Key
+                        All.Add m, m.Key
+                        ParseSetupObject m, LCase(TypeName(RHS))
+                    Next
+                End If
+                Set o = Nothing
+            End If
     End Select
 End Property
 
-Public Property Get Serialize(Optional ByRef Indent As String = "")
-    
-    Serialize = Indent & "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
+Public Property Get Serialize()
+Attribute Serialize.VB_MemberFlags = "40"
 
-    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Indent & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
+    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
 
-    If modParse.Camera.Serialize Then
-        Serialize = Serialize & Indent & "<Camera>" & Include.URLEncode(modParse.Camera.ToString) & "</Camera>" & vbCrLf
-    End If
-    
-    
 End Property
-
 Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As Point
     Set Point = New Point
     Point.X = X
     Point.Y = Y
     Point.z = z
 End Function
-
-'Public Property Get Count() As Long
-''    Select Case LastCreateCall
-''        Case "Brilliant"
-''            Count = Brilliants.Count
-''        Case "Billboard"
-''            Count = Billboards.Count
-''        Case "Planet"
-''            Count = Planets.Count
-''        Case "Motion"
-''            Count = Motions.Count
-''        Case "Molecule"
-''            Count = Molecules.Count
-''        Case Else
-'            Count = All.Count
-''    End Select
-'End Property
-'
-'Public Property Get Item(ByVal Index As Variant) As Object
-''    Select Case LastCreateCall
-''        Case "Brilliant"
-''            Set Item = Brilliants(Index)
-''        Case "Billboard"
-''            Set Item = Billboards(Index)
-''        Case "Planet"
-''            Set Item = Planets(Index)
-''        Case "Motion"
-''            Set Item = Motions(Index)
-''        Case "Molecule"
-''            Set Item = Molecules(Index)
-''        Case Else
-'            Set Item = All(Index)
-''    End Select
-'End Property
-'
-'Public Function Add(ByRef NewObj, Optional ByVal Name As Variant = "") As String
-'    If Name = "" Then Name = Unnamed(All)
-''    Select Case LastCreateCall
-''        Case "Brilliant"
-''            Brilliants.Add NewObj, Name
-''        Case "Billboard"
-''            Billboards.Add NewObj, Name
-''        Case "Planet"
-''            Planets.Add NewObj, Name
-''        Case "Motion"
-''            Motions.Add NewObj, Name
-''        Case "Molecule"
-''            Molecules.Add NewObj, Name
-''        Case Else
-'            All.Add NewObj, Name
-''    End Select
-'    Add = Name
-'End Function
-'
-'Public Sub Remove(ByVal Name As Variant)
-''    Select Case LastCreateCall
-''        Case "Brilliant"
-''            Brilliants.Remove Name
-''        Case "Billboard"
-''            Billboards.Remove Name
-''        Case "Planet"
-''            Planets.Remove Name
-''        Case "Motion"
-''            Motions.Remove Name
-''        Case "Molecule"
-''            Molecules.Remove Name
-''        Case Else
-'            All.Remove Name
-''    End Select
-'End Sub
-'Public Function Exists(ByVal Name As Variant) As Boolean
-''    Select Case LastCreateCall
-''        Case "Brilliant"
-''            Exists = Brilliants.Exists(Name)
-''        Case "Billboard"
-''            Exists = Billboards.Exists(Name)
-''        Case "Planet"
-''            Exists = Planets.Exists(Name)
-''        Case "Motion"
-''            Exists = Motions.Exists(Name)
-''        Case "Molecule"
-''            Exists = Molecules.Exists(Name)
-''        Case Else
-'            Exists = All.Exists(Name)
-''    End Select
-'End Function
 
 Public Function URLDecode(ByVal encodedString As String) As String
 
@@ -310,30 +183,7 @@ Public Function SafeKey(ByVal mKey As Variant) As Variant
         SafeKey = LCase(Ret)
     End If
 End Function
-Public Function Unnamed(ByRef Collection As Object) As String
-'    If Collection Is Nothing Then
-'        Select Case LastCreateCall
-'            Case "Brilliant"
-'                Set Collection = Brilliants
-'            Case "Billboard"
-'                Set Collection = Billboards
-'            Case "Planet"
-'                Set Collection = Planets
-'            Case "Motion"
-'                Set Collection = Motions
-'            Case "Molecule"
-'                Set Collection = Molecules
-'        End Select
-'    End If
-    
-    'If Collection Is Nothing Then Set Collection = All
-    Dim cnt As Long
-    cnt = 1
-    Do Until Not Collection.Exists("Unnamed" & Trim(CStr(cnt)))
-        cnt = cnt + 1
-    Loop
-    Unnamed = "Unnamed" & Trim(CStr(cnt))
-End Function
+
 '###############################################################
 '### Code base of Sub/Function's added to ScriptControl are  ###
 '### also exposed in modScript private to modFactory.Execute ###
@@ -439,49 +289,54 @@ End Property
 '#####################################################
 '########## Collections ##############################
 '#####################################################
-
+Public Property Get All() As ntnodes10.Collection
+    Set All = modParse.All
+End Property
+'Public Property Set All(ByRef RHS As ntnodes10.Collection)
+'    Set modParse.All = RHS
+'End Property
 Public Property Get Camera() As Camera
     Set Camera = modParse.Camera
 End Property
-Public Property Set Camera(ByRef RHS As Camera)
-    Set modParse.Camera = RHS
-End Property
+'Public Property Set Camera(ByRef RHS As Camera)
+'    Set modParse.Camera = RHS
+'End Property
 Public Property Get Motions() As Motions
     Set Motions = modParse.Motions
 End Property
-Public Property Set Motions(ByRef RHS As Motions)
-    Set modParse.Motions = RHS
-End Property
+'Public Property Set Motions(ByRef RHS As Motions)
+'    Set modParse.Motions = RHS
+'End Property
 Public Property Get Brilliants() As Brilliants
     Set Brilliants = modParse.Brilliants
 End Property
-Public Property Set Brilliants(ByRef RHS As Brilliants)
-    Set modParse.Brilliants = RHS
-End Property
+'Public Property Set Brilliants(ByRef RHS As Brilliants)
+'    Set modParse.Brilliants = RHS
+'End Property
 Public Property Get Molecules() As Molecules
     Set Molecules = modParse.Molecules
 End Property
-Public Property Set Molecules(ByRef RHS As Molecules)
-    Set modParse.Molecules = RHS
-End Property
+'Public Property Set Molecules(ByRef RHS As Molecules)
+'    Set modParse.Molecules = RHS
+'End Property
 Public Property Get Billboards() As Billboards
     Set Billboards = modParse.Billboards
 End Property
-Public Property Set Billboards(ByRef RHS As Billboards)
-    Set modParse.Billboards = RHS
-End Property
+'Public Property Set Billboards(ByRef RHS As Billboards)
+'    Set modParse.Billboards = RHS
+'End Property
 Public Property Get Bindings() As Bindings
     Set Bindings = modParse.Bindings
 End Property
-Public Property Set Bindings(ByRef RHS As Bindings)
-    Set modParse.Bindings = RHS
-End Property
+'Public Property Set Bindings(ByRef RHS As Bindings)
+'    Set modParse.Bindings = RHS
+'End Property
 Public Property Get Planets() As Planets
     Set Planets = modParse.Planets
 End Property
-Public Property Set Planets(ByRef RHS As Planets)
-    Set modParse.Planets = RHS
-End Property
+'Public Property Set Planets(ByRef RHS As Planets)
+'    Set modParse.Planets = RHS
+'End Property
 
 '###################################################
 '########## Functions ##############################

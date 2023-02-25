@@ -89,49 +89,37 @@ Public SerialStack As Boolean
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetup Picture1.Parent
-End Sub
-
-Private Sub Form_Load()
-    Startup
+    If KeyCode = 112 Then ShowSetupForm Picture1.Parent
 End Sub
 
 Public Sub Startup()
     With ScriptControl1
-       
-       
+        
         .Language = "VBScript"
         'only the global add the code members of
         .AddObject "Include", modParse.Include, True
         'the rest are builds of and not code based
-        .AddObject "All", modParse.All
-        .AddObject "Camera", modParse.Camera
-        .AddObject "Motions", modParse.Motions
-        .AddObject "Brilliants", modParse.Brilliants
-        .AddObject "Molecules", modParse.Molecules
-        .AddObject "Billboards", modParse.Billboards
-        .AddObject "Bindings", modParse.Bindings
-        .AddObject "Planets", modParse.Planets
-
+       ' .AddObject "All", modParse.All, True
+       ' .AddObject "Camera", modParse.Camera, True
+       ' .AddObject "Motions", modParse.Motions, True
+       ' .AddObject "Brilliants", modParse.Brilliants, True
+       ' .AddObject "Molecules", modParse.Molecules, True
+       ' .AddObject "Billboards", modParse.Billboards, True
+       ' .AddObject "Bindings", modParse.Bindings, True
+       ' .AddObject "Planets", modParse.Planets, True
+    
     End With
 End Sub
-Public Function Serialize(Optional ByVal Deserialize As Variant) As String
+Public Function Serialize(ByVal Deserialize As Boolean) As String
     On Error GoTo errcatch:
     On Local Error GoTo errcatch:
     With ScriptControl1
         If .Procedures.Count > 0 Then
             Dim cnt As Long
             For cnt = 1 To .Procedures.Count
-                If ((Not IsMissing(Deserialize)) And (LCase(.Procedures.Item(cnt).Name) = "deserialize")) Then
-                    'If SerialStack = False Then
-                    '    SerialStack = True
-                        .Run "Deserialize"
-                        If Deserialize <> "" Then
-                            .ExecuteStatement Deserialize
-                        End If
-                    '    SerialStack = False
-                    'End If
-                ElseIf (IsMissing(Deserialize) And (LCase(.Procedures.Item(cnt).Name) = "serialize")) Then
+                If (Deserialize And (LCase(.Procedures.Item(cnt).Name) = "deserialize")) Then
+                    .Run "Deserialize"
+                ElseIf ((Not Deserialize) And (LCase(.Procedures.Item(cnt).Name) = "serialize")) Then
                     Serialize = .Eval("Serialize")
                 End If
             Next
@@ -147,11 +135,11 @@ errcatch:
         If Err.Number <> 0 Then Err.Clear
     End With
 End Function
-Public Sub AddCode(ByVal Code As String)
+Public Sub AddCode(ByVal code As String)
     On Error GoTo errcatch:
     On Local Error GoTo errcatch:
     With ScriptControl1
-        .AddCode Code
+        .AddCode code
     Exit Sub
 errcatch:
         If Not ConsoleVisible Then
@@ -231,7 +219,7 @@ Public Function Run(ByRef ProcedureName As Variant) As Variant
         .Run ProcedureName
         If .Error.Number <> 0 Then
             Err.Raise .Error.Number, .Error.Source, .Error.Description & vbCrLf & _
-                "At line " & .Error.Line & " column " & .Error.Column & " of sniplet; " & vbCrLf & .Error.Text
+                "At line " & .Error.line & " column " & .Error.Column & " of sniplet; " & vbCrLf & .Error.Text
         End If
     Exit Function
 errcatch:
@@ -245,9 +233,14 @@ errcatch:
     End With
 End Function
 
+
+Private Sub Form_Load()
+'    Startup
+End Sub
+
 Private Sub Picture1_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetup Picture1.Parent
+    If KeyCode = 112 Then ShowSetupForm Picture1.Parent
 End Sub
 
 Private Sub ScriptControl1_Error()
@@ -258,10 +251,10 @@ Private Sub ScriptControl1_Error()
             End If
             Debug.Print "echo An error " & Err.Number & " occurd in " & Err.Source & _
                     vbCrLf & "Description: " & .Error.Description & vbCrLf & _
-                    "At line " & .Error.Line & " code sniplet; " & vbCrLf & .Error.Text
+                    "At line " & .Error.line & " code sniplet; " & vbCrLf & .Error.Text
             Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
                     vbCrLf & "Description: " & .Error.Description & vbCrLf & _
-                    "At line " & .Error.Line & " code sniplet; " & vbCrLf & .Error.Text
+                    "At line " & .Error.line & " code sniplet; " & vbCrLf & .Error.Text
             If .Error.Number <> 0 Then .Error.Clear
         End If
     End With

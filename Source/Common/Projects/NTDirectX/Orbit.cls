@@ -24,6 +24,14 @@ Public Visible As Boolean
 Private pParent As Orbit
 Private pRelative As Orbit
 Private pAbsolute As Orbit
+Private pSerialize As Boolean
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 
 Friend Property Get Parent() As Orbit
     Set Parent = pParent
@@ -45,11 +53,11 @@ Friend Property Get Absolute() As Orbit
     If pAbsolute Is Nothing Then
         Set pAbsolute = New Orbit
         With pAbsolute
-            Set .Offset = pOffset
-            Set .Origin = pOrigin
-            Set .Rotate = pRotate
-            Set .Scaled = pScaled
-            Set .Ranges = pRanges
+            Set .Offset = .Offset
+            Set .Origin = .Origin
+            Set .Rotate = .Rotate
+            Set .Scaled = .Scaled
+            Set .Ranges = .Ranges
         End With
     End If
     Set Absolute = pAbsolute
@@ -104,37 +112,45 @@ Public Property Set Ranges(ByRef RHS As Range)
     Set pRanges = RHS
 End Property
 
-Public Property Get Serialize() As String
-Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "600"
-    Serialize = "[" & Origin.Serialize & Offset.Serialize & Rotate.Serialize & Scaled.Serialize & Ranges.Serialize & "]"
+Public Property Get ToString() As String
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "600"
+    ToString = "[" & pOrigin & pOffset & pRotate & pScaled & pRanges & "]"
 End Property
-Public Property Let Serialize(ByVal RHS As String)
+Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2)
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Origin.Serialize = Left(RHS, InStr(RHS, "]"))
+            pOrigin = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Offset.Serialize = Left(RHS, InStr(RHS, "]"))
+            pOffset = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Rotate.Serialize = Left(RHS, InStr(RHS, "]"))
+            pRotate = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Scaled.Serialize = Left(RHS, InStr(RHS, "]"))
+            pScaled = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Ranges.Serialize = Left(RHS, InStr(RHS, "]"))
+            pRanges = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
     End If
-    
+    If pAbsolute Is Nothing Then Set pAbsolute = New Orbit
+    With pAbsolute
+        Set .Offset = .Offset
+        Set .Origin = .Origin
+        Set .Rotate = .Rotate
+        Set .Scaled = .Scaled
+        Set .Ranges = .Ranges
+    End With
+
 End Property
 
 Private Sub Class_Terminate()

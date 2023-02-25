@@ -18,7 +18,12 @@ Private pRed As Integer
 Private pGreen As Integer
 Private pBlue As Integer
 Public Event Changed()
- 
+
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = True
+End Property
+
 Public Property Get RGB() As Long
     RGB = VBA.RGB(pRed, pGreen, pBlue)
 End Property
@@ -55,16 +60,16 @@ Public Property Let Blue(ByVal RHS As Integer)
 End Property
 
 
-Public Property Let Serialize(ByVal RHS As String)
+Public Property Let ToString(ByVal RHS As String)
     If InStr(RHS, "[") > 0 Then RHS = RemoveQuotedArg(RHS, "[", "]")
-    Alpha = CSng(RemoveNextArg(RHS, ","))
-    Red = CSng(RemoveNextArg(RHS, ","))
-    Green = CSng(RemoveNextArg(RHS, ","))
-    Blue = CSng(RemoveNextArg(RHS, ","))
+    pAlpha = CSng(RemoveNextArg(RHS, ","))
+    pRed = CSng(RemoveNextArg(RHS, ","))
+    pGreen = CSng(RemoveNextArg(RHS, ","))
+    pBlue = CSng(RemoveNextArg(RHS, ","))
     RaiseEvent Changed
 End Property
-Public Property Get Serialize() As String
-Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "240"
-    Serialize = "[ " & Alpha & " , " & Red & ", " & Green & ", " & Blue & "]"
+Public Property Get ToString() As String
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "600"
+    ToString = "[ " & pAlpha & " , " & pRed & ", " & pGreen & ", " & pBlue & "]"
 End Property

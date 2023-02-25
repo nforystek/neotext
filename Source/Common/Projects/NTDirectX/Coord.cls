@@ -16,6 +16,11 @@ Option Explicit
 Private pX As Single
 Private pY As Single
 
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = True
+End Property
+
 Public Property Get X() As Single
     X = pX
 End Property
@@ -32,34 +37,33 @@ End Property
 
 Public Function Equals(ByRef Point As Point) As Boolean
     If Point Is Nothing Then
-        Equals = (X = 0 And Y = 0)
+        Equals = (pX = 0 And pY = 0)
     Else
-        Equals = (Point.X = X And Point.Y = Y)
+        Equals = (Point.X = pX And Point.Y = pY)
     End If
 End Function
 
-Public Property Get Serialize() As String
-Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "600"
-    Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & "]"
+Public Property Get ToString() As String
+Attribute ToString.VB_MemberFlags = "440"
+    ToString = "[" & Round(pX, 6) & ", " & Round(pY, 6) & "]"
 End Property
-Public Property Let Serialize(ByVal RHS As String)
+Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2)
         If InStr(RHS, ",") > 0 Then
             If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                X = CSng(Left(RHS, InStr(RHS, ",") - 1))
+                pX = CSng(Left(RHS, InStr(RHS, ",") - 1))
             Else
-                X = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+                pX = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
             End If
             RHS = Mid(RHS, InStr(RHS, ",") + 1)
         End If
         If InStr(RHS, ",") = 0 Then
             If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                Y = CSng(Left(RHS, InStr(RHS, ",") - 1))
+                pY = CSng(Left(RHS, InStr(RHS, ",") - 1))
             Else
-                Y = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+                pY = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
             End If
             RHS = Mid(RHS, InStr(RHS, ",") + 1)
         End If

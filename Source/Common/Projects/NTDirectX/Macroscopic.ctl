@@ -127,6 +127,8 @@ Friend Sub PauseRendering()
         If TrapMouse Or FullScreen Then
             VB.Screen.MousePointer = 0
         End If
+        
+        Timer1.Enabled = False
     
     End If
         
@@ -152,6 +154,8 @@ Friend Sub ResumeRendering()
         If (TrapMouse Or FullScreen) And (Bindings.Controller = Trapping Or Bindings.Controller = Hidden) Then
             VB.Screen.MousePointer = 99
         End If
+        
+        Timer1.Enabled = True
                 
     End If
 
@@ -193,7 +197,7 @@ End Property
 
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetup Me
+    If KeyCode = 112 Then ShowSetupForm Me
 End Sub
 
 Private Sub UserControl_Resize()

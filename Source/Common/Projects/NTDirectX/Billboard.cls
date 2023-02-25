@@ -36,10 +36,9 @@ Private pImageIndex() As Long
 
 Private pFileIndex As Long
 
-Private pKey As String
 Private pSerialize As Boolean
-
 Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
@@ -68,24 +67,10 @@ Public Property Set Absolute(ByRef RHS As Orbit)
 End Property
 
 Public Property Get Key() As String
-    Key = pKey
+    Key = Molecule.Key
 End Property
 Public Property Let Key(ByVal RHS As String)
-    
-'    If RHS = "" And Billboards.Exists(pKey) Then
-'        Billboards.Remove pKey
-'        pKey = ""
-'    Else
-        If pKey <> "" And (Not Billboards.Exists(RHS)) Then
-           ' If All.Exists(pKey) Then All.Remove pKey
-            If Billboards.Exists(pKey) Then Billboards.Remove pKey
-          ' All.Add Me, RHS
-            Billboards.Add Me, RHS
-            pKey = RHS
-        ElseIf pKey = "" Then
-            pKey = RHS
-        End If
-'    End If
+    Molecule.Key = RHS
 End Property
 
 Public Property Get Transparent() As Boolean
@@ -534,132 +519,131 @@ End Sub
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
-    
-    Molecule.Key = "M" & ObjPtr(Molecule)
+    Key = "K" & ObjPtr(Me)
 
 End Sub
 
 Private Sub Class_Terminate()
-    If pKey <> "" Then
-        If Billboards.Exists(pKey) Then Billboards.Remove pKey
+    If Key <> "" Then
+        If Billboards.Exists(Key) Then Billboards.Remove Key
     End If
 
 End Sub
 
 Private Property Let Molecule_FileName(ByVal RHS As String)
-    Me.FileName = RHS
+    Molecule.FileName = RHS
 End Property
 
 Private Property Get Molecule_FileName() As String
-    Molecule_FileName = Me.FileName
+    Molecule_FileName = Molecule.FileName
 End Property
 
 Private Property Let Molecule_Key(ByVal RHS As String)
-    Key = RHS
+    Molecule.Key = RHS
 End Property
 
 Private Property Get Molecule_Key() As String
-    Molecule_Key = Key
+    Molecule_Key = Molecule.Key
 End Property
 
 Private Property Set Molecule_Parent(RHS As Orbit)
-    Set Me.Parent = RHS
+    Set Molecule.Parent = RHS
 End Property
 
 Private Property Get Molecule_Parent() As Orbit
-    Set Molecule_Parent = Me.Parent
+    Set Molecule_Parent = Molecule.Parent
 End Property
 
 Private Property Set Molecule_Relative(RHS As Orbit)
-    Set Me.Relative = RHS
+    Set Molecule.Relative = RHS
 End Property
 
 Private Property Get Molecule_Relative() As Orbit
-    Set Molecule_Relative = Me.Relative
+    Set Molecule_Relative = Molecule.Relative
 End Property
 
 Private Property Set Molecule_Absolute(RHS As Orbit)
-    Set Me.Absolute = RHS
+    Set Molecule.Absolute = RHS
 End Property
 
 Private Property Get Molecule_Absolute() As Orbit
-    Set Molecule_Absolute = Me.Absolute
+    Set Molecule_Absolute = Molecule.Absolute
 End Property
 
 Private Property Set Molecule_Molecues(ByVal RHS As Molecules)
-    Set Me.Molecules = RHS
+    Set Molecule.Molecules = RHS
 End Property
 
 Private Property Get Molecule_Molecues() As Molecules
-    Set Molecule_Molecues = Me.Molecules
+    Set Molecule_Molecues = Molecule.Molecules
 End Property
 
 Private Property Set Molecule_Molecules(RHS As Molecules)
-    Set Me.Molecules = RHS
+    Set Molecule.Molecules = RHS
 End Property
 
 Private Property Get Molecule_Molecules() As Molecules
-    Set Molecule_Molecules = Me.Molecules
+    Set Molecule_Molecules = Molecule.Molecules
 End Property
 
 Private Property Set Molecule_Offset(ByRef RHS As Point)
-    Set Me.Offset = RHS
+    Set Molecule.Offset = RHS
 End Property
 
 Private Property Get Molecule_Offset() As Point
-    Set Molecule_Offset = Me.Offset
+    Set Molecule_Offset = Molecule.Offset
 End Property
 
 Private Property Set Molecule_Origin(ByRef RHS As Point)
-    Set Me.Origin = RHS
+    Set Molecule.Origin = RHS
 End Property
 
 Private Property Get Molecule_Origin() As Point
-    Set Molecule_Origin = Me.Origin
+    Set Molecule_Origin = Molecule.Origin
 End Property
 
 Private Property Set Molecule_Ranges(ByRef RHS As Range)
-    Set Me.Ranges = RHS
+    Set Molecule.Ranges = RHS
 End Property
 
 Private Property Get Molecule_Ranges() As Range
-    Set Molecule_Ranges = Me.Ranges
+    Set Molecule_Ranges = Molecule.Ranges
 End Property
 
 Private Property Set Molecule_Rotate(ByRef RHS As Point)
-    Set Me.Rotate = RHS
+    Set Molecule.Rotate = RHS
 End Property
 
 Private Property Get Molecule_Rotate() As Point
-    Set Molecule_Rotate = Me.Rotate
+    Set Molecule_Rotate = Molecule.Rotate
 End Property
 
 Private Property Set Molecule_Scaled(ByRef RHS As Point)
-    Set Me.Scaled = RHS
+    Set Molecule.Scaled = RHS
 End Property
 
 Private Property Get Molecule_Scaled() As Point
-    Set Molecule_Scaled = Me.Scaled
+    Set Molecule_Scaled = Molecule.Scaled
 End Property
 
 Private Property Let Molecule_Serialize(ByVal RHS As Boolean)
-    Me.Serialize = RHS
+    Molecule.Serialize = RHS
 End Property
 
 Private Property Get Molecule_Serialize() As Boolean
-    Molecule_Serialize = Me.Serialize
+    Molecule_Serialize = Molecule.Serialize
 End Property
 
 Private Property Let Molecule_Visible(ByVal RHS As Boolean)
-    Me.Visible = RHS
+    Molecule.Visible = RHS
 End Property
 
 Private Property Get Molecule_Visible() As Boolean
-    Molecule_Visible = Me.Visible
+    Molecule_Visible = Molecule.Visible
 End Property
 
 Private Property Set Molecule_Volume(ByRef RHS As Volume)
-    Set Me.Volume = RHS
+    Set Molecule.Volume = RHS
 End Property
 
 Private Property Get Molecule_Volume() As Volume

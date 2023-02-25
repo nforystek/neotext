@@ -808,7 +808,7 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
         ElseIf DIKEYBOARDSTATE.Key(DIK_F1) Then
             If (Not TogglePress1 = DIK_F1) Then
                 TogglePress1 = DIK_F1
-                ShowSetup UserControl
+                ShowSetup = True
             End If
             
         ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT) Then
@@ -944,7 +944,8 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
     Exit Sub
 pausing:
     Err.Clear
-    DoPauseGame UserControl
+    'DoPauseGame UserControl
+    UserControl.PauseRendering
 End Sub
 
 Public Property Get ConsoleVisible() As Boolean

@@ -16,10 +16,13 @@ Option Explicit
 'links multi-matter to be one set of,
 'such as a Orbitis to Volume, only
 'their not recursive, like orbits
+
+Implements NTNodes10.Collection
+
 Private this As NTNodes10.Collection
 
 Public Property Get Serialize() As Boolean
-    Serialize = True
+    Serialize = False
 End Property
 
 Function NewEnum() As IUnknown ' _
@@ -81,8 +84,55 @@ End Sub
 
 Private Sub Class_Initialize()
     Set this = New NTNodes10.Collection
+    vbaObjSetAddref Collection, ObjPtr(this)
 End Sub
 
 Private Sub Class_Terminate()
     Set this = Nothing
 End Sub
+
+Private Sub Collection_Add(Anything As Variant, Optional Key As Variant, Optional Before As Variant, Optional After As Variant)
+    this.Add Anything, Key, Before, After
+End Sub
+
+Private Sub Collection_Clear()
+    this.Clear
+End Sub
+
+Private Function Collection_Clone() As NTNodes10.Collection
+    Set Collection_Clone = this.Clone
+End Function
+
+Private Property Get Collection_Count() As Long
+    Collection_Count = this.Count
+End Property
+
+Private Property Get Collection_Exists(ByVal KeyOrIndex As Variant) As Boolean
+    Collection_Exists = this.Exists(KeyOrIndex)
+End Property
+
+Private Property Set Collection_Item(ByVal KeyOrIndex As Variant, RHS As Variant)
+    Set this.Item(KeyOrIndex) = RHS
+End Property
+
+Private Property Let Collection_Item(ByVal KeyOrIndex As Variant, RHS As Variant)
+    this.Item(KeyOrIndex) = RHS
+End Property
+
+Private Property Get Collection_Item(ByVal KeyOrIndex As Variant) As Variant
+    Set Collection_Item = this.Item(KeyOrIndex)
+End Property
+
+Private Property Get Collection_Key(ByVal Index As Variant) As Variant
+    Collection_Key = Me.Key(Index)
+End Property
+
+Private Function Collection_NewEnum() As stdole.IUnknown
+    Set Collection_NewEnum = Me.[NewEnum]
+End Function
+
+Private Sub Collection_Remove(Optional KeyOrIndex As Variant)
+    Me.Remove KeyOrIndex
+End Sub
+
+

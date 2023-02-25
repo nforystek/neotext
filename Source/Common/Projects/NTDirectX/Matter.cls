@@ -39,4 +39,8 @@ Public NormalIndex As Long
 Public TriangleIndex As Long
 Public ObjectIndex As Long
 Public FaceIndex As Long
-Public Serialize As Boolean
+
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = False
+End Property

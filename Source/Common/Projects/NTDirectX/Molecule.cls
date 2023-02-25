@@ -20,6 +20,13 @@ Private pMolecules As Molecules
 Private pFileName As String
 Private pKey As String
 Private pSerialize As Boolean
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 
 Public Property Get Parent() As Orbit
     Set Parent = Orbit.Parent
@@ -47,22 +54,7 @@ Public Property Get Key() As String
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-'    If Molecules.Exists(pKey) And pKey <> "" Then Molecules.Remove pKey
-'    pKey = RHS
-'    If RHS <> "" And (Not Motions.Exists(RHS)) Then Molecules.Add Me, RHS
-    
-'    If RHS = "" And Molecules.Exists(pKey) Then
-'        Molecules.Remove pKey
-'        pKey = ""
-'    Else
-        If pKey <> "" And (Not Molecules.Exists(RHS)) Then
-            If Molecules.Exists(pKey) Then Molecules.Remove pKey
-            Molecules.Add Me, RHS
-            pKey = RHS
-        ElseIf pKey = "" Then
-            pKey = RHS
-        End If
-'    End If
+    pKey = RHS
 End Property
 
 Public Property Get FileName() As String
@@ -141,15 +133,6 @@ Public Property Set Ranges(ByRef RHS As Range)
     Set Orbit.Ranges = RHS
 End Property
 
-Public Property Get Serialize() As Boolean
-Attribute Serialize.VB_UserMemId = 0
-Attribute Serialize.VB_MemberFlags = "600"
-    Serialize = pSerialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    pSerialize = RHS
-End Property
-
 Public Property Get Visible() As Boolean
     Visible = Orbit.Visible
 End Property
@@ -159,6 +142,7 @@ End Property
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
+    Key = "K" & ObjPtr(Me)
 End Sub
 
 'Public Property Get NotEmpty() As Boolean
@@ -178,45 +162,45 @@ End Sub
 'End Sub
 
 Private Sub Class_Terminate()
+    If Key <> "" Then
+        If Molecules.Exists(Key) Then Molecules.Remove Key
+    End If
+    
     Set pVolume = Nothing
     Set pMolecules = Nothing
-    If pKey <> "" Then
-        If Molecules.Exists(pKey) Then Molecules.Remove pKey
-       ' If All.Exists(pKey) Then All.Remove pKey
-    End If
 End Sub
 
 Private Property Set Orbit_Relative(RHS As Orbit)
-    Set Me.Relative = RHS
+    Set Orbit.Relative = RHS
 End Property
 
 Private Property Get Orbit_Relative() As Orbit
-    Set Orbit_Relative = Me.Relative
+    Set Orbit_Relative = Orbit.Relative
 End Property
 
 
 Private Property Set Orbit_Absolute(RHS As Orbit)
-    Set Me.Absolute = RHS
+    Set Orbit.Absolute = RHS
 End Property
 
 Private Property Get Orbit_Absolute() As Orbit
-    Set Orbit_Absolute = Me.Absolute
+    Set Orbit_Absolute = Orbit.Absolute
 End Property
 
 Private Property Get Orbit_Offset() As Point
-    Set Orbit_Offset = Me.Offset
+    Set Orbit_Offset = Orbit.Offset
 End Property
 
 Private Property Set Orbit_Offset(ByRef RHS As Point)
-    Set Me.Offset = RHS
+    Set Orbit.Offset = RHS
 End Property
 
 Private Property Get Orbit_Origin() As Point
-    Set Orbit_Origin = Me.Origin
+    Set Orbit_Origin = Orbit.Origin
 End Property
 
 Private Property Set Orbit_Origin(ByRef RHS As Point)
-    Set Me.Origin = RHS
+    Set Orbit.Origin = RHS
 End Property
 
 Private Property Get Orbit_Ranges() As Range
@@ -228,33 +212,41 @@ Private Property Set Orbit_Ranges(ByRef RHS As Range)
 End Property
 
 Private Property Get Orbit_Rotate() As Point
-    Set Orbit_Rotate = Me.Rotate
+    Set Orbit_Rotate = Orbit.Rotate
 End Property
 
 Private Property Set Orbit_Rotate(ByRef RHS As Point)
-    Set Me.Rotate = RHS
+    Set Orbit.Rotate = RHS
 End Property
 
 Private Property Get Orbit_Scaled() As Point
-    Set Orbit_Scaled = Me.Scaled
+    Set Orbit_Scaled = Orbit.Scaled
 End Property
 
 Private Property Set Orbit_Scaled(ByRef RHS As Point)
-    Set Me.Scaled = RHS
+    Set Orbit.Scaled = RHS
 End Property
 
-Private Property Get Orbit_Serialize() As String
+Private Property Get Orbit_Serialize() As Boolean
     Orbit_Serialize = Orbit.Serialize
 End Property
 
-Private Property Let Orbit_Serialize(ByVal RHS As String)
+Private Property Let Orbit_Serialize(ByVal RHS As Boolean)
     Orbit.Serialize = RHS
 End Property
 
+Private Property Let Orbit_ToString(ByVal RHS As String)
+    Orbit.ToString = RHS
+End Property
+
+Private Property Get Orbit_ToString() As String
+    Orbit_ToString = Orbit.ToString
+End Property
+
 Private Property Get Orbit_Visible() As Boolean
-    Orbit_Visible = Me.Visible
+    Orbit_Visible = Orbit.Visible
 End Property
 
 Private Property Let Orbit_Visible(ByVal RHS As Boolean)
-    Me.Visible = RHS
+    Orbit.Visible = RHS
 End Property

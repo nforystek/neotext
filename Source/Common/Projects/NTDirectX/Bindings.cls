@@ -21,19 +21,27 @@ Option Compare Binary
 
 Private binds(0 To 255) As String
 Public Controller As Long 'ControllerModes
-Public Serialize As Boolean
+Private pSerialize As Boolean
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 
-
-Public Property Get ToString(Optional ByVal Indent As String = "") As String
+Public Property Get ToString() As String
 
     Dim i As Long
     For i = 0 To 255
         If binds(i) <> "" Then
-            ToString = ToString & Indent & "Bindings.Item(""" & GetBindingText(i) & """) = Include.URLDecode(""" & Include.URLEncode(binds(i)) & """)" & vbCrLf
+            ToString = ToString & Include.URLEncode("Bindings.Item(""" & GetBindingText(i) & """) = Include.URLDecode(""" & Include.URLEncode(binds(i)) & """)") & vbCrLf
         End If
     Next
-    ToString = ToString & Indent & "Bindings.Controller=" & Controller & vbCrLf
-
+    ToString = ToString & Include.URLEncode("Bindings.Controller=" & Controller) & vbCrLf
+    
+    ToString = "  <Bindings>" & vbCrLf & ToString & vbCrLf & "</Bindings>" & vbCrLf
+    
 End Property
 
 

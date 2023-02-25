@@ -40,75 +40,40 @@ Public Attenuation As Point
 Private pKey As String
 
 Private pSerialize As Boolean
-
-
 Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-'Public Property Get Serialize() As String
-'    Serializer Serialize, "SunLight", SunLight
-'    Serializer Serialize, "LightBlink", LightBlink
-'    Serializer Serialize, "LightTimer", LightTimer
-'    Serializer Serialize, "LightIsOn", LightIsOn
-'    Serializer Serialize, "DiffuseRoll", DiffuseRoll
-'    Serializer Serialize, "DiffuseTimer", DiffuseTimer
-'    Serializer Serialize, "DIffuseMax", DIffuseMax
-'    Serializer Serialize, "DiffuseNow", DiffuseNow
+'Public Property Get ToString() As String
+'    ToString = ToString & "<Phi>" & Phi & "</Phi>" & vbCrLf
+'    ToString = ToString & "<Theta>" & Theta & "</Theta>" & vbCrLf
+'    ToString = ToString & "<FallOff>" & FallOff & "</FallOff>" & vbCrLf
+'    ToString = ToString & "<Range>" & Range & "</Range>" & vbCrLf
+'    ToString = ToString & "<Illumine>" & Illumine & "</Illumine>" & vbCrLf
+'    ToString = ToString & "<Enabled>" & Enabled & "</Enabled>" & vbCrLf
+'    ToString = ToString & "<SunLight>" & SunLight & "</SunLight>" & vbCrLf
+'    ToString = ToString & "<LightBlink>" & LightBlink & "</LightBlink>" & vbCrLf
+'    ToString = ToString & "<DiffuseRoll>" & DiffuseRoll & "</DiffuseRoll>" & vbCrLf
+'    ToString = ToString & "<DIffuseMax>" & DIffuseMax & "</DIffuseMax>" & vbCrLf
 '
-'    Serializer Serialize, "Diffuse", Diffuse.Serialize
-'    Serializer Serialize, "Ambience", Ambience.Serialize
-'    Serializer Serialize, "Specular", Specular.Serialize
-'    Serializer Serialize, "Attenuation", Attenuation.Serialize
+'    ToString = ToString & "<Ambience>" & Ambience.ToString() & "</Ambience>" & vbCrLf
+'    ToString = ToString & "<Diffuse>" & Diffuse.ToString() & "</Diffuse>" & vbCrLf
+'    ToString = ToString & "<Specular>" & Specular.ToString() & "</Specular>" & vbCrLf
+'    ToString = ToString & "<Attenuation>" & Attenuation.ToString() & "</Attenuation>" & vbCrLf
+'
+'    ToString = ToString & "" & Molecule.ToString()
 'End Property
-'Public Property Let Serialize(ByVal RHS As String)
-'    RHS = Trim(RHS)
-'    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-'        RHS = Mid(RHS, 2, Len(RHS) - 2)
-'
-'        SunLight = Serializer(RHS, "SunLight", SunLight)
-'        LightBlink = Serializer(RHS, "LightBlink", LightBlink)
-'        LightTimer = Serializer(RHS, "LightTimer", LightTimer)
-'        LightIsOn = Serializer(RHS, "LightIsOn", LightIsOn)
-'        DiffuseRoll = Serializer(RHS, "DiffuseRoll", DiffuseRoll)
-'        DiffuseTimer = Serializer(RHS, "DiffuseTimer", DiffuseTimer)
-'        DIffuseMax = Serializer(RHS, "DIffuseMax", DIffuseMax)
-'        DiffuseNow = Serializer(RHS, "DiffuseNow", DiffuseNow)
-'
-'        Diffuse.Serialize = Serializer(RHS, "Diffuse", Diffuse.Serialize)
-'        Ambience.Serialize = Serializer(RHS, "Ambience", Ambience.Serialize)
-'        Specular.Serialize = Serializer(RHS, "Specular", Specular.Serialize)
-'        Attenuation.Serialize = Serializer(RHS, "Attenuation", Attenuation.Serialize)
-'
-'    End If
-'End Property
-
 
 Public Property Get Key() As String
+Attribute Key.VB_MemberFlags = "40"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-'    If Brilliants.Exists(pKey) And pKey <> "" Then Brilliants.Remove pKey
-'    pKey = RHS
-'    If RHS <> "" And (Not Brilliants.Exists(RHS)) Then Brilliants.Add Me, RHS
-    
-'    If RHS = "" And Brilliants.Exists(pKey) Then
-'        Brilliants.Remove pKey
-'        pKey = ""
-'    Else
-        If pKey <> "" And (Not Brilliants.Exists(RHS)) Then
-            'If All.Exists(pKey) Then All.Remove pKey
-            If Brilliants.Exists(pKey) Then Brilliants.Remove pKey
-          '  All.Add Me, RHS
-            Brilliants.Add Me, RHS
-            pKey = RHS
-        ElseIf pKey = "" Then
-            pKey = RHS
-        End If
-'    End If
+    pKey = RHS
 End Property
 
 Public Property Get Parent() As Orbit
@@ -254,6 +219,8 @@ End Sub
 Private Sub Class_Initialize()
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
     
+    Key = "K" & ObjPtr(Me)
+    
     LightCount = LightCount + 1
     ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
     LightIndex = LightCount
@@ -265,8 +232,8 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    If pKey <> "" Then
-        If Brilliants.Exists(pKey) Then Brilliants.Remove pKey
+    If Key <> "" Then
+        If Brilliants.Exists(Key) Then Brilliants.Remove Key
     End If
     Set Diffuse = Nothing
     Set Ambience = Nothing
@@ -292,75 +259,83 @@ Private Sub Class_Terminate()
 End Sub
 
 Private Property Set Orbit_Relative(RHS As Orbit)
-    Set Me.Relative = RHS
+    Set Orbit.Relative = RHS
 End Property
 
 Private Property Get Orbit_Relative() As Orbit
-    Set Orbit_Relative = Me.Relative
+    Set Orbit_Relative = Orbit.Relative
 End Property
 
 Private Property Set Orbit_Absolute(RHS As Orbit)
-    Set Me.Absolute = RHS
+    Set Orbit.Absolute = RHS
 End Property
 
 Private Property Get Orbit_Absolute() As Orbit
-    Set Orbit_Absolute = Me.Absolute
+    Set Orbit_Absolute = Orbit.Absolute
 End Property
 
 Private Property Get Orbit_Offset() As Point
-    Set Orbit_Offset = Offset
+    Set Orbit_Offset = Orbit.Offset
 End Property
 
 Private Property Set Orbit_Offset(ByRef RHS As Point)
-    Set Offset = RHS
+    Set Orbit.Offset = RHS
 End Property
 
 Private Property Get Orbit_Origin() As Point
-    Set Orbit_Origin = Origin
+    Set Orbit_Origin = Orbit.Origin
 End Property
 
 Private Property Set Orbit_Origin(ByRef RHS As Point)
-    Set Origin = RHS
+    Set Orbit.Origin = RHS
 End Property
 
 Private Property Get Orbit_Ranges() As Range
-    Set Orbit_Ranges = Ranges
+    Set Orbit_Ranges = Orbit.Ranges
 End Property
 
 Private Property Set Orbit_Ranges(ByRef RHS As Range)
-    Set Ranges = RHS
+    Set Orbit.Ranges = RHS
 End Property
 
 Private Property Get Orbit_Rotate() As Point
-    Set Orbit_Rotate = Rotate
+    Set Orbit_Rotate = Orbit.Rotate
 End Property
 
 Private Property Set Orbit_Rotate(ByRef RHS As Point)
-    Set Rotate = RHS
+    Set Orbit.Rotate = RHS
 End Property
 
 Private Property Get Orbit_Scaled() As Point
-    Set Orbit_Scaled = Scaled
+    Set Orbit_Scaled = Orbit.Scaled
 End Property
 
 Private Property Set Orbit_Scaled(ByRef RHS As Point)
-    Set Scaled = RHS
+    Set Orbit.Scaled = RHS
 End Property
 
-Private Property Let Orbit_Serialize(ByVal RHS As String)
-    Me.Serialize = RHS
+Private Property Let Orbit_Serialize(ByVal RHS As Boolean)
+    Orbit.Serialize = RHS
 End Property
 
-Private Property Get Orbit_Serialize() As String
-    Orbit_Serialize = Me.Serialize
+Private Property Get Orbit_Serialize() As Boolean
+    Orbit_Serialize = Orbit.Serialize
 End Property
 
+
+Private Property Let Orbit_ToString(ByVal RHS As String)
+    Orbit.ToString = RHS
+End Property
+
+Private Property Get Orbit_ToString() As String
+    Orbit_ToString = Orbit.ToString
+End Property
 
 Private Property Get Orbit_Visible() As Boolean
-    Orbit_Visible = Visible
+    Orbit_Visible = Orbit.Visible
 End Property
 
 Private Property Let Orbit_Visible(ByVal RHS As Boolean)
-    Visible = RHS
+    Orbit.Visible = RHS
 End Property
 

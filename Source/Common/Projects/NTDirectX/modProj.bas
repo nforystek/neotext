@@ -17,54 +17,65 @@ Private Mirrors As NTNodes10.Collection
 Public worldRotate As New Point
 
 Public Sub CreateProj()
-    If frmMain.SerialStack = False Then
-        frmMain.SerialStack = True
         
-
-        
-        If ScriptRoot = "" Then
-            If PathExists(CurDir & "\Index.vbx") Then
-                ScriptRoot = CurDir
-            ElseIf PathExists(AppPath(False) & "Index.vbx") Then
-                ScriptRoot = Left(AppPath(False), Len(AppPath(False)) - 1)
-            ElseIf PathExists(AppPath(True) & "Index.vbx") Then
-                ScriptRoot = Left(AppPath(True), Len(AppPath(True)) - 1)
-            ElseIf PathExists(GetFilePath(AppEXE(False)) & "\Index.vbx") Then
-                ScriptRoot = GetFilePath(AppEXE(False))
-            End If
-            If ScriptRoot = "" Then
-                ScriptRoot = modFolders.SearchPath("Index.vbx", True, CurDir, FirstOnly)
-                If ScriptRoot <> "" Then ScriptRoot = GetFilePath(ScriptRoot)
-            End If
+    frmMain.Startup
+    
+    If ScriptRoot = "" Then
+        If PathExists(CurDir & "\Index.vbx") Then
+            ScriptRoot = CurDir
+        ElseIf PathExists(AppPath(False) & "Index.vbx") Then
+            ScriptRoot = Left(AppPath(False), Len(AppPath(False)) - 1)
+        ElseIf PathExists(AppPath(True) & "Index.vbx") Then
+            ScriptRoot = Left(AppPath(True), Len(AppPath(True)) - 1)
+        ElseIf PathExists(GetFilePath(AppEXE(False)) & "\Index.vbx") Then
+            ScriptRoot = GetFilePath(AppEXE(False))
         End If
-
-        frmMain.Serialize ParseScript(ScriptRoot & "\Index.vbx")
-
-    
-        frmMain.SerialStack = False
+        If ScriptRoot = "" Then
+            ScriptRoot = modFolders.SearchPath("Index.vbx", True, CurDir, FirstOnly)
+            If ScriptRoot <> "" Then ScriptRoot = GetFilePath(ScriptRoot)
+        End If
     End If
-    
-    
+
+    If PathExists(ScriptRoot & "\Index.vbx") Then
+        ParseScript ScriptRoot & "\Index.vbx"
+        
+        If PathExists(ScriptRoot & "\Serial.xml", True) Then
+            frmMain.Serialize True
+        End If
+        
+    End If
     
 End Sub
 
+Private Sub RemoveIterate(ByRef Molecules As Molecules)
+    If Not Molecules Is Nothing Then
+        Dim m As Molecule
+        Do While Molecules.Count > 0
+            RemoveIterate Molecules(1).Molecules
+            Molecules.Remove 1
+        Loop
+    End If
+End Sub
 Public Sub CleanUpProj()
     Dim ser As String
-    ser = frmMain.Serialize
+    ser = frmMain.Serialize(False)
     If ser <> "" Then WriteFile ScriptRoot & "\Serial.xml", ser
     
     frmMain.ScriptControl1.Reset
     
+    
     Do While Planets.Count > 0
+        RemoveIterate Planets(1).Molecules
         Planets.Remove 1
     Loop
 
+    Do While Molecules.Count > 0
+        RemoveIterate Molecules(1).Molecules
+        Molecules.Remove 1
+    Loop
+    
     Do While Brilliants.Count > 0
         Brilliants.Remove 1
-    Loop
-
-    Do While Molecules.Count > 0
-        Molecules.Remove 1
     Loop
 
     Do While Billboards.Count > 0
@@ -93,8 +104,6 @@ Public Sub CleanUpProj()
         Erase Files
         FileCount = 0
     End If
-
-    If Not StopGame Then frmMain.Startup
 
 End Sub
 

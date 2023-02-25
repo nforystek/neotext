@@ -17,15 +17,39 @@ Private pColor As Long
 Private pPlayer As Molecule
 Private pPlanet As Planet
 
-Public Serialize As Boolean
+Private pSerialize As Boolean
+Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
+
+Public Function ToString() As String
+
+    If Not Camera.Planet Is Nothing Then
+        ToString = ToString & Include.URLEncode("Set Camera.Planet = Planets(""" & Camera.Planet.Key & """)") & vbCrLf
+    End If
+    If Not Camera.Player Is Nothing Then
+        ToString = ToString & Include.URLEncode("Set Camera.Player = Molecules(""" & Camera.Player.Key & """)") & vbCrLf
+        ToString = ToString & Include.URLEncode("Camera.Player.Origin.ToString = """ & Camera.Player.Origin.ToString & """") & vbCrLf
+        ToString = ToString & Include.URLEncode("Camera.Player.Rotate.ToString = """ & Camera.Player.Rotate.ToString & """") & vbCrLf
+    End If
+    
+    ToString = ToString & Include.URLEncode("Camera.Color = " & Camera.Color) & vbCrLf
+    ToString = ToString & Include.URLEncode("Camera.Serialize = True") & vbCrLf
+    
+    ToString = "  <Camera>" & vbCrLf & ToString & vbCrLf & "</Camera>" & vbCrLf
+End Function
 
 Public Property Get Player() As Molecule
-    'If pPlayer Is Nothing Then Set pPlayer = New Molecule
     Set Player = pPlayer
 End Property
 Public Property Set Player(ByRef RHS As Molecule)
     Set pPlayer = RHS
 End Property
+
 
 Public Property Get Planet() As Planet
     Set Planet = pPlanet
@@ -33,24 +57,6 @@ End Property
 Public Property Set Planet(ByRef RHS As Planet)
     Set pPlanet = RHS
 End Property
-
-Public Property Get ToString() As String
-    If Serialize Then
-        ToString = ""
-        If Not pPlanet Is Nothing Then
-            ToString = ToString & "Set Camera.Planet = Planets(""" & pPlanet.Key & """)" & vbCrLf
-        End If
-        If Not pPlayer Is Nothing Then
-            ToString = ToString & "Set Camera.Player = Molecules(""" & pPlayer.Key & """)" & vbCrLf
-            ToString = ToString & "Camera.Player.Origin = """ & pPlayer.Origin & """" & vbCrLf
-            ToString = ToString & "Camera.Player.Rotate = """ & pPlayer.Rotate & """" & vbCrLf
-        End If
-        ToString = ToString & "Camera.Color = " & pColor & vbCrLf
-        ToString = ToString & "Camera.Serialize = True" & vbCrLf
-    End If
-End Property
-
-
 
 
 Public Property Let Color(ByVal RHS As Long)
