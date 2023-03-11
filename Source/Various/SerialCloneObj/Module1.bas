@@ -61,7 +61,7 @@ Public Sub Main()
     'this readprocessmemory is not available on all Windows OS, there is a write too
     If ReadProcessMemory(pHandle, ObjPtr(try), ByVal hMem, lSize, 0) <> 0 Then
 
-        'successful reading, set a reference to the new object memory
+        'set a reference to the new object memory
         vbaObjSetAddref too, hMem
 
     End If
@@ -74,12 +74,49 @@ Public Sub Main()
 
     too.Test "Changed clones" 'by running a functional element of the object
 
+    'hey just for kicks let's see if we can serialize it to the disk
+    Dim indata() As Byte
+    
+    Dim filenum As Integer
+    filenum = FreeFile
+    Open App.Path & "\Serial.obj" For Binary As #FreeFile Len = lSize
+    
+    ReDim indata(0 To lSize - 1) As Byte 'we need to move the memoryy into a byte array
+    RtlMoveMemory ByVal VarPtr(indata(0)), ByVal hMem, lSize
+    Put filenum, 1, indata 'now save it to disk
+    Close filenum
+    
+    'be sure and free up the memory
+    'and reset to test the serial
+    Set too = Nothing
+    GlobalFree hMem
+    Erase indata
+    
+    Dim hMem2 As Long 'now let's make a new handle and allocate the size of the object
+    hMem2 = GlobalAlloc(GlobalFlags(ObjPtr(try)), FileLen(App.Path & "\Serial.obj"))
+    
+    'then load it back up into a byte array first
+    Open App.Path & "\Serial.obj" For Binary As #FreeFile Len = lSize
+    ReDim indata(0 To lSize - 1) As Byte ' no "preserve" keyword
+    Get filenum, 1, indata
+    Close filenum
+    
+    RtlMoveMemory ByVal hMem2, ByVal VarPtr(indata(0)), lSize 'move it into a handle
+    
+    'clean up the serialized obj
+    Kill App.Path & "\Serial.obj"
+    Erase indata
+
+    'set a reference to the new object memory
+    vbaObjSetAddref too, hMem2
+    
     try.Test "Still original" 'show that the previous object is not changed
 
     too.Test "While clones" 'our cloned object holds its value not original
 
     Set too = Nothing 'free the reference to the clone
-    GlobalFree hMem 'be sure and free up the memory
+    
+    GlobalFree hMem2
 
     Set try = Nothing 'clean up our original object
     
