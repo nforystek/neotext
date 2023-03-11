@@ -53,38 +53,18 @@ End Function
 
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "600"
+Attribute ToString.VB_MemberFlags = "640"
     ToString = "[" & Round(Coord.X, 6) & ", " & Round(Coord.Y, 6) & ", " & Round(pZ, 6) & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
-
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "240"
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
-        If InStr(RHS, ",") > 0 Then
-            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                Coord.X = CSng(Left(RHS, InStr(RHS, ",") - 1))
-            Else
-                Coord.X = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
-            End If
-            RHS = Mid(RHS, InStr(RHS, ",") + 1)
-        End If
-        If InStr(RHS, ",") > 0 Then
-            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                Coord.Y = CSng(Left(RHS, InStr(RHS, ",") - 1))
-            Else
-                Coord.Y = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
-            End If
-            RHS = Mid(RHS, InStr(RHS, ",") + 1)
-        End If
-        If InStr(RHS, ",") > 0 Then
-            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                pZ = CSng(Left(RHS, InStr(RHS, ",") - 1))
-            Else
-                pZ = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
-            End If
-            RHS = Mid(RHS, InStr(RHS, ",") + 1)
-        End If
+        Coord.X = ParseNumerical(RHS)
+        Coord.Y = ParseNumerical(RHS)
+        pZ = ParseNumerical(RHS)
     End If
 End Property
 

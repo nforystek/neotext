@@ -15,11 +15,14 @@ Option Explicit
 
 Implements NTNodes10.Collection
 
-Private this As New NTNodes10.Collection
+Private this As NTNodes10.Collection
 Private pParent As Molecule
-
+Private pSerialize As Boolean
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 Public Property Get Serialize() As Boolean
-    Serialize = True
+    Serialize = pSerialize
 End Property
 
 Friend Property Get Parent() As Molecule
@@ -33,7 +36,7 @@ Friend Property Set Parent(ByRef RHS As Molecule)
     Next
 End Property
 
-Function NewEnum() As IUnknown ' _
+Public Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
 Attribute NewEnum.VB_Description = "Foreach iteration enumerator."
 Attribute NewEnum.VB_UserMemId = -4
@@ -76,7 +79,7 @@ Public Property Get Item(ByVal KeyOrIndex) As Molecule ' _
 Gets or sets the item at the key or index supplied as the properties parameter, allowing anything, and disposes of the existing item.
 Attribute Item.VB_Description = "Gets or sets the item at the key or index supplied as the properties parameter, allowing anything, and disposes of the existing item."
 Attribute Item.VB_UserMemId = 0
-Attribute Item.VB_MemberFlags = "600"
+Attribute Item.VB_MemberFlags = "200"
     Set Item = this.Item(KeyOrIndex)
 End Property
 
@@ -91,8 +94,7 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    Set this = New NTNodes10.Collection
-    vbaObjSetAddref Collection, ObjPtr(this)
+    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
@@ -133,14 +135,14 @@ Private Property Get Collection_Item(ByVal KeyOrIndex As Variant) As Variant
 End Property
 
 Private Property Get Collection_Key(ByVal Index As Variant) As Variant
-    Collection_Key = Me.Key(Index)
+    Collection_Key = this.Key(Index)
 End Property
 
 Private Function Collection_NewEnum() As stdole.IUnknown
-    Set Collection_NewEnum = Me.[NewEnum]
+    Set Collection_NewEnum = this.[NewEnum]
 End Function
 
 Private Sub Collection_Remove(Optional KeyOrIndex As Variant)
-    Me.Remove KeyOrIndex
+    this.Remove KeyOrIndex
 End Sub
 

@@ -28,10 +28,19 @@ End Property
 
 
 Public Property Get Key() As String
+Attribute Key.VB_UserMemId = 0
+Attribute Key.VB_MemberFlags = "600"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-    pKey = RHS
+    If RHS <> "" Then
+        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+        If All.Exists(RHS) Then
+            All.Remove RHS
+            All.Add Me, RHS
+        End If
+        pKey = RHS
+    End If
 End Property
 
 Public Property Get Form() As Long
@@ -46,8 +55,3 @@ Private Sub Class_Initialize()
     pKey = "K" & ObjPtr(Me)
 End Sub
 
-Private Sub Class_Terminate()
-    If pKey <> "" Then
-        If Motions.Exists(pKey) Then Motions.Remove pKey
-    End If
-End Sub

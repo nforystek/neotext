@@ -39,8 +39,46 @@ Public NormalIndex As Long
 Public TriangleIndex As Long
 Public ObjectIndex As Long
 Public FaceIndex As Long
+Public Serialize As Boolean
 
-Public Property Get Serialize() As Boolean
-Attribute Serialize.VB_MemberFlags = "40"
-    Serialize = False
-End Property
+Friend Function Clone() As Matter
+    Set Clone = New Matter
+    
+    Set Clone.Point1 = New Point
+    Clone.Point1 = Point1
+    
+    Set Clone.Point2 = New Point
+    Clone.Point2 = Point2
+    
+    Set Clone.Point3 = New Point
+    Clone.Point3 = Point3
+    
+    Set Clone.Normal = New Point
+    Clone.Normal = Normal
+    
+    Clone.Index1 = Index1
+    Clone.Index2 = Index2
+    Clone.Index3 = Index3
+    Clone.U1 = U1
+    Clone.V1 = V1
+    Clone.U2 = U2
+    Clone.V2 = V2
+    Clone.U3 = U3
+    Clone.V3 = V3
+    Clone.Transparent = Transparent
+    Clone.Translucent = Translucent
+    Clone.TextureIndex = TextureIndex
+    Clone.NormalIndex = NormalIndex
+    Clone.TriangleIndex = TriangleIndex
+    Clone.ObjectIndex = ObjectIndex
+    Clone.FaceIndex = FaceIndex
+    Clone.Serialize = Serialize
+    
+End Function
+
+Private Sub Class_Terminate()
+    If TriangleIndex > 0 Then
+        RemoveTriangleArray TriangleIndex
+        TriangleIndex = 0
+    End If
+End Sub

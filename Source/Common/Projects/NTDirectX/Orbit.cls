@@ -53,11 +53,11 @@ Friend Property Get Absolute() As Orbit
     If pAbsolute Is Nothing Then
         Set pAbsolute = New Orbit
         With pAbsolute
-            Set .Offset = .Offset
-            Set .Origin = .Origin
-            Set .Rotate = .Rotate
-            Set .Scaled = .Scaled
-            Set .Ranges = .Ranges
+            Set .Offset = pOffset
+            Set .Origin = pOrigin
+            Set .Rotate = pRotate
+            Set .Scaled = pScaled
+            Set .Ranges = pRanges
         End With
     End If
     Set Absolute = pAbsolute
@@ -114,41 +114,44 @@ End Property
 
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "600"
-    ToString = "[" & pOrigin & pOffset & pRotate & pScaled & pRanges & "]"
+Attribute ToString.VB_MemberFlags = "640"
+    
+    ToString = "[" & Origin & Offset & Rotate & Scaled & Ranges & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "240"
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2)
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            pOrigin = Left(RHS, InStr(RHS, "]"))
+            Origin = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            pOffset = Left(RHS, InStr(RHS, "]"))
+            Offset = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            pRotate = Left(RHS, InStr(RHS, "]"))
+            Rotate = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            pScaled = Left(RHS, InStr(RHS, "]"))
+            Scaled = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            pRanges = Left(RHS, InStr(RHS, "]"))
+            Ranges = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
     End If
     If pAbsolute Is Nothing Then Set pAbsolute = New Orbit
     With pAbsolute
-        Set .Offset = .Offset
-        Set .Origin = .Origin
-        Set .Rotate = .Rotate
-        Set .Scaled = .Scaled
-        Set .Ranges = .Ranges
+        Set .Offset = pOffset
+        Set .Origin = pOrigin
+        Set .Rotate = pRotate
+        Set .Scaled = pScaled
+        Set .Ranges = pRanges
     End With
 
 End Property

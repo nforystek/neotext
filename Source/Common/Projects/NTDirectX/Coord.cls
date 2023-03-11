@@ -44,29 +44,18 @@ Public Function Equals(ByRef Point As Point) As Boolean
 End Function
 
 Public Property Get ToString() As String
+Attribute ToString.VB_UserMemId = 0
 Attribute ToString.VB_MemberFlags = "440"
     ToString = "[" & Round(pX, 6) & ", " & Round(pY, 6) & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "240"
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2)
-        If InStr(RHS, ",") > 0 Then
-            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                pX = CSng(Left(RHS, InStr(RHS, ",") - 1))
-            Else
-                pX = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
-            End If
-            RHS = Mid(RHS, InStr(RHS, ",") + 1)
-        End If
-        If InStr(RHS, ",") = 0 Then
-            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
-                pY = CSng(Left(RHS, InStr(RHS, ",") - 1))
-            Else
-                pY = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
-            End If
-            RHS = Mid(RHS, InStr(RHS, ",") + 1)
-        End If
+        pX = ParseNumerical(RHS)
+        pY = ParseNumerical(RHS)
     End If
 End Property
 

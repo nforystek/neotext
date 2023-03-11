@@ -85,11 +85,10 @@ Option Compare Binary
 
 Public LastX As Long
 Public LastY As Long
-Public SerialStack As Boolean
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetupForm Picture1.Parent
+    If KeyCode = 112 Then ShowSetup = True
 End Sub
 
 Public Sub Startup()
@@ -99,6 +98,12 @@ Public Sub Startup()
         'only the global add the code members of
         .AddObject "Include", modParse.Include, True
         'the rest are builds of and not code based
+       modParse.Motions.Serialize = True
+       modParse.Brilliants.Serialize = True
+       modParse.Molecules.Serialize = True
+       modParse.Billboards.Serialize = True
+       modParse.Planets.Serialize = True
+       modParse.Bindings.Serialize = True
        ' .AddObject "All", modParse.All, True
        ' .AddObject "Camera", modParse.Camera, True
        ' .AddObject "Motions", modParse.Motions, True
@@ -107,19 +112,42 @@ Public Sub Startup()
        ' .AddObject "Billboards", modParse.Billboards, True
        ' .AddObject "Bindings", modParse.Bindings, True
        ' .AddObject "Planets", modParse.Planets, True
+
+       
     
     End With
 End Sub
-Public Function Serialize(ByVal Deserialize As Boolean) As String
+Public Function Deserialize() As String
     On Error GoTo errcatch:
     On Local Error GoTo errcatch:
     With ScriptControl1
         If .Procedures.Count > 0 Then
             Dim cnt As Long
             For cnt = 1 To .Procedures.Count
-                If (Deserialize And (LCase(.Procedures.Item(cnt).Name) = "deserialize")) Then
+                If (LCase(.Procedures.Item(cnt).Name) = "deserialize") Then
                     .Run "Deserialize"
-                ElseIf ((Not Deserialize) And (LCase(.Procedures.Item(cnt).Name) = "serialize")) Then
+                End If
+            Next
+        End If
+    Exit Function
+errcatch:
+        If Not ConsoleVisible Then
+            ConsoleToggle
+        End If
+        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
+                "\n" & "Description: " & Err.Description
+        If .Error.Number <> 0 Then .Error.Clear
+        If Err.Number <> 0 Then Err.Clear
+    End With
+End Function
+Public Function Serialize() As String
+    On Error GoTo errcatch:
+    On Local Error GoTo errcatch:
+    With ScriptControl1
+        If .Procedures.Count > 0 Then
+            Dim cnt As Long
+            For cnt = 1 To .Procedures.Count
+                If (LCase(.Procedures.Item(cnt).Name) = "serialize") Then
                     Serialize = .Eval("Serialize")
                 End If
             Next
@@ -234,13 +262,9 @@ errcatch:
 End Function
 
 
-Private Sub Form_Load()
-'    Startup
-End Sub
-
 Private Sub Picture1_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetupForm Picture1.Parent
+    If KeyCode = 112 Then ShowSetup = True
 End Sub
 
 Private Sub ScriptControl1_Error()

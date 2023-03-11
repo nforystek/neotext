@@ -55,22 +55,19 @@ End Function
 
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "600"
+Attribute ToString.VB_MemberFlags = "640"
     ToString = "[" & Round(Point.X, 6) & ", " & Round(Point.Y, 6) & ", " & Round(Point.z, 6) & ", " & Round(pW, 6) & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
-    RHS = RemoveQuotedArg(RHS, "[", "]")
-    If IsNumeric(NextArg(RHS, ",")) Then
-        Point.X = CSng(NextArg(RHS, ","))
-    End If
-    If IsNumeric(NextArg(RemoveArg(RHS, ","), ",")) Then
-        Point.Y = CSng(NextArg(RemoveArg(RHS, ","), ","))
-    End If
-    If IsNumeric(NextArg(RemoveArg(RemoveArg(RHS, ","), ","), ",")) Then
-        Point.z = CSng(NextArg(RemoveArg(RemoveArg(RHS, ","), ","), ","))
-    End If
-    If IsNumeric(NextArg(RemoveArg(RemoveArg(RemoveArg(RHS, ","), ","), ","), ",")) Then
-        pW = CSng(NextArg(RemoveArg(RemoveArg(RemoveArg(RHS, ","), ","), ","), ","))
+Attribute ToString.VB_UserMemId = 0
+Attribute ToString.VB_MemberFlags = "240"
+    RHS = Trim(RHS)
+    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
+        Point.X = ParseNumerical(RHS)
+        Point.Y = ParseNumerical(RHS)
+        Point.z = ParseNumerical(RHS)
+        pW = ParseNumerical(RHS)
     End If
 End Property
 
@@ -87,12 +84,12 @@ Private Property Get Point_Serialize() As Boolean
     Point_Serialize = Point.Serialize
 End Property
 
-Private Property Let Point_ToString(ByVal RHS As String)
-    Point.ToString = RHS
-End Property
-
 Private Property Get Point_ToString() As String
     Point_ToString = Point.ToString
+End Property
+
+Private Property Let Point_ToString(ByVal RHS As String)
+    Point.ToString = RHS
 End Property
 
 Private Property Let Point_X(ByVal RHS As Single)

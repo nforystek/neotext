@@ -61,15 +61,19 @@ End Property
 
 
 Public Property Let ToString(ByVal RHS As String)
-    If InStr(RHS, "[") > 0 Then RHS = RemoveQuotedArg(RHS, "[", "]")
-    pAlpha = CSng(RemoveNextArg(RHS, ","))
-    pRed = CSng(RemoveNextArg(RHS, ","))
-    pGreen = CSng(RemoveNextArg(RHS, ","))
-    pBlue = CSng(RemoveNextArg(RHS, ","))
+    RHS = Trim(RHS)
+    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+        RHS = Mid(RHS, 2, Len(RHS) - 2)
+        pAlpha = ParseNumerical(RHS)
+        pRed = ParseNumerical(RHS)
+        pGreen = ParseNumerical(RHS)
+        pBlue = ParseNumerical(RHS)
+    End If
+
     RaiseEvent Changed
 End Property
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "600"
+Attribute ToString.VB_MemberFlags = "640"
     ToString = "[ " & pAlpha & " , " & pRed & ", " & pGreen & ", " & pBlue & "]"
 End Property

@@ -20,9 +20,12 @@ Option Explicit
 Implements NTNodes10.Collection
 
 Private this As NTNodes10.Collection
-
+Private pSerialize As Boolean
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 Public Property Get Serialize() As Boolean
-    Serialize = False
+    Serialize = pSerialize
 End Property
 
 Function NewEnum() As IUnknown ' _
@@ -30,38 +33,38 @@ Foreach iteration enumerator.
 Attribute NewEnum.VB_Description = "Foreach iteration enumerator."
 Attribute NewEnum.VB_UserMemId = -4
 Attribute NewEnum.VB_MemberFlags = "40"
-    Set NewEnum = this.[NewEnum]
+    Set NewEnum = [Collection_NewEnum]
 End Function
 
 Public Sub Add(ByRef Anything As Matter, Optional Key, Optional Before, Optional After) ' _
 Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation.
 Attribute Add.VB_Description = "Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation."
-    this.Add Anything, Key, Before, After
+    Collection_Add Anything, Key, Before, After
 End Sub
 
 Public Sub Remove(Optional KeyOrIndex) ' _
 Removes an item from the collection, by the optional parameter as key or index if it exists, if it does not exist, the first item is removed.
 Attribute Remove.VB_Description = "Removes an item from the collection, by the optional parameter as key or index if it exists, if it does not exist, the first item is removed."
-    this.Remove KeyOrIndex
+    Collection_Remove KeyOrIndex
 End Sub
 
 Public Property Get Exists(ByVal KeyOrIndex) As Boolean ' _
 Returns true if the given parameter for the property is a valid key or index contained in the collection, otherwise false.
 Attribute Exists.VB_Description = "Returns true if the given parameter for the property is a valid key or index contained in the collection, otherwise false."
-    Exists = this.Exists(KeyOrIndex)
+    Exists = Collection_Exists(KeyOrIndex)
 End Property
 
 
 Public Property Get Count() As Long ' _
 Numerical value indicating of how many items the collection contains.
 Attribute Count.VB_Description = "Numerical value indicating of how many items the collection contains."
-    Count = this.Count
+    Count = Collection_Count
 End Property
 
 Public Property Get Key(ByVal Index) ' _
 Gets the key for the item in the collection specified by the Index parameter.
 Attribute Key.VB_Description = "Gets the key for the item in the collection specified by the Index parameter."
-    Key = this.Key(Index)
+    Key = Collection_Key(Index)
 End Property
 
 Public Property Get Item(ByVal KeyOrIndex) As Matter ' _
@@ -69,22 +72,21 @@ Gets or sets the item at the key or index supplied as the properties parameter, 
 Attribute Item.VB_Description = "Gets or sets the item at the key or index supplied as the properties parameter, allowing anything, and disposes of the existing item."
 Attribute Item.VB_UserMemId = 0
 Attribute Item.VB_MemberFlags = "200"
-    Set Item = this.Item(KeyOrIndex)
+    Set Item = Collection_Item(KeyOrIndex)
 End Property
 
 Public Property Set Item(ByVal KeyOrIndex, ByRef Anything As Matter)
-    Set this.Item(KeyOrIndex) = Anything
+    Set Collection_Item(KeyOrIndex) = Anything
 End Property
 
 Public Sub Clear() ' _
 Clears all items with-in the collection, and the Count property becomes zero.
 Attribute Clear.VB_Description = "Clears all items with-in the collection, and the Count property becomes zero."
-    this.Clear
+    Collection_Clear
 End Sub
 
 Private Sub Class_Initialize()
-    Set this = New NTNodes10.Collection
-    vbaObjSetAddref Collection, ObjPtr(this)
+    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
@@ -124,11 +126,11 @@ Private Property Get Collection_Item(ByVal KeyOrIndex As Variant) As Variant
 End Property
 
 Private Property Get Collection_Key(ByVal Index As Variant) As Variant
-    Collection_Key = Me.Key(Index)
+    Collection_Key = this.Key(Index)
 End Property
 
 Private Function Collection_NewEnum() As stdole.IUnknown
-    Set Collection_NewEnum = Me.[NewEnum]
+    Set Collection_NewEnum = this.[NewEnum]
 End Function
 
 Private Sub Collection_Remove(Optional KeyOrIndex As Variant)

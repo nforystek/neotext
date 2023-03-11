@@ -18,7 +18,8 @@ Public Enum CollisionTypes
     Coupling = 32 'when push comes to
     'shove, couples with other pushes
     Liquid = Freely Or Gravity
-    'able climb but also when sitting has lo gravity effect
+    'able climb but also when you'res
+    'sitting has lo gravity effect
 End Enum
 
 Public Enum CoordinateTypes
@@ -49,10 +50,8 @@ End Enum
 Public Enum PlanetTypes
     Shade = 0 'the space color and fog color, any plane may
     World = 1 'cubic 3d 720 degree panoramic globe atmosphere rendering form
-    Plateau = 2 'a single axis value stretch all ways single textured
-    Inland = 3 'inland is a plateau with a hole cut out the center
-    Island = 4 'opposite inland, the cut is on the plane, and may row/col of h/w
-    Screen = 8 'flat face 2d rendering on the screen as a plane
+    Plateau = 2 'covers any plane style texture rendering
+    Screen = 4 'flat face 2d rendering on the screen as a plane
 End Enum
 
 Public Enum MotionTypes
@@ -153,22 +152,22 @@ Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Lon
     Dim ref2 As Single
     Dim ref3 As Single
     Dim Ret As Single
-    Dim f As Long
-    f = LBound(l)
+    Dim F As Long
+    F = LBound(l)
     PointInPoly3d = -1
     
-    If UBound(l) + IIf(f = 0, 1, 0) > 2 Then
-        ref1 = (p.X - l(f).X) * (l(f + 1).Y - l(f).Y) - (p.Y - l(f).Y) * (l(f + 1).X - l(f).X)
-        ref2 = (p.Y - l(f).Y) * (l(f + 1).z - l(f).z) - (p.z - l(f).z) * (l(f + 1).Y - l(f).Y)
-        ref3 = (p.z - l(f).z) * (l(f + 1).X - l(f).X) - (p.X - l(f).X) * (l(f + 1).z - l(f).z)
+    If UBound(l) + IIf(F = 0, 1, 0) > 2 Then
+        ref1 = (p.X - l(F).X) * (l(F + 1).Y - l(F).Y) - (p.Y - l(F).Y) * (l(F + 1).X - l(F).X)
+        ref2 = (p.Y - l(F).Y) * (l(F + 1).z - l(F).z) - (p.z - l(F).z) * (l(F + 1).Y - l(F).Y)
+        ref3 = (p.z - l(F).z) * (l(F + 1).X - l(F).X) - (p.X - l(F).X) * (l(F + 1).z - l(F).z)
    
         Ret = ref1 + ref2 + ref3
         
         Dim i As Long
-        For i = f + 1 To UBound(l)
-            ref1 = ((p.X - l(f).X) * (l(i).Y - l(f).Y) - (p.Y - l(f).Y) * (l(i).X - l(f).X))
-            ref2 = ((p.Y - l(f).Y) * (l(i).z - l(f).z) - (p.z - l(f).z) * (l(i).Y - l(f).Y))
-            ref3 = ((p.z - l(f).z) * (l(i).X - l(f).X) - (p.X - l(f).X) * (l(i).z - l(f).z))
+        For i = F + 1 To UBound(l)
+            ref1 = ((p.X - l(F).X) * (l(i).Y - l(F).Y) - (p.Y - l(F).Y) * (l(i).X - l(F).X))
+            ref2 = ((p.Y - l(F).Y) * (l(i).z - l(F).z) - (p.z - l(F).z) * (l(i).Y - l(F).Y))
+            ref3 = ((p.z - l(F).z) * (l(i).X - l(F).X) - (p.X - l(F).X) * (l(i).z - l(F).z))
 
             If ((Ret >= 0) Xor ((ref1 + ref2 + ref3) >= 0)) Then
                 PointInPoly3d = i
@@ -432,11 +431,11 @@ End Function
 '
 'End Function
 
-Function FloatToDWord(f As Single) As Long
+Function FloatToDWord(F As Single) As Long
     Dim buf As D3DXBuffer
     Dim l As Long
     Set buf = D3DX.CreateBuffer(4)
-    D3DX.BufferSetData buf, 0, 4, 1, f
+    D3DX.BufferSetData buf, 0, 4, 1, F
     D3DX.BufferGetData buf, 0, 4, 1, l
     FloatToDWord = l
 End Function
@@ -631,14 +630,14 @@ End Sub
 '
 'End Function
 
-'Public Function CreateCircle(ByRef Data() As MyVertex, ByVal OuterRadii As Single, ByVal Segments As Single, Optional ByVal InnerRadii As Single = 0, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Double
+'Public Function CreateCircle(ByRef Data() As MyVertex, ByVal OuterEdge As Single, ByVal Segments As Single, Optional ByVal InnerEdge As Single = 0, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Double
 ''creates a tiangle list for a circle of segment amount of straight edges arranged to a circle
-''of segment amount of triangles, when innerradii is supplied in segment*2 amount of trianlges
+''of segment amount of triangles, when InnerEdge is supplied in segment*2 amount of trianlges
 '
 '    Dim vn As D3DVECTOR
 '    Dim start As Integer
 '    start = UBound(Data) + 1
-'    ReDim Preserve Data(0 To start + ((IIf(InnerRadii > 0, 6, 3) * Segments) - 1) + (IIf(InnerRadii > 0, 6, 3) * 2)) As MyVertex
+'    ReDim Preserve Data(0 To start + ((IIf(InnerEdge > 0, 6, 3) * Segments) - 1) + (IIf(InnerEdge > 0, 6, 3) * 2)) As MyVertex
 '
 '    Dim i As Long
 '    Dim g As Single
@@ -661,19 +660,19 @@ End Sub
 '    Dim dist3 As Single
 '    Dim dist4 As Single
 '
-'    For i = -IIf(InnerRadii > 0, 6, 3) To UBound(Data) - start Step IIf(InnerRadii > 0, 6, 3)
+'    For i = -IIf(InnerEdge > 0, 6, 3) To UBound(Data) - start Step IIf(InnerEdge > 0, 6, 3)
 '
-'        g = (((360 / Segments) * (((i + 1) / IIf(InnerRadii > 0, 6, 3)) - 1)) * RADIAN)
+'        g = (((360 / Segments) * (((i + 1) / IIf(InnerEdge > 0, 6, 3)) - 1)) * RADIAN)
 '
-'        intX2 = (OuterRadii * Sin(g))
-'        intY2 = (-OuterRadii * Cos(g))
+'        intX2 = (OuterEdge * Sin(g))
+'        intY2 = (-OuterEdge * Cos(g))
 '
-'        intX3 = (InnerRadii * Sin(g))
-'        intY3 = (-InnerRadii * Cos(g))
+'        intX3 = (InnerEdge * Sin(g))
+'        intY3 = (-InnerEdge * Cos(g))
 '
 '        If i >= 0 Then  'skip ahead
 '
-'            If (InnerRadii > 0) Then
+'            If (InnerEdge > 0) Then
 '                If (i Mod 12) = 0 Then
 '
 '                    dist1 = Distance(intX2, 0, intY2, intX1, 0, intY1) * (ScaleX / 100) * -Sin(g)

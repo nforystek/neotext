@@ -51,10 +51,19 @@ End Property
 
 
 Public Property Get Key() As String
+Attribute Key.VB_UserMemId = 0
+Attribute Key.VB_MemberFlags = "600"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-    pKey = RHS
+    If RHS <> "" Then
+        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+        If All.Exists(RHS) Then
+            All.Remove RHS
+            All.Add Me, RHS
+        End If
+        pKey = RHS
+    End If
 End Property
 
 Public Property Get FileName() As String
@@ -142,7 +151,7 @@ End Property
 
 Private Sub Class_Initialize()
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
-    Key = "K" & ObjPtr(Me)
+    pKey = "K" & ObjPtr(Me)
 End Sub
 
 'Public Property Get NotEmpty() As Boolean
@@ -165,7 +174,6 @@ Private Sub Class_Terminate()
     If Key <> "" Then
         If Molecules.Exists(Key) Then Molecules.Remove Key
     End If
-    
     Set pVolume = Nothing
     Set pMolecules = Nothing
 End Sub
@@ -235,12 +243,12 @@ Private Property Let Orbit_Serialize(ByVal RHS As Boolean)
     Orbit.Serialize = RHS
 End Property
 
-Private Property Let Orbit_ToString(ByVal RHS As String)
-    Orbit.ToString = RHS
-End Property
-
 Private Property Get Orbit_ToString() As String
     Orbit_ToString = Orbit.ToString
+End Property
+
+Private Property Let Orbit_ToString(ByVal RHS As String)
+    Orbit.ToString = RHS
 End Property
 
 Private Property Get Orbit_Visible() As Boolean

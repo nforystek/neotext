@@ -103,6 +103,8 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color, 1, 0
             
+            Begin UserControl, Camera.Player
+            
             MainMatrixSetup UserControl, Camera.Player
             
             DDevice.BeginScene
@@ -111,15 +113,14 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
             RenderPlanets UserControl, Camera.Player
             
-            RenderOrbits UserControl, Camera.Player
+            Finish UserControl, Camera.Player
             
             InputScene UserControl
 
                 '       Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
-               '         Orientate MakePoint(0.01, 0, 0), Planets("Earth")
+                 '       Orientate MakePoint(0.01, 0, 0), Planets("Earth")
         '                Orientate MakePoint(0, 0.01, 0), Planets("Earth")
          '               Orientate MakePoint(0, 0, 0.01), Planets("Earth")
-            
             
             If Not PauseGame Then
                 
@@ -210,34 +211,7 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
         If Not Camera.Planet Is Nothing Then
 
-            D3DXMatrixRotationX matPitch, -Camera.Player.Absolute.Rotate.X
-            D3DXMatrixMultiply matView, matPitch, matView
-
-            D3DXMatrixRotationY matYaw, -Camera.Player.Absolute.Rotate.Y
-            D3DXMatrixMultiply matView, matYaw, matView
-
-            D3DXMatrixRotationZ matRoll, -Camera.Player.Absolute.Rotate.z
-            D3DXMatrixMultiply matView, matRoll, matView
-
-            DDevice.SetTransform D3DTS_VIEW, matView
-
-            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z
-            D3DXMatrixMultiply matView, matPos, matView
-
-            DDevice.SetTransform D3DTS_VIEW, matView
-
-            D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
-            D3DXMatrixMultiply matView, matPitch, matView
-
-            D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
-            D3DXMatrixMultiply matView, matYaw, matView
-
-            D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
-            D3DXMatrixMultiply matView, matRoll, matView
-
-       Else
-
-            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
+            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.x
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
@@ -248,7 +222,34 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
-            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
+            D3DXMatrixTranslation matPos, -Camera.Player.Origin.x, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
+            D3DXMatrixMultiply matView, matPos, matView
+
+            DDevice.SetTransform D3DTS_VIEW, matView
+
+            D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.x
+            D3DXMatrixMultiply matView, matPitch, matView
+
+            D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
+            D3DXMatrixMultiply matView, matYaw, matView
+
+            D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
+            D3DXMatrixMultiply matView, matRoll, matView
+
+       Else
+
+            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.x
+            D3DXMatrixMultiply matView, matPitch, matView
+
+            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
+            D3DXMatrixMultiply matView, matYaw, matView
+
+            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
+            D3DXMatrixMultiply matView, matRoll, matView
+
+            DDevice.SetTransform D3DTS_VIEW, matView
+
+            D3DXMatrixTranslation matPos, -Camera.Player.Origin.x, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
         End If

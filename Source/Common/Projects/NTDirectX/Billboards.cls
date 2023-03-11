@@ -15,25 +15,28 @@ Option Explicit
 
 Implements NTNodes10.Collection
 
-Private this As New NTNodes10.Collection
+Private this As NTNodes10.Collection
 Private pParent As Molecule
-
+Private pSerialize As Boolean
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 Public Property Get Serialize() As Boolean
-    Serialize = True
+    Serialize = pSerialize
 End Property
 
-Friend Property Get Parent() As Molecule
-    Set Parent = pParent
-End Property
-Friend Property Set Parent(ByRef RHS As Molecule)
-    Set pParent = RHS
-    Dim m As Molecule
-    For Each m In this
-        Set m.Parent = pParent
-    Next
-End Property
+'Friend Property Get Parent() As Molecule
+'    Set Parent = pParent
+'End Property
+'Friend Property Set Parent(ByRef RHS As Molecule)
+'    Set pParent = RHS
+'    Dim m As Molecule
+'    For Each m In this
+'        Set m.Parent = pParent
+'    Next
+'End Property
 
-Function NewEnum() As IUnknown ' _
+Public Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
 Attribute NewEnum.VB_Description = "Foreach iteration enumerator."
 Attribute NewEnum.VB_UserMemId = -4
@@ -45,7 +48,7 @@ Public Sub Add(ByRef Anything As Billboard, Optional Key, Optional Before, Optio
 Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation.
 Attribute Add.VB_Description = "Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation."
     this.Add Anything, Key, Before, After
-    If Not Anything Is Nothing Then Set Anything.Parent = pParent
+'    If Not Anything Is Nothing Then Set Anything.Parent = pParent
 End Sub
 
 Public Sub Remove(Optional KeyOrIndex) ' _
@@ -91,8 +94,7 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    Set this = New NTNodes10.Collection
-    vbaObjSetAddref Collection, ObjPtr(this)
+    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
@@ -133,15 +135,15 @@ Private Property Get Collection_Item(ByVal KeyOrIndex As Variant) As Variant
 End Property
 
 Private Property Get Collection_Key(ByVal Index As Variant) As Variant
-    Collection_Key = Me.Key(Index)
+    Collection_Key = this.Key(Index)
 End Property
 
 Private Function Collection_NewEnum() As stdole.IUnknown
-    Set Collection_NewEnum = Me.[NewEnum]
+    Set Collection_NewEnum = this.[NewEnum]
 End Function
 
 Private Sub Collection_Remove(Optional KeyOrIndex As Variant)
-    Me.Remove KeyOrIndex
+    this.Remove KeyOrIndex
 End Sub
 
 

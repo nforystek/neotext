@@ -48,32 +48,20 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-'Public Property Get ToString() As String
-'    ToString = ToString & "<Phi>" & Phi & "</Phi>" & vbCrLf
-'    ToString = ToString & "<Theta>" & Theta & "</Theta>" & vbCrLf
-'    ToString = ToString & "<FallOff>" & FallOff & "</FallOff>" & vbCrLf
-'    ToString = ToString & "<Range>" & Range & "</Range>" & vbCrLf
-'    ToString = ToString & "<Illumine>" & Illumine & "</Illumine>" & vbCrLf
-'    ToString = ToString & "<Enabled>" & Enabled & "</Enabled>" & vbCrLf
-'    ToString = ToString & "<SunLight>" & SunLight & "</SunLight>" & vbCrLf
-'    ToString = ToString & "<LightBlink>" & LightBlink & "</LightBlink>" & vbCrLf
-'    ToString = ToString & "<DiffuseRoll>" & DiffuseRoll & "</DiffuseRoll>" & vbCrLf
-'    ToString = ToString & "<DIffuseMax>" & DIffuseMax & "</DIffuseMax>" & vbCrLf
-'
-'    ToString = ToString & "<Ambience>" & Ambience.ToString() & "</Ambience>" & vbCrLf
-'    ToString = ToString & "<Diffuse>" & Diffuse.ToString() & "</Diffuse>" & vbCrLf
-'    ToString = ToString & "<Specular>" & Specular.ToString() & "</Specular>" & vbCrLf
-'    ToString = ToString & "<Attenuation>" & Attenuation.ToString() & "</Attenuation>" & vbCrLf
-'
-'    ToString = ToString & "" & Molecule.ToString()
-'End Property
-
 Public Property Get Key() As String
-Attribute Key.VB_MemberFlags = "40"
+Attribute Key.VB_UserMemId = 0
+Attribute Key.VB_MemberFlags = "600"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-    pKey = RHS
+    If RHS <> "" Then
+        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+        If All.Exists(RHS) Then
+            All.Remove RHS
+            All.Add Me, RHS
+        End If
+        pKey = RHS
+    End If
 End Property
 
 Public Property Get Parent() As Orbit
@@ -232,9 +220,7 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    If Key <> "" Then
-        If Brilliants.Exists(Key) Then Brilliants.Remove Key
-    End If
+
     Set Diffuse = Nothing
     Set Ambience = Nothing
     Set Specular = Nothing
@@ -323,12 +309,12 @@ Private Property Get Orbit_Serialize() As Boolean
 End Property
 
 
-Private Property Let Orbit_ToString(ByVal RHS As String)
-    Orbit.ToString = RHS
-End Property
-
 Private Property Get Orbit_ToString() As String
     Orbit_ToString = Orbit.ToString
+End Property
+
+Private Property Let Orbit_ToString(ByVal RHS As String)
+    Orbit.ToString = RHS
 End Property
 
 Private Property Get Orbit_Visible() As Boolean

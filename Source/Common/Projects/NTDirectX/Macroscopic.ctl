@@ -197,7 +197,7 @@ End Property
 
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetupForm Me
+    If KeyCode = 112 Then ShowSetup = True
 End Sub
 
 Private Sub UserControl_Resize()

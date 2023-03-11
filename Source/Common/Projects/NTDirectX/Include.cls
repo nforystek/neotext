@@ -13,7 +13,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Location Origin, ApplyTo   'location is changing the origin to absolute
 End Sub
@@ -21,14 +20,12 @@ Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Position Origin, ApplyTo  'position is changing the origin relative
 End Sub
 
-
 Public Sub Rotation(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Rotation Radians, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Orientate(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Orientate Radians, ApplyTo  'position is changing the origin relative
 End Sub
-
 
 Public Sub Scaling(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Scaling Ratios, ApplyTo  'location is changing the origin to absolute
@@ -41,6 +38,7 @@ Public Property Set Serialize(ByRef RHS)
 
     Dim code As String
     Dim line As String
+    Dim o As Object 'NTNodes10.Collection
     Select Case LCase(TypeName(RHS))
         Case "bindings", "camera"
             If All.Exists(LCase(TypeName(RHS))) Then
@@ -53,8 +51,7 @@ Public Property Set Serialize(ByRef RHS)
             End If
         Case "molecules", "brilliants", "planets", "billboards"
             If All.Exists(LCase(TypeName(RHS))) Then
-                Dim o As ntnodes10.Collection
-                Set o = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+                Set o = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
                 All.Remove LCase(TypeName(RHS))
                 If o.Count > 0 Then
                     Dim m As Object
@@ -76,12 +73,13 @@ Public Property Get Serialize()
 Attribute Serialize.VB_MemberFlags = "40"
 
     Serialize = "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
-    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(ntnodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
 
 End Property
+
 Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As Point
     Set Point = New Point
     Point.X = X
@@ -237,9 +235,7 @@ End Property
 Public Property Get Screen() As PlanetTypes
     Screen = PlanetTypes.Screen
 End Property
-Public Property Get Island() As PlanetTypes
-    Island = PlanetTypes.Island
-End Property
+
 
 Public Property Get None() As CollisionTypes
     None = CollisionTypes.None
@@ -289,54 +285,37 @@ End Property
 '#####################################################
 '########## Collections ##############################
 '#####################################################
-Public Property Get All() As ntnodes10.Collection
+Public Property Get All() As NTNodes10.Collection
     Set All = modParse.All
 End Property
-'Public Property Set All(ByRef RHS As ntnodes10.Collection)
-'    Set modParse.All = RHS
-'End Property
+
 Public Property Get Camera() As Camera
     Set Camera = modParse.Camera
 End Property
-'Public Property Set Camera(ByRef RHS As Camera)
-'    Set modParse.Camera = RHS
-'End Property
+
 Public Property Get Motions() As Motions
     Set Motions = modParse.Motions
 End Property
-'Public Property Set Motions(ByRef RHS As Motions)
-'    Set modParse.Motions = RHS
-'End Property
+
 Public Property Get Brilliants() As Brilliants
     Set Brilliants = modParse.Brilliants
 End Property
-'Public Property Set Brilliants(ByRef RHS As Brilliants)
-'    Set modParse.Brilliants = RHS
-'End Property
+
 Public Property Get Molecules() As Molecules
     Set Molecules = modParse.Molecules
 End Property
-'Public Property Set Molecules(ByRef RHS As Molecules)
-'    Set modParse.Molecules = RHS
-'End Property
+
 Public Property Get Billboards() As Billboards
     Set Billboards = modParse.Billboards
 End Property
-'Public Property Set Billboards(ByRef RHS As Billboards)
-'    Set modParse.Billboards = RHS
-'End Property
+
 Public Property Get Bindings() As Bindings
     Set Bindings = modParse.Bindings
 End Property
-'Public Property Set Bindings(ByRef RHS As Bindings)
-'    Set modParse.Bindings = RHS
-'End Property
+
 Public Property Get Planets() As Planets
     Set Planets = modParse.Planets
 End Property
-'Public Property Set Planets(ByRef RHS As Planets)
-'    Set modParse.Planets = RHS
-'End Property
 
 '###################################################
 '########## Functions ##############################

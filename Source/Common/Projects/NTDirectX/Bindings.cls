@@ -30,7 +30,8 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-Public Property Get ToString() As String
+Public Function ToString() As String
+Attribute ToString.VB_MemberFlags = "40"
 
     Dim i As Long
     For i = 0 To 255
@@ -42,7 +43,7 @@ Public Property Get ToString() As String
     
     ToString = "  <Bindings>" & vbCrLf & ToString & vbCrLf & "</Bindings>" & vbCrLf
     
-End Property
+End Function
 
 
 Public Property Get Count() As Long

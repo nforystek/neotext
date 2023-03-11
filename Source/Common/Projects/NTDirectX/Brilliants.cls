@@ -15,13 +15,16 @@ Option Explicit
 
 Implements NTNodes10.Collection
 
-Private this As New NTNodes10.Collection
-
+Private this As NTNodes10.Collection
+Private pSerialize As Boolean
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
 Public Property Get Serialize() As Boolean
-    Serialize = True
+    Serialize = pSerialize
 End Property
 
-Function NewEnum() As IUnknown ' _
+Public Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
 Attribute NewEnum.VB_Description = "Foreach iteration enumerator."
 Attribute NewEnum.VB_UserMemId = -4
@@ -78,8 +81,7 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    Set this = New NTNodes10.Collection
-    vbaObjSetAddref Collection, ObjPtr(this)
+    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
@@ -123,11 +125,11 @@ Private Property Get Collection_Key(ByVal Index As Variant) As Variant
 End Property
 
 Private Function Collection_NewEnum() As stdole.IUnknown
-    Set Collection_NewEnum = Me.[NewEnum]
+    Set Collection_NewEnum = this.[NewEnum]
 End Function
 
 Private Sub Collection_Remove(Optional KeyOrIndex As Variant)
-    Me.Remove KeyOrIndex
+    this.Remove KeyOrIndex
 End Sub
 
 

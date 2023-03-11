@@ -576,7 +576,7 @@ End Function
 
 Public Function GetIndexFile(ByVal ID As Long) As String
     If FileCount > 0 And ID < FileCount Then
-        GetIndexFile = LCase(Trim(Files(ID).path))
+        GetIndexFile = LCase(Trim(Files(ID).Path))
     End If
 End Function
 
@@ -586,22 +586,22 @@ Public Function GetFileIndex(Optional ByVal ID As String) As Long
     Dim idx As Long
     If FileCount > 0 Then
         For cnt = 1 To FileCount
-            If LCase(Trim(Files(cnt).path)) = LCase(Trim(ID)) Then
+            If LCase(Trim(Files(cnt).Path)) = LCase(Trim(ID)) Then
                 GetFileIndex = cnt
                 Exit Function
-            ElseIf Files(cnt).path = "" And idx = 0 Then
+            ElseIf Files(cnt).Path = "" And idx = 0 Then
                 idx = cnt
             End If
         Next
         If idx > 0 Then
             GetFileIndex = idx
-            Files(idx).path = ID
+            Files(idx).Path = ID
             Exit Function
         End If
     End If
     FileCount = FileCount + 1
     ReDim Preserve Files(1 To FileCount) As MyFile
-    Files(FileCount).path = ID
+    Files(FileCount).Path = ID
     GetFileIndex = FileCount
 End Function
 

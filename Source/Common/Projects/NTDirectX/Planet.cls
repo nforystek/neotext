@@ -25,14 +25,13 @@ Private pWidth As Single
 Private pLength As Single
 Private pSegments As Long
 
-Private pOuterRadius As Single
-Private pInnerRadius As Single
+Private pOuterEdge As Single
+Private pInnerEdge As Single
 Private pRows As Long
 Private pColumns As Long
 
-Private pImageIndex() As Long
 
-Private pFileIndex As Long
+Private pFileIndex() As Long
 
 Private pColor As Color
 Private pFog As Single
@@ -167,7 +166,7 @@ Public Property Get Width() As Single
 End Property
 Public Property Let Width(ByVal RHS As Single)
     pWidth = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
 Public Property Get Height() As Single
@@ -179,7 +178,7 @@ Public Property Get Height() As Single
 End Property
 Public Property Let Height(ByVal RHS As Single)
     pHeight = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
 Public Property Get Length() As Single
@@ -191,34 +190,38 @@ Public Property Get Length() As Single
 End Property
 Public Property Let Length(ByVal RHS As Single)
     pLength = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
-Public Property Get OuterRadius() As Single
-    OuterRadius = pOuterRadius
+Public Property Get OuterEdge() As Single
+    OuterEdge = pOuterEdge
 End Property
-Public Property Let OuterRadius(ByVal RHS As Single)
-    pOuterRadius = RHS
-    Ranges.W = IIf(pInnerRadius > -1, pInnerRadius, 0) + IIf(pOuterRadius > -1, pOuterRadius, 0)
-    If RHS > pInnerRadius Or RHS = -1 Then
-        If (pFileIndex > 0) Then RebuildPlanet
+Public Property Let OuterEdge(ByVal RHS As Single)
+    pOuterEdge = RHS
+    Ranges.W = IIf(pInnerEdge > -1, pInnerEdge, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    If RHS > pInnerEdge Or RHS = -1 Then
+        If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
 End Property
 
-Public Property Get InnerRadius() As Single
-    InnerRadius = pInnerRadius
+Public Property Get InnerEdge() As Single
+    InnerEdge = pInnerEdge
 End Property
-Public Property Let InnerRadius(ByVal RHS As Single)
-    pInnerRadius = RHS
-    Ranges.W = IIf(pInnerRadius > -1, pInnerRadius, 0) + IIf(pOuterRadius > -1, pOuterRadius, 0)
-    If RHS < pOuterRadius And RHS > -1 Then
-        If (pFileIndex > 0) Then RebuildPlanet
+Public Property Let InnerEdge(ByVal RHS As Single)
+    pInnerEdge = RHS
+    Ranges.W = IIf(pInnerEdge > -1, pInnerEdge, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    If RHS < pOuterEdge And RHS > -1 Then
+        If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
 End Property
 
 Public Property Get Segments() As Long
     If pSegments < 3 Then
-        Segments = 360
+        If ((Length <> 0) And (Height <> 0)) Then
+            Segments = 4
+        Else
+            Segments = 360
+        End If
     Else
         Segments = pSegments
     End If
@@ -226,10 +229,21 @@ End Property
 Public Property Let Segments(ByVal RHS As Long)
     If RHS >= 3 Then
         pSegments = RHS
-        If (pFileIndex > 0) Then RebuildPlanet
+        If (pFileIndex(0) > 0) Then RebuildPlanet
     Else
         Err.Raise 8, "Planet", "Segments must be a value of 3 or greater."
     End If
+End Property
+
+Public Property Get Field() As Single
+    If (Molecule.Ranges.W = 0 And Length > 0 And Width > 0) Then
+        Field = Far '(Length * Width) ^ (1 / 2)
+    Else
+        Field = Molecule.Ranges.W
+    End If
+End Property
+Public Property Let Field(ByVal RHS As Single)
+    Molecule.Ranges.W = RHS
 End Property
 
 Public Property Get Rows() As Single
@@ -237,7 +251,7 @@ Public Property Get Rows() As Single
 End Property
 Public Property Let Rows(ByVal RHS As Single)
     pRows = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
 Public Property Get Columns() As Single
@@ -245,10 +259,12 @@ Public Property Get Columns() As Single
 End Property
 Public Property Let Columns(ByVal RHS As Single)
     pColumns = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
 Public Property Get Key() As String
+Attribute Key.VB_UserMemId = 0
+Attribute Key.VB_MemberFlags = "600"
     Key = Molecule.Key
 End Property
 Public Property Let Key(ByVal RHS As String)
@@ -260,30 +276,45 @@ Public Property Get Form() As Long
 End Property
 Public Property Let Form(ByRef RHS As Long)
     pForm = RHS
-    If (pFileIndex > 0) Then RebuildPlanet
+    If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
 
+Friend Property Get FileIndex(ByVal GridIndex As Long) As Long
+    FileIndex = pFileIndex(GridIndex)
+End Property
 
-Public Property Get FileName() As String
-    If (pFileIndex > 0) Then
-        FileName = GetIndexFile(pFileIndex)
+Public Property Get FileName(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0) As String
+    If (pFileIndex(Row * Column) > 0) Then
+        FileName = GetIndexFile(pFileIndex(Row * Column))
     End If
 End Property
-Public Property Let FileName(ByVal RHS As String)
-    If RHS = "" And pFileIndex > 0 Then
-        pFileIndex = 0
+Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0, ByVal RHS As String)
+    If RHS = "" And pFileIndex(Row * Column) > 0 Then
+        pFileIndex(Row * Column) = 0
     ElseIf PathExists(RHS, True) Then
-        pFileIndex = GetFileIndex(RHS)
-        Set Files(pFileIndex).Data = LoadTexture(RHS)
-        ImageDimensions RHS, Files(pFileIndex).Size
-        If pWidth = 0 Then pWidth = Files(pFileIndex).Size.Width
-        If pHeight = 0 Then pHeight = Files(pFileIndex).Size.Height
+        pFileIndex(Row * Column) = GetFileIndex(RHS)
+        Set Files(pFileIndex(Row * Column)).Data = LoadTexture(RHS)
+        ImageDimensions RHS, Files(pFileIndex(Row * Column)).Size
+        If pWidth = 0 Then pWidth = Files(pFileIndex(Row * Column)).Size.Width
+        If pHeight = 0 Then pHeight = Files(pFileIndex(Row * Column)).Size.Height
         If pLength = 0 Then pLength = ((pWidth + pHeight) \ 2)
         RebuildPlanet
     End If
 End Property
 
+Friend Property Get PlateauInfinite()
+    PlateauInfinite = ((pFileIndex(0) > 0) And (PlateauHole Xor (Not (PlateauIsland Or PlateauDoughnut))))
+End Property
+Friend Property Get PlateauIsland()
+    PlateauIsland = ((pFileIndex(0) > 0) And ((OuterEdge > 0) And (InnerEdge = 0)))
+End Property
+Friend Property Get PlateauDoughnut()
+    PlateauDoughnut = ((pFileIndex(0) > 0) And (((OuterEdge > InnerEdge) And (InnerEdge > 0))))
+End Property
+Friend Property Get PlateauHole()
+    PlateauHole = ((pFileIndex(0) > 0) And ((InnerEdge > 0) And (OuterEdge = 0)))
+End Property
 
 Private Sub RebuildPlanet()
                     
@@ -296,19 +327,25 @@ Private Sub RebuildPlanet()
     Dim P4 As Point
     
     If pColumns > 0 And pRows > 0 Then
-        ReDim Preserve pImageIndex(pColumns * pRows) As Long
+        ReDim Preserve pFileIndex(0 To pColumns * pRows) As Long
     End If
 
-    
+    Dim Size As ImageDimensions
     Dim tmp As String
-    If pFileIndex > 0 Then
-        tmp = Files(pFileIndex).path
+    If pFileIndex(0) > 0 Then
+        tmp = Files(pFileIndex(0)).Path
+        Size = Files(pFileIndex(0)).Size
+    Else
+        Size.Height = 1
+        Size.Width = 1
     End If
     If tmp = "" Then Exit Sub
     
+    Dim useSize As Single
+    
     If Form = PlanetTypes.World Then
             
-          If (pFileIndex > 0) And (Width > 0) And (Height > 0) And (Length > 0) Then
+          If (pFileIndex(0) > 0) And (Width > 0) And (Height > 0) And (Length > 0) Then '3d sky, i.e. in a box
               If Height / 3 = Width / 4 Then
 
                   Volume.Clear
@@ -426,64 +463,120 @@ Private Sub RebuildPlanet()
               End If
               
           End If
+    ElseIf Form = PlanetTypes.Plateau Then 'all the flat types
+   
+   
+        If ((Rows > 0) And (Columns > 0)) And (PlateauIsland Or PlateauDoughnut) Then
+
+            Dim i As Single
+            Dim x As Single
+            Dim z As Single
+            
+            Dim useWidth As Single
+            Dim useLength As Single
+            Dim useVolCnt As Long
+            
+            useVolCnt = Volume.Count
+            
+            If OuterEdge > 0 Then
+                useWidth = OuterEdge
+                useLength = OuterEdge
+            Else
+                useWidth = Width
+                useLength = Length
+            End If
+
+            If UBound(pFileIndex) < Rows * Columns Then
+                ReDim Preserve pFileIndex(0 To Rows * Columns) As Long
+            End If
+
+            For i = 1 To Rows * Columns
+                If pFileIndex(i) = 0 Then pFileIndex(i) = pFileIndex(0)
+            Next
+
+        End If
         
-    ElseIf Form = PlanetTypes.Plateau And pInnerRadius > 0 Then
-        Dim cutoff As Single
+        'a circle at 360 segments, a square at 4 segments, a triangle at 3 segments
+    
+        If PlateauIsland() Then 'island
         
-
-        cutoff = (pInnerRadius * 2)  '* MILE
-       ' pWidth = (cutoff * ((Size.Height / 2) / 100))
-      '  pHeight = (cutoff * (Size.Height / 100))
-      '  cutoff = (Far / 2) '* MILE
-        
-        Volume.Clear
-
-        Set uuu = CreateVolumeFace(tmp, MakePoint((cutoff / 2), 0, -(cutoff / 2)), _
-                                MakePoint(-(cutoff / 2), 0, -(cutoff / 2)), _
-                                MakePoint(-(cutoff / 2), 0, (cutoff / 2)), _
-                                MakePoint((cutoff / 2), 0, (cutoff / 2)), _
-                                 (cutoff * ((Height / 2) / 100)), (cutoff * ((Width / 2) / 100)))
-
-        For Each V In uuu
-            Volume.Add V
-        Next
-        uuu.Clear
-        Set uuu = Nothing
-
-
-      
-        Set uuu = CreateVolumeLanding(tmp, (cutoff / 4) * 3, Segments, pInnerRadius / 4, (cutoff * (Height / 100)), (cutoff * (Width / 100)))
-       ' Set uuu = CreateVolumeLanding(tmp, cutoff, Segments, cutoff / 4, (cutoff * (Height / 100)), (cutoff * (Width / 100)))
-        
-        For Each V In uuu
-
-'            Set v.Point1 = VectorRotateAxis(v.Point1, MakePoint(0, (PI / 2), 0))
-'            Set v.Point2 = VectorRotateAxis(v.Point2, MakePoint(0, (PI / 2), 0))
-'            Set v.Point3 = VectorRotateAxis(v.Point3, MakePoint(0, (PI / 2), 0))
-
-            Volume.Add V
-        Next
-        uuu.Clear
-        Set uuu = Nothing
-                
-'        Set uuu = CreateVolumeFace(tmp, MakePoint((cutoff / 3), 0, -(cutoff / 3)), _
-'                                MakePoint(-(cutoff / 3), 0, -(cutoff / 3)), _
-'                                MakePoint(-(cutoff / 3), 0, (cutoff / 3)), _
-'                                MakePoint((cutoff / 3), 0, (cutoff / 3)), _
-'                                ((cutoff / 1.5) * ((Size.Width / 2) / 100)), ((cutoff / 1.5) * ((Size.Height / 2) / 100)))
+            Set m = CreateMoleculeLanding(tmp, OuterEdge, Segments, 0, Size.Width, Size.Height)
+            
+            Volume.Clear
+            For Each V In m.Volume
+                Volume.Add V
+            Next
+            m.Volume.Clear
+            Set m = Nothing
 '
-'        For Each v In uuu
+'                        Set m = CreateMoleculeFace(tmp, _
+'                                                    MakePoint((OuterEdge / 2), 0, -(OuterEdge / 2)), _
+'                                                    MakePoint(-(OuterEdge / 2), 0, -(OuterEdge / 2)), _
+'                                                    MakePoint(-(OuterEdge / 2), 0, (OuterEdge / 2)), _
+'                                                    MakePoint((OuterEdge / 2), 0, (OuterEdge / 2)), _
+'                                                    (OuterEdge * ((Size.Width / 2) / 100)), (OuterEdge * ((Size.Height / 2) / 100)))
 '
-''            Set v.Point1 = VectorRotateAxis(v.Point1, MakePoint(0, (PI / 2), 0))
-''            Set v.Point2 = VectorRotateAxis(v.Point2, MakePoint(0, (PI / 2), 0))
-''            Set v.Point3 = VectorRotateAxis(v.Point3, MakePoint(0, (PI / 2), 0))
-'
-'            Volume.Add v
-'        Next
-'        uuu.Clear
-'        Set uuu = Nothing
+'            For Each V In m.Volume
+'                Volume.Add V
+'            Next
+'            m.Volume.Clear
+'            Set m = Nothing
+
+        ElseIf PlateauDoughnut() Then 'doughnut
+
+            Set m = CreateMoleculeLanding(tmp, OuterEdge, Segments, InnerEdge, Size.Width, Size.Height)
+            
+            Volume.Clear
+            For Each V In m.Volume
+                Volume.Add V
+            Next
+            m.Volume.Clear
+            Set m = Nothing
+                            
+                        
+        ElseIf PlateauHole Then 'hole
+        
+            Volume.Clear
+
+            useSize = Far '10 * MILE
+
+            Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
+
+            For Each V In m.Volume
+                Volume.Add V
+            Next
+            m.Volume.Clear
+            Set m = Nothing
+            
+            Set m = CreateMoleculeLanding(tmp, useSize, Segments, InnerEdge, Size.Width, Size.Height)
+
+
+            For Each V In m.Volume
+                Volume.Add V
+            Next
+            m.Volume.Clear
+            Set m = Nothing
+                        
+                        
+        ElseIf PlateauInfinite Then 'stretched texture island
+
+            Volume.Clear
+    
+            useSize = Far
+
+            Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
+
+            For Each V In m.Volume
+                Volume.Add V
+            Next
+            m.Volume.Clear
+            Set m = Nothing
+                            
+        End If
+
 
     End If
+    
 
 End Sub
 
@@ -491,12 +584,14 @@ End Sub
 Private Sub Class_Initialize()
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
     Key = "K" & ObjPtr(Me)
+    ReDim pFileIndex(0 To 0) As Long
 End Sub
 
 Private Sub Class_Terminate()
-    If Key <> "" Then
-        If Planets.Exists(Key) Then Planets.Remove Key
-    End If
+    Erase pFileIndex
+'    If Key <> "" Then
+'        If Planets.Exists(Key) Then Planets.Remove Key
+'    End If
     Set pColor = Nothing
 End Sub
 
