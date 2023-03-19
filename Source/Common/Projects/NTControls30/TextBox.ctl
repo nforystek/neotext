@@ -153,6 +153,9 @@ Private pPasswordChar As String
 Private pGreyNoTextMsg As String
 Private pPageBreaks() As Long
 Private pColorRecords() As ColorRange
+Private pBorderStyle As Integer
+Private pAppearance As Integer
+
 
 Private pOldProc As Long
 
@@ -933,9 +936,14 @@ Private Function VisibleRange(Optional ByVal StartingLine As Long = -1) As Range
         If StartingLine = -1 Then
             StartingLine = LineFirstVisible
         End If
-        .StartPos = pText.poll(Asc(vbLf), StartingLine) 'pText.Offset(StartingLine) '
-        If .StartPos > 0 Then .StartPos = .StartPos + 1
-        .StopPos = pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1) 'pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight))
+        
+'        .StartPos = pText.poll(Asc(vbLf), StartingLine)
+'        If .StartPos > 0 Then .StartPos = .StartPos + 1
+'        .StopPos = pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1)
+
+        .StartPos = pText.Offset(StartingLine + 1)
+        .StopPos = pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight) + 1)
+
     End With
 End Function
 

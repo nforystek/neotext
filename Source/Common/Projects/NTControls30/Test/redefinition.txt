@@ -1,0 +1,38 @@
+SoSweet - A grammar markup language, whitespace definition for color coding text.
+
+
+Statement overview
+
+In every interpretation of the languages code, at nothing, everything is whitespace except for those truths defined by the following statements;
+
+letter
+digit
+word
+
+In each context of the above statements their plural form also exists, meerly extending their application to use, without having to repeat the word per entry following the statement;
+
+letters
+digits
+words
+
+Digit, word and letter statements may be used anywhere, but the heart of the markup, is the color statement;
+
+color
+
+The color statement must come before or after any statement applicable, and must be used therefore consideredably applies to the respective statement it is coupled with.
+
+Hoop, loop, ream and wrap are statements with a color exception, color may only occur before a hoop and ream, not after, likewise only after a loop and wrap, not before;
+
+hoop loop
+ream wrap
+
+Hoop and loop are tandem statements, in a one (hoop) to many (loop) relationship.  Ream and wrap are also tandem statements, in a many (ream) to one (wrap relationship.
+
+Inside any tandem statements are allowed the push and mush statement, and not allowed otherwise outside;
+
+push
+mush
+
+Push and mush are statements used to escalate and depress the color applied over the backdrop surrounding backdrop, so long as their following non whitespace and coupled color definiton are satisified.
+
+

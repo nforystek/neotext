@@ -13,7 +13,7 @@ Public FileCount As Long
 Public Lights() As D3DLIGHT8
 Public LightCount As Long
 
-Private Mirrors As NTNodes10.Collection
+Private Mirrors As ntnodes10.Collection
 Public worldRotate As New Point
 
 Public Sub CreateProj()
@@ -182,7 +182,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
     Dim dist4 As Single
 
 
-    Dim V As Matter
+    Dim v As Matter
     Dim i As Long
     Dim Render As Boolean
 
@@ -196,12 +196,12 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
                         'If DistanceEx(MoleculeView.Origin, p.Origin) <  p.OuterEdge Then
 
-                            dist = Distance(p.Origin.x, 0, p.Origin.z, 0, MoleculeView.Origin.Y, 0)
+                            dist = Distance(p.Origin.x, 0, p.Origin.z, 0, MoleculeView.Origin.y, 0)
                             If dist < p.OuterEdge Then
                                 If dist > (p.OuterEdge / 4) Then
                                     SetRenderBlends False, True
 
-                                    dist = 1 - (1 * ((MoleculeView.Origin.Y - (p.OuterEdge / 4)) / (p.OuterEdge - (p.OuterEdge / 4))))
+                                    dist = 1 - (1 * ((MoleculeView.Origin.y - (p.OuterEdge / 4)) / (p.OuterEdge - (p.OuterEdge / 4))))
                                     Render = True
                                    ' DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(dist, Planets(onKey).Color.Red, Planets(onKey).Color.Green, Planets(onKey).Color.Blue)
                                 Else
@@ -314,7 +314,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
     If lastOrigin Is Nothing Then
         Set lastOrigin = New Point
         lastOrigin.x = MoleculeView.Origin.x
-        lastOrigin.Y = MoleculeView.Origin.Y
+        lastOrigin.y = MoleculeView.Origin.y
         lastOrigin.z = MoleculeView.Origin.z
     End If
     
@@ -393,7 +393,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     'get running sums for universe calsulations
                     sum = sum + ((p.InnerEdge * 2) + (p.OuterEdge * 2))
                     If sumx < Abs(p.Origin.x) Then sumx = Abs(p.Origin.x)
-                    If sumy < Abs(p.Origin.Y) Then sumy = Abs(p.Origin.Y)
+                    If sumy < Abs(p.Origin.y) Then sumy = Abs(p.Origin.y)
                     If sumz < Abs(p.Origin.z) Then sumz = Abs(p.Origin.z)
                     
                     'distance to center of planet
@@ -496,7 +496,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     cnt = cnt + 1 'the number of total in plateau we are on
 
                     p.Scaled.z = 1
-                    p.Scaled.Y = p.Scaled.z
+                    p.Scaled.y = p.Scaled.z
                     p.Scaled.x = p.Scaled.z
 
 
@@ -552,23 +552,132 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                         Dim lineto As Point
                         'If (p.PlateauInfinite Or p.PlateauHole) Then 'first 12 triangles is the rolling backdrop
                             
-                            DDevice.SetRenderState D3DRS_ZENABLE, 0
-                            DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
-                                
-                            Dim testFar As Long
-                            testFar = Far '10 * MILE
-
+                        DDevice.SetRenderState D3DRS_ZENABLE, 0
+                        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
                             
-                            If (Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
+                        Dim testFar As Long
+                        testFar = Far '10 * MILE
+                        
+                        If (Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.y - p.Origin.y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
 
+                            D3DXMatrixIdentity matPlane
+                            D3DXMatrixIdentity matPos
+                            D3DXMatrixIdentity matYaw
+                            D3DXMatrixIdentity matPitch
+                            D3DXMatrixIdentity matRoll
+                            D3DXMatrixIdentity matScale
+                        
+                            D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.y, p.Origin.z
+                            D3DXMatrixMultiply matPlane, matPlane, matPos
+                            
+                            DDevice.SetTransform D3DTS_WORLD, matPlane
+    
+                            D3DXMatrixRotationZ matRoll, p.Rotate.z
+                            D3DXMatrixMultiply matPlane, matRoll, matPlane
+        
+                            D3DXMatrixRotationY matYaw, p.Rotate.y
+                            D3DXMatrixMultiply matPlane, matYaw, matPlane
+                            
+                            D3DXMatrixRotationX matPitch, p.Rotate.x
+                            D3DXMatrixMultiply matPlane, matPitch, matPlane
+                            
+                            D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                            D3DXMatrixMultiply matPlane, matScale, matPlane
+        
+                            DDevice.SetTransform D3DTS_WORLD, matPlane
+
+                            With p.Volume((p.Volume.Count / 3) + 1)
+
+                                SetRenderBlends .Transparent, .Translucent
+                                If Not (.Translucent Or .Transparent) Then
+                                    DDevice.SetMaterial GenericMaterial
+                                    If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                    DDevice.SetTexture 1, Nothing
+                                Else
+                                    DDevice.SetMaterial LucentMaterial
+                                    If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                    DDevice.SetMaterial GenericMaterial
+                                    If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
+                                End If
+                                DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, ((p.Volume.Count / 3) * 2), VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
+
+                            End With
+
+                        Else
+                            If Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.y - p.Origin.y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
+
+                                If ((p.Rows > 0) And (p.Columns > 0)) And (p.PlateauIsland Or p.PlateauDoughnut) Then
+                        
+                                    Dim j As Long
+                                    Dim x As Single
+                                    Dim z As Single
+                                    x = ((p.Rows \ 2) * (p.OuterEdge * 2))
+                                    z = ((p.Columns \ 2) * (p.OuterEdge * 2))
+   
+                                    For j = 0 To ((p.Rows * p.Columns) - 1)
+                        
+                                        If j Mod p.Columns = 0 Then
+                                            z = z - (p.OuterEdge * 2)
+                                            x = -((p.Rows \ 2) * (p.OuterEdge * 2))
+                                        Else
+                                            x = x + (p.OuterEdge * 2)
+                                        End If
+                                        
+                                        With p.Volume(1)
+                                            D3DXMatrixIdentity matPlane
+                                            D3DXMatrixIdentity matPos
+                                            D3DXMatrixIdentity matYaw
+                                            D3DXMatrixIdentity matPitch
+                                            D3DXMatrixIdentity matRoll
+                                            D3DXMatrixIdentity matScale
+                                            
+                                            D3DXMatrixTranslation matPos, (p.Origin.x \ (testFar / 2)) * (testFar / 2) + x, _
+                                                (p.Origin.y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
+                                            D3DXMatrixMultiply matPlane, matPlane, matPos
+                        
+                                            DDevice.SetTransform D3DTS_WORLD, matPlane
+                        
+                                            D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                            D3DXMatrixMultiply matPlane, matRoll, matPlane
+                        
+                                            D3DXMatrixRotationY matYaw, p.Rotate.y
+                                            D3DXMatrixMultiply matPlane, matYaw, matPlane
+                        
+                                            D3DXMatrixRotationX matPitch, p.Rotate.x
+                                            D3DXMatrixMultiply matPlane, matPitch, matPlane
+                        
+                                            D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                                            D3DXMatrixMultiply matPlane, matScale, matPlane
+                                                    
+                                            DDevice.SetTransform D3DTS_WORLD, matPlane
+                
+                                            SetRenderBlends .Transparent, .Translucent
+                                            If Not (.Translucent Or .Transparent) Then
+                                                DDevice.SetMaterial GenericMaterial
+                                                If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                                DDevice.SetTexture 1, Nothing
+                                            Else
+                                                DDevice.SetMaterial LucentMaterial
+                                                If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                                DDevice.SetMaterial GenericMaterial
+                                                If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
+                                            End If
+                                            DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
+    
+                                        End With
+                        
+                                    Next
+                                
+                                End If
+                                
                                 D3DXMatrixIdentity matPlane
                                 D3DXMatrixIdentity matPos
                                 D3DXMatrixIdentity matYaw
                                 D3DXMatrixIdentity matPitch
                                 D3DXMatrixIdentity matRoll
                                 D3DXMatrixIdentity matScale
-                            
-                                D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.Y, p.Origin.z
+                                                
+                                D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.y, p.Origin.z
                                 D3DXMatrixMultiply matPlane, matPlane, matPos
                                 
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -576,19 +685,19 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                 D3DXMatrixRotationZ matRoll, p.Rotate.z
                                 D3DXMatrixMultiply matPlane, matRoll, matPlane
             
-                                D3DXMatrixRotationY matYaw, p.Rotate.Y
+                                D3DXMatrixRotationY matYaw, p.Rotate.y
                                 D3DXMatrixMultiply matPlane, matYaw, matPlane
                                 
                                 D3DXMatrixRotationX matPitch, p.Rotate.x
                                 D3DXMatrixMultiply matPlane, matPitch, matPlane
                                 
-                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.Y, p.Scaled.z
+                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
                                 D3DXMatrixMultiply matPlane, matScale, matPlane
             
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
-
-                                With p.Volume((p.Volume.Count / 3) + 1)
-
+                        
+                                With p.Volume(1)
+            
                                     SetRenderBlends .Transparent, .Translucent
                                     If Not (.Translucent Or .Transparent) Then
                                         DDevice.SetMaterial GenericMaterial
@@ -600,169 +709,59 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                         DDevice.SetMaterial GenericMaterial
                                         If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                                     End If
-                                    DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, ((p.Volume.Count / 3) * 2), VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
+                                    DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
 
                                 End With
 
-                            Else
-                                If Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
+                            ElseIf (p.PlateauInfinite Or p.PlateauHole) Then
+                            
+                                D3DXMatrixIdentity matPlane
+                                D3DXMatrixIdentity matPos
+                                D3DXMatrixIdentity matYaw
+                                D3DXMatrixIdentity matPitch
+                                D3DXMatrixIdentity matRoll
+                                D3DXMatrixIdentity matScale
 
-                                    If ((p.Rows > 0) And (p.Columns > 0)) And (p.PlateauIsland Or p.PlateauDoughnut) Then
-                            
-                                        Dim j As Long
-                                        Dim x As Single
-                                        Dim z As Single
-                                        x = ((p.Rows \ 2) * (p.OuterEdge * 2))
-                                        z = ((p.Columns \ 2) * (p.OuterEdge * 2))
-       
-                                        For j = 0 To ((p.Rows * p.Columns) - 1)
-                            
-                                            If j Mod p.Columns = 0 Then
-                                                z = z - (p.OuterEdge * 2)
-                                                x = -((p.Rows \ 2) * (p.OuterEdge * 2))
-                                            Else
-                                                x = x + (p.OuterEdge * 2)
-                                            End If
-                                            
-                                            With p.Volume(1)
-                                                D3DXMatrixIdentity matPlane
-                                                D3DXMatrixIdentity matPos
-                                                D3DXMatrixIdentity matYaw
-                                                D3DXMatrixIdentity matPitch
-                                                D3DXMatrixIdentity matRoll
-                                                D3DXMatrixIdentity matScale
-                                                
-                                                D3DXMatrixTranslation matPos, (p.Origin.x \ (testFar / 2)) * (testFar / 2) + x, _
-                                                    (p.Origin.Y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
-                                                D3DXMatrixMultiply matPlane, matPlane, matPos
-                            
-                                                DDevice.SetTransform D3DTS_WORLD, matPlane
-                            
-                                                D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                                D3DXMatrixMultiply matPlane, matRoll, matPlane
-                            
-                                                D3DXMatrixRotationY matYaw, p.Rotate.Y
-                                                D3DXMatrixMultiply matPlane, matYaw, matPlane
-                            
-                                                D3DXMatrixRotationX matPitch, p.Rotate.x
-                                                D3DXMatrixMultiply matPlane, matPitch, matPlane
-                            
-                                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.Y, p.Scaled.z
-                                                D3DXMatrixMultiply matPlane, matScale, matPlane
-                                                        
-                                                DDevice.SetTransform D3DTS_WORLD, matPlane
-                    
-                                                SetRenderBlends .Transparent, .Translucent
-                                                If Not (.Translucent Or .Transparent) Then
-                                                    DDevice.SetMaterial GenericMaterial
-                                                    If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                                    DDevice.SetTexture 1, Nothing
-                                                Else
-                                                    DDevice.SetMaterial LucentMaterial
-                                                    If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                                    DDevice.SetMaterial GenericMaterial
-                                                    If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
-                                                End If
-                                                DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-        
-                                            End With
-                            
-                                        Next
-                                    
-                                    End If
-                                    
-                                    D3DXMatrixIdentity matPlane
-                                    D3DXMatrixIdentity matPos
-                                    D3DXMatrixIdentity matYaw
-                                    D3DXMatrixIdentity matPitch
-                                    D3DXMatrixIdentity matRoll
-                                    D3DXMatrixIdentity matScale
-                                                    
-                                    D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.Y, p.Origin.z
-                                    D3DXMatrixMultiply matPlane, matPlane, matPos
-                                    
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
-            
-                                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                    D3DXMatrixMultiply matPlane, matRoll, matPlane
-                
-                                    D3DXMatrixRotationY matYaw, p.Rotate.Y
-                                    D3DXMatrixMultiply matPlane, matYaw, matPlane
-                                    
-                                    D3DXMatrixRotationX matPitch, p.Rotate.x
-                                    D3DXMatrixMultiply matPlane, matPitch, matPlane
-                                    
-                                    D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.Y, p.Scaled.z
-                                    D3DXMatrixMultiply matPlane, matScale, matPlane
-                
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
-                            
-                                    With p.Volume(1)
-                
-                                        SetRenderBlends .Transparent, .Translucent
-                                        If Not (.Translucent Or .Transparent) Then
-                                            DDevice.SetMaterial GenericMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                            DDevice.SetTexture 1, Nothing
-                                        Else
-                                            DDevice.SetMaterial LucentMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                            DDevice.SetMaterial GenericMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
-                                        End If
-                                        DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-    
-                                    End With
-
-                                ElseIf (p.PlateauInfinite Or p.PlateauHole) Then
+                                D3DXMatrixTranslation matPos, ((Camera.Player.Origin.x - p.Origin.x) \ (testFar / 2)) * (testFar / 2), _
+                                     (p.Origin.y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
+                                D3DXMatrixMultiply matPlane, matPlane, matPos
                                 
-                                    D3DXMatrixIdentity matPlane
-                                    D3DXMatrixIdentity matPos
-                                    D3DXMatrixIdentity matYaw
-                                    D3DXMatrixIdentity matPitch
-                                    D3DXMatrixIdentity matRoll
-                                    D3DXMatrixIdentity matScale
-
-                                    D3DXMatrixTranslation matPos, ((Camera.Player.Origin.x - p.Origin.x) \ (testFar / 2)) * (testFar / 2), _
-                                         (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
-                                    D3DXMatrixMultiply matPlane, matPlane, matPos
-                                    
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
+                                DDevice.SetTransform D3DTS_WORLD, matPlane
+        
+                                D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                D3DXMatrixMultiply matPlane, matRoll, matPlane
             
-                                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                    D3DXMatrixMultiply matPlane, matRoll, matPlane
-                
-                                    D3DXMatrixRotationY matYaw, p.Rotate.Y
-                                    D3DXMatrixMultiply matPlane, matYaw, matPlane
-                                    
-                                    D3DXMatrixRotationX matPitch, p.Rotate.x
-                                    D3DXMatrixMultiply matPlane, matPitch, matPlane
-                                    
-                                    D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.Y, p.Scaled.z
-                                    D3DXMatrixMultiply matPlane, matScale, matPlane
-                
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
-                            
-                                    With p.Volume(1)
-                
-                                        SetRenderBlends .Transparent, .Translucent
-                                        If Not (.Translucent Or .Transparent) Then
-                                            DDevice.SetMaterial GenericMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                            DDevice.SetTexture 1, Nothing
-                                        Else
-                                            DDevice.SetMaterial LucentMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                            DDevice.SetMaterial GenericMaterial
-                                            If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
-                                        End If
-                                        DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-    
-                                    End With
-                                End If
+                                D3DXMatrixRotationY matYaw, p.Rotate.y
+                                D3DXMatrixMultiply matPlane, matYaw, matPlane
+                                
+                                D3DXMatrixRotationX matPitch, p.Rotate.x
+                                D3DXMatrixMultiply matPlane, matPitch, matPlane
+                                
+                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                                D3DXMatrixMultiply matPlane, matScale, matPlane
+            
+                                DDevice.SetTransform D3DTS_WORLD, matPlane
+                        
+                                With p.Volume(1)
+            
+                                    SetRenderBlends .Transparent, .Translucent
+                                    If Not (.Translucent Or .Transparent) Then
+                                        DDevice.SetMaterial GenericMaterial
+                                        If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                        DDevice.SetTexture 1, Nothing
+                                    Else
+                                        DDevice.SetMaterial LucentMaterial
+                                        If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                        DDevice.SetMaterial GenericMaterial
+                                        If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
+                                    End If
+                                    DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
 
-
+                                End With
                             End If
+
+
+                        End If
 
                     End If
 
@@ -827,7 +826,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
         'reset lastorigin value to current for next time
         lastOrigin.x = MoleculeView.Origin.x
-        lastOrigin.Y = MoleculeView.Origin.Y
+        lastOrigin.y = MoleculeView.Origin.y
         lastOrigin.z = MoleculeView.Origin.z
         
         DDevice.SetRenderState D3DRS_ZENABLE, 1
@@ -2646,7 +2645,7 @@ Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As B
         If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     End If
 End Sub
-Private Sub BackOfTheLine(ByRef line As NTNodes10.Collection)
+Private Sub BackOfTheLine(ByRef line As ntnodes10.Collection)
     Dim Key As String
     Dim Obj As Object
     Key = line.Key(1)

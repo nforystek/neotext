@@ -1,0 +1,60 @@
+Option Explicit
+'TOP DOWN
+
+Public Function CreateList(Optional ByRef MemorySize As Long) As Node ' _
+Creates a new node list, and returns the Node object identifying that list.  Node objects are not creatable by themselves, you must use this function to make create them.
+    Set CreateList = New Node
+End Function
+
+Public Sub SaveList(ByRef Node As Node, Optional ByVal FileName As String, Optional ByVal Clear As Boolean = False)
+    Node.Save FileName, Clear
+End Sub
+
+Public Sub LoadList(ByRef Node As Node, Optional ByVal FileName As String, Optional ByVal Clear As Boolean = False)
+    Node.Load FileName, Clear
+End Sub
+
+Public Function NodeExists(ByRef Node As Node) As Boolean ' _
+Checks the existance of a node or node list with the specified lsit.
+    If Not Node Is Nothing Then
+        NodeExists = Node.Exists
+    End If
+End Function
+
+Public Sub DisposeList(ByRef Node As Node) ' _
+Destroies all nodes with in the specified node list, unlike the Clear function in the Node object, this will also set the node to Nothing.
+    If Not Node Is Nothing Then
+        Node.Clear
+        Set Node = Nothing
+    End If
+End Sub
+
+Public Sub Remove(ByRef Node As Node) ' _
+Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
+    Node.Remove
+End Sub
+
+Public Sub Append(ByRef Node As Node) ' _
+Adds a node to the end of the list, the point location reflects the new node after Append is called.
+    Node.Append
+End Sub
+
+Public Sub Delete(ByRef Node As Node) ' _
+Deletes the node that is located at the current point in the list.
+    Node.Delete
+End Sub
+
+Public Sub Insert(ByRef Node As Node) ' _
+Inserts a node at the current point in the list.  Nodes can be added to the end by using the Append function.
+    Node.Insert
+End Sub
+
+Public Sub Forward(ByRef Node As Node) ' _
+Moves to the next node in the list.  This function projects along with backward if it is called infrequent to backward.  At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists.
+    Node.Forward
+End Sub
+
+Public Sub Backward(ByRef Node As Node) ' _
+Moves to the prior node in the list.  This function projects along with forward if it is called infrequent to forward.  At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists.
+    Node.Backward
+End Sub

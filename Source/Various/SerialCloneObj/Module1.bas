@@ -51,6 +51,7 @@ Public Sub Main()
 
     Dim lSize As Long 'get the objects size
     lSize = GlobalSize(ObjPtr(try))
+Debug.Print GlobalFlags(ObjPtr(try))
 
     Dim hMem As Long 'allocate new memory for another object
     hMem = GlobalAlloc(GlobalFlags(ObjPtr(try)), lSize)
@@ -79,7 +80,7 @@ Public Sub Main()
     
     Dim filenum As Integer
     filenum = FreeFile
-    Open App.Path & "\Serial.obj" For Binary As #FreeFile Len = lSize
+    Open App.Path & "\Serial.object" For Binary As #FreeFile Len = lSize
     
     ReDim indata(0 To lSize - 1) As Byte 'we need to move the memoryy into a byte array
     RtlMoveMemory ByVal VarPtr(indata(0)), ByVal hMem, lSize
@@ -96,7 +97,7 @@ Public Sub Main()
     hMem2 = GlobalAlloc(GlobalFlags(ObjPtr(try)), FileLen(App.Path & "\Serial.obj"))
     
     'then load it back up into a byte array first
-    Open App.Path & "\Serial.obj" For Binary As #FreeFile Len = lSize
+    Open App.Path & "\Serial.object" For Binary As #FreeFile Len = lSize
     ReDim indata(0 To lSize - 1) As Byte ' no "preserve" keyword
     Get filenum, 1, indata
     Close filenum
@@ -104,7 +105,7 @@ Public Sub Main()
     RtlMoveMemory ByVal hMem2, ByVal VarPtr(indata(0)), lSize 'move it into a handle
     
     'clean up the serialized obj
-    Kill App.Path & "\Serial.obj"
+    'Kill App.Path & "\Serial.obj"
     Erase indata
 
     'set a reference to the new object memory

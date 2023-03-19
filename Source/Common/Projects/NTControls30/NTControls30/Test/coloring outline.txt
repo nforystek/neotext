@@ -1,0 +1,72 @@
+
+
+
+
+occurs a change in text verses cached load
+	when filename is active stream to text
+	load cache to file coloring oppostunity
+	when no filename still maintain cache
+
+
+occurs a change in file verses cached load
+
+	when filename is active stream file to
+	load cache and the coloring opportunity
+	*no condition with out filename active
+
+
+occurs a change by keys verses chched load
+
+
+	always color basis of single line
+	when filename is active stream to file
+	when a paste occurs then start timer
+		normal routine viisble is first
+		in timer fucntion then pre/post
+
+
+	
+
+
+
+
+sets a text
+	remove activity of file and only cache
+	color new text by start timer fucntion
+
+
+sets a file
+	add file that caches contents coloring
+	and close mimicing it still open if the
+	filename proeprty is still set to file
+	start timer in to load file cache and
+	have the watching changes both ways tap
+	on reopen to write or load cache copy
+
+
+
+timer function
+		stream text in by part per timer
+
+		upon visble rnage cover do color
+
+		when full text had been loaded
+
+			swap to color pre & post view range
+			straming same rate just one to next
+
+		when all range is covered colored
+
+			stop the timer close file but keep
+			file name so ti's active like edit
+
+		
+
+	timer does visible range coloring if always as first
+	as streaming is loaded and onyl not all visible if it
+	is a single line chagne with no added or removed lines
+
+
+
+
+

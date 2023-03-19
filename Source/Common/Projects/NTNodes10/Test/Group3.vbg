@@ -1,0 +1,3 @@
+VBGROUP 5.0
+StartupProject=TestNodes.vbp
+Project=..\..\NTNodes10.vbp

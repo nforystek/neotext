@@ -1,0 +1,3 @@
+VBGROUP 5.0
+Project=..\..\NTCipher10.vbp
+StartupProject=Project1.vbp

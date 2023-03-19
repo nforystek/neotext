@@ -1,0 +1,147 @@
+SoSweet's a whitespace language most comparable to markups or styling type of interest, absent the ability of actual change of anything it is presented.  The actual stance of whether it should carry the qualities of such was given very close and careful thought and decided on never, for the sake of code and text in a real world situation of the author of bad news, will never thy alter (not even case sensitivity).  It's simply, for lack of a better understanding, color coding of foreground text.  The idea is for a cover all purpose, but not present all purposed with-in the realm of language possibilities.  Standing out quite simply in underwrite it does nothing but occur in the white space around text and is with-in text uniformily. While may it be English or a computer language as part of the render, the realm of projecting langauge in flow is the colors ability.
+
+
+The indication that it may alter a word is creation of text in
+it at itself, thus even as little as an edit like a case letter correction where it isn't case sensitive is still alterations. Static state rendering possibilities (applied not in real time) of altering have context among the syntax abilities by example. Dynamic rendered altering (real time like many modern IDE's)
+has no place in implementation coloring a visual only feign.
+
+
+
+
+       SoSweet Block Breakdown                                              
+                                                            |
+                                                            | 
+          @      @          @                              -+-
+          |______|__________|_________________________[>]   |
+          |HOOPS |BLOCK MADE| OF POST TIME LINES
+          |      |          |
+       [>]|      |          |         ###  ##  ###
+          |      |          |
+          |      |EACH HOOP |LINE FISHTALES FROM RIGHT
+          |      |TO LEFT AN|D UP CARRIES ALL NOTATION
+          |      -----------|------------------------@[>]
+          |                 |
+       [>]| ## ##           |      ###    ##
+          |                 |
+          |     ENTIRE BLOCK| WITH NOTATIONS MISED IN
+          |     LINES HAPPEN|S ALL STILL ACT OCCURING
+          -------------------------------------------@[>]
+                            |
+       [>]   ####     ###   |    ##          ###
+                            |
+               NOTATIONS MAY| HAPPEN BETWEEN OF HOOPS
+               THESE CAN FAL|L IN MIDDLE OF A HOOP AS
+               HOOPS THEMSEL|VES MAY NOT HAPPEN ORDER
+                            |
+       [>]     ####         |       ####
+   |                        |
+   |                        -------------------------@[>]
+  -+-          &&&
+   |      ______|_____________________________________[>]
+   |      REAMS |BLOCK MADE OF PRE TIME LINES
+                |      
+       [>]      |   %%     % %%%     %%   %
+                |  
+          REAMS |VERY MUCH SIMILAR AND EXACT IN SYNTAX
+          NATURE| THE SAME AS HOOPS ONLY A SECOND HALF
+          OF THE| DOCUMENT KEEP A PERSISTANT HAPPENING
+                |
+       [>]  %%  |       %%       %%    %%
+                |
+                -------------------------------------&[>]
+          HOOPS APP|EAR AT |TOP HALF BUT FUNCTION LIKE
+          HOOKING A|N ENTIR|E DOCUMENT FROM BOTTOM TO
+          TOP AND D|IFFEREN|T IN NOTION COLLECTION TOO
+                   |       |
+       [>] %%  %%  |  %%   |    %%  %% %%%%    %% 
+                   |       |
+       [>] %%%     |       --------------------------&[>]
+                   |
+       [>]   %%    |   %%          %%  % %%
+                   |
+          SYNTAX FL|OW IS EXACTLY THE SAME AS HOOPS
+          BUT REAMS| LINE STEP INSTRUCT UNLIKE HOOP
+          AT WHOLE |DOCUMENT WHILE NOTATIONS MIXING       
+                   |                                    
+                   |                                         
+                   ----------------------------------&[>]   
+                                                            | 
+                                                            |
+          (2016 Neotext)                               -----+
+                                                      
+                                                          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

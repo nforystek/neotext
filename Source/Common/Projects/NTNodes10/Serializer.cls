@@ -14,7 +14,12 @@ Attribute VB_Exposed = True
 Option Explicit
 'This object attempts to Serialize any object passed to the Serialize function into XML
 'and Deserialize it to an object again with the Deserialize function, optionally specifying a
-'Library if know, it makes things easier for debugging.  It handles collections and nesting too.
+'Library if know, it makes things easier for debugging.  It handles collections and nesting
+'objects too. It is not true Serialization in that it does not intent to save functional code.
+'
+'If a Seralize or ToString property exist on the object as a boolean, it will use the value
+'to determine selective serializing, skipping the object if false.  If either Serialize or
+'the ToString function exists as read/write strings, it will use is as the serialized obj.
 
 Private Const Dent As String = "  "
 Private Indent As String

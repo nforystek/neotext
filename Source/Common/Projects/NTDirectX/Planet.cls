@@ -320,7 +320,7 @@ Private Sub RebuildPlanet()
                     
     Dim m As Molecule
     Dim uuu As Volume
-    Dim V As Matter
+    Dim v As Matter
     Dim p1 As Point
     Dim p2 As Point
     Dim p3 As Point
@@ -366,8 +366,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -383,8 +383,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -401,8 +401,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -419,8 +419,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -437,8 +437,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -454,8 +454,8 @@ Private Sub RebuildPlanet()
 
                   Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
 
-                  For Each V In uuu
-                      Volume.Add V
+                  For Each v In uuu
+                      Volume.Add v
                   Next
                   uuu.Clear
                   Set uuu = Nothing
@@ -503,8 +503,8 @@ Private Sub RebuildPlanet()
             Set m = CreateMoleculeLanding(tmp, OuterEdge, Segments, 0, Size.Width, Size.Height)
             
             Volume.Clear
-            For Each V In m.Volume
-                Volume.Add V
+            For Each v In m.Volume
+                Volume.Add v
             Next
             m.Volume.Clear
             Set m = Nothing
@@ -527,8 +527,8 @@ Private Sub RebuildPlanet()
             Set m = CreateMoleculeLanding(tmp, OuterEdge, Segments, InnerEdge, Size.Width, Size.Height)
             
             Volume.Clear
-            For Each V In m.Volume
-                Volume.Add V
+            For Each v In m.Volume
+                Volume.Add v
             Next
             m.Volume.Clear
             Set m = Nothing
@@ -542,8 +542,8 @@ Private Sub RebuildPlanet()
 
             Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
 
-            For Each V In m.Volume
-                Volume.Add V
+            For Each v In m.Volume
+                Volume.Add v
             Next
             m.Volume.Clear
             Set m = Nothing
@@ -551,8 +551,8 @@ Private Sub RebuildPlanet()
             Set m = CreateMoleculeLanding(tmp, useSize, Segments, InnerEdge, Size.Width, Size.Height)
 
 
-            For Each V In m.Volume
-                Volume.Add V
+            For Each v In m.Volume
+                Volume.Add v
             Next
             m.Volume.Clear
             Set m = Nothing
@@ -566,8 +566,8 @@ Private Sub RebuildPlanet()
 
             Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
 
-            For Each V In m.Volume
-                Volume.Add V
+            For Each v In m.Volume
+                Volume.Add v
             Next
             m.Volume.Clear
             Set m = Nothing

@@ -1,0 +1,177 @@
+
+bindings {
+	UP = [Player.Rotate.X=Player.Rotate.X-0.1]
+	DOWN = [Player.Rotate.X=Player.Rotate.X+0.1]
+	LEFT = [Player.Rotate.Y=Player.Rotate.Y+0.1]
+	RIGHT = [Player.Rotate.Y=Player.Rotate.Y-0.1]
+
+	PGUP = [If Player.Offset.Z>0 then Player.Offset.Z=Player.Offset.Z-0.01]
+	PGDN = [Player.Offset.Z=Player.Offset.Z+0.01]
+
+	E = [Player.MoveForward 0.1, 0.5]
+	D = [Player.MoveBackward 0.1, 0.5]
+	W = [Player.MoveLeft 0.1, 0.5]
+	R = [Player.MoveRight 0.1, 0.5]
+	S = [Player.MoveUp 0.1, 0.5]
+	F = [Player.MoveDown 0.1, 0.5]
+
+	.Controller = Trapping
+	.Serialize=false
+}
+
+plane {
+	.Form = World
+	.File = "Sky\top.bmp"
+	.File = "Sky\back.bmp"
+	.File = "Sky\left.bmp"
+	.File = "Sky\front.bmp"
+	.File = "Sky\right.bmp"
+	.File = "Sky\bottom.bmp"
+	.Visible=true
+}
+brilliant
+{
+	.Illumine = Point
+	.ambience = [ 1, 1, 1, 1]
+	.diffuse = [ .1, 1, 1, 1]
+	.Rotate =[0,-1, 0]
+	.range =1000
+	.attenuation = [ 0, 0.005, 0]
+	.Origin =[ 0, 0, 0]
+	.enabled=true
+	.sunlight=true
+	.Serialize=false
+}
+
+molecule <Rock> {
+	.Origin.Z=0
+	.Range =1
+	.File = "Box\Box.x"
+	.offset.x=1
+	.scaled.x=.8
+	.scaled.y=.8
+	.scaled.z=.8
+	activity {
+		.Action = Rotate
+		.Axis = [ 0,-0.6,0 ]
+		.recount = -1
+		.emphasis = 1
+	}
+	OnInRange [ <Arm>
+		'pullarm
+
+	]
+	.Relative =true
+
+}
+molecule <Rock2> {
+	.Origin.Z=0
+	.Range =1
+	.File = "Box\Box2.x"
+	.offset.x=4
+	.scaled.x=.8
+	.scaled.y=.8
+	.scaled.z=.8
+	activity {
+		.Action = Rotate
+		.Axis = [ 0,0.6,0 ]
+		.recount = -1
+		.emphasis = 1
+	}
+	OnInRange [ <Arm>
+		pusharm
+
+	]
+	.Relative =true
+
+}
+molecule <Arm> {
+	.file = "Harddrive\arm.x"
+	.Visible=true
+	.range =3
+	.origin.z=-4
+	.origin.x=-.8
+	'.rotate.y=19
+	.rotate.y=338
+
+	activity {
+		.action = rotate
+		.axis = [ 0,-1,0 ]
+		.recount=-1
+		.emphasis = .5
+	}
+}
+method <pullarm> {
+	arm.activity.item(1).axis.y = -abs(arm.activity.item(1).axis.y)
+
+'		Arm.rotate.y=Arm.rotate.y-0.02
+'		'if Arm.rotate.y<338 then arm.rotate.y=338
+'		if Arm.rotate.y<0 then Arm.rotate.y = Arm.rotate.y+360
+}
+method <pusharm> {
+	arm.activity.item(1).axis.y = abs(arm.activity.item(1).axis.y)
+		'Arm.rotate.y=Arm.rotate.y+0.01
+		''if Arm.rotate.y>19 then arm.rotate.y=19	
+		'if Arm.rotate.y>360 then Arm.rotate.y =Arm.rotate.y-360
+}
+molecule <disc> {
+	.file = "Harddrive\disc.x"
+	.Visible=true
+	.origin.y=-.2
+	activity {
+		.action = rotate
+		.axis = [ 0,1,0 ]
+		.recount=-1
+		.emphasis = 4
+	}
+
+}
+molecule <disc2> {
+	.file = "Harddrive\disc.x"
+	.Visible=true
+	.origin.y=0
+	.relative=false
+	activity {
+		.action = rotate
+		.axis = [ 0,-1,0 ]
+		.recount=-1
+		.emphasis = 8
+	}
+
+}
+molecule <nonmoving> {
+	.file = "Harddrive\non-moving.x"
+	.Visible=true
+	.origin.z=-4
+	.origin.x=-.8
+
+}
+
+molecule <Player> {
+
+	.Origin = [ 0, 1, -6 ]
+	.Range = 0.1
+	.Relative =true
+
+	.Serialize=true
+}
+
+
+
+
+variable <data> = 9 
+Echo data
+
+
+serialize {
+	data
+}
+deserialize {
+	echo data
+}
+
+camera {
+	
+
+}
+Set Camera = Player

@@ -97,7 +97,7 @@ Private Declare Function SHGetFileInfo Lib "shell32" Alias "SHGetFileInfoA" (ByV
 
 Private Declare Function GetUserName Lib "advapi32" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
 Private Declare Function GetCompName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
-Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal path As String, ByVal cbBytes As Long) As Long
+Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal Path As String, ByVal cbBytes As Long) As Long
 
 Private Const TOKEN_QUERY = (&H8)
 Private Declare Function GetAllUsersProfileDirectory Lib "userenv" Alias "GetAllUsersProfileDirectoryA" (ByVal lpProfileDir As String, lpcchSize As Long) As Boolean
@@ -167,17 +167,17 @@ Public Function FolderQuoteName83(ByVal ShortPath As String) As String
     FolderQuoteName83 = """" & inDir & """"
 End Function
 
-Public Sub RemovePath(ByVal path As String, Optional ByRef FolderList As String)
+Public Sub RemovePath(ByVal Path As String, Optional ByRef FolderList As String)
     Dim nxt As String
     On Error Resume Next
-    nxt = Dir(path & "\*", vbDirectory)
+    nxt = Dir(Path & "\*", vbDirectory)
     If Err Then
         Err.Clear
-        Kill path
+        Kill Path
     Else
         Do Until nxt = ""
             If Not nxt = "." And Not nxt = ".." Then
-                FolderList = FolderList & path & "\" & nxt & vbCrLf
+                FolderList = FolderList & Path & "\" & nxt & vbCrLf
             End If
             nxt = Dir
         Loop
@@ -185,7 +185,7 @@ Public Sub RemovePath(ByVal path As String, Optional ByRef FolderList As String)
     Do Until FolderList = ""
         RemovePath RemoveNextArg(FolderList, vbCrLf), FolderList
     Loop
-    RmDir path
+    RmDir Path
 End Sub
 
 Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
@@ -213,7 +213,7 @@ Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As
     If (FindText <> "") Then
         On Error Resume Next
         'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
-
+0
             nxt = Dir(Replace(RootPath & "\", "\\", "\"), flags)
 
             If Err Then
@@ -285,9 +285,9 @@ End Function
 Public Function GetSystem32Folder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim ret As Long
+        Dim Ret As Long
         winDir = String(45, Chr(0))
-        ret = GetSystemDirectory(winDir, 45)
+        Ret = GetSystemDirectory(winDir, 45)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -297,9 +297,9 @@ End Function
 Public Function GetWindowsFolder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim ret As Long
+        Dim Ret As Long
         winDir = String(260, Chr(0))
-        ret = GetWindowsDirectory(winDir, 260)
+        Ret = GetWindowsDirectory(winDir, 260)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -309,10 +309,10 @@ End Function
 Public Function GetWindowsTempFolder(Optional ByVal UseWin As Boolean = False) As String
 
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(260, Chr(0))
-    ret = GetTempPath(260, winDir)
-    If (Not ((ret = 16) And UseWin)) And (Not ((ret = 34) And Not UseWin)) Then
+    Ret = GetTempPath(260, winDir)
+    If (Not ((Ret = 16) And UseWin)) And (Not ((Ret = 34) And Not UseWin)) Then
         If PathExists(GetWindowsFolder() + "TEMP") Then
             winDir = GetWindowsFolder() + "TEMP\"
         Else
@@ -651,16 +651,16 @@ Public Function MapPaths(Optional ByVal inRoot As String = "", Optional ByVal in
     MapPaths = outPath
 End Function
 
-Public Function MakeFolder(ByRef path As String)
+Public Function MakeFolder(ByRef Path As String)
     On Error Resume Next
-    If InStr(path, "\") > 0 Then
-        GetAttr Left(path, InStrRev(path, "\") - 1)
+    If InStr(Path, "\") > 0 Then
+        GetAttr Left(Path, InStrRev(Path, "\") - 1)
         If Err.Number = 76 Or Err.Number = 53 Then
             Err.Clear
-            MakeFolder = path
-            path = MakeFolder(Left(path, InStrRev(path, "\") - 1))
+            MakeFolder = Path
+            Path = MakeFolder(Left(Path, InStrRev(Path, "\") - 1))
         Else
-            MakeFolder = path
+            MakeFolder = Path
         End If
     End If
     If Err.Number = 0 Then
