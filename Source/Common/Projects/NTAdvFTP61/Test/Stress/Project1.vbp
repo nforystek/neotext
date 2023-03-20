@@ -1,0 +1,39 @@
+Type=Exe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{133D2769-1F54-417C-887A-F796487C154E}#3f3.0#0#..\..\..\..\Binary\NTAdvFTP61.dll#Neotext Advanced FTP Object 6.1
+Module=modDoTasks; ..\..\..\..\..\Shared\modDoTasks.bas
+Module=modCommon; ..\..\..\..\..\Shared\modCommon.bas
+Module=Module1; Module1.bas
+Module=modInput; ..\..\..\..\..\Shared\modInput.bas
+Startup="Sub Main"
+Command32=""
+CondComp="Project1=-1:VBIDE=-1:modDoTasks=-1:modCommon=-1:Module1=-1:modInput=-1"
+Name="Project1"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Computer Science"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+
+[MS Transaction Server]
+AutoRefresh=1
+[Neotext]
+CompCond="modDoTasks=-1:modCommon=-1:Module1=-1:modInput=-1"

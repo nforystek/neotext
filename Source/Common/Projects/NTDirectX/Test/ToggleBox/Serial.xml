@@ -1,5 +1,5 @@
 <Serial>
-<DateTime>12%2F24%2F2009+6%3A35%3A02+PM</DateTime>
+<DateTime>12%2F21%2F2009+9%3A38%3A37+PM</DateTime>
   <Molecules>
       <Item>
         <Key>Player</Key>
@@ -8,7 +8,7 @@
             <Orbit>%5B%5B0%2C+0%2C+0%5D%5B0%2C+0%2C+0%5D%5B0%2C+0%2C+0%5D%5B1%2C+1%2C+1%5D%5B0%2C+0%2C+0%2C+0%5D%5D</Orbit>
           </Relative>
           <Absolute>
-            <Orbit>%5B%5B%2D0%2E198813%2C+6%2E237013%2C+%2D0%2E403868%5D%5B0%2C+0%2C+0%5D%5B0%2E836%2C+%2D2%2E698%2C+0%5D%5B1%2C+1%2C+1%5D%5B0%2C+0%2C+0%2C+0%5D%5D</Orbit>
+            <Orbit>%5B%5B1%2E043901%2C+22%2E12166%2C+%2D13%2E77242%5D%5B0%2C+0%2C+0%5D%5B1%2E018%2C+%2D0%2E101%2C+0%5D%5B1%2C+1%2C+1%5D%5B0%2C+0%2C+0%2C+0%5D%5D</Orbit>
           </Absolute>
           <Key><String>Player</String></Key>
           <FileName><String>C%3A%5CDevelopment%5CNeotext%5CCommon%5CProjects%5CNTDirectX%5CTest%5CToggleBox%5CBox%5CBox%2Ex</String></FileName>
@@ -19,13 +19,13 @@
             <Molecules></Molecules>
           </Molecules>
           <Origin>
-            <Point>%5B%2D0%2E198813%2C+6%2E237013%2C+%2D0%2E403868%5D</Point>
+            <Point>%5B1%2E043901%2C+22%2E12166%2C+%2D13%2E77242%5D</Point>
           </Origin>
           <Offset>
             <Point>%5B0%2C+0%2C+0%5D</Point>
           </Offset>
           <Rotate>
-            <Point>%5B0%2E836%2C+%2D2%2E698%2C+0%5D</Point>
+            <Point>%5B1%2E018%2C+%2D0%2E101%2C+0%5D</Point>
           </Rotate>
           <Scaled>
             <Point>%5B1%2C+1%2C+1%5D</Point>
@@ -39,8 +39,8 @@
     </Molecules>
   <Camera>
 Set+Camera%2EPlayer+%3D+Molecules%28%22Player%22%29
-Camera%2EPlayer%2EOrigin%2EToString+%3D+%22%5B%2D0%2E198813%2C+6%2E237013%2C+%2D0%2E403868%5D%22
-Camera%2EPlayer%2ERotate%2EToString+%3D+%22%5B0%2E836%2C+%2D2%2E698%2C+0%5D%22
+Camera%2EPlayer%2EOrigin%2EToString+%3D+%22%5B1%2E043901%2C+22%2E12166%2C+%2D13%2E77242%5D%22
+Camera%2EPlayer%2ERotate%2EToString+%3D+%22%5B1%2E018%2C+%2D0%2E101%2C+0%5D%22
 Camera%2EColor+%3D+16777216
 Camera%2ESerialize+%3D+True
 </Camera>

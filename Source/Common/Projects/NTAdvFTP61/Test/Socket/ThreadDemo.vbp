@@ -1,0 +1,48 @@
+Type=OleExe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{133D2769-1F54-417C-887A-F796487C154E}#401.0#0#..\..\..\..\Binary\NTAdvFTP61.dll#Neotext Advanced FTP Object 6.1
+Class=MainApp; MainApp.cls
+Form=frmProcess.frm
+Module=Module1; Module1.bas
+Form=frmMTMain.frm
+Class=ThreadedWindow; ThreadedWindow.cls
+Form=frmThreadedWindow.frm
+Module=modCommon; ..\..\..\..\..\Shared\modCommon.bas
+Startup="Sub Main"
+HelpFile=""
+Title="ThreadDemo"
+ExeName32="ThreadDemo.exe"
+Command32=""
+Name="ThreadDemo"
+HelpContextID="0"
+CompatibleMode="1"
+CompatibleEXE32="ThreadDemo.exe"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Neotext Software"
+CondComp="ThreadDemo=-1:VBIDE=-1:Module1=-1:modCommon=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=-1
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="Module1=-1:modCommon=-1"

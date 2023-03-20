@@ -177,7 +177,7 @@ Set Camera.Player = Molecules("Player")
 
 planet <World> {
 	.form = Plateau
-	.Segments = 24
+	.Segments =10
 	.OuterEdge = 10
 	'.Rows = 4
 	'.Columns = 4
