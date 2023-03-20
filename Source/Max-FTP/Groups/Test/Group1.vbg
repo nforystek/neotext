@@ -1,4 +1,0 @@
-VBGROUP 5.0
-StartupProject=Project1.vbp
-Project=..\Projects\MaxFTP.vbp
-Project=..\Projects\MaxService.vbp
