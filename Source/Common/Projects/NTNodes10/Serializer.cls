@@ -14,7 +14,12 @@ Attribute VB_Exposed = True
 Option Explicit
 'This object attempts to Serialize any object passed to the Serialize function into XML
 'and Deserialize it to an object again with the Deserialize function, optionally specifying a
-'Library if know, it makes things easier for debugging.  It handles collections and nesting too.
+'Library if know, it makes things easier for debugging.  It handles collections and nesting
+'objects too. It is not true Serialization in that it does not intent to save functional code.
+'
+'If a Seralize or ToString property exist on the object as a boolean, it will use the value
+'to determine selective serializing, skipping the object if false.  If either Serialize or
+'the ToString function exists as read/write strings, it will use is as the serialized obj.
 
 Private Const Dent As String = "  "
 Private Indent As String
@@ -27,6 +32,8 @@ Private Enum ImportantMembers
     Clear = 64
     SerialFlag = 128
     SerialObj = 256
+    ToStringFlag = 1024
+    ToStringObj = 2048
 End Enum
 
 
@@ -69,7 +76,7 @@ Private Function SerializeObjectEx(ByVal ObjToSerial, Optional ByVal member As S
     On Error Resume Next
     frm.ScriptControl1.ExecuteStatement "Set ObjHelper.Holder = ObjToSerial" & IIf(member = "", "", "." & member)
     If Err.Number = 0 Then
-        SerializeObjectEx = Replace(Replace(Serialize(hlp.Holder, LibFilePath), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+        SerializeObjectEx = Replace(Replace(Serialize2(hlp.Holder, LibFilePath), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Else
         SerializeObjectEx = ""
         Err.Clear
@@ -135,6 +142,8 @@ End Sub
 
 Private Sub PropertyLetEx(ByVal ObjToSerial, Optional ByRef member As Variant, Optional ByVal SetToValue As String = "", Optional ByRef Key As Variant)
     Dim frm As New frmTemp
+    On Error GoTo failproperty
+    
     frm.ScriptControl1.AddObject "ObjToSerial", ObjToSerial, True
     If IsMissing(Key) And (Not IsMissing(member)) Then
         Select Case frm.ScriptControl1.Eval("TypeName(ObjToSerial." & member & ")")
@@ -145,6 +154,10 @@ Private Sub PropertyLetEx(ByVal ObjToSerial, Optional ByRef member As Variant, O
         End Select
     ElseIf (Not IsMissing(Key)) And IsMissing(member) Then
         frm.ScriptControl1.ExecuteStatement "ObjToSerial.Add " & SetToValue & Key
+    End If
+failproperty:
+    If Err.Number <> 0 Then
+        Err.Clear
     End If
     Unload frm
     Set frm = Nothing
@@ -199,24 +212,39 @@ Private Function GetImportantMembers(ByVal lib As TypeLibInfo, ByVal classname A
             If Trim(LCase(classname)) = Trim(LCase(cls.Item(cnt).Name)) Then
                 Set fce = cls.Item(cnt).Interfaces
                 For cnt2 = 1 To fce.Count
-                    Set mem = fce.Item(cnt2).Members
-                    If mem.Count > 0 Then
-                        For cnt3 = 1 To mem.Count
-                            Set inf = mem.Item(cnt3)
-                            If LCase(inf.Name) = "count" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Count
-                            If LCase(inf.Name) = "item" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Item
-                            If LCase(inf.Name) = "add" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Add
-                            If LCase(inf.Name) = "key" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Key
-                            If LCase(inf.Name) = "clear" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Clear
-                            If LCase(inf.Name) = "serialize" Then
-                                Select Case inf.ReturnType
-                                    Case TliVarType.VT_BOOL
-                                        GetImportantMembers = GetImportantMembers Or ImportantMembers.SerialFlag
-                                    Case Else
-                                        GetImportantMembers = GetImportantMembers Or ImportantMembers.SerialObj
-                                End Select
-                            End If
-                        Next
+                    If Trim(LCase(fce.Item(cnt2).Name)) = Trim(LCase(classname)) Or _
+                        Trim(LCase(fce.Item(cnt2).Name)) = "_" & Trim(LCase(classname)) Then
+                        Set mem = fce.Item(cnt2).Members
+                        If mem.Count > 0 Then
+                            For cnt3 = 1 To mem.Count
+                                Set inf = mem.Item(cnt3)
+                                If LCase(inf.Name) = "count" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Count
+                                If LCase(inf.Name) = "item" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Item
+                                If LCase(inf.Name) = "add" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Add
+                                If LCase(inf.Name) = "key" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Key
+                                If LCase(inf.Name) = "clear" Then GetImportantMembers = GetImportantMembers Or ImportantMembers.Clear
+                                If LCase(inf.Name) = "tostring" Then
+                                    Select Case inf.ReturnType
+                                        Case TliVarType.VT_BOOL
+                                            GetImportantMembers = GetImportantMembers Or ImportantMembers.ToStringFlag
+                                        Case Else
+                                            If inf.InvokeKind = INVOKE_PROPERTYPUT Or inf.InvokeKind = INVOKE_PROPERTYPUTREF Then
+                                                GetImportantMembers = GetImportantMembers Or ImportantMembers.ToStringObj
+                                            End If
+                                    End Select
+                                End If
+                                If LCase(inf.Name) = "serialize" Then
+                                    Select Case inf.ReturnType
+                                        Case TliVarType.VT_BOOL
+                                            GetImportantMembers = GetImportantMembers Or ImportantMembers.SerialFlag
+                                        Case Else
+                                            If inf.InvokeKind = INVOKE_PROPERTYPUT Or inf.InvokeKind = INVOKE_PROPERTYPUTREF Then
+                                                GetImportantMembers = GetImportantMembers Or ImportantMembers.SerialObj
+                                            End If
+                                    End Select
+                                End If
+                            Next
+                        End If
                     End If
                 Next
             End If
@@ -293,27 +321,57 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
     Dim cnt3 As Long
     Dim gets As String
     Dim tmp As String
+    
     Indent = Indent & Dent
+    
     Serialize2 = Serialize2 & Indent & "<" & VBA.TypeName(ObjToSerial) & ">"
     Set lib = GetLibraryObject(ObjToSerial, LibFilePath)
     Dim colMem As ImportantMembers
     colMem = GetImportantMembers(lib, VBA.TypeName(ObjToSerial))
+    cnt = 0
     If ((colMem And SerialObj) = SerialObj) Then
-         Serialize2 = Serialize2 & URLEncode(ObjToSerial.Serialize)
-    Else
-        If ((colMem And SerialFlag) = SerialFlag) Then
+        If (TypeName(ObjToSerial.Serialize) <> "Boolean") Then
+            tmp = URLEncode(ObjToSerial.Serialize)
+            If tmp <> "" Then
+                Serialize2 = Serialize2 & tmp
+                cnt = -1 'skip it
+            End If
+        End If
+    ElseIf ((colMem And ToStringObj) = ToStringObj) Then
+        If (TypeName(ObjToSerial.ToString) <> "Boolean") Then
+            tmp = URLEncode(ObjToSerial.ToString)
+            If tmp <> "" Then
+                Serialize2 = Serialize2 & tmp
+                cnt = -1 'skip it
+            End If
+        End If
+    End If
+    
+    If ((colMem And SerialFlag) = SerialFlag) Then
+        If (TypeName(ObjToSerial.Serialize) = "Boolean") Then
             If Not ObjToSerial.Serialize Then
                 cnt = -1 'skip it
             End If
         End If
-        If cnt = 0 Then
-            Serialize2 = Serialize2 & vbCrLf
-            Set cls = lib.CoClasses
-            If cls.Count > 0 Then
-                For cnt = 1 To cls.Count
-                    If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(cls.Item(cnt).Name)) Then
-                        Set fce = cls.Item(cnt).Interfaces
-                        For cnt2 = 1 To fce.Count
+    End If
+    If ((colMem And ToStringFlag) = ToStringFlag) Then
+        If (TypeName(ObjToSerial.ToString) = "Boolean") Then
+            If Not ObjToSerial.ToString Then
+                cnt = -1 'skip it
+            End If
+        End If
+    End If
+
+    If cnt = 0 Then
+        Serialize2 = Serialize2 & vbCrLf
+        Set cls = lib.CoClasses
+        If cls.Count > 0 Then
+            For cnt = 1 To cls.Count
+                If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(cls.Item(cnt).Name)) Then
+                    Set fce = cls.Item(cnt).Interfaces
+                    For cnt2 = 1 To fce.Count
+                        If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Or _
+                            "_" & Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Then
                             Set mem = fce.Item(cnt2).Members
                             If mem.Count > 0 Then
                                 For cnt3 = 1 To mem.Count
@@ -339,6 +397,7 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
                                 Indent = Indent & Dent
                                 For cnt3 = 1 To mem.Count
                                     Set inf = mem.Item(cnt3)
+                                    'Debug.Print inf.Name & " " & inf.MemberId
                                     If (inf.InvokeKind = INVOKE_PROPERTYPUT Or inf.InvokeKind = INVOKE_PROPERTYPUTREF) And (InStr(gets, inf.Name & ",") > 0) Then
                                         Select Case inf.ReturnType
                                             Case 24, 19 'not user defined so far
@@ -378,53 +437,54 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
                                 Next
                                 Indent = Mid(Indent, Len(Dent) + 1)
                             End If
-                        Next
-                    End If
-                Next
-            End If
-            If IsCollection(colMem) Then
-                If ObjToSerial.Count > 0 Then
-                    Indent = Indent & Dent
-                    For cnt = 1 To ObjToSerial.Count
-                        Select Case VBA.TypeName(ObjToSerial.Item(cnt))
-                            Case "String", "Long", "Single", "Double", "Byte", "Integer"
+                        End If
+                    Next
+                End If
+            Next
+        End If
+        If IsCollection(colMem) Then
+            If ObjToSerial.Count > 0 Then
+                Indent = Indent & Dent
+                For cnt = 1 To ObjToSerial.Count
+                    Select Case VBA.TypeName(ObjToSerial.Item(cnt))
+                        Case "String", "Long", "Single", "Double", "Byte", "Integer"
+                            Serialize2 = Serialize2 & Indent & "<Item>" & vbCrLf
+                            Indent = Indent & Dent
+                            If ((colMem And ImportantMembers.Key) = ImportantMembers.Key) Then  'KeysExist(ObjToSerial) Then
+                                If ObjToSerial.Key(cnt) <> "" Then Serialize2 = Serialize2 & Indent & "<Key>" & URLEncode(ObjToSerial.Key(cnt)) & "</Key>" & vbCrLf
+                            End If
+                            Indent = Mid(Indent, Len(Dent) + 1)
+                            Serialize2 = Serialize2 & Indent & "<" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & URLEncode(ObjToSerial.Item(cnt)) & "</" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & vbCrLf
+                            Serialize2 = Serialize2 & Indent & "</Item>" & vbCrLf
+                        Case Else
+                            'Debug.Print VBA.TypeName(ObjToSerial.Item(cnt))
+                            tmp = SerializeObjectEx(ObjToSerial.Item(cnt), , LibFilePath)
+                            If Replace(Replace(tmp, "<" & VBA.TypeName(ObjToSerial.Item(cnt)) & "></" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & vbCrLf, ""), " ", "") <> "" Then
                                 Serialize2 = Serialize2 & Indent & "<Item>" & vbCrLf
                                 Indent = Indent & Dent
+                            
                                 If ((colMem And ImportantMembers.Key) = ImportantMembers.Key) Then  'KeysExist(ObjToSerial) Then
                                     If ObjToSerial.Key(cnt) <> "" Then Serialize2 = Serialize2 & Indent & "<Key>" & URLEncode(ObjToSerial.Key(cnt)) & "</Key>" & vbCrLf
                                 End If
                                 Indent = Mid(Indent, Len(Dent) + 1)
-                                Serialize2 = Serialize2 & Indent & "<" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & URLEncode(ObjToSerial.Item(cnt)) & "</" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & vbCrLf
+                                Serialize2 = Serialize2 & tmp
                                 Serialize2 = Serialize2 & Indent & "</Item>" & vbCrLf
-                            Case Else
-                                'Debug.Print VBA.TypeName(ObjToSerial.Item(cnt))
-                                tmp = SerializeObjectEx(ObjToSerial.Item(cnt), , LibFilePath)
-                                If Replace(Replace(tmp, "<" & VBA.TypeName(ObjToSerial.Item(cnt)) & "></" & VBA.TypeName(ObjToSerial.Item(cnt)) & ">" & vbCrLf, ""), " ", "") <> "" Then
-                                    Serialize2 = Serialize2 & Indent & "<Item>" & vbCrLf
-                                    Indent = Indent & Dent
-                                
-                                    If ((colMem And ImportantMembers.Key) = ImportantMembers.Key) Then  'KeysExist(ObjToSerial) Then
-                                        If ObjToSerial.Key(cnt) <> "" Then Serialize2 = Serialize2 & Indent & "<Key>" & URLEncode(ObjToSerial.Key(cnt)) & "</Key>" & vbCrLf
-                                    End If
-                                    Indent = Mid(Indent, Len(Dent) + 1)
-                                    Serialize2 = Serialize2 & tmp
-                                    Serialize2 = Serialize2 & Indent & "</Item>" & vbCrLf
-                                End If
-                        End Select
-                        
-                    Next
-                    Indent = Mid(Indent, Len(Dent) + 1)
-                End If
+                            End If
+                    End Select
+                    
+                Next
+                Indent = Mid(Indent, Len(Dent) + 1)
             End If
-            Serialize2 = Serialize2 & Indent
         End If
+        Serialize2 = Serialize2 & Indent
     End If
+
     Serialize2 = Serialize2 & "</" & VBA.TypeName(ObjToSerial) & ">" & vbCrLf
     Indent = Mid(Indent, Len(Dent) + 1)
 End Function
 
 Public Function Serialize(ByVal ObjToSerial, Optional ByVal LibFilePath As String = "") As String ' _
-Converts ActiveX objects into text for read and write properties of the following data types; Boolean, Long, Integer, Double, Single, Byte, String, Object and Collection (explicit type library definition may be supplied by file path) If a boolean flag named Serialize of an objects properties is present, then it mustbe set true or it will be skipped. It Serialize is a string, then it will use it as the objects serial text.
+Converts ActiveX objects into xml text consisting of it's read and write properties, for later Deserialize().  A boolean, or string serialize property flag may be present, overriden when CascadeObjects is true.
 Attribute Serialize.VB_Description = "Converts ActiveX objects into text for read and write properties of the following data types; Boolean, Long, Integer, Double, Single, Byte, String, Object and Collection (explicit type library definition may be supplied by file path) If a boolean flag named Serialize of an objects properties is present, then it mustbe set true or it will be skipped. It Serialize is a string, then it will use it as the objects serial text."
     Static objptrs As String 'returns an object xml serialized
     'format is name encloses type encloses properties recursive
@@ -442,6 +502,7 @@ Attribute Serialize.VB_Description = "Converts ActiveX objects into text for rea
     End If
 End Function
 
+
 Private Function Deserialize2(ByRef xml As MSXML.IXMLDOMNode, Optional ByVal LibFilePath As String = "")
     Dim lib As TypeLibInfo
     Dim Key As Variant
@@ -452,12 +513,22 @@ Private Function Deserialize2(ByRef xml As MSXML.IXMLDOMNode, Optional ByVal Lib
     Set Deserialize2 = CreateObjectEx(lib.Name & "." & xml.nodeName)
     For Each child In xml.childNodes
         colMem = GetImportantMembers(lib, VBA.TypeName(Deserialize2))
+        Key = ""
         
-        If (colMem And SerialObj) = SerialObj Then
-            PropertyLetEx Deserialize2, "Serialize", """" & Replace(URLDecode(child.Text), """", """""") & """"
-        ElseIf IsCollection(colMem) And (child.nodeName = "Item") Then
+        If ((colMem And SerialObj) = SerialObj) Then
+            If Not (LCase(URLDecode(child.Text)) = "true" Or LCase(URLDecode(child.Text)) = "false") And (child.Text <> "") Then
+                PropertyLetEx Deserialize2, "Serialize", """" & Replace(URLDecode(child.Text), """", """""") & """"
+                Key = "skip"
+            End If
+        ElseIf ((colMem And ToStringObj) = ToStringObj) Then
+            If (Not (LCase(URLDecode(child.Text)) = "true" Or LCase(URLDecode(child.Text)) = "false")) And (child.Text <> "") Then
+                PropertyLetEx Deserialize2, "ToString", """" & Replace(URLDecode(child.Text), """", """""") & """"
+                Key = "skip"
+            End If
+        End If
+        If (IsCollection(colMem) And (child.nodeName = "Item")) And (Not (Key = "skip")) Then
 
-            Key = ""
+            
             For Each child2 In child.childNodes
                 If child2.nodeName = "Key" Then
                     Key = child2.Text
@@ -487,7 +558,7 @@ Private Function Deserialize2(ByRef xml As MSXML.IXMLDOMNode, Optional ByVal Lib
                 End If
             Next
 
-        Else
+        ElseIf (Not Key = "skip") Then
             For Each child2 In child.childNodes
                 Select Case child2.nodeName
                     Case "String"
@@ -503,7 +574,7 @@ Private Function Deserialize2(ByRef xml As MSXML.IXMLDOMNode, Optional ByVal Lib
 End Function
 
 Public Function Deserialize(ByVal ObjInSerial As String, Optional ByVal LibFilePath As String = "") ' _
-Converts text retruned by the Serialize() function into program memory returning the ActiveX object (explicit type library definition may be supplied by file path) If a boolean flag named Serialize of an objects properties is present, then it mustbe set true or it will be skipped. It Serialize is a string, then it will use only the Serialize property as the object serial.
+Converts xml text retruned by the Serialize() function into program memory returning the ActiveX object.
 Attribute Deserialize.VB_Description = "Converts text retruned by the Serialize() function into program memory returning the ActiveX object (explicit type library definition may be supplied by file path) If a boolean flag named Serialize of an objects properties is present, then it mustbe set true or it will be skipped. It Serialize is a string, then it will use only the Serialize property as the object serial."
     Dim xml As New MSXML.DOMDocument
     Dim child As MSXML.IXMLDOMNode
@@ -576,3 +647,4 @@ Public Function URLEncode(ByVal encodeString As String) As String
     Next
     URLEncode = ReturnString
 End Function
+

@@ -1,11 +1,11 @@
 VERSION 5.00
 Begin {AC0714F6-3D04-11D1-AE7D-00A0C90F26F4} Connect 
-   ClientHeight    =   9900
+   ClientHeight    =   9465
    ClientLeft      =   1740
    ClientTop       =   1545
    ClientWidth     =   23415
    _ExtentX        =   41301
-   _ExtentY        =   17463
+   _ExtentY        =   16695
    _Version        =   393216
    Description     =   "VB 6 Neotext Basic - Enhancements for Visual Basic 6.0"
    DisplayName     =   "VB 6 Neotext Basic"
@@ -192,6 +192,7 @@ Private Sub FCE_BeforeLoadFile(ByVal VBProject As VBIDE.VBProject, FileNames() A
         If PathExists(FileNames(cnt), True) Then
             If GetFileExt(FileNames(cnt), True, True) = "vbp" Then
                 BuildProject FileNames(cnt)
+               ' Stop
             End If
             If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
                 BuildFileDescriptions FileNames(cnt), True

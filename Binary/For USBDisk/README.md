@@ -15,3 +15,5 @@ to compile it ever again after I felt I was intruded. The encryption uses all th
 it after the USB I put on a necklace that was my locket.  I bought a similar program with an actual USB drive of a
 
 major card/flash drive brand and have both theirs and mine running on the USB, it seems their's stopped working.
+
+Little warning about databases reaching 2GB, if you go over it may not preform, and also be recoverable at that.

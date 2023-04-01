@@ -50,7 +50,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Advanced FTP Object"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Max-FTP 6.1"
-CondComp="NTAdvFTP61 = -1 : VBIDE = 0 : modSockets = -1 : modMain = -1 : modWindow = -1 : modWinProc = -1 : modWildCard = -1 : MODPROCESS = -1 : modCommon = -1 : modMemory = -1 : modBitValue = -1 : modFileSys = -1 : modStream = -1 : modDoTasks = -1 : modCrypto = -1 : modGuid = -1"
+CondComp="NTAdvFTP61=-1:VBIDE=0:modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:MODPROCESS=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modCrypto=-1:modGuid=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

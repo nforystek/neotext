@@ -121,34 +121,30 @@ Public Function PointOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As P
     PointOnPlane = (r.x * (p.x - v0.x)) + (r.y * (p.y - v0.y)) + (r.z * (p.z - v0.z)) = 0
 End Function
 Public Function PointSideOfPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
-    PointSideOfPlane = VectorDotProduct(VectorAddition(PlaneNormal(v0, V1, V2), TriangleAxii(v0, V1, V2)), p) > 0
+    PointSideOfPlane = VectorDotProduct(PlaneNormal(v0, V1, V2), p) > 0
 End Function
+
 Public Function PointOnPlaneNearestPoint(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Point
-    Dim r As Range
-    Set r = ToPlane(v0, V1, V2)
-    Dim n As Point
-    Set n = PlaneNormal(v0, V1, V2)
+
+    Set PointOnPlaneNearestPoint = New Point
+    With PointOnPlaneNearestPoint
     
-    Dim d As Single
-
-    d = Abs(DistanceToPlane(p, r))
+        Dim r As Range
+        Set r = ToPlane(v0, V1, V2)
+        
+        Dim n As Point
+        Set n = PlaneNormal(v0, V1, V2)
     
-    If PointSideOfPlane(v0, V1, V2, p) Then
-
-        If Abs(DistanceToPlane(VectorDeduction(p, n), r)) < d Then
-            Set PointOnPlaneNearestPoint = DistanceSet(p, VectorDeduction(p, n), d)
-        Else
-            Set PointOnPlaneNearestPoint = DistanceSet(p, VectorAddition(p, n), d)
-        End If
-    Else
-
-        If Abs(DistanceToPlane(VectorAddition(p, n), r)) < d Then
-            Set PointOnPlaneNearestPoint = DistanceSet(p, VectorAddition(p, n), d)
-        Else
-            Set PointOnPlaneNearestPoint = DistanceSet(p, VectorDeduction(p, n), d)
-        End If
-    End If
-
+        Dim d As Single
+        d = DistanceToPlane(p, r)
+        
+        .x = (d * n.x)
+        .y = (d * n.y)
+        .z = (d * n.z)
+        
+    End With
+    Set PointOnPlaneNearestPoint = VectorAddition(p, PointOnPlaneNearestPoint)
+    
 End Function
 
 Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir As Point, ByRef VIntersectOut As Point) As Boolean
@@ -503,46 +499,13 @@ Public Function InvSin(Number As Single) As Single
 End Function
 
 Public Function VectorRotateAxis(ByRef p1 As Point, ByRef Angles As Point) As Point
-'    Dim mp As Point
-'
-'    Set mp = MakePoint(p1.z, p1.y, p1.x)
-'    Angles.x = Angles.x + (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-'    Set mp = MakePoint(p1.x, p1.z, p1.y)
-'    Angles.y = Angles.y + (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-'    Set mp = MakePoint(p1.x, p1.y, p1.z)
-'    Angles.z = Angles.z + (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-    
-    
-'    Dim x As Point
-'    Dim y As Point
-'
-'    Set x = VectorRotateX(p1, Angles.x)
-'    Set y = VectorRotateY(x, Angles.y)
-'    Set VectorRotateAxis = VectorRotateZ(y, Angles.z)
-    
 
-
-
-'    Dim tmp As New Point
 '    Set VectorRotateAxis = New Point
-'    With VectorRotateAxis
-'        tmp.x = Cos(Angles.z) * p1.x - Sin(Angles.z) * p1.y
-'        tmp.y = Sin(Angles.z) * p1.x + Cos(Angles.z) * p1.y
-'        tmp.z = p1.z
-'
-'        tmp.y = Cos(Angles.x) * tmp.y - Sin(Angles.x) * tmp.z
-'        tmp.z = Sin(Angles.x) * tmp.y + Cos(Angles.x) * tmp.z
-'
-'        .x = Sin(Angles.y) * tmp.z + Cos(Angles.y) * tmp.x
-'        .z = Cos(Angles.y) * tmp.z - Sin(Angles.y) * tmp.x
-'        tmp.x = .x
-'        tmp.z = .z
-'
-'    End With
-'    Set tmp = Nothing
+'    VectorRotateAxis = VectorRotateX(p1, Angles.X)
+'    VectorRotateAxis = VectorRotateY(p1, Angles.Y)
+'    VectorRotateAxis = VectorRotateZ(p1, Angles.z)
 
-
-
+    Dim S As Single
     Dim tmp As New Point
     Set VectorRotateAxis = New Point
     With VectorRotateAxis
@@ -565,38 +528,76 @@ Public Function VectorRotateAxis(ByRef p1 As Point, ByRef Angles As Point) As Po
 End Function
 
 Public Function VectorRotateX(ByRef p1 As Point, ByVal angle As Single) As Point
+    Dim CosPhi   As Single
+    Dim SinPhi   As Single
+    Dim RadAngle As Single
+    
+    RadAngle = (angle * RADIAN)
+    CosPhi = Cos(RadAngle)
+    SinPhi = Sin(RadAngle)
+    
     Set VectorRotateX = New Point
     With VectorRotateX
-'        .x = p1.x
-'        .y = Sin(angle) * p1.z + Cos(angle) * p1.y
-'        .z = Cos(angle) * p1.z - Sin(angle) * p1.y
 
+        .z = p1.z * CosPhi - p1.y * SinPhi
+        .y = p1.z * SinPhi + p1.y * CosPhi
         .x = p1.x
-        .y = Cos(angle) * p1.y - Sin(angle) * p1.z
-        .z = Sin(angle) * p1.y + Cos(angle) * p1.z
+
+
+'        .x = p1.x
+'        .Y = Cos(angle) * p1.Y - Sin(angle) * p1.z
+'        .z = Sin(angle) * p1.Y + Cos(angle) * p1.z
     End With
 End Function
 
 Public Function VectorRotateY(ByRef p1 As Point, ByVal angle As Single) As Point
+
+    
+    Dim CosPhi   As Single
+    Dim SinPhi   As Single
+    Dim RadAngle As Single
+    
+    RadAngle = (angle * RADIAN)
+    CosPhi = Cos(RadAngle)
+    SinPhi = Sin(RadAngle)
+ 
     Set VectorRotateY = New Point
     With VectorRotateY
 
-        .x = Cos(angle) * p1.x - Sin(angle) * p1.z
-        .z = Sin(angle) * p1.x + Cos(angle) * p1.z
+        .x = p1.x * CosPhi - p1.z * SinPhi
+        .z = p1.x * SinPhi + p1.z * CosPhi
         .y = p1.y
+    
+
+
+'        .x = Cos(angle) * p1.x - Sin(angle) * p1.z
+'        .z = Sin(angle) * p1.x + Cos(angle) * p1.z
+'        .Y = p1.Y
     End With
 End Function
 
 Public Function VectorRotateZ(ByRef p1 As Point, ByVal angle As Single) As Point
+
+    Dim CosPhi   As Single
+    Dim SinPhi   As Single
+    Dim RadAngle As Single
+    
+    RadAngle = (angle * RADIAN) * -1
+    CosPhi = Cos(RadAngle)
+    SinPhi = Sin(RadAngle)
+    
     Set VectorRotateZ = New Point
     With VectorRotateZ
-'        .y = Sin(angle) * p1.x + Cos(angle) * p1.y
-'        .x = Cos(angle) * p1.x - Sin(angle) * p1.y
-'        .z = p1.z
-        
-        .y = Cos(angle) * p1.x - Sin(angle) * p1.y
-        .x = Sin(angle) * p1.x + Cos(angle) * p1.y
+
+        .x = p1.x * CosPhi - p1.y * SinPhi
+        .y = p1.x * SinPhi + p1.y * CosPhi
         .z = p1.z
+        
+
+        
+'        .Y = Cos(angle) * p1.x - Sin(angle) * p1.Y
+'        .x = Sin(angle) * p1.x + Cos(angle) * p1.Y
+'        .z = p1.z
     End With
 End Function
 
