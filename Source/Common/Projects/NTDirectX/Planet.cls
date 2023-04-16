@@ -30,7 +30,6 @@ Private pInnerEdge As Single
 Private pRows As Long
 Private pColumns As Long
 
-
 Private pFileIndex() As Long
 
 Private pColor As Color
@@ -469,7 +468,7 @@ Private Sub RebuildPlanet()
         If ((Rows > 0) And (Columns > 0)) And (PlateauIsland Or PlateauDoughnut) Then
 
             Dim i As Single
-            Dim x As Single
+            Dim X As Single
             Dim z As Single
             
             Dim useWidth As Single
