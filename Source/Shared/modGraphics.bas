@@ -295,7 +295,7 @@ Public Declare Function StretchBlt Lib "gdi32" (ByVal hdc As Long, ByVal X As Lo
 Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
 Public Declare Function SetPixelV Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Public Declare Function MoveToEx Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
-Public Declare Function LineTo Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function lineto Lib "gdi32" Alias "LineTo" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
 Public Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 Public Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 Public Declare Function Polygon Lib "gdi32" (ByVal hdc As Long, lpPoint As POINTAPI, ByVal nCount As Long) As Long
@@ -548,22 +548,22 @@ Public Function RECT(Left, Top, Right, Bottom) As RECT
     End With
 End Function
 
-Public Function ConvertColor(ByVal Color As Variant, Optional ByRef Red As Long, Optional ByRef Green As Long, Optional ByRef Blue As Long) As Long
+Public Function ConvertColor(ByVal color As Variant, Optional ByRef red As Long, Optional ByRef green As Long, Optional ByRef blue As Long) As Long
 On Error GoTo catch
     Dim lngColor As Long
-    If InStr(CStr(Color), "#") > 0 Then
+    If InStr(CStr(color), "#") > 0 Then
         GoTo HTMLorHexColor
-    ElseIf InStr(CStr(Color), "&H") > 0 Then
+    ElseIf InStr(CStr(color), "&H") > 0 Then
         GoTo SysOrLongColor
-    ElseIf IsAlphaNumeric(Color) Then
-        If (Not (Len(Color) = 6)) And (Not Left(Color, 1) = "0") Then
+    ElseIf IsAlphaNumeric(color) Then
+        If (Not (Len(color) = 6)) And (Not Left(color, 1) = "0") Then
             GoTo SysOrLongColor
         Else
             GoTo HTMLorHexColor
         End If
     End If
 SysOrLongColor:
-    lngColor = CLng(Color)
+    lngColor = CLng(color)
     If Not (lngColor >= 0 And lngColor <= 16777215) Then 'if system colour
         Select Case lngColor
             Case SystemColorConstants.vbScrollBars
@@ -616,18 +616,22 @@ SysOrLongColor:
 '    Else
 '
     End If
-    Color = Right("000000" & Hex(lngColor), 6)
+    color = Right("000000" & Hex(lngColor), 6)
 HTMLorHexColor:
-    Red = CByte("&h" & Mid(Color, 5, 2))
-    Green = CByte("&h" & Mid(Color, 3, 2))
-    Blue = CByte("&h" & Mid(Color, 1, 2))
-    ConvertColor = RGB(Red, Green, Blue)
+    red = CByte("&h" & Mid(color, 5, 2))
+    green = CByte("&h" & Mid(color, 3, 2))
+    blue = CByte("&h" & Mid(color, 1, 2))
+    
+    ConvertColor = RGB(red, green, blue)
+    If ConvertColor <> lngColor Then
+        Err.Raise 8, "Exception."
+    End If
     Exit Function
 
-'    Green = Val("&H" & Right(Color, 2))
-'    Red = Val("&H" & Mid(Color, 2, 2))
-'    Blue = Val("&H" & Mid(Color, 4, 2))
-'    ConvertColor = RGB(Red, Green, Blue)
+'    green = Val("&H" & Right(color, 2))
+'    red = Val("&H" & Mid(color, 2, 2))
+'    blue = Val("&H" & Mid(color, 4, 2))
+'    ConvertColor = RGB(red, green, blue)
 '    Exit Function
 catch:
     Err.Clear
@@ -938,25 +942,25 @@ End Function
 Public Function IsAlphaNumeric(ByVal Text As String) As Boolean
     Dim cnt As Integer
     Dim C2 As Integer
-    Dim retVal As Boolean
-    retVal = True
+    Dim retval As Boolean
+    retval = True
     If Not IsNumeric(Text) Then
     If Len(Text) > 0 Then
         For cnt = 1 To Len(Text)
             If (Asc(LCase(Mid(Text, cnt, 1))) = 46) Then
                 C2 = C2 + 1
             ElseIf (Not IsNumeric(Mid(Text, cnt, 1))) And (Not (Asc(LCase(Mid(Text, cnt, 1))) >= 97 And Asc(LCase(Mid(Text, cnt, 1))) <= 122)) Then
-                retVal = False
+                retval = False
                 Exit For
             End If
         Next
     Else
-        retVal = False
+        retval = False
     End If
     Else
-        retVal = True
+        retval = True
     End If
-    IsAlphaNumeric = retVal And (C2 <= 1)
+    IsAlphaNumeric = retval And (C2 <= 1)
 End Function
 
 #End If

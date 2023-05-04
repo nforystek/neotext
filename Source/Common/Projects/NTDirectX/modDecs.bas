@@ -120,10 +120,8 @@ Public MinCameraZoom As Single
 Public GravityVector As New Point
 Public LiquidVector As New Point
 
-
 Public Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 Public Const VK_F1 = &H70
-
 
 Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
@@ -140,10 +138,10 @@ Public Declare Function SetParent Lib "user32" (ByVal HwndChild As Long, ByVal h
 Public Declare Function SetWindowWord Lib "user32" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal wNewWord As Long) As Long
 Public Const SWW_HPARENT = -8
 
-Public Function ConvertVertexToVector(ByRef V As D3DVERTEX) As D3DVECTOR
-    ConvertVertexToVector.X = V.X
-    ConvertVertexToVector.Y = V.Y
-    ConvertVertexToVector.z = V.z
+Public Function ConvertVertexToVector(ByRef v As D3DVERTEX) As D3DVECTOR
+    ConvertVertexToVector.X = v.X
+    ConvertVertexToVector.Y = v.Y
+    ConvertVertexToVector.z = v.z
 End Function
 
 Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Long
@@ -180,8 +178,6 @@ Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Lon
 
     End If
 End Function
-
-
 
 'Public Sub CreateMesh(ByVal FileName As String, mesh As D3DXMesh, Buffer As D3DXBuffer, MeshMaterials() As D3DMATERIAL8, MeshTextures() As IUnknown, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long, Optional ByRef SurfaceArea As Single, Optional ByRef Volume As Single)
 '    Dim TextureName As String
@@ -304,7 +300,6 @@ End Function
 '
 'End Sub
 
-
 Public Function TriangleAreaByLen(ByVal l1 As Single, ByVal l2 As Single, ByVal l3 As Single) As Single
     TriangleAreaByLen = (((((((l1 + l2) - l3) + ((l2 + l3) - l1) + ((l3 + l1) - l2)) * (l1 * l2 * l3)) / (l1 + l2 + l3)) ^ (1 / 2)))
 End Function
@@ -312,7 +307,6 @@ Public Function TriangleVolByLen(ByVal l1 As Single, ByVal l2 As Single, ByVal l
     TriangleVolByLen = TriangleAreaByLen(l1, l2, l3)
     TriangleVolByLen = ((((TriangleVolByLen ^ (1 / 3)) ^ 2) ^ 3) / 12)
 End Function
-
 
 'Public Function ScreenXYTo3DZ0(ByVal MouseX As Single, ByVal MouseY As Single) As D3DVECTOR
 '    Dim Alpha As Single
@@ -463,8 +457,8 @@ Public Function Clamp(ByVal Value As Single, ByVal max As Single, ByVal min As S
     End If
 End Function
 
-Public Function LengthSqr(ByRef V As D3DVECTOR) As Single
-    LengthSqr = Sqr(Distance(0, 0, 0, V.X, V.Y, V.z))
+Public Function LengthSqr(ByRef v As D3DVECTOR) As Single
+    LengthSqr = Sqr(Distance(0, 0, 0, v.X, v.Y, v.z))
 End Function
 
 Public Function CreateVertex(X As Single, Y As Single, z As Single, NX As Single, NY As Single, Nz As Single, tu As Single, tv As Single) As MyVertex
@@ -477,14 +471,11 @@ Public Function CreateVertex(X As Single, Y As Single, z As Single, NX As Single
     
 End Function
 
-
 'Public Function PointToPlane(ByRef p1 As D3DVECTOR, ByRef p2 As D3DVECTOR) As Single
 '    Dim p3 As D3DVECTOR
 '    p3 = VectorSubtract(p1, p2)
 '    PointToPlane = Sqr(VectorDotProduct(p3, p3))
 'End Function
-
-
 
 'Public Function InterceptPoint(ByRef l1p1 As D3DVECTOR, ByRef l1p2 As D3DVECTOR, ByRef l2p1 As D3DVECTOR, ByRef l2p2 As D3DVECTOR, ByRef r1 As D3DVECTOR, ByRef r2 As D3DVECTOR) As Boolean
 '    ' // Algorithm is ported from the C algorithm of (but third port by Nick to vb)
@@ -523,8 +514,6 @@ End Function
 '        End If
 '    End If
 'End Function
-'
-
 
 Public Function GetNow() As String
 
@@ -806,6 +795,5 @@ End Sub
 ''
 ''
 ''
-'
 
 

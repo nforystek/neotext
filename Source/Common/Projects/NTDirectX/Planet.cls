@@ -32,7 +32,7 @@ Private pColumns As Long
 
 Private pFileIndex() As Long
 
-Private pColor As Color
+Private pColor As color
 Private pFog As Single
 
 Private pKey As String
@@ -53,11 +53,35 @@ Public Property Let Fog(ByVal RHS As Single)
     pFog = RHS
 End Property
 
-Public Property Get Color() As Color
-    If pColor Is Nothing Then Set pColor = New Color
-    Set Color = pColor
+Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
+    Dim Checkto As Single
+    Checkto = Round(Distance, 0)
+    If PlateauInfinite Then
+        RelativeColorFactor = 1
+    ElseIf Checkto <= OuterEdge + Field Then
+        If PlateauIsland Or (PlateauDoughnut And (Checkto > InnerEdge)) Then
+            If Checkto <= OuterEdge And Checkto >= InnerEdge Then
+                RelativeColorFactor = 1
+            ElseIf Checkto - OuterEdge < Field And (OuterEdge - InnerEdge) > 0 Then
+                RelativeColorFactor = CSng(CSng(Distance - OuterEdge) / Field)
+            End If
+        ElseIf PlateauHole Or (PlateauDoughnut And Checkto < InnerEdge) Then
+            If Checkto >= (OuterEdge - (InnerEdge + Field)) Then
+                RelativeColorFactor = CSng(CSng(Field - CSng(Distance - CSng(OuterEdge - CSng(InnerEdge + Field)))) / Field)
+            End If
+
+        End If
+    End If
+    If RelativeColorFactor > 1 Then RelativeColorFactor = 1
+    If RelativeColorFactor < 0 Then RelativeColorFactor = 0
+    RelativeColorFactor = Round(RelativeColorFactor, 2)
+End Function
+
+Public Property Get color() As color
+    If pColor Is Nothing Then Set pColor = New color
+    Set color = pColor
 End Property
-Public Property Set Color(ByRef RHS As Color)
+Public Property Set color(ByRef RHS As color)
     Set pColor = RHS
 End Property
 
@@ -340,8 +364,6 @@ Private Sub RebuildPlanet()
     End If
     If tmp = "" Then Exit Sub
     
-    Dim useSize As Single
-    
     If Form = PlanetTypes.World Then
             
           If (pFileIndex(0) > 0) And (Width > 0) And (Height > 0) And (Length > 0) Then '3d sky, i.e. in a box
@@ -464,31 +486,13 @@ Private Sub RebuildPlanet()
           End If
     ElseIf Form = PlanetTypes.Plateau Then 'all the flat types
    
-   
         If ((Rows > 0) And (Columns > 0)) And (PlateauIsland Or PlateauDoughnut) Then
-
-            Dim i As Single
-            Dim X As Single
-            Dim z As Single
-            
-            Dim useWidth As Single
-            Dim useLength As Single
-            Dim useVolCnt As Long
-            
-            useVolCnt = Volume.Count
-            
-            If OuterEdge > 0 Then
-                useWidth = OuterEdge
-                useLength = OuterEdge
-            Else
-                useWidth = Width
-                useLength = Length
-            End If
 
             If UBound(pFileIndex) < Rows * Columns Then
                 ReDim Preserve pFileIndex(0 To Rows * Columns) As Long
             End If
 
+            Dim i As Single
             For i = 1 To Rows * Columns
                 If pFileIndex(i) = 0 Then pFileIndex(i) = pFileIndex(0)
             Next
@@ -496,7 +500,6 @@ Private Sub RebuildPlanet()
         End If
         
         'a circle at 360 segments, a square at 4 segments, a triangle at 3 segments
-    
         If PlateauIsland() Then 'island
         
             Set m = CreateMoleculeLanding(tmp, OuterEdge, Segments, 0, Size.Width, Size.Height)
@@ -507,19 +510,6 @@ Private Sub RebuildPlanet()
             Next
             m.Volume.Clear
             Set m = Nothing
-'
-'                        Set m = CreateMoleculeFace(tmp, _
-'                                                    MakePoint((OuterEdge / 2), 0, -(OuterEdge / 2)), _
-'                                                    MakePoint(-(OuterEdge / 2), 0, -(OuterEdge / 2)), _
-'                                                    MakePoint(-(OuterEdge / 2), 0, (OuterEdge / 2)), _
-'                                                    MakePoint((OuterEdge / 2), 0, (OuterEdge / 2)), _
-'                                                    (OuterEdge * ((Size.Width / 2) / 100)), (OuterEdge * ((Size.Height / 2) / 100)))
-'
-'            For Each V In m.Volume
-'                Volume.Add V
-'            Next
-'            m.Volume.Clear
-'            Set m = Nothing
 
         ElseIf PlateauDoughnut() Then 'doughnut
 
@@ -531,15 +521,12 @@ Private Sub RebuildPlanet()
             Next
             m.Volume.Clear
             Set m = Nothing
-                            
                         
         ElseIf PlateauHole Then 'hole
         
             Volume.Clear
 
-            useSize = Far '10 * MILE
-
-            Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
+            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width, Size.Height)
 
             For Each v In m.Volume
                 Volume.Add v
@@ -547,8 +534,7 @@ Private Sub RebuildPlanet()
             m.Volume.Clear
             Set m = Nothing
             
-            Set m = CreateMoleculeLanding(tmp, useSize, Segments, InnerEdge, Size.Width, Size.Height)
-
+            Set m = CreateMoleculeLanding(tmp, Far, Segments, InnerEdge, Size.Width, Size.Height)
 
             For Each v In m.Volume
                 Volume.Add v
@@ -556,14 +542,11 @@ Private Sub RebuildPlanet()
             m.Volume.Clear
             Set m = Nothing
                         
-                        
         ElseIf PlateauInfinite Then 'stretched texture island
 
             Volume.Clear
-    
-            useSize = Far
 
-            Set m = CreateMoleculeLanding(tmp, useSize, Segments, 0, Size.Width, Size.Height)
+            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width * Far, Size.Height * Far)
 
             For Each v In m.Volume
                 Volume.Add v
@@ -573,7 +556,6 @@ Private Sub RebuildPlanet()
                             
         End If
 
-
     End If
     
 
@@ -581,6 +563,7 @@ End Sub
 
 
 Private Sub Class_Initialize()
+   
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
     Key = "K" & ObjPtr(Me)
     ReDim pFileIndex(0 To 0) As Long
@@ -698,6 +681,14 @@ Private Property Get Molecule_Serialize() As Boolean
     Molecule_Serialize = Molecule.Serialize
 End Property
 
+
+Private Property Let Molecule_ToString(ByVal RHS As String)
+    Molecule.ToString = RHS
+End Property
+
+Private Property Get Molecule_ToString() As String
+    Molecule.ToString = Molecule_ToString
+End Property
 
 Private Property Let Molecule_Visible(ByVal RHS As Boolean)
     Molecule.Visible = RHS

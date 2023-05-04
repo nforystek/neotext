@@ -159,9 +159,9 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                     For Each child In serial.childNodes
                         Select Case Include.SafeKey(child.baseName)
                             Case "datetime"
-                               ' If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
+                                'If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
                                     GoTo exitout:
-                               ' End If
+                                'End If
                             Case "variables"
                                 For cnt = 0 To child.childNodes.Length - 1
                                     tmp = Replace(Replace(Include.URLDecode(child.childNodes(cnt).Text), """", """"""), vbCrLf, """ & vbCrLf & """)

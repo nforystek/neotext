@@ -6,12 +6,12 @@ Option Compare Binary
 Option Private Module
 
 Private Type POINTAPI
-        x As Long
+        X As Long
         Y As Long
 End Type
 
 Private Type Msg
-    hWnd As Long
+    hwnd As Long
     Message As Long
     wParam As Long
     lParam As Long
@@ -25,8 +25,8 @@ Private Const PM_NOYIELD = &H2
 
 Private Declare Function TranslateMessage Lib "user32" (lpMsg As Msg) As Long
 Private Declare Function DispatchMessage Lib "user32" Alias "DispatchMessageA" (lpMsg As Msg) As Long
-Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
-Private Declare Function GetMessage Lib "user32" Alias "GetMessageA" (lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
+Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageA" (lpMsg As Msg, ByVal hwnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
+Private Declare Function GetMessage Lib "user32" Alias "GetMessageA" (lpMsg As Msg, ByVal hwnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
 
 Public Declare Function GetCurrentThreadId Lib "kernel32" () As Long
 
@@ -35,17 +35,17 @@ Public Declare Function EnumChildWindows Lib "user32" (ByVal hWndParent As Long,
 Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVal lParam As Long) As Boolean
 
 Public Declare Function GetCurrentProcessId Lib "kernel32" () As Long
-Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
-Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal path As String, ByVal cbBytes As Long) As Long
+Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal Path As String, ByVal cbBytes As Long) As Long
 Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameA" (ByVal hModule As Long, ByVal lpFileName As String, ByVal nSize As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetCurrentProcess Lib "kernel32" () As Long
 
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
 
 Private Declare Function IsWow64Process Lib "kernel32" (ByVal hProc As Long, ByRef bWow64Process As Boolean) As Long
-Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleA" (ByVal lpModuleName As String) As Long
 
 Private doStack As Long
@@ -156,7 +156,7 @@ Public Function RootOf(ByVal Base As Double, ByVal Exponent As Double) As Double
     RootOf = Base ^ (1 / Exponent)
 End Function
 
-Public Function InvertNum(ByVal Value As Long, Optional ByVal Whole As Long = 100, Optional ByVal Unit As Long = 1)
+Public Function InvertNum(ByVal Value As Single, Optional ByVal Whole As Single = 100, Optional ByVal Unit As Single = 1)
  InvertNum = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
@@ -269,15 +269,15 @@ dimerror:
 End Function
 
 Public Function Convert(Info)
-    Dim N As Long
+    Dim n As Long
     Dim out() As Byte
-    Dim ret As String
+    Dim Ret As String
     Select Case VBA.TypeName(Info)
         Case "String"
             If Len(Info) > 0 Then
                 ReDim out(0 To Len(Info) - 1) As Byte
-                For N = 0 To Len(Info) - 1
-                    out(N) = Asc(Mid(Info, N + 1, 1))
+                For n = 0 To Len(Info) - 1
+                    out(n) = Asc(Mid(Info, n + 1, 1))
                 Next
             Else
                 ReDim out(-1 To -1) As Byte
@@ -286,19 +286,19 @@ Public Function Convert(Info)
         Case "Byte()"
             If (ArraySize(Info) > 0) Then
                 On Error GoTo dimcheck
-                For N = LBound(Info) To UBound(Info)
-                    ret = ret & Chr(Info(N))
+                For n = LBound(Info) To UBound(Info)
+                    Ret = Ret & Chr(Info(n))
                 Next
             End If
-            Convert = ret
+            Convert = Ret
     End Select
     Exit Function
 dimcheck:
     If Err Then Err.Clear
-    For N = LBound(Info, 2) To UBound(Info, 2)
-        ret = ret & Chr(Info(0, N))
+    For n = LBound(Info, 2) To UBound(Info, 2)
+        Ret = Ret & Chr(Info(0, n))
     Next
-    Convert = ret
+    Convert = Ret
 End Function
 #End If
 
@@ -467,25 +467,25 @@ Public Function IsBreakMode() As Boolean
     IsBreakMode = (IsDebugState = 4)
 End Function
 
-Private Function IsDebuggingWinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
+Private Function IsDebuggingWinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     
     Dim txt As String
     Dim lSize As Long
     txt = VBA.Space$(255)
     lSize = Len(txt)
-    Call GetWindowText(hWnd, txt, lSize)
+    Call GetWindowText(hwnd, txt, lSize)
     If lSize > 0 Then
         txt = Trim(Replace(Left$(txt, lSize), Chr(0), ""))
     End If
    'Debug.Print txt
-    IsDebugHwnds = IsDebugHwnds & hWnd & " "
+    IsDebugHwnds = IsDebugHwnds & hwnd & " "
     If VBA.TypeName(IsDebugState) = "String" Then
         If (InStr(1, txt, IsDebugState, vbTextCompare) > 0) Then
             IsDebugState = "TRUE"
         Else
             IsDebuggingWinEvents = (Not (IsDebugState = "TRUE"))
             If Not IsDebuggingWinEvents Then
-                EnumChildWindows hWnd, AddressOf IsDebuggingWinChildEvents1, lParam
+                EnumChildWindows hwnd, AddressOf IsDebuggingWinChildEvents1, lParam
             End If
         End If
     ElseIf (InStr(1, txt, "Microsoft Visual Basic [design]", vbTextCompare) > 0) Then
@@ -499,22 +499,22 @@ Private Function IsDebuggingWinEvents(ByVal hWnd As Long, ByVal lParam As Long) 
     Else
         IsDebuggingWinEvents = (Not (IsDebugState <> 0))
         If Not IsDebuggingWinEvents Then
-            EnumChildWindows hWnd, AddressOf IsDebuggingWinChildEvents1, lParam
+            EnumChildWindows hwnd, AddressOf IsDebuggingWinChildEvents1, lParam
         End If
     End If
 
 End Function
-Private Function IsDebuggingWinChildEvents1(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
+Private Function IsDebuggingWinChildEvents1(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     
     Dim txt As String
     Dim lSize As Long
     txt = VBA.Space$(255)
     lSize = Len(txt)
-    Call GetWindowText(hWnd, txt, lSize)
+    Call GetWindowText(hwnd, txt, lSize)
     If lSize > 0 Then
         txt = Trim(Replace(Left$(txt, lSize), Chr(0), ""))
     End If
-    IsDebugHwnds = IsDebugHwnds & hWnd & " "
+    IsDebugHwnds = IsDebugHwnds & hwnd & " "
     If VBA.TypeName(IsDebugState) = "String" Then
         If (InStr(1, txt, IsDebugState, vbTextCompare) > 0) Then
             IsDebugState = "TRUE"
@@ -570,11 +570,11 @@ End Function
 'End Function
 
 Public Function System64Bit() As Boolean
-    Dim Handle As Long
+    Dim handle As Long
     Dim is64Bit As Boolean
     is64Bit = False
-    Handle = GetProcAddress(GetModuleHandle("kernel32"), "IsWow64Process")
-    If Handle <> 0 Then
+    handle = GetProcAddress(GetModuleHandle("kernel32"), "IsWow64Process")
+    If handle <> 0 Then
         IsWow64Process GetCurrentProcess(), is64Bit
     End If
     System64Bit = is64Bit
@@ -586,7 +586,7 @@ Public Function FileSize(ByVal fname As String) As Double
     Set myFso = CreateObject("Scripting.FileSystemObject")
     Dim F As Object
     Set F = myFso.GetFile(fname)
-    FileSize = F.size
+    FileSize = F.Size
     Set F = Nothing
     Set myFso = Nothing
 End Function
@@ -624,11 +624,11 @@ Public Sub DoTasks()
     
 End Sub
 
-Private Function WinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
+Private Function WinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
     Dim pId As Long
     Static wMsg As Msg
     If (lParam <= 0) And (lParam >= -3) Then
-        If PeekMessage(wMsg, hWnd, 0, 0, PM_REMOVE + PM_NOYIELD) Then
+        If PeekMessage(wMsg, hwnd, 0, 0, PM_REMOVE + PM_NOYIELD) Then
             Do
                 TranslateMessage wMsg
                 DispatchMessage wMsg
@@ -644,18 +644,18 @@ Private Function WinEvents(ByVal hWnd As Long, ByVal lParam As Long) As Boolean
             If PeekMessage(wMsg, 0, 0, 0, PM_NOREMOVE + PM_NOYIELD) Then
                 Do
                     Sleep 0
-                Loop While PeekMessage(wMsg, hWnd, 0, 0, PM_NOREMOVE + PM_NOYIELD)
+                Loop While PeekMessage(wMsg, hwnd, 0, 0, PM_NOREMOVE + PM_NOYIELD)
             End If
         End If
     Else
         Dim nMsg As Msg
-        GetWindowThreadProcessId hWnd, pId
-        If (pId = lParam) And IsWindow(hWnd) Then
+        GetWindowThreadProcessId hwnd, pId
+        If (pId = lParam) And IsWindow(hwnd) Then
             If PeekMessage(nMsg, 0, 0, 0, PM_REMOVE + PM_NOYIELD) Then
                 Do
                     TranslateMessage nMsg
                     DispatchMessage nMsg
-                Loop While PeekMessage(nMsg, hWnd, 0, 0, PM_REMOVE + PM_NOYIELD)
+                Loop While PeekMessage(nMsg, hwnd, 0, 0, PM_REMOVE + PM_NOYIELD)
             End If
             WinEvents = True
         End If
@@ -680,9 +680,9 @@ End Sub
 
 Public Function SysPath() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(45, Chr(0))
-    ret = GetSystemDirectory(winDir, 45)
+    Ret = GetSystemDirectory(winDir, 45)
     winDir = Trim(Replace(winDir, Chr(0), ""))
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     SysPath = winDir
@@ -697,7 +697,7 @@ Public Function AppPath(Optional ByVal RootEXEOf As Boolean = False) As String
         lpTemp = GetFilePath(Trim(Left(lpTemp, nLen)))
         If Right(lpTemp, 1) <> "\" Then lpTemp = lpTemp & "\"
     Else
-        lpTemp = IIf((Right(App.path, 1) = "\"), App.path, App.path & "\")
+        lpTemp = IIf((Right(App.Path, 1) = "\"), App.Path, App.Path & "\")
     End If
 #If VBIDE Then
     If LCase(Right(lpTemp, 10)) = "\projects\" Then
@@ -792,7 +792,7 @@ End Function
 Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
     'seeks for the projects running status parent, which during running or debugging
     'is the application itself, not nested compiled modules, is in the VBIDE started
-    Static ret As Integer
+    Static Ret As Integer
     'If ret = 0 Then
         Dim nLen As String
         Dim lpTemp As String
@@ -800,7 +800,7 @@ Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
         nLen = GetModuleFileName(0&, lpTemp, Len(lpTemp))
         lpTemp = Left(lpTemp, nLen)
         If (InStrRev(LCase(lpTemp), "vb6.exe") > 0) Then
-            ret = -2
+            Ret = -2
             If AppTitle = "" Then AppTitle = App.Title
             If AppTitle <> "" Then
                 IsDebugState = AppTitle & " - Microsoft Visual Basic"
@@ -817,13 +817,13 @@ Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
                         TmpHwnds = ""
                     End If
                 Loop
-                ret = CInt(CBool((IsDebugState = "TRUE"))) - 1
+                Ret = CInt(CBool((IsDebugState = "TRUE"))) - 1
             End If
         Else
-            ret = -1
+            Ret = -1
         End If
    'End If
-    IsDebugger = CBool(ret + 1)
+    IsDebugger = CBool(Ret + 1)
 End Function
 
 'Public Function Toggler(ByRef Value As Variant, Optional ByVal Inverse As Boolean = False, Optional ByVal Whole As Long = 1) As Variant
@@ -845,14 +845,14 @@ End Function
 Public Function ClearCollection(ByRef ColList, Optional ByVal IsObjects As Boolean = False, Optional ByVal SetNothing As Boolean = False)
     If Not ColList Is Nothing Then
         If IsObjects Then
-            Dim obj As Object
-            Do Until ColList.count = 0
-                Set obj = ColList(1)
+            Dim Obj As Object
+            Do Until ColList.Count = 0
+                Set Obj = ColList(1)
                 ColList.Remove 1
-                Set obj = Nothing
+                Set Obj = Nothing
             Loop
         Else
-            Do Until ColList.count = 0
+            Do Until ColList.Count = 0
                 ColList.Remove 1
             Loop
         End If
@@ -931,20 +931,20 @@ Public Function NextQuotedArg(ByVal TheParams As String, Optional ByVal BeginQuo
     NextQuotedArg = RemoveQuotedArg(TheParams, BeginQuote, EndQuote, Embeded, Compare)
 End Function
 Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """", Optional ByVal Embeded As Boolean = False, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare) As String
-    Dim retVal As String
-    Dim x As Long
-    x = InStr(1, TheParams, BeginQuote, Compare)
-    If (x > 0) And (x < Len(TheParams)) Then
-        If (InStr(x + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
+    Dim retval As String
+    Dim X As Long
+    X = InStr(1, TheParams, BeginQuote, Compare)
+    If (X > 0) And (X < Len(TheParams)) Then
+        If (InStr(X + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
             If (Not Embeded) Or (EndQuote = BeginQuote) Then
-                retVal = Mid(TheParams, x + Len(BeginQuote))
-                TheParams = Left(TheParams, x - 1) & Mid(retVal, InStr(1, retVal, EndQuote, Compare) + Len(EndQuote))
-                retVal = Left(retVal, InStr(1, retVal, EndQuote, Compare) - 1)
+                retval = Mid(TheParams, X + Len(BeginQuote))
+                TheParams = Left(TheParams, X - 1) & Mid(retval, InStr(1, retval, EndQuote, Compare) + Len(EndQuote))
+                retval = Left(retval, InStr(1, retval, EndQuote, Compare) - 1)
             Else
                 Dim l As Long
                 Dim Y As Long
                 l = 1
-                Y = x
+                Y = X
                 Do Until l = 0
                     If (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) > 0) And (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) < InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare)) Then
                         l = l + 1
@@ -957,13 +957,13 @@ Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQ
                         l = 0
                     End If
                 Loop
-                retVal = Mid(TheParams, x + Len(BeginQuote))
-                TheParams = Left(TheParams, x - 1) & Mid(retVal, (Y - x) + Len(EndQuote))
-                retVal = Left(retVal, (Y - x) - 1)
+                retval = Mid(TheParams, X + Len(BeginQuote))
+                TheParams = Left(TheParams, X - 1) & Mid(retval, (Y - X) + Len(EndQuote))
+                retval = Left(retval, (Y - X) - 1)
             End If
         End If
     End If
-    RemoveQuotedArg = retVal
+    RemoveQuotedArg = retval
 End Function
 
 Public Function CountWord(ByVal Text As String, ByVal Word As String, Optional ByVal Exact As Boolean = True) As Long
@@ -981,29 +981,29 @@ End Function
 Public Function IsAlphaNumeric(ByVal Text As String) As Boolean
     Dim cnt As Integer
     Dim C2 As Integer
-    Dim retVal As Boolean
-    retVal = True
+    Dim retval As Boolean
+    retval = True
     If Not IsNumeric(Text) Then
     If Len(Text) > 0 Then
         For cnt = 1 To Len(Text)
             If (Asc(LCase(Mid(Text, cnt, 1))) = 46) Then
                 C2 = C2 + 1
             ElseIf (Not IsNumeric(Mid(Text, cnt, 1))) And (Not (Asc(LCase(Mid(Text, cnt, 1))) >= 97 And Asc(LCase(Mid(Text, cnt, 1))) <= 122)) Then
-                retVal = False
+                retval = False
                 Exit For
             End If
         Next
     Else
-        retVal = False
+        retval = False
     End If
     Else
-        retVal = True
+        retval = True
     End If
-    IsAlphaNumeric = retVal And (C2 <= 1)
+    IsAlphaNumeric = retval And (C2 <= 1)
 End Function
 
 Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant = Empty) As Boolean
-    Dim ret As Boolean
+    Dim Ret As Boolean
     
     If Left(URL, 2) = "\\" Then GoTo altcheck
     If Left(LCase(URL), 7) = "file://" Then
@@ -1036,31 +1036,31 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
             Do
                 If VBA.TypeName(IsFile) = "Empty" Then
                     chk1 = Dir(URL, attr)
-                    If chk1 <> "" And Not ret Then
+                    If chk1 <> "" And Not Ret Then
                         If InStr(URL, "*") > 0 Then
-                            ret = True
+                            Ret = True
                         Else
                             If Len(URL) > Len(chk1) Then
-                                ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                             Else
-                                ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                             End If
                         End If
                     End If
-                    If Not ret Then
+                    If Not Ret Then
                         chk1 = Dir(URL, attr + vbDirectory)
                         If chk1 <> "" Then
                             If InStr(URL, "*") > 0 Then
-                                ret = True
+                                Ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                    Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                                 Else
-                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
-                                If ret Then
+                                If Ret Then
                                     If Not (GetAttr(URL) And vbDirectory) = vbDirectory Then
-                                        ret = False
+                                        Ret = False
                                     End If
                                 End If
                             End If
@@ -1069,32 +1069,32 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
                 Else
                     If Not IsFile Then
                         chk1 = Dir(URL, attr + vbDirectory)
-                        If chk1 <> "" And Not ret Then
+                        If chk1 <> "" And Not Ret Then
                             If InStr(URL, "*") > 0 Then
-                                ret = True
+                                Ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
+                                    Ret = LCase(Right(URL, Len(chk1))) = LCase(chk1)
                                 Else
-                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
-                                If ret Then
+                                If Ret Then
                                     If Not (GetAttr(URL) And vbDirectory) = vbDirectory Then
-                                        ret = False
+                                        Ret = False
                                     End If
                                 End If
                             End If
                         End If
                     Else
                         chk1 = Dir(URL, attr)
-                        If chk1 <> "" And Not ret Then
+                        If chk1 <> "" And Not Ret Then
                             If InStr(URL, "*") > 0 Then
-                                ret = True
+                                Ret = True
                             Else
                                 If Len(URL) > Len(chk1) Then
-                                    ret = (LCase(Right(URL, Len(chk1))) = LCase(chk1))
+                                    Ret = (LCase(Right(URL, Len(chk1))) = LCase(chk1))
                                 Else
-                                    ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
+                                    Ret = LCase(Right(chk1, Len(URL))) = LCase(URL)
                                 End If
                             End If
                         End If
@@ -1118,8 +1118,8 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
                     Case vbSystem + vbReadOnly
                         attr = vbNormal
                 End Select
-            Loop Until ret Or attr = vbNormal
-            PathExists = ret
+            Loop Until Ret Or attr = vbNormal
+            PathExists = Ret
         End If
     End If
 
@@ -1177,7 +1177,7 @@ fixthis:
     End If
 End Function
 
-Public Function ReadFile(ByVal path As String) As String
+Public Function ReadFile(ByVal Path As String) As String
     Dim num As Long
     Dim Text As String
     Dim timeout As Single
@@ -1185,8 +1185,8 @@ Public Function ReadFile(ByVal path As String) As String
     num = FreeFile
     On Error Resume Next
     On Local Error Resume Next
-    If PathExists(path, True) Then
-        Open path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
+    If PathExists(Path, True) Then
+        Open Path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
         Close #num
         Select Case Err.Number
             Case 54, 70, 75
@@ -1194,9 +1194,9 @@ Public Function ReadFile(ByVal path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open path For Binary Access Read Lock Write As num Len = 1
+                Open Path For Binary Access Read Lock Write As num Len = 1
                 If timeout <> 0 Then
-                    Open path For Binary Shared As #num Len = 1
+                    Open Path For Binary Shared As #num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1205,9 +1205,9 @@ Public Function ReadFile(ByVal path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open path For Binary Access Read As num Len = 1
+                Open Path For Binary Access Read As num Len = 1
                 If timeout <> 0 Then
-                    Open path For Binary Shared As num Len = 1
+                    Open Path For Binary Shared As num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1237,10 +1237,10 @@ failit:
     Err.Raise 75, "ReadFile"
 End Function
 
-Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
+Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
 
-    If PathExists(path, True) Then
-        If (GetAttr(path) And vbReadOnly) <> 0 Then Exit Function
+    If PathExists(Path, True) Then
+        If (GetAttr(Path) And vbReadOnly) <> 0 Then Exit Function
     End If
     
     Dim timeout As Single
@@ -1250,7 +1250,7 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
     On Local Error Resume Next
     
     num = FreeFile
-    Open path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
+    Open Path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
     Close #num
     
     Select Case Err.Number
@@ -1260,9 +1260,9 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open path For Binary Access Write Lock Read As #num Len = 1
+            Open Path For Binary Access Write Lock Read As #num Len = 1
             If timeout <> 0 Then
-                Open path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num
@@ -1271,9 +1271,9 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open path For Binary Access Write As #num Len = 1
+            Open Path For Binary Access Write As #num Len = 1
             If timeout <> 0 Then
-                Open path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num

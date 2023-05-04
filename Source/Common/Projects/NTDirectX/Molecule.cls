@@ -15,11 +15,13 @@ Option Explicit
 
 Implements Orbit
 
+
 Private pVolume As Volume
 Private pMolecules As Molecules
 Private pFileName As String
 Private pKey As String
 Private pSerialize As Boolean
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -49,6 +51,13 @@ Public Property Set Absolute(ByRef RHS As Orbit)
     Set Orbit.Absolute = RHS
 End Property
 
+Public Property Let ToString(ByVal RHS As String)
+    Orbit.ToString = RHS
+End Property
+Public Property Get ToString() As String
+Attribute ToString.VB_MemberFlags = "40"
+    ToString = Orbit.ToString
+End Property
 
 Public Property Get Key() As String
 Attribute Key.VB_UserMemId = 0
@@ -80,9 +89,9 @@ Public Property Let FileName(ByVal RHS As String)
         pFileName = RHS
         Dim m As Molecule
         Set m = CreateMoleculeMesh(pFileName)
-        Dim V As Matter
-        For Each V In m.Volume
-            Volume.Add V
+        Dim v As Matter
+        For Each v In m.Volume
+            Volume.Add v
         Next
         m.Volume.Clear
         Set m = Nothing
@@ -154,6 +163,7 @@ Private Sub Class_Initialize()
     pKey = "K" & ObjPtr(Me)
 End Sub
 
+
 'Public Property Get NotEmpty() As Boolean
 '    NotEmpty = pOrbit.NotEmpty
 'End Property
@@ -212,11 +222,11 @@ Private Property Set Orbit_Origin(ByRef RHS As Point)
 End Property
 
 Private Property Get Orbit_Ranges() As Range
-    Set Orbit_Ranges = Me.Ranges
+    Set Orbit_Ranges = Orbit.Ranges
 End Property
 
 Private Property Set Orbit_Ranges(ByRef RHS As Range)
-    Set Me.Ranges = RHS
+    Set Orbit.Ranges = RHS
 End Property
 
 Private Property Get Orbit_Rotate() As Point

@@ -852,25 +852,41 @@ Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecu
     DDevice.SetTexture 0, Nothing
     DDevice.SetMaterial GenericMaterial
     DDevice.SetTexture 1, Nothing
+    
+    Dim matRoll As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPos As D3DMATRIX
+        
+    Dim matMat As D3DMATRIX
+    D3DXMatrixIdentity matMat
+    DDevice.SetTransform D3DTS_WORLD, matMat
+        
+    If Not Camera.Planet Is Nothing Then
 
+        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
+        D3DXMatrixMultiply matMat, matRoll, matMat
+
+        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
+        D3DXMatrixMultiply matMat, matYaw, matMat
+
+        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
+        D3DXMatrixMultiply matMat, matPitch, matMat
+        
+        DDevice.SetTransform D3DTS_WORLD, matMat
+
+   End If
     
     RenderOrbits Molecules, True
 
     For Each p In Planets
         RenderOrbits p.Molecules, False
     Next
-
+    
     If Not Camera.Planet Is Nothing Then
 
-        Dim matMat As D3DMATRIX
-
         D3DXMatrixIdentity matMat
-
-        Dim matRoll As D3DMATRIX
-        Dim matPitch As D3DMATRIX
-        Dim matYaw As D3DMATRIX
-        Dim matPos As D3DMATRIX
-
+    
         D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
         D3DXMatrixMultiply matMat, matPos, matMat
 
@@ -886,26 +902,26 @@ Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecu
         DDevice.SetTransform D3DTS_WORLD, matMat
 
     End If
-
+    
 End Sub
 
-Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
-    
+Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean) ', ByRef matMat As D3DMATRIX)
+
     Dim matMat As D3DMATRIX
     D3DXMatrixIdentity matMat
-                
+    
     Dim m As Molecule
     For Each m In col
         If NoParentOnly Then
             If m.Parent Is Nothing Then
-                RenderMolecule m, Nothing, matMat 'matPos2, matRoll2, matYaw2, matPitch2, matScale2
+                RenderMolecule m, Nothing, matMat  'matPos2, matRoll2, matYaw2, matPitch2, matScale2
             End If
         Else
-            RenderMolecule m, Nothing, matMat 'matPos2, matRoll2, matYaw2, matPitch2, matScale2
+            RenderMolecule m, Nothing, matMat  'matPos2, matRoll2, matYaw2, matPitch2, matScale2
         End If
         
     Next
-
+    
 End Sub
 
 Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX)
@@ -2333,7 +2349,7 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
 
         ObjectCount = ObjectCount + 1
 
-        Set CreateVolumeLanding = vol
+        Set CreateVolumeLanding2 = vol
     End If
     
 End Function

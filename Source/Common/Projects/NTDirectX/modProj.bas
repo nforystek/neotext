@@ -13,7 +13,7 @@ Public FileCount As Long
 Public Lights() As D3DLIGHT8
 Public LightCount As Long
 
-Private Mirrors As ntnodes10.Collection
+Private Mirrors As NTNodes10.Collection
 Public worldRotate As New Point
 
 Public Sub CreateProj()
@@ -172,9 +172,9 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
     DDevice.SetTexture 0, Nothing
 
 
-
-
-    Dim cutoff As Single
+    Camera.BuildColor
+    
+    
     Dim cnt As Long
     Dim dist As Single
     Dim dist2 As Single
@@ -196,12 +196,12 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
                         'If DistanceEx(MoleculeView.Origin, p.Origin) <  p.OuterEdge Then
 
-                            dist = Distance(p.Origin.x, 0, p.Origin.z, 0, MoleculeView.Origin.y, 0)
+                            dist = Distance(p.Origin.X, 0, p.Origin.z, 0, MoleculeView.Origin.Y, 0)
                             If dist < p.OuterEdge Then
                                 If dist > (p.OuterEdge / 4) Then
                                     SetRenderBlends False, True
 
-                                    dist = 1 - (1 * ((MoleculeView.Origin.y - (p.OuterEdge / 4)) / (p.OuterEdge - (p.OuterEdge / 4))))
+                                    dist = 1 - (1 * ((MoleculeView.Origin.Y - (p.OuterEdge / 4)) / (p.OuterEdge - (p.OuterEdge / 4))))
                                     Render = True
                                    ' DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(dist, Planets(onKey).Color.Red, Planets(onKey).Color.Green, Planets(onKey).Color.Blue)
                                 Else
@@ -222,6 +222,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 '                            SetRenderBlends p.Transparent, p.Translucent
 '                        End If
 
+                        Camera.BuildColor p.color.RGB, p.RelativeColorFactor(dist)
 
                         If Render Then
                             If (Not (p.Transparent Or p.Translucent)) Then
@@ -264,6 +265,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
                             End If
                         End If
+                        
+                        
 
                     Case Plateau
 
@@ -287,9 +290,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
    
 
 
-
     DDevice.SetRenderState D3DRS_LIGHTING, 1
-    DDevice.SetRenderState D3DRS_FOGENABLE, 0
     
     DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
@@ -297,9 +298,18 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
     DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
 
-    DDevice.SetRenderState D3DRS_FOGCOLOR, DDevice.GetRenderState(D3DRS_AMBIENT)
     
+    'DDevice.SetRenderState D3DRS_AMBIENT,camera.c
+   ' DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(1, red, g, b)
 
+'    DDevice.SetRenderState D3DRS_FOGENABLE, 1
+'    DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
+'    DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
+'    DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
+'    DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(50 / 2)
+'    DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(50)
+'    DDevice.SetRenderState D3DRS_FOGDENSITY, 0
+    
     DDevice.SetRenderState D3DRS_ZENABLE, 1
   
 
@@ -313,8 +323,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
     Static lastOrigin As Point
     If lastOrigin Is Nothing Then
         Set lastOrigin = New Point
-        lastOrigin.x = MoleculeView.Origin.x
-        lastOrigin.y = MoleculeView.Origin.y
+        lastOrigin.X = MoleculeView.Origin.X
+        lastOrigin.Y = MoleculeView.Origin.Y
         lastOrigin.z = MoleculeView.Origin.z
     End If
     
@@ -385,20 +395,22 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
             Set p = Planets(i)
         'For Each p In Planets
-
+            dist = DistanceEx(MoleculeView.Origin, p.Origin)
+            Camera.BuildColor p.color.RGB, p.RelativeColorFactor(dist)
+            
             If p.Visible Then
                 If (p.Form = Plateau) Then
                     total = total + 1 'hold total of plateau only
 
                     'get running sums for universe calsulations
                     sum = sum + ((p.InnerEdge * 2) + (p.OuterEdge * 2))
-                    If sumx < Abs(p.Origin.x) Then sumx = Abs(p.Origin.x)
-                    If sumy < Abs(p.Origin.y) Then sumy = Abs(p.Origin.y)
+                    If sumx < Abs(p.Origin.X) Then sumx = Abs(p.Origin.X)
+                    If sumy < Abs(p.Origin.Y) Then sumy = Abs(p.Origin.Y)
                     If sumz < Abs(p.Origin.z) Then sumz = Abs(p.Origin.z)
                     
                     'distance to center of planet
-                    dist = DistanceEx(MoleculeView.Origin, p.Origin)
-
+                    
+                    
                     'find nearest planet (dist4 holds closest last dist)
                     If dist < dist4 Or dist4 = 0 Then
                         dist4 = dist
@@ -436,14 +448,14 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     'set camera.planet based on if we enter/leave radius
                     If onkey = p.Key Then
 
-                        If dist > p.InnerEdge Then
+                        If dist > p.OuterEdge + p.Field Then
                             Set Camera.Planet = Nothing
                         End If
 
                         
                     Else
                         
-                        If dist <= p.InnerEdge And onkey = "" Then
+                        If dist <= p.OuterEdge And onkey = "" Then
                                     
                             Set Camera.Planet = p
 
@@ -496,8 +508,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     cnt = cnt + 1 'the number of total in plateau we are on
 
                     p.Scaled.z = 1
-                    p.Scaled.y = p.Scaled.z
-                    p.Scaled.x = p.Scaled.z
+                    p.Scaled.Y = p.Scaled.z
+                    p.Scaled.X = p.Scaled.z
 
 
                     
@@ -508,13 +520,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     Dim matYaw As D3DMATRIX
                     Dim matPitch As D3DMATRIX
                     Dim matRoll As D3DMATRIX
-                    D3DXMatrixIdentity matPlane
-
-                    D3DXMatrixIdentity matRot
-                    D3DXMatrixIdentity matPos
-                    D3DXMatrixIdentity matYaw
-                    D3DXMatrixIdentity matPitch
-                    D3DXMatrixIdentity matRoll
                     
                     If onkey <> p.Key Then
                       '  Rotation VectorAxisAngles(VectorDeduction(MoleculeView.Origin, p.Origin)), p
@@ -525,7 +530,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                   '     Orientate MakePoint(0.01, 0.01, 0.01), p
                   '    Orientate MakePoint(0.01, 0, 0),
                      '   Orientate MakePoint(0, 0.01, 0), Planets("Earth").Molecules("Box2")
-                      ' Orientate MakePoint(0, 0, 0.01), p
+                     '  Orientate MakePoint(0, 0, 0.01), p
 
                       
                     
@@ -537,12 +542,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                     If onkey = p.Key Then
 
 '                       Orientate MakePoint(0.01, 0.01, 0.01), p
-'                       ' Orientate MakePoint(0.01, 0, 0), p
+            '            Orientate MakePoint(0.01, 0, 0), p
 '                        'Orientate MakePoint(0, 0.01, 0), p
 '                        'Orientate MakePoint(0, 0, 0.01), p
 
-                      
-                    
                     End If
 
                     
@@ -558,7 +561,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                         Dim testFar As Long
                         testFar = Far '10 * MILE
                         
-                        If (Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.y - p.Origin.y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
+                        If (Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
 
                             D3DXMatrixIdentity matPlane
                             D3DXMatrixIdentity matPos
@@ -567,7 +570,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                             D3DXMatrixIdentity matRoll
                             D3DXMatrixIdentity matScale
                         
-                            D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.y, p.Origin.z
+                            D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
                             D3DXMatrixMultiply matPlane, matPlane, matPos
                             
                             DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -575,13 +578,13 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                             D3DXMatrixRotationZ matRoll, p.Rotate.z
                             D3DXMatrixMultiply matPlane, matRoll, matPlane
         
-                            D3DXMatrixRotationY matYaw, p.Rotate.y
+                            D3DXMatrixRotationY matYaw, p.Rotate.Y
                             D3DXMatrixMultiply matPlane, matYaw, matPlane
                             
-                            D3DXMatrixRotationX matPitch, p.Rotate.x
+                            D3DXMatrixRotationX matPitch, p.Rotate.X
                             D3DXMatrixMultiply matPlane, matPitch, matPlane
                             
-                            D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                             D3DXMatrixMultiply matPlane, matScale, matPlane
         
                             DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -604,23 +607,23 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                             End With
 
                         Else
-                            If Not ((Abs(Camera.Player.Origin.x - p.Origin.x) > (testFar / 2)) Or (Abs(Camera.Player.Origin.y - p.Origin.y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
+                            If Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
 
                                 If ((p.Rows > 0) And (p.Columns > 0)) And (p.PlateauIsland Or p.PlateauDoughnut) Then
                         
                                     Dim j As Long
-                                    Dim x As Single
+                                    Dim X As Single
                                     Dim z As Single
-                                    x = ((p.Rows \ 2) * (p.OuterEdge * 2))
-                                    z = ((p.Columns \ 2) * (p.OuterEdge * 2))
+                                    X = ((p.Rows \ 2) * ((p.OuterEdge * 2) + p.Field))
+                                    z = ((p.Columns \ 2) * ((p.OuterEdge * 2) + p.Field))
    
                                     For j = 0 To ((p.Rows * p.Columns) - 1)
                         
                                         If j Mod p.Columns = 0 Then
-                                            z = z - (p.OuterEdge * 2)
-                                            x = -((p.Rows \ 2) * (p.OuterEdge * 2))
+                                            z = z - ((p.OuterEdge * 2) + p.Field)
+                                            X = -((p.Rows \ 2) * ((p.OuterEdge * 2) + p.Field))
                                         Else
-                                            x = x + (p.OuterEdge * 2)
+                                            X = X + ((p.OuterEdge * 2) + p.Field)
                                         End If
                                         
                                         With p.Volume(1)
@@ -631,8 +634,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                             D3DXMatrixIdentity matRoll
                                             D3DXMatrixIdentity matScale
                                             
-                                            D3DXMatrixTranslation matPos, (p.Origin.x \ (testFar / 2)) * (testFar / 2) + x, _
-                                                (p.Origin.y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
+                                            D3DXMatrixTranslation matPos, (p.Origin.X \ (testFar / 2)) * (testFar / 2) + X, _
+                                                (p.Origin.Y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
                                             D3DXMatrixMultiply matPlane, matPlane, matPos
                         
                                             DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -640,13 +643,13 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                             D3DXMatrixRotationZ matRoll, p.Rotate.z
                                             D3DXMatrixMultiply matPlane, matRoll, matPlane
                         
-                                            D3DXMatrixRotationY matYaw, p.Rotate.y
+                                            D3DXMatrixRotationY matYaw, p.Rotate.Y
                                             D3DXMatrixMultiply matPlane, matYaw, matPlane
                         
-                                            D3DXMatrixRotationX matPitch, p.Rotate.x
+                                            D3DXMatrixRotationX matPitch, p.Rotate.X
                                             D3DXMatrixMultiply matPlane, matPitch, matPlane
                         
-                                            D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                                            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                                             D3DXMatrixMultiply matPlane, matScale, matPlane
                                                     
                                             DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -668,16 +671,64 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                         
                                     Next
                                 
-                                End If
+                                ElseIf (p.PlateauIsland Or p.PlateauDoughnut) Then
                                 
+                                    D3DXMatrixIdentity matPlane
+                                    D3DXMatrixIdentity matPos
+                                    D3DXMatrixIdentity matYaw
+                                    D3DXMatrixIdentity matPitch
+                                    D3DXMatrixIdentity matRoll
+                                    D3DXMatrixIdentity matScale
+                                                    
+                                    D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
+                                    D3DXMatrixMultiply matPlane, matPlane, matPos
+                                    
+                                    DDevice.SetTransform D3DTS_WORLD, matPlane
+            
+                                    D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                    D3DXMatrixMultiply matPlane, matRoll, matPlane
+                
+                                    D3DXMatrixRotationY matYaw, p.Rotate.Y
+                                    D3DXMatrixMultiply matPlane, matYaw, matPlane
+                                    
+                                    D3DXMatrixRotationX matPitch, p.Rotate.X
+                                    D3DXMatrixMultiply matPlane, matPitch, matPlane
+                                    
+                                    D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+                                    D3DXMatrixMultiply matPlane, matScale, matPlane
+                
+                                    DDevice.SetTransform D3DTS_WORLD, matPlane
+                            
+                                    With p.Volume(1)
+                
+                                        SetRenderBlends .Transparent, .Translucent
+                                        If Not (.Translucent Or .Transparent) Then
+                                            DDevice.SetMaterial GenericMaterial
+                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                            DDevice.SetTexture 1, Nothing
+                                        Else
+                                            DDevice.SetMaterial LucentMaterial
+                                            If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
+                                            DDevice.SetMaterial GenericMaterial
+                                            If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
+                                        End If
+                                        DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
+    
+                                    End With
+                                End If
+
+                            End If
+                            If (p.PlateauInfinite Or p.PlateauHole) Then
+                            
                                 D3DXMatrixIdentity matPlane
                                 D3DXMatrixIdentity matPos
                                 D3DXMatrixIdentity matYaw
                                 D3DXMatrixIdentity matPitch
                                 D3DXMatrixIdentity matRoll
                                 D3DXMatrixIdentity matScale
-                                                
-                                D3DXMatrixTranslation matPos, p.Origin.x, p.Origin.y, p.Origin.z
+
+                                D3DXMatrixTranslation matPos, ((Camera.Player.Origin.X - p.Origin.X) \ (testFar / 2)) * (testFar / 2), _
+                                     (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
                                 D3DXMatrixMultiply matPlane, matPlane, matPos
                                 
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -685,13 +736,13 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                 D3DXMatrixRotationZ matRoll, p.Rotate.z
                                 D3DXMatrixMultiply matPlane, matRoll, matPlane
             
-                                D3DXMatrixRotationY matYaw, p.Rotate.y
+                                D3DXMatrixRotationY matYaw, p.Rotate.Y
                                 D3DXMatrixMultiply matPlane, matYaw, matPlane
                                 
-                                D3DXMatrixRotationX matPitch, p.Rotate.x
+                                D3DXMatrixRotationX matPitch, p.Rotate.X
                                 D3DXMatrixMultiply matPlane, matPitch, matPlane
                                 
-                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
+                                D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                                 D3DXMatrixMultiply matPlane, matScale, matPlane
             
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
@@ -710,52 +761,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
                                         If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                                     End If
                                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-
-                                End With
-
-                            ElseIf (p.PlateauInfinite Or p.PlateauHole) Then
-                            
-                                D3DXMatrixIdentity matPlane
-                                D3DXMatrixIdentity matPos
-                                D3DXMatrixIdentity matYaw
-                                D3DXMatrixIdentity matPitch
-                                D3DXMatrixIdentity matRoll
-                                D3DXMatrixIdentity matScale
-
-                                D3DXMatrixTranslation matPos, ((Camera.Player.Origin.x - p.Origin.x) \ (testFar / 2)) * (testFar / 2), _
-                                     (p.Origin.y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
-                                D3DXMatrixMultiply matPlane, matPlane, matPos
-                                
-                                DDevice.SetTransform D3DTS_WORLD, matPlane
-        
-                                D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                D3DXMatrixMultiply matPlane, matRoll, matPlane
-            
-                                D3DXMatrixRotationY matYaw, p.Rotate.y
-                                D3DXMatrixMultiply matPlane, matYaw, matPlane
-                                
-                                D3DXMatrixRotationX matPitch, p.Rotate.x
-                                D3DXMatrixMultiply matPlane, matPitch, matPlane
-                                
-                                D3DXMatrixScaling matScale, p.Scaled.x, p.Scaled.y, p.Scaled.z
-                                D3DXMatrixMultiply matPlane, matScale, matPlane
-            
-                                DDevice.SetTransform D3DTS_WORLD, matPlane
-                        
-                                With p.Volume(1)
-            
-                                    SetRenderBlends .Transparent, .Translucent
-                                    If Not (.Translucent Or .Transparent) Then
-                                        DDevice.SetMaterial GenericMaterial
-                                        If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                        DDevice.SetTexture 1, Nothing
-                                    Else
-                                        DDevice.SetMaterial LucentMaterial
-                                        If .TextureIndex > 0 Then DDevice.SetTexture 0, Files(.TextureIndex).Data
-                                        DDevice.SetMaterial GenericMaterial
-                                        If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
-                                    End If
-                                    DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
 
                                 End With
                             End If
@@ -825,8 +830,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
 
         'reset lastorigin value to current for next time
-        lastOrigin.x = MoleculeView.Origin.x
-        lastOrigin.y = MoleculeView.Origin.y
+        lastOrigin.X = MoleculeView.Origin.X
+        lastOrigin.Y = MoleculeView.Origin.Y
         lastOrigin.z = MoleculeView.Origin.z
         
         DDevice.SetRenderState D3DRS_ZENABLE, 1
@@ -834,6 +839,13 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef MoleculeView As
 
     End If
 
+   ' DDevice.SetTransform D3DTS_VIEW, matView
+    'DDevice.SetTransform D3DTS_WORLD, matWorld
+
+'    D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
+'        ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far
+'    DDevice.SetTransform D3DTS_PROJECTION, matProj
+    
     DDevice.SetRenderState D3DRS_CLIPPING, 1
 
     DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
@@ -1026,7 +1038,7 @@ End Sub
 '
 '    DDevice.SetRenderState D3DRS_FOGCOLOR, DDevice.GetRenderState(D3DRS_AMBIENT)
 '
-'  ' DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color
+'  ' DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color.RGBA
 '    DDevice.SetRenderState D3DRS_ZENABLE, 1
 '
 '
@@ -2645,7 +2657,7 @@ Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As B
         If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     End If
 End Sub
-Private Sub BackOfTheLine(ByRef line As ntnodes10.Collection)
+Private Sub BackOfTheLine(ByRef line As NTNodes10.Collection)
     Dim Key As String
     Dim Obj As Object
     Key = line.Key(1)
