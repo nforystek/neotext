@@ -777,7 +777,7 @@ Private Sub AllCommitRoutine(ByRef ApplyTo As Molecule, Optional ByRef Parent As
     Set ApplyTo.Relative = Nothing
 End Sub
 
-Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
+Public Sub RenderMotions(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
     'called once per frame committing changes the last frame has waiting in object properties in entirety
     Dim m As Molecule
     Dim p As Planet
@@ -810,7 +810,7 @@ Public Sub Begin(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecul
 End Sub
 
 
-Public Sub Finish(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
+Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
     Dim p As Planet
     
     'called once per frame drawing the objects, with out any of the current frame object

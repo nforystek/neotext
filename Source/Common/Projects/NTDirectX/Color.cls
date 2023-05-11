@@ -26,7 +26,9 @@ End Property
 Public Property Get RGBA() As Long
     RGBA = D3DColorRGBA(red * 255, green * 255, blue * 255, Alpha)
 End Property
-
+Public Property Get ARGB() As Long
+    ARGB = D3DColorARGB(Alpha, red * 255, green * 255, blue * 255)
+End Property
 Public Property Let RGB(ByVal RHS As Long)
     Dim r As Long
     Dim g As Long

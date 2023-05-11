@@ -213,7 +213,7 @@ Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As
     If (FindText <> "") Then
         On Error Resume Next
         'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
-0
+
             nxt = Dir(Replace(RootPath & "\", "\\", "\"), flags)
 
             If Err Then
@@ -318,7 +318,7 @@ Public Function GetWindowsTempFolder(Optional ByVal UseWin As Boolean = False) A
         Else
             On Error Resume Next
             MkDir GetWindowsFolder() + "TEMP"
-            If Err.Number <> 0 Then Err.Clear
+            If Err.number <> 0 Then Err.Clear
             On Error GoTo 0
             
             If PathExists(GetWindowsFolder() + "TEMP") Then
@@ -655,7 +655,7 @@ Public Function MakeFolder(ByRef Path As String)
     On Error Resume Next
     If InStr(Path, "\") > 0 Then
         GetAttr Left(Path, InStrRev(Path, "\") - 1)
-        If Err.Number = 76 Or Err.Number = 53 Then
+        If Err.number = 76 Or Err.number = 53 Then
             Err.Clear
             MakeFolder = Path
             Path = MakeFolder(Left(Path, InStrRev(Path, "\") - 1))
@@ -663,9 +663,9 @@ Public Function MakeFolder(ByRef Path As String)
             MakeFolder = Path
         End If
     End If
-    If Err.Number = 0 Then
+    If Err.number = 0 Then
         GetAttr MakeFolder
-        If Err.Number = 76 Or Err.Number = 53 Then
+        If Err.number = 76 Or Err.number = 53 Then
             Err.Clear
             On Error GoTo -1
             MkDir MakeFolder

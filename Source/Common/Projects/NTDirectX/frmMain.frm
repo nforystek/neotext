@@ -26,6 +26,14 @@ Begin VB.Form frmMain
    ScaleWidth      =   6090
    ShowInTaskbar   =   0   'False
    Visible         =   0   'False
+   Begin MSScriptControlCtl.ScriptControl ScriptControl2 
+      Left            =   4875
+      Top             =   2715
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      AllowUI         =   0   'False
+      UseSafeSubset   =   -1  'True
+   End
    Begin VB.PictureBox Picture3 
       AutoRedraw      =   -1  'True
       AutoSize        =   -1  'True
@@ -118,102 +126,55 @@ Public Sub Startup()
     End With
 End Sub
 Public Function Deserialize() As String
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
     With ScriptControl1
         If .Procedures.Count > 0 Then
             Dim cnt As Long
             For cnt = 1 To .Procedures.Count
                 If (LCase(.Procedures.Item(cnt).Name) = "deserialize") Then
                     .Run "Deserialize"
+                    If .Error.number <> 0 Then Err.Raise .Error.number, "Deserialize", .Error.description & vbCrLf & "Line Number: " & .Error.line & " of sniplet; " & vbCrLf & .Error.Text
                 End If
             Next
         End If
-    Exit Function
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
     End With
 End Function
+
 Public Function Serialize() As String
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
     With ScriptControl1
         If .Procedures.Count > 0 Then
             Dim cnt As Long
             For cnt = 1 To .Procedures.Count
                 If (LCase(.Procedures.Item(cnt).Name) = "serialize") Then
                     Serialize = .Eval("Serialize")
+                    If .Error.number <> 0 Then Err.Raise .Error.number, "Serialize", .Error.description & vbCrLf & "Line Number: " & .Error.line & " of sniplet; " & vbCrLf & .Error.Text
                 End If
             Next
         End If
-    Exit Function
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
     End With
 End Function
-Public Sub AddCode(ByVal code As String)
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
+
+Public Sub AddCode(ByVal code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
     With ScriptControl1
         .AddCode code
-    Exit Sub
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
+        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & code
     End With
 End Sub
-Public Function Evaluate(ByVal Expression As Variant) As Variant
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
+
+Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As String = "Evaluate", Optional ByVal LineNumber As Long = 0) As Variant
     With ScriptControl1
         Evaluate = .Eval(Expression)
-    Exit Function
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
+        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & Expression
     End With
 End Function
-Public Sub ExecuteStatement(ByVal Statement As String)
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
+
+Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As String = "ExecuteStatement", Optional ByVal LineNumber As Long = 0)
     With ScriptControl1
         .ExecuteStatement Statement
-    Exit Sub
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
+        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & Statement
     End With
 End Sub
-Public Sub RunEvent(ByRef EventText As String)
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
+
+Public Sub RunEvent(ByRef EventText As String, Optional ByVal source As String = "RunEvent", Optional ByVal LineNumber As Long = "0")
     'any event not yet run is given a guid procedure name and added
     'then subsequent calls are addressing only the guid, changing it
     'to code will create it new, increasing ghosted memory procedures
@@ -225,39 +186,17 @@ Public Sub RunEvent(ByRef EventText As String)
                 .AddCode "Sub b" & Replace(proc, "-", "") & _
                     "()" & vbCrLf & Replace(EventText, "Debug.Print", "DebugPrint", , , vbTextCompare) & vbCrLf & "End Sub" & vbCrLf
                 EventText = proc
+                If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & EventText
             End If
-            frmMain.Run "b" & Replace(EventText, "-", "")
+            frmMain.Run "b" & Replace(EventText, "-", ""), source, LineNumber
         End If
-    Exit Sub
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
     End With
 End Sub
 
-Public Function Run(ByRef ProcedureName As Variant) As Variant
-    On Error GoTo errcatch:
-    On Local Error GoTo errcatch:
+Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As String = "Run", Optional ByVal LineNumber As Long = 0) As Variant
     With ScriptControl1
         .Run ProcedureName
-        If .Error.Number <> 0 Then
-            Err.Raise .Error.Number, .Error.Source, .Error.Description & vbCrLf & _
-                "At line " & .Error.line & " column " & .Error.Column & " of sniplet; " & vbCrLf & .Error.Text
-        End If
-    Exit Function
-errcatch:
-        If Not ConsoleVisible Then
-            ConsoleToggle
-        End If
-        Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                "\n" & "Description: " & Err.Description
-        If .Error.Number <> 0 Then .Error.Clear
-        If Err.Number <> 0 Then Err.Clear
+        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & ProcedureName
     End With
 End Function
 
@@ -265,23 +204,6 @@ End Function
 Private Sub Picture1_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
     If KeyCode = 112 Then ShowSetup = True
-End Sub
-
-Private Sub ScriptControl1_Error()
-    With ScriptControl1
-        If .Error.Number <> 0 Then
-            If Not ConsoleVisible Then
-                ConsoleToggle
-            End If
-            Debug.Print "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                    vbCrLf & "Description: " & .Error.Description & vbCrLf & _
-                    "At line " & .Error.line & " code sniplet; " & vbCrLf & .Error.Text
-            Process "echo An error " & Err.Number & " occurd in " & Err.Source & _
-                    vbCrLf & "Description: " & .Error.Description & vbCrLf & _
-                    "At line " & .Error.line & " code sniplet; " & vbCrLf & .Error.Text
-            If .Error.Number <> 0 Then .Error.Clear
-        End If
-    End With
 End Sub
 
 Private Sub Form_Resize()

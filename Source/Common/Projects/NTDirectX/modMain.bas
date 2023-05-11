@@ -69,13 +69,13 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 If TestDirectX(UserControl) Then
     
                     On Error Resume Next
-                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGBA, 1, 0
+                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGB, 1, 0
                     DDevice.BeginScene
                     DDevice.EndScene
 
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
                     
-                    If (Err.Number = 0) Then
+                    If (Err.number = 0) Then
                         PauseGame = False
                     Else
                         Err.Clear
@@ -84,7 +84,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
     
                 End If
                 
-                If (Not PauseGame) And (Err.Number = 0) Then
+                If (Not PauseGame) And (Err.number = 0) Then
                     InitGameData UserControl
                 Else
                     TermDirectX UserControl
@@ -98,37 +98,44 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 '            On Error GoTo Render
 
             On Error GoTo nofocus
- 
+             
             'BeginMirrors UserControl, Camera.Player
 
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGBA, 1, 0
             
-            Begin UserControl, Camera.Player
+            
+            On Error GoTo 0 'temporary
+            
+            RenderMotions UserControl, Camera
             
             DDevice.BeginScene
             
-            MainMatrixSetup UserControl, Camera.Player
+            RenderCamera UserControl, Camera
             
-            RenderBrilliants UserControl, Camera.Player
+            RenderBrilliants UserControl, Camera
             
-            RenderPlanets UserControl, Camera.Player
+            RenderPlanets UserControl, Camera
         
-            Finish UserControl, Camera.Player
+            RenderMolecules UserControl, Camera
 
             InputScene UserControl
 
 '                       Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
-                    '   Orientate MakePoint(0.01, 0, 0), Planets("Earth")
-'                        Orientate MakePoint(0, 0.01, 0), Planets("Earth")
-'                        Orientate MakePoint(0, 0, 0.01), Planets("Earth")
+                    '   Orientate MakePoint(0.01, 0, 0), Planets("Backdrop")
+                     '  Orientate MakePoint(0, 0.01, 0), Planets("Backdrop")
+'                        Orientate MakePoint(0, 0, 0.01), Planets("Backdrop")
             
             If Not PauseGame Then
                 
                 RenderCmds UserControl
             
+                On Error GoTo nofocus
+                
                 DDevice.EndScene
 
                 PresentScene UserControl
+                
+                On Error GoTo 0 'temporary
 
                 FPSCount = FPSCount + 1
                 If (FPSTimer = 0) Or ((Timer - FPSTimer) >= 1) Then
@@ -173,7 +180,7 @@ Public Sub PresentScene(ByRef UserControl As Macroscopic)
     On Error Resume Next
     
     Do
-        If Err.Number <> 0 Then
+        If Err.number <> 0 Then
             Err.Clear
             If IsScreenSaverActive And (Not ScreenSaver) Then
                 ScreenSaver = True
@@ -188,12 +195,12 @@ Public Sub PresentScene(ByRef UserControl As Macroscopic)
         
         DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
         
-    Loop Until Err.Number = 0
+    Loop Until Err.number = 0
 
     On Error GoTo 0
 End Sub
 
-Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView As Molecule)
+Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
 
     Dim matYaw As D3DMATRIX
     Dim matPitch As D3DMATRIX
@@ -211,19 +218,19 @@ Public Sub MainMatrixSetup(ByRef UserControl As Macroscopic, ByRef MoleculeView 
 
         If Not Camera.Planet Is Nothing Then
 
-            D3DXMatrixRotationX matPitch, -Camera.Player.Absolute.Rotate.X
+            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -Camera.Player.Absolute.Rotate.Y
+            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -Camera.Player.Absolute.Rotate.z
+            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
-            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z
+            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
@@ -344,10 +351,10 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     
     On Error Resume Next
     Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, D3DWindow)
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
         Err.Clear
         Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_MIXED_VERTEXPROCESSING, D3DWindow)
-        If Err.Number <> 0 Then
+        If Err.number <> 0 Then
             Err.Clear
             Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, D3DWindow)
         End If
@@ -419,7 +426,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         On Error Resume Next
         Set DSound = dx.DirectSoundCreate("")
         DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
-        If Err.Number <> 0 Then Err.Clear
+        If Err.number <> 0 Then Err.Clear
         On Error GoTo 0
 
         Dim shArray() As Long
@@ -443,7 +450,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
         PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
-    
+
         GravityVector.Y = -0.05
         
         LiquidVector.Y = -0.005
@@ -576,8 +583,8 @@ Public Function TestDirectX(ByRef UserControl As Macroscopic) As Boolean
 
     On Error Resume Next
     InitDirectX UserControl
-    TestDirectX = (Err.Number = 0)
-    If Err.Number <> 0 Then Err.Clear
+    TestDirectX = (Err.number = 0)
+    If Err.number <> 0 Then Err.Clear
     On Error GoTo 0
 
 End Function

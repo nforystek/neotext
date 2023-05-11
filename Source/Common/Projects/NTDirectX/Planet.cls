@@ -24,6 +24,7 @@ Private pHeight As Single
 Private pWidth As Single
 Private pLength As Single
 Private pSegments As Long
+Private pFOllow As Boolean
 
 Private pOuterEdge As Single
 Private pInnerEdge As Single
@@ -53,13 +54,27 @@ Public Property Let Fog(ByVal RHS As Single)
     pFog = RHS
 End Property
 
+Public Property Get Follow() As Boolean
+    Follow = pFOllow
+End Property
+Public Property Let Follow(ByVal RHS As Boolean)
+    pFOllow = RHS
+End Property
+
 Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
     Dim Checkto As Single
+    
     Checkto = Round(Distance, 0)
-    If PlateauInfinite Then
+    If (Form = World) Then
+        If (Checkto < Field) And (Field > 0) Then
+            RelativeColorFactor = (Field - Distance) / Field
+        ElseIf Field = 0 Then
+            RelativeColorFactor = 1
+        End If
+    ElseIf PlateauInfinite Then
         RelativeColorFactor = 1
     ElseIf Checkto <= OuterEdge + Field Then
-        If PlateauIsland Or (PlateauDoughnut And (Checkto > InnerEdge)) Then
+        If PlateauIsland Or (PlateauDoughnut And (Checkto >= InnerEdge)) Then
             If Checkto <= OuterEdge And Checkto >= InnerEdge Then
                 RelativeColorFactor = 1
             ElseIf Checkto - OuterEdge < Field And (OuterEdge - InnerEdge) > 0 Then
@@ -228,6 +243,7 @@ Public Property Let OuterEdge(ByVal RHS As Single)
 End Property
 
 Public Property Get InnerEdge() As Single
+    
     InnerEdge = pInnerEdge
 End Property
 Public Property Let InnerEdge(ByVal RHS As Single)
@@ -327,7 +343,7 @@ Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Colu
 End Property
 
 Friend Property Get PlateauInfinite()
-    PlateauInfinite = ((pFileIndex(0) > 0) And (PlateauHole Xor (Not (PlateauIsland Or PlateauDoughnut))))
+    PlateauInfinite = ((pFileIndex(0) > 0) And (((Form = World) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
 End Property
 Friend Property Get PlateauIsland()
     PlateauIsland = ((pFileIndex(0) > 0) And ((OuterEdge > 0) And (InnerEdge = 0)))

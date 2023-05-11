@@ -212,6 +212,7 @@ Private Function GetImportantMembers(ByVal lib As TypeLibInfo, ByVal classname A
             If Trim(LCase(classname)) = Trim(LCase(cls.Item(cnt).Name)) Then
                 Set fce = cls.Item(cnt).Interfaces
                 For cnt2 = 1 To fce.Count
+                    On Error Resume Next
                     If Trim(LCase(fce.Item(cnt2).Name)) = Trim(LCase(classname)) Or _
                         Trim(LCase(fce.Item(cnt2).Name)) = "_" & Trim(LCase(classname)) Then
                         Set mem = fce.Item(cnt2).Members
@@ -246,6 +247,7 @@ Private Function GetImportantMembers(ByVal lib As TypeLibInfo, ByVal classname A
                             Next
                         End If
                     End If
+                    On Error GoTo 0
                 Next
             End If
         Next
@@ -370,8 +372,8 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
                 If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(cls.Item(cnt).Name)) Then
                     Set fce = cls.Item(cnt).Interfaces
                     For cnt2 = 1 To fce.Count
-                        If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Or _
-                            "_" & Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Then
+'                        If Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Or _
+'                            "_" & Trim(LCase(VBA.TypeName(ObjToSerial))) = Trim(LCase(fce.Item(cnt2).Name)) Then
                             Set mem = fce.Item(cnt2).Members
                             If mem.Count > 0 Then
                                 For cnt3 = 1 To mem.Count
@@ -437,7 +439,7 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
                                 Next
                                 Indent = Mid(Indent, Len(Dent) + 1)
                             End If
-                        End If
+'                        End If
                     Next
                 End If
             Next

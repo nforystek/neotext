@@ -564,8 +564,6 @@ Public Function GetBindingText(ByVal BindIndex As Integer) As String
             GetBindingText = "MYCOMPUTER"
         Case DIK_N
             GetBindingText = "N"
-        Case DIK_NEXT
-            GetBindingText = "NEXT"
         Case DIK_NEXTTRACK
             GetBindingText = "NEXTTRACK"
         Case DIK_NOCONVERT
@@ -624,6 +622,8 @@ Public Function GetBindingText(ByVal BindIndex As Integer) As String
             GetBindingText = "PGUP"
         Case DIK_PLAYPAUSE
             GetBindingText = "PLAYPAUSE"
+        Case DIK_NEXT
+            GetBindingText = "NEXT"
         Case DIK_POWER
             GetBindingText = "POWER"
         Case DIK_PREVTRACK
@@ -727,8 +727,8 @@ Public Sub FadeMessage(ByVal txt As String)
     AddMessage txt
 End Sub
 
-Public Function row(ByVal num As Long) As Long
-    row = ((TextHeight \ VB.Screen.TwipsPerPixelY) * num) + (2 * num)
+Public Function Row(ByVal num As Long) As Long
+    Row = ((TextHeight \ VB.Screen.TwipsPerPixelY) * num) + (2 * num)
 End Function
 
 Public Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
@@ -1106,6 +1106,7 @@ Public Function AddMessage(ByVal Message As String)
         ConsoleMsgs.Remove 1
     End If
     ConsoleMsgs.Add Message
+    Debug.Print Message
     
 End Function
 Public Sub ConsoleInput(ByRef UserControl As Macroscopic, ByRef kState As DIKEYBOARDSTATE)
@@ -1495,7 +1496,7 @@ Public Sub Process(ByVal inArg As String, Optional ByRef UserControl As Macrosco
         Case "print"
             inX = RemoveNextArg(inArg, " ")
             inY = RemoveNextArg(inArg, " ")
-            PrintText inArg, (((frmMain.ScaleWidth / VB.Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, row(inY)
+            PrintText inArg, (((frmMain.ScaleWidth / VB.Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, Row(inY)
         Case "help", "cmdlist", "?", "--?"
             Select Case LCase(inArg)
                 Case Else

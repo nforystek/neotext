@@ -23,8 +23,31 @@ Global OnEvents As New NTNodes10.Collection
 Global Bindings As New Bindings
 Global Camera As New Camera
 
-Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """", Optional ByVal Embeded As Boolean = False, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare, Optional ByVal KeepDelim As Boolean = True) As String
+Private LastCall As String
+
+'###########################################################
+'### Commonly used functions among other parse functions ###
+'###########################################################
+
+Public Function ParseNumerical(ByRef inValues As String) As Variant
+    'not used in this module, rather is for values tostring elsewhere
+    
+    ParseNumerical = RemoveNextArg(inValues, ",")
+    If IsNumeric(ParseNumerical) Then
+        ParseNumerical = CSng(ParseNumerical)
+    Else
+        ParseNumerical = CSng(frmMain.Evaluate(ParseNumerical))
+    End If
+
+End Function
+
+Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """", Optional ByVal NextBlock As Boolean = True) As String
+    'passing true for NextBlock removes and returns an entire next section identified by beginquote and endquote with text before the block as well
+    'passing false for NextBlock removes and retruns what is only inbetween the beginquote and endquote, stripping it and leaving before text
+    'concatenated to any text after whwer ethe block was
     Dim retval As String
+    Dim Compare As VbCompareMethod
+    Compare = VbCompareMethod.vbBinaryCompare
     Dim X As Long
     X = InStr(1, TheParams, BeginQuote, Compare)
     If (X > 0) And (X < Len(TheParams)) Then
@@ -45,7 +68,7 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
                     l = 0
                 End If
             Loop
-            If KeepDelim Then
+            If NextBlock Then
                 retval = Left(TheParams, X - 1) & Mid(TheParams, X)
                 TheParams = Mid(retval, (X - 1) + (Y - X) + Len(EndQuote) + Len(BeginQuote))
                 retval = Left(retval, (X - 1) + (Y - X) + Len(BeginQuote))
@@ -58,24 +81,13 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
     End If
     ParseQuotedArg = retval
 End Function
-Public Function ParseNumerical(ByRef inValues As String) As Variant
 
-    ParseNumerical = RemoveNextArg(inValues, ",")
-    
-    If IsNumeric(ParseNumerical) Then
-        ParseNumerical = CSng(ParseNumerical)
-    Else
-        ParseNumerical = CSng(frmMain.Evaluate(ParseNumerical))
-    End If
-    
-
-End Function
-
-Private Function ParseReservedWord(ByVal txt As String) As Integer
+Private Function ParseReservedWord(ByVal inLine As String) As Integer
+    'checks for the presence of a reserved word and returns the code for it
     Dim inWord As String
-    Do While IsAlphaNumeric(Left(txt, 1))
-        inWord = inWord & Left(txt, 1)
-        txt = Mid(txt, 2)
+    Do While IsAlphaNumeric(Left(inLine, 1))
+        inWord = inWord & Left(inLine, 1)
+        inLine = Mid(inLine, 2)
     Loop
     Select Case LCase(inWord)
         Case "oninrange", "onoutrange", "oncollide"
@@ -88,29 +100,33 @@ Private Function ParseReservedWord(ByVal txt As String) As Integer
             ParseReservedWord = IIf(GetBindingIndex(inWord) > -1, 2, 0)
     End Select
 End Function
-Private Function ParseBracketOff(ByVal txt As String, ByVal StartDelim As String, ByVal StopDelim As String) As String
-    txt = ParseWhiteSpace(txt)
-    If Left(txt, 1) = StartDelim And Right(txt, 1) = StopDelim Then
-        txt = Mid(txt, 2)
-        txt = Left(txt, Len(txt) - 1)
+Private Function ParseBracketOff(ByVal inBlock As String, ByVal StartDelim As String, ByVal StopDelim As String) As String
+    'similar to trimstrip with delimiters, and startdelim at the beginning is removed, any stopdelim at the end is removed
+    inBlock = ParseWhiteSpace(inBlock)
+    If Left(inBlock, 1) = StartDelim And Right(inBlock, 1) = StopDelim Then
+        inBlock = Mid(inBlock, 2)
+        inBlock = Left(inBlock, Len(inBlock) - 1)
     End If
-    ParseBracketOff = ParseWhiteSpace(txt)
+    ParseBracketOff = ParseWhiteSpace(inBlock)
 End Function
-Public Function ParseWhiteSpace(ByVal txt As String) As String
+Public Function ParseWhiteSpace(ByVal inBlock As String) As String
+    'similar to trimstrip with whitespaces, and sequence repeating white-
+    'spaces at the bginning or end are removed from the result returned
     Static stack As Boolean
     If Not stack Then
         stack = True
-        txt = StrReverse(txt)
-        txt = ParseWhiteSpace(txt)
-        txt = StrReverse(txt)
+        inBlock = StrReverse(inBlock)
+        inBlock = ParseWhiteSpace(inBlock)
+        inBlock = StrReverse(inBlock)
         stack = False
     End If
-    Do While Left(txt, 1) = " " Or Left(txt, 1) = vbTab Or Left(txt, 1) = vbCr Or Left(txt, 1) = vbLf
-        txt = Mid(txt, 2)
+    Do While Left(inBlock, 1) = " " Or Left(inBlock, 1) = vbTab Or Left(inBlock, 1) = vbCr Or Left(inBlock, 1) = vbLf
+        inBlock = Mid(inBlock, 2)
     Loop
-    ParseWhiteSpace = txt
+    ParseWhiteSpace = inBlock
 End Function
 Private Function ParseInWith(ByVal inLine As String, Optional ByVal inWith As String = "") As String
+    'builds the inline code with any "with" statement that starting with a "." extend
     Dim pos As Long
     Dim inName As String
     pos = InStr(inLine, ".")
@@ -138,6 +154,21 @@ Private Function ParseInWith(ByVal inLine As String, Optional ByVal inWith As St
     ParseInWith = Replace(inLine, "Debug.Print", "DebugPrint", , , vbTextCompare)
 End Function
 
+Private Function ParseName(ByVal inLine As String) As String
+    ParseName = ParseQuotedArg(inLine, "<", ">", False)
+End Function
+
+Private Function ParseType(ByVal inLine As String) As String
+    inLine = ParseWhiteSpace(inLine)
+    Do While IsAlphaNumeric(Left(inLine, 1))
+        ParseType = ParseType & Left(inLine, 1)
+        inLine = Mid(inLine, 2)
+    Loop
+End Function
+'##################################################################
+'### Deserialize and serialize functions executed in part parse ###
+'##################################################################
+
 Private Function ParseDeserialize(ByRef nXML As String) As String
     Dim xml As New MSXML.DOMDocument
     xml.async = "false"
@@ -159,9 +190,9 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                     For Each child In serial.childNodes
                         Select Case Include.SafeKey(child.baseName)
                             Case "datetime"
-                                'If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
+                                If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
                                     GoTo exitout:
-                                'End If
+                                End If
                             Case "variables"
                                 For cnt = 0 To child.childNodes.Length - 1
                                     tmp = Replace(Replace(Include.URLDecode(child.childNodes(cnt).Text), """", """"""), vbCrLf, """ & vbCrLf & """)
@@ -186,8 +217,8 @@ exitout:
     ParseDeserialize = retval
     Set xml = Nothing
 End Function
-Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt As String, Optional ByRef LineNum As Long = 0) As String
-    'On Error Resume Next
+Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt As String) As String
+    On Error Resume Next
     Static retval As String
     Select Case inSection
         Case 1
@@ -232,43 +263,56 @@ Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt A
             End If
     End Select
     
-    If Err.Number = 11 Then
+    If Err.number = 11 Then
         Err.Clear
         On Error GoTo 0
-        Err.Raise 453, "Line " & (LineNum - CountWord(txt, vbCrLf)), "Unable to serialize."
+        Err.Raise 453, "Serialize", "Unable to serialize."
     Else
         On Error GoTo 0
     End If
 End Function
 
-Private Function ParseExecute(ByRef txt As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0) As String
-    If GetFileExt(NextArg(txt, vbCrLf)) = ".vbx" Then
-        If PathExists(NextArg(txt, vbCrLf), True) Then
-            ParseScript RemoveNextArg(txt, vbCrLf), inWith, (LineNum - CountWord(txt, vbCrLf))
+'#################################################################################
+'### DFisposable parameter functions, anything passed is not changed to callee ###
+'#################################################################################
+
+Private Function ParseExecute(ByVal inLine As String, ByVal inWith As String) As String
+    If GetFileExt(inLine) = ".vbx" Then
+        If PathExists(inLine, True) Then
+            ParseScript RemoveNextArg(inLine, vbCrLf), inWith
         Else
-            frmMain.ExecuteStatement ParseInWith(RemoveNextArg(txt, vbCrLf), inWith)
+            LastCall = ParseInWith(inLine, inWith)
+            frmMain.ExecuteStatement LastCall
         End If
     Else
-        frmMain.ExecuteStatement ParseInWith(RemoveNextArg(txt, vbCrLf), inWith)
+        LastCall = ParseInWith(inLine, inWith)
+        frmMain.ExecuteStatement LastCall
     End If
 End Function
-Private Sub ParseSetting(ByRef inLine As String, ByRef inValue As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0)
+
+Private Sub ParseSetting(ByVal inLine As String, ByVal inValue As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0)
     'Debug.Print "Setting: " & inLine & " B: " & inValue
+    LastCall = inLine & " = " & inValue
+    Dim inName As String
     If Left(inLine, 8) = "variable" Then
-        Dim inName As String
-        inName = ParseQuotedArg(inLine, "<", ">", , , False)
-        frmMain.AddCode "Dim " & inName & vbCrLf
+        inName = ParseQuotedArg(inLine, "<", ">", False)
         inLine = inName
     End If
     inValue = ParseWhiteSpace(inValue)
     If ((Left(inValue, 1) = "[") And (Right(inValue, 1) = "]")) Then
-        frmMain.ExecuteStatement ParseInWith(inLine, inWith) & "=""" & Replace(Replace(inValue, """", """"""), vbCrLf, """ & vbcrlf & """) & """"
+        LastCall = ParseInWith(inLine, inWith) & "=""" & Replace(Replace(inValue, """", """"""), vbCrLf, """ & vbcrlf & """) & """"
+        If inName <> "" Then frmMain.AddCode "Dim " & inName & vbCrLf
+        frmMain.ExecuteStatement LastCall
     Else
-        frmMain.ExecuteStatement ParseInWith(inLine, inWith) & "=" & inValue
+        LastCall = ParseInWith(inLine, inWith) & "=" & inValue
+        If inName <> "" Then frmMain.AddCode "Dim " & inName & vbCrLf
+        frmMain.ExecuteStatement LastCall
     End If
 End Sub
 
-Private Sub ParseBindings(ByRef inBind As String, ByRef inBlock As String, Optional ByRef LineNum As Long = 0)
+Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String, Optional ByRef LineNum As Long = 0)
+    LastCall = inBind & " = [" & inBlock & "]"
+    
     On Error Resume Next
     Dim BindIndex As Long
     Dim bindCode As String
@@ -277,16 +321,15 @@ Private Sub ParseBindings(ByRef inBind As String, ByRef inBlock As String, Optio
     
     BindIndex = GetBindingIndex(RemoveNextArg(inBind, "="))
     If Left(inBlock, 1) = "[" And Right(inBlock, 1) = "]" Then
-        bindCode = ParseQuotedArg(inBlock, "[", "]", , , False)
+        bindCode = ParseQuotedArg(inBlock, "[", "]", False)
     Else
         bindCode = inBlock
     End If
-    
     If BindIndex > -1 And bindCode <> "" Then
         Bindings(BindIndex) = bindCode
     End If
 
-    If Err.Number = 11 Then
+    If Err.number = 11 Then
         Err.Clear
         On Error GoTo 0
         Err.Raise 453, "Line " & (LineNum - CountWord(inBind & inBlock, vbCrLf)), "The binding specified was not recognized."
@@ -294,8 +337,9 @@ Private Sub ParseBindings(ByRef inBind As String, ByRef inBlock As String, Optio
         On Error GoTo 0
     End If
 End Sub
-Private Sub ParseEvent(ByRef inLine As String, ByRef inBlock As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0)
+Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0)
     'Debug.Print "Event: " & inLine & " B: " & inBlock
+    LastCall = inLine & " = " & inBlock
     Dim inEvent As String
     Do While IsAlphaNumeric(Left(inLine, 1))
         inEvent = inEvent & Left(inLine, 1)
@@ -303,7 +347,7 @@ Private Sub ParseEvent(ByRef inLine As String, ByRef inBlock As String, ByVal in
     Loop
     inBlock = ParseBracketOff(inBlock, "[", "]")
     Dim inName As String
-    inName = ParseQuotedArg(inBlock, "<", ">", , , False)
+    inName = ParseQuotedArg(inBlock, "<", ">", False)
     inBlock = ParseInWith(inBlock, inWith)
     inBlock = """" & Replace(Replace(inBlock, """", """"""), vbCrLf, """ & vbCrLf & """) & """"
     frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = Nothing"
@@ -311,17 +355,22 @@ Private Sub ParseEvent(ByRef inLine As String, ByRef inBlock As String, ByVal in
     frmMain.ExecuteStatement inWith & "." & inEvent & ".Code = " & inBlock
 
 End Sub
-Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0) As String
+
+Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String, Optional ByRef LineNum As Long = 0) As String
+
     'Debug.Print "Object: " & inLine
+    LastCall = inLine
+    
     inBlock = ParseBracketOff(ParseBracketOff(inBlock, "{", "}"), "[", "]")
+   
     Dim inName As String
-    inName = ParseQuotedArg(inLine, "<", ">", , , False)
-    inLine = ParseWhiteSpace(inLine)
     Dim inObj As String
-    Do While IsAlphaNumeric(Left(inLine, 1))
-        inObj = inObj & Left(inLine, 1)
-        inLine = Mid(inLine, 2)
-    Loop
+
+    inName = ParseName(inLine)
+    inObj = ParseType(inLine)
+    
+    LastCall = inObj & " <" & inName & ">"
+        
     If LCase(inObj) = "serialize" Then
         ParseSerialize 2, inBlock
     ElseIf LCase(inObj) = "deserialize" Then
@@ -329,39 +378,33 @@ Private Function ParseObject(ByRef inLine As String, ByRef inBlock As String, By
     ElseIf (LCase(inObj) = "method") Then
         frmMain.AddCode "Sub " & inName & "()" & vbCrLf & _
              ParseInWith(inBlock, inWith) & vbCrLf & "End Sub" & vbCrLf
-    ElseIf ParseReservedWord(inObj) = -3 Then
-        ParseScript inBlock, inObj, (LineNum - CountWord(inBlock, vbCrLf))
     ElseIf ParseReservedWord(inObj) = 3 Then
-
         Dim Temporary As Object
         inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
         Set Temporary = CreateObjectPrivate(inObj)
     
-        ParseSetupObject Temporary, inObj, inWith, inName
-        
-        ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)", (LineNum - CountWord(inBlock, vbCrLf))
+        If inName = "" Then inName = Temporary.Key
+        If Not All.Exists(inName) Then
+            If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
+            All.Add Temporary, inName
+        End If
+        If inWith = "" Then
+            frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
+        End If
+        If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)") Then
+            frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Remove """ & inName & """"
+        End If
+        frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Add All(""" & inName & """), """ & inName & """"
+        frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
+    
+        ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)"
     End If
 End Function
-Public Sub ParseSetupObject(ByRef Temporary As Object, ByRef inObj As String, Optional ByVal inWith As String = "", Optional ByRef inName As String)
-    
-    If inName = "" Then inName = Temporary.Key
 
-    If Not All.Exists(inName) Then
-        If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf
-        All.Add Temporary, inName
-    End If
 
-    If inWith = "" Then
-        frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
-    End If
-
-    If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)") Then
-        frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Remove """ & inName & """"
-    End If
-    frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Add All(""" & inName & """), """ & inName & """"
-
-    frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """"
-End Sub
+'########################################
+'### Main parsing of scripts function ###
+'########################################
 
 Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String = "", Optional ByRef LineNum As Long = 0, Optional ByVal Deserialize As String = "Serial.xml") As String
     On Error GoTo parseerror
@@ -382,44 +425,51 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
     Dim inBlock As String
     Dim inLine As String
     Dim reserve As Integer
+    Dim atLine As Long
+    atLine = 1
     Do Until txt = ""
         txt = ParseWhiteSpace(txt)
         If Not Left(txt, 1) = "'" Then
             reserve = ParseReservedWord(txt)
             If reserve <> 0 Then
                 If (((InStr(txt, "{") < InStr(txt, "[")) Or (InStr(txt, "[") = 0)) And (InStr(txt, "{") > 0)) Then
-                    inLine = ParseQuotedArg(txt, "{", "}")
-                    inBlock = "{" & RemoveArg(inLine, "{")
+                    inLine = ParseQuotedArg(txt, "{", "}", True)
+                    inBlock = "{" & RemoveArg(inLine, "{", vbBinaryCompare, False)
                     inLine = Replace(inLine, inBlock, "")
                 ElseIf (((InStr(txt, "[") < InStr(txt, "{")) Or (InStr(txt, "{") = 0)) And (InStr(txt, "[") > 0)) Then
-                    inLine = ParseQuotedArg(txt, "[", "]")
-                    inBlock = "[" & RemoveArg(inLine, "[")
+                    inLine = ParseQuotedArg(txt, "[", "]", True)
+                    inBlock = "[" & RemoveArg(inLine, "[", vbBinaryCompare, False)
                     inLine = Replace(inLine, inBlock, "")
                 End If
                 inLine = ParseWhiteSpace(inLine)
                 If reserve = 1 Then
-                    ParseEvent inLine, inBlock, inWith, (LineNum - CountWord(txt, vbCrLf))
+                    ParseEvent inLine, inBlock, inWith, atLine
                 ElseIf reserve = 2 Then
-                    ParseBindings inLine, inBlock, (LineNum - CountWord(txt, vbCrLf))
+                    ParseBindings inLine, inBlock, atLine
+                ElseIf ParseReservedWord(inLine) = -3 Then
+                    inBlock = ParseBracketOff(ParseBracketOff(inBlock, "{", "}"), "[", "]")
+                    ParseScript inBlock, ParseType(inLine), atLine
                 ElseIf Abs(reserve) > 2 Then
-                    ParseObject inLine, inBlock, inWith, (LineNum - CountWord(txt, vbCrLf))
+                    ParseObject inLine, inBlock, inWith, atLine
                 End If
             ElseIf InStr(NextArg(txt, vbCrLf), "=") > 0 Then
                 If ParseWhiteSpace(RemoveArg(NextArg(txt, "["), "=")) = "" Then
-                    inLine = ParseQuotedArg(txt, "[", "]")
-                    ParseSetting NextArg(inLine, "="), RemoveArg(inLine, "="), inWith, (LineNum - CountWord(txt, vbCrLf))
+                    inLine = ParseQuotedArg(txt, "[", "]", True)
+                    ParseSetting NextArg(inLine, "="), RemoveArg(inLine, "="), inWith, atLine
                 ElseIf ParseWhiteSpace(RemoveArg(NextArg(txt, vbCrLf), "=")) <> "" Then
                     inLine = RemoveNextArg(txt, vbCrLf)
-                    ParseSetting NextArg(inLine, "="), RemoveArg(inLine, "="), inWith, (LineNum - CountWord(txt, vbCrLf))
+                    ParseSetting NextArg(inLine, "="), RemoveArg(inLine, "="), inWith, atLine
                 Else
-                    ParseExecute txt, inWith, (LineNum - CountWord(txt, vbCrLf))
+                    ParseExecute RemoveNextArg(txt, vbCrLf), inWith, atLine
                 End If
             Else
-                ParseExecute txt, inWith, (LineNum - CountWord(txt, vbCrLf))
+                ParseExecute RemoveNextArg(txt, vbCrLf), inWith, atLine
             End If
+            atLine = (LineNum - CountWord(txt, vbCrLf))
         Else
             RemoveNextArg txt, vbCrLf
         End If
+        LastCall = ""
     Loop
     serialLevel = serialLevel - 1
     If serialLevel = 0 Then
@@ -429,6 +479,15 @@ Public Function ParseScript(ByRef txt As String, Optional ByVal inWith As String
     Exit Function
 parseerror:
     serialLevel = 0
-    Debug.Print "Error: "; Err.Number & " Line: " & (LineNum - CountWord(txt, vbCrLf)) & " Description: " & Err.Description
+'    Debug.Print "Error: "; Err.number & " Line: " & (atLine - 1) & " Description: " & Err.description
+
+    If Not ConsoleVisible Then
+        ConsoleToggle
+    End If
+    Process "echo An error " & Err.number & " occurd in " & Err.source & " at line " & (atLine - 1) & "\n" & Err.description & "\n" & LastCall
+    
+    If frmMain.ScriptControl1.Error.number <> 0 Then frmMain.ScriptControl1.Error.Clear
+    If Err.number <> 0 Then Err.Clear
+
 End Function
 

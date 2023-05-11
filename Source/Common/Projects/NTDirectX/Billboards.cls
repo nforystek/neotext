@@ -80,7 +80,21 @@ Gets or sets the item at the key or index supplied as the properties parameter, 
 Attribute Item.VB_Description = "Gets or sets the item at the key or index supplied as the properties parameter, allowing anything, and disposes of the existing item."
 Attribute Item.VB_UserMemId = 0
 Attribute Item.VB_MemberFlags = "600"
+    On Error Resume Next
     Set Item = this.Item(KeyOrIndex)
+    If Err.number <> 0 Then
+        Dim number As Long
+        Dim description As String
+        Dim source As String
+        source = Err.source
+        description = Err.description
+        number = Err.number
+        On Error GoTo 0
+        On Error GoTo -1
+        Err.Raise number, source, description
+    Else
+        On Error GoTo 0
+    End If
 End Property
 
 Public Property Set Item(ByVal KeyOrIndex, ByRef Anything As Billboard)

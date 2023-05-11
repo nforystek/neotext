@@ -559,7 +559,7 @@ On Error GoTo catch
         If (Not (Len(color) = 6)) And (Not Left(color, 1) = "0") Then
             GoTo SysOrLongColor
         Else
-            GoTo HTMLorHexColor
+            GoTo HTMLorHexColor2
         End If
     End If
 SysOrLongColor:
@@ -616,6 +616,7 @@ SysOrLongColor:
 '    Else
 '
     End If
+HTMLorHexColor2:
     color = Right("000000" & Hex(lngColor), 6)
 HTMLorHexColor:
     red = CByte("&h" & Mid(color, 5, 2))
