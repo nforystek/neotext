@@ -63,15 +63,8 @@ End Property
 
 Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
     Dim Checkto As Single
-    
     Checkto = Round(Distance, 0)
-    If (Form = World) Then
-        If (Checkto < Field) And (Field > 0) Then
-            RelativeColorFactor = (Field - Distance) / Field
-        ElseIf Field = 0 Then
-            RelativeColorFactor = 1
-        End If
-    ElseIf PlateauInfinite Then
+    If PlateauInfinite Then
         RelativeColorFactor = 1
     ElseIf Checkto <= OuterEdge + Field Then
         If PlateauIsland Or (PlateauDoughnut And (Checkto >= InnerEdge)) Then
@@ -84,7 +77,18 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
             If Checkto >= (OuterEdge - (InnerEdge + Field)) Then
                 RelativeColorFactor = CSng(CSng(Field - CSng(Distance - CSng(OuterEdge - CSng(InnerEdge + Field)))) / Field)
             End If
-
+        ElseIf (Field > 0) Then
+            If Distance = 0 Then
+                RelativeColorFactor = 1
+            ElseIf Checkto <= Field Then
+                If Distance = 0 Then
+                    RelativeColorFactor = 1
+                Else
+                    RelativeColorFactor = ((Field - Distance) / Field)
+                End If
+            Else
+                RelativeColorFactor = 0
+            End If
         End If
     End If
     If RelativeColorFactor > 1 Then RelativeColorFactor = 1
@@ -343,7 +347,7 @@ Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Colu
 End Property
 
 Friend Property Get PlateauInfinite()
-    PlateauInfinite = ((pFileIndex(0) > 0) And (((Form = World) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
+    PlateauInfinite = ((pFileIndex(0) > 0) And ((((Form = World) And (Field = 0)) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
 End Property
 Friend Property Get PlateauIsland()
     PlateauIsland = ((pFileIndex(0) > 0) And ((OuterEdge > 0) And (InnerEdge = 0)))

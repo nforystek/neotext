@@ -121,9 +121,9 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             InputScene UserControl
 
 '                       Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
-                    '   Orientate MakePoint(0.01, 0, 0), Planets("Backdrop")
-                     '  Orientate MakePoint(0, 0.01, 0), Planets("Backdrop")
-'                        Orientate MakePoint(0, 0, 0.01), Planets("Backdrop")
+                   '   Orientate MakePoint(0.0001, 0, 0), Planets("Backdrop")
+                      Orientate MakePoint(0, 0.00001, 0), Planets("Backdrop")
+                        Orientate MakePoint(0, 0.0001, 0), Planets("Backdrop2")
             
             If Not PauseGame Then
                 

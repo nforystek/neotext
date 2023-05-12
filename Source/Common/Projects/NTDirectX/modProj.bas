@@ -164,7 +164,7 @@ End Sub
 
 Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet)
     With p
-    
+    Debug.Print p.Key
         Dim matPlane As D3DMATRIX
         Dim matRot As D3DMATRIX
         Dim matPos As D3DMATRIX
@@ -180,6 +180,8 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
         D3DXMatrixIdentity matRoll
         D3DXMatrixIdentity matScale
         
+                
+        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(255, 255, 255, 255)
         
         'render the round portion first
         If p.Volume.Count > 0 Then
@@ -380,9 +382,126 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
     End With
     
 End Sub
+
+Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet, ByVal RelativeFactor As Single)
+
+    Dim matPlane As D3DMATRIX
+    Dim matRot As D3DMATRIX
+    Dim matPos As D3DMATRIX
+    Dim matScale As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matRoll As D3DMATRIX
+            
+    D3DXMatrixIdentity matPlane
+    D3DXMatrixIdentity matPos
+    D3DXMatrixIdentity matYaw
+    D3DXMatrixIdentity matPitch
+    D3DXMatrixIdentity matRoll
+    D3DXMatrixIdentity matScale
+    
+    If (Not p.Follow) Then
+        
+        D3DXMatrixTranslation matPos, -p.Origin.X, -p.Origin.Y, -p.Origin.z
+        D3DXMatrixMultiply matPlane, matPlane, matPos
+                
+    Else
+    
+        D3DXMatrixTranslation matPos, 0, 0, 0
+        D3DXMatrixMultiply matPlane, matPlane, matPos
+        
+    End If
+        
+    DDevice.SetTransform D3DTS_WORLD, matPlane
+    
+    D3DXMatrixRotationZ matRoll, p.Rotate.z
+    D3DXMatrixMultiply matPlane, matRoll, matPlane
+
+    D3DXMatrixRotationY matYaw, p.Rotate.Y
+    D3DXMatrixMultiply matPlane, matYaw, matPlane
+    
+    D3DXMatrixRotationX matPitch, p.Rotate.X
+    D3DXMatrixMultiply matPlane, matPitch, matPlane
+    
+    D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+    D3DXMatrixMultiply matPlane, matScale, matPlane
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
+        
+    SetRenderBlends p.Transparent, p.Translucent
+    
+    Dim i As Long
+    Dim rsam As Single
+    If (Not (p.Translucent Or p.Transparent)) Then
+
+        DDevice.SetRenderState D3DRS_ZENABLE, 1
+        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
+        
+        DDevice.SetVertexShader FVF_RENDER
+        DDevice.SetPixelShader PixelShaderDefault
+
+        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
+                
+        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+               
+         For i = 1 To p.Volume.Count Step 2
+            DDevice.SetMaterial LucentMaterial
+            DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
+            DDevice.SetMaterial GenericMaterial
+            DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
+            DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
+        Next
+
+    Else
+        
+        rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
+        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB((1 - RelativeFactor) * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+    
+        If p.Transparent Then
+
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+            DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+            DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+
+            For i = 1 To p.Volume.Count Step 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
+                DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
+            Next
+            
+        ElseIf p.Translucent Then
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
+            DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+            DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+            
+            For i = 1 To p.Volume.Count Step 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
+                DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
+            Next
+            
+        End If
+                            
+        DDevice.SetRenderState D3DRS_AMBIENT, rsam
+
+    End If
+
+End Sub
+
 Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
        
-    Dim dist As Single
+    Dim Dist As Single
     Dim dist2 As Single
     Dim dist3 As Single
     Dim dist4 As Single
@@ -440,53 +559,29 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             Select Case p.Form
                 Case World
                     If p.Visible Then
-                        dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
-                        dist = p.RelativeColorFactor(dist)
+                        If Not p.Follow And Not Camera.Player Is Nothing Then
+                            Dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
+                        ElseIf Not Camera.Planet Is Nothing Then
+                            Dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z)
+                        End If
+                        Dist = p.RelativeColorFactor(Dist)
 
-                        If (dist = 1) And (Not (p.Translucent Or p.Transparent)) Then
-                            Camera.BuildColor p.color.RGB, dist
-                            
-                            'Debug.Print p.Key & " " & dist
-                            
-                            'render only fully opaque worlds first
-                          '  SetRenderBlends p.Transparent, p.Translucent
-'                            rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
-'                            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(1, 255, 255, 255)
-                            
-                            DDevice.SetMaterial GenericMaterial
-                            DDevice.SetTexture 1, Nothing
-                            For i = 1 To p.Volume.Count Step 2
-                                DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
-                                DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
-                           Next
+                        If (Dist = 1) And (Not (p.Translucent Or p.Transparent)) Then
+                            Camera.BuildColor p.color.RGB, Dist
 
-'                            rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
-'                            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0.01, 30, 30, 30)
-'
-'                            SetRenderBlends p.Transparent, p.Translucent
-'
-'                            DDevice.SetMaterial LucentMaterial
-'                            For i = 1 To p.Volume.Count Step 2
-'                                 DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
-'                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
-'                            Next
-'
-'                            DDevice.SetMaterial GenericMaterial
-'                            For i = 1 To p.Volume.Count Step 2
-'                                 DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
-'                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
-'                            Next
-'
-'                            DDevice.SetRenderState D3DRS_AMBIENT, rsam
+                            Debug.Print p.Key; Dist
+
+                            SubRenderWorld UserControl, Camera, p, Dist
+
                         Else
                         
                         End If
                     End If
                 Case Plateau
 
-                    dist = DistanceEx(Camera.Player.Origin, p.Origin)
+                    Dist = DistanceEx(Camera.Player.Origin, p.Origin)
                     If p.Visible Then
-                        dist2 = p.RelativeColorFactor(dist)
+                        dist2 = p.RelativeColorFactor(Dist)
                         If dist2 > 0 Then Camera.BuildColor p.color.RGB, dist2
 '                        'get running sums for universe calsulations for
 '                        'planes in collision to scale against spread out
@@ -497,8 +592,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '                        If sumz < Abs(p.Origin.z) Then sumz = Abs(p.Origin.z)
                         
                         'find nearest planet (dist4 holds closest last dist)
-                        If dist < dist4 Or dist4 = 0 Then
-                            dist4 = dist
+                        If Dist < dist4 Or dist4 = 0 Then
+                            dist4 = Dist
                             Set nearest = p
                         End If
                         
@@ -513,11 +608,11 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         End If
                         'set camera.planet based on if we enter/leave radius
                         If onkey = p.Key Then
-                            If dist > p.OuterEdge + p.Field Then
+                            If Dist > p.OuterEdge + p.Field Then
                                 Set Camera.Planet = Nothing
                             End If
                         Else
-                            If dist <= p.OuterEdge And onkey = "" Then
+                            If Dist <= p.OuterEdge And onkey = "" Then
                                 Set Camera.Planet = p
                             Else
                                 
@@ -586,17 +681,24 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
         'DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
 
         i = 1
-        Set p = Planets(i)
-        Do While i < Planets.Count
-
+        
+        Do While i <= Planets.Count
+            Set p = Planets(i)
+            
             If p.Visible Then
                 
                 If (p.Form = World) Then
-
-                    dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
-                    dist = p.RelativeColorFactor(dist)
+                    If Not p.Follow Then
+                        Dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
+                    ElseIf Not Camera.Player Is Nothing Then
+                        Dist = 0
+                    ElseIf Not Camera.Planet Is Nothing Then
+                        Dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z)
+                    End If
+'                    Dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
+                    Dist = p.RelativeColorFactor(Dist)
                     
-                    If ((dist <= 1) And (dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent) Then
+                    If ((Dist <= 1) And (Dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent) Then
                         'hot sort the list to opaque World, not on plateau, then
                         'alpha blend world and finally on plateau is already last
                         j = i
@@ -619,61 +721,25 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         
                         Set p = Planets(i)
                         
-                        dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
-                        dist = p.RelativeColorFactor(dist)
+                        Dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
+                        Dist = p.RelativeColorFactor(Dist)
                         
                     End If
                     
-                    If p.Form = World And (dist <= 1) And (dist > 0) And (p.Translucent Or p.Transparent) Then
+                    If p.Form = World And (Dist <= 1) And (Dist > 0) And (p.Translucent Or p.Transparent) Then
 
-                        dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
-                        dist = p.RelativeColorFactor(dist)
-
+                        Dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
+                        Dist = p.RelativeColorFactor(Dist)
                     
-                        If ((dist <= 1) And (dist > 0)) Then
+                        If ((Dist <= 1) And (Dist > 0)) Then
                             'draw the world with the alpha blend a relativefactor
-                            'Debug.Print p.Key & " " & dist
-                            Camera.BuildColor p.color.RGB, dist
+                            Debug.Print p.Key; Dist
+                            
+                            Camera.BuildColor p.color.RGB, Dist
                     
                             SubRenderWorldSetup UserControl, Camera, True  'must be called again, tiwce per one call
     
-    '                            rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
-    '                            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0.01, 30, 30, 30)
-    '
-    '                            SetRenderBlends p.Transparent, p.Translucent
-    '
-    '                            DDevice.SetMaterial LucentMaterial
-    '                            For i = 1 To p.Volume.Count Step 2
-    '                                 DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
-    '                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
-    '                            Next
-    '
-    '                            DDevice.SetMaterial GenericMaterial
-    '                            For i = 1 To p.Volume.Count Step 2
-    '                                 DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
-    '                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
-    '                            Next
-    '
-    '                            DDevice.SetRenderState D3DRS_AMBIENT, rsam
-    
-                            SetRenderBlends p.Transparent, p.Translucent
-                            
-'                            rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
-'                            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(1, 255, 255, 255)
-                            
-                            DDevice.SetMaterial LucentMaterial
-                            For v = 1 To p.Volume.Count Step 2
-                                 DDevice.SetTexture 0, Files(p.Volume(v).TextureIndex).Data
-                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(v).TriangleIndex * 3), Len(VertexDirectX(0))
-                            Next
-    
-                            DDevice.SetMaterial GenericMaterial
-                            For v = 1 To p.Volume.Count Step 2
-                                 DDevice.SetTexture 1, Files(p.Volume(v).TextureIndex).Data
-                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(v).TriangleIndex * 3), Len(VertexDirectX(0))
-                            Next
-                            
-'                            DDevice.SetRenderState D3DRS_AMBIENT, rsam
+                            SubRenderWorld UserControl, Camera, p, Dist
                             
                             SubRenderWorldSetup UserControl, Camera, False 'the second call returns the view state
                                
@@ -692,7 +758,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             End If
             
             i = i + 1
-            Set p = Planets(i)
+            If i < Planets.Count Then Set p = Planets(i)
         Loop
         
         If p.Key = onkey Then
@@ -753,7 +819,6 @@ Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As B
     
     If Not (Translucent Or Transparent) Then
         If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-    
         If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
         If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     End If
