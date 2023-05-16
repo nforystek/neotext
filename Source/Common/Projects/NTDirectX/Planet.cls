@@ -19,6 +19,7 @@ Private pForm As Long
 
 Private pTransparent As Boolean
 Private pTranslucent As Boolean
+Private pAlphablend As Boolean
 
 Private pHeight As Single
 Private pWidth As Single
@@ -71,13 +72,14 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
             If Checkto <= OuterEdge And Checkto >= InnerEdge Then
                 RelativeColorFactor = 1
             ElseIf Checkto - OuterEdge < Field And (OuterEdge - InnerEdge) > 0 Then
-                RelativeColorFactor = CSng(CSng(Distance - OuterEdge) / Field)
+                RelativeColorFactor = CSng((CSng(Distance - OuterEdge)) / Field)
             End If
         ElseIf PlateauHole Or (PlateauDoughnut And Checkto < InnerEdge) Then
             If Checkto >= (OuterEdge - (InnerEdge + Field)) Then
                 RelativeColorFactor = CSng(CSng(Field - CSng(Distance - CSng(OuterEdge - CSng(InnerEdge + Field)))) / Field)
             End If
         ElseIf (Field > 0) Then
+        
             If Distance = 0 Then
                 RelativeColorFactor = 1
             ElseIf Checkto <= Field Then
@@ -125,7 +127,12 @@ Public Property Set Absolute(ByRef RHS As Orbit)
     Set Molecule.Absolute = RHS
 End Property
 
-
+Public Property Get Alphablend() As Boolean
+    Alphablend = pAlphablend
+End Property
+Public Property Let Alphablend(ByVal RHS As Boolean)
+    pAlphablend = RHS
+End Property
 Public Property Get Transparent() As Boolean
     Transparent = pTransparent
 End Property
@@ -393,9 +400,10 @@ Private Sub RebuildPlanet()
                   
                   '3x4 cube texture
                   Set frmMain.Picture2.Picture = LoadPicture(tmp)
-                  frmMain.Picture3.Width = frmMain.Picture2.Width / 4
-                  frmMain.Picture3.Height = frmMain.Picture2.Height / 3
+                  frmMain.Picture3.Width = (frmMain.Picture2.Width / 4)
+                  frmMain.Picture3.Height = (frmMain.Picture2.Height / 3)
 
+            'Debug.Print frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY
                   BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, ((frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX) * 2), (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Left.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
@@ -430,7 +438,7 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, 0, (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
+                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, 1, (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
 
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Right.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
@@ -484,7 +492,7 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX), 0, SRCCOPY
+                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX), 1, SRCCOPY
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Top.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 

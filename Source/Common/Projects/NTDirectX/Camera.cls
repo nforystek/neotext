@@ -77,7 +77,7 @@ Public Sub BuildColor(Optional ByVal ColorToAdd As Variant, Optional ByVal Relat
                 If lastFactor < RelativeFactor Then
                     pBuildColor.RGB = Blend(Blend(pBuildColor.RGB, lastColor, lastFactor), ColorToAdd, RelativeFactor)
                 Else
-                    pBuildColor.RGB = Blend(Blend(pBuildColor.RGB, lastColor, lastFactor), ColorToAdd, RelativeFactor)
+                    pBuildColor.RGB = Blend(Blend(pBuildColor.RGB, lastFactor, lastColor), ColorToAdd, RelativeFactor)
                 End If
             End If
             lastColor = ColorToAdd

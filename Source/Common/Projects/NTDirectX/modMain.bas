@@ -120,10 +120,30 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
             InputScene UserControl
 
-'                       Orientate MakePoint(0.01, 0.01, 0.01), Planets("Earth")
-                   '   Orientate MakePoint(0.0001, 0, 0), Planets("Backdrop")
-                      Orientate MakePoint(0, 0.00001, 0), Planets("Backdrop")
-                        Orientate MakePoint(0, 0.0001, 0), Planets("Backdrop2")
+
+
+            If Millis <> 0 Then
+                If Timer - Millis > 0.1 Then
+                    Millis = Timer
+                    frmMain.Run "Millis"
+                End If
+            End If
+            
+            If Second <> 0 Then
+                If Timer - Second > 0.1 Then
+                    Second = Timer
+                    frmMain.Run "Second"
+                End If
+            End If
+
+            If Frame Then
+                frmMain.Run "Frame"
+            End If
+   
+            
+                
+            
+            
             
             If Not PauseGame Then
                 
@@ -367,9 +387,9 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
          
        '  DViewPort.X = (((Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
        '  DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
-         
+
        '  DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
-      '   DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
+       '  DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
          
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
@@ -383,13 +403,12 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     
         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-    
+            
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-    
+
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-        
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_MAXANISOTROPY, 16
@@ -398,7 +417,6 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-    
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_MAXANISOTROPY, 16
@@ -420,7 +438,8 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
         DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
 
-    
+
+
         If frmMain.WindowState = vbMinimized Then frmMain.WindowState = IIf(FullScreen, vbMaximized, vbNormal)
 
         On Error Resume Next

@@ -168,6 +168,7 @@ Public Function FolderQuoteName83(ByVal ShortPath As String) As String
 End Function
 
 Public Sub RemovePath(ByVal Path As String, Optional ByRef FolderList As String)
+    'deletes PATH, and all files and fodlers under PATH
     Dim nxt As String
     On Error Resume Next
     nxt = Dir(Path & "\*", vbDirectory)
@@ -188,7 +189,7 @@ Public Sub RemovePath(ByVal Path As String, Optional ByRef FolderList As String)
     RmDir Path
 End Sub
 
-Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
+Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal Flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
     If RootPath = "" Then RootPath = Left(CurDir, 2) & "\"
    ' Debug.Print Replace(RootPath & "\", "\\", "\")
     
@@ -214,7 +215,7 @@ Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As
         On Error Resume Next
         'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
 
-            nxt = Dir(Replace(RootPath & "\", "\\", "\"), flags)
+            nxt = Dir(Replace(RootPath & "\", "\\", "\"), Flags)
 
             If Err Then
                 Err.Clear
@@ -231,7 +232,7 @@ Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As
         
         Do Until (FolderList = "") Or (FindText = "")
             nxt = RemoveNextArg(FolderList, vbCrLf)
-            SearchPath = SearchPath & SearchPath(FindText, Recursive, nxt, MatchFlag, , flags)
+            SearchPath = SearchPath & SearchPath(FindText, Recursive, nxt, MatchFlag, , Flags)
         Loop
 
     End If
@@ -318,7 +319,7 @@ Public Function GetWindowsTempFolder(Optional ByVal UseWin As Boolean = False) A
         Else
             On Error Resume Next
             MkDir GetWindowsFolder() + "TEMP"
-            If Err.number <> 0 Then Err.Clear
+            If Err.Number <> 0 Then Err.Clear
             On Error GoTo 0
             
             If PathExists(GetWindowsFolder() + "TEMP") Then
@@ -655,7 +656,7 @@ Public Function MakeFolder(ByRef Path As String)
     On Error Resume Next
     If InStr(Path, "\") > 0 Then
         GetAttr Left(Path, InStrRev(Path, "\") - 1)
-        If Err.number = 76 Or Err.number = 53 Then
+        If Err.Number = 76 Or Err.Number = 53 Then
             Err.Clear
             MakeFolder = Path
             Path = MakeFolder(Left(Path, InStrRev(Path, "\") - 1))
@@ -663,9 +664,9 @@ Public Function MakeFolder(ByRef Path As String)
             MakeFolder = Path
         End If
     End If
-    If Err.number = 0 Then
+    If Err.Number = 0 Then
         GetAttr MakeFolder
-        If Err.number = 76 Or Err.number = 53 Then
+        If Err.Number = 76 Or Err.Number = 53 Then
             Err.Clear
             On Error GoTo -1
             MkDir MakeFolder

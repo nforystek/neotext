@@ -23,6 +23,11 @@ Global OnEvents As New NTNodes10.Collection
 Global Bindings As New Bindings
 Global Camera As New Camera
 
+
+Global Frame As Boolean
+Global Second As Single
+Global Millis As Single
+
 Private LastCall As String
 
 '###########################################################
@@ -92,7 +97,7 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
     Select Case LCase(inWord)
         Case "oninrange", "onoutrange", "oncollide"
             ParseReservedWord = 1
-        Case "molecule", "method", "brilliant", "serialize", "deserialize", "motion", "billboard", "planet"
+        Case "molecule", "method", "brilliant", "serialize", "deserialize", "motion", "billboard", "planet", "frame", "second", "millis"
             ParseReservedWord = 3
         Case "bindings", "camera"
             ParseReservedWord = -3
@@ -366,6 +371,13 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
     ElseIf (LCase(inObj) = "method") Then
         frmMain.AddCode "Sub " & inName & "()" & vbCrLf & _
              ParseInWith(inBlock, inWith) & vbCrLf & "End Sub" & vbCrLf
+    ElseIf (LCase(inObj) = "frame") Or (LCase(inObj) = "second") Or (LCase(inObj) = "millis") Then
+        If (LCase(inObj) = "frame") Then Frame = True
+        If (LCase(inObj) = "second") Then Second = Timer
+        If (LCase(inObj) = "millis") Then Millis = Timer
+    
+        frmMain.AddCode "Sub " & inObj & "()" & vbCrLf & _
+             inBlock & vbCrLf & "End Sub" & vbCrLf
     ElseIf ParseReservedWord(inObj) = 3 Then
     
     
