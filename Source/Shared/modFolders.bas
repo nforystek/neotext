@@ -363,46 +363,46 @@ Public Function GetCurrentUserProfileFolder() As String
 End Function
 
 
-'2 C:\Documents and Settings\Nickels\Start Menu\Programs
-'5 C:\Documents and Settings\Nickels\My Documents
-'6 C:\Documents and Settings\Nickels\Favorites
-'7 C:\Documents and Settings\Nickels\Start Menu\Programs\Startup
-'8 C:\Documents and Settings\Nickels\Recent
-'9 C:\Documents and Settings\Nickels\SendTo
-'11 C:\Documents and Settings\Nickels\Start Menu
-'13 C:\Documents and Settings\Nickels\My Documents\My Music
-'16 C:\Documents and Settings\Nickels\Desktop
-'19 C:\Documents and Settings\Nickels\NetHood
+'2 C:\Documents and Settings\<User>\Start Menu\Programs
+'5 C:\Documents and Settings\<User>\My Documents
+'6 C:\Documents and Settings\<User>\Favorites
+'7 C:\Documents and Settings\<User>\Start Menu\Programs\Startup
+'8 C:\Documents and Settings\<User>\Recent
+'9 C:\Documents and Settings\<User>\SendTo
+'11 C:\Documents and Settings\<User>\Start Menu
+'13 C:\Documents and Settings\<User>\My Documents\My Music
+'16 C:\Documents and Settings\<User>\Desktop
+'19 C:\Documents and Settings\<User>\NetHood
 '20 C:\WINDOWS\Fonts
-'21 C:\Documents and Settings\Nickels\Templates
+'21 C:\Documents and Settings\<User>\Templates
 '22 C:\Documents and Settings\All Users\Start Menu
 '23 C:\Documents and Settings\All Users\Start Menu\Programs
 '24 C:\Documents and Settings\All Users\Start Menu\Programs\Startup
 '25 C:\Documents and Settings\All Users\Desktop
-'26 C:\Documents and Settings\Nickels\Application Data
-'27 C:\Documents and Settings\Nickels\PrintHood
-'28 C:\Documents and Settings\Nickels\Local Settings\Application Data
+'26 C:\Documents and Settings\<User>\Application Data
+'27 C:\Documents and Settings\<User>\PrintHood
+'28 C:\Documents and Settings\<User>\Local Settings\Application Data
 '31 C:\Documents and Settings\All Users\Favorites
-'32 C:\Documents and Settings\Nickels\Local Settings\Temporary Internet Files
-'33 C:\Documents and Settings\Nickels\Cookies
-'34 C:\Documents and Settings\Nickels\Local Settings\History
+'32 C:\Documents and Settings\<User>\Local Settings\Temporary Internet Files
+'33 C:\Documents and Settings\<User>\Cookies
+'34 C:\Documents and Settings\<User>\Local Settings\History
 '35 C:\Documents and Settings\All Users\Application Data
 '36 C:\WINDOWS
 '37 C:\WINDOWS\system32
 '38 C:\Program Files
-'39 C:\Documents and Settings\Nickels\My Documents\My Pictures
-'40 C:\Documents and Settings\Nickels
+'39 C:\Documents and Settings\<User>\My Documents\My Pictures
+'40 C:\Documents and Settings\<User>
 '43 C:\Program Files\Common Files
 '45 C:\Documents and Settings\All Users\Templates
 '46 C:\Documents and Settings\All Users\Documents
 '47 C:\Documents and Settings\All Users\Start Menu\Programs\Administrative Tools
-'48 C:\Documents and Settings\Nickels\Start Menu\Programs\Administrative Tools
+'48 C:\Documents and Settings\<User>\Start Menu\Programs\Administrative Tools
 '53 C:\Documents and Settings\All Users\Documents\My Music
 '54 C:\Documents and Settings\All Users\Documents\My Pictures
 '55 C:\Documents and Settings\All Users\Documents\My Videos
 '56 C:\WINDOWS\Resources
-'59 C:\Documents and Settings\Nickels\Local Settings\Application Data\Microsoft\CD Burning
-'32782 C:\Documents and Settings\Nickels\My Documents\My Videos
+'59 C:\Documents and Settings\<User>\Local Settings\Application Data\Microsoft\CD Burning
+'32782 C:\Documents and Settings\<User>\My Documents\My Videos
 '32825 C:\WINDOWS\Resources\0409
 '
 'Private Function GetFolderValue(tAction As Long) As Long
