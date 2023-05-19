@@ -62,28 +62,28 @@ End Sub
 Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
     Do While Not StopGame
-            
+
         If PauseGame Then
 
             If Not ((frmMain.WindowState = 1) Or (UserControl.Parent.WindowState = 1)) Then
                 If TestDirectX(UserControl) Then
-    
+
                     On Error Resume Next
                     DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGB, 1, 0
                     DDevice.BeginScene
                     DDevice.EndScene
 
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-                    
+
                     If (Err.number = 0) Then
                         PauseGame = False
                     Else
                         Err.Clear
                     End If
                     On Error GoTo 0
-    
+
                 End If
-                
+
                 If (Not PauseGame) And (Err.number = 0) Then
                     InitGameData UserControl
                 Else
@@ -92,45 +92,40 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             ElseIf Not D3DWindow.Windowed = 1 Then
                 DoTasks
             End If
-            
+
         Else
-    
-'            On Error GoTo Render
 
             On Error GoTo nofocus
-             
+
             'BeginMirrors UserControl, Camera.Player
 
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGBA, 1, 0
-            
-            
+
             On Error GoTo 0 'temporary
-            
+
             RenderMotions UserControl, Camera
-            
+
             DDevice.BeginScene
-            
+
             RenderCamera UserControl, Camera
-            
+
             RenderBrilliants UserControl, Camera
-            
+
             RenderPlanets UserControl, Camera
-        
+
             RenderMolecules UserControl, Camera
 
             InputScene UserControl
 
-
-
             If Millis <> 0 Then
-                If Timer - Millis > 0.1 Then
+                If Timer - Millis >= 0.1 Then
                     Millis = Timer
                     frmMain.Run "Millis"
                 End If
             End If
-            
+
             If Second <> 0 Then
-                If Timer - Second > 0.1 Then
+                If Timer - Second >= 1 Then
                     Second = Timer
                     frmMain.Run "Second"
                 End If
@@ -139,12 +134,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             If Frame Then
                 frmMain.Run "Frame"
             End If
-   
-            
-                
-            
-            
-            
+
             If Not PauseGame Then
                 
                 RenderCmds UserControl
@@ -165,18 +155,17 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 End If
                     
             End If
-            
-            
+
             If ShowSetup Then
                 ShowSetupForm UserControl
                 ShowSetup = False
             End If
-            
+
         End If
-        
+
         If D3DWindow.Windowed = 1 Then DoTasks
     Loop
-    
+
 Exit Sub
 nofocus:
     Err.Clear
@@ -237,16 +226,15 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     If Not Camera.Player Is Nothing Then
 
         If Not Camera.Planet Is Nothing Then
-
+            
             D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-
+            
             D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
-
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
@@ -254,13 +242,13 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
+
             
             D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-
 
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
@@ -291,13 +279,13 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 '            D3DXMatrixMultiply matView, matRoll, matView
 
        Else
-
+            
             D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-
+            
             D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
@@ -308,6 +296,7 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
         End If
     Else
+        
         D3DXMatrixRotationX matPitch, 0
         D3DXMatrixMultiply matView, matPitch, matView
 
@@ -316,7 +305,7 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
         D3DXMatrixRotationZ matRoll, 0
         D3DXMatrixMultiply matView, matRoll, matView
-
+        
         D3DXMatrixTranslation matPos, 0, 0, 0
         D3DXMatrixMultiply matView, matPos, matView
     End If
@@ -438,7 +427,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
         DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
 
-
+        
 
         If frmMain.WindowState = vbMinimized Then frmMain.WindowState = IIf(FullScreen, vbMaximized, vbNormal)
 

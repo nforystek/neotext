@@ -76,9 +76,13 @@ Friend Function Clone() As Matter
     
 End Function
 
+Private Sub Class_Initialize()
+    TriangleIndex = -1
+End Sub
+
 Private Sub Class_Terminate()
-    If TriangleIndex > 0 Then
+    If TriangleIndex > -1 Then
         RemoveTriangleArray TriangleIndex
-        TriangleIndex = 0
+        TriangleIndex = -1
     End If
 End Sub

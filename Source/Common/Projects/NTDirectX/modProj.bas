@@ -52,14 +52,14 @@ Private Sub RemoveIterate(ByRef Molecules As Molecules)
         Loop
     End If
 End Sub
+
 Public Sub CleanUpProj()
     Dim ser As String
     ser = frmMain.Serialize
     If ser <> "" Then WriteFile ScriptRoot & "\Serial.xml", ser
-    
+
     frmMain.ScriptControl1.Reset
-    
-    
+
     Do While Planets.Count > 0
         RemoveIterate Planets(1).Molecules
         Planets.Remove 1
@@ -69,7 +69,7 @@ Public Sub CleanUpProj()
         RemoveIterate Molecules(1).Molecules
         Molecules.Remove 1
     Loop
-    
+
     Do While Brilliants.Count > 0
         Brilliants.Remove 1
     Loop
@@ -77,21 +77,21 @@ Public Sub CleanUpProj()
     Do While Billboards.Count > 0
         Billboards.Remove 1
     Loop
-    
+
     Do While OnEvents.Count > 0
         OnEvents.Remove 1
     Loop
-    
+
     Do While All.Count > 0
         All.Remove 1
     Loop
+
     Dim o As Long
-    
     If LightCount > 0 Then
         Erase Lights
         LightCount = 0
     End If
-    
+
     If FileCount > 0 Then
         For o = 1 To FileCount
             Set Files(o).Data = Nothing
@@ -104,17 +104,17 @@ Public Sub CleanUpProj()
 End Sub
 
 Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
-    
+
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
     DDevice.SetVertexShader FVF_RENDER
-    
+
     Dim fogSTate As Boolean
     fogSTate = DDevice.GetRenderState(D3DRS_FOGENABLE)
     If fogSTate Then DDevice.SetRenderState D3DRS_FOGENABLE, False
     DDevice.SetRenderState D3DRS_LIGHTING, 1
     DDevice.SetRenderState D3DRS_ZENABLE, False
-    
+
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
@@ -127,7 +127,6 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
             If Brilliants(l).SunLight Then
                 DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.r * 255, _
                     Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.g * 255, Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.b * 255)
-
             End If
             Set b = Nothing
         Next
@@ -138,7 +137,7 @@ End Sub
 Public Function BlendValue(ByVal StartMinimum As Single, ByVal StartMaximum As Single, ByVal StartFactor As Single, ByVal StopMinimum As Single, ByVal StopMaximum As Single, ByVal StopFactor As Single, ByVal CurrentFactor As Single) As Single
 
     BlendValue = (((StartMaximum - StartMinimum) * StartFactor) + ((((StopMaximum - StopMinimum) * StopFactor) - ((StartMaximum - StartMinimum) * StartFactor)) * CurrentFactor))
-    
+
 End Function
 Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByVal StartOrStop As Boolean)
     Static matSave As D3DMATRIX
@@ -164,7 +163,7 @@ End Sub
 
 Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet)
     With p
-   ' Debug.Print p.Key
+    Debug.Print p.Key
         Dim matPlane As D3DMATRIX
         Dim matRot As D3DMATRIX
         Dim matPos As D3DMATRIX
@@ -172,43 +171,41 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
         Dim matYaw As D3DMATRIX
         Dim matPitch As D3DMATRIX
         Dim matRoll As D3DMATRIX
-                
+
         D3DXMatrixIdentity matPlane
         D3DXMatrixIdentity matPos
         D3DXMatrixIdentity matYaw
         D3DXMatrixIdentity matPitch
         D3DXMatrixIdentity matRoll
         D3DXMatrixIdentity matScale
-        
-                
+
         DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(255, 255, 255, 255)
         
         'render the round portion first
         If p.Volume.Count > 0 Then
-        
+
             Dim lineto As Point
             'If (p.PlateauInfinite Or p.PlateauHole) Then 'first 12 triangles is the rolling backdrop
-                
-               
+
             Dim testFar As Long
             testFar = Far '10 * MILE
-            
+
             If (Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
                 'draws hole type of plane if in range of the hole, else the infinite plane is used further down
-            
+
                 D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
                 D3DXMatrixMultiply matPlane, matPlane, matPos
-                
+
                 DDevice.SetTransform D3DTS_WORLD, matPlane
-        
-                D3DXMatrixRotationZ matRoll, p.Rotate.z
-                D3DXMatrixMultiply matPlane, matRoll, matPlane
-        
-                D3DXMatrixRotationY matYaw, p.Rotate.Y
-                D3DXMatrixMultiply matPlane, matYaw, matPlane
                 
                 D3DXMatrixRotationX matPitch, p.Rotate.X
                 D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+                D3DXMatrixRotationY matYaw, p.Rotate.Y
+                D3DXMatrixMultiply matPlane, matYaw, matPlane
+
+                D3DXMatrixRotationZ matRoll, p.Rotate.z
+                D3DXMatrixMultiply matPlane, matRoll, matPlane
                 
                 D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                 D3DXMatrixMultiply matPlane, matScale, matPlane
@@ -233,7 +230,10 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                 End With
         
             Else
-                If Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
+                If Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or _
+                    (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or _
+                    (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2))) Then
+
                 'draws island and doughnut stype plane
                 
                     If ((p.Rows > 0) And (p.Columns > 0)) And (p.PlateauIsland Or p.PlateauDoughnut) Then
@@ -261,16 +261,16 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                 D3DXMatrixMultiply matPlane, matPlane, matPos
             
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
-            
-                                D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                D3DXMatrixMultiply matPlane, matRoll, matPlane
-            
-                                D3DXMatrixRotationY matYaw, p.Rotate.Y
-                                D3DXMatrixMultiply matPlane, matYaw, matPlane
-            
+                
                                 D3DXMatrixRotationX matPitch, p.Rotate.X
                                 D3DXMatrixMultiply matPlane, matPitch, matPlane
-            
+
+                                D3DXMatrixRotationY matYaw, p.Rotate.Y
+                                D3DXMatrixMultiply matPlane, matYaw, matPlane
+
+                                D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                D3DXMatrixMultiply matPlane, matRoll, matPlane
+                                
                                 D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                                 D3DXMatrixMultiply matPlane, matScale, matPlane
                                         
@@ -288,35 +288,34 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                     If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                                 End If
                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-        
+
                             End With
-            
+
                         Next
-                    
+
                     ElseIf (p.PlateauIsland Or p.PlateauDoughnut) Then
                     'draws island and doughnut stype plane where as no grid of them exists
-                                        
+
                         D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
                         D3DXMatrixMultiply matPlane, matPlane, matPos
-                        
+
                         DDevice.SetTransform D3DTS_WORLD, matPlane
-        
-                        D3DXMatrixRotationZ matRoll, p.Rotate.z
-                        D3DXMatrixMultiply matPlane, matRoll, matPlane
-        
-                        D3DXMatrixRotationY matYaw, p.Rotate.Y
-                        D3DXMatrixMultiply matPlane, matYaw, matPlane
-                        
+                
                         D3DXMatrixRotationX matPitch, p.Rotate.X
                         D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+                        D3DXMatrixRotationY matYaw, p.Rotate.Y
+                        D3DXMatrixMultiply matPlane, matYaw, matPlane
+
+                        D3DXMatrixRotationZ matRoll, p.Rotate.z
+                        D3DXMatrixMultiply matPlane, matRoll, matPlane
                         
                         D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                         D3DXMatrixMultiply matPlane, matScale, matPlane
-        
+
                         DDevice.SetTransform D3DTS_WORLD, matPlane
-                
+
                         With p.Volume(1)
-        
                             SetRenderBlends .Transparent, .Translucent
                             If Not (.Translucent Or .Transparent) Then
                                 DDevice.SetMaterial GenericMaterial
@@ -329,7 +328,6 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                 If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                             End If
                             DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
-        
                         End With
                     End If
         
@@ -342,15 +340,15 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                     D3DXMatrixMultiply matPlane, matPlane, matPos
                     
                     DDevice.SetTransform D3DTS_WORLD, matPlane
-        
-                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                    D3DXMatrixMultiply matPlane, matRoll, matPlane
-        
-                    D3DXMatrixRotationY matYaw, p.Rotate.Y
-                    D3DXMatrixMultiply matPlane, matYaw, matPlane
-                    
+                
                     D3DXMatrixRotationX matPitch, p.Rotate.X
                     D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+                    D3DXMatrixRotationY matYaw, p.Rotate.Y
+                    D3DXMatrixMultiply matPlane, matYaw, matPlane
+
+                    D3DXMatrixRotationZ matRoll, p.Rotate.z
+                    D3DXMatrixMultiply matPlane, matRoll, matPlane
                     
                     D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
                     D3DXMatrixMultiply matPlane, matScale, matPlane
@@ -384,7 +382,8 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 End Sub
 
 Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet, ByVal RelativeFactor As Single)
-
+    Debug.Print p.Key
+    
     Dim matPlane As D3DMATRIX
     Dim matRot As D3DMATRIX
     Dim matPos As D3DMATRIX
@@ -400,28 +399,29 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     D3DXMatrixIdentity matRoll
     D3DXMatrixIdentity matScale
     
-    If (Not p.Follow) Then
-        
+    If p.Follow Then
+
         D3DXMatrixTranslation matPos, -p.Origin.X, -p.Origin.Y, -p.Origin.z
         D3DXMatrixMultiply matPlane, matPlane, matPos
-                
+
     Else
+    
     
         D3DXMatrixTranslation matPos, 0, 0, 0
         D3DXMatrixMultiply matPlane, matPlane, matPos
-        
+
     End If
         
     DDevice.SetTransform D3DTS_WORLD, matPlane
-    
-    D3DXMatrixRotationZ matRoll, p.Rotate.z
-    D3DXMatrixMultiply matPlane, matRoll, matPlane
+                
+    D3DXMatrixRotationX matPitch, p.Rotate.X
+    D3DXMatrixMultiply matPlane, matPitch, matPlane
 
     D3DXMatrixRotationY matYaw, p.Rotate.Y
     D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-    D3DXMatrixRotationX matPitch, p.Rotate.X
-    D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+    D3DXMatrixRotationZ matRoll, p.Rotate.z
+    D3DXMatrixMultiply matPlane, matRoll, matPlane
     
     D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
     D3DXMatrixMultiply matPlane, matScale, matPlane
@@ -435,12 +435,14 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     Dim rsam As Single
     
     rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
-          
 
     If p.Alphablend Then
-       
-        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
-     
+        
+       If Not p.Follow Then
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+       Else
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+       End If
      
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR And D3DBLEND_INVSRCALPHA
         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA And D3DBLEND_INVSRCCOLOR
@@ -455,9 +457,13 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
             DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
         Next
             
-    ElseIf (Not p.Translucent) And (Not p.Alphablend) Then
+    ElseIf ((Not p.Translucent) And (Not p.Alphablend)) Then
         
-        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB((1 - RelativeFactor) * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+        If Not p.Follow Then
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB((1 - RelativeFactor) * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+        Else
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+        End If
         
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
@@ -474,7 +480,11 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
             
     Else
 
-        DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor * 255, 192 * RelativeFactor, 192 * RelativeFactor, 192 * RelativeFactor)
+        If Not p.Follow Then
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor * 255, 192 * RelativeFactor, 192 * RelativeFactor, 192 * RelativeFactor)
+        Else
+            DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 192 * RelativeFactor, 192 * RelativeFactor, 192 * RelativeFactor)
+        End If
 
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
@@ -546,7 +556,16 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
 '    End If
 
 End Sub
-
+Private Function GetWorldRelativeFactor(ByRef p As Planet, ByRef Camera As Camera)
+    If Not Camera.Player Is Nothing Then
+        GetWorldRelativeFactor = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
+    ElseIf Not Camera.Planet Is Nothing Then
+        GetWorldRelativeFactor = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z)
+    Else
+        GetWorldRelativeFactor = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0)
+    End If
+    GetWorldRelativeFactor = p.RelativeColorFactor(GetWorldRelativeFactor)
+End Function
 Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
        
     Dim dist As Single
@@ -576,7 +595,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     If Not Camera.Planet Is Nothing Then onkey = Camera.Planet.Key
     If Not Camera.Player Is Nothing Then AngleAxisRestrict Camera.Player.Rotate
     Camera.BuildColor
-        
+    Debug.Print
 
 '#####################################################################################################
 '#####################################################################################################
@@ -607,21 +626,16 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             Select Case p.Form
                 Case World
                     If p.Visible Then
-                        If Not p.Follow And Not Camera.Player Is Nothing Then
-                            dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
-                        ElseIf Not Camera.Planet Is Nothing Then
-                            dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z)
-                        End If
-                        dist = p.RelativeColorFactor(dist)
+                        dist = GetWorldRelativeFactor(p, Camera)
                         Camera.BuildColor p.color.RGB, dist
 
-                        If (dist > 0) And (Not (p.Translucent Or p.Transparent)) Then
+                        If (dist > 0) And (Not (p.Translucent Or p.Transparent Or p.Alphablend)) Then
                             
 
-                           ' Debug.Print p.Key; dist
+                            'Debug.Print p.Key; dist
 
                             SubRenderWorld UserControl, Camera, p, dist
-
+                        
                         Else
                         
                         End If
@@ -739,16 +753,11 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             If p.Visible Then
                 
                 If (p.Form = World) Then
-                    If Camera.Player Is Nothing Then
-                        dist = 0
-                   ElseIf Not Camera.Planet Is Nothing Then
-                        dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z)
-                        dist = p.RelativeColorFactor(dist)
-                   End If
+                    dist = GetWorldRelativeFactor(p, Camera)
+                    
 '                    Dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
                     
-                    
-                    If ((dist <= 1) And (dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent) Then
+                    If ((dist <= 1) And (dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent Or p.Alphablend) Then
                         'hot sort the list to opaque World, not on plateau, then
                         'alpha blend world and finally on plateau is already last
                         j = i
@@ -771,19 +780,15 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         
                         Set p = Planets(i)
                         
-                        dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
-                        dist = p.RelativeColorFactor(dist)
+                        dist = GetWorldRelativeFactor(p, Camera)
                         
                     End If
                     
-                    If p.Form = World And (dist <= 1) And (dist > 0) And (p.Translucent Or p.Transparent) Then
-
-                        dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z)
-                        dist = p.RelativeColorFactor(dist)
+                    If p.Form = World And (dist <= 1) And (dist > 0) And (p.Translucent Or p.Transparent Or p.Alphablend) Then
                     
                         If ((dist <= 1) And (dist > 0)) Then
                             'draw the world with the alpha blend a relativefactor
-                          '  Debug.Print p.Key; dist
+                            'Debug.Print p.Key; dist
                             
                             Camera.BuildColor p.color.RGB, dist
                     
@@ -798,18 +803,34 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                     End If
                 End If
 
-                If (p.Form = Plateau) And onkey <> p.Key Then
+                If (p.Form = Plateau) Then
+                        'dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.X, Camera.Player.Y, Camera.Player.z)
+
+                        
+                    If onkey = p.Key Then
+                        
+                        
+                        
+                
                     
-                    Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-                    Set p.Absolute.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+                    ElseIf onkey <> p.Key Then
                     
-                    SubRenderPlateau UserControl, Camera, p
-                    
+                      'find aiming at plaet (dist3 holds closest last aiming at dist)
+                        Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+                        
+                        'Set tmp = AngleAxisDifference(VectorAxisAngles(VectorRotateAxis(MakePoint(0, 0, 1), Camera.Player.Rotate)), tmp)
+                        
+                        
+                        'Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+                        Set p.Absolute.Rotate = p.Rotate
+                     '
+                        
+                        SubRenderPlateau UserControl, Camera, p
+                    End If
                 End If
             End If
             
             i = i + 1
-            If i < Planets.Count Then Set p = Planets(i)
         Loop
         
         If p.Key = onkey Then

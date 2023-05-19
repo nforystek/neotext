@@ -232,7 +232,7 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Sine = 0
-    MsgBox Err.Description, vbExclamation
+    MsgBox Err.description, vbExclamation
     Resume PROC_EXIT
 End Function
 
@@ -260,7 +260,7 @@ PROC_EXIT:
     Exit Function
 PROC_ERR:
     Cosine = 0
-    MsgBox Err.Description, vbExclamation
+    MsgBox Err.description, vbExclamation
     Resume PROC_EXIT
 End Function
 
@@ -863,15 +863,15 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     DDevice.SetTransform D3DTS_WORLD, matMat
         
     If Not Camera.Planet Is Nothing Then
-
-        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-        D3DXMatrixMultiply matMat, matRoll, matMat
+        
+        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
+        D3DXMatrixMultiply matMat, matPitch, matMat
 
         D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
         D3DXMatrixMultiply matMat, matYaw, matMat
-
-        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
-        D3DXMatrixMultiply matMat, matPitch, matMat
+        
+        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
+        D3DXMatrixMultiply matMat, matRoll, matMat
         
         DDevice.SetTransform D3DTS_WORLD, matMat
 
@@ -889,16 +889,16 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     
         D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
         D3DXMatrixMultiply matMat, matPos, matMat
-
-        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-        D3DXMatrixMultiply matMat, matRoll, matMat
-
-        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
-        D3DXMatrixMultiply matMat, matYaw, matMat
-
+        
         D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
         D3DXMatrixMultiply matMat, matPitch, matMat
-
+        
+        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
+        D3DXMatrixMultiply matMat, matYaw, matMat
+        
+        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
+        D3DXMatrixMultiply matMat, matRoll, matMat
+                
         DDevice.SetTransform D3DTS_WORLD, matMat
 
     End If
@@ -933,19 +933,20 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     Dim matYaw As D3DMATRIX
     Dim matPitch As D3DMATRIX
     Dim matScale As D3DMATRIX
+    Dim matRot As D3DMATRIX
     
     D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
     D3DXMatrixMultiply matMat, matPos, matMat
-    
+   
     D3DXMatrixRotationX matPitch, ApplyTo.Rotate.X
     D3DXMatrixMultiply matMat, matPitch, matMat
-
+     
     D3DXMatrixRotationY matYaw, ApplyTo.Rotate.Y
     D3DXMatrixMultiply matMat, matYaw, matMat
 
     D3DXMatrixRotationZ matRoll, ApplyTo.Rotate.z
     D3DXMatrixMultiply matMat, matRoll, matMat
-
+    
     D3DXMatrixTranslation matPos, ApplyTo.Offset.X, ApplyTo.Offset.Y, ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
     
@@ -1017,10 +1018,10 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     
     D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
-
+    
     D3DXMatrixRotationZ matRoll, -ApplyTo.Rotate.z
     D3DXMatrixMultiply matMat, matRoll, matMat
-
+    
     D3DXMatrixRotationY matYaw, -ApplyTo.Rotate.Y
     D3DXMatrixMultiply matMat, matYaw, matMat
     
@@ -1033,47 +1034,15 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
 End Sub
 
 Public Function RebuildTriangleArray() As Long
-    ReDim Preserve TriangleFace(0 To 5, 0 To TriangleCount) As Single
-    ReDim Preserve VertexXAxis(0 To 2, 0 To TriangleCount) As Single
-    ReDim Preserve VertexYAxis(0 To 2, 0 To TriangleCount) As Single
-    ReDim Preserve VertexZAxis(0 To 2, 0 To TriangleCount) As Single
-    RebuildTriangleArray = (((TriangleCount + 1) * 3) - 1)
-    ReDim Preserve VertexDirectX(0 To RebuildTriangleArray) As MyVertex
-    ReDim Preserve ScreenDirectX(0 To RebuildTriangleArray) As MyScreen
-    RebuildTriangleArray = RebuildTriangleArray - 2
-End Function
-
-Public Function RemoveTriangleArray(ByRef TriangleIndex As Long)
-    Dim i As Long
-    For i = TriangleIndex To TriangleCount - 1
-        TriangleFace(0, i) = TriangleFace(0, i + 1)
-        TriangleFace(1, i) = TriangleFace(1, i + 1)
-        TriangleFace(2, i) = TriangleFace(2, i + 1)
-        TriangleFace(3, i) = TriangleFace(3, i + 1)
-        TriangleFace(4, i) = TriangleFace(4, i + 1)
-        TriangleFace(5, i) = TriangleFace(5, i + 1)
-        
-        VertexXAxis(0, i) = VertexXAxis(0, i + 1)
-        VertexXAxis(1, i) = VertexXAxis(1, i + 1)
-        VertexXAxis(2, i) = VertexXAxis(2, i + 1)
-        
-        VertexYAxis(0, i) = VertexYAxis(0, i + 1)
-        VertexYAxis(1, i) = VertexYAxis(1, i + 1)
-        VertexYAxis(2, i) = VertexYAxis(2, i + 1)
-        
-        VertexZAxis(0, i) = VertexZAxis(0, i + 1)
-        VertexZAxis(1, i) = VertexZAxis(1, i + 1)
-        VertexZAxis(2, i) = VertexZAxis(2, i + 1)
-    Next
-    
-    For i = (((TriangleIndex + 1) * 3) - 1) To (((TriangleCount + 1) * 3) - 1) - 3
-        VertexDirectX(i) = VertexDirectX(i + 3)
-        ScreenDirectX(i) = ScreenDirectX(i + 3)
-    Next
-    
-    TriangleCount = TriangleCount - 1
-    If TriangleCount > 1 Then
-        RebuildTriangleArray
+    If TriangleCount >= 0 Then
+        ReDim Preserve TriangleFace(0 To 5, 0 To TriangleCount) As Single
+        ReDim Preserve VertexXAxis(0 To 2, 0 To TriangleCount) As Single
+        ReDim Preserve VertexYAxis(0 To 2, 0 To TriangleCount) As Single
+        ReDim Preserve VertexZAxis(0 To 2, 0 To TriangleCount) As Single
+        RebuildTriangleArray = (((TriangleCount + 1) * 3) - 1)
+        ReDim Preserve VertexDirectX(0 To RebuildTriangleArray) As MyVertex
+        ReDim Preserve ScreenDirectX(0 To RebuildTriangleArray) As MyScreen
+        RebuildTriangleArray = RebuildTriangleArray - 2
     Else
         Erase TriangleFace
         Erase VertexXAxis
@@ -1081,9 +1050,37 @@ Public Function RemoveTriangleArray(ByRef TriangleIndex As Long)
         Erase VertexZAxis
         Erase VertexDirectX
         Erase ScreenDirectX
-        TriangleCount = 0
+        TriangleCount = -1
     End If
-    
+End Function
+
+Public Function RemoveTriangleArray(ByRef TriangleIndex As Long)
+    Dim i As Long
+    If TriangleIndex < TriangleCount - 1 Then
+        For i = TriangleIndex To TriangleCount - 2
+            TriangleFace(0, i) = TriangleFace(0, i + 1)
+            TriangleFace(1, i) = TriangleFace(1, i + 1)
+            TriangleFace(2, i) = TriangleFace(2, i + 1)
+            TriangleFace(3, i) = TriangleFace(3, i + 1)
+            TriangleFace(4, i) = TriangleFace(4, i + 1)
+            TriangleFace(5, i) = TriangleFace(5, i + 1)
+            VertexXAxis(0, i) = VertexXAxis(0, i + 1)
+            VertexXAxis(1, i) = VertexXAxis(1, i + 1)
+            VertexXAxis(2, i) = VertexXAxis(2, i + 1)
+            VertexYAxis(0, i) = VertexYAxis(0, i + 1)
+            VertexYAxis(1, i) = VertexYAxis(1, i + 1)
+            VertexYAxis(2, i) = VertexYAxis(2, i + 1)
+            VertexZAxis(0, i) = VertexZAxis(0, i + 1)
+            VertexZAxis(1, i) = VertexZAxis(1, i + 1)
+            VertexZAxis(2, i) = VertexZAxis(2, i + 1)
+        Next
+        For i = (TriangleIndex * 3) To ((TriangleCount - 2) * 3)
+            VertexDirectX(i) = VertexDirectX(i + 3)
+            ScreenDirectX(i) = ScreenDirectX(i + 3)
+        Next
+    End If
+    TriangleCount = TriangleCount - 1
+    RebuildTriangleArray
 End Function
 
 Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef P4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Molecule
