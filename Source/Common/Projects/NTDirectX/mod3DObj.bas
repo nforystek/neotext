@@ -393,6 +393,25 @@ PROC_ERR:
     Resume PROC_EXIT
 End Function
 
+Private Function CombineOrbits(ByRef o1 As Orbit, ByRef o2 As Orbit) As Orbit
+    Set CombineOrbits = New Orbit
+    With CombineOrbits
+        .Origin = VectorAddition(o1.Origin, o2.Origin)
+        .Offset = VectorDeduction(VectorDeduction(VectorAddition(o1.Origin, o1.Offset), VectorAddition(o2.Origin, o2.Offset)), .Origin)
+        .Rotate = VectorAddition(o1.Rotate, o2.Rotate)
+        .Scaled = VectorAddition(o1.Scaled, o2.Scaled)
+        .Ranges.X = o1.Ranges.X + o2.Ranges.X
+        .Ranges.Y = o1.Ranges.Y + o2.Ranges.Y
+        .Ranges.z = o1.Ranges.z + o2.Ranges.z
+        If o1.Ranges.W = -1 Or o2.Ranges.W = -1 Then
+            .Ranges.W = -1
+        ElseIf o1.Ranges.W > o2.Ranges.W Then
+            .Ranges.W = o1.Ranges.W
+        Else
+            .Ranges.W = o2.Ranges.W
+        End If
+    End With
+End Function
 
 Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
@@ -438,25 +457,6 @@ Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByV
         Set ApplyTo.Relative.Rotate = Nothing
     End If
 
-'    Static stacked As Integer
-'    stacked = stacked + 1
-'    Dim m As Molecule
-'    If TypeName(ApplyTo) = "Planet" Then
-'        For Each m In Molecules
-'            If ApplyTo.Ranges.W = -1 Then
-'                ApplyRotate m, ApplyTo, Relative
-'            ElseIf ApplyTo.Ranges.W > 0 Then
-'                If ApplyTo.Ranges.W - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyRotate m, ApplyTo, Relative
-'                End If
-'            End If
-'        Next
-'    ElseIf TypeName(ApplyTo) = "Molecule" Then
-'        For Each m In ApplyTo.Molecules
-'            ApplyRotate m, ApplyTo, Relative
-'        Next
-'    End If
-'    stacked = stacked - 1
 
 End Sub
 
@@ -545,10 +545,10 @@ Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If p.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.W = -1 Then
                         LocPos Origin, Relative, p, ApplyTo
-                    ElseIf p.Ranges.W > 0 Then
-                        If p.Ranges.W - Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.W > 0 Then
+                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
                             LocPos Origin, Relative, p, ApplyTo
                         End If
                     End If
@@ -560,6 +560,22 @@ Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Origin = Origin
                 End If
+'                If TypeName(ApplyTo) = "Planet" Then
+''                    For Each m In Molecules
+''                        If ApplyTo.Ranges.W = -1 Then
+''                            LocPos Origin, Relative, m
+''                        ElseIf ApplyTo.Ranges.W > 0 Then
+''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
+''                                LocPos Origin, Relative, m
+''                            End If
+''                        End If
+''                    Next
+''                ElseIf TypeName(ApplyTo) = "Molecule" Then
+''                    For Each m In ApplyTo.Molecules
+''                        LocPos Origin, Relative, m
+''                    Next
+'                End If
         End Select
     End If
 End Sub
@@ -584,10 +600,10 @@ Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional B
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If p.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.W = -1 Then
                         RotOri Degrees, Relative, p, ApplyTo
-                    ElseIf p.Ranges.W > 0 Then
-                        If p.Ranges.W - Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.W > 0 Then
+                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
                             RotOri Degrees, Relative, p, ApplyTo
                         End If
                     End If
@@ -599,6 +615,22 @@ Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional B
                 Else
                     Set ApplyTo.Absolute.Rotate = Degrees
                 End If
+'                If TypeName(ApplyTo) = "Planet" Then
+''                    For Each m In Molecules
+''                        If ApplyTo.Ranges.W = -1 Then
+''                            RotOri Degrees, Relative, m
+''                        ElseIf ApplyTo.Ranges.W > 0 Then
+''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
+''                                RotOri Degrees, Relative, m
+''                            End If
+''                        End If
+''                    Next
+''                ElseIf TypeName(ApplyTo) = "Molecule" Then
+''                    For Each m In ApplyTo.Molecules
+''                        RotOri Degrees, Relative, m
+''                    Next
+'                End If
         End Select
     End If
 End Sub
@@ -624,10 +656,10 @@ Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If p.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.W = -1 Then
                         ScaExp Scalar, Relative, p, ApplyTo
-                    ElseIf p.Ranges.W > 0 Then
-                        If p.Ranges.W - Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.W > 0 Then
+                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
                             ScaExp Scalar, Relative, p, ApplyTo
                         End If
                     End If
@@ -640,6 +672,22 @@ Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Scaled = Scalar
                 End If
+'                If TypeName(ApplyTo) = "Planet" Then
+''                    For Each m In Molecules
+''                        If ApplyTo.Ranges.W = -1 Then
+''                            ScaExp Scalar, Relative, m
+''                        ElseIf ApplyTo.Ranges.W > 0 Then
+''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
+''                                ScaExp Scalar, Relative, m
+''                            End If
+''                        End If
+''                    Next
+''                ElseIf TypeName(ApplyTo) = "Molecule" Then
+''                    For Each m In ApplyTo.Molecules
+''                        ScaExp Scalar, Relative, m
+''                    Next
+'                End If
         End Select
     End If
 End Sub
@@ -665,11 +713,10 @@ Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If p.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.W = -1 Then
                         DisBal Offset, Relative, p, ApplyTo
-                    ElseIf p.Ranges.W > 0 Then
-                        dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0)
-                        If p.Ranges.W - dist > 0 Then
+                    ElseIf ApplyTo.Ranges.W > 0 Then
+                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
                             DisBal Offset, Relative, p, ApplyTo
                         End If
                     End If
@@ -682,6 +729,22 @@ Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Offset = Offset
                 End If
+'                If TypeName(ApplyTo) = "Planet" Then
+''                    For Each m In Molecules
+''                        If ApplyTo.Ranges.W = -1 Then
+''                            DisBal Offset, Relative, m
+''                        ElseIf ApplyTo.Ranges.W > 0 Then
+''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
+''                                DisBal Offset, Relative, m
+''                            End If
+''                        End If
+''                    Next
+''                ElseIf TypeName(ApplyTo) = "Molecule" Then
+''                    For Each m In ApplyTo.Molecules
+''                        DisBal Offset, Relative, m
+''                    Next
+'                End If
         End Select
     End If
 End Sub
@@ -697,7 +760,7 @@ Private Function RangedMolecules(ByRef ApplyTo As Molecule) As NTNodes10.Collect
                 RangedMolecules.Add m, m.Key
             ElseIf ApplyTo.Ranges.W > 0 Then
                 dist = Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z)
-                If ApplyTo.Ranges.W - dist > 0 Then
+                If ApplyTo.Ranges.W <= dist Then
                     RangedMolecules.Add m, m.Key
                 End If
             End If
@@ -787,13 +850,13 @@ Public Sub RenderMotions(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 
         AllCommitRoutine p, Nothing
 
-        Set ms = RangedMolecules(p)
-
-        For Each m In ms
-
-            AllCommitRoutine m, p
-
-        Next
+'        Set ms = RangedMolecules(p)
+'
+'        For Each m In ms
+'
+'            AllCommitRoutine m, p
+'
+'        Next
 
     Next
 
@@ -874,7 +937,7 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
         D3DXMatrixMultiply matMat, matRoll, matMat
         
         DDevice.SetTransform D3DTS_WORLD, matMat
-
+        
    End If
     
     RenderOrbits Molecules, True
@@ -905,7 +968,7 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     
 End Sub
 
-Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean) ', ByRef matMat As D3DMATRIX)
+Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
 
     Dim matMat As D3DMATRIX
     D3DXMatrixIdentity matMat
@@ -914,10 +977,10 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean) ', 
     For Each m In col
         If NoParentOnly Then
             If m.Parent Is Nothing Then
-                RenderMolecule m, Nothing, matMat  'matPos2, matRoll2, matYaw2, matPitch2, matScale2
+                RenderMolecule m, Nothing, matMat
             End If
         Else
-            RenderMolecule m, Nothing, matMat  'matPos2, matRoll2, matYaw2, matPitch2, matScale2
+            RenderMolecule m, Nothing, matMat
         End If
         
     Next
@@ -1223,14 +1286,14 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             .Index1 = PointCache(p1)
             .Index2 = PointCache(p3)
             .Index3 = PointCache(P4)
-
+            
             Set .Point1 = Points(.Index1)
             Set .Point2 = Points(.Index2)
             Set .Point3 = Points(.Index3)
 
             .V1 = ScaleY
             .U2 = ScaleX
-
+            
             Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
 
             VertexXAxis(0, TriangleCount) = .Point1.X

@@ -228,11 +228,15 @@ End Function
 
 Public Function SphereToCubeRoot(ByVal Diameter As Single) As Single
     SphereToCubeRoot = (((Diameter ^ 2) / 2) ^ (1 / 2))
+    'opposite of CubeToSphereDiameter() if edge1, edge2, and edge3 are the same value,
+    'true cube. for instance ((Diameter^2)^(1/3)) equals one eight of any of all three edges
+    'surface area of a sphere is still only two dimensions, so we skip ahead cutting down
 End Function
 
 Public Function SquareCenter(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Point
     Set SquareCenter = New Point
     With SquareCenter
+        'center by adding onto the lowest value of axis with the the middle of the absolute difference of each of axis
         .X = (Least(v0.X, V1.X, V2.X, V3.X) + ((Large(v0.X, V1.X, V2.X, V3.X) - Least(v0.X, V1.X, V2.X, V3.X)) / 2))
         .Y = (Least(v0.Y, V1.Y, V2.Y, V3.Y) + ((Large(v0.Y, V1.Y, V2.Y, V3.Y) - Least(v0.Y, V1.Y, V2.Y, V3.Y)) / 2))
         .z = (Least(v0.z, V1.z, V2.z, V3.z) + ((Large(v0.z, V1.z, V2.z, V3.z) - Least(v0.z, V1.z, V2.z, V3.z)) / 2))
@@ -243,12 +247,25 @@ Public Function CirclePermeter(ByVal Radii As Single) As Single
     CirclePermeter = ((Radii * 2) * PI)
 End Function
 
-Public Function CubeToSphereDiameter(ByVal edge1 As Single, ByVal edge2 As Single, ByVal edge3 As Single) As Single
-    CubeToSphereDiameter = (((((edge1 * edge2) + (edge2 * edge3) + (edge3 * edge1)) / 3)) + _
-            ((((edge1 * edge1) + (edge2 * edge2) + (edge3 * edge3)) / 3))) ^ (1 / 2)
+Public Function CubeToSphereDiameter(ByVal edge1 As Single, Optional ByVal edge2 As Single = 0, Optional ByVal edge3 As Single = 0) As Single
+    'opposite of SphereToCubeRoot(), input is three edges or length, width and height
+    'each form of square dimensions among the neighbor is used with a self squared to
+    'find all the possible square dimensions making two groups of three, and add together
+    'the averages of those groups then root it by two, returning a diameter by the volume
+    If edge2 = 0 And edge3 = 0 Then
+        CubeToSphereDiameter = (((((edge1 ^ 2) + (edge1 ^ 2) + (edge1 ^ 2)) / 3)) + _
+                ((((edge1 ^ 2) + (edge1 ^ 2) + (edge1 ^ 2)) / 3))) ^ (1 / 2)
+    Else
+        CubeToSphereDiameter = (((((edge1 * edge2) + (edge2 * edge3) + (edge3 * edge1)) / 3)) + _
+                ((((edge1 * edge1) + (edge2 * edge2) + (edge3 * edge3)) / 3))) ^ (1 / 2)
+    End If
 End Function
-Public Function CubePerimeter(ByVal Edge As Single) As Single
-    CubePerimeter = (Edge * 12)
+Public Function CubePerimeter(ByVal edge1 As Single, Optional ByVal edge2 As Single = 0, Optional ByVal edge3 As Single = 0) As Single
+    If edge2 = 0 And edge3 = 0 Then
+        CubePerimeter = (edge1 * 12)
+    Else
+        CubePerimeter = (edge1 * 4) + (edge2 * 4) + (edge3 * 4)
+    End If
 End Function
 
 Public Function CubeSurfaceArea(ByVal Edge As Single) As Single
@@ -421,24 +438,24 @@ Public Function TriangleHypotenuse(ByRef p1 As Point, ByRef p2 As Point, Optiona
 End Function
 
 
-Public Sub AngleAxisRestrict(ByRef p As Point)
-    p.X = AngleRestrict(p.X)
-    p.Y = AngleRestrict(p.Y)
-    p.z = AngleRestrict(p.z)
+Public Sub AngleAxisRestrict(ByRef AxisAngles As Point)
+    AxisAngles.X = AngleRestrict(AxisAngles.X)
+    AxisAngles.Y = AngleRestrict(AxisAngles.Y)
+    AxisAngles.z = AngleRestrict(AxisAngles.z)
 End Sub
-Public Function AngleRestrict(ByRef A As Single) As Single
-    A = Round(A, 6)
+Public Function AngleRestrict(ByRef AxisAngle As Single) As Single
+    AxisAngle = Round(AxisAngle, 6)
     AngleRestrict = 0
-    Do While A < -PI * 2 And AngleRestrict <= 4
-        A = A + (PI * 2)
+    Do While AxisAngle < -PI * 2 And AngleRestrict <= 4
+        AxisAngle = AxisAngle + (PI * 2)
         AngleRestrict = AngleRestrict + 1
     Loop
     AngleRestrict = 0
-    Do While A > PI * 2 And AngleRestrict <= 4
-        A = A - (PI * 2)
+    Do While AxisAngle > PI * 2 And AngleRestrict <= 4
+        AxisAngle = AxisAngle - (PI * 2)
         AngleRestrict = AngleRestrict + 1
     Loop
-    AngleRestrict = A
+    AngleRestrict = AxisAngle
 End Function
 
 Public Function VectorOctet(ByRef p As Point) As Single
@@ -479,7 +496,27 @@ End Function
 
 Public Function VectorRotateAxis(ByRef PointToRotate As Point, ByRef RadianAngles As Point) As Point
 
-    Dim S As Single
+'    Dim S As Single
+'    Dim tmp As New Point
+'    Set VectorRotateAxis = New Point
+'    With VectorRotateAxis
+'        .Y = Cos(RadianAngles.X) * PointToRotate.Y - Sin(RadianAngles.X) * PointToRotate.z
+'        .z = Sin(RadianAngles.X) * PointToRotate.Y + Cos(RadianAngles.X) * PointToRotate.z
+'        tmp.X = PointToRotate.X
+'        tmp.Y = .Y
+'        tmp.z = .z
+'        .X = Sin(RadianAngles.Y) * tmp.z + Cos(RadianAngles.Y) * tmp.X
+'        .z = Cos(RadianAngles.Y) * tmp.z - Sin(RadianAngles.Y) * tmp.X
+'        tmp.X = .X
+'        tmp.z = .z
+'        .X = Cos(RadianAngles.z) * tmp.X - Sin(RadianAngles.z) * tmp.Y
+'        .Y = Sin(RadianAngles.z) * tmp.X + Cos(RadianAngles.z) * tmp.Y
+'        .z = tmp.z
+'    End With
+'    Set tmp = Nothing
+    
+
+   ' Dim S As Single
     Dim tmp As New Point
     Set VectorRotateAxis = New Point
     With VectorRotateAxis
@@ -495,9 +532,10 @@ Public Function VectorRotateAxis(ByRef PointToRotate As Point, ByRef RadianAngle
         .X = Cos(RadianAngles.z) * tmp.X - Sin(RadianAngles.z) * tmp.Y
         .Y = Sin(RadianAngles.z) * tmp.X + Cos(RadianAngles.z) * tmp.Y
         .z = tmp.z
-    End With
-    Set tmp = Nothing
 
+
+
+'    Debug.Print .X; .Y; .z
 
 '            Dim S As New Point 'sine
 '            Dim c As New Point 'cosine
@@ -509,35 +547,75 @@ Public Function VectorRotateAxis(ByRef PointToRotate As Point, ByRef RadianAngle
 '            Dim A As New Point 'angle
 '            Dim r As New Point 'co-angle
 '
-'            Set mp = MakePoint(p1.z, p1.y, p1.x)
-'            A.x = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-'            r.x = (A.x - ((A.x \ 90) * 90)) * RADIAN
-'            S.x = VectorSine(mp)
-'            c.x = VectorCosine(mp)
-'            t.x = VectorTangent(mp)
-'            ss.x = VectorCosecant(mp)
-'            cc.x = VectorSecant(mp)
-'            tt.x = VectorCotangent(mp)
+'            Set mp = MakePoint(PointToRotate.z, PointToRotate.Y, PointToRotate.X)
+'            A.X = AngleZOfCoordXY(mp)
+'            r.X = AngleRestrict(AngleRestrict(A.X) + AngleRestrict(RadianAngles.X)) * DEGREE
+'            A.X = AngleQuadrant(A.X * DEGREE)
+'            S.X = VectorSine(mp)
+'            c.X = VectorCosine(mp)
+'            t.X = VectorTangent(mp)
+'            ss.X = VectorCosecant(mp)
+'            cc.X = VectorSecant(mp)
+'            tt.X = VectorCotangent(mp)
 '
-'            Set mp = MakePoint(p1.x, p1.z, p1.y)
-'            A.y = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-'            r.y = (A.y - ((A.y \ 90) * 90)) * RADIAN
-'            S.y = VectorSine(mp)
-'            c.y = VectorCosine(mp)
-'            t.y = VectorTangent(mp)
-'            ss.y = VectorCosecant(mp)
-'            cc.y = VectorSecant(mp)
-'            tt.y = VectorCotangent(mp)
+'            Set mp = MakePoint(PointToRotate.X, PointToRotate.z, PointToRotate.Y)
+'            A.Y = AngleZOfCoordXY(mp)
+'            r.Y = AngleRestrict(AngleRestrict(A.Y) + AngleRestrict(RadianAngles.Y)) * DEGREE
+'            A.Y = AngleQuadrant(A.Y * DEGREE)
+'            S.Y = VectorSine(mp)
+'            c.Y = VectorCosine(mp)
+'            t.Y = VectorTangent(mp)
+'            ss.Y = VectorCosecant(mp)
+'            cc.Y = VectorSecant(mp)
+'            tt.Y = VectorCotangent(mp)
 '
-'            Set mp = MakePoint(p1.x, p1.y, p1.z)
-'            A.z = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
-'            r.z = (A.z - ((A.z \ 90) * 90)) * RADIAN
+'            Set mp = MakePoint(PointToRotate.X, PointToRotate.Y, PointToRotate.z)
+'            A.z = AngleZOfCoordXY(mp)
+'            r.z = AngleRestrict(AngleRestrict(A.z) + AngleRestrict(RadianAngles.z)) * DEGREE
+'            A.z = AngleQuadrant(A.z * DEGREE)
 '            S.z = VectorSine(mp)
 '            c.z = VectorCosine(mp)
 '            t.z = VectorTangent(mp)
 '            ss.z = VectorCosecant(mp)
 '            cc.z = VectorSecant(mp)
 '            tt.z = VectorCotangent(mp)
+
+
+            
+'            r.X = ((RadianAngles.X * S.X) + ((RadianAngles.Y * c.X) - (RadianAngles.z * ss.z)))
+'            r.Y = ((RadianAngles.X * cc.Y) - ((RadianAngles.Y * cc.X) + (RadianAngles.z * S.z)))
+'            r.z = ((RadianAngles.z * t.z) - ((RadianAngles.X * tt.Y) + (RadianAngles.Y * tt.X)))
+'
+'
+'            r.Y = ((RadianAngles.X * S.X) + ((RadianAngles.X * c.X) - (RadianAngles.z * c.z)))
+'            r.X = ((RadianAngles.Y * ss.Y) - ((RadianAngles.Y * cc.Y) + (RadianAngles.z * cc.z)))
+'            r.z = ((RadianAngles.z * t.z) - ((RadianAngles.X * tt.Y) + (RadianAngles.Y * tt.X))) - _
+'                    ((RadianAngles.z * tt.z) - ((RadianAngles.Y * c.Y) + (RadianAngles.X * ss.X)))
+            
+            
+
+'            r.Y = -(((RadianAngles.X * S.X) + ((RadianAngles.X * ss.Y) - (RadianAngles.X * ss.z)))) '****
+'
+'            r.X = ((RadianAngles.Y * c.Y) + ((RadianAngles.Y * cc.X) - (RadianAngles.Y * cc.z))) - (r.Y * 2)
+'
+'            r.z = ((RadianAngles.z * t.z) - ((RadianAngles.X * tt.Y) + (RadianAngles.Y * tt.X))) - _
+'                    ((RadianAngles.z * tt.z) - ((RadianAngles.Y * c.Y) + (RadianAngles.X * ss.X)))
+'
+'
+'            r.X = AngleRestrict(r.X)
+'            r.Y = AngleRestrict(r.Y)
+'            r.z = 1 - AngleRestrict(r.z)
+'
+'            Debug.Print r.X; r.Y; r.z
+'            Debug.Print Round(.X, 3); Round(.Y, 3); Round(.z, 3)
+'            Debug.Print
+'
+'            .X = r.X
+'            .Y = r.Y
+'            .z = r.z
+            
+    End With
+    Set tmp = Nothing
 End Function
 
 Public Function VectorRotateX(ByRef PointToRotate As Point, ByVal RadianAngle As Single) As Point
@@ -580,33 +658,74 @@ Public Function VectorRotateZ(ByRef PointToRotate As Point, ByVal RadianAngle As
 End Function
 
 
-Public Function VectorAxisAngles(ByRef p As Point, Optional ByVal Combined As Boolean = True) As Point
+Public Function VectorAxisAngles(ByRef PointToZero As Point, Optional ByVal Combined As Boolean = True) As Point
     Set VectorAxisAngles = New Point
     With VectorAxisAngles
         If Not Combined Then
-            .X = AngleZOfCoordXY(MakePoint(p.z, p.Y, p.X))
-            .Y = AngleZOfCoordXY(MakePoint(p.X, p.z, p.Y))
-            .z = AngleZOfCoordXY(MakePoint(p.X, p.Y, p.z))
+            .X = AngleZOfCoordXY(MakePoint(PointToZero.z, PointToZero.Y, PointToZero.X))
+            .Y = AngleZOfCoordXY(MakePoint(PointToZero.X, PointToZero.z, PointToZero.Y))
+            .z = AngleZOfCoordXY(MakePoint(PointToZero.X, PointToZero.Y, PointToZero.z))
         Else
             Dim magnitude As Single
             Dim heading As Single
             Dim pitch As Single
             Dim slope As Single
 
-            magnitude = Sqr(p.X * p.X + p.Y * p.Y + p.z * p.z)
+            magnitude = Sqr(PointToZero.X * PointToZero.X + PointToZero.Y * PointToZero.Y + PointToZero.z * PointToZero.z)
             If magnitude < 10 Then magnitude = 100
-            slope = VectorSlope(MakePoint(0, 0, 0), p)
-            heading = ATan2(p.z, p.X)
-            pitch = ATan2(p.Y, Sqr(p.X * p.X + p.z * p.z))
+            slope = VectorSlope(MakePoint(0, 0, 0), PointToZero)
+            heading = ATan2(PointToZero.z, PointToZero.X)
+            pitch = ATan2(PointToZero.Y, Sqr(PointToZero.X * PointToZero.X + PointToZero.z * PointToZero.z))
             .X = (((heading / magnitude) - pitch) * (slope / magnitude))
             .z = ((PI / 2) + (-pitch + (heading / magnitude))) * (1 - (slope / magnitude))
             .Y = ((-heading + (pitch / magnitude)) * (1 - (slope / magnitude)))
             .Y = -(.Y + ((.X * (slope / magnitude)) / 2) - (.Y * 2) - ((.z * (slope / magnitude)) / 2))
             .X = (PI * 2) - (.X - ((PI / 2) * (slope / magnitude)))
             .z = (PI * 2) - (.z - ((PI / 2) * (slope / magnitude)))
-
         End If
     End With
+    
+    
+'            Dim S As New Point 'sine
+'            Dim c As New Point 'cosine
+'            Dim t As New Point 'tangent
+'            Dim ss As New Point 'cosecant
+'            Dim cc As New Point 'secant
+'            Dim tt As New Point 'cotangent
+'            Dim mp As New Point 'temporary
+'            Dim A As New Point 'angle
+'            Dim r As New Point 'co-angle
+'
+'            Set mp = MakePoint(p1.z, p1.y, p1.x)
+'            A.x = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
+'            r.x = (A.x - ((A.x \ 90) * 90)) * RADIAN
+'            S.x = VectorSine(mp)
+'            c.x = VectorCosine(mp)
+'            t.x = VectorTangent(mp)
+'            ss.x = VectorCosecant(mp)
+'            cc.x = VectorSecant(mp)
+'            tt.x = VectorCotangent(mp)
+'
+'            Set mp = MakePoint(p1.x, p1.z, p1.y)
+'            A.y = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
+'            r.y = (A.y - ((A.y \ 90) * 90)) * RADIAN
+'            S.y = VectorSine(mp)
+'            c.y = VectorCosine(mp)
+'            t.y = VectorTangent(mp)
+'            ss.y = VectorCosecant(mp)
+'            cc.y = VectorSecant(mp)
+'            tt.y = VectorCotangent(mp)
+'
+'            Set mp = MakePoint(p1.x, p1.y, p1.z)
+'            A.z = (AngleZOfCoordXY(mp) * DEGREE) * RADIAN
+'            r.z = (A.z - ((A.z \ 90) * 90)) * RADIAN
+'            S.z = VectorSine(mp)
+'            c.z = VectorCosine(mp)
+'            t.z = VectorTangent(mp)
+'            ss.z = VectorCosecant(mp)
+'            cc.z = VectorSecant(mp)
+'            tt.z = VectorCotangent(mp)
+
 End Function
 
 Public Function AngleZOfCoordXY(ByRef p As Point) As Single

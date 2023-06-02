@@ -58,7 +58,7 @@ Public Sub CleanUpProj()
     ser = frmMain.Serialize
     If ser <> "" Then WriteFile ScriptRoot & "\Serial.xml", ser
 
-    frmMain.ScriptControl1.Reset
+    'frmMain.ScriptControl1.Reset
 
     Do While Planets.Count > 0
         RemoveIterate Planets(1).Molecules
@@ -163,7 +163,7 @@ End Sub
 
 Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet)
     With p
-    Debug.Print p.Key
+    'Debug.Print p.Key
         Dim matPlane As D3DMATRIX
         Dim matRot As D3DMATRIX
         Dim matPos As D3DMATRIX
@@ -382,7 +382,7 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 End Sub
 
 Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet, ByVal RelativeFactor As Single)
-    Debug.Print p.Key
+    'Debug.Print p.Key
     
     Dim matPlane As D3DMATRIX
     Dim matRot As D3DMATRIX
@@ -406,7 +406,6 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
 
     Else
     
-    
         D3DXMatrixTranslation matPos, 0, 0, 0
         D3DXMatrixMultiply matPlane, matPlane, matPos
 
@@ -427,9 +426,15 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     D3DXMatrixMultiply matPlane, matScale, matPlane
 
     DDevice.SetTransform D3DTS_WORLD, matPlane
-        
+
+
+    DDevice.SetRenderState D3DRS_ZENABLE, 1
+
     DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDefault
+
+    DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
                
     Dim i As Long
     Dim rsam As Single
@@ -444,8 +449,9 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
             DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
        End If
      
-        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR And D3DBLEND_INVSRCALPHA
-        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA And D3DBLEND_INVSRCCOLOR
+        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR 'And D3DBLEND_INVSRCALPHA
+        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA 'And D3DBLEND_INVSRCCOLOR
+
         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
         
@@ -454,6 +460,8 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
             DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
             DDevice.SetMaterial GenericMaterial
             DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
+            
+
             DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
         Next
             
@@ -502,6 +510,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     End If
     
     DDevice.SetRenderState D3DRS_AMBIENT, rsam
+
     
 '    Else
 '
@@ -595,7 +604,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     If Not Camera.Planet Is Nothing Then onkey = Camera.Planet.Key
     If Not Camera.Player Is Nothing Then AngleAxisRestrict Camera.Player.Rotate
     Camera.BuildColor
-    Debug.Print
+   '; Debug.Print
 
 '#####################################################################################################
 '#####################################################################################################
@@ -604,11 +613,12 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
     DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
     
-    DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_POINT
-    DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_POINT
+    DDevice.SetRenderState D3DRS_ZENABLE, 0
+    DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
     
-    DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_POINT
-    DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_POINT
+    DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
 
 '    DDevice.SetMaterial GenericMaterial
 '    DDevice.SetTexture 1, Nothing
@@ -620,8 +630,9 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     If (Planets.Count > 0) And (Not Camera.Player Is Nothing) Then
         'first loop through all, we render worlds that
         'are opaque, and calculate up stuff for plateaus
-        
-        For Each p In Planets
+        i = 1
+        Do While i <= Planets.Count
+            Set p = Planets(i)
             
             Select Case p.Form
                 Case World
@@ -630,9 +641,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         Camera.BuildColor p.color.RGB, dist
 
                         If (dist > 0) And (Not (p.Translucent Or p.Transparent Or p.Alphablend)) Then
-                            
-
-                            'Debug.Print p.Key; dist
 
                             SubRenderWorld UserControl, Camera, p, dist
                         
@@ -645,6 +653,22 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                     dist = DistanceEx(Camera.Player.Origin, p.Origin)
 
                     If p.Visible Then
+                        '(dist4 holds closest last dist)
+                        
+                        If dist > dist2 And dist2 <> 0 Then 'dist2 is the prior
+                            'distance of the collection elements iteration (i-1)
+                            'Plateau's rendered sound be organized by distance
+                            Set p2 = Planets(i - 1)
+                            Planets.Remove (i - 1)
+                            If i < Planets.Count Then
+                                Planets.Add p2, p2.Key, i
+                            Else
+                                Planets.Add p2, p2.Key
+                            End If
+                            i = i + 1
+                        End If
+                    
+                    
                         dist2 = p.RelativeColorFactor(dist)
                         Camera.BuildColor p.color.RGB, dist2
                         
@@ -683,12 +707,14 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                                 
                             End If
                         End If
+                        dist2 = dist 'set dist2 for last planet in collection
+                        'for coming back around checking the sort of them
                         
                     End If
 
             End Select
-            
-        Next
+            i = i + 1
+        Loop
         
 '        'find greatest dist of x/y/z for max universe size
 '        If sumx >= sumy And sumx >= sumz Then maxdist = sumx * 2
@@ -708,7 +734,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     
     DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-
     
 '    DDevice.SetRenderState D3DRS_AMBIENT, Camera.color.ARGB
    ' DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(1, red, g, b)
@@ -763,7 +788,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         j = i
                         Do
                             If (Planets(j + 1).Form = Plateau And (Not Planets(j + 1) = onkey)) Then
-                                
                                 Set p2 = Planets(j + 1)
                                 Planets.Remove j + 1
                                 If j < Planets.Count Then
@@ -804,26 +828,16 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                 End If
 
                 If (p.Form = Plateau) Then
-                        'dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.X, Camera.Player.Y, Camera.Player.z)
+                    'dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.X, Camera.Player.Y, Camera.Player.z)
 
-                        
                     If onkey = p.Key Then
                         
-                        
-                        
-                
-                    
+
                     ElseIf onkey <> p.Key Then
                     
                       'find aiming at plaet (dist3 holds closest last aiming at dist)
                         Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
-                        
-                        'Set tmp = AngleAxisDifference(VectorAxisAngles(VectorRotateAxis(MakePoint(0, 0, 1), Camera.Player.Rotate)), tmp)
-                        
-                        
-                        'Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
                         Set p.Absolute.Rotate = p.Rotate
-                     '
                         
                         SubRenderPlateau UserControl, Camera, p
                     End If

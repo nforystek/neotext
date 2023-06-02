@@ -23,7 +23,6 @@ Global OnEvents As New NTNodes10.Collection
 Global Bindings As New Bindings
 Global Camera As New Camera
 
-
 Global Frame As Boolean
 Global Second As Single
 Global Millis As Single
@@ -195,9 +194,9 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                     For Each child In serial.childNodes
                         Select Case Include.SafeKey(child.baseName)
                             Case "datetime"
-                                'If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
+                                If (FileDateTime(ScriptRoot & "\Index.vbx") <> Include.URLDecode(child.Text)) And (Not (InStr(1, LCase(Command), "/debug", vbTextCompare) > 0)) Then
                                     GoTo exitout:
-                                'End If
+                                End If
                             Case "variables"
                                 For cnt = 0 To child.childNodes.Length - 1
                                     tmp = Replace(Replace(Include.URLDecode(child.childNodes(cnt).Text), """", """"""), vbCrLf, """ & vbCrLf & """)
@@ -303,7 +302,7 @@ End Sub
 
 Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String)
     LastCall = inBind & " = [" & inBlock & "]"
-    
+
     On Error Resume Next
     Dim BindIndex As Long
     Dim bindCode As String
@@ -345,7 +344,6 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
     frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = Nothing"
     If inName <> "" Then frmMain.ExecuteStatement inWith & "." & inEvent & ".ApplyTo = """ & inName & """"
     frmMain.ExecuteStatement inWith & "." & inEvent & ".Code = " & inBlock
-
 End Sub
 
 Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String) As String
@@ -379,20 +377,12 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
         frmMain.AddCode "Sub " & inObj & "()" & vbCrLf & _
              inBlock & vbCrLf & "End Sub" & vbCrLf
     ElseIf ParseReservedWord(inObj) = 3 Then
-    
-    
         Dim Temporary As Object
         inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
         Set Temporary = CreateObjectPrivate(inObj)
-    
-    
         ParseSetupObject Temporary, inObj, inName, inWith
-        
-    
-    
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)"
     End If
-    
 scripterror:
         If Err.number <> 0 Then
             Dim num As Long
@@ -431,7 +421,6 @@ Private Function ParseExecute(ByVal inLine As String, ByVal inWith As String) As
             On Error GoTo scripterror:
             Dim src As String
             src = RemoveNextArg(inLine, vbCrLf)
-            
             modCommon.Swap src, ScriptRoot
             ParseScript src, inWith
             modCommon.Swap src, ScriptRoot

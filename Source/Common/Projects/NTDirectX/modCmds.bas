@@ -995,7 +995,6 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
 
     DDevice.SetVertexShader FVF_SCREEN
     DDevice.SetRenderState D3DRS_ZENABLE, False
-    DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_LIGHTING, False
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE

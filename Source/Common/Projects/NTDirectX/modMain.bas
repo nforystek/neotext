@@ -61,29 +61,62 @@ End Sub
 
 Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
+
+'    Do While Not StopGame
+'
+'        If PauseGame Then
+'
+'            If Not ((frmMain.WindowState = 1) Or (UserControl.Parent.WindowState = 1)) Then
+'                If TestDirectX(UserControl) Then
+'
+'                    On Error Resume Next
+'                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGB, 1, 0
+'                    DDevice.BeginScene
+'                    DDevice.EndScene
+'                    DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
+'                    If (Err.number = 0) Then
+'                        PauseGame = False
+'                    Else
+'                        Err.Clear
+'                    End If
+'                    On Error GoTo 0
+'
+'                End If
+'
+'                If (Not PauseGame) And (Err.number = 0) Then
+'                    InitGameData
+'                Else
+'                    TermDirectX
+'                End If
+'            Else
+'                DoTasks
+'            End If
+'
+'        Else
+            
     Do While Not StopGame
 
         If PauseGame Then
 
             If Not ((frmMain.WindowState = 1) Or (UserControl.Parent.WindowState = 1)) Then
                 If TestDirectX(UserControl) Then
-
+    
                     On Error Resume Next
-                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGB, 1, 0
+                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color, 1, 0
                     DDevice.BeginScene
                     DDevice.EndScene
 
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-
+                    
                     If (Err.number = 0) Then
                         PauseGame = False
                     Else
                         Err.Clear
                     End If
                     On Error GoTo 0
-
+    
                 End If
-
+                
                 If (Not PauseGame) And (Err.number = 0) Then
                     InitGameData UserControl
                 Else
@@ -92,6 +125,8 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             ElseIf Not D3DWindow.Windowed = 1 Then
                 DoTasks
             End If
+            
+           ' If GetKeyState(VK_F1) = -128 Then ShowSetup UserControl
 
         Else
 
@@ -102,38 +137,22 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGBA, 1, 0
 
             On Error GoTo 0 'temporary
-
-            RenderMotions UserControl, Camera
-
+            
             DDevice.BeginScene
-
+                    
             RenderCamera UserControl, Camera
-
+            
             RenderBrilliants UserControl, Camera
 
             RenderPlanets UserControl, Camera
 
             RenderMolecules UserControl, Camera
+                    
+            RenderEvents UserControl, Camera
 
             InputScene UserControl
-
-            If Millis <> 0 Then
-                If Timer - Millis >= 0.1 Then
-                    Millis = Timer
-                    frmMain.Run "Millis"
-                End If
-            End If
-
-            If Second <> 0 Then
-                If Timer - Second >= 1 Then
-                    Second = Timer
-                    frmMain.Run "Second"
-                End If
-            End If
-
-            If Frame Then
-                frmMain.Run "Frame"
-            End If
+            
+            RenderMotions UserControl, Camera
 
             If Not PauseGame Then
                 
@@ -143,6 +162,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 
                 DDevice.EndScene
 
+                'DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
                 PresentScene UserControl
                 
                 On Error GoTo 0 'temporary
@@ -168,26 +188,99 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
 Exit Sub
 nofocus:
+
     Err.Clear
-    UserControl.PauseRendering
+    DoPauseGame UserControl
+
+'    If Err.number <> 0 Then
+'        Err.Clear
+'        If IsScreenSaverActive And (Not ScreenSaver) Then
+'            ScreenSaver = True
+'            UserControl.PauseRendering
+'            TrapMouse = False
+'        End If
+'        DoTasks
+'    End If
+        
+    'UserControl.PauseRendering
     'DoPauseGame UserControl
     
 'Exit Sub
 'Render:
 '    TermGameData UserControl
 '    TermDirectX UserControl
+'    StopGame = True
 '
 '    Unload frmMain
 '
-'    MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
+'    MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.number & ", " & Err.description, vbOKOnly + vbInformation, App.Title
 '    Err.Clear
     
 End Sub
 
+Public Sub DoPauseGame(ByRef UserControl As Macroscopic)
+
+    On Error Resume Next
+    PauseGame = True
+    TermGameData UserControl
+    TermDirectX UserControl
+End Sub
+
+Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
+
+    If Millis <> 0 Then
+        If Timer - Millis >= 0.1 Then
+            Millis = Timer
+            frmMain.Run "Millis"
+        End If
+    End If
+
+    If Second <> 0 Then
+        If Timer - Second >= 1 Then
+            Second = Timer
+            frmMain.Run "Second"
+        End If
+    End If
+
+    If Frame Then
+        frmMain.Run "Frame"
+    End If
+End Sub
+
+'Public Sub PresentScene(ByRef UserControl As Macroscopic)
+'
+'    On Error Resume Next
+'
+'    Do
+'        If Err.number <> 0 Then
+'            Err.Clear
+'            If IsScreenSaverActive And (Not ScreenSaver) Then
+'                ScreenSaver = True
+'                UserControl.PauseRendering
+'                TrapMouse = False
+'            End If
+'            DoTasks
+'        End If
+'        If ((Not IsScreenSaverActive) And ScreenSaver) Or (Not ScreenSaver) Then
+'
+'            DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
+'
+'        End If
+'
+'    Loop Until Err.number = 0
+'
+'    If ScreenSaver Then
+'        UserControl.ResumeRendering
+'        ScreenSaver = False
+'    End If
+'
+'    On Error GoTo 0
+'End Sub
+
 Public Sub PresentScene(ByRef UserControl As Macroscopic)
 
     On Error Resume Next
-    
+
     Do
         If Err.number <> 0 Then
             Err.Clear
@@ -201,9 +294,9 @@ Public Sub PresentScene(ByRef UserControl As Macroscopic)
             End If
             DoTasks
         End If
-        
+
         DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-        
+Debug.Print Err.description
     Loop Until Err.number = 0
 
     On Error GoTo 0
@@ -242,7 +335,6 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-
             
             D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
@@ -252,31 +344,7 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
-            
-'            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
-'            D3DXMatrixMultiply matView, matPitch, matView
-'
-'            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
-'            D3DXMatrixMultiply matView, matYaw, matView
-'
-'            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
-'            D3DXMatrixMultiply matView, matRoll, matView
-'
-'            DDevice.SetTransform D3DTS_VIEW, matView
-'
-'            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
-'            D3DXMatrixMultiply matView, matPos, matView
-'
-'            DDevice.SetTransform D3DTS_VIEW, matView
-'
-'            D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
-'            D3DXMatrixMultiply matView, matPitch, matView
-'
-'            D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
-'            D3DXMatrixMultiply matView, matYaw, matView
-'
-'            D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
-'            D3DXMatrixMultiply matView, matRoll, matView
+
 
        Else
             
@@ -441,6 +509,15 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         Dim shLength As Long
         Dim shCode As D3DXBuffer
 
+        Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
+                                            "tex t0" & vbCrLf & _
+                                            "mov r0,t0" & vbCrLf, 0, Nothing)
+        shLength = shCode.GetBufferSize() / 4
+        ReDim shArray(shLength - 1) As Long
+        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
+        PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
+        Set shCode = Nothing
+        
         Set shCode = D3DX.AssembleShader("ps.1.0" & vbCrLf & _
                                             "tex t0" & vbCrLf & _
                                             "mul r0, t0,v0" & vbCrLf, 0, Nothing)
@@ -450,14 +527,6 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         PixelShaderDefault = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
 
-        Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
-                                            "tex t0" & vbCrLf & _
-                                            "mov r0,t0" & vbCrLf, 0, Nothing)
-        shLength = shCode.GetBufferSize() / 4
-        ReDim shArray(shLength - 1) As Long
-        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
-        PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
-        Set shCode = Nothing
 
         GravityVector.Y = -0.05
         

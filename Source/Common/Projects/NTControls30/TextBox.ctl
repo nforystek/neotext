@@ -3305,16 +3305,13 @@ Public Static Sub Refresh()
                 Else
                     tText.Concat pText.Partial(bpos, epos - bpos)
                 End If
+
             End If
                     
             If Enabled Then
                     
                 If ((pSel.StartPos <> pSel.StopPos) And (hasFocus Xor ((Not hasFocus) And (Not pHideSelection)))) _
                     And (Not ((tmpsel.StopPos <= bpos) Or (tmpsel.StartPos >= epos))) Then
-    
-                
-                    lastPos.StartPos = bpos
-                    lastPos.StopPos = epos - bpos
     
                     If ((tmpsel.StartPos <= bpos) And (tmpsel.StopPos >= epos)) Then
                         If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(0, epos - bpos), LineOffset(lastFirstLine), GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_HIGHLIGHT), True)
@@ -3340,7 +3337,9 @@ Public Static Sub Refresh()
                 If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
             End If
          
-
+            lastPos.StartPos = bpos
+            lastPos.StopPos = epos - bpos
+                    
             If Not colorOpen Then
                 colorOpen = True
             Else

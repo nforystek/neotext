@@ -30,6 +30,7 @@ Private pHoning As Boolean
 
 Private pOuterEdge As Single
 Private pInnerEdge As Single
+Private pField As Single
 Private pRows As Long
 Private pColumns As Long
 
@@ -40,7 +41,21 @@ Private pFog As Single
 
 Private pKey As String
 
+Private pPlanets As Planets
+
 Private pSerialize As Boolean
+
+Public Property Get Planets() As Planets
+    If pPlanets Is Nothing Then
+        Set pPlanets = New Planets
+        Set pPlanets.Parent = Me
+    End If
+    Set Planets = pPlanets
+End Property
+Public Property Set Planets(ByRef RHS As Planets)
+    Set pPlanets = RHS
+End Property
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -255,7 +270,7 @@ Public Property Get OuterEdge() As Single
 End Property
 Public Property Let OuterEdge(ByVal RHS As Single)
     pOuterEdge = RHS
-    Ranges.W = IIf(pInnerEdge > -1, pInnerEdge, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    Ranges.W = IIf(Field > -1, Field, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
     If RHS > pInnerEdge Or RHS = -1 Then
         If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
@@ -267,7 +282,6 @@ Public Property Get InnerEdge() As Single
 End Property
 Public Property Let InnerEdge(ByVal RHS As Single)
     pInnerEdge = RHS
-    Ranges.W = IIf(pInnerEdge > -1, pInnerEdge, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
     If RHS < pOuterEdge And RHS > -1 Then
         If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
@@ -294,14 +308,15 @@ Public Property Let Segments(ByVal RHS As Long)
 End Property
 
 Public Property Get Field() As Single
-    If (Molecule.Ranges.W = 0 And Length > 0 And Width > 0) Then
+    If (pField = 0 And Length > 0 And Width > 0) Then
         Field = Far '(Length * Width) ^ (1 / 2)
     Else
-        Field = Molecule.Ranges.W
+        Field = pField
     End If
 End Property
 Public Property Let Field(ByVal RHS As Single)
-    Molecule.Ranges.W = RHS
+    pField = RHS
+    Ranges.W = IIf(pField > -1, pField, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
 End Property
 
 Public Property Get Rows() As Single
@@ -405,23 +420,25 @@ Private Sub RebuildPlanet()
               If Height / 3 = Width / 4 Then
 
                   Volume.Clear
-                  
-                  '3x4 cube texture
-                  Set frmMain.Picture2.Picture = LoadPicture(tmp)
-                  frmMain.Picture3.Width = (frmMain.Picture2.Width / 4)
-                  frmMain.Picture3.Height = (frmMain.Picture2.Height / 3)
 
+                  '3x4 cube texture
+                  frmMain.Picture2.Cls
+                  
+                  Set frmMain.Picture2.Picture = LoadPicture(tmp) '
+                  Debug.Print frmMain.Picture2.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture2.Height / VB.Screen.TwipsPerPixelY
+                  
+'                  Stop
+                  frmMain.Picture3.Width = (Size.Width / 4) * VB.Screen.TwipsPerPixelX
+                  frmMain.Picture3.Height = (Size.Height / 3) * VB.Screen.TwipsPerPixelY
+
+                  frmMain.Picture3.Cls
                   'Debug.Print frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, ((frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX) * 2), (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, ((frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX) * 2), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), SRCCOPY
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Left.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Left.bmp"
                   
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-'                  Set P4 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
                   Set p1 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
                   Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
                   Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
@@ -435,15 +452,12 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, ((frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX) * 3), (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
+                  frmMain.Picture3.Cls
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, ((frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX) * 3), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), SRCCOPY
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Back.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Back.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p3 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
-'                  Set P4 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
                   Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
                   Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
                   Set p3 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
@@ -457,16 +471,13 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, 1, (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
+                  frmMain.Picture3.Cls
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, 0, (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), SRCCOPY
 
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Right.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Right.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p2 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-'                  Set p3 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-'                  Set P4 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
                   Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
                   Set p2 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
                   Set p3 = MakePoint((Width / 2), (Height / 2), (Length / 2))
@@ -480,16 +491,14 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX), ((frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY) * 2), SRCCOPY
+                  frmMain.Picture3.Cls
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), ((frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY) * 2), SRCCOPY
                   
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Bottom.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Bottom.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                  Set p3 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                  Set P4 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
+
                   Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
                   Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
                   Set p3 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
@@ -503,16 +512,13 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY), SRCCOPY
+                  frmMain.Picture3.Cls
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), SRCCOPY
                   
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Front.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Front.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-'                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                  Set p3 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-'                  Set P4 = MakePoint((Width / 2), (Height / 2), (Length / 2))
                   Set p1 = MakePoint((Width \ 2), -(Height \ 2), (Length \ 2))
                   Set p2 = MakePoint(-(Width \ 2), -(Height \ 2), (Length \ 2))
                   Set p3 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2))
@@ -526,15 +532,12 @@ Private Sub RebuildPlanet()
                   uuu.Clear
                   Set uuu = Nothing
 
-                  BitBlt frmMain.Picture3.hdc, 0, 0, frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX, frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY, frmMain.Picture2.hdc, (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX), 1, SRCCOPY
+                  frmMain.Picture3.Cls
+                  BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), 0, SRCCOPY
                   tmp = GetTemporaryFolder & "\" & GetFileTitle(tmp) & "Top.bmp"
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Top.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-'                  Set p1 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-'                  Set p2 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-'                  Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-'                  Set P4 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
                   Set p1 = MakePoint((Width \ 2), (Height \ 2), (Length \ 2))
                   Set p2 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2))
                   Set p3 = MakePoint(-(Width \ 2), (Height \ 2), -(Length \ 2))
@@ -547,6 +550,7 @@ Private Sub RebuildPlanet()
                   Next
                   uuu.Clear
                   Set uuu = Nothing
+                  
                   
               End If
               
@@ -642,6 +646,7 @@ Private Sub Class_Terminate()
 '        If Planets.Exists(Key) Then Planets.Remove Key
 '    End If
     Set pColor = Nothing
+    Set pPlanets = Nothing
 End Sub
 
 Private Property Let Molecule_FileName(ByVal RHS As String)

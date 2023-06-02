@@ -68,7 +68,7 @@ Public Function LoadFolder(ByVal PathName As String) As Boolean
 
     Exit Function
 failload:
-    MsgBox "Unable to """ & PathName & "\Index.vbx""" & vbCrLf & Err.Description, vbCritical
+    MsgBox "Unable to """ & PathName & "\Index.vbx""" & vbCrLf & Err.description, vbCritical
     Err.Clear
 End Function
 Friend Property Get Parent() As Object
@@ -113,26 +113,6 @@ Private Sub Timer1_Timer()
     
 End Sub
 
-Friend Sub PauseRendering()
-    If (Not PauseGame) Then
-        
-        frmMain.Visible = False
-        Image2.Visible = True
-        Shape1.Visible = True
-        
-        PauseGame = True
-        TermGameData Me
-        TermDirectX Me
-    
-        If TrapMouse Or FullScreen Then
-            VB.Screen.MousePointer = 0
-        End If
-        
-        Timer1.Enabled = False
-    
-    End If
-        
-End Sub
 
 Friend Sub ResumeRendering()
     On Error GoTo fault
@@ -166,6 +146,26 @@ fault:
     Err.Clear
 End Sub
 
+
+Friend Sub PauseRendering()
+    If (Not PauseGame) Then
+        
+        frmMain.Visible = False
+        Image2.Visible = True
+        Shape1.Visible = True
+        
+        PauseGame = True
+        TermGameData Me
+        TermDirectX Me
+    
+        If TrapMouse Or FullScreen Then
+            VB.Screen.MousePointer = 0
+        End If
+        
+        Timer1.Enabled = False
+    End If
+End Sub
+
 Private Sub UserControl_Initialize()
 
     FPSCount = 36
@@ -186,7 +186,6 @@ Private Sub UserControl_Initialize()
                 
         PauseGame = True
         ResumeRendering
-        Timer1.Enabled = True
         
     End If
 

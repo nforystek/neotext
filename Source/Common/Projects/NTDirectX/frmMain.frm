@@ -35,9 +35,12 @@ Begin VB.Form frmMain
       UseSafeSubset   =   -1  'True
    End
    Begin VB.PictureBox Picture3 
+      Appearance      =   0  'Flat
       AutoRedraw      =   -1  'True
       AutoSize        =   -1  'True
+      BackColor       =   &H80000005&
       BorderStyle     =   0  'None
+      ForeColor       =   &H80000008&
       Height          =   1305
       Left            =   4515
       ScaleHeight     =   1305
@@ -48,9 +51,12 @@ Begin VB.Form frmMain
       Width           =   1260
    End
    Begin VB.PictureBox Picture2 
+      Appearance      =   0  'Flat
       AutoRedraw      =   -1  'True
       AutoSize        =   -1  'True
+      BackColor       =   &H80000005&
       BorderStyle     =   0  'None
+      ForeColor       =   &H80000008&
       Height          =   1530
       Left            =   1230
       ScaleHeight     =   1530
@@ -101,6 +107,10 @@ End Sub
 
 Public Sub Startup()
     With ScriptControl1
+        
+        Static AlreadyRan As Boolean
+        If AlreadyRan Then .Reset
+        AlreadyRan = True
         
         .Language = "VBScript"
         'only the global add the code members of
