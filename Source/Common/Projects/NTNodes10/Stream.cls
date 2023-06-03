@@ -37,22 +37,16 @@ Attribute Scope.VB_Description = "Retrieves the type of memory functionally this
     Scope = pScope
 End Property
 
-Private Sub Class_Initialize() ' _
-
-Attribute Class_Initialize.VB_Description = ""
+Private Sub Class_Initialize()
     pScope = MemoryScopes.heap
     'pScope = MemoryScopes.[Local] Or MemoryScopes.Locking
 End Sub
 
-Private Sub Class_Terminate() ' _
-
-Attribute Class_Terminate.VB_Description = ""
+Private Sub Class_Terminate()
     Reset pScope
 End Sub
 
-Private Sub MemoryModify(Optional ByVal Size As Long = 0) ' _
-
-Attribute MemoryModify.VB_Description = ""
+Private Sub MemoryModify(Optional ByVal Size As Long = 0)
 
     If (Pointer <> 0) Then
         If ((Scope And MemoryScopes.Locking) = MemoryScopes.Locking) And (Not (Length = 0)) Then
@@ -147,8 +141,8 @@ Attribute Concat.VB_Description = "Appends Data bytes onto the stream at the end
 End Sub
 
 Public Property Get Length() As Long ' _
-Gets the amount of bytes with in this instance of the stream object.
-Attribute Length.VB_Description = "Gets the amount of bytes with in this instance of the stream object."
+Gets the amount of bytes with in this instance of the stream object., Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes.
+Attribute Length.VB_Description = "Gets the amount of bytes with in this instance of the stream object., Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes."
     If Pointer <> 0 Then
         If ((pScope And MemoryScopes.Local) = MemoryScopes.Local) Then
             Length = LocalSize(Pointer)
@@ -162,9 +156,7 @@ Attribute Length.VB_Description = "Gets the amount of bytes with in this instanc
     End If
 End Property
 
-Public Property Let Length(ByVal RHS As Long) ' _
-Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes.
-Attribute Length.VB_Description = "Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes."
+Public Property Let Length(ByVal RHS As Long)
     If (RHS > 0) Then
         MemoryModify RHS
     ElseIf (RHS = 0) Then
@@ -195,15 +187,15 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
     Dim lSize As Long
     lSize = Length
     If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    Dim ret() As Byte
+    Dim Ret() As Byte
     If (Width > 0) And (Pointer <> 0) Then
-        ReDim ret(0 To Width - 1) As Byte
-        RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + Offset, Width
+        ReDim Ret(0 To Width - 1) As Byte
+        RtlMoveMemory ByVal VarPtr(Ret(LBound(Ret))), ByVal Pointer + Offset, Width
     Else
-        ReDim ret(-1 To -1) As Byte
+        ReDim Ret(-1 To -1) As Byte
     End If
-    Partial = ret
-    Erase ret
+    Partial = Ret
+    Erase Ret
 End Function
 
 Public Sub Prepend(ByRef Data() As Byte) ' _
@@ -309,13 +301,13 @@ Attribute Pinch.VB_Description = "Removes a portion of the stream defined by Off
     Dim lSize As Long
     lSize = Length
     If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
-        Dim N As New Stream
+        Dim n As New Stream
         
-        N.Concat Partial(0, Offset)
-        N.Concat Partial(Offset + Width, lSize - (Offset + Width))
-        Clone N
+        n.Concat Partial(0, Offset)
+        n.Concat Partial(Offset + Width, lSize - (Offset + Width))
+        Clone n
         
-        Set N = Nothing
+        Set n = Nothing
         
     ElseIf Offset = 0 And Width = lSize Then
         Reset
@@ -338,14 +330,13 @@ Attribute Pyramid.VB_Description = "Topples a SubStream, which were initially an
         Dim lSize2 As Long
         lSize2 = SubStream.Length
         If lSize2 > 0 Then
-            Dim N As New Stream
-            
-            If Offset > 0 Then N.Concat Partial(0, Offset)
-            N.Concat SubStream.Partial
-            If lSize - (Offset + Width) > 0 Then N.Concat Partial(Offset + Width, lSize - (Offset + Width))
-            Clone N
-            
-            Set N = Nothing
+            Dim n As New Stream
+            If Offset > 0 Then n.Concat Partial(0, Offset)
+            n.Concat SubStream.Partial
+            If lSize - (Offset + Width) > 0 Then n.Concat Partial(Offset + Width, lSize - (Offset + Width))
+           ' If (Offset + Width) > 0 And (Offset + Width) < lSize Then n.Concat Partial(Offset + Width)  ', lSize - (Offset + Width))
+            Clone n
+            Set n = Nothing
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If

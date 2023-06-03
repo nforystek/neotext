@@ -36,20 +36,21 @@ Private pColumns As Long
 
 Private pFileIndex() As Long
 
-Private pColor As color
+Private pColor As Color
 Private pFog As Single
 
 Private pKey As String
 
 Private pPlanets As Planets
+Private pParent As Molecule
 
 Private pSerialize As Boolean
 
 Public Property Get Planets() As Planets
-    If pPlanets Is Nothing Then
-        Set pPlanets = New Planets
-        Set pPlanets.Parent = Me
-    End If
+'    If pPlanets Is Nothing Then
+'        Set pPlanets = New Planets
+'        Set pPlanets.Parent = Me
+'    End If
     Set Planets = pPlanets
 End Property
 Public Property Set Planets(ByRef RHS As Planets)
@@ -121,21 +122,26 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
     RelativeColorFactor = Round(RelativeColorFactor, 2)
 End Function
 
-Public Property Get color() As color
-    If pColor Is Nothing Then Set pColor = New color
-    Set color = pColor
+Public Property Get Color() As Color
+    If pColor Is Nothing Then Set pColor = New Color
+    Set Color = pColor
 End Property
-Public Property Set color(ByRef RHS As color)
+Public Property Set Color(ByRef RHS As Color)
     Set pColor = RHS
 End Property
 
 Public Property Get Parent() As Orbit
-    Set Parent = Molecule.Parent
+    Set Parent = pParent
 End Property
 Public Property Set Parent(ByRef RHS As Orbit)
-    Set Molecule.Parent = RHS
+    Set pParent = RHS
 End Property
-
+'Public Property Get Parent() As Orbit
+'    Set Parent = Molecule.Parent
+'End Property
+'Public Property Set Parent(ByRef RHS As Orbit)
+'    Set Molecule.Parent = RHS
+'End Property
 Public Property Get Relative() As Orbit
     Set Relative = Molecule.Relative
 End Property
@@ -414,18 +420,20 @@ Private Sub RebuildPlanet()
     End If
     If tmp = "" Then Exit Sub
     
+    If Volume Is Nothing Then Set Volume = New Volume
+    
     If Form = PlanetTypes.World Then
             
           If (pFileIndex(0) > 0) And (Width > 0) And (Height > 0) And (Length > 0) Then '3d sky, i.e. in a box
               If Height / 3 = Width / 4 Then
-
+                
                   Volume.Clear
 
                   '3x4 cube texture
                   frmMain.Picture2.Cls
                   
                   Set frmMain.Picture2.Picture = LoadPicture(tmp) '
-                  Debug.Print frmMain.Picture2.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture2.Height / VB.Screen.TwipsPerPixelY
+                 ' Debug.Print frmMain.Picture2.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture2.Height / VB.Screen.TwipsPerPixelY
                   
 '                  Stop
                   frmMain.Picture3.Width = (Size.Width / 4) * VB.Screen.TwipsPerPixelX
@@ -634,19 +642,39 @@ End Sub
 
 
 Private Sub Class_Initialize()
-   
+    Stats_Planet_Count = Stats_Planet_Count + 1
     vbaObjSetAddref Molecule, ObjPtr(New Molecule)
     Key = "K" & ObjPtr(Me)
     ReDim pFileIndex(0 To 0) As Long
 End Sub
 
 Private Sub Class_Terminate()
+    Stats_Planet_Count = Stats_Planet_Count - 1
+    
+    Set pParent = Nothing
+    'Set Molecule.Parent = Nothing
+
+    If Not Molecule.Molecules Is Nothing Then
+        Molecule.Molecules.Clear
+    End If
+    Set Molecule.Molecules = Nothing
+
+    If Not Molecule.Volume Is Nothing Then
+        Molecule.Volume.Clear
+    End If
+    Set Molecule.Volume = Nothing
+
+
+
+    vbaObjSet Molecule, ObjPtr(Nothing)
+    
     Erase pFileIndex
-'    If Key <> "" Then
-'        If Planets.Exists(Key) Then Planets.Remove Key
-'    End If
-    Set pColor = Nothing
+    If Not pPlanets Is Nothing Then
+        pPlanets.Clear
+    End If
     Set pPlanets = Nothing
+
+    Set pColor = Nothing
 End Sub
 
 Private Property Let Molecule_FileName(ByVal RHS As String)
@@ -665,11 +693,11 @@ Private Property Get Molecule_Key() As String
     Molecule_Key = Molecule.Key
 End Property
 
-Private Property Set Molecule_Parent(RHS As Orbit)
+Private Property Set Molecule_Parent(RHS As Molecule)
     Set Molecule.Parent = RHS
 End Property
 
-Private Property Get Molecule_Parent() As Orbit
+Private Property Get Molecule_Parent() As Molecule
     Set Molecule_Parent = Molecule.Parent
 End Property
 

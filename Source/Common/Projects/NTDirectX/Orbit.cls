@@ -153,15 +153,21 @@ Attribute ToString.VB_MemberFlags = "240"
         Set .Scaled = pScaled
         Set .Ranges = pRanges
     End With
-
 End Property
 
-Private Sub Class_Terminate()
+Private Sub Class_Initialize()
+    Stats_Orbit_Count = Stats_Orbit_Count + 1
+End Sub
+
+Friend Sub Class_Terminate()
+    Stats_Orbit_Count = Stats_Orbit_Count - 1
+    
     Set pOrigin = Nothing
     Set pOffset = Nothing
     Set pRotate = Nothing
     Set pScaled = Nothing
     Set pRanges = Nothing
+    
     Set pParent = Nothing
     Set pRelative = Nothing
     Set pAbsolute = Nothing

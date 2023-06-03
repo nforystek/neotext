@@ -60,3 +60,10 @@ Attribute ToString.VB_MemberFlags = "240"
 End Property
 
 
+Private Sub Class_Initialize()
+    Stats_Coord_Count = Stats_Coord_Count + 1
+End Sub
+
+Friend Sub Class_Terminate()
+    Stats_Coord_Count = Stats_Coord_Count - 1
+End Sub

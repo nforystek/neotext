@@ -407,6 +407,11 @@ Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Op
     If inWith = "" Then
         frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)"
     End If
+    
+    If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " Is Nothing") Then
+        frmMain.ExecuteStatement "Set " & IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " = CreateObjectPrivate(""" & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & """)"
+    End If
+    
     If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)") Then
         frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Remove """ & inName & """"
     End If

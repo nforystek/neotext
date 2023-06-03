@@ -138,6 +138,49 @@ Public Declare Function SetParent Lib "user32" (ByVal HwndChild As Long, ByVal h
 Public Declare Function SetWindowWord Lib "user32" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal wNewWord As Long) As Long
 Public Const SWW_HPARENT = -8
 
+Public Stats_Billboard_Count As Long
+Public Stats_Billboards_Count As Long
+Public Stats_Bindings_Count As Long
+Public Stats_Brilliant_Count As Long
+Public Stats_Brilliants_Count As Long
+Public Stats_Camera_Count As Long
+Public Stats_Color_Count As Long
+Public Stats_Coord_Count As Long
+Public Stats_Include_Count As Long
+Public Stats_Matter_Count As Long
+Public Stats_Molecule_Count As Long
+Public Stats_Molecules_Count As Long
+Public Stats_Motion_Count As Long
+Public Stats_Motions_Count As Long
+Public Stats_Orbit_Count As Long
+Public Stats_Orbits_Count As Long
+Public Stats_Planet_Count As Long
+Public Stats_Planets_Count As Long
+Public Stats_Point_Count As Long
+Public Stats_Points_Count As Long
+Public Stats_Range_Count As Long
+Public Stats_Ranges_Count As Long
+Public Stats_Volume_Count As Long
+
+Public Function GetStats() As String
+    GetStats = "Frames per second: " & FPSRate & ", Elapse per frame: " & FPSElapse & vbCrLf & _
+        "Object Counts: " & vbCrLf & "    Billboard: " & Stats_Billboard_Count & ":" & Billboards.Count & ", " & _
+        "Billboards: " & Stats_Billboards_Count & ", " & "Bindings: " & Stats_Bindings_Count & ", " & _
+        "Brilliant: " & Stats_Brilliant_Count & ":" & Brilliants.Count & ", " & "Brilliants: " & Stats_Brilliants_Count & ", " & _
+        "Camera: " & Stats_Camera_Count & ", " & "Color: " & Stats_Color_Count & ", " & _
+        "Coord: " & Stats_Coord_Count & vbCrLf & "    Include: " & Stats_Include_Count & ", " & _
+        "Matter: " & Stats_Matter_Count & ", " & "Molecule: " & Stats_Molecule_Count & ":" & Molecules.Count & ", " & _
+        "Molecules: " & Stats_Molecules_Count & ", " & "Motion: " & Stats_Motion_Count & ", " & _
+        "Motions: " & Stats_Motions_Count & ", " & "Orbit: " & Stats_Orbit_Count & ", " & _
+        "Orbits: " & Stats_Orbits_Count & vbCrLf & "    Planet: " & Stats_Planet_Count & ":" & Planets.Count & ", " & _
+        "Planets: " & Stats_Planets_Count & ", " & "Point: " & Stats_Point_Count & ", " & _
+        "Points: " & Stats_Points_Count & ", " & "Range: " & Stats_Range_Count & ", " & _
+        "Ranges: " & Stats_Ranges_Count & ", " & "Volume: " & Stats_Volume_Count & vbCrLf & _
+        "Array Counts: " & vbCrLf & _
+        "    TriangleCount: " & TriangleCount & ", ObjectCount: " & ObjectCount & vbCrLf & _
+        "    LightCount: " & LightCount & ", FileCount: " & FileCount
+End Function
+
 Public Function ConvertVertexToVector(ByRef v As D3DVERTEX) As D3DVECTOR
     ConvertVertexToVector.X = v.X
     ConvertVertexToVector.Y = v.Y

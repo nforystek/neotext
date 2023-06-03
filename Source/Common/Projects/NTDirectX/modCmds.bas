@@ -810,6 +810,11 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
                 TogglePress1 = DIK_F1
                 ShowSetup = True
             End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F2) Then
+            If (Not TogglePress1 = DIK_F2) Then
+                TogglePress1 = DIK_F2
+                ShowStats = Not ShowStats
+            End If
             
         ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT) Then
             If DIKEYBOARDSTATE.Key(DIK_TAB) Then
@@ -1075,6 +1080,7 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
         TextColor = lastColor
 
     Else
+        If ShowStats Then DrawText GetStats, 10, 10
 
         If DrawCount > 0 Then
             For cnt = 1 To DrawCount
@@ -1469,12 +1475,7 @@ Public Sub Process(ByVal inArg As String, Optional ByRef UserControl As Macrosco
     Select Case Trim(LCase(inCmd))
 
         Case "reset"
-            UserControl.PauseRendering
-            If PathExists(ScriptRoot & "\Serial.xml", True) Then
-                Kill ScriptRoot & "\Serial.xml"
-            End If
-            UserControl.ResumeRendering
-            ConsoleToggle
+            ResetGame = True
                         
         Case "exit", "quit", "close"
             StopGame = True

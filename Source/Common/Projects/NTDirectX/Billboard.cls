@@ -92,11 +92,11 @@ End Property
 
 Private Sub Class_Initialize()
     ReDim pFileIndex(0 To 0) As Long
+    Stats_Billboard_Count = Stats_Billboard_Count + 1
     Key = "K" & ObjPtr(Me)
 End Sub
 
 Private Sub Class_Terminate()
-    If Key <> "" Then
-        If Billboards.Exists(Key) Then Billboards.Remove Key
-    End If
+    Stats_Billboard_Count = Stats_Billboard_Count - 1
+    Erase pFileIndex
 End Sub

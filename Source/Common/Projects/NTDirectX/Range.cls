@@ -72,7 +72,15 @@ Attribute ToString.VB_MemberFlags = "240"
 End Property
 
 Private Sub Class_Initialize()
+    Stats_Range_Count = Stats_Range_Count + 1
     vbaObjSetAddref Point, ObjPtr(New Point)
+    'Set Point = New Point
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Range_Count = Stats_Range_Count - 1
+   ' Set Point = Nothing
+    vbaObjSet Point, ObjPtr(Nothing)
 End Sub
 
 Private Function Point_Equals(Point As Point) As Boolean

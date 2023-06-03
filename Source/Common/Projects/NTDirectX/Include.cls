@@ -285,37 +285,37 @@ End Property
 '#####################################################
 '########## Collections ##############################
 '#####################################################
-Public Property Get All() As NTNodes10.Collection
-    Set All = modParse.All
-End Property
-
-Public Property Get Camera() As Camera
-    Set Camera = modParse.Camera
-End Property
-
-Public Property Get Motions() As Motions
-    Set Motions = modParse.Motions
-End Property
-
-Public Property Get Brilliants() As Brilliants
-    Set Brilliants = modParse.Brilliants
-End Property
-
-Public Property Get Molecules() As Molecules
-    Set Molecules = modParse.Molecules
-End Property
-
-Public Property Get Billboards() As Billboards
-    Set Billboards = modParse.Billboards
-End Property
-
-Public Property Get Bindings() As Bindings
-    Set Bindings = modParse.Bindings
-End Property
-
-Public Property Get Planets() As Planets
-    Set Planets = modParse.Planets
-End Property
+'Public Property Get All() As NTNodes10.Collection
+'    Set All = modParse.All
+'End Property
+'
+'Public Property Get Camera() As Camera
+'    Set Camera = modParse.Camera
+'End Property
+'
+'Public Property Get Motions() As Motions
+'    Set Motions = modParse.Motions
+'End Property
+'
+'Public Property Get Brilliants() As Brilliants
+'    Set Brilliants = modParse.Brilliants
+'End Property
+'
+'Public Property Get Molecules() As Molecules
+'    Set Molecules = modParse.Molecules
+'End Property
+'
+'Public Property Get Billboards() As Billboards
+'    Set Billboards = modParse.Billboards
+'End Property
+'
+'Public Property Get Bindings() As Bindings
+'    Set Bindings = modParse.Bindings
+'End Property
+'
+'Public Property Get Planets() As Planets
+'    Set Planets = modParse.Planets
+'End Property
 
 '###################################################
 '########## Functions ##############################
@@ -338,4 +338,12 @@ End Sub
 
 Public Sub Echo(ByVal Text As String)
     Process "echo " & frmMain.Evaluate(Text)
+End Sub
+
+Private Sub Class_Initialize()
+    Stats_Include_Count = Stats_Include_Count + 1
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Include_Count = Stats_Include_Count - 1
 End Sub

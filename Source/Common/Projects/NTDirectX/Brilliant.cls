@@ -34,7 +34,6 @@ Public Ambience As Color
 Attribute Ambience.VB_VarHelpID = -1
 Public Specular As Color
 Attribute Specular.VB_VarHelpID = -1
-
 Public Attenuation As Point
 
 Private pKey As String
@@ -176,19 +175,19 @@ End Property
 
 Friend Sub UpdateValues()
     Lights(LightIndex).Diffuse.A = Diffuse.Alpha
-    Lights(LightIndex).Diffuse.r = Diffuse.Red
-    Lights(LightIndex).Diffuse.g = Diffuse.Green
-    Lights(LightIndex).Diffuse.b = Diffuse.Blue
+    Lights(LightIndex).Diffuse.r = Diffuse.red
+    Lights(LightIndex).Diffuse.g = Diffuse.green
+    Lights(LightIndex).Diffuse.b = Diffuse.blue
  
     Lights(LightIndex).Ambient.A = Ambience.Alpha
-    Lights(LightIndex).Ambient.r = Ambience.Red
-    Lights(LightIndex).Ambient.g = Ambience.Green
-    Lights(LightIndex).Ambient.b = Ambience.Blue
+    Lights(LightIndex).Ambient.r = Ambience.red
+    Lights(LightIndex).Ambient.g = Ambience.green
+    Lights(LightIndex).Ambient.b = Ambience.blue
  
     Lights(LightIndex).Specular.A = Specular.Alpha
-    Lights(LightIndex).Specular.r = Specular.Red
-    Lights(LightIndex).Specular.g = Specular.Green
-    Lights(LightIndex).Specular.b = Specular.Blue
+    Lights(LightIndex).Specular.r = Specular.red
+    Lights(LightIndex).Specular.g = Specular.green
+    Lights(LightIndex).Specular.b = Specular.blue
  
     Lights(LightIndex).Attenuation0 = Attenuation.X
     Lights(LightIndex).Attenuation1 = Attenuation.Y
@@ -205,7 +204,9 @@ Friend Sub UpdateValues()
 End Sub
 
 Private Sub Class_Initialize()
+    Stats_Brilliant_Count = Stats_Brilliant_Count + 1
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
+    'Set Orbit = New Orbit
     
     Key = "K" & ObjPtr(Me)
     
@@ -220,28 +221,33 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
+    Stats_Brilliant_Count = Stats_Brilliant_Count - 1
 
+'    If LightCount > 0 Then
+'        If LightIndex < LightCount Then
+'            Dim cnt As Long
+'            For cnt = LightIndex + 1 To LightCount
+'                Lights(cnt - 1) = Lights(cnt)
+'            Next
+'        End If
+'        LightCount = LightCount - 1
+'        If LightCount > 0 Then
+'            ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
+'            Dim brill As Object
+'            For Each brill In Brilliants
+'                If brill.LightIndex > LightIndex Then brill.LightIndex = brill.LightIndex - 1
+'            Next
+'        End If
+'    End If
+'    If StopGame And LightCount = 0 Then Erase Lights
+    
     Set Diffuse = Nothing
     Set Ambience = Nothing
     Set Specular = Nothing
     Set Attenuation = Nothing
-    If LightCount > 0 Then
-        If LightIndex < LightCount Then
-            Dim cnt As Long
-            For cnt = LightIndex + 1 To LightCount
-                Lights(cnt - 1) = Lights(cnt)
-            Next
-        End If
-        LightCount = LightCount - 1
-        If LightCount > 0 Then
-            ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
-            Dim brill As Object
-            For Each brill In Brilliants
-                If brill.LightIndex > LightIndex Then brill.LightIndex = brill.LightIndex - 1
-            Next
-        End If
-    End If
-    If StopGame And LightCount = 0 Then Erase Lights
+    
+    'Set Orbit = Nothing
+    vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
 
 Private Property Set Orbit_Relative(RHS As Orbit)

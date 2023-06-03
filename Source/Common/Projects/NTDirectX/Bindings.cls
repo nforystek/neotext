@@ -77,3 +77,11 @@ Public Property Let Item(ByVal Index As Variant, ByVal RHS As Variant)
         End If
     End If
 End Property
+
+Private Sub Class_Initialize()
+    Stats_Bindings_Count = Stats_Bindings_Count + 1
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Bindings_Count = Stats_Bindings_Count - 1
+End Sub

@@ -2893,14 +2893,14 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
                     pText.Post CByte(KeyAscii)
                 End If
             
-            ElseIf pSel.StartPos < pText.Length Then
+            ElseIf pSel.StartPos < pText.Length Or pSel.StopPos - pSel.StartPos > 0 Then
 
                 Set tText = New Strands
 
                 ExpandColorRecords pSel.StartPos, 1
 
                 tText.Concat Convert(Chr(KeyAscii))
-                If pSel.StopPos < pText.Length Then
+                If pSel.StopPos <= pText.Length Then
                     If pSel.StopPos - pSel.StartPos > 0 Then
                         xUndoActs(0).PriorTextData.Concat pText.Partial(pSel.StartPos, pSel.StopPos - pSel.StartPos)
                     End If

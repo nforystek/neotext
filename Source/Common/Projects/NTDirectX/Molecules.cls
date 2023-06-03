@@ -30,10 +30,10 @@ Friend Property Get Parent() As Molecule
 End Property
 Friend Property Set Parent(ByRef RHS As Molecule)
     Set pParent = RHS
-    Dim m As Molecule
-    For Each m In this
-        Set m.Parent = pParent
-    Next
+'    Dim m As Molecule
+'    For Each m In this
+'        Set m.Parent = pParent
+'    Next
 End Property
 
 Public Function NewEnum() As IUnknown ' _
@@ -48,7 +48,7 @@ Public Sub Add(ByRef Anything As Molecule, Optional Key, Optional Before, Option
 Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation.
 Attribute Add.VB_Description = "Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation."
     this.Add Anything, Key, Before, After
-    If Not Anything Is Nothing Then Set Anything.Parent = pParent
+    'If Not Anything Is Nothing Then Set Anything.Parent = pParent
 End Sub
 
 Public Sub Remove(Optional KeyOrIndex) ' _
@@ -108,10 +108,13 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
+    Stats_Molecules_Count = Stats_Molecules_Count + 1
+    Set this = New NTNodes10.Collection
+    'vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
+    Stats_Molecules_Count = Stats_Molecules_Count - 1
     Set pParent = Nothing
     Set this = Nothing
 End Sub

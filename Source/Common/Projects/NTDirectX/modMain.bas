@@ -16,10 +16,14 @@ Public ScreenSaver As Boolean
 Public TrapMouse As Boolean
 Public StopGame As Boolean
 Public ShowSetup As Boolean
+Public ResetGame As Boolean
+Public ShowStats As Boolean
 
 Public FPSTimer As Double
 Public FPSCount As Long
 Public FPSRate As Long
+Public FPSElapse As Single
+Public FPSLatency As Single
 
 Public BackColor As Long
 
@@ -61,39 +65,6 @@ End Sub
 
 Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
-
-'    Do While Not StopGame
-'
-'        If PauseGame Then
-'
-'            If Not ((frmMain.WindowState = 1) Or (UserControl.Parent.WindowState = 1)) Then
-'                If TestDirectX(UserControl) Then
-'
-'                    On Error Resume Next
-'                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGB, 1, 0
-'                    DDevice.BeginScene
-'                    DDevice.EndScene
-'                    DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-'                    If (Err.number = 0) Then
-'                        PauseGame = False
-'                    Else
-'                        Err.Clear
-'                    End If
-'                    On Error GoTo 0
-'
-'                End If
-'
-'                If (Not PauseGame) And (Err.number = 0) Then
-'                    InitGameData
-'                Else
-'                    TermDirectX
-'                End If
-'            Else
-'                DoTasks
-'            End If
-'
-'        Else
-            
     Do While Not StopGame
 
         If PauseGame Then
@@ -173,12 +144,23 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                     FPSRate = FPSCount
                     FPSCount = 0
                 End If
+                FPSElapse = Round(((Timer - FPSLatency) + FPSElapse) / 2, 4)
+                FPSLatency = Timer
                     
             End If
 
             If ShowSetup Then
                 ShowSetupForm UserControl
                 ShowSetup = False
+            End If
+            If ResetGame Then
+                UserControl.PauseRendering
+                If PathExists(ScriptRoot & "\Serial.xml", True) Then
+                    Kill ScriptRoot & "\Serial.xml"
+                End If
+                UserControl.ResumeRendering
+                If ConsoleVisible Then ConsoleToggle
+                ResetGame = False
             End If
 
         End If
@@ -190,7 +172,8 @@ Exit Sub
 nofocus:
 
     Err.Clear
-    DoPauseGame UserControl
+   ' DoPauseGame UserControl
+    UserControl.PauseRendering
 
 '    If Err.number <> 0 Then
 '        Err.Clear
@@ -243,6 +226,7 @@ Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     End If
 
     If Frame Then
+        
         frmMain.Run "Frame"
     End If
 End Sub
@@ -296,7 +280,7 @@ Public Sub PresentScene(ByRef UserControl As Macroscopic)
         End If
 
         DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-Debug.Print Err.description
+
     Loop Until Err.number = 0
 
     On Error GoTo 0

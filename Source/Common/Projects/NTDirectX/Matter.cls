@@ -18,10 +18,6 @@ Public Point2 As Point
 Public Point3 As Point
 Public Normal As Point
 
-Public Index1 As Long
-Public Index2 As Long
-Public Index3 As Long
-
 Public U1 As Single
 Public V1 As Single
 
@@ -56,9 +52,6 @@ Friend Function Clone() As Matter
     Set Clone.Normal = New Point
     Clone.Normal = Normal
     
-    Clone.Index1 = Index1
-    Clone.Index2 = Index2
-    Clone.Index3 = Index3
     Clone.U1 = U1
     Clone.V1 = V1
     Clone.U2 = U2
@@ -77,12 +70,18 @@ Friend Function Clone() As Matter
 End Function
 
 Private Sub Class_Initialize()
+    Stats_Matter_Count = Stats_Matter_Count + 1
     TriangleIndex = -1
 End Sub
 
 Private Sub Class_Terminate()
-    If TriangleIndex > -1 Then
-        RemoveTriangleArray TriangleIndex
-        TriangleIndex = -1
-    End If
+    Stats_Matter_Count = Stats_Matter_Count - 1
+'    If TriangleIndex > -1 Then
+'        RemoveTriangleArray TriangleIndex
+'        TriangleIndex = -1
+'    End If
+    Set Point1 = Nothing
+    Set Point2 = Nothing
+    Set Point3 = Nothing
+    Set Normal = Nothing
 End Sub

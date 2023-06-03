@@ -96,10 +96,13 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
+    Stats_Points_Count = Stats_Points_Count + 1
+    Set this = New NTNodes10.Collection
+    'vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
+    Stats_Points_Count = Stats_Points_Count - 1
     Set this = Nothing
 End Sub
 

@@ -69,7 +69,15 @@ Attribute ToString.VB_MemberFlags = "240"
 End Property
 
 Private Sub Class_Initialize()
+    Stats_Point_Count = Stats_Point_Count + 1
+    'Set Coord = New Coord
     vbaObjSetAddref Coord, ObjPtr(New Coord)
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Point_Count = Stats_Point_Count - 1
+    'Set Coord = Nothing
+    vbaObjSet Coord, ObjPtr(Nothing)
 End Sub
 
 Private Function Coord_Equals(Point As Point) As Boolean

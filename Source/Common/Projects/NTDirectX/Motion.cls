@@ -52,6 +52,10 @@ End Property
 
 
 Private Sub Class_Initialize()
+    Stats_Motion_Count = Stats_Motion_Count + 1
     pKey = "K" & ObjPtr(Me)
 End Sub
 
+Private Sub Class_Terminate()
+    Stats_Motion_Count = Stats_Motion_Count - 1
+End Sub

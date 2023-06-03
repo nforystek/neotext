@@ -116,20 +116,22 @@ Public Sub Startup()
         'only the global add the code members of
         .AddObject "Include", modParse.Include, True
         'the rest are builds of and not code based
+        
        modParse.Motions.Serialize = True
        modParse.Brilliants.Serialize = True
        modParse.Molecules.Serialize = True
        modParse.Billboards.Serialize = True
        modParse.Planets.Serialize = True
        modParse.Bindings.Serialize = True
-       ' .AddObject "All", modParse.All, True
-       ' .AddObject "Camera", modParse.Camera, True
-       ' .AddObject "Motions", modParse.Motions, True
-       ' .AddObject "Brilliants", modParse.Brilliants, True
-       ' .AddObject "Molecules", modParse.Molecules, True
-       ' .AddObject "Billboards", modParse.Billboards, True
-       ' .AddObject "Bindings", modParse.Bindings, True
-       ' .AddObject "Planets", modParse.Planets, True
+       
+        .AddObject "All", modParse.All, True
+        .AddObject "Camera", modParse.Camera, True
+        .AddObject "Motions", modParse.Motions, True
+        .AddObject "Brilliants", modParse.Brilliants, True
+        .AddObject "Molecules", modParse.Molecules, True
+        .AddObject "Billboards", modParse.Billboards, True
+        .AddObject "Bindings", modParse.Bindings, True
+        .AddObject "Planets", modParse.Planets, True
 
        
     
@@ -189,17 +191,23 @@ Public Sub RunEvent(ByRef EventText As String, Optional ByVal source As String =
     'then subsequent calls are addressing only the guid, changing it
     'to code will create it new, increasing ghosted memory procedures
     With ScriptControl1
-        If EventText <> "" Then
-            If Not IsGuid(EventText) Then
-                Dim proc As String
-                proc = modGuid.GUID
-                .AddCode "Sub b" & Replace(proc, "-", "") & _
-                    "()" & vbCrLf & Replace(EventText, "Debug.Print", "DebugPrint", , , vbTextCompare) & vbCrLf & "End Sub" & vbCrLf
-                EventText = proc
-                If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & EventText
-            End If
-            frmMain.Run "b" & Replace(EventText, "-", ""), source, LineNumber
-        End If
+'        If EventText <> "" Then
+'            If Not IsGuid(EventText) Then
+'                Dim proc As String
+'                proc = modGuid.GUID
+'                .AddCode "Sub b" & Replace(proc, "-", "") & _
+'                    "()" & vbCrLf & Replace(EventText, "Debug.Print", "DebugPrint", , , vbTextCompare) & vbCrLf & "End Sub" & vbCrLf
+'                EventText = proc
+'                If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & EventText
+'            Else
+'                Stop
+'            End If
+'            frmMain.Run "b" & Replace(EventText, "-", ""), source, LineNumber
+'        End If
+
+
+        frmMain.ExecuteStatement Replace(EventText, "Debug.Print", "DebugPrint", , , vbTextCompare) & vbCrLf, source, LineNumber
+
     End With
 End Sub
 

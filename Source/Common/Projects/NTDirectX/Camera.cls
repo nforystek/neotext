@@ -13,11 +13,11 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Private pColor As color
+Private pColor As Color
 Private pPlayer As Molecule
 Private pPlanet As Planet
 
-Private pBuildColor As color
+Private pBuildColor As Color
 Private pColorCount As Long
 
 Private pSerialize As Boolean
@@ -86,19 +86,19 @@ Public Sub BuildColor(Optional ByVal ColorToAdd As Variant, Optional ByVal Relat
     End If
     
     If IsMissing(ColorToAdd) Then 'preform reset
-        If pBuildColor Is Nothing Then Set pBuildColor = New color
+        If pBuildColor Is Nothing Then Set pBuildColor = New Color
         pColor.RGB = pBuildColor.RGB
         lastColor = Empty
         lastFactor = Empty
     End If
 End Sub
 
-Public Property Set color(ByVal RHS As color)
+Public Property Set Color(ByVal RHS As Color)
     Set pColor = RHS
 End Property
-Public Property Get color() As color
-    If pColor Is Nothing Then Set pColor = New color
-    Set color = pColor
+Public Property Get Color() As Color
+    If pColor Is Nothing Then Set pColor = New Color
+    Set Color = pColor
     
 '    If pPlayer Is Nothing Then
 '        Color = pColor
@@ -213,6 +213,14 @@ End Property
 
 
 Private Sub Class_Initialize()
-    Set pColor = New color
+    Stats_Camera_Count = Stats_Camera_Count + 1
+    Set pColor = New Color
 End Sub
 
+Private Sub Class_Terminate()
+    Stats_Camera_Count = Stats_Camera_Count - 1
+    Set pColor = Nothing
+    Set pBuildColor = Nothing
+    Set pPlayer = Nothing
+    Set pPlanet = Nothing
+End Sub

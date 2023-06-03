@@ -105,5 +105,10 @@ Attribute ToString.VB_MemberFlags = "640"
 End Property
 
 Private Sub Class_Initialize()
+    Stats_Color_Count = Stats_Color_Count + 1
     Alpha = 1
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Color_Count = Stats_Color_Count - 1
 End Sub

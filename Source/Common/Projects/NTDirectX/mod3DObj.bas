@@ -48,22 +48,7 @@ Public VertexZAxis() As Single
 Public VertexDirectX() As MyVertex
 Public ScreenDirectX() As MyScreen
 
-Public Points As Points
-'Public Rotates As Orbit 'waiting to be applied rotates
-'Public Scalars As Orbit 'waiting to be applied scalars
-Public Zero As New Point
-Public PlayerGyro As New Point
-Public PlanetGyro As New Point
-Public Localized As Point
-
-'Public Orbits As Orbits 'collection of in non script accessable for the app for all orbits and implmenets of
-'Public Ranges As Ranges 'collection of those that are part of the planet object only needed in global cycle
-'Public Points As Points 'cache of all points uniquely, so far this just grows and shouldn't accept change them
-
 Public Sub CleanUpObjs()
-
-    Set Localized = Nothing
-    Set Points = Nothing
     
     ObjectCount = 0
     TriangleCount = 0
@@ -78,9 +63,6 @@ Public Sub CleanUpObjs()
 End Sub
 
 Public Sub CreateObjs()
-
-    Set Points = New Points
-    Set Localized = New Point
          
 End Sub
 
@@ -973,6 +955,8 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
     Dim matMat As D3DMATRIX
     D3DXMatrixIdentity matMat
     
+    If Not col Is Nothing Then
+    
     Dim m As Molecule
     For Each m In col
         If NoParentOnly Then
@@ -984,7 +968,7 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
         End If
         
     Next
-    
+    End If
 End Sub
 
 Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX)
@@ -1017,67 +1001,71 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     D3DXMatrixMultiply matScale, matScale, matMat
     
     Dim m As Molecule
-    For Each m In ApplyTo.Molecules
-        RenderMolecule m, ApplyTo, matMat
-    Next
+    If Not ApplyTo.Molecules Is Nothing Then
+        For Each m In ApplyTo.Molecules
+            RenderMolecule m, ApplyTo, matMat
+        Next
+    End If
     
     Dim v As Matter
-    For Each v In ApplyTo.Volume
-
-        D3DXVec3TransformCoord vout, ToVector(v.Point1), matScale
-        VertexDirectX((v.TriangleIndex * 3) + 0).X = vout.X
-        VertexDirectX((v.TriangleIndex * 3) + 0).Y = vout.Y
-        VertexDirectX((v.TriangleIndex * 3) + 0).z = vout.z
-
-        D3DXVec3TransformCoord vout, ToVector(v.Point2), matScale
-        VertexDirectX((v.TriangleIndex * 3) + 1).X = vout.X
-        VertexDirectX((v.TriangleIndex * 3) + 1).Y = vout.Y
-        VertexDirectX((v.TriangleIndex * 3) + 1).z = vout.z
-
-        D3DXVec3TransformCoord vout, ToVector(v.Point3), matScale
-        VertexDirectX((v.TriangleIndex * 3) + 2).X = vout.X
-        VertexDirectX((v.TriangleIndex * 3) + 2).Y = vout.Y
-        VertexDirectX((v.TriangleIndex * 3) + 2).z = vout.z
-
-        VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
-        VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
-        VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.z
-
-        VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
-        VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
-        VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.z
-
-        VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
-        VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
-        VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.z
-
-        VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).X
-        VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).X
-        VertexXAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).X
-
-        VertexYAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).Y
-        VertexYAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).Y
-        VertexYAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).Y
-
-        VertexZAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).z
-        VertexZAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).z
-        VertexZAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).z
-
-         If ApplyTo.Visible And (Not (TypeName(ApplyTo) = "Planet")) Then
-             If Not (v.Translucent Or v.Transparent) Then
-                 DDevice.SetMaterial GenericMaterial
-                 If v.TextureIndex > 0 Then DDevice.SetTexture 0, Files(v.TextureIndex).Data
-                 DDevice.SetTexture 1, Nothing
-             Else
-                 DDevice.SetMaterial LucentMaterial
-                 If v.TextureIndex > 0 Then DDevice.SetTexture 0, Files(v.TextureIndex).Data
-                 DDevice.SetMaterial GenericMaterial
-                 If v.TextureIndex > 0 Then DDevice.SetTexture 1, Files(v.TextureIndex).Data
+    If Not ApplyTo.Volume Is Nothing Then
+        For Each v In ApplyTo.Volume
+    
+            D3DXVec3TransformCoord vout, ToVector(v.Point1), matScale
+            VertexDirectX((v.TriangleIndex * 3) + 0).X = vout.X
+            VertexDirectX((v.TriangleIndex * 3) + 0).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 0).z = vout.z
+    
+            D3DXVec3TransformCoord vout, ToVector(v.Point2), matScale
+            VertexDirectX((v.TriangleIndex * 3) + 1).X = vout.X
+            VertexDirectX((v.TriangleIndex * 3) + 1).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 1).z = vout.z
+    
+            D3DXVec3TransformCoord vout, ToVector(v.Point3), matScale
+            VertexDirectX((v.TriangleIndex * 3) + 2).X = vout.X
+            VertexDirectX((v.TriangleIndex * 3) + 2).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 2).z = vout.z
+    
+            VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
+            VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.z
+    
+            VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
+            VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.z
+    
+            VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
+            VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.z
+    
+            VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).X
+            VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).X
+            VertexXAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).X
+    
+            VertexYAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).Y
+            VertexYAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).Y
+            VertexYAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).Y
+    
+            VertexZAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).z
+            VertexZAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).z
+            VertexZAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).z
+    
+             If ApplyTo.Visible And (Not (TypeName(ApplyTo) = "Planet")) Then
+                 If Not (v.Translucent Or v.Transparent) Then
+                     DDevice.SetMaterial GenericMaterial
+                     If v.TextureIndex > 0 Then DDevice.SetTexture 0, Files(v.TextureIndex).Data
+                     DDevice.SetTexture 1, Nothing
+                 Else
+                     DDevice.SetMaterial LucentMaterial
+                     If v.TextureIndex > 0 Then DDevice.SetTexture 0, Files(v.TextureIndex).Data
+                     DDevice.SetMaterial GenericMaterial
+                     If v.TextureIndex > 0 Then DDevice.SetTexture 1, Files(v.TextureIndex).Data
+                 End If
+    
+                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 1, VertexDirectX((v.TriangleIndex * 3)), Len(VertexDirectX(0))
              End If
-
-             DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 1, VertexDirectX((v.TriangleIndex * 3)), Len(VertexDirectX(0))
-         End If
-    Next
+        Next
+    End If
     
     D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
@@ -1174,13 +1162,9 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             .TriangleIndex = TriangleCount
             RebuildTriangleArray
 
-            .Index1 = PointCache(p1)
-            .Index2 = PointCache(p2)
-            .Index3 = PointCache(p3)
-
-            Set .Point1 = Points(.Index1)
-            Set .Point2 = Points(.Index2)
-            Set .Point3 = Points(.Index3)
+            Set .Point1 = p1
+            Set .Point2 = p2
+            Set .Point3 = p3
 
             .V1 = ScaleY
             .U2 = ScaleX
@@ -1283,14 +1267,10 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             .TriangleIndex = TriangleCount
             RebuildTriangleArray
 
-            .Index1 = PointCache(p1)
-            .Index2 = PointCache(p3)
-            .Index3 = PointCache(P4)
+            Set .Point1 = p1
+            Set .Point2 = p3
+            Set .Point3 = P4
             
-            Set .Point1 = Points(.Index1)
-            Set .Point2 = Points(.Index2)
-            Set .Point3 = Points(.Index3)
-
             .V1 = ScaleY
             .U2 = ScaleX
             
@@ -1493,18 +1473,15 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         RebuildTriangleArray
 
                         If DiagnalTexture = 1 Then
-                            .Index1 = PointCache(MakePoint(intX4, 0, intY4))     '1-2
-                            .Index2 = PointCache(MakePoint(intX2, 0, intY2))     '|/|
-                            .Index3 = PointCache(MakePoint(intX1, 0, intY1))     '4-3
+                            Set .Point1 = MakePoint(intX4, 0, intY4)      '1-2
+                            Set .Point2 = MakePoint(intX2, 0, intY2)     '|/|
+                            Set .Point3 = MakePoint(intX1, 0, intY1)     '4-3
                         Else
-                            .Index1 = PointCache(MakePoint(intX2, 0, intY2))
-                            .Index2 = PointCache(MakePoint(intX1, 0, intY1))
-                            .Index3 = PointCache(MakePoint(intX4, 0, intY4))
+                            Set .Point1 = MakePoint(intX2, 0, intY2)
+                            Set .Point2 = MakePoint(intX1, 0, intY1)
+                            Set .Point3 = MakePoint(intX4, 0, intY4)
                         End If
 
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
                         If DiagnalTexture = 1 Then
                             .U1 = dist3
                             .V1 = 0
@@ -1618,18 +1595,15 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         RebuildTriangleArray
 
                         If DiagnalTexture = 1 Then
-                            .Index1 = PointCache(MakePoint(intX4, 0, intY4))      '     1-2
-                            .Index2 = PointCache(MakePoint(intX2, 0, intY2))      '     |/|
-                            .Index3 = PointCache(MakePoint(intX3, 0, intY3))      '     4-3
+                            Set .Point1 = MakePoint(intX4, 0, intY4)      '     1-2
+                            Set .Point2 = MakePoint(intX2, 0, intY2)      '     |/|
+                            Set .Point3 = MakePoint(intX3, 0, intY3)      '     4-3
                         Else
-                            .Index1 = PointCache(MakePoint(intX2, 0, intY2))
-                            .Index2 = PointCache(MakePoint(intX4, 0, intY4))
-                            .Index3 = PointCache(MakePoint(intX3, 0, intY3))
+                            Set .Point1 = MakePoint(intX2, 0, intY2)
+                            Set .Point2 = MakePoint(intX4, 0, intY4)
+                            Set .Point3 = MakePoint(intX3, 0, intY3)
                         End If
-                        
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
+
 
                         If DiagnalTexture = 1 Then
                             .U1 = dist3
@@ -1746,18 +1720,15 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         RebuildTriangleArray
                         
                         If DiagnalTexture = 0 Then
-                            .Index1 = PointCache(MakePoint(intX2, 0, intY2))
-                            .Index2 = PointCache(MakePoint(intX1, 0, intY1))
-                            .Index3 = PointCache(MakePoint(intX4, 0, intY4))
+                            Set .Point1 = MakePoint(intX2, 0, intY2)
+                            Set .Point2 = MakePoint(intX1, 0, intY1)
+                            Set .Point3 = MakePoint(intX4, 0, intY4)
                         Else
-                            .Index1 = PointCache(MakePoint(intX2, 0, intY2))
-                            .Index2 = PointCache(MakePoint(IIf(Abs(intX1) < Abs(intX2), intX1, intX2), 0, IIf(Abs(intY1) < Abs(intY2), intY1, intY2)))
-                            .Index3 = PointCache(MakePoint(intX1, 0, intY1))
+                            Set .Point1 = MakePoint(intX2, 0, intY2)
+                            Set .Point2 = MakePoint(IIf(Abs(intX1) < Abs(intX2), intX1, intX2), 0, IIf(Abs(intY1) < Abs(intY2), intY1, intY2))
+                            Set .Point3 = MakePoint(intX1, 0, intY1)
                         End If
                         
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
 
                         Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
                         
@@ -2016,13 +1987,10 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         .TriangleIndex = TriangleCount
                         RebuildTriangleArray
 
-                        .Index1 = PointCache(MakePoint(intX4, 0, intY4))     '1-2
-                        .Index2 = PointCache(MakePoint(intX2, 0, intY2))     '|/|
-                        .Index3 = PointCache(MakePoint(intX1, 0, intY1))     '4-3
+                        Set .Point1 = MakePoint(intX4, 0, intY4)     '1-2
+                        Set .Point2 = MakePoint(intX2, 0, intY2)     '|/|
+                        Set .Point3 = MakePoint(intX1, 0, intY1)     '4-3
 
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
                         
                         .U1 = dist3
                         .V1 = 0
@@ -2147,13 +2115,11 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         .TriangleIndex = TriangleCount
                         RebuildTriangleArray
 
-                        .Index1 = PointCache(MakePoint(intX4, 0, intY4))      '     1-2
-                        .Index2 = PointCache(MakePoint(intX2, 0, intY2))      '     |/|
-                        .Index3 = PointCache(MakePoint(intX3, 0, intY3))      '     4-3
+                        Set .Point1 = MakePoint(intX4, 0, intY4)      '     1-2
+                        Set .Point2 = MakePoint(intX2, 0, intY2)      '     |/|
+                        Set .Point3 = MakePoint(intX3, 0, intY3)    '     4-3
 
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
+
                         .U1 = dist3
                         .V1 = 0
                         .U2 = 0
@@ -2286,13 +2252,10 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         .TriangleIndex = TriangleCount
                         RebuildTriangleArray
 
-                        .Index1 = PointCache(MakePoint(intX2, 0, intY2))
-                        .Index2 = PointCache(MakePoint(intX1, 0, intY1))
-                        .Index3 = PointCache(MakePoint(intX4, 0, intY4))
+                        Set .Point1 = MakePoint(intX2, 0, intY2)
+                        Set .Point2 = MakePoint(intX1, 0, intY1)
+                        Set .Point3 = MakePoint(intX4, 0, intY4)
 
-                        Set .Point1 = Points(.Index1)
-                        Set .Point2 = Points(.Index2)
-                        Set .Point3 = Points(.Index3)
 
                         dist1 = DistanceEx(.Point1, .Point2)
                         dist2 = DistanceEx(.Point2, .Point3)
@@ -2844,24 +2807,21 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                 .TriangleIndex = TriangleCount
                 RebuildTriangleArray
 
-                .Index1 = PointCache(MakePoint( _
+                Set .Point1 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 0)).X, _
                     MeshVerticies(MeshIndicies(Index + 0)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 0)).z))
+                    MeshVerticies(MeshIndicies(Index + 0)).z)
 
-                .Index2 = PointCache(MakePoint( _
+                Set .Point2 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 1)).X, _
                     MeshVerticies(MeshIndicies(Index + 1)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 1)).z))
+                    MeshVerticies(MeshIndicies(Index + 1)).z)
 
-                .Index3 = PointCache(MakePoint( _
+                Set .Point3 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 2)).X, _
                     MeshVerticies(MeshIndicies(Index + 2)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 2)).z))
+                    MeshVerticies(MeshIndicies(Index + 2)).z)
 
-                Set .Point1 = Points(.Index1)
-                Set .Point2 = Points(.Index2)
-                Set .Point3 = Points(.Index3)
 
                 Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
 
@@ -2929,24 +2889,21 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                 .TriangleIndex = TriangleCount
                 RebuildTriangleArray
 
-                .Index1 = PointCache(MakePoint( _
+                Set .Point1 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 3)).X, _
                     MeshVerticies(MeshIndicies(Index + 3)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 3)).z))
+                    MeshVerticies(MeshIndicies(Index + 3)).z)
 
-                .Index2 = PointCache(MakePoint( _
+                Set .Point2 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 4)).X, _
                     MeshVerticies(MeshIndicies(Index + 4)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 4)).z))
+                    MeshVerticies(MeshIndicies(Index + 4)).z)
 
-                .Index3 = PointCache(MakePoint( _
+                Set .Point3 = MakePoint( _
                     MeshVerticies(MeshIndicies(Index + 5)).X, _
                     MeshVerticies(MeshIndicies(Index + 5)).Y, _
-                    MeshVerticies(MeshIndicies(Index + 5)).z))
+                    MeshVerticies(MeshIndicies(Index + 5)).z)
 
-                Set .Point1 = Points(.Index1)
-                Set .Point2 = Points(.Index2)
-                Set .Point3 = Points(.Index3)
 
                 Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
 
@@ -3020,20 +2977,3 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
 End Function
 
 
-Public Function PointCache(ByRef p As Point) As Long
-    Points.Add p
-    PointCache = Points.Count
-    Exit Function
-    If Points.Count > 0 Then
-        Dim i As Long
-        For i = 1 To Points.Count
-            If Points(i).ToString = p.ToString Then
-                PointCache = i
-                Set p = Points(i)
-                Exit Function
-            End If
-        Next
-    End If
-    Points.Add p, p.ToString
-    PointCache = Points.Count
-End Function

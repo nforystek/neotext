@@ -16,7 +16,7 @@ Option Explicit
 Implements NTNodes10.Collection
 
 Private this As NTNodes10.Collection
-Private pParent As Molecule
+'Private pParent As Molecule
 Private pSerialize As Boolean
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
@@ -108,11 +108,14 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
+    Stats_Billboards_Count = Stats_Billboards_Count + 1
+    Set this = New NTNodes10.Collection
+    'vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
-    Set pParent = Nothing
+    Stats_Billboards_Count = Stats_Billboards_Count - 1
+   ' Set pParent = Nothing
     Set this = Nothing
 End Sub
 

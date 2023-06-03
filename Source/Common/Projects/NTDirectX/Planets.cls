@@ -16,7 +16,7 @@ Option Explicit
 Implements NTNodes10.Collection
 
 Private this As NTNodes10.Collection
-Private pParent As Molecule
+Private pParent As Planet
 Private pSerialize As Boolean
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
@@ -25,15 +25,15 @@ Public Property Get Serialize() As Boolean
     Serialize = pSerialize
 End Property
 
-Friend Property Get Parent() As Molecule
+Friend Property Get Parent() As Planet
     Set Parent = pParent
 End Property
-Friend Property Set Parent(ByRef RHS As Molecule)
+Friend Property Set Parent(ByRef RHS As Planet)
     Set pParent = RHS
-    Dim m As Molecule
-    For Each m In this
-        Set m.Parent = pParent
-    Next
+'    Dim m As Planet
+'    For Each m In this
+'        Set m.Parent = pParent
+'    Next
 End Property
 Public Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
@@ -47,7 +47,7 @@ Public Sub Add(ByRef Anything As Planet, Optional Key, Optional Before, Optional
 Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation.
 Attribute Add.VB_Description = "Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation."
     this.Add Anything, Key, Before, After
-    If Not Anything Is Nothing Then Set Anything.Parent = pParent
+    'If Not Anything Is Nothing Then Set Anything.Parent = pParent
 End Sub
 
 Public Sub Remove(Optional KeyOrIndex) ' _
@@ -107,10 +107,13 @@ Attribute Clear.VB_Description = "Clears all items with-in the collection, and t
 End Sub
 
 Private Sub Class_Initialize()
-    vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
+    Stats_Planets_Count = Stats_Planets_Count + 1
+    Set this = New NTNodes10.Collection
+    'vbaObjSetAddref this, ObjPtr(New NTNodes10.Collection)
 End Sub
 
 Private Sub Class_Terminate()
+    Stats_Planets_Count = Stats_Planets_Count - 1
     Set pParent = Nothing
     Set this = Nothing
 End Sub

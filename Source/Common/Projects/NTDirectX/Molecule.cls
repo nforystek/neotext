@@ -15,12 +15,13 @@ Option Explicit
 
 Implements Orbit
 
-
 Private pVolume As Volume
 Private pMolecules As Molecules
+Private pParent As Molecule
 Private pFileName As String
 Private pKey As String
 Private pSerialize As Boolean
+
 
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
@@ -30,12 +31,19 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-Public Property Get Parent() As Orbit
-    Set Parent = Orbit.Parent
+Public Property Get Parent() As Molecule
+    Set Parent = pParent
 End Property
-Public Property Set Parent(ByRef RHS As Orbit)
-    Set Orbit.Parent = RHS
+Public Property Set Parent(ByRef RHS As Molecule)
+    Set pParent = RHS
 End Property
+
+'Public Property Get Parent() As Orbit
+'    Set Parent = Orbit.Parent
+'End Property
+'Public Property Set Parent(ByRef RHS As Orbit)
+'    Set Orbit.Parent = RHS
+'End Property
 
 Public Property Get Relative() As Orbit
     Set Relative = Orbit.Relative
@@ -81,6 +89,8 @@ Public Property Get FileName() As String
     End If
 End Property
 Public Property Let FileName(ByVal RHS As String)
+    If Volume Is Nothing Then Set pVolume = New Volume
+    
     If RHS = "" And pFileName <> "" Then
         Volume.Clear
         pFileName = ""
@@ -99,17 +109,12 @@ Public Property Let FileName(ByVal RHS As String)
 End Property
 
 Public Property Get Volume() As Volume
-    If pVolume Is Nothing Then Set pVolume = New Volume
     Set Volume = pVolume
 End Property
 Public Property Set Volume(ByRef RHS As Volume)
     Set pVolume = RHS
 End Property
 Public Property Get Molecules() As Molecules
-    If pMolecules Is Nothing Then
-        Set pMolecules = New Molecules
-        Set pMolecules.Parent = Me
-    End If
     Set Molecules = pMolecules
 End Property
 Public Property Set Molecules(ByRef RHS As Molecules)
@@ -159,33 +164,42 @@ Public Property Let Visible(ByVal RHS As Boolean)
 End Property
 
 Private Sub Class_Initialize()
+    Stats_Molecule_Count = Stats_Molecule_Count + 1
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
+    'Set Orbit = New Orbit
+    
     pKey = "K" & ObjPtr(Me)
+
 End Sub
 
 
-'Public Property Get NotEmpty() As Boolean
-'    NotEmpty = pOrbit.NotEmpty
-'End Property
-'
-'Public Sub StackAdd(RHS As Orbit)
-'    pOrbit.StackAdd RHS
-'End Sub
-'
-'Public Function StackDel() As Orbit
-'    Set StackDel = pOrbit.StackDel
-'End Function
-'
-'Private Sub Class_Initialize()
-'    'Set Orbit = pOrbit
-'End Sub
+Friend Sub Class_Terminate()
+    'Set Orbit = Nothing
+    Stats_Molecule_Count = Stats_Molecule_Count - 1
+    
+    Set pParent = Nothing
+    
+    If Not pMolecules Is Nothing Then
+        pMolecules.Clear
+    End If
+    Set pMolecules = Nothing
 
-Private Sub Class_Terminate()
-    If Key <> "" Then
-        If Molecules.Exists(Key) Then Molecules.Remove Key
+    If Not pVolume Is Nothing Then
+        pVolume.Clear
     End If
     Set pVolume = Nothing
-    Set pMolecules = Nothing
+    
+    Set Orbit.Offset = Nothing
+    Set Orbit.Origin = Nothing
+    Set Orbit.Ranges = Nothing
+    Set Orbit.Rotate = Nothing
+    Set Orbit.Scaled = Nothing
+
+    'Set Orbit.Parent = Nothing
+    Set Orbit.Absolute = Nothing
+    Set Orbit.Relative = Nothing
+    
+    vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
 
 Private Property Set Orbit_Relative(RHS As Orbit)
