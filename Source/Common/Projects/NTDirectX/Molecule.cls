@@ -176,14 +176,13 @@ End Sub
 Friend Sub Class_Terminate()
     'Set Orbit = Nothing
     Stats_Molecule_Count = Stats_Molecule_Count - 1
-    
+        
     Set pParent = Nothing
     
     If Not pMolecules Is Nothing Then
         pMolecules.Clear
     End If
     Set pMolecules = Nothing
-
     If Not pVolume Is Nothing Then
         pVolume.Clear
     End If
@@ -195,11 +194,12 @@ Friend Sub Class_Terminate()
     Set Orbit.Rotate = Nothing
     Set Orbit.Scaled = Nothing
 
-    'Set Orbit.Parent = Nothing
+    Set Orbit.Parent = Nothing
     Set Orbit.Absolute = Nothing
     Set Orbit.Relative = Nothing
-    
-    vbaObjSet Orbit, ObjPtr(Nothing)
+
+    'Set Orbit = Nothing
+    'vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
 
 Private Property Set Orbit_Relative(RHS As Orbit)

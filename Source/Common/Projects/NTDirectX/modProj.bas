@@ -57,9 +57,14 @@ Public Sub CleanUpProj()
     ser = frmMain.Serialize
     If ser <> "" Then WriteFile ScriptRoot & "\Serial.xml", ser
     
-    frmMain.ScriptControl1.Reset
+    Dim A As Long
+    If All.Count > 0 Then
+        For A = 1 To All.Count
+            frmMain.ScriptControl1.ExecuteStatement "Set " & All(A).Key & " = Nothing"
+        Next
+    End If
     
-    Debug.Print GetStats
+    frmMain.ScriptControl1.Reset
 
     Set Camera = Nothing
 
@@ -74,7 +79,6 @@ Public Sub CleanUpProj()
     Brilliants.Clear
     Billboards.Clear
     Motions.Clear
-    
 
     Set Brilliants = Nothing
     Set Billboards = Nothing
@@ -86,49 +90,6 @@ Public Sub CleanUpProj()
     
     All.Clear
     Set All = Nothing
-
-
-'    Set OnEvents = Nothing
-'    Set Bindings = Nothing
-'    Set Include = Nothing
-    
-    'Bindings.Clear
-'Global Camera As New Camera
-    
-'Global Include As New Include
-
-
-    
-'    Dim p As Planet
-'    Do While Planets.Count > 0
-'        Set p = Planets(1)
-'        RemoveIterate Planets(1).Molecules, Planets(1).Planets
-'        Planets.Remove 1
-'        Set p = Nothing
-'    Loop
-'    Set p = Nothing
-
-'    Dim m As Molecule
-'    Do While Molecules.Count > 0
-'        Set m = Molecules(1)
-'        RemoveIterate Molecules(1).Molecules
-'        Molecules.Remove 1
-'        Set m = Nothing
-'    Loop
-'
-'    Dim br As Brilliant
-'    Do While Brilliants.Count > 0
-'        Set br = Brilliants(1)
-'        Brilliants.Remove 1
-'        Set br = Nothing
-'    Loop
-'
-'    Dim bi As Billboard
-'    Do While Billboards.Count > 0
-'        Set bi = Billboards(1)
-'        Billboards.Remove 1
-'        Set bi = Nothing
-'    Loop
 
 
     Dim o As Long
@@ -145,8 +106,6 @@ Public Sub CleanUpProj()
         Erase Files
         FileCount = 0
     End If
-
-    Debug.Print GetStats
     
 End Sub
 

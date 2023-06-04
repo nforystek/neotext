@@ -152,7 +152,7 @@ Private Function Collection_NewEnum() As stdole.IUnknown
 End Function
 
 Private Sub Collection_Remove(Optional KeyOrIndex As Variant)
-    Me.Remove KeyOrIndex
+    this.Remove KeyOrIndex
 End Sub
 
 

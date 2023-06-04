@@ -21,7 +21,6 @@ Begin VB.Form frmTemp
       _ExtentX        =   1005
       _ExtentY        =   1005
       AllowUI         =   0   'False
-      UseSafeSubset   =   -1  'True
    End
 End
 Attribute VB_Name = "frmTemp"

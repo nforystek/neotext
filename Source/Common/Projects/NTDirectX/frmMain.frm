@@ -116,13 +116,6 @@ Public Sub Startup()
         'only the global add the code members of
         .AddObject "Include", modParse.Include, True
         'the rest are builds of and not code based
-        
-       modParse.Motions.Serialize = True
-       modParse.Brilliants.Serialize = True
-       modParse.Molecules.Serialize = True
-       modParse.Billboards.Serialize = True
-       modParse.Planets.Serialize = True
-       modParse.Bindings.Serialize = True
        
         .AddObject "All", modParse.All, True
         .AddObject "Camera", modParse.Camera, True
@@ -132,8 +125,6 @@ Public Sub Startup()
         .AddObject "Billboards", modParse.Billboards, True
         .AddObject "Bindings", modParse.Bindings, True
         .AddObject "Planets", modParse.Planets, True
-
-       
     
     End With
 End Sub

@@ -48,22 +48,22 @@ planet <Earth> {
 	.OuterEdge = 21.1016060473552 * MILE
 	.Field = (11.76894*MILE)
 	.Segments = 36
-	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Land\Grass.bmp"
+	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Land\Grass.bmp"
 	.color = [ 0,0,0,1]
 	molecule <Box1> {
 		.origin = [0,0,1]
 		.Visible=true
-		.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.x"
+		.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.x"
 	}
 	molecule <Box2> {
 		.origin = [-1,0,1]
 		.Visible=true
-		.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.x"
+		.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.x"
 		.Serialize = true
 		molecule <Box3> {
 			.origin = [0,0,1]
 			.Visible=true
-			.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.x"
+			.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.x"
 		.Serialize = true
 
 		}
@@ -76,13 +76,13 @@ planet <Moon> {
 	.OuterEdge = 11.0136279218067 * MILE
 	.Field =  (6.5*MILE)
 	.Segments = 36
-	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Land\moonrock.bmp"
+	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Land\moonrock.bmp"
 }
 
 planet <Backdrop> {
 	.form = World
 	.Visible = true
-	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Sky\asky5.bmp"
+	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Sky\asky5.bmp"
 	.Height=256
 	.Width=256
 	.Length=256
@@ -93,7 +93,7 @@ planet <Backdrop> {
 planet <Backdrop2> {
 	.form = World
 	.Visible = true
-	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Sky\asky6.bmp"
+	.Filename = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Sky\asky6.bmp"
 	.Height=256
 	.Width=256
 	.Length=256
@@ -105,7 +105,7 @@ planet <Backdrop2> {
 molecule <Player> {
 	.Origin = [ 0,2,0 ]
 	.Visible=true
-	.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.x"
+	.FileName = "C:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.x"
 	.Serialize=true
 }
 

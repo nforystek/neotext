@@ -13,6 +13,13 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+Public Property Get ShowStats() As Boolean
+    ShowStats = modMain.ShowStats
+End Property
+Public Property Let ShowStats(ByVal RHS As Boolean)
+    modMain.ShowStats = RHS
+End Property
+
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
     mod3DObj.Location Origin, ApplyTo   'location is changing the origin to absolute
 End Sub
@@ -38,7 +45,7 @@ Public Property Set Serialize(ByRef RHS)
 
     Dim code As String
     Dim line As String
-    Dim o As Object 'NTNodes10.Collection
+    Dim o As Object
     Select Case LCase(TypeName(RHS))
         Case "bindings", "camera"
             If All.Exists(LCase(TypeName(RHS))) Then
@@ -49,20 +56,22 @@ Public Property Set Serialize(ByRef RHS)
                     frmMain.ExecuteStatement line
                 Loop
             End If
+
         Case "molecules", "brilliants", "planets", "billboards"
             If All.Exists(LCase(TypeName(RHS))) Then
-                Set o = NTNodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+                code = All(LCase(TypeName(RHS)))
                 All.Remove LCase(TypeName(RHS))
+                Set o = NTNodes10.Deserialize(code, AppPath & App.EXEName & ".ocx")
                 If o.Count > 0 Then
                     Dim m As Object
                     For Each m In o
                         m.Serialize = True
-                        If RHS.Exists(m.Key) Then RHS.Remove m.Key
-                        RHS.Add m, m.Key
                         If All.Exists(m.Key) Then All.Remove m.Key
-                        All.Add m, m.Key
-                        ParseSetupObject m, LCase(TypeName(RHS))
+                        If RHS.Exists(m.Key) Then RHS.Remove m.Key
+                        ParseSetupObject m, LCase(TypeName(RHS)), m.Key
                     Next
+                    Set m = Nothing
+                    o.Clear
                 End If
                 Set o = Nothing
             End If

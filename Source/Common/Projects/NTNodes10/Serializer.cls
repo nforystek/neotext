@@ -82,6 +82,7 @@ Private Function SerializeObjectEx(ByVal ObjToSerial, Optional ByVal member As S
         Err.Clear
     End If
     On Error GoTo 0
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Function
@@ -98,6 +99,7 @@ Private Function IsRedundant(ByRef ObjToSerial, ByVal member As String) As Boole
         IsRedundant = True
     End If
     On Error GoTo 0
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Function
@@ -107,6 +109,7 @@ Private Function SerializeValueEx(ByRef ObjToSerial, Optional ByVal member As St
     frm.ScriptControl1.AddObject "ObjToSerial", ObjToSerial
     SerializeValueEx = frm.ScriptControl1.Eval("Typename(ObjToSerial" & IIf(member = "", "", "." & member) & ")")
     SerializeValueEx = "<" & SerializeValueEx & ">" & URLEncode(frm.ScriptControl1.Eval("ObjToSerial" & IIf(member = "", "", "." & member))) & "</" & SerializeValueEx & ">"
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Function
@@ -115,6 +118,7 @@ Private Function IsObjectEx(ByRef ObjToSerial, ByVal member As String) As Boolea
     Dim frm As New frmTemp
     frm.ScriptControl1.AddObject "ObjToSerial", ObjToSerial
     IsObjectEx = frm.ScriptControl1.Eval("IsObject(ObjToSerial." & member & ")")
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Function
@@ -123,6 +127,7 @@ Private Function TypeNameEx(ByRef ObjToSerial, ByVal member As String) As String
     Dim frm As New frmTemp
     frm.ScriptControl1.AddObject "ObjToSerial", ObjToSerial, True
     TypeNameEx = frm.ScriptControl1.Eval("TypeName(ObjToSerial." & member & ")")
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Function
@@ -134,8 +139,10 @@ Private Sub PropertySetEx(ByRef ObjToSerial, Optional ByRef member As Variant, O
     If IsMissing(Key) And (Not IsMissing(member)) Then
         frm.ScriptControl1.ExecuteStatement "Set ObjToSerial." & member & " = SetToObject"
     ElseIf (Not IsMissing(Key)) And IsMissing(member) Then
+        'Debug.Print "ObjToSerial.Add SetToObject" & Key
         frm.ScriptControl1.ExecuteStatement "ObjToSerial.Add SetToObject" & Key
     End If
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Sub
@@ -159,6 +166,7 @@ failproperty:
     If Err.Number <> 0 Then
         Err.Clear
     End If
+    frm.ScriptControl1.Reset
     Unload frm
     Set frm = Nothing
 End Sub
@@ -530,7 +538,6 @@ Private Function Deserialize2(ByRef xml As MSXML.IXMLDOMNode, Optional ByVal Lib
         End If
         If (IsCollection(colMem) And (child.nodeName = "Item")) And (Not (Key = "skip")) Then
 
-            
             For Each child2 In child.childNodes
                 If child2.nodeName = "Key" Then
                     Key = child2.Text

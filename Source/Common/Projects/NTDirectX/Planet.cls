@@ -664,8 +664,6 @@ Private Sub Class_Terminate()
     End If
     Set Molecule.Volume = Nothing
 
-
-
     vbaObjSet Molecule, ObjPtr(Nothing)
     
     Erase pFileIndex
