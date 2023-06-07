@@ -377,7 +377,7 @@ Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Colu
         ImageDimensions RHS, Files(pFileIndex(Row * Column)).Size
         If pWidth = 0 Then pWidth = Files(pFileIndex(Row * Column)).Size.Width
         If pHeight = 0 Then pHeight = Files(pFileIndex(Row * Column)).Size.Height
-        If pLength = 0 Then pLength = ((pWidth + pHeight) \ 2)
+        If pLength = 0 Then pLength = ((pWidth * pHeight) ^ (1 / 2))
         RebuildPlanet
     End If
 End Property
@@ -438,7 +438,9 @@ Private Sub RebuildPlanet()
 '                  Stop
                   frmMain.Picture3.Width = (Size.Width / 4) * VB.Screen.TwipsPerPixelX
                   frmMain.Picture3.Height = (Size.Height / 3) * VB.Screen.TwipsPerPixelY
-
+                  Size.Height = (frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX)
+                  Size.Width = (frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY)
+                  
                   frmMain.Picture3.Cls
                   'Debug.Print frmMain.Picture3.Width / VB.Screen.TwipsPerPixelX; frmMain.Picture3.Height / VB.Screen.TwipsPerPixelY
                   BitBlt frmMain.Picture3.hdc, 0, 0, (frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), frmMain.Picture2.hdc, ((frmMain.Picture3.Width \ VB.Screen.TwipsPerPixelX) * 2), (frmMain.Picture3.Height \ VB.Screen.TwipsPerPixelY), SRCCOPY
@@ -447,12 +449,12 @@ Private Sub RebuildPlanet()
                   
                   SavePicture frmMain.Picture3.Image, tmp
 
-                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-                  Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-                  Set P4 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-                  
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set p3 = MakePoint((Width / 2), -(Height / 2), (Length / 2)) ' right    4    __   '
+                  Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2)) '       3    /_|/|
+                  Set p1 = MakePoint((Width / 2), (Height / 2), -(Length / 2)) '          1  |/_|/
+                  Set P4 = MakePoint((Width / 2), (Height / 2), (Length / 2)) '         2
+                   
+                  Set uuu = CreateVolumeFace(tmp, P4, p1, p2, p3, Size.Width / Width, Size.Height / Length)
 
                   For Each v In uuu
                       Volume.Add v
@@ -466,12 +468,12 @@ Private Sub RebuildPlanet()
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Back.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-                  Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-                  Set p3 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
-                  Set P4 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
+                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2)) '      __   back  '
+                  Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2)) '     /_|/|   4  3   '
+                  Set p3 = MakePoint((Width / 2), (Height / 2), -(Length / 2)) '      |/_|/   1  2   '
+                  Set P4 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2)) '                    '
                   
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set uuu = CreateVolumeFace(tmp, p3, P4, p1, p2, Size.Width / Width, Size.Height / Height)
 
                   For Each v In uuu
                       Volume.Add v
@@ -486,12 +488,12 @@ Private Sub RebuildPlanet()
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Right.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-                  Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-                  Set p2 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-                  Set p3 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-                  Set P4 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
+                  Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2)) '      __          3  left    '
+                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2)) '     /_|/|       4            '
+                  Set p3 = MakePoint(-(Width / 2), (Height / 2), (Length / 2)) '      |/_|/         2         '
+                  Set P4 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2)) '                 1               '
                   
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set uuu = CreateVolumeFace(tmp, P4, p3, p2, p1, Size.Height / Length, Size.Width / Width)
 
                   For Each v In uuu
                       Volume.Add v
@@ -507,12 +509,12 @@ Private Sub RebuildPlanet()
                   SavePicture frmMain.Picture3.Image, tmp
 
 
-                  Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-                  Set p3 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-                  Set P4 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
+                  Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2)) '        __    bottom       '
+                  Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2)) '     /_|/|               '
+                  Set p3 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2)) '      |/_|/   3  4       '
+                  Set P4 = MakePoint((Width / 2), -(Height / 2), (Length / 2)) '              2  1           '
                   
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4, Size.Width / Width, Size.Height / Length)
 
                   For Each v In uuu
                       Volume.Add v
@@ -527,12 +529,12 @@ Private Sub RebuildPlanet()
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Front.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-                  Set p1 = MakePoint((Width \ 2), -(Height \ 2), (Length \ 2))
-                  Set p2 = MakePoint(-(Width \ 2), -(Height \ 2), (Length \ 2))
-                  Set p3 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2))
-                  Set P4 = MakePoint((Width \ 2), (Height \ 2), (Length \ 2))
+                  Set p1 = MakePoint((Width \ 2), -(Height \ 2), (Length \ 2)) '        __      front  '
+                  Set p2 = MakePoint(-(Width \ 2), -(Height \ 2), (Length \ 2)) '     /_|/|     3  4     '
+                  Set p3 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2)) '      |/_|/     2  1    '
+                  Set P4 = MakePoint((Width \ 2), (Height \ 2), (Length \ 2)) '                           '
                   
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set uuu = CreateVolumeFace(tmp, p3, P4, p1, p2, Size.Width / Width, Size.Height / Height)
 
                   For Each v In uuu
                       Volume.Add v
@@ -546,12 +548,12 @@ Private Sub RebuildPlanet()
                   'tmp = "C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Temp\" & "Top.bmp"
                   SavePicture frmMain.Picture3.Image, tmp
 
-                  Set p1 = MakePoint((Width \ 2), (Height \ 2), (Length \ 2))
-                  Set p2 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2))
-                  Set p3 = MakePoint(-(Width \ 2), (Height \ 2), -(Length \ 2))
-                  Set P4 = MakePoint((Width \ 2), (Height \ 2), -(Length \ 2))
+                  Set p1 = MakePoint((Width \ 2), (Height \ 2), (Length \ 2)) '          __     top    '
+                  Set p2 = MakePoint(-(Width \ 2), (Height \ 2), (Length \ 2)) '       /_|/|    2  1   '
+                  Set p3 = MakePoint(-(Width \ 2), (Height \ 2), -(Length \ 2)) '      |/_|/   3  4   '
+                  Set P4 = MakePoint((Width \ 2), (Height \ 2), -(Length \ 2)) '                      '
                   
-                  Set uuu = CreateVolumeFace(tmp, p1, p2, p3, P4)
+                  Set uuu = CreateVolumeFace(tmp, p3, P4, p1, p2, Size.Width / Width, Size.Height / Length)
 
                   For Each v In uuu
                       Volume.Add v

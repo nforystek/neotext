@@ -438,10 +438,8 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     
     
         DDevice.SetRenderState D3DRS_ZENABLE, 1
-    
         DDevice.SetVertexShader FVF_RENDER
         DDevice.SetPixelShader PixelShaderDefault
-    
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
                    
@@ -453,13 +451,14 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
         If p.Alphablend Then
             
            If Not p.Follow Then
-                DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(RelativeFactor * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
+                DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
            Else
                 DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
            End If
-         
-            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR 'And D3DBLEND_INVSRCALPHA
-            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA 'And D3DBLEND_INVSRCCOLOR
+
+
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA
     
             DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
             DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
@@ -624,20 +623,22 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
     DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
-    
+
     DDevice.SetRenderState D3DRS_ZENABLE, 0
     DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-    
+
     DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
 
-'    DDevice.SetMaterial GenericMaterial
-'    DDevice.SetTexture 1, Nothing
-'    DDevice.SetMaterial LucentMaterial
-'    DDevice.SetTexture 0, Nothing
+    DDevice.SetMaterial GenericMaterial
+    DDevice.SetTexture 1, Nothing
+    DDevice.SetMaterial LucentMaterial
+    DDevice.SetTexture 0, Nothing
     
     SubRenderWorldSetup UserControl, Camera, True  'must be called again, tiwce per one call
+    
+    'DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color.RGBA
     
     If (Planets.Count > 0) And (Not Camera.Player Is Nothing) Then
         'first loop through all, we render worlds that
@@ -741,23 +742,23 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '#####################################################################################################
 
     DDevice.SetRenderState D3DRS_LIGHTING, 1
-    
+
     DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-    
+
     DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
     
-'    DDevice.SetRenderState D3DRS_AMBIENT, Camera.color.ARGB
-   ' DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(1, red, g, b)
+'    DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color.RGB
+    'DDevice.SetRenderState D3DRS_FOGCOLOR, Camera.Color.RGBA
 
-'    DDevice.SetRenderState D3DRS_FOGENABLE, 1
+    DDevice.SetRenderState D3DRS_FOGENABLE, False
 '    DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
-'    DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
-'    DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
-'    DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(50 / 2)
-'    DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(50)
-'    DDevice.SetRenderState D3DRS_FOGDENSITY, 0
+'    DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR
+    DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
+'    DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Camera.Planet.Field / 2)
+'    DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Camera.Planet.Field)
+'    DDevice.SetRenderState D3DRS_FOGDENSITY, 0.9
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetTexture 1, Nothing
@@ -780,8 +781,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
         DDevice.SetRenderState D3DRS_ZENABLE, 0
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
 
-        'DDevice.SetRenderState D3DRS_ZENABLE, 1
-        'DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
+'        DDevice.SetRenderState D3DRS_ZENABLE, 1
+'        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
 
         i = 1
         

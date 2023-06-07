@@ -24,10 +24,14 @@ Attribute Serialize.VB_MemberFlags = "40"
     Serialize = True
 End Property
 Public Property Get RGBA() As Long
+
     RGBA = D3DColorRGBA(red * 255, green * 255, blue * 255, Alpha)
+
 End Property
 Public Property Get ARGB() As Long
+
     ARGB = D3DColorARGB(Alpha, red * 255, green * 255, blue * 255)
+
 End Property
 Public Property Let RGB(ByVal RHS As Long)
     Dim r As Long
@@ -44,7 +48,11 @@ Public Property Let RGB(ByVal RHS As Long)
 '    pBlue = rgbBlue(RHS) / 255
 End Property
 Public Property Get RGB() As Long
-    RGB = VBA.RGB(pRed * 255, pGreen * 255, pBlue * 255)
+    If pRed > 1 Or pGreen > 1 Or pBlue > 1 Then
+        RGB = VBA.RGB(pRed, pGreen, pBlue)
+    Else
+        RGB = VBA.RGB(pRed * 255, pGreen * 255, pBlue * 255)
+    End If
 End Property
 
 Public Property Get Alpha() As Single

@@ -73,7 +73,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 If TestDirectX(UserControl) Then
     
                     On Error Resume Next
-                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color, 1, 0
+                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color.RGBA, 1, 0
                     DDevice.BeginScene
                     DDevice.EndScene
 
@@ -105,7 +105,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
             'BeginMirrors UserControl, Camera.Player
 
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.color.RGBA, 1, 0
+            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
 
             On Error GoTo 0 'temporary
             
@@ -133,7 +133,6 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 
                 DDevice.EndScene
 
-                'DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
                 PresentScene UserControl
                 
                 On Error GoTo 0 'temporary
@@ -388,8 +387,8 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     D3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, Display
 
     D3DWindow.BackBufferCount = 2
-    D3DWindow.BackBufferWidth = VB.Screen.Width / VB.Screen.TwipsPerPixelX
-    D3DWindow.BackBufferHeight = VB.Screen.Height / VB.Screen.TwipsPerPixelY
+    D3DWindow.BackBufferWidth = (VB.Screen.Width / VB.Screen.TwipsPerPixelX)
+    D3DWindow.BackBufferHeight = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
     D3DWindow.BackBufferFormat = Display.Format
     D3DWindow.MultiSampleType = D3DMULTISAMPLE_NONE
     If Not FullScreen Then
@@ -407,8 +406,8 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     
     DViewPort.MaxZ = Far
     DViewPort.MinZ = Near
-    DViewPort.Width = VB.Screen.Width / VB.Screen.TwipsPerPixelX
-    DViewPort.Height = VB.Screen.Height / VB.Screen.TwipsPerPixelY
+    DViewPort.Width = (VB.Screen.Width / VB.Screen.TwipsPerPixelX)
+    DViewPort.Height = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
     
     On Error Resume Next
     Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, D3DWindow)
@@ -444,12 +443,13 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     
         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-            
+    
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-
+    
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
+        
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_MAXANISOTROPY, 16
@@ -458,26 +458,27 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
+    
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_MAXANISOTROPY, 16
         DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-   
+        
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     
         DDevice.SetRenderState D3DRS_ALPHAREF, modDecs.Transparent
         DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL
         DDevice.SetRenderState D3DRS_ZFUNC, D3DCMP_LESSEQUAL
-    
-        DDevice.SetRenderState D3DRS_FOGENABLE, 0
-        DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
-        DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
-        DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
-        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 4 * 3)
-        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
-        DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
+
+'        DDevice.SetRenderState D3DRS_FOGENABLE, 0
+'        DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
+'        DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
+'        DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
+'        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 4)
+'        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
+'        DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
 
         
 

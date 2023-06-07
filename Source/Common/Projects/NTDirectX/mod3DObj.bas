@@ -1155,6 +1155,12 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
         PathExists(TextureFileName, True)) Then
         If ScaleX = 0 Then ScaleX = 1
         If ScaleY = 0 Then ScaleY = 1
+        Dim offsetX As Single
+        Dim offsetY As Single
+        ScaleX = 1
+        ScaleY = 1
+        offsetX = 0.01
+        offsetY = 0.01
         
         Dim vol As New Volume
         Dim m As New Matter
@@ -1166,11 +1172,20 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             Set .Point2 = p2
             Set .Point3 = p3
 
-            .V1 = ScaleY
-            .U2 = ScaleX
-            .V2 = ScaleY
-            .U3 = ScaleX
+'            .U1 = 0
+'            .V1 = ScaleY
+'            .U2 = ScaleX
+'            .V2 = ScaleY
+'            .U3 = ScaleX
+'            .V3 = 0
 
+            .U1 = 0
+            .V1 = 0
+            .U2 = ScaleX
+            .V2 = 0
+            .U3 = ScaleX
+            .V3 = ScaleY
+            
             Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
 
             VertexXAxis(0, TriangleCount) = .Point1.X
@@ -1271,8 +1286,19 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             Set .Point2 = p3
             Set .Point3 = P4
             
-            .V1 = ScaleY
+'            .U1 = 0
+'            .V1 = ScaleY
+'            .U2 = ScaleX
+'            .V2 = 0
+'            .U3 = 0
+'            .V3 = 0
+
+            .U1 = 0
+            .V1 = 0
             .U2 = ScaleX
+            .V2 = ScaleY
+            .U3 = 0
+            .V3 = ScaleY
             
             Set .Normal = TriangleNormal(.Point1, .Point2, .Point3)
 

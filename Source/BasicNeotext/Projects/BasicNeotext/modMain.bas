@@ -23,6 +23,18 @@ Public QuitFail As Single
 Global MainLoopElapse As Single
 Global TimerLoopElapse As Single
 
+'Public CPUCurrent As Long
+'Public CPUDirect As Long
+'Public CPUPrior As Long
+'Public Const CPUCores As Long = 4
+'Public Const CPUUSage As Long = 25
+'
+'Public TargetPitch As Single
+'Public TargetWhole As Single
+'
+'Public QueryStop As Boolean
+'Public QueryObject As Object
+
 Public Sub Main()
 
     InitialSetup
@@ -292,6 +304,14 @@ End Function
 Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional ByVal Hide As Boolean = False, Optional ByVal Wait As Boolean = False)
 
     If Trim(path) <> "" Then
+    
+'        If IsWindows98 Then
+'            Set QueryObject = New WinCPU
+'        Else
+'            Set QueryObject = New WinCPUNT
+'        End If
+'        QueryObject.Initialize
+            
         Dim LastRun As String
         Dim LoopLatency As Single
         LoopLatency = Timer
@@ -300,6 +320,7 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
         
         VBPID = Shell(LastRun, IIf(Hide, vbHide, vbNormalFocus))
 
+
         If (VBPID > 0) Then
 
             Do While ((IsProccessIDRunning(VBPID) Or QuitCall) And Wait) And (Not QuitFail = -1)
@@ -307,6 +328,8 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
                 MainLoopElapse = (Timer - LoopLatency) * 1000
                 LoopLatency = Timer
                 
+                
+                'SteadyService
                 DoLoop
                 
                 If QuitCall Then
@@ -327,8 +350,37 @@ Public Sub RunProcessEx(ByVal path As String, ByVal Params As String, Optional B
             Loop
 
         End If
+        
+        'Set QueryObject = Nothing
+        
     End If
 End Sub
+
+'Public Sub SteadyService()
+'
+'    TargetWhole = (100 / CPUCores)
+'    TargetPitch = (TargetWhole * (CPUUSage / 100))
+'
+'    Dim lVal As Long, sVal As String
+'    lVal = QueryObject.Query
+'    If (lVal <> CPUPrior) And (lVal < 100) Then
+'        sVal = Format$(lVal, "000")
+'        lVal = CInt(sVal)
+'        CPUDirect = CPUCurrent - lVal
+'        CPUCurrent = lVal
+'    End If
+'    CPUPrior = lVal
+'     'Debug.Print "CPUCurrent: " & CPUCurrent & ",  CPUDirect: " & CPUDirect & ", TargetWhole: " & TargetWhole & ",  TargetPitch: " & TargetPitch
+'    If CPUDirect > TargetWhole Then TargetPitch = TargetPitch \ 2
+'    If (CPUCurrent < TargetWhole) Then
+'       If (TargetPitch > 0) Then Sleep TargetPitch
+'    ElseIf (CPUCurrent > TargetWhole) Then
+'        DoLoop
+'    End If
+'
+'
+'End Sub
+
 
 Private Function DoCleanCopy() As Boolean
 

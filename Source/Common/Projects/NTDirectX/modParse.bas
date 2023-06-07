@@ -159,7 +159,9 @@ Private Function ParseInWith(ByVal inLine As String, Optional ByVal inWith As St
 End Function
 
 Private Function ParseName(ByVal inLine As String) As String
-    ParseName = ParseQuotedArg(inLine, "<", ">", False)
+    If (InStr(inLine, "<") > 0) And (InStr(inLine, ">") > InStr(inLine, "<")) Then
+        ParseName = ParseQuotedArg(inLine, "<", ">", False)
+    End If
 End Function
 
 Private Function ParseType(ByVal inLine As String) As String
@@ -329,7 +331,10 @@ Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String)
 End Sub
 
 Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String)
-    'Debug.Print "Event: " & inLine & " B: " & inBlock
+
+    Debug.Print "Event: " & inLine & " Block: " & inBlock;
+
+    
     LastCall = inLine & " = " & inBlock
     Dim inEvent As String
     Do While IsAlphaNumeric(Left(inLine, 1))
@@ -339,6 +344,7 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
     inBlock = ParseBracketOff(inBlock, "[", "]")
     Dim inName As String
     inName = ParseQuotedArg(inBlock, "<", ">", False)
+    Debug.Print " Name(s): " & inName
     inBlock = ParseInWith(inBlock, inWith)
     inBlock = """" & Replace(Replace(inBlock, """", """"""), vbCrLf, """ & vbCrLf & """) & """"
     frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = Nothing"
