@@ -21,47 +21,47 @@ Public Property Let ShowStats(ByVal RHS As Boolean)
 End Property
 
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Location Origin, ApplyTo   'location is changing the origin to absolute
+    modMove.Location Origin, ApplyTo   'location is changing the origin to absolute
 End Sub
 Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Position Origin, ApplyTo  'position is changing the origin relative
+    modMove.Position Origin, ApplyTo  'position is changing the origin relative
 End Sub
 
 Public Sub Rotation(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Rotation Radians, ApplyTo  'location is changing the origin to absolute
+    modMove.Rotation Radians, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Orientate(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Orientate Radians, ApplyTo  'position is changing the origin relative
+    modMove.Orientate Radians, ApplyTo  'position is changing the origin relative
 End Sub
 
 Public Sub Scaling(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Scaling Ratios, ApplyTo  'location is changing the origin to absolute
+    modMove.Scaling Ratios, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Explode(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
-    mod3DObj.Explode Ratios, ApplyTo  'position is changing the origin relative
+    modMove.Explode Ratios, ApplyTo  'position is changing the origin relative
 End Sub
 
 Public Property Set Serialize(ByRef RHS)
 
-    Dim code As String
+    Dim Code As String
     Dim line As String
     Dim o As Object
     Select Case LCase(TypeName(RHS))
         Case "bindings", "camera"
             If All.Exists(LCase(TypeName(RHS))) Then
-                code = RemoveQuotedArg(All(LCase(TypeName(RHS))), "<" & TypeName(RHS) & ">", "</" & TypeName(RHS) & ">")
+                Code = RemoveQuotedArg(All(LCase(TypeName(RHS))), "<" & TypeName(RHS) & ">", "</" & TypeName(RHS) & ">")
                 All.Remove LCase(TypeName(RHS))
-                Do Until code = ""
-                    line = URLDecode(RemoveNextArg(code, vbCrLf))
+                Do Until Code = ""
+                    line = URLDecode(RemoveNextArg(Code, vbCrLf))
                     frmMain.ExecuteStatement line
                 Loop
             End If
 
-        Case "molecules", "brilliants", "planets", "billboards"
+        Case "molecules", "brilliants", "planets" ', "billboards"
             If All.Exists(LCase(TypeName(RHS))) Then
-                code = All(LCase(TypeName(RHS)))
+                Code = All(LCase(TypeName(RHS)))
                 All.Remove LCase(TypeName(RHS))
-                Set o = NTNodes10.Deserialize(code, AppPath & App.EXEName & ".ocx")
+                Set o = NTNodes10.Deserialize(Code, AppPath & App.EXEName & ".ocx")
                 If o.Count > 0 Then
                     Dim m As Object
                     For Each m In o
@@ -82,7 +82,7 @@ Public Property Get Serialize()
 Attribute Serialize.VB_MemberFlags = "40"
 
     Serialize = "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
-    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    'Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
@@ -196,18 +196,18 @@ End Function
 '### also exposed in modScript private to modFactory.Execute ###
 '###############################################################
     
-Public Property Get NotLoaded() As BillboardTypes
-    NotLoaded = BillboardTypes.NotLoaded
-End Property
-Public Property Get CacheOnly() As BillboardTypes
-    CacheOnly = BillboardTypes.CacheOnly
-End Property
-Public Property Get HudPanel() As BillboardTypes
-    HudPanel = BillboardTypes.HudPanel
-End Property
-Public Property Get Beacon() As BillboardTypes
-    Beacon = BillboardTypes.Beacon
-End Property
+'Public Property Get NotLoaded() As BillboardTypes
+'    NotLoaded = BillboardTypes.NotLoaded
+'End Property
+'Public Property Get CacheOnly() As BillboardTypes
+'    CacheOnly = BillboardTypes.CacheOnly
+'End Property
+'Public Property Get HudPanel() As BillboardTypes
+'    HudPanel = BillboardTypes.HudPanel
+'End Property
+'Public Property Get Beacon() As BillboardTypes
+'    Beacon = BillboardTypes.Beacon
+'End Property
 
 Public Property Get Directed() As BrilliantTypes
     Directed = BrilliantTypes.Directed
@@ -252,9 +252,11 @@ End Property
 Public Property Get Ranged() As CollisionTypes
     Ranged = CollisionTypes.Ranged
 End Property
-Public Property Get Through() As CollisionTypes
-    Through = CollisionTypes.Through
+Public Property Get Contact() As CollisionTypes
+    Contact = CollisionTypes.Contact
 End Property
+
+
 Public Property Get Freely() As CollisionTypes
     Freely = CollisionTypes.Freely
 End Property

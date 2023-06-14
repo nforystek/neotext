@@ -65,32 +65,31 @@ Public Sub CleanUpProj()
     End If
     
     frmMain.ScriptControl1.Reset
+    
+    OnEvents.Clear
+    Set OnEvents = Nothing
 
     Set Camera = Nothing
-
     
     Molecules.Clear
     Set Molecules = Nothing
-    
 
     Planets.Clear
     Set Planets = Nothing
 
     Brilliants.Clear
-    Billboards.Clear
+    'Billboards.Clear
     Motions.Clear
 
     Set Brilliants = Nothing
-    Set Billboards = Nothing
+    'Set Billboards = Nothing
     Set Motions = Nothing
-
     
     OnEvents.Clear
     Set OnEvents = Nothing
     
     All.Clear
     Set All = Nothing
-
 
     Dim o As Long
     If LightCount > 0 Then
@@ -200,25 +199,32 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                 If (Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.z - p.Origin.z) > (testFar / 2)))) And p.PlateauHole Then
                     'draws hole type of plane if in range of the hole, else the infinite plane is used further down
     
-                    D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
-                    D3DXMatrixMultiply matPlane, matPlane, matPos
+                    If Not p.Follow Then
+                        D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
+                        D3DXMatrixMultiply matPlane, matPlane, matPos
+                    Else
+                        D3DXMatrixTranslation matPos, 0, 0, 0
+                        D3DXMatrixMultiply matPlane, matPlane, matPos
+                    End If
     
                     DDevice.SetTransform D3DTS_WORLD, matPlane
+                    If Not p.Honing Then
                     
-                    D3DXMatrixRotationX matPitch, p.Rotate.X
-                    D3DXMatrixMultiply matPlane, matPitch, matPlane
-    
-                    D3DXMatrixRotationY matYaw, p.Rotate.Y
-                    D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                    D3DXMatrixMultiply matPlane, matRoll, matPlane
+                        D3DXMatrixRotationX matPitch, p.Rotate.X
+                        D3DXMatrixMultiply matPlane, matPitch, matPlane
+        
+                        D3DXMatrixRotationY matYaw, p.Rotate.Y
+                        D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+                        D3DXMatrixRotationZ matRoll, p.Rotate.z
+                        D3DXMatrixMultiply matPlane, matRoll, matPlane
+                        
+                        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+                        D3DXMatrixMultiply matPlane, matScale, matPlane
+                
+                        DDevice.SetTransform D3DTS_WORLD, matPlane
+                    End If
                     
-                    D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
-                    D3DXMatrixMultiply matPlane, matScale, matPlane
-            
-                    DDevice.SetTransform D3DTS_WORLD, matPlane
-            
                     With p.Volume((p.Volume.Count / 3) + 1)
             
                         SetRenderBlends .Transparent, .Translucent
@@ -263,26 +269,31 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                 
                                 With p.Volume(1)
                                     
-                                    D3DXMatrixTranslation matPos, (p.Origin.X \ (testFar / 2)) * (testFar / 2) + X, _
-                                        (p.Origin.Y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
-                                    D3DXMatrixMultiply matPlane, matPlane, matPos
-                
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
-                    
-                                    D3DXMatrixRotationX matPitch, p.Rotate.X
-                                    D3DXMatrixMultiply matPlane, matPitch, matPlane
-    
-                                    D3DXMatrixRotationY matYaw, p.Rotate.Y
-                                    D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-                                    D3DXMatrixRotationZ matRoll, p.Rotate.z
-                                    D3DXMatrixMultiply matPlane, matRoll, matPlane
+                                    If Not p.Follow Then
+                                        D3DXMatrixTranslation matPos, (p.Origin.X \ (testFar / 2)) * (testFar / 2) + X, _
+                                            (p.Origin.Y \ (testFar / 2)) * (testFar / 2), (p.Origin.z \ (testFar / 2)) * (testFar / 2) + z
+                                        D3DXMatrixMultiply matPlane, matPlane, matPos
+                                    Else
+                                        D3DXMatrixTranslation matPos, 0, 0, 0
+                                        D3DXMatrixMultiply matPlane, matPlane, matPos
+                                    End If
                                     
-                                    D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
-                                    D3DXMatrixMultiply matPlane, matScale, matPlane
-                                            
                                     DDevice.SetTransform D3DTS_WORLD, matPlane
-            
+                                    If Not p.Honing Then
+                                        D3DXMatrixRotationX matPitch, p.Rotate.X
+                                        D3DXMatrixMultiply matPlane, matPitch, matPlane
+        
+                                        D3DXMatrixRotationY matYaw, p.Rotate.Y
+                                        D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+                                        D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                        D3DXMatrixMultiply matPlane, matRoll, matPlane
+                                        
+                                        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+                                        D3DXMatrixMultiply matPlane, matScale, matPlane
+                                                
+                                        DDevice.SetTransform D3DTS_WORLD, matPlane
+                                    End If
                                     SetRenderBlends .Transparent, .Translucent
                                     If Not (.Translucent Or .Transparent) Then
                                         DDevice.SetMaterial GenericMaterial
@@ -303,23 +314,30 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                         ElseIf (p.PlateauIsland Or p.PlateauDoughnut) Then
                         'draws island and doughnut stype plane where as no grid of them exists
     
-                            D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
-                            D3DXMatrixMultiply matPlane, matPlane, matPos
+                            If Not p.Follow Then
+                                D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.z
+                                D3DXMatrixMultiply matPlane, matPlane, matPos
+                            Else
+                                D3DXMatrixTranslation matPos, 0, 0, 0
+                                D3DXMatrixMultiply matPlane, matPlane, matPos
+                            End If
     
                             DDevice.SetTransform D3DTS_WORLD, matPlane
-                    
-                            D3DXMatrixRotationX matPitch, p.Rotate.X
-                            D3DXMatrixMultiply matPlane, matPitch, matPlane
-    
-                            D3DXMatrixRotationY matYaw, p.Rotate.Y
-                            D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-                            D3DXMatrixRotationZ matRoll, p.Rotate.z
-                            D3DXMatrixMultiply matPlane, matRoll, matPlane
+
+                            If Not p.Honing Then
+                                D3DXMatrixRotationX matPitch, p.Rotate.X
+                                D3DXMatrixMultiply matPlane, matPitch, matPlane
+        
+                                D3DXMatrixRotationY matYaw, p.Rotate.Y
+                                D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+                                D3DXMatrixRotationZ matRoll, p.Rotate.z
+                                D3DXMatrixMultiply matPlane, matRoll, matPlane
+                                
+                                D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+                                D3DXMatrixMultiply matPlane, matScale, matPlane
+                            End If
                             
-                            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
-                            D3DXMatrixMultiply matPlane, matScale, matPlane
-    
                             DDevice.SetTransform D3DTS_WORLD, matPlane
     
                             With p.Volume(1)
@@ -342,24 +360,31 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                     If (p.PlateauInfinite Or p.PlateauHole) Then
                     'draws a infinite stype plane, no escaping it
             
-                        D3DXMatrixTranslation matPos, ((Camera.Player.Origin.X - p.Origin.X) \ (testFar / 2)) * (testFar / 2), _
-                             (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
-                        D3DXMatrixMultiply matPlane, matPlane, matPos
+                        If Not p.Follow Then
+                            D3DXMatrixTranslation matPos, ((Camera.Player.Origin.X - p.Origin.X) \ (testFar / 2)) * (testFar / 2), _
+                                 (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.z - p.Origin.z) \ (testFar / 2)) * (testFar / 2)
+                            D3DXMatrixMultiply matPlane, matPlane, matPos
+                        Else
+                            D3DXMatrixTranslation matPos, 0, 0, 0
+                            D3DXMatrixMultiply matPlane, matPlane, matPos
+                        End If
                         
                         DDevice.SetTransform D3DTS_WORLD, matPlane
                     
-                        D3DXMatrixRotationX matPitch, p.Rotate.X
-                        D3DXMatrixMultiply matPlane, matPitch, matPlane
-    
-                        D3DXMatrixRotationY matYaw, p.Rotate.Y
-                        D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-                        D3DXMatrixRotationZ matRoll, p.Rotate.z
-                        D3DXMatrixMultiply matPlane, matRoll, matPlane
+                        If Not p.Honing Then
+                            D3DXMatrixRotationX matPitch, p.Rotate.X
+                            D3DXMatrixMultiply matPlane, matPitch, matPlane
+        
+                            D3DXMatrixRotationY matYaw, p.Rotate.Y
+                            D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+                            D3DXMatrixRotationZ matRoll, p.Rotate.z
+                            D3DXMatrixMultiply matPlane, matRoll, matPlane
+                            
+                            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+                            D3DXMatrixMultiply matPlane, matScale, matPlane
+                        End If
                         
-                        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
-                        D3DXMatrixMultiply matPlane, matScale, matPlane
-            
                         DDevice.SetTransform D3DTS_WORLD, matPlane
                 
                         With p.Volume(1)
@@ -408,31 +433,31 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
         D3DXMatrixIdentity matRoll
         D3DXMatrixIdentity matScale
         
-        If p.Follow Then
-    
+        If Not p.Follow Then
             D3DXMatrixTranslation matPos, -p.Origin.X, -p.Origin.Y, -p.Origin.z
             D3DXMatrixMultiply matPlane, matPlane, matPos
-    
         Else
-        
             D3DXMatrixTranslation matPos, 0, 0, 0
             D3DXMatrixMultiply matPlane, matPlane, matPos
-    
         End If
             
         DDevice.SetTransform D3DTS_WORLD, matPlane
-                    
-        D3DXMatrixRotationX matPitch, p.Rotate.X
-        D3DXMatrixMultiply matPlane, matPitch, matPlane
-    
-        D3DXMatrixRotationY matYaw, p.Rotate.Y
-        D3DXMatrixMultiply matPlane, matYaw, matPlane
-    
-        D3DXMatrixRotationZ matRoll, p.Rotate.z
-        D3DXMatrixMultiply matPlane, matRoll, matPlane
+                   
+        If Not p.Honing Then
         
-        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
-        D3DXMatrixMultiply matPlane, matScale, matPlane
+            D3DXMatrixRotationX matPitch, p.Rotate.X
+            D3DXMatrixMultiply matPlane, matPitch, matPlane
+        
+            D3DXMatrixRotationY matYaw, p.Rotate.Y
+            D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+            D3DXMatrixRotationZ matRoll, p.Rotate.z
+            D3DXMatrixMultiply matPlane, matRoll, matPlane
+            
+            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.z
+            D3DXMatrixMultiply matPlane, matScale, matPlane
+            
+        End If
     
         DDevice.SetTransform D3DTS_WORLD, matPlane
     
@@ -455,7 +480,6 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
            Else
                 DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
            End If
-
 
             DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR
             DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA

@@ -1008,7 +1008,8 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
     DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
-    '    If Billboards.Count > 0 Then
+    
+'    If Billboards.Count > 0 Then
 '
 '        Dim e As Billboard
 '

@@ -13,9 +13,9 @@ Public Function DistanceBetweenTwo3DPoints(p1 As D3DVECTOR, p2 As D3DVECTOR) As 
     
     tmpVector.X = p2.X - p1.X
     tmpVector.Y = p2.Y - p1.Y
-    tmpVector.Z = p2.Z - p1.Z
+    tmpVector.z = p2.z - p1.z
     
-    DistanceBetweenTwo3DPoints = Sqr(tmpVector.X * tmpVector.X + tmpVector.Y * tmpVector.Y + tmpVector.Z * tmpVector.Z)
+    DistanceBetweenTwo3DPoints = Sqr(tmpVector.X * tmpVector.X + tmpVector.Y * tmpVector.Y + tmpVector.z * tmpVector.z)
 
 End Function
 '############################################################################################################
@@ -45,12 +45,12 @@ Public Function RayIntersectPlane(Plane As D3DVECTOR4, PStart As D3DVECTOR, vDir
     
     q.X = PStart.X          'Q is a point and therefore it's W value is 1
     q.Y = PStart.Y
-    q.Z = PStart.Z
+    q.z = PStart.z
     q.W = 1
     
     v.X = vDir.X            'V is a vector and therefore it's W value is zero
     v.Y = vDir.Y
-    v.Z = vDir.Z
+    v.z = vDir.z
     v.W = 0
     
     planeVdot = D3DXVec4Dot(Plane, v)
@@ -63,7 +63,7 @@ Public Function RayIntersectPlane(Plane As D3DVECTOR4, PStart As D3DVECTOR, vDir
         'This is where the line intersects the plane
         VIntersectOut.X = Round(q.X + (t * v.X), 5)
         VIntersectOut.Y = Round(q.Y + (t * v.Y), 5)
-        VIntersectOut.Z = Round(q.Z + (t * v.Z), 5)
+        VIntersectOut.z = Round(q.z + (t * v.z), 5)
 
         RayIntersectPlane = True
     Else
@@ -116,17 +116,17 @@ Public Function PointInTriangle(V1 As D3DVECTOR, V2 As D3DVECTOR, V3 As D3DVECTO
     Dim ABSTriangleNormal As D3DVECTOR      'Absolute values of the above
     
     'Get TriangleNormal
-    TriangleNormal = GenerateTriangleNormal(V1, V2, V3)
+    TriangleNormal = PlaneNormal(V1, V2, V3)
 
     'What is the greatest absolute value
     ABSTriangleNormal.X = Abs(TriangleNormal.X)
     ABSTriangleNormal.Y = Abs(TriangleNormal.Y)
-    ABSTriangleNormal.Z = Abs(TriangleNormal.Z)
+    ABSTriangleNormal.z = Abs(TriangleNormal.z)
     
     'Discard the greatest absolute value and project onto the other
     'remaining planes.
     
-    If ABSTriangleNormal.X > ABSTriangleNormal.Y And ABSTriangleNormal.X > ABSTriangleNormal.Z Then
+    If ABSTriangleNormal.X > ABSTriangleNormal.Y And ABSTriangleNormal.X > ABSTriangleNormal.z Then
         
         Project3dvectorYZplane PointVertex, p
         Project3dvectorYZplane vertex1, V1
@@ -134,7 +134,7 @@ Public Function PointInTriangle(V1 As D3DVECTOR, V2 As D3DVECTOR, V3 As D3DVECTO
         Project3dvectorYZplane vertex3, V3
     
     Else
-        If (ABSTriangleNormal.Y > ABSTriangleNormal.X) And (ABSTriangleNormal.Y > ABSTriangleNormal.Z) Then
+        If (ABSTriangleNormal.Y > ABSTriangleNormal.X) And (ABSTriangleNormal.Y > ABSTriangleNormal.z) Then
             Project3dvectorXZplane PointVertex, p
             Project3dvectorXZplane vertex1, V1
             Project3dvectorXZplane vertex2, V2
@@ -184,12 +184,12 @@ Public Sub Project3dvectorXYplane(ByRef vout As D3DVECTOR2, vin As D3DVECTOR)
     vout.Y = vin.Y
 End Sub
 Public Sub Project3dvectorYZplane(ByRef vout As D3DVECTOR2, vin As D3DVECTOR)
-    vout.X = vin.Z
+    vout.X = vin.z
     vout.Y = vin.Y
 End Sub
 Public Sub Project3dvectorXZplane(ByRef vout As D3DVECTOR2, vin As D3DVECTOR)
     vout.X = vin.X
-    vout.Y = vin.Z
+    vout.Y = vin.z
 End Sub
 
 
@@ -209,24 +209,24 @@ Public Function Create4DPlaneVectorFromPoints(V1 As D3DVECTOR, V2 As D3DVECTOR, 
     Create4DPlaneVectorFromPoints.W = D3DXVec3Dot(pNormal, V1) * -1
     Create4DPlaneVectorFromPoints.X = pNormal.X
     Create4DPlaneVectorFromPoints.Y = pNormal.Y
-    Create4DPlaneVectorFromPoints.Z = pNormal.Z
+    Create4DPlaneVectorFromPoints.z = pNormal.z
     
 End Function
 
 'Written by someone named witchlord on the gamedev boards
 Sub VectorMatrixMultiply(ByRef vDest As D3DVECTOR, ByRef vSrc As D3DVECTOR, ByRef mat As D3DMATRIX)
     
-    Dim X As Single, Y As Single, Z As Single, W As Single
-    X = vSrc.X * mat.m11 + vSrc.Y * mat.m21 + vSrc.Z * mat.m31 + mat.m41
-    Y = vSrc.X * mat.m12 + vSrc.Y * mat.m22 + vSrc.Z * mat.m32 + mat.m42
-    Z = vSrc.X * mat.m13 + vSrc.Y * mat.m23 + vSrc.Z * mat.m33 + mat.m43
-    W = vSrc.X * mat.m14 + vSrc.Y * mat.m24 + vSrc.Z * mat.m34 + mat.m44
+    Dim X As Single, Y As Single, z As Single, W As Single
+    X = vSrc.X * mat.m11 + vSrc.Y * mat.m21 + vSrc.z * mat.m31 + mat.m41
+    Y = vSrc.X * mat.m12 + vSrc.Y * mat.m22 + vSrc.z * mat.m32 + mat.m42
+    z = vSrc.X * mat.m13 + vSrc.Y * mat.m23 + vSrc.z * mat.m33 + mat.m43
+    W = vSrc.X * mat.m14 + vSrc.Y * mat.m24 + vSrc.z * mat.m34 + mat.m44
 
-    If Abs(W) < Epsilon Then Exit Sub
+    If Abs(W) < epsilon Then Exit Sub
 
     vDest.X = X / W
     vDest.Y = Y / W
-    vDest.Z = Z / W
+    vDest.z = z / W
 End Sub
 
 'Thanks to Jack Hoxley. I've adapted it to work with DirectX 8
@@ -234,30 +234,30 @@ Public Sub TranslateMatrix(pMatrix As D3DMATRIX, pVector As D3DVECTOR)
   D3DXMatrixIdentity pMatrix
   pMatrix.m41 = pVector.X
   pMatrix.m42 = pVector.Y
-  pMatrix.m43 = pVector.Z
+  pMatrix.m43 = pVector.z
 End Sub
 
-Public Function GenerateTriangleNormal(p0 As D3DVECTOR, p1 As D3DVECTOR, p2 As D3DVECTOR) As D3DVECTOR
-'Variables required
-    Dim v01 As D3DVECTOR        'Vector from points 0 to 1
-    Dim v02 As D3DVECTOR        'Vector from points 0 to 2
-    Dim vNorm As D3DVECTOR      'The final vector
-
-'Create the vectors from points 0 to 1 and 0 to 2
-    D3DXVec3Subtract v01, p1, p0
-    D3DXVec3Subtract v02, p2, p0
-
-'Get the cross product
-    D3DXVec3Cross vNorm, v01, v02
-
-' Normalize this vector
-    D3DXVec3Normalize vNorm, vNorm
-
-' Return the value
-    GenerateTriangleNormal.X = vNorm.X
-    GenerateTriangleNormal.Y = vNorm.Y
-    GenerateTriangleNormal.Z = vNorm.Z
-
-End Function
+'Public Function GenerateTriangleNormal(p0 As D3DVECTOR, p1 As D3DVECTOR, p2 As D3DVECTOR) As D3DVECTOR
+''Variables required
+'    Dim v01 As D3DVECTOR        'Vector from points 0 to 1
+'    Dim v02 As D3DVECTOR        'Vector from points 0 to 2
+'    Dim vNorm As D3DVECTOR      'The final vector
+'
+''Create the vectors from points 0 to 1 and 0 to 2
+'    D3DXVec3Subtract v01, p1, p0
+'    D3DXVec3Subtract v02, p2, p0
+'
+''Get the cross product
+'    D3DXVec3Cross vNorm, v01, v02
+'
+'' Normalize this vector
+'    D3DXVec3Normalize vNorm, vNorm
+'
+'' Return the value
+'    GenerateTriangleNormal.X = vNorm.X
+'    GenerateTriangleNormal.Y = vNorm.Y
+'    GenerateTriangleNormal.z = vNorm.z
+'
+'End Function
 
 

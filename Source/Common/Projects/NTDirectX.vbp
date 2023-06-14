@@ -28,7 +28,6 @@ Module=modMaths; NTDirectX\modMaths.bas
 Class=Include; NTDirectX\Include.cls
 Class=Molecule; NTDirectX\Molecule.cls
 Class=Brilliant; NTDirectX\Brilliant.cls
-Class=Billboards; NTDirectX\Billboards.cls
 Module=mod3DObj; NTDirectX\mod3DObj.bas
 Class=Point; NTDirectX\Point.cls
 Class=Planet; NTDirectX\Planet.cls
@@ -38,16 +37,17 @@ Class=Molecules; NTDirectX\Molecules.cls
 Class=Matter; NTDirectX\Matter.cls
 Class=Volume; NTDirectX\Volume.cls
 Class=Points; NTDirectX\Points.cls
-Class=Ranges; NTDirectX\Ranges.cls
 Class=Orbits; NTDirectX\Orbits.cls
-Class=Billboard; NTDirectX\Billboard.cls
 Class=Motion; NTDirectX\Motion.cls
 Class=Motions; NTDirectX\Motions.cls
 Class=Brilliants; NTDirectX\Brilliants.cls
 Class=Planets; NTDirectX\Planets.cls
 Module=modColors; NTDirectX\modColors.bas
 Class=Coord; NTDirectX\Coord.cls
+Class=OnEvent; NTDirectX\OnEvent.cls
+Class=OnEvents; NTDirectX\OnEvents.cls
 ResFile32="NTDirectX\NTDirectX.RES"
+Module=modMove; NTDirectX\modMove.bas
 IconForm="frmMain"
 Startup="(None)"
 HelpFile=""
@@ -89,4 +89,4 @@ DebugStartupComponent=Macroscopic
 AutoRefresh=1
 
 [Neotext]
-CompCond="modCmds=-1:modDecs=-1:modTexts=-1:modCommon=-1:modGraphics=-1:modFolders=-1:modMain=-1:modFactory=-1:modParse=-1:modDoTasks=-1:modGeometry=-1:modGuid=-1:modProj=-1:modMaths=-1:mod3DObj=-1:modColors=-1"
+CompCond="modCmds=-1:modDecs=-1:modTexts=-1:modCommon=-1:modGraphics=-1:modFolders=-1:modMain=-1:modFactory=-1:modParse=-1:modDoTasks=-1:modGeometry=-1:modGuid=-1:modProj=-1:modMaths=-1:mod3DObj=-1:modColors=-1:modMove=-1"

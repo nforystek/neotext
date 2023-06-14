@@ -130,6 +130,13 @@ Public Property Set Color(ByRef RHS As Color)
     Set pColor = RHS
 End Property
 
+Public Property Get Motions() As Motions
+    Set Motions = Molecule.Motions
+End Property
+Public Property Set Motions(ByRef RHS As Motions)
+    Set Molecule.Motions = RHS
+End Property
+
 Public Property Get Parent() As Orbit
     Set Parent = pParent
 End Property
@@ -355,6 +362,16 @@ Public Property Get Form() As Long
 End Property
 Public Property Let Form(ByRef RHS As Long)
     pForm = RHS
+'    Select Case pForm
+'        Case PlanetTypes.Plateau
+'
+'        Case PlanetTypes.Screen
+'
+'        Case PlanetTypes.Shade
+'
+'        Case PlanetTypes.World
+'
+'    End Select
     If (pFileIndex(0) > 0) Then RebuildPlanet
 End Property
 
@@ -676,6 +693,14 @@ Private Sub Class_Terminate()
 
     Set pColor = Nothing
 End Sub
+
+Private Property Set Molecule_Motions(RHS As Motions)
+    Set Molecule.Motions = RHS
+End Property
+
+Private Property Get Molecule_Motions() As Motions
+    Set Molecule_Motions = Molecule.Motions
+End Property
 
 Private Property Let Molecule_FileName(ByVal RHS As String)
     Molecule.FileName = RHS

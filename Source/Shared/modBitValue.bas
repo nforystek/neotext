@@ -51,6 +51,8 @@ Public Const Bit30 = &H10000000
 Public Const Bit31 = &H20000000
 Public Const Bit32 = &H40000000
 
+Public Const BitReg = 4
+
 Public Const Num_128 = &H80
 Public Const Num_255 = &HFF&
 Public Const Num_256 = &H100&
@@ -119,31 +121,50 @@ Private Function FindBit(ByVal Index As Variant) As Variant
 End Function
 '########################################################################################
 
-Public Function ByteBound(Optional ByVal UnSigned As Boolean = False) As Byte
-    ByteBound = Num_255
+Public Function ByteBound(Optional ByVal UnSigned As Boolean = False) As Variant
+
+    ByteBound = (BitReg ^ BitReg)
+    If Not UnSigned Then ByteBound = (ByteBound - 1)
+    
+    'ByteBound = Num_255
 End Function
-Public Function IntBound(Optional ByVal UnSigned As Boolean = False) As Long
+Public Function IntBound(Optional ByVal UnSigned As Boolean = False) As Variant
     If UnSigned Then
-        IntBound = Num_65535
+        IntBound = (((BitReg * BitReg) ^ BitReg) - 1)
     Else
-        IntBound = 32767
+        IntBound = ((((BitReg + BitReg) * BitReg) ^ 3) - 1)
     End If
+    
+'    If UnSigned Then
+'        IntBound = Num_65535
+'    Else
+'        IntBound = 32767
+'    End If
 End Function
-Public Function LongBound(Optional ByVal UnSigned As Boolean = False) As Double
+Public Function LongBound(Optional ByVal UnSigned As Boolean = False) As Variant
+
     If UnSigned Then
-        LongBound = CDbl((VBA.Round(CDbl((CDbl(2147483647) * CDbl(2)) / Num_285212672), 0) * Num_285212672))
+        LongBound = ((BitReg ^ BitReg ^ BitReg) - ((BitReg * BitReg * BitReg) ^ BitReg))
     Else
-        LongBound = CDbl(2147483647)
+        LongBound = (((BitReg ^ BitReg ^ BitReg) / 2) - 1)
     End If
+
 End Function
 Public Function HighBound(Optional ByVal UnSigned As Boolean = False) As Variant
+
     If UnSigned Then
-        HighBound = "600000000000000"
+        HighBound = CStr(CDec(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDec(2) * CDec(3.2768))
     Else
-        HighBound = CDec("92233723685477")
+        HighBound = ((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)
     End If
+
 End Function
 
+Public Function CurBound(Optional ByVal UnSigned As Boolean = False) As Variant
+
+    CurBound = ((((BitReg ^ BitReg) * ((BitReg ^ BitReg) ^ BitReg)) * (BitReg ^ BitReg)) ^ 2)
+
+End Function
 '########################################################################################
 Public Property Let Bit(ByRef This As Variant, ByVal Index As Variant, ByRef Value As Boolean)
     Index = FindBit(Index)

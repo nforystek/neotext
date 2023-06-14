@@ -14,12 +14,12 @@ Global All As New NTNodes10.Collection
 Global Brilliants As New Brilliants
 Global Molecules As New Molecules
 
-Global Billboards As New Billboards
+'Global Billboards As New Billboards
 Global Planets As New Planets
 
 Global Motions As New Motions
 
-Global OnEvents As New NTNodes10.Collection
+Global OnEvents As New OnEvents
 Global Bindings As New Bindings
 Global Camera As New Camera
 
@@ -94,9 +94,9 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
         inLine = Mid(inLine, 2)
     Loop
     Select Case LCase(inWord)
-        Case "oninrange", "onoutrange", "oncollide"
+        Case "oninrange", "onoutrange", "onrange", "oncontact", "oncollide", "onevent", "range", "ranged", "contact"
             ParseReservedWord = 1
-        Case "molecule", "method", "brilliant", "serialize", "deserialize", "motion", "billboard", "planet", "frame", "second", "millis"
+        Case "molecule", "method", "brilliant", "serialize", "deserialize", "motion", "billboard", "planet", "frame", "second", "millis", "motion"
             ParseReservedWord = 3
         Case "bindings", "camera"
             ParseReservedWord = -3
@@ -209,7 +209,7 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                                     End If
                                 Next
                                 
-                            Case "molecules", "brilliants", "planets", "billboards", "camera", "bindings"
+                            Case "molecules", "brilliants", "planets", "camera", "bindings" ', "billboards"
                                 All.Add "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf & child.xml & vbCrLf & "</Serial>" & vbCrLf, Include.SafeKey(child.baseName)
                                 retval = retval & "Set Include.Serialize = " & Include.SafeKey(child.baseName) & vbCrLf
 
@@ -254,7 +254,7 @@ Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt A
     
                 retval = retval & "Serialize = Replace(Serialize,""  <Variables>"" & vbCrLf & ""  </Variables>"","""")" & vbCrLf
                 retval = retval & "Serialize = Replace(Serialize,""  <Bindings>"" & vbCrLf & "" </Bindings>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Billboards>"" & vbCrLf & ""  </Billboards>"","""")" & vbCrLf
+                'retval = retval & "Serialize = Replace(Serialize,""  <Billboards>"" & vbCrLf & ""  </Billboards>"","""")" & vbCrLf
                 retval = retval & "Serialize = Replace(Serialize,""  <Planets>"" & vbCrLf & ""  </Planets>"","""")" & vbCrLf
                 retval = retval & "Serialize = Replace(Serialize,""  <Brilliants>"" & vbCrLf & ""  </Brilliants>"","""")" & vbCrLf
                 retval = retval & "Serialize = Replace(Serialize,""  <Molecules>"" & vbCrLf & ""  </Molecules>"","""")" & vbCrLf
@@ -332,10 +332,10 @@ End Sub
 
 Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String)
 
-    Debug.Print "Event: " & inLine & " Block: " & inBlock;
-
+    'Debug.Print "Event: " & inLine & " Block: " & inBlock;
     
     LastCall = inLine & " = " & inBlock
+    
     Dim inEvent As String
     Do While IsAlphaNumeric(Left(inLine, 1))
         inEvent = inEvent & Left(inLine, 1)
@@ -344,12 +344,30 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
     inBlock = ParseBracketOff(inBlock, "[", "]")
     Dim inName As String
     inName = ParseQuotedArg(inBlock, "<", ">", False)
-    Debug.Print " Name(s): " & inName
+    'Debug.Print " Name(s): " & inName
     inBlock = ParseInWith(inBlock, inWith)
     inBlock = """" & Replace(Replace(inBlock, """", """"""), vbCrLf, """ & vbCrLf & """) & """"
-    frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = Nothing"
-    If inName <> "" Then frmMain.ExecuteStatement inWith & "." & inEvent & ".ApplyTo = """ & inName & """"
-    frmMain.ExecuteStatement inWith & "." & inEvent & ".Code = " & inBlock
+    
+    frmMain.ExecuteStatement "OnEvents.Add CreateObjectPrivate(""OnEvent"")"
+    
+    Select Case inEvent
+        Case "onevent"
+            inLine = LCase(Trim(RemoveQuotedArg(inLine, "<", ">")))
+            Select Case inLine
+                Case "range", "ranged", "onrange", "oninrange"
+                    frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Ranged"
+                Case "collide", "contact", "oncontact"
+                    frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Contact"
+            End Select
+        Case "range", "ranged", "onrange", "oninrange"
+            frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Ranged"
+        Case "collide", "contact", "oncontact"
+            frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Contact"
+    End Select
+    
+    frmMain.ExecuteStatement "Set OnEvents.Item(OnEvents.Count).ApplyTo = " & inWith
+    frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).Constraint = """ & inName & """"
+    frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).Code = " & inBlock
 End Sub
 
 Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, ByVal inWith As String) As String

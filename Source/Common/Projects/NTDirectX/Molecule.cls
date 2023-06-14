@@ -20,6 +20,7 @@ Private pMolecules As Molecules
 Private pParent As Molecule
 Private pFileName As String
 Private pKey As String
+
 Private pSerialize As Boolean
 
 
@@ -36,6 +37,13 @@ Public Property Get Parent() As Molecule
 End Property
 Public Property Set Parent(ByRef RHS As Molecule)
     Set pParent = RHS
+End Property
+
+Public Property Get Motions() As Motions
+    Set Motions = Orbit.Motions
+End Property
+Public Property Set Motions(ByRef RHS As Motions)
+    Set Orbit.Motions = RHS
 End Property
 
 'Public Property Get Parent() As Orbit
@@ -201,6 +209,14 @@ Friend Sub Class_Terminate()
     'Set Orbit = Nothing
     'vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
+
+Private Property Set Orbit_Motions(RHS As Motions)
+    Set Orbit.Motions = RHS
+End Property
+
+Private Property Get Orbit_Motions() As Motions
+    Set Orbit_Motions = Orbit.Motions
+End Property
 
 Private Property Set Orbit_Relative(RHS As Orbit)
     Set Orbit.Relative = RHS

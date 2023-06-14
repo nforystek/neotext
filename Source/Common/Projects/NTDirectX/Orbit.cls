@@ -24,7 +24,36 @@ Public Visible As Boolean
 Private pParent As Orbit
 Private pRelative As Orbit
 Private pAbsolute As Orbit
+
+Private pMotions As Motions
+
 Private pSerialize As Boolean
+
+Public Property Get Motions() As Motions
+    Set Motions = pMotions
+End Property
+Public Property Set Motions(ByRef RHS As Motions)
+    Set pMotions = RHS
+End Property
+'Public Property Get Clone() As Orbit
+'    Set Clone = New Orbit
+'    With Clone
+'        .Origin = pOrigin
+'        .Offset = pOffset
+'        .Rotate = pRotate
+'        .Scaled = pScaled
+'        .Ranges = pRanges
+'        .Visible = visble
+'        .Parent = pParent
+'        If Not .Relative Is Nothing Then
+'
+'        End If
+'        If Not .Absolute Is Nothing Then
+'
+'        End If
+'        .Serialize = pSerialize
+'    End With
+'End Property
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -161,6 +190,11 @@ End Sub
 
 Friend Sub Class_Terminate()
     Stats_Orbit_Count = Stats_Orbit_Count - 1
+    
+    If Not pMotions Is Nothing Then
+        pMotions.Clear
+        Set pMotions = Nothing
+    End If
     
     Set pOrigin = Nothing
     Set pOffset = Nothing

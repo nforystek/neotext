@@ -191,6 +191,48 @@ Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir A
     
 End Function
 
+Public Function TriangleIntersect(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef t1p3 As Point, ByRef t2p1 As Point, ByRef t2p2 As Point, ByRef t2p3 As Point) As Point
+    'Debug.Print TriangleIntersect(MakePoint(-5, 0, 0), MakePoint(5, 0, -5), MakePoint(5, 0, 5), MakePoint(-2.5, 2.5, 0), MakePoint(2.5, 2.5, 0), MakePoint(0, -2.5, 0))
+    'compute another way of representing triangles, the center, normal and side lengths
+    Dim t1n As New Point
+    Dim t2n As New Point
+    Dim t1a As New Point
+    Dim t2a As New Point
+    Dim t1l As New Point
+    Dim t2l As New Point
+    
+    t1n = TriangleNormal(t1p1, t1p2, t1p3)
+    t2n = TriangleNormal(t2p1, t2p2, t2p3)
+
+    Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
+
+'    t1n = PlaneNormal(t1p1, t1p2, t1p3)
+'    t2n = PlaneNormal(t2p1, t2p2, t2p3)
+'    Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
+    
+    t1a = TriangleAxii(t1p1, t1p2, t1p3)
+    t2a = TriangleAxii(t2p1, t2p2, t2p3)
+    
+    Debug.Print t1a; t2a
+    
+    t1l.X = DistanceEx(t1p1, t1p2)
+    t1l.Y = DistanceEx(t1p2, t1p3)
+    t1l.z = DistanceEx(t1p3, t1p1)
+    
+    t2l.X = DistanceEx(t2p1, t2p2)
+    t2l.Y = DistanceEx(t2p2, t2p3)
+    t2l.z = DistanceEx(t2p3, t2p1)
+     
+    Debug.Print t1l; t2l
+       
+    
+    Set TriangleIntersect = New Point
+    With TriangleIntersect
+
+
+    End With
+End Function
+
 Public Function RandomPositive(ByVal LowerBound As Long, ByVal UpperBound As Long) As Single
     RandomPositive = CSng((UpperBound - LowerBound + 1) * Rnd + LowerBound)
 End Function
@@ -315,6 +357,24 @@ Public Function TriangleOffset(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As
     End With
 End Function
 
+Public Function TriangleLowestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
+    Set TriangleLowestOfAll = New Point
+    With TriangleLowestOfAll
+        .X = Least(p1.X, p2.X, p3.X)
+        .Y = Least(p1.Y, p2.Y, p3.Y)
+        .z = Least(p1.z, p2.z, p3.z)
+    End With
+End Function
+
+Public Function TriangleLargestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
+    Set TriangleLargestOfAll = New Point
+    With TriangleLargestOfAll
+        .X = Large(p1.X, p2.X, p3.X)
+        .Y = Large(p1.Y, p2.Y, p3.Y)
+        .z = Large(p1.z, p2.z, p3.z)
+    End With
+End Function
+
 Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     Set TriangleAxii = New Point
     With TriangleAxii
@@ -326,17 +386,47 @@ Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As P
     End With
 End Function
 
+'Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+'    Set TriangleNormal = New Point
+'    Dim o As Point
+'    Dim d As Single
+'    With TriangleNormal
+'        Set o = TriangleDisplace(v0, V1, V2)
+'        d = (o.X + o.Y + o.z)
+'        If (d <> 0) Then
+'            .z = (((o.X + o.Y) - o.z) / d)
+'            .X = (((o.Y + o.z) - o.X) / d)
+'            .Y = (((o.z + o.X) - o.Y) / d)
+'        End If
+'    End With
+'End Function
+
+'Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+'    Set TriangleNormal = New Point
+'    Dim o As Point
+'    Dim d As Single
+'    With TriangleNormal
+'        Set o = TriangleDisplace(v0, V1, V2)
+'        d = (o.X + o.Y + o.z)
+'        If (d <> 0) Then
+'            .z = (((o.X + o.Y) - o.z) / d)
+'            .X = (((o.Y + o.z) - o.X) / d)
+'            .Y = (((o.z + o.X) - o.Y) / d)
+'        End If
+'    End With
+'End Function
+
 Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
     Set TriangleNormal = New Point
     Dim o As Point
     Dim d As Single
     With TriangleNormal
         Set o = TriangleDisplace(v0, V1, V2)
-        d = (o.X + o.Y + o.z)
-        If (d > 0) Then
-            .z = (((o.X + o.Y) - o.z) / d)
-            .X = (((o.Y + o.z) - o.X) / d)
-            .Y = (((o.z + o.X) - o.Y) / d)
+        d = (Abs(o.X) + Abs(o.Y) + Abs(o.z))
+        If (d <> 0) Then
+            .z = (((Abs(o.X) + Abs(o.Y)) - Abs(o.z)) / d)
+            .X = (((Abs(o.Y) + Abs(o.z)) - Abs(o.X)) / d)
+            .Y = (((Abs(o.z) + Abs(o.X)) - Abs(o.Y)) / d)
         End If
     End With
 End Function
@@ -1303,12 +1393,18 @@ End Function
 Public Function VectorIsNormal(ByRef p1 As Point) As Boolean
     'returns if a point provided is normalized, to the best of ability
     VectorIsNormal = (Round(Abs(p1.X) + Abs(p1.Y) + Abs(p1.z), 0) = 1) 'first kind is the absolute of all values equals one
-    VectorIsNormal = VectorIsNormal Or (DistanceEx(MakePoint(0, 0, 0), p1) = 1) 'another is the total length of vector is one
+    If VectorIsNormal Then Exit Function
+    VectorIsNormal = (DistanceEx(MakePoint(0, 0, 0), p1) = 1)  'another is the total length of vector is one
+    If VectorIsNormal Then Exit Function
     'another is if any value exists non zero as well as adding up in any non specific arrangement cancels to zero, as has one
-    VectorIsNormal = VectorIsNormal Or ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (( _
+    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (( _
         ((p1.X + p1.Y + p1.z) = 0) Or ((p1.Y + p1.z + p1.X) = 0) Or ((p1.z + p1.X + p1.Y) = 0) Or _
         ((p1.X + p1.z + p1.Y) = 0) Or ((p1.z + p1.Y + p1.X) = 0) Or ((p1.Y + p1.X + p1.z) = 0) _
         )))
+    If VectorIsNormal Then Exit Function
+    'triangle's normal, only the sides are expressed upon each axis
+    VectorIsNormal = ((((p1.X - p1.Y) + p1.z) + ((p1.Y - p1.z) + p1.X) + ((p1.z - p1.X) + p1.Y)) = 1)
+    If VectorIsNormal Then Exit Function
     Dim tmp As Single
     'another is a reflection test and check if it falls with in -1 to 1 for triangle normals
     'reflection is 27 groups of three arithmitic (-1+(2-3)) and by the third group, the groups
@@ -1323,41 +1419,26 @@ Public Function VectorIsNormal(ByRef p1 As Point) As Boolean
         ((-p1.Y + (p1.X - p1.z)) + ((-p1.X + (p1.z - p1.Y)) - (-p1.z + (p1.Y - p1.X))) - _
         (-p1.X + (p1.z - p1.Y)) + ((-p1.z + (p1.Y - p1.X)) - (-p1.Y + (p1.X - p1.z))))))
         '9 lines, 27 groups, 81 values, full circle, the first value (-negative, plus (second minus third))
-    VectorIsNormal = VectorIsNormal Or ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (tmp >= -1 And tmp <= 1))
+    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (tmp >= -1 And tmp <= 1))
 End Function
 
-'Public Function AbsoluteDecimal(ByVal n As Single) As Single
-'    If n <> 0 Then
-'        AbsoluteDecimal = ((n * n) / ((n * 0.5) * (n * 0.5)))
-'        AbsoluteDecimal = (((AbsoluteDecimal * AbsoluteDecimal) * 2) + AbsoluteDecimal)
-'        AbsoluteDecimal = (Abs(n) - (-((n - AbsoluteDecimal) + ((n * -1) - AbsoluteDecimal)) / 2)) * AbsoluteFactor(n)
-'    End If
-'End Function
-'Public Function AbsoluteFactor(ByVal n As Single) As Single
-'    AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)
-'End Function
-'Public Function AbsoluteWhole(ByVal n As Single) As Single
-'    AbsoluteWhole = n - AbsoluteValue(AbsoluteDecimal(n)) * AbsoluteFactor(n)
-'End Function
-'Public Function AbsoluteValue(ByRef n As Single) As Single
-'    AbsoluteValue = (-((-(n * -1) * n) ^ (1 / 2) * -1))
-'End Function
-
-
+Public Function AbsoluteFactor(ByVal n As Single) As Single
+    'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
+    AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)
+End Function
 
 Public Function AbsoluteValue(ByRef n As Single) As Single
     'same as abs(), returns a number as positive quantified
     AbsoluteValue = (-((-(n * -1) * n) ^ (1 / 2) * -1))
 End Function
 
-
 Public Function AbsoluteWhole(ByRef n As Single) As Single
-    'returns only the value to the left of a decimal number
+    'returns only the digits to the left of a decimal in any numerical
     AbsoluteWhole = (n \ 1)
 End Function
 
 Public Function AbsoluteDecimal(ByRef n As Single) As Single
-    'returns only the value to the right of a decimal number
+    'returns only the digits to the right of a decimal in any numerical
     AbsoluteDecimal = (n - AbsoluteWhole(n))
 End Function
 

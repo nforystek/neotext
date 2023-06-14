@@ -122,9 +122,10 @@ Public Sub Startup()
         .AddObject "Motions", modParse.Motions, True
         .AddObject "Brilliants", modParse.Brilliants, True
         .AddObject "Molecules", modParse.Molecules, True
-        .AddObject "Billboards", modParse.Billboards, True
+'        .AddObject "Billboards", modParse.Billboards, True
         .AddObject "Bindings", modParse.Bindings, True
         .AddObject "Planets", modParse.Planets, True
+        .AddObject "OnEvents", modParse.OnEvents, True
     
     End With
 End Sub
@@ -156,10 +157,10 @@ Public Function Serialize() As String
     End With
 End Function
 
-Public Sub AddCode(ByVal code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
+Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
     With ScriptControl1
-        .AddCode code
-        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & code
+        .AddCode Code
+        If .Error.number <> 0 Then Err.Raise .Error.number, source, .Error.description & vbCrLf & "Line Number: " & LineNumber & " of sniplet; " & vbCrLf & Code
     End With
 End Sub
 

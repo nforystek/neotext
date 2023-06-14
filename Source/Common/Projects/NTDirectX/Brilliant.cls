@@ -63,6 +63,13 @@ Public Property Let Key(ByVal RHS As String)
     End If
 End Property
 
+Public Property Get Motions() As Motions
+    Set Motions = Orbit.Motions
+End Property
+Public Property Set Motions(ByRef RHS As Motions)
+    Set Orbit.Motions = RHS
+End Property
+
 Public Property Get Parent() As Orbit
     Set Parent = Orbit.Parent
 End Property
@@ -249,6 +256,14 @@ Private Sub Class_Terminate()
     'Set Orbit = Nothing
     vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
+
+Private Property Set Orbit_Motions(RHS As Motions)
+    Set Orbit.Motions = RHS
+End Property
+
+Private Property Get Orbit_Motions() As Motions
+    Set Orbit_Motions = Orbit.Motions
+End Property
 
 Private Property Set Orbit_Relative(RHS As Orbit)
     Set Orbit.Relative = RHS

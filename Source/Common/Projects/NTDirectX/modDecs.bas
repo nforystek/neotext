@@ -6,11 +6,15 @@ Option Explicit
 
 Option Compare Binary
 
+Public Enum EventTypes
+    Ranged = 1 'calls oninrange events
+    Contact = 2 'calls oncollide events
+End Enum
 
 Public Enum CollisionTypes
     None = 0 'nothing, also hidden objs
     Ranged = 1 'calls oninrange events
-    Through = 2 'calls oncollide events
+    Contact = 2 'calls oncollide events
     Freely = 4 'able climb and stayup
     Gravity = 8 'rock gravity with all
     Curbing = 16 'upon move, predicts
@@ -34,12 +38,12 @@ Public Enum BrilliantTypes
     Spot = 2
 End Enum
 
-Public Enum BillboardTypes
-    NotLoaded = 0
-    CacheOnly = 1
-    HudPanel = 2
-    Beacon = 4
-End Enum
+'Public Enum BillboardTypes
+'    NotLoaded = 0
+'    CacheOnly = 1
+'    HudPanel = 2
+'    Beacon = 4
+'End Enum
 
 Public Enum ControllerModes
     Visual = 0 'no mouse conduct
@@ -161,21 +165,23 @@ Public Stats_Points_Count As Long
 Public Stats_Range_Count As Long
 Public Stats_Ranges_Count As Long
 Public Stats_Volume_Count As Long
+Public Stats_OnEvent_Count As Long
+Public Stats_OnEvents_Count As Long
 
 Public Function GetStats() As String
     GetStats = "Frames per second: " & FPSRate & ", Elapse per frame: " & FPSElapse & vbCrLf & _
-        "Object Counts: " & vbCrLf & "    Billboard: " & Stats_Billboard_Count & ":" & Billboards.Count & ", " & _
-        "Billboards: " & Stats_Billboards_Count & ", " & "Bindings: " & Stats_Bindings_Count & ", " & _
+        "Object Counts: " & vbCrLf & "    Bindings: " & Stats_Bindings_Count & ", " & _
         "Brilliant: " & Stats_Brilliant_Count & ":" & Brilliants.Count & ", " & "Brilliants: " & Stats_Brilliants_Count & ", " & _
         "Camera: " & Stats_Camera_Count & ", " & "Color: " & Stats_Color_Count & ", " & _
         "Coord: " & Stats_Coord_Count & vbCrLf & "    Include: " & Stats_Include_Count & ", " & _
         "Matter: " & Stats_Matter_Count & ", " & "Molecule: " & Stats_Molecule_Count & ":" & Molecules.Count & ", " & _
         "Molecules: " & Stats_Molecules_Count & ", " & "Motion: " & Stats_Motion_Count & ", " & _
-        "Motions: " & Stats_Motions_Count & ", " & "Orbit: " & Stats_Orbit_Count & ", " & _
-        "Orbits: " & Stats_Orbits_Count & vbCrLf & "    Planet: " & Stats_Planet_Count & ":" & Planets.Count & ", " & _
+        "Motions: " & Stats_Motions_Count & vbCrLf & "    Orbit: " & Stats_Orbit_Count & ", " & _
+        "Orbits: " & Stats_Orbits_Count & ", " & "Planet: " & Stats_Planet_Count & ":" & Planets.Count & ", " & _
         "Planets: " & Stats_Planets_Count & ", " & "Point: " & Stats_Point_Count & ", " & _
-        "Points: " & Stats_Points_Count & ", " & "Range: " & Stats_Range_Count & ", " & _
-        "Ranges: " & Stats_Ranges_Count & ", " & "Volume: " & Stats_Volume_Count & vbCrLf & _
+        "Points: " & Stats_Points_Count & vbCrLf & "    Range: " & Stats_Range_Count & ", " & _
+        "Ranges: " & Stats_Ranges_Count & ", " & "Volume: " & Stats_Volume_Count & ", " & _
+        "OnEvent: " & Stats_OnEvent_Count & ", " & "OnEvents: " & Stats_OnEvents_Count & vbCrLf & _
         "Array Counts: " & vbCrLf & _
         "    TriangleCount: " & TriangleCount & ", ObjectCount: " & ObjectCount & vbCrLf & _
         "    LightCount: " & LightCount & ", FileCount: " & FileCount
@@ -637,7 +643,7 @@ End Sub
 '    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
 '    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
-'    Set vn = TriangleNormal(MakePoint(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+'    Set vn = PlaneNormal(MakePoint(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 '                            MakePoint(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 '                            MakePoint(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 '    Data(Index + 0).NX = vn.X: Data(Index + 0).NY = vn.Y: Data(Index + 0).Nz = vn.Z
@@ -650,7 +656,7 @@ End Sub
 '    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 '    Data(Index + 5) = CreateVertex(P4.X, P4.Y, P4.Z, 0, 0, 0, 0, 0)
-'    vn = TriangleNormal(MakePoint(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+'    vn = PlaneNormal(MakePoint(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 '                            MakePoint(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 '                            MakePoint(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 '    Data(Index + 3).NX = vn.X: Data(Index + 3).NY = vn.Y: Data(Index + 3).Nz = vn.Z
@@ -718,7 +724,7 @@ End Sub
 '                Data(start + i + 0) = CreateVertex(intX2, 0, intY2, 0, 0, 0, 0, dist2)
 '                Data(start + i + 1) = CreateVertex(intX1, 0, intY1, 0, 0, 0, dist1, dist4)
 '                Data(start + i + 2) = CreateVertex(intX4, 0, intY4, 0, 0, 0, dist3, 0)
-'                vn = TriangleNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
+'                vn = PlaneNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
 '                                    MakeVector(Data(start + i + 1).X, Data(start + i + 1).Y, Data(start + i + 1).Z), _
 '                                    MakeVector(Data(start + i + 2).X, Data(start + i + 2).Y, Data(start + i + 2).Z))
 '                Data(start + i + 0).NX = vn.X: Data(start + i + 0).NY = vn.Y: Data(start + i + 0).Nz = vn.Z
@@ -733,7 +739,7 @@ End Sub
 '                Data(start + i + 3) = CreateVertex(intX2, 0, intY2, 0, 0, 0, 0, dist2)
 '                Data(start + i + 4) = CreateVertex(intX4, 0, intY4, 0, 0, 0, dist3, 0)
 '                Data(start + i + 5) = CreateVertex(intX3, 0, intY3, 0, 0, 0, 0, 0)
-'                vn = TriangleNormal(MakeVector(Data(start + i + 3).X, Data(start + i + 3).Y, Data(start + i + 3).Z), _
+'                vn = PlaneNormal(MakeVector(Data(start + i + 3).X, Data(start + i + 3).Y, Data(start + i + 3).Z), _
 '                                    MakeVector(Data(start + i + 4).X, Data(start + i + 4).Y, Data(start + i + 4).Z), _
 '                                    MakeVector(Data(start + i + 5).X, Data(start + i + 5).Y, Data(start + i + 5).Z))
 '                Data(start + i + 3).NX = vn.X: Data(start + i + 3).NY = vn.Y: Data(start + i + 3).Nz = vn.Z
@@ -753,7 +759,7 @@ End Sub
 '                Data(start + i + 0) = CreateVertex(intX2, 0, intY2, 0, 0, 0, ((ScaleX / dist1) * (dist1 / 100)), 0)
 '                Data(start + i + 1) = CreateVertex(intX1, 0, intY1, 0, 0, 0, 0, ((ScaleY / dist2) * (dist2 / 100)))
 '                Data(start + i + 2) = CreateVertex(intX4, 0, intY4, 0, 0, 0, 0, 0)
-'                vn = TriangleNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
+'                vn = PlaneNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
 '                                    MakeVector(Data(start + i + 1).X, Data(start + i + 1).Y, Data(start + i + 1).Z), _
 '                                    MakeVector(Data(start + i + 2).X, Data(start + i + 2).Y, Data(start + i + 2).Z))
 '                Data(start + i + 0).NX = vn.X: Data(start + i + 0).NY = vn.Y: Data(start + i + 0).Nz = vn.Z
@@ -792,7 +798,7 @@ End Sub
 ''    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
 ''    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 ''
-''    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+''    vn = PlaneNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 ''                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 ''                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 ''
@@ -816,7 +822,7 @@ End Sub
 ''    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 ''    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, 0, 0)
 ''
-''    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+''    vn = PlaneNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 ''                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 ''                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 ''

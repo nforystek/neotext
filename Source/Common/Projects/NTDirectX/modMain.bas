@@ -228,6 +228,26 @@ Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera
         
         frmMain.Run "Frame"
     End If
+    
+    
+    
+    Dim ev As OnEvent
+    
+    For Each ev In OnEvents
+        Select Case ev.EventType
+            Case EventTypes.Ranged
+            
+            
+            
+            Case EventTypes.Contact
+            
+            
+            
+        End Select
+    Next
+    
+    
+    
 End Sub
 
 'Public Sub PresentScene(ByRef UserControl As Macroscopic)

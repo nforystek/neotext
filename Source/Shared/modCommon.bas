@@ -56,7 +56,7 @@ Private IsDebugCount As Long
 Private IsDebugHwnds As String
 
 #If Not modMemory Then
-Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef Source As Any, ByVal Length As Long)
+Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef source As Any, ByVal Length As Long)
 #End If
 
 #If Not modMemory Then
@@ -142,13 +142,13 @@ Public Function EnVarEval(ByVal URI As String) As String
     EnVarEval = EnVarEval & URI
 End Function
 
-Public Function repeat(ByVal Number As Integer, ByVal Expression As String) As String
-    If Number > 1 Then
+Public Function repeat(ByVal number As Integer, ByVal Expression As String) As String
+    If number > 1 Then
         Dim cnt As Integer
-        For cnt = Number To 1 Step -1
+        For cnt = number To 1 Step -1
             repeat = repeat & Expression
         Next
-    ElseIf Number = 1 Then
+    ElseIf number = 1 Then
         repeat = Expression
     End If
 End Function
@@ -592,7 +592,18 @@ Public Function FileSize(ByVal fname As String) As Double
 End Function
 
 Public Function Nor(exp1, exp2)
+    'bool
     Nor = (((((Not exp1) Or (Not exp1)) = ((Not -exp2) And (Not -exp2)))) And ((((Not exp1) And (Not exp1)) = ((Not -exp2) Or (Not -exp2)))))
+    
+'    'mathematical
+'    Nor = ((((-exp1 - exp1) = (exp2 + exp2))) + (((exp1 + -exp1) = (-exp2 - -exp2))))
+'
+'    'bitwise mathematical bool
+'    Nor = (((((Not exp1) Or (Not exp1)) = ((Not -exp2) And (Not -exp2)))) And ((((Not exp1) And (Not exp1)) = ((Not -exp2) Or (Not -exp2))))) + _
+'         ((((-exp1 - -exp1) = ((Not exp2) + (Not exp2)))) + ((((Not -exp1) - (Not -exp1)) = (-exp2 + -exp2)))) - _
+'          ((((-exp1 - exp1) = (exp2 + exp2))) + (((exp1 + -exp1) = (-exp2 - -exp2)))) - _
+'         (((((Not exp1) Or (Not exp1)) = ((Not -exp2) And (Not -exp2)))) And ((((Not exp1) And (Not exp1)) = ((Not -exp2) Or (Not -exp2))))) And _
+'         ((((-exp1 - -exp1) = ((Not exp2) + (Not exp2)))) + ((((Not -exp1) - (Not -exp1)) = (-exp2 + -exp2))))
 End Function
 
 Public Sub DoTasks()
@@ -1126,7 +1137,7 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
     Exit Function
 altcheck:
 
-    Select Case Err.Number
+    Select Case Err.number
         Case 55, 58, 70
             PathExists = True
         Case Else '53, 52
@@ -1156,7 +1167,7 @@ altcheck:
     
     Dim Alt As Integer
     Alt = GetAttr(URL)
-    If Err.Number = 0 Then
+    If Err.number = 0 Then
         If (IsEmpty(IsFile)) Then
             PathExists = True
         Else
@@ -1166,8 +1177,8 @@ altcheck:
     End If
     
 fixthis:
-    If Err.Number <> 0 Then
-        Select Case Err.Number
+    If Err.number <> 0 Then
+        Select Case Err.number
             Case 55, 58, 70
                 PathExists = True
             Case Else
@@ -1188,7 +1199,7 @@ Public Function ReadFile(ByVal Path As String) As String
     If PathExists(Path, True) Then
         Open Path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
         Close #num
-        Select Case Err.Number
+        Select Case Err.number
             Case 54, 70, 75
                 Err.Clear
                 On Error GoTo tryagain
@@ -1253,7 +1264,7 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
     Open Path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
     Close #num
     
-    Select Case Err.Number
+    Select Case Err.number
 
         Case 54, 70, 75
             Err.Clear
