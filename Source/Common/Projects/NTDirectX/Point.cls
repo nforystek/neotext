@@ -109,5 +109,5 @@ Private Property Let Coord_Y(ByVal RHS As Single)
 End Property
 
 Private Property Get Coord_Y() As Single
-    Coord_X = Coord.Y
+    Coord_Y = Coord.Y
 End Property

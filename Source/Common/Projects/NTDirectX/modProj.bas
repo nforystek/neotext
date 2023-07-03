@@ -638,8 +638,12 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     
     If Not Camera.Planet Is Nothing Then onkey = Camera.Planet.Key
     If Not Camera.Player Is Nothing Then AngleAxisRestrict Camera.Player.Rotate
+   ' Camera.Color.RGB = RGB(0, 0, 0)
     Camera.BuildColor
    '; Debug.Print
+   
+   Static playerPlanetOffset As New Point
+   
 
 '#####################################################################################################
 '#####################################################################################################
@@ -662,7 +666,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     
     SubRenderWorldSetup UserControl, Camera, True  'must be called again, tiwce per one call
     
-    'DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color.RGBA
+    DDevice.SetRenderState D3DRS_AMBIENT, Camera.Color.RGBA
     
     If (Planets.Count > 0) And (Not Camera.Player Is Nothing) Then
         'first loop through all, we render worlds that
@@ -740,6 +744,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         Else
                             If dist <= p.OuterEdge And onkey = "" Then
                                 Set Camera.Planet = p
+                                Set playerPlanetOffset = AngleAxisDifference(p.Rotate, Camera.Player.Rotate)
                             Else
                                 
                             End If
@@ -868,16 +873,27 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                 If (p.Form = Plateau) Then
                     'dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.z, Camera.Player.X, Camera.Player.Y, Camera.Player.z)
 
+                    'Rotation VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin)), p
+
                     If onkey = p.Key Then
-                        
+                      '  Dist = Distance(p.Origin.x, p.Origin.y, p.Origin.z, Camera.Player.x, Camera.Player.y, Camera.Player.z)
 
                     ElseIf onkey <> p.Key Then
                     
+
+                        
                       'find aiming at plaet (dist3 holds closest last aiming at dist)
                         Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+                       ' Set p.Absolute.Rotate = p.Rotate
+                       
+                       ' Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, acmera.Player.Origin))
                         Set p.Absolute.Rotate = p.Rotate
                         
+'                        Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+'                        Set p.Absolute.Rotate = p.Rotate
+                        
                         SubRenderPlateau UserControl, Camera, p
+
                     End If
                 End If
             End If
@@ -889,8 +905,37 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
         If p.Key = onkey Then
             'finally render the planet we are on
 
+            
+'            If Not p.Rotate.X = 0 And Not p.Rotate.Y = 0 And Not p.Rotate.z = 0 Then
+'
+'                Set tmp = MakePoint(IIf(p.Rotate.X > 0, -p.Rotate.X / 2, IIf(p.Rotate.X < 0, p.Rotate.X / 2, 0)), _
+'                                    IIf(p.Rotate.Y > 0, -p.Rotate.Y / 2, IIf(p.Rotate.Y < 0, p.Rotate.Y / 2, 0)), _
+'                                    IIf(p.Rotate.z > 0, -p.Rotate.z / 2, IIf(p.Rotate.z < 0, p.Rotate.z / 2, 0)))
+'''
+''                If Not PointSideOfPlane(Camera.Player.Origin, p.Volume(1).Point3, p.Volume(1).Point2, p.Volume(1).Point1) Then
+''
+''                    Set tmp = AngleAxisDeduction(tmp, AngleAxisInvert(tmp))
+''                    Rotation tmp, p
+''
+''                    Set tmp = AngleAxisAddition(Camera.Player, AngleAxisInvert(Camera.Player.Rotate))
+''                    Orientate tmp, Camera.Player
+''                    Set tmp = VectorAddition(VectorNegative(VectorDeduction(Camera.Player.Origin, p.Origin)), p.Origin)
+''                Else
+'                 '   Rotation tmp, p
+''                End If
+'
+'
+'            End If
+
+            'Rotation VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin)), p
+            
+             '           Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, amera.Player.Origin))
+                        
+            Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+            Set p.Absolute.Rotate = p.Rotate
+                        
             SubRenderPlateau UserControl, Camera, p
-        
+
         End If
         Set p = Nothing
         DDevice.SetRenderState D3DRS_ZENABLE, 1

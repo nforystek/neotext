@@ -66,13 +66,13 @@ Public Enum MotionTypes
 End Enum
 
 Public Type POINTAPI
-    X As Long
-    Y As Long
+    x As Long
+    y As Long
 End Type
 
 Public Type MyScreen
-    X As Single
-    Y As Single
+    x As Single
+    y As Single
     z As Single
     rhw As Single
     clr As Long
@@ -81,8 +81,8 @@ Public Type MyScreen
 End Type
 
 Public Type MyVertex
-    X As Single
-    Y As Single
+    x As Single
+    y As Single
     z As Single
     NX As Single
     NY As Single
@@ -134,7 +134,7 @@ Public Declare Function CoCreateGuid Lib "ole32" (ByVal pGuid As Long) As Long
 Public Declare Function timeGetTime Lib "winmm" () As Long
 Public Declare Function GetActiveWindow Lib "user32" () As Long
 Public Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
-Public Declare Function SetCursorPos Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
 Public Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 Public Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function GetUserName Lib "advapi32" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
@@ -188,8 +188,8 @@ Public Function GetStats() As String
 End Function
 
 Public Function ConvertVertexToVector(ByRef v As D3DVERTEX) As D3DVECTOR
-    ConvertVertexToVector.X = v.X
-    ConvertVertexToVector.Y = v.Y
+    ConvertVertexToVector.x = v.x
+    ConvertVertexToVector.y = v.y
     ConvertVertexToVector.z = v.z
 End Function
 
@@ -204,17 +204,17 @@ Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Lon
     PointInPoly3d = -1
     
     If UBound(l) + IIf(F = 0, 1, 0) > 2 Then
-        ref1 = (p.X - l(F).X) * (l(F + 1).Y - l(F).Y) - (p.Y - l(F).Y) * (l(F + 1).X - l(F).X)
-        ref2 = (p.Y - l(F).Y) * (l(F + 1).z - l(F).z) - (p.z - l(F).z) * (l(F + 1).Y - l(F).Y)
-        ref3 = (p.z - l(F).z) * (l(F + 1).X - l(F).X) - (p.X - l(F).X) * (l(F + 1).z - l(F).z)
+        ref1 = (p.x - l(F).x) * (l(F + 1).y - l(F).y) - (p.y - l(F).y) * (l(F + 1).x - l(F).x)
+        ref2 = (p.y - l(F).y) * (l(F + 1).z - l(F).z) - (p.z - l(F).z) * (l(F + 1).y - l(F).y)
+        ref3 = (p.z - l(F).z) * (l(F + 1).x - l(F).x) - (p.x - l(F).x) * (l(F + 1).z - l(F).z)
    
         Ret = ref1 + ref2 + ref3
         
         Dim i As Long
         For i = F + 1 To UBound(l)
-            ref1 = ((p.X - l(F).X) * (l(i).Y - l(F).Y) - (p.Y - l(F).Y) * (l(i).X - l(F).X))
-            ref2 = ((p.Y - l(F).Y) * (l(i).z - l(F).z) - (p.z - l(F).z) * (l(i).Y - l(F).Y))
-            ref3 = ((p.z - l(F).z) * (l(i).X - l(F).X) - (p.X - l(F).X) * (l(i).z - l(F).z))
+            ref1 = ((p.x - l(F).x) * (l(i).y - l(F).y) - (p.y - l(F).y) * (l(i).x - l(F).x))
+            ref2 = ((p.y - l(F).y) * (l(i).z - l(F).z) - (p.z - l(F).z) * (l(i).y - l(F).y))
+            ref3 = ((p.z - l(F).z) * (l(i).x - l(F).x) - (p.x - l(F).x) * (l(i).z - l(F).z))
 
             If ((Ret >= 0) Xor ((ref1 + ref2 + ref3) >= 0)) Then
                 PointInPoly3d = i
@@ -507,13 +507,13 @@ Public Function Clamp(ByVal Value As Single, ByVal max As Single, ByVal min As S
 End Function
 
 Public Function LengthSqr(ByRef v As D3DVECTOR) As Single
-    LengthSqr = Sqr(Distance(0, 0, 0, v.X, v.Y, v.z))
+    LengthSqr = Sqr(Distance(0, 0, 0, v.x, v.y, v.z))
 End Function
 
-Public Function CreateVertex(X As Single, Y As Single, z As Single, NX As Single, NY As Single, Nz As Single, tu As Single, tv As Single) As MyVertex
+Public Function CreateVertex(x As Single, y As Single, z As Single, NX As Single, NY As Single, Nz As Single, tu As Single, tv As Single) As MyVertex
     
     With CreateVertex
-        .X = X: .Y = Y: .z = z
+        .x = x: .y = y: .z = z
         .NX = NX: .NY = NY: .Nz = Nz
         .tu = tu: .tv = tv
     End With
@@ -576,12 +576,6 @@ Public Function GetTimer() As String
     
 End Function
 
-Public Sub Swap(ByRef val1 As Single, ByRef val2 As Single)
-    Dim tmp As Single
-    tmp = val1
-    val1 = val2
-    val2 = tmp
-End Sub
 
 'Public Sub CreateGridPlate(ByRef Data() As MyVertex, ByRef Verticies As Direct3DVertexBuffer8, Optional ByVal Col As Long = 1, Optional ByVal row As Long = 1, Optional ByRef Count As Long = -1, Optional ByVal PlateWidth As Single = 1, Optional ByVal PlateHeight As Single = 1, Optional ByVal tv As Single, Optional ByVal tu As Single)
 '    'creates a number of square plates n, is of either row*col or count which ever is greater, count can be existing already and elements are added modifying it

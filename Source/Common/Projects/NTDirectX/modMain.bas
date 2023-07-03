@@ -338,7 +338,7 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-            
+
             D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 

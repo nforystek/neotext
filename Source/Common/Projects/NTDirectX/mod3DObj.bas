@@ -144,7 +144,7 @@ End Function
 '' Return a value between PI and -PI.
 '' Note that the value is the opposite of what you might
 '' expect because Y coordinates increase downward.
-Public Function GetAngle(ByRef p1 As Point, ByRef p2 As Point) As Single
+Public Function GetAngle(ByRef p1 As point, ByRef p2 As point) As Single
 'ByVal Ax As Single, ByVal Ay As _
     'Single, ByVal Bx As Single, ByVal By As Single, ByVal _
     'Cx As Single, ByVal Cy As Single) As Single
@@ -190,16 +190,16 @@ Public Function GetAngle2(ByVal x1 As Double, ByVal y1 As Double, ByVal x2 As Do
 End Function
 
 
-Public Function GetAngle3(ByRef p1 As Point, ByRef p2 As Point) As Single
-If p1.X = p2.X Then
-    If p1.Y < p2.Y Then
+Public Function GetAngle3(ByRef p1 As point, ByRef p2 As point) As Single
+If p1.x = p2.x Then
+    If p1.y < p2.y Then
         GetAngle3 = 90
     Else
         GetAngle3 = 270
     End If
     Exit Function
-ElseIf p1.Y = p2.Y Then
-    If p1.X < p2.X Then
+ElseIf p1.y = p2.y Then
+    If p1.x < p2.x Then
         GetAngle3 = 0
     Else
         GetAngle3 = 180
@@ -210,8 +210,8 @@ Else
     GetAngle3 = GetAngle3 * 180 / PI
     If GetAngle3 < 0 Then GetAngle3 = GetAngle3 + 360
     '----------Test for direction--------
-    If p1.X > p2.X And GetAngle3 <> 180 Then GetAngle3 = GetAngle3 + 180
-    If p1.Y > p2.Y And GetAngle3 = 90 Then GetAngle3 = GetAngle3 + 180
+    If p1.x > p2.x And GetAngle3 <> 180 Then GetAngle3 = GetAngle3 + 180
+    If p1.y > p2.y And GetAngle3 = 90 Then GetAngle3 = GetAngle3 + 180
     If GetAngle3 > 360 Then GetAngle3 = GetAngle3 - 360
 End If
 End Function
@@ -407,8 +407,8 @@ Private Function CombineOrbits(ByRef o1 As Orbit, ByRef o2 As Orbit) As Orbit
         .Offset = VectorDeduction(VectorDeduction(VectorAddition(o1.Origin, o1.Offset), VectorAddition(o2.Origin, o2.Offset)), .Origin)
         .Rotate = VectorAddition(o1.Rotate, o2.Rotate)
         .Scaled = VectorAddition(o1.Scaled, o2.Scaled)
-        .Ranges.X = o1.Ranges.X + o2.Ranges.X
-        .Ranges.Y = o1.Ranges.Y + o2.Ranges.Y
+        .Ranges.x = o1.Ranges.x + o2.Ranges.x
+        .Ranges.y = o1.Ranges.y + o2.Ranges.y
         .Ranges.z = o1.Ranges.z + o2.Ranges.z
         If o1.Ranges.W = -1 Or o2.Ranges.W = -1 Then
             .Ranges.W = -1
@@ -478,10 +478,10 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
         
     If Not Camera.Planet Is Nothing Then
         
-        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
+        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.x
         D3DXMatrixMultiply matMat, matPitch, matMat
 
-        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
+        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.y
         D3DXMatrixMultiply matMat, matYaw, matMat
         
         D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
@@ -502,13 +502,13 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 
         D3DXMatrixIdentity matMat
     
-        D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
+        D3DXMatrixTranslation matPos, Camera.Planet.Origin.x, Camera.Planet.Origin.y, Camera.Planet.Origin.z
         D3DXMatrixMultiply matMat, matPos, matMat
         
-        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
+        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.x
         D3DXMatrixMultiply matMat, matPitch, matMat
         
-        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
+        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.y
         D3DXMatrixMultiply matMat, matYaw, matMat
         
         D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
@@ -563,22 +563,22 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     Dim matScale As D3DMATRIX
     Dim matRot As D3DMATRIX
     
-    D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
+    D3DXMatrixTranslation matPos, ApplyTo.Origin.x, ApplyTo.Origin.y, ApplyTo.Origin.z
     D3DXMatrixMultiply matMat, matPos, matMat
    
-    D3DXMatrixRotationX matPitch, ApplyTo.Rotate.X
+    D3DXMatrixRotationX matPitch, ApplyTo.Rotate.x
     D3DXMatrixMultiply matMat, matPitch, matMat
      
-    D3DXMatrixRotationY matYaw, ApplyTo.Rotate.Y
+    D3DXMatrixRotationY matYaw, ApplyTo.Rotate.y
     D3DXMatrixMultiply matMat, matYaw, matMat
 
     D3DXMatrixRotationZ matRoll, ApplyTo.Rotate.z
     D3DXMatrixMultiply matMat, matRoll, matMat
     
-    D3DXMatrixTranslation matPos, ApplyTo.Offset.X, ApplyTo.Offset.Y, ApplyTo.Offset.z
+    D3DXMatrixTranslation matPos, ApplyTo.Offset.x, ApplyTo.Offset.y, ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
     
-    D3DXMatrixScaling matScale, ApplyTo.Scaled.X, ApplyTo.Scaled.Y, ApplyTo.Scaled.z
+    D3DXMatrixScaling matScale, ApplyTo.Scaled.x, ApplyTo.Scaled.y, ApplyTo.Scaled.z
     D3DXMatrixMultiply matScale, matScale, matMat
     
     Dim m As Molecule
@@ -593,39 +593,39 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
         For Each v In ApplyTo.Volume
     
             D3DXVec3TransformCoord vout, ToVector(v.Point1), matScale
-            VertexDirectX((v.TriangleIndex * 3) + 0).X = vout.X
-            VertexDirectX((v.TriangleIndex * 3) + 0).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 0).x = vout.x
+            VertexDirectX((v.TriangleIndex * 3) + 0).y = vout.y
             VertexDirectX((v.TriangleIndex * 3) + 0).z = vout.z
     
             D3DXVec3TransformCoord vout, ToVector(v.Point2), matScale
-            VertexDirectX((v.TriangleIndex * 3) + 1).X = vout.X
-            VertexDirectX((v.TriangleIndex * 3) + 1).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 1).x = vout.x
+            VertexDirectX((v.TriangleIndex * 3) + 1).y = vout.y
             VertexDirectX((v.TriangleIndex * 3) + 1).z = vout.z
     
             D3DXVec3TransformCoord vout, ToVector(v.Point3), matScale
-            VertexDirectX((v.TriangleIndex * 3) + 2).X = vout.X
-            VertexDirectX((v.TriangleIndex * 3) + 2).Y = vout.Y
+            VertexDirectX((v.TriangleIndex * 3) + 2).x = vout.x
+            VertexDirectX((v.TriangleIndex * 3) + 2).y = vout.y
             VertexDirectX((v.TriangleIndex * 3) + 2).z = vout.z
     
-            VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
-            VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.x
+            VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.y
             VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.z
     
-            VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
-            VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.x
+            VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.y
             VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.z
     
-            VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
-            VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
+            VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.x
+            VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.y
             VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.z
     
-            VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).X
-            VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).X
-            VertexXAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).X
+            VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).x
+            VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).x
+            VertexXAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).x
     
-            VertexYAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).Y
-            VertexYAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).Y
-            VertexYAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).Y
+            VertexYAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).y
+            VertexYAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).y
+            VertexYAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).y
     
             VertexZAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).z
             VertexZAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).z
@@ -648,19 +648,19 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
         Next
     End If
     
-    D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.z
+    D3DXMatrixTranslation matPos, -ApplyTo.Offset.x, -ApplyTo.Offset.y, -ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
     
     D3DXMatrixRotationZ matRoll, -ApplyTo.Rotate.z
     D3DXMatrixMultiply matMat, matRoll, matMat
     
-    D3DXMatrixRotationY matYaw, -ApplyTo.Rotate.Y
+    D3DXMatrixRotationY matYaw, -ApplyTo.Rotate.y
     D3DXMatrixMultiply matMat, matYaw, matMat
     
-    D3DXMatrixRotationX matPitch, -ApplyTo.Rotate.X
+    D3DXMatrixRotationX matPitch, -ApplyTo.Rotate.x
     D3DXMatrixMultiply matMat, matPitch, matMat
     
-    D3DXMatrixTranslation matPos, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z
+    D3DXMatrixTranslation matPos, -ApplyTo.Origin.x, -ApplyTo.Origin.y, -ApplyTo.Origin.z
     D3DXMatrixMultiply matMat, matPos, matMat
     
 End Sub
@@ -722,7 +722,7 @@ Public Function RemoveTriangleArray(ByRef TriangleIndex As Long)
     RebuildTriangleArray
 End Function
 
-Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef P4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Molecule
+Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As point, ByRef p2 As point, ByRef p3 As point, ByRef P4 As point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Molecule
     If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(P4))) And _
         (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(P4))) And _
         (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(P4))) And _
@@ -735,7 +735,7 @@ Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As 
         Set CreateMoleculeFace = r
     End If
 End Function
-Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef P4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Volume
+Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As point, ByRef p2 As point, ByRef p3 As point, ByRef P4 As point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Volume
     If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(P4))) And _
         (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(P4))) And _
         (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(P4))) And _
@@ -776,20 +776,20 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             
             Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-            VertexXAxis(0, TriangleCount) = .Point1.X
-            VertexXAxis(1, TriangleCount) = .Point2.X
-            VertexXAxis(2, TriangleCount) = .Point3.X
+            VertexXAxis(0, TriangleCount) = .Point1.x
+            VertexXAxis(1, TriangleCount) = .Point2.x
+            VertexXAxis(2, TriangleCount) = .Point3.x
 
-            VertexYAxis(0, TriangleCount) = .Point1.Y
-            VertexYAxis(1, TriangleCount) = .Point2.Y
-            VertexYAxis(2, TriangleCount) = .Point3.Y
+            VertexYAxis(0, TriangleCount) = .Point1.y
+            VertexYAxis(1, TriangleCount) = .Point2.y
+            VertexYAxis(2, TriangleCount) = .Point3.y
 
             VertexZAxis(0, TriangleCount) = .Point1.z
             VertexZAxis(1, TriangleCount) = .Point2.z
             VertexZAxis(2, TriangleCount) = .Point3.z
 
-            TriangleFace(0, TriangleCount) = .Normal.X
-            TriangleFace(1, TriangleCount) = .Normal.Y
+            TriangleFace(0, TriangleCount) = .Normal.x
+            TriangleFace(1, TriangleCount) = .Normal.y
             TriangleFace(2, TriangleCount) = .Normal.z
             TriangleFace(4, TriangleCount) = ObjectCount
             TriangleFace(5, TriangleCount) = 0
@@ -804,28 +804,28 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
                 End If
             End If
             
-            VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-            VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+            VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+            VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
             VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-            VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-            VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+            VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+            VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
             VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-            VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-            VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+            VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+            VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
             VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-            VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-            VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-            VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
             VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -835,21 +835,21 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             VertexDirectX(.TriangleIndex * 3 + 2).tu = .U3
             VertexDirectX(.TriangleIndex * 3 + 2).tv = .V3
             
-            ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-            ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-            ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+            ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+            ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+            ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
             ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-            ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-            ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-            ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+            ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+            ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+            ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
             ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-            ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-            ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-            ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+            ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+            ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+            ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
             ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
@@ -890,20 +890,20 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             
             Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-            VertexXAxis(0, TriangleCount) = .Point1.X
-            VertexXAxis(1, TriangleCount) = .Point2.X
-            VertexXAxis(2, TriangleCount) = .Point3.X
+            VertexXAxis(0, TriangleCount) = .Point1.x
+            VertexXAxis(1, TriangleCount) = .Point2.x
+            VertexXAxis(2, TriangleCount) = .Point3.x
 
-            VertexYAxis(0, TriangleCount) = .Point1.Y
-            VertexYAxis(1, TriangleCount) = .Point2.Y
-            VertexYAxis(2, TriangleCount) = .Point3.Y
+            VertexYAxis(0, TriangleCount) = .Point1.y
+            VertexYAxis(1, TriangleCount) = .Point2.y
+            VertexYAxis(2, TriangleCount) = .Point3.y
 
             VertexZAxis(0, TriangleCount) = .Point1.z
             VertexZAxis(1, TriangleCount) = .Point2.z
             VertexZAxis(2, TriangleCount) = .Point3.z
 
-            TriangleFace(0, TriangleCount) = .Normal.X
-            TriangleFace(1, TriangleCount) = .Normal.Y
+            TriangleFace(0, TriangleCount) = .Normal.x
+            TriangleFace(1, TriangleCount) = .Normal.y
             TriangleFace(2, TriangleCount) = .Normal.z
             TriangleFace(4, TriangleCount) = ObjectCount
             TriangleFace(5, TriangleCount) = 1
@@ -918,28 +918,28 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
                 End If
             End If
             
-            VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-            VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+            VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+            VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
             VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-            VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-            VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+            VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+            VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
             VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-            VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-            VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+            VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+            VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
             VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-            VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-            VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-            VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-            VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+            VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+            VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
             VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
             VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -949,21 +949,21 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
             VertexDirectX(.TriangleIndex * 3 + 2).tu = .U3
             VertexDirectX(.TriangleIndex * 3 + 2).tv = .V3
             
-            ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-            ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-            ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+            ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+            ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+            ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
             ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-            ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-            ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-            ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+            ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+            ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+            ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
             ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-            ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-            ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-            ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+            ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+            ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+            ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
             ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
             ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
@@ -1025,8 +1025,8 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
         Dim l1 As Single
         Dim l2 As Single
         Dim l3 As Single
-        Dim X As Single
-        Dim Y As Single
+        Dim x As Single
+        Dim y As Single
         
         Dim intX1 As Single
         Dim intX2 As Single
@@ -1111,24 +1111,24 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         End If
                         Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                        l1 = Distance(.Point1.X, .Point1.Y, .Point1.z, .Point2.X, .Point2.Y, .Point2.z)
-                        l2 = Distance(.Point2.X, .Point2.Y, .Point2.z, .Point3.X, .Point3.Y, .Point3.z)
-                        l3 = Distance(.Point3.X, .Point3.Y, .Point3.z, .Point1.X, .Point1.Y, .Point1.z)
+                        l1 = Distance(.Point1.x, .Point1.y, .Point1.z, .Point2.x, .Point2.y, .Point2.z)
+                        l2 = Distance(.Point2.x, .Point2.y, .Point2.z, .Point3.x, .Point3.y, .Point3.z)
+                        l3 = Distance(.Point3.x, .Point3.y, .Point3.z, .Point1.x, .Point1.y, .Point1.z)
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1143,46 +1143,46 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
                         VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -1233,24 +1233,24 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         
                         Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                        l1 = Distance(.Point1.X, .Point1.Y, .Point1.z, .Point2.X, .Point2.Y, .Point2.z)
-                        l2 = Distance(.Point2.X, .Point2.Y, .Point2.z, .Point3.X, .Point3.Y, .Point3.z)
-                        l3 = Distance(.Point3.X, .Point3.Y, .Point3.z, .Point1.X, .Point1.Y, .Point1.z)
+                        l1 = Distance(.Point1.x, .Point1.y, .Point1.z, .Point2.x, .Point2.y, .Point2.z)
+                        l2 = Distance(.Point2.x, .Point2.y, .Point2.z, .Point3.x, .Point3.y, .Point3.z)
+                        l3 = Distance(.Point3.x, .Point3.y, .Point3.z, .Point1.x, .Point1.y, .Point1.z)
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1265,46 +1265,46 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
                         VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -1359,20 +1359,20 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             .V3 = 0
                         End If
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1387,46 +1387,46 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
                         
                         TriangleCount = TriangleCount + 1
@@ -1439,17 +1439,17 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             dist1 = DistanceEx(.Point2, .Point1)
                             dist2 = DistanceEx(.Point2, .Point3)
     
-                            X = (ScaleX * (dist2 / OuterEdge))
-                            Y = (ScaleY * (dist1 / OuterEdge))
+                            x = (ScaleX * (dist2 / OuterEdge))
+                            y = (ScaleY * (dist1 / OuterEdge))
     
-                            .U1 = X
+                            .U1 = x
                             .V1 = 0
     
-                            .U2 = X
-                            .V2 = Y
+                            .U2 = x
+                            .V2 = y
     
                             .U3 = 0
-                            .V3 = Y
+                            .V3 = y
     
                             VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
                             VertexDirectX(.TriangleIndex * 3 + 0).tv = .V1
@@ -1546,8 +1546,8 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
         Dim l1 As Single
         Dim l2 As Single
         Dim l3 As Single
-        Dim X As Single
-        Dim Y As Single
+        Dim x As Single
+        Dim y As Single
         
         Dim intX1 As Single
         Dim intX2 As Single
@@ -1632,24 +1632,24 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         
                         Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                        l1 = Distance(.Point1.X, .Point1.Y, .Point1.z, .Point2.X, .Point2.Y, .Point2.z)
-                        l2 = Distance(.Point2.X, .Point2.Y, .Point2.z, .Point3.X, .Point3.Y, .Point3.z)
-                        l3 = Distance(.Point3.X, .Point3.Y, .Point3.z, .Point1.X, .Point1.Y, .Point1.z)
+                        l1 = Distance(.Point1.x, .Point1.y, .Point1.z, .Point2.x, .Point2.y, .Point2.z)
+                        l2 = Distance(.Point2.x, .Point2.y, .Point2.z, .Point3.x, .Point3.y, .Point3.z)
+                        l3 = Distance(.Point3.x, .Point3.y, .Point3.z, .Point1.x, .Point1.y, .Point1.z)
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1664,46 +1664,46 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
                         VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -1767,24 +1767,24 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         
                         Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                        l1 = Distance(.Point1.X, .Point1.Y, .Point1.z, .Point2.X, .Point2.Y, .Point2.z)
-                        l2 = Distance(.Point2.X, .Point2.Y, .Point2.z, .Point3.X, .Point3.Y, .Point3.z)
-                        l3 = Distance(.Point3.X, .Point3.Y, .Point3.z, .Point1.X, .Point1.Y, .Point1.z)
+                        l1 = Distance(.Point1.x, .Point1.y, .Point1.z, .Point2.x, .Point2.y, .Point2.z)
+                        l2 = Distance(.Point2.x, .Point2.y, .Point2.z, .Point3.x, .Point3.y, .Point3.z)
+                        l3 = Distance(.Point3.x, .Point3.y, .Point3.z, .Point1.x, .Point1.y, .Point1.z)
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1799,46 +1799,46 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
                         VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -1884,20 +1884,20 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
 
                         Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                        VertexXAxis(0, TriangleCount) = .Point1.X
-                        VertexXAxis(1, TriangleCount) = .Point2.X
-                        VertexXAxis(2, TriangleCount) = .Point3.X
+                        VertexXAxis(0, TriangleCount) = .Point1.x
+                        VertexXAxis(1, TriangleCount) = .Point2.x
+                        VertexXAxis(2, TriangleCount) = .Point3.x
 
-                        VertexYAxis(0, TriangleCount) = .Point1.Y
-                        VertexYAxis(1, TriangleCount) = .Point2.Y
-                        VertexYAxis(2, TriangleCount) = .Point3.Y
+                        VertexYAxis(0, TriangleCount) = .Point1.y
+                        VertexYAxis(1, TriangleCount) = .Point2.y
+                        VertexYAxis(2, TriangleCount) = .Point3.y
 
                         VertexZAxis(0, TriangleCount) = .Point1.z
                         VertexZAxis(1, TriangleCount) = .Point2.z
                         VertexZAxis(2, TriangleCount) = .Point3.z
 
-                        TriangleFace(0, TriangleCount) = .Normal.X
-                        TriangleFace(1, TriangleCount) = .Normal.Y
+                        TriangleFace(0, TriangleCount) = .Normal.x
+                        TriangleFace(1, TriangleCount) = .Normal.y
                         TriangleFace(2, TriangleCount) = .Normal.z
                         TriangleFace(4, TriangleCount) = ObjectCount
                         TriangleFace(5, TriangleCount) = ((pointsPerFace + i) \ pointsPerFace)
@@ -1912,46 +1912,46 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                             End If
                         End If
 
-                        ScreenDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        ScreenDirectX(.TriangleIndex * 3 + 0).Y = .Point1.z
-                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        ScreenDirectX(.TriangleIndex * 3 + 0).y = .Point1.z
+                        ScreenDirectX(.TriangleIndex * 3 + 0).z = .Point1.y
                         ScreenDirectX(.TriangleIndex * 3 + 0).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 0).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        ScreenDirectX(.TriangleIndex * 3 + 1).Y = .Point2.z
-                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        ScreenDirectX(.TriangleIndex * 3 + 1).y = .Point2.z
+                        ScreenDirectX(.TriangleIndex * 3 + 1).z = .Point2.y
                         ScreenDirectX(.TriangleIndex * 3 + 1).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 1).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        ScreenDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        ScreenDirectX(.TriangleIndex * 3 + 2).Y = .Point3.z
-                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.Y
+                        ScreenDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        ScreenDirectX(.TriangleIndex * 3 + 2).y = .Point3.z
+                        ScreenDirectX(.TriangleIndex * 3 + 2).z = .Point3.y
                         ScreenDirectX(.TriangleIndex * 3 + 2).rhw = 1
                         ScreenDirectX(.TriangleIndex * 3 + 2).clr = D3DColorARGB(255, 255, 255, 255)
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                         VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                         VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                         VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
 
-                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                        VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                        VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                         VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
 
                         VertexDirectX(.TriangleIndex * 3 + 0).tu = .U1
@@ -2422,37 +2422,37 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                 RebuildTriangleArray
 
                 Set .Point1 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 0)).X, _
-                    MeshVerticies(MeshIndicies(Index + 0)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 0)).x, _
+                    MeshVerticies(MeshIndicies(Index + 0)).y, _
                     MeshVerticies(MeshIndicies(Index + 0)).z)
 
                 Set .Point2 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 1)).X, _
-                    MeshVerticies(MeshIndicies(Index + 1)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 1)).x, _
+                    MeshVerticies(MeshIndicies(Index + 1)).y, _
                     MeshVerticies(MeshIndicies(Index + 1)).z)
 
                 Set .Point3 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 2)).X, _
-                    MeshVerticies(MeshIndicies(Index + 2)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 2)).x, _
+                    MeshVerticies(MeshIndicies(Index + 2)).y, _
                     MeshVerticies(MeshIndicies(Index + 2)).z)
 
 
                 Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                VertexXAxis(0, TriangleCount) = .Point1.X
-                VertexXAxis(1, TriangleCount) = .Point2.X
-                VertexXAxis(2, TriangleCount) = .Point3.X
+                VertexXAxis(0, TriangleCount) = .Point1.x
+                VertexXAxis(1, TriangleCount) = .Point2.x
+                VertexXAxis(2, TriangleCount) = .Point3.x
 
-                VertexYAxis(0, TriangleCount) = .Point1.Y
-                VertexYAxis(1, TriangleCount) = .Point2.Y
-                VertexYAxis(2, TriangleCount) = .Point3.Y
+                VertexYAxis(0, TriangleCount) = .Point1.y
+                VertexYAxis(1, TriangleCount) = .Point2.y
+                VertexYAxis(2, TriangleCount) = .Point3.y
 
                 VertexZAxis(0, TriangleCount) = .Point1.z
                 VertexZAxis(1, TriangleCount) = .Point2.z
                 VertexZAxis(2, TriangleCount) = .Point3.z
 
-                TriangleFace(0, TriangleCount) = .Normal.X
-                TriangleFace(1, TriangleCount) = .Normal.Y
+                TriangleFace(0, TriangleCount) = .Normal.x
+                TriangleFace(1, TriangleCount) = .Normal.y
                 TriangleFace(2, TriangleCount) = .Normal.z
                 TriangleFace(4, TriangleCount) = ObjectCount
                 TriangleFace(5, TriangleCount) = (Index \ 4) + 0
@@ -2467,29 +2467,29 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                     End If
                 End If
 
-                VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                 VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
-                VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 0).tu = MeshVerticies(MeshIndicies(Index + 0)).tu
                 VertexDirectX(.TriangleIndex * 3 + 0).tv = MeshVerticies(MeshIndicies(Index + 0)).tv
 
-                VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                 VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
-                VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 1).tu = MeshVerticies(MeshIndicies(Index + 1)).tu
                 VertexDirectX(.TriangleIndex * 3 + 1).tv = MeshVerticies(MeshIndicies(Index + 1)).tv
 
-                VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                 VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
-                VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 2).tu = MeshVerticies(MeshIndicies(Index + 2)).tu
                 VertexDirectX(.TriangleIndex * 3 + 2).tv = MeshVerticies(MeshIndicies(Index + 2)).tv
@@ -2504,37 +2504,37 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                 RebuildTriangleArray
 
                 Set .Point1 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 3)).X, _
-                    MeshVerticies(MeshIndicies(Index + 3)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 3)).x, _
+                    MeshVerticies(MeshIndicies(Index + 3)).y, _
                     MeshVerticies(MeshIndicies(Index + 3)).z)
 
                 Set .Point2 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 4)).X, _
-                    MeshVerticies(MeshIndicies(Index + 4)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 4)).x, _
+                    MeshVerticies(MeshIndicies(Index + 4)).y, _
                     MeshVerticies(MeshIndicies(Index + 4)).z)
 
                 Set .Point3 = MakePoint( _
-                    MeshVerticies(MeshIndicies(Index + 5)).X, _
-                    MeshVerticies(MeshIndicies(Index + 5)).Y, _
+                    MeshVerticies(MeshIndicies(Index + 5)).x, _
+                    MeshVerticies(MeshIndicies(Index + 5)).y, _
                     MeshVerticies(MeshIndicies(Index + 5)).z)
 
 
                 Set .Normal = PlaneNormal(.Point1, .Point2, .Point3)
 
-                VertexXAxis(0, TriangleCount) = .Point1.X
-                VertexXAxis(1, TriangleCount) = .Point2.X
-                VertexXAxis(2, TriangleCount) = .Point3.X
+                VertexXAxis(0, TriangleCount) = .Point1.x
+                VertexXAxis(1, TriangleCount) = .Point2.x
+                VertexXAxis(2, TriangleCount) = .Point3.x
 
-                VertexYAxis(0, TriangleCount) = .Point1.Y
-                VertexYAxis(1, TriangleCount) = .Point2.Y
-                VertexYAxis(2, TriangleCount) = .Point3.Y
+                VertexYAxis(0, TriangleCount) = .Point1.y
+                VertexYAxis(1, TriangleCount) = .Point2.y
+                VertexYAxis(2, TriangleCount) = .Point3.y
 
                 VertexZAxis(0, TriangleCount) = .Point1.z
                 VertexZAxis(1, TriangleCount) = .Point2.z
                 VertexZAxis(2, TriangleCount) = .Point3.z
 
-                TriangleFace(0, TriangleCount) = .Normal.X
-                TriangleFace(1, TriangleCount) = .Normal.Y
+                TriangleFace(0, TriangleCount) = .Normal.x
+                TriangleFace(1, TriangleCount) = .Normal.y
                 TriangleFace(2, TriangleCount) = .Normal.z
                 TriangleFace(4, TriangleCount) = ObjectCount
                 TriangleFace(5, TriangleCount) = (Index \ 4) + 1
@@ -2549,29 +2549,29 @@ Public Function CreateVolumeMesh(ByVal DirectXFileName As String) As Volume
                     End If
                 End If
 
-                VertexDirectX(.TriangleIndex * 3 + 0).X = .Point1.X
-                VertexDirectX(.TriangleIndex * 3 + 0).Y = .Point1.Y
+                VertexDirectX(.TriangleIndex * 3 + 0).x = .Point1.x
+                VertexDirectX(.TriangleIndex * 3 + 0).y = .Point1.y
                 VertexDirectX(.TriangleIndex * 3 + 0).z = .Point1.z
-                VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 0).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 0).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 0).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 0).tu = MeshVerticies(MeshIndicies(Index + 3)).tu
                 VertexDirectX(.TriangleIndex * 3 + 0).tv = MeshVerticies(MeshIndicies(Index + 3)).tv
 
-                VertexDirectX(.TriangleIndex * 3 + 1).X = .Point2.X
-                VertexDirectX(.TriangleIndex * 3 + 1).Y = .Point2.Y
+                VertexDirectX(.TriangleIndex * 3 + 1).x = .Point2.x
+                VertexDirectX(.TriangleIndex * 3 + 1).y = .Point2.y
                 VertexDirectX(.TriangleIndex * 3 + 1).z = .Point2.z
-                VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 1).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 1).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 1).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 1).tu = MeshVerticies(MeshIndicies(Index + 4)).tu
                 VertexDirectX(.TriangleIndex * 3 + 1).tv = MeshVerticies(MeshIndicies(Index + 4)).tv
 
-                VertexDirectX(.TriangleIndex * 3 + 2).X = .Point3.X
-                VertexDirectX(.TriangleIndex * 3 + 2).Y = .Point3.Y
+                VertexDirectX(.TriangleIndex * 3 + 2).x = .Point3.x
+                VertexDirectX(.TriangleIndex * 3 + 2).y = .Point3.y
                 VertexDirectX(.TriangleIndex * 3 + 2).z = .Point3.z
-                VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.X
-                VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.Y
+                VertexDirectX(.TriangleIndex * 3 + 2).NX = .Normal.x
+                VertexDirectX(.TriangleIndex * 3 + 2).NY = .Normal.y
                 VertexDirectX(.TriangleIndex * 3 + 2).Nz = .Normal.z
                 VertexDirectX(.TriangleIndex * 3 + 2).tu = MeshVerticies(MeshIndicies(Index + 5)).tu
                 VertexDirectX(.TriangleIndex * 3 + 2).tv = MeshVerticies(MeshIndicies(Index + 5)).tv
