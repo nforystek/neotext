@@ -1,6 +1,5 @@
 Attribute VB_Name = "modEditor"
-#Const [True] = -1
-#Const [False] = 0
+
 #Const modEditor = -1
 Option Explicit
 'TOP DOWN
@@ -37,8 +36,8 @@ Public Type FindType
 End Type
 
 Public Type PointType
-    x As Long
-    y As Long
+    X As Long
+    Y As Long
 End Type
 
 Public Type SCROLLINFO
@@ -385,11 +384,11 @@ Public Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hDC As
 Public Declare Function HideCaret Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function ShowCaret Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function GetCaretPos Lib "user32" (lpPoint As PointType) As Long
-Public Declare Function SetCaretPos Lib "user32" (ByVal x As Integer, ByVal y As Integer) As Boolean
+Public Declare Function SetCaretPos Lib "user32" (ByVal X As Integer, ByVal Y As Integer) As Boolean
 
 Public Declare Function ShowCursor Lib "user32" (ByVal bShow As Long) As Long
 Public Declare Function GetCursorPos Lib "user32" (lpPoint As PointType) As Long
-Public Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+Public Declare Function SetCursorPos Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
 Public Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 
 Public Declare Function SetWindowText Lib "user32" Alias "SetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String) As Long
@@ -416,9 +415,9 @@ Public Declare Function ShowScrollBar Lib "user32" (ByVal hwnd As Long, ByVal wB
 
 Public Declare Function GetScrollPos Lib "user32" (ByVal hwnd As Long, ByVal nBar As Long) As Long
 Public Declare Function SetScrollPos Lib "user32" (ByVal hwnd As Long, ByVal nBar As Long, ByVal nPos As Long, ByVal bRedraw As Long) As Long
-Public Declare Function GetScrollInfo Lib "user32" (ByVal hwnd As Long, ByVal N As Long, lpScrollInfo As SCROLLINFO) As Long
+Public Declare Function GetScrollInfo Lib "user32" (ByVal hwnd As Long, ByVal n As Long, lpScrollInfo As SCROLLINFO) As Long
 Public Declare Function GetScrollRange Lib "user32" (ByVal hwnd As Long, ByVal nBar As Long, lpMinPos As Long, lpMaxPos As Long) As Long
-Public Declare Function SetScrollInfo Lib "user32" (ByVal hwnd As Long, ByVal N As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
+Public Declare Function SetScrollInfo Lib "user32" (ByVal hwnd As Long, ByVal n As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
 Public Declare Function SetScrollRange Lib "user32" (ByVal hwnd As Long, ByVal nBar As Long, ByVal nMinPos As Long, ByVal nMaxPos As Long, ByVal bRedraw As Long) As Long
 Public Declare Function ScrollWindow Lib "user32" (ByVal hwnd As Long, ByVal XAmount As Long, ByVal YAmount As Long, lpRect As RectType, lpClipRect As RectType) As Long
 
@@ -429,7 +428,7 @@ Public Declare Function GetTempFileName Lib "kernel32" Alias "GetTempFileNameA" 
 Public Declare Function GetTempPath Lib "kernel32" Alias "GetTempPathA" (ByVal nBufferLength As Long, ByVal lpBuffer As String) As Long
 
 Public Declare Function GetSysColor Lib "user32" (ByVal nIndex As Long) As Long
-Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, source As Any, ByVal Length As Long)
 
 Public Const LOGPIXELSX = 88
 Private Const POINTS_PER_INCH As Long = 72
@@ -459,20 +458,20 @@ Public Sub FileProc(ByVal hwnd As Long, ByVal uMsg As Long, ByVal idEvent As Lon
     Static stacking As Long
     stacking = stacking + 1
     If stacking > 1 Then GoTo notloaded
-    Dim obj As CodeEdit
-    Set obj = PtrObj(idEvent)
+    Dim Obj As CodeEdit
+    Set Obj = PtrObj(idEvent)
         
-    If (Not (obj Is Nothing)) Then
+    If (Not (Obj Is Nothing)) Then
 
         Static startByte As Long
         Static stopByte As Long
         
-        If obj.FillFilePass(startByte, stopByte, idEvent) Then
+        If Obj.FillFilePass(startByte, stopByte, idEvent) Then
             startByte = 0
             stopByte = 0
         End If
 
-        Set obj = Nothing
+        Set Obj = Nothing
     Else
         KillTimer hwnd, idEvent
     End If
@@ -484,16 +483,16 @@ notloaded:
     stacking = stacking - 1
 End Sub
 
-Public Static Function HookObj(ByRef obj)
+Public Static Function HookObj(ByRef Obj)
 On Error GoTo hookerror
     Static hc As Collection
     Static ha As Collection
     If xHooked Then
-        If IsNumeric(obj) Then
-            If obj < 0 Then
-                HookObj = ha("k" & -obj)
+        If IsNumeric(Obj) Then
+            If Obj < 0 Then
+                HookObj = ha("k" & -Obj)
             Else
-                Set HookObj = hc("k" & obj)
+                Set HookObj = hc("k" & Obj)
             End If
         Else
             If ha Is Nothing Then Set ha = New Collection
@@ -501,20 +500,20 @@ On Error GoTo hookerror
             Dim cnt As Long
             If hc.count > 0 Then
                 For cnt = 1 To hc.count
-                    If hc(cnt).hwnd = obj.hwnd Then
-                        If obj.hwnd > 0 Then
-                        SetWindowLong obj.hwnd, _
-                        GWL_WNDPROC, ha("k" & obj.hwnd)
-                        hc.Remove "k" & obj.hwnd
-                        ha.Remove "k" & obj.hwnd
+                    If hc(cnt).hwnd = Obj.hwnd Then
+                        If Obj.hwnd > 0 Then
+                        SetWindowLong Obj.hwnd, _
+                        GWL_WNDPROC, ha("k" & Obj.hwnd)
+                        hc.Remove "k" & Obj.hwnd
+                        ha.Remove "k" & Obj.hwnd
                         End If
                         GoTo hookok
                     End If
                 Next
             End If
-            hc.Add obj, "k" & obj.hwnd
-            ha.Add GetWindowLong(obj.hwnd, GWL_WNDPROC), "k" & obj.hwnd
-            SetWindowLong obj.hwnd, GWL_WNDPROC, AddressOf ControlWndProc
+            hc.Add Obj, "k" & Obj.hwnd
+            ha.Add GetWindowLong(Obj.hwnd, GWL_WNDPROC), "k" & Obj.hwnd
+            SetWindowLong Obj.hwnd, GWL_WNDPROC, AddressOf ControlWndProc
         End If
 hookok:
         If ha.count = 0 Then Set ha = Nothing
@@ -530,11 +529,11 @@ Private Function ControlWndProc(ByVal hwnd As Long, ByVal uMsg As Long, ByVal wP
     lDispatch = True
 
     If (HookObj(-hwnd) <> 0) Then
-        Dim obj As RichTextBox
+        Dim Obj As RichTextBox
         Dim par As CodeEdit
-        Set obj = HookObj(hwnd)
-        If Not obj Is Nothing Then
-            Set par = obj.Parent
+        Set Obj = HookObj(hwnd)
+        If Not Obj Is Nothing Then
+            Set par = Obj.Parent
         
             Select Case uMsg
                 Case EM_CANUNDO
@@ -581,7 +580,7 @@ Private Function ControlWndProc(ByVal hwnd As Long, ByVal uMsg As Long, ByVal wP
             Set par = Nothing
         End If
         
-        Set obj = Nothing
+        Set Obj = Nothing
 
     End If
 

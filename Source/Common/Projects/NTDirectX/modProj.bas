@@ -883,7 +883,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 
                         
                       'find aiming at plaet (dist3 holds closest last aiming at dist)
-                        Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+                        Set p.Rotate = AnglesOfPoint(VectorDeduction(p.Origin, Camera.Player.Origin))
                        ' Set p.Absolute.Rotate = p.Rotate
                        
                        ' Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, acmera.Player.Origin))
@@ -931,7 +931,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             
              '           Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, amera.Player.Origin))
                         
-            Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
+            Set p.Rotate = AnglesOfPoint(VectorDeduction(p.Origin, Camera.Player.Origin))
             Set p.Absolute.Rotate = p.Rotate
                         
             SubRenderPlateau UserControl, Camera, p

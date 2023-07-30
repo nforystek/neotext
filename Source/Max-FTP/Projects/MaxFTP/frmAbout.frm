@@ -386,10 +386,6 @@ Private Sub DrawFireWork(tFW As FireWork)
 End Sub
 
 
-Private Sub prgVersion_Click()
-
-End Sub
-
 Private Sub Timer1_Timer()
     Dim i As Long
     For i = 0 To FWCount

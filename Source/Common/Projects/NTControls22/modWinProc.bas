@@ -1,6 +1,5 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modWinProc"
+
 #Const modWinProc = -1
 Option Explicit
 'TOP DOWN
@@ -86,4 +85,4 @@ Public Function HideWindow()
     Unload frmCombo
 End Function
 
-Attribute 
+

@@ -1,8 +1,4 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modMain"
-
-
 
 #Const modMain = -1
 Option Explicit
@@ -29,11 +25,11 @@ Public Declare Function TerminateProcess Lib "kernel32" (ByVal hProcess As Long,
 Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef Source As Any, ByVal Length As Long)
 
 
-Public Sub MaxDBError(ByVal Number As Long, ByVal Description As String, ByRef Retry As Boolean)
+Public Sub MaxDBError(ByVal number As Long, ByVal Description As String, ByRef Retry As Boolean)
     'Handles any and all database errors that technically should not occur and
     'immediately halts progress of the application until an ultimatim is met;
     'either it continues to retry by user request and time outs, or shutdown.
-    If (Number = -2147467259) Or (Number = 3709) Then
+    If (number = -2147467259) Or (number = 3709) Then
         
         ShutDownMaxFTP True
         
@@ -44,7 +40,7 @@ Public Sub MaxDBError(ByVal Number As Long, ByVal Description As String, ByRef R
     
     Else
     
-        frmDBError.ShowError Number & " " & Description
+        frmDBError.ShowError number & " " & Description
                 
         Do Until frmDBError.Visible = False
             modCommon.DoTasks
@@ -60,6 +56,12 @@ End Sub
 
 
 Public Sub Main()
+
+'    Dim Ret As String
+'
+'    FindMicrosoftNetworkNameByMachine "desktop", Ret
+'Debug.Print Ret
+'End
     EnableMachinePrivileges
     
 '%LICENSE%
@@ -233,7 +235,7 @@ Public Sub ShutDownMaxFTP(Optional ByVal DBError As Boolean = False)
     Dim frmcnt As Long
     
     cnt = 0
-    Do Until cnt > Forms.Count - 1
+    Do Until cnt > Forms.count - 1
         If frmMain.timGlobal.enabled Then Exit Sub
         If IsUnloadForm(Forms(cnt)) Then
             Unload Forms(cnt)
@@ -244,14 +246,14 @@ Public Sub ShutDownMaxFTP(Optional ByVal DBError As Boolean = False)
     Loop
     
     cnt = 0
-    Do Until cnt > Forms.Count - 1
+    Do Until cnt > Forms.count - 1
         If frmMain.timGlobal.enabled Then Exit Sub
         If TypeName(Forms(cnt)) = "frmMain" Then
             cnt = cnt + 1
         Else
-            frmcnt = Forms.Count
+            frmcnt = Forms.count
             Unload Forms(cnt)
-            If frmcnt = Forms.Count Then cnt = cnt + 1
+            If frmcnt = Forms.count Then cnt = cnt + 1
         End If
     Loop
 
@@ -326,7 +328,7 @@ Public Function PromptAbortClose(ByVal MsgText As String) As Boolean
         Dim cnt As Integer
         Dim frm As frmFTPClientGUI
         cnt = 0
-        Do Until cnt > Forms.Count - 1
+        Do Until cnt > Forms.count - 1
             If TypeName(Forms(cnt)) = "frmFTPClientGUI" Then
                 Set frm = Forms(cnt)
                 If frm.myClient0.ConnectedState Or frm.myClient1.ConnectedState Then
@@ -371,7 +373,7 @@ Public Function GetFormByID(ByVal FormID As String) As Form
 
     Dim test As String
     Dim cnt As Integer
-    For cnt = 0 To Forms.Count - 1
+    For cnt = 0 To Forms.count - 1
         If TypeName(Forms(cnt)) = "frmFTPClientGUI" Then
             test = Forms(cnt).MyDescription
             If LCase(test) = LCase(FormID) Then

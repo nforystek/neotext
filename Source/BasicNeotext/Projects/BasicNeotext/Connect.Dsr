@@ -1090,10 +1090,10 @@ Private Sub DoMakeProj(ByRef vbp As VBProject)
     
     vbp.MakeCompiledFile
     
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
 
-        If Err.Number <> 0 Then
-            MsgBox Err.Description, vbCritical, "Error " & Err.Number
+        If Err.number <> 0 Then
+            MsgBox Err.Description, vbCritical, "Error " & Err.number
         End If
     
         Err.Clear

@@ -1,5 +1,7 @@
 Attribute VB_Name = "modSockets"
 
+
+
 #Const modSockets = -1
 Option Explicit
 'TOP DOWN
@@ -109,7 +111,7 @@ Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal S As Long, ByVal cm
 Public Declare Sub CopyMemoryHost Lib "kernel32" Alias "RtlMoveMemory" (ByRef xDest As hostent, ByVal xSource As Long, ByVal nbytes As Long)
 Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef xDest As Long, ByVal xSource As Long, ByVal nbytes As Long)
 Public Declare Sub RtlMoveMemory3 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, ByVal hpvSource&, ByVal cbCopy&)
-Public Declare Sub RtlMoveMemory2 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, Source As Any, ByVal cbCopy As Long)
+Public Declare Sub RtlMoveMemory2 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, source As Any, ByVal cbCopy As Long)
 
 Public Const FD_READ       As Long = &H1
 Public Const FD_WRITE      As Long = &H2
@@ -558,7 +560,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.Number, App.EXEName, Err.Description
+    Err.Raise Err.number, App.EXEName, Err.Description
 End Function
 
 Function LoByte(ByVal wParam As Integer)
@@ -568,7 +570,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.Number, App.EXEName, Err.Description
+    Err.Raise Err.number, App.EXEName, Err.Description
 End Function
 #End If
 
@@ -645,7 +647,7 @@ On Error GoTo catch
             
 Exit Function
 catch:
-    Err.Raise Err.Number, App.EXEName, Err.Description
+    Err.Raise Err.number, App.EXEName, Err.Description
 End Function
 
 Function SocketsCleanUp() As Long
@@ -669,7 +671,7 @@ On Error GoTo catch
     
 Exit Function
 catch:
-    Err.Raise Err.Number, App.EXEName, Err.Description
+    Err.Raise Err.number, App.EXEName, Err.Description
 End Function
 
 Public Function GetPortIP(Optional ByVal Domain As String = "") As Collection
@@ -678,12 +680,12 @@ On Error GoTo catch
     Dim IPList As New Collection
 
     Dim init As Boolean
-    Dim retVal As Long
+    Dim retval As Long
     If Not WinsockControl Then
         init = True
-        retVal = SocketsInitialize()
+        retval = SocketsInitialize()
     End If
-    If retVal = 0 Then
+    If retval = 0 Then
             
         Dim phe As Long
         Dim heDestHost As hostent
@@ -700,13 +702,13 @@ On Error GoTo catch
         If Domain = "" Then
             HostName = Space(256)
             If gethostname(HostName, 256) = Socket_ERROR Then
-                retVal = 1
+                retval = 1
             Else
                 HostName = Trim$(HostName)
                 Hostent_addr = GetHostByName(HostName)
     
                 If Hostent_addr = 0 Then
-                    retVal = 2
+                    retval = 2
                 Else
                     
                     CopyMemoryHost Host, Hostent_addr, LenB(Host)
@@ -763,7 +765,7 @@ On Error GoTo catch
         End If
         
         If init Then
-            retVal = SocketsCleanUp()
+            retval = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -773,19 +775,19 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.Number, App.EXEName, Err.Description
+    Err.Raise Err.number, App.EXEName, Err.Description
 End Function
 
 
 Public Function ResolveIP(ByVal Host As String) As String
 
     Dim init As Boolean
-    Dim retVal As Long
+    Dim retval As Long
     If Not WinsockControl Then
         init = True
-        retVal = SocketsInitialize()
+        retval = SocketsInitialize()
     End If
-    If retVal = 0 Then
+    If retval = 0 Then
     
         Dim phe As Long
         Dim heDestHost As hostent
@@ -826,7 +828,7 @@ Public Function ResolveIP(ByVal Host As String) As String
         End If
     
         If init Then
-            retVal = SocketsCleanUp()
+            retval = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -837,12 +839,12 @@ End Function
 Public Function Resolve(ByVal Host As String) As Long
    
     Dim init As Boolean
-    Dim retVal As Long
+    Dim retval As Long
     If Not WinsockControl Then
         init = True
-        retVal = SocketsInitialize()
+        retval = SocketsInitialize()
     End If
-    If retVal = 0 Then
+    If retval = 0 Then
         
         Dim phe As Long
         Dim heDestHost As hostent
@@ -866,7 +868,7 @@ Public Function Resolve(ByVal Host As String) As Long
         End If
             
         If init Then
-            retVal = SocketsCleanUp()
+            retval = SocketsCleanUp()
         End If
 
     End If
@@ -877,12 +879,12 @@ End Function
 Public Function LocalHost() As String
 
     Dim init As Boolean
-    Dim retVal As Long
+    Dim retval As Long
     If Not WinsockControl Then
         init = True
-        retVal = SocketsInitialize()
+        retval = SocketsInitialize()
     End If
-    If retVal = 0 Then
+    If retval = 0 Then
     
         
         Dim Buf As String
@@ -897,7 +899,7 @@ Public Function LocalHost() As String
         End If
     
         If init Then
-            retVal = SocketsCleanUp()
+            retval = SocketsCleanUp()
         End If
 
     End If

@@ -1,5 +1,5 @@
 Type=OleDll
-Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0; MSCOMCTL.OCX
+Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0; MSCOMCTL.OCX
 Class=Window; NTPopup21\Window.cls
 Form=NTPopup21\frmPopup.frm
 Module=modForms; ..\..\Shared\modForms.bas

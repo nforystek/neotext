@@ -11,6 +11,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+
 Option Explicit
 'TOP DOWN
 
@@ -27,8 +28,8 @@ Private pIcon As Integer
 Private pVisible As Boolean
 Private pAlwaysOnTop As Boolean
 
-Friend Property Get hWnd() As Long
-    hWnd = pPopup.hWnd
+Friend Property Get hwnd() As Long
+    hwnd = pPopup.hwnd
 End Property
 
 Friend Property Get WindowState() As Long

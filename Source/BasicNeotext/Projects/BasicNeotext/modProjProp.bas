@@ -255,9 +255,9 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
         For Each frm In Hooks
 
             frm.SaveVisibility
-            
+
             If frm.CodeModule Is Nothing Then
-                
+
                 Set frm.CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hwnd))
 
             End If

@@ -11,6 +11,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+
 Option Explicit
 
 Option Compare Binary
@@ -136,7 +137,7 @@ Private ftpWriteTextStream As Scripting.TextStream
 Private ftpReadFileNum As Integer
 Private ftpReadTextStream As Scripting.TextStream
 
-Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Public Event Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
 Public Event LogMessage(ByVal MessageType As MessageTypes, ByVal AddedText As String)
 Public Event ItemListing(ByVal ItemName As String, ByVal ItemSize As String, ByVal ItemDate As String, ByVal ItemAccess As String)
 Public Event DataProgress(ByVal ProgressType As ProgressTypes, ByVal ReceivedBytes As Double) ' _
@@ -144,6 +145,7 @@ Event that is called during a data socket transfering data and has progressed.
 Attribute DataProgress.VB_Description = "Event that is called during a data socket transfering data and has progressed."
 Public Event DataComplete(ByVal ProgressType As ProgressTypes) ' _
 Event that is called when the data socket has finished transfering and has closed.
+Attribute DataComplete.VB_Description = "Event that is called when the data socket has finished transfering and has closed."
 
 Private myObj As Client
 Private myServerObj As Client
@@ -2229,7 +2231,7 @@ Private Sub mData_Disconnected()
    ' End If
 End Sub
 
-Private Sub mData_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Private Sub mData_Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
     SetLastError RaiseError, Number, Description
 End Sub
 
@@ -2752,6 +2754,6 @@ Private Sub DoOutCommands()
 
 End Sub
 
-Private Sub mTCP_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Private Sub mTCP_Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
     SetLastError RaiseError, Number, Description
 End Sub

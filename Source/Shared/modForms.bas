@@ -1,4 +1,5 @@
 Attribute VB_Name = "modForms"
+
 #Const modForms = -1
 Option Explicit
 'TOP DOWN
@@ -12,7 +13,7 @@ Private Const SWP_NOZORDER = &H4
 
 Private Const HWND_TOPMOST = -1
 Private Const HWND_NOTOPMOST = -2
-Private Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal Y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+Private Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
 
 Public Sub GetFormByHWND(ByRef tForm As Form, ByVal hwnd As Long)
 

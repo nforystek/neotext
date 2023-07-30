@@ -1,6 +1,5 @@
 Attribute VB_Name = "modParentProc"
-#Const [True] = -1
-#Const [False] = 0
+
 #Const modParentProc = -1
 Option Explicit
 'TOP DOWN
@@ -12,7 +11,7 @@ Public Const WM_WINDOWPOSCHANGING = &H46
 Public Const WM_WINDOWPOSCHANGED = &H47
 
 Type WINDOWPOS
-        hWNd As Long
+        hwnd As Long
         hWndInsertAfter As Long
         X As Long
         Y As Long
@@ -45,42 +44,42 @@ Private Const GWL_WNDPROC = (-4)
 
 Private Declare Function GetForegroundWindow Lib "user32" () As Long
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)
-Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWNd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lngParam As Long) As Long
-Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWNd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWNd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lngParam As Long) As Long
+Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Public Declare Function GetActiveWindow Lib "user32" () As Long
 
-Private Declare Function DestroyWindow Lib "user32" (ByVal hWNd As Long) As Long
+Private Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
 
 Private Const ENDSESSION_LOGOFF As Long = &H80000000
 
 Private UC As New VBA.Collection
 
-Public Function Hook(ByRef obj As Window) As String
-    If obj.PrevWndProc = 0 Then
+Public Function Hook(ByRef Obj As Window) As String
+    If Obj.PrevWndProc = 0 Then
         
           Dim NewObj As Window
           Dim UCKey As String
         
-          UCKey = "hw" & obj.ParentHWnd
+          UCKey = "hw" & Obj.ParentHWnd
           
-          Set NewObj = obj
+          Set NewObj = Obj
           UC.Add NewObj, UCKey
           
           Set NewObj = Nothing
 
         Hook = UCKey
         
-        obj.PrevWndProc = SetWindowLong(obj.ParentHWnd, GWL_WNDPROC, AddressOf WindowProc)
+        Obj.PrevWndProc = SetWindowLong(Obj.ParentHWnd, GWL_WNDPROC, AddressOf WindowProc)
     End If
 End Function
 
-Public Sub Unhook(ByRef obj As Window)
-    If obj.PrevWndProc <> 0 Then
-        SetWindowLong obj.ParentHWnd, GWL_WNDPROC, obj.PrevWndProc
-        obj.PrevWndProc = 0
-        UC.Remove "hw" & obj.ParentHWnd
+Public Sub Unhook(ByRef Obj As Window)
+    If Obj.PrevWndProc <> 0 Then
+        SetWindowLong Obj.ParentHWnd, GWL_WNDPROC, Obj.PrevWndProc
+        Obj.PrevWndProc = 0
+        UC.Remove "hw" & Obj.ParentHWnd
     End If
 End Sub
 
@@ -140,7 +139,7 @@ Public Function WindowProc(ByVal hw As Long, ByVal uMsg As Long, ByVal wParam As
         If Not ((uMsg And WM_QUERYENDSESSION) = WM_QUERYENDSESSION) Then
     
             Select Case GetActiveWindow
-                Case TempUC.hWNd, TempUC.ParentHWnd
+                Case TempUC.hwnd, TempUC.ParentHWnd
                     If GetForegroundWindow = GetActiveWindow Then TempUC.ParentIsActive = True
                 Case 0
                     If TempUC.WindowState = vbNormal Then

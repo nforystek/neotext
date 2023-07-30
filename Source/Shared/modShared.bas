@@ -1,5 +1,3 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modShared"
 
 
@@ -297,7 +295,7 @@ End Function
 '    GetDownloadsFolder = sPath & "\Downloads"
 'End Function
 
-Private Sub FindMicrosoftNetworkNameByMachine(ByVal computername As String, ByRef domainworkgroup As String)
+Public Sub FindMicrosoftNetworkNameByMachine(ByVal computername As String, ByRef domainworkgroup As String)
    
     Dim lngresult As Long
     Dim lngenumhwnd As Long
@@ -371,7 +369,7 @@ Private Sub SearchNetworkChildren(netdata_parent As NETRESOURCE, strremotename_p
                 
                 For Each objDomain In objNameSpace
                     DoEvents
-                    domainworkgroup = objDomain.Name
+                    domainworkgroup = objDomain.name
                     Exit For
                 Next
                 
@@ -533,9 +531,9 @@ End Function
 
 Public Function GetWinDir() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(260, Chr(0))
-    ret = GetWindowsDirectory(winDir, 260)
+    Ret = GetWindowsDirectory(winDir, 260)
     winDir = Trim(Replace(winDir, Chr(0), ""))
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     GetWinDir = winDir
@@ -548,16 +546,16 @@ End Function
 Public Function GetWinTempDir(Optional ByVal UseWin As Boolean = False) As String
 
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(260, Chr(0))
-    ret = GetTempPath(260, winDir)
-    If (Not ((ret = 16) And UseWin)) And (Not ((ret = 34) And Not UseWin)) Then
+    Ret = GetTempPath(260, winDir)
+    If (Not ((Ret = 16) And UseWin)) And (Not ((Ret = 34) And Not UseWin)) Then
         If PathExists(GetWinDir() + "TEMP") Then
             winDir = GetWinDir() + "TEMP\"
         Else
             On Error Resume Next
             MkDir GetWinDir() + "TEMP"
-            If Err.Number <> 0 Then Err.Clear
+            If Err.number <> 0 Then Err.Clear
             On Error GoTo 0
             
             If PathExists(GetWinDir() + "TEMP") Then

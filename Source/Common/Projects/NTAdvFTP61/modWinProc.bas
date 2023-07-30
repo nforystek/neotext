@@ -53,18 +53,20 @@ Private mSubProc As Long
 Private mForm As frmThread
 
 Public Function SocketsInitialize()
-    If Not modSockets.WinsockControl Then
+     If Not modSockets.WinsockControl Then
         If mForm Is Nothing Then
             Set mForm = New frmThread
             Load mForm
+           
             mSubProc = SetWindowLong(mForm.hwnd, GWL_WNDPROC, AddressOf WinsockEvents)
         End If
     End If
+    
     modSockets.SocketsInitialize
 End Function
 
 Public Function SocketsCleanUp()
-    modSockets.SocketsCleanUp
+    
     If Not modSockets.WinsockControl Then
         If Not mForm Is Nothing Then
             SetWindowLong mForm.hwnd, GWL_WNDPROC, mSubProc
@@ -73,6 +75,7 @@ Public Function SocketsCleanUp()
             Set mForm = Nothing
         End If
     End If
+    modSockets.SocketsCleanUp
 End Function
 
 Public Function RegisterSocket(ByRef sock As ISocket)

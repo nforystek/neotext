@@ -434,7 +434,7 @@ Attribute Accept.VB_Description = "Accepts a incoming connection, or mismatched 
             State(States.Opening) = True
             State(States.Closed) = False
             mSocket = nHandle
-            RegisterSocket Me
+            'RegisterSocket Me
             mSendData.Reset
             mReadData.Reset
             State(States.Opened) = True
@@ -981,6 +981,7 @@ On Error GoTo sockerror
 
 Exit Function
 sockerror:
+Debug.Print Err.Number
     Err.Clear
     On Error GoTo 0
     Err.Raise 8, "Socket", "Error attempting to capture events."
@@ -1167,23 +1168,23 @@ Private Sub DebugEvent(ByVal txt As String)
     End If
 End Sub
 Private Sub DataValidating(ByVal wParam As Long)
-        SetValidatingMode
-        RaiseEvent Connection(Handle)
-        UnsetValidatingMode Handle, "Not validating remote connections."
-        
-    
-'    If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
 '        SetValidatingMode
 '        RaiseEvent Connection(Handle)
-'        UnsetValidatingMode Handle, "he remote address did not match the ip address for the connection."
-'    Else
-'        If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
-'            SetValidatingMode
-'            RaiseEvent Connection(Handle)
-'            UnsetValidatingMode Handle, "Either remote or local socket handle did not match ip address for the connection."
-'
-'        End If
-'    End If
+'        UnsetValidatingMode Handle, "Not validating remote connections."
+        
+    
+    If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
+        SetValidatingMode
+        RaiseEvent Connection(Handle)
+        UnsetValidatingMode Handle, "The remote address did not match the ip address for the connection."
+    Else
+        If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
+            SetValidatingMode
+            RaiseEvent Connection(Handle)
+            UnsetValidatingMode Handle, "Either remote or local socket handle did not match ip address for the connection."
+
+        End If
+    End If
 End Sub
 
 

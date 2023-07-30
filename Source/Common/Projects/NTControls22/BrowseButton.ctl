@@ -103,6 +103,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+
 Option Explicit
 'TOP DOWN
 
@@ -243,7 +244,7 @@ Private MousePos As POINTAPI
 
 
 Private Type POINTAPI
-        x As Long
+        X As Long
         Y As Long
 End Type
 
@@ -361,7 +362,7 @@ Private Function IsOverButton() As Boolean
     
     GetCursorPos pt
 
-    hwnd = WindowFromPoint(pt.x, pt.Y)
+    hwnd = WindowFromPoint(pt.X, pt.Y)
 
     If hwnd = UserControl.hwnd Then
         IsOverButton = True
@@ -404,15 +405,15 @@ Private Sub EventMouseUp()
     End Select
 End Sub
 
-Private Sub buttonImg_MouseDown(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub buttonImg_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     EventMouseDown
 End Sub
 
-Private Sub buttonImg_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub buttonImg_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     EventMouseMove
 End Sub
 
-Private Sub buttonImg_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub buttonImg_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     EventMouseUp
 End Sub
 
@@ -458,16 +459,16 @@ Private Sub Command1_LostFocus()
     End If
 End Sub
 
-Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, x As Single, Y As Single)
-    buttonImg_MouseDown Button, Shift, x, Y
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    buttonImg_MouseDown Button, Shift, X, Y
 End Sub
 
-Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
-    buttonImg_MouseMove Button, Shift, x, Y
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    buttonImg_MouseMove Button, Shift, X, Y
 End Sub
 
-Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
-    buttonImg_MouseUp Button, Shift, x, Y
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    buttonImg_MouseUp Button, Shift, X, Y
 End Sub
 
 Private Sub buttonOver_Timer()
@@ -673,7 +674,7 @@ Public Function Browse() As String
         CommonDialog1.DialogTitle = pBrowseTitle
         CommonDialog1.Filter = pFileFilter
         CommonDialog1.FilterIndex = pFileFilterIndex
-        If Not ((CommonDialog1.flags And &H4) = &H4) Then CommonDialog1.flags = CommonDialog1.flags + &H4
+        If Not ((CommonDialog1.Flags And &H4) = &H4) Then CommonDialog1.Flags = CommonDialog1.Flags + &H4
         CommonDialog1.CancelError = True
         
         On Error Resume Next
