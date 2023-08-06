@@ -20,7 +20,7 @@ End Type
 'todo: an implementation of defragmenting
 
 Public Sub Main()
-
+    
 End Sub
 'Public Function DebugPrint(ByRef FileCount As Long, ByRef FileIndex() As FileData, ByVal Resource As String) As String
 '    If FileCount > 0 Then

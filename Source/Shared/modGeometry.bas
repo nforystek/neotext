@@ -18,7 +18,7 @@ Private Enum AngleValue
     Sine = 2 'the majority of the angle with in 0 to 45
     Cosine = 3 'the remainder of the angle with in 0 to 22.5
     Tangent = 4 'the tangent of the sine and cosine of the angle
-    Angle = 5 'base, sine and cosine of the angle added together
+    angle = 5 'base, sine and cosine of the angle added together
 End Enum
 
 Public Const PI As Single = 3.14159265358979
@@ -128,12 +128,12 @@ Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal n As Sin
     With DistanceSet
         If Not (dist = n) Then
             If ((dist > 0) And (n > 0)) Then
-                .X = Large(p1.X, p2.X) - Least(p1.X, p2.X)
-                .Y = Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y)
-                .z = Large(p1.z, p2.z) - Least(p1.z, p2.z)
-                .X = (Least(p1.X, p2.X) + (n * (.X / dist)))
-                .Y = (Least(p1.Y, p2.Y) + (n * (.Y / dist)))
-                .z = (Least(p1.z, p2.z) + (n * (.z / dist)))
+                .X = large(p1.X, p2.X) - least(p1.X, p2.X)
+                .Y = large(p1.Y, p2.Y) - least(p1.Y, p2.Y)
+                .z = large(p1.z, p2.z) - least(p1.z, p2.z)
+                .X = (least(p1.X, p2.X) + (n * (.X / dist)))
+                .Y = (least(p1.Y, p2.Y) + (n * (.Y / dist)))
+                .z = (least(p1.z, p2.z) + (n * (.z / dist)))
             ElseIf (n = 0) Then
                 .X = p1.X
                 .Y = p1.Y
@@ -180,15 +180,15 @@ Public Function PointOnPlaneNearestPoint(ByRef v0 As Point, ByRef V1 As Point, B
 End Function
 
 Public Function LineOpposite(ByVal Length1 As Single, ByVal Length2 As Single, ByVal Length3 As Single) As Single
-    LineOpposite = Least(Length1, Length2, Length3)
+    LineOpposite = least(Length1, Length2, Length3)
 End Function
 
 Public Function LineAdjacent(ByVal Length1 As Single, ByVal Length2 As Single, ByVal Length3 As Single) As Single
-    LineAdjacent = Large(Least(Length1, Length2), Large(Least(Length2, Length3), Least(Length3, Length1)))
+    LineAdjacent = large(least(Length1, Length2), large(least(Length2, Length3), least(Length3, Length1)))
 End Function
 
 Public Function LineHypotenuse(ByVal Length1 As Single, ByVal Length2 As Single, ByVal Length3 As Single) As Single
-    LineHypotenuse = Large(Length1, Length2, Length3)
+    LineHypotenuse = large(Length1, Length2, Length3)
 End Function
 
 Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir As Point, ByRef VIntersectOut As Point) As Boolean
@@ -323,9 +323,9 @@ Public Function SquareCenter(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As P
     Set SquareCenter = New Point
     With SquareCenter
         'center by adding onto the lowest value of axis with the the middle of the absolute difference of each of axis
-        .X = (Least(v0.X, V1.X, V2.X, V3.X) + ((Large(v0.X, V1.X, V2.X, V3.X) - Least(v0.X, V1.X, V2.X, V3.X)) / 2))
-        .Y = (Least(v0.Y, V1.Y, V2.Y, V3.Y) + ((Large(v0.Y, V1.Y, V2.Y, V3.Y) - Least(v0.Y, V1.Y, V2.Y, V3.Y)) / 2))
-        .z = (Least(v0.z, V1.z, V2.z, V3.z) + ((Large(v0.z, V1.z, V2.z, V3.z) - Least(v0.z, V1.z, V2.z, V3.z)) / 2))
+        .X = (least(v0.X, V1.X, V2.X, V3.X) + ((large(v0.X, V1.X, V2.X, V3.X) - least(v0.X, V1.X, V2.X, V3.X)) / 2))
+        .Y = (least(v0.Y, V1.Y, V2.Y, V3.Y) + ((large(v0.Y, V1.Y, V2.Y, V3.Y) - least(v0.Y, V1.Y, V2.Y, V3.Y)) / 2))
+        .z = (least(v0.z, V1.z, V2.z, V3.z) + ((large(v0.z, V1.z, V2.z, V3.z) - least(v0.z, V1.z, V2.z, V3.z)) / 2))
     End With
 End Function
 
@@ -395,27 +395,27 @@ End Function
 Public Function TriangleOffset(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     Set TriangleOffset = New Point
     With TriangleOffset
-        .X = (Large(p1.X, p2.X, p3.X) - Least(p1.X, p2.X, p3.X))
-        .Y = (Large(p1.Y, p2.Y, p3.Y) - Least(p1.Y, p2.Y, p3.Y))
-        .z = (Large(p1.z, p2.z, p3.z) - Least(p1.z, p2.z, p3.z))
+        .X = (large(p1.X, p2.X, p3.X) - least(p1.X, p2.X, p3.X))
+        .Y = (large(p1.Y, p2.Y, p3.Y) - least(p1.Y, p2.Y, p3.Y))
+        .z = (large(p1.z, p2.z, p3.z) - least(p1.z, p2.z, p3.z))
     End With
 End Function
 
 Public Function TriangleLowestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     Set TriangleLowestOfAll = New Point
     With TriangleLowestOfAll
-        .X = Least(p1.X, p2.X, p3.X)
-        .Y = Least(p1.Y, p2.Y, p3.Y)
-        .z = Least(p1.z, p2.z, p3.z)
+        .X = least(p1.X, p2.X, p3.X)
+        .Y = least(p1.Y, p2.Y, p3.Y)
+        .z = least(p1.z, p2.z, p3.z)
     End With
 End Function
 
 Public Function TriangleLargestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     Set TriangleLargestOfAll = New Point
     With TriangleLargestOfAll
-        .X = Large(p1.X, p2.X, p3.X)
-        .Y = Large(p1.Y, p2.Y, p3.Y)
-        .z = Large(p1.z, p2.z, p3.z)
+        .X = large(p1.X, p2.X, p3.X)
+        .Y = large(p1.Y, p2.Y, p3.Y)
+        .z = large(p1.z, p2.z, p3.z)
     End With
 End Function
 
@@ -424,9 +424,9 @@ Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As P
     With TriangleAxii
         Dim o As Point
         Set o = TriangleOffset(p1, p2, p3)
-        .X = (Least(p1.X, p2.X, p3.X) + (o.X / 2))
-        .Y = (Least(p1.Y, p2.Y, p3.Y) + (o.Y / 2))
-        .z = (Least(p1.z, p2.z, p3.z) + (o.z / 2))
+        .X = (least(p1.X, p2.X, p3.X) + (o.X / 2))
+        .Y = (least(p1.Y, p2.Y, p3.Y) + (o.Y / 2))
+        .z = (least(p1.z, p2.z, p3.z) + (o.z / 2))
     End With
 End Function
 
@@ -526,7 +526,7 @@ Public Function TriangleOpposite(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 
         If l2 < l1 And l2 < TriangleOpposite Then
             TriangleOpposite = ((TriangleOpposite ^ 2) - (l1 ^ 2)) ^ (1 / 2)
         ElseIf l2 > TriangleOpposite Then
-            TriangleOpposite = ((l2 ^ 2) - (Large(l1, TriangleOpposite) ^ 2)) ^ (1 / 2)
+            TriangleOpposite = ((l2 ^ 2) - (large(l1, TriangleOpposite) ^ 2)) ^ (1 / 2)
         Else
             TriangleOpposite = ((TriangleOpposite ^ 2) - (l2 ^ 2)) ^ (1 / 2)
         End If
@@ -722,26 +722,26 @@ Public Function VectorRotateZ(ByRef PointToRotate As Point, ByVal RadianAngle As
 End Function
 
 
-Public Function LineSlope(ByVal X1 As Single, ByVal Y1 As Single, Optional ByVal X2 As Single, Optional ByVal Y2 As Single) As Single
-    If (Y2 - Y1) <> 0 Then
-        LineSlope = (X2 - X1) / (Y2 - Y1) 'rise over run
+Public Function LineSlope(ByVal x1 As Single, ByVal y1 As Single, Optional ByVal x2 As Single, Optional ByVal y2 As Single) As Single
+    If (y2 - y1) <> 0 Then
+        LineSlope = (x2 - x1) / (y2 - y1) 'rise over run
     End If
 End Function
 
 
-Public Function SquareSlope(ByVal X1 As Single, ByVal Y1 As Single, Optional ByVal X2 As Single, Optional ByVal Y2 As Single) As Single
+Public Function SquareSlope(ByVal x1 As Single, ByVal y1 As Single, Optional ByVal x2 As Single, Optional ByVal y2 As Single) As Single
     'never returns above 1 or below -1
-    X1 = X2 - X1
-    Y1 = Y2 - Y1
-    If (Y1 = 0) Or (X1 = 0 And Y1 = 0) Then 'horizontal
+    x1 = x2 - x1
+    y1 = y2 - y1
+    If (y1 = 0) Or (x1 = 0 And y1 = 0) Then 'horizontal
         SquareSlope = 0
-    ElseIf (X1 = 0) Then 'vertical
-        SquareSlope = IIf(X1 < 0 Or Y1 < 0, -1, 1)
+    ElseIf (x1 = 0) Then 'vertical
+        SquareSlope = IIf(x1 < 0 Or y1 < 0, -1, 1)
     Else
-        If (Y1 = X1) Then 'diagonal
-            SquareSlope = IIf(X1 < 0 Or Y1 < 0, -0.5, 0.5)
+        If (y1 = x1) Then 'diagonal
+            SquareSlope = IIf(x1 < 0 Or y1 < 0, -0.5, 0.5)
         Else
-            SquareSlope = Round((Y1 / X1), 6) 'rise over run
+            SquareSlope = Round((y1 / x1), 6) 'rise over run
         End If
     End If
 End Function
@@ -757,73 +757,7 @@ Public Function ATan2(ByVal opp As Single, ByVal adj As Single) As Single
 End Function
 
 
-'Private Function AngleOfCoord(ByRef Coord As Coord) As Single
-'    Dim X As Single
-'    Dim Y As Single
-'    'round them off for checking
-'    X = Round(Coord.X, 6)
-'    Y = Round(Coord.Y, 6)
-'    'returns the z axis angle of the x and y in p
-'    If (X = 0) Then 'slope of 1
-'        'must be 360 or 180
-'        If (Y > 0) Then
-'            AngleOfCoord = (180 * RADIAN)
-'        ElseIf (Y < 0) Then
-'            AngleOfCoord = (360 * RADIAN)
-'        End If
-'    ElseIf (Y = 0) Then 'slope of 0
-'        'must be 90 or 270
-'        If (X > 0) Then
-'            AngleOfCoord = (90 * RADIAN)
-'        ElseIf (X < 0) Then
-'            AngleOfCoord = (270 * RADIAN)
-'        End If
-'    Else
-'        'get the base angle
-'        '(up to the quardrant)
-'        If ((X > 0) And (Y > 0)) Then
-'            AngleOfCoord = (90 * RADIAN)
-'        ElseIf ((X < 0) And (Y > 0)) Then
-'            AngleOfCoord = (180 * RADIAN)
-'        ElseIf ((X < 0) And (Y < 0)) Then
-'            AngleOfCoord = (270 * RADIAN)
-'        ElseIf ((X > 0) And (Y < 0)) Then
-'            AngleOfCoord = (360 * RADIAN)
-'        End If
-'        'all the trickery
-'        Dim slope As Single
-'        Dim large As Single
-'        Dim least As Single
-'        Dim angle As Single
-'        If Abs(Coord.X) > Abs(Coord.Y) Then
-'            large = Abs(Coord.X)
-'            least = Abs(Coord.Y)
-'        Else
-'            least = Abs(Coord.X)
-'            large = Abs(Coord.Y)
-'        End If
-'        slope = (least / large) 'the angle in square form
-'        '^^ or tangent, tangable to other axis angles' shared axis
-'        angle = (((Coord.X ^ 2) + (Coord.Y ^ 2)) ^ (1 / 2)) 'distance, for now
-'        large = (((large ^ 2) - (least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
-'        least = (((angle ^ 2) - (least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
-'        least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (large / angle)) * (least / angle))
-'        '^^ rounding remainder cosine of the angle, to make up for the bulk sine not suffecient a curve
-'        'in 16's, we are also adding the two degrees that are one removed from the pi in 4's done next
-'        large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope) 'bulk sine of the angle in 45 degree slices
-'        '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
-'        angle = large + least
-'        If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
-'           (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
-'            angle = (PI / 4) - angle
-'            AngleOfCoord = AngleOfCoord + (PI / 4)
-'        End If
-'        AngleOfCoord = AngleOfCoord + angle
-'    End If
-'End Function
-
-
-Private Function AngleFunction(ByRef Coord As Coord, ByRef RetType As AngleValue) As Single
+Private Function AngleOfCoord(ByRef Coord As Coord) As Single
     Dim X As Single
     Dim Y As Single
     'round them off for checking
@@ -832,462 +766,528 @@ Private Function AngleFunction(ByRef Coord As Coord, ByRef RetType As AngleValue
     'returns the z axis angle of the x and y in p
     If (X = 0) Then 'slope of 1
         'must be 360 or 180
-        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
-            If (Y > 0) Then
-                AngleFunction = (180 * RADIAN)
-            ElseIf (Y < 0) Then
-                AngleFunction = (360 * RADIAN)
-            End If
+        If (Y > 0) Then
+            AngleOfCoord = (180 * RADIAN)
+        ElseIf (Y < 0) Then
+            AngleOfCoord = (360 * RADIAN)
         End If
     ElseIf (Y = 0) Then 'slope of 0
         'must be 90 or 270
-        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
-            If (X > 0) Then
-                AngleFunction = (90 * RADIAN)
-            ElseIf (X < 0) Then
-                AngleFunction = (270 * RADIAN)
-            End If
+        If (X > 0) Then
+            AngleOfCoord = (90 * RADIAN)
+        ElseIf (X < 0) Then
+            AngleOfCoord = (270 * RADIAN)
         End If
     Else
         'get the base angle
         '(up to the quardrant)
-        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
-            If ((X > 0) And (Y > 0)) Then
-                AngleFunction = (90 * RADIAN)
-            ElseIf ((X < 0) And (Y > 0)) Then
-                AngleFunction = (180 * RADIAN)
-            ElseIf ((X < 0) And (Y < 0)) Then
-                AngleFunction = (270 * RADIAN)
-            ElseIf ((X > 0) And (Y < 0)) Then
-                AngleFunction = (360 * RADIAN)
-            End If
+        If ((X > 0) And (Y > 0)) Then
+            AngleOfCoord = (90 * RADIAN)
+        ElseIf ((X < 0) And (Y > 0)) Then
+            AngleOfCoord = (180 * RADIAN)
+        ElseIf ((X < 0) And (Y < 0)) Then
+            AngleOfCoord = (270 * RADIAN)
+        ElseIf ((X > 0) And (Y < 0)) Then
+            AngleOfCoord = (360 * RADIAN)
         End If
         'all the trickery
-        Dim Slope As Single
-        Dim Large As Single
-        Dim Least As Single
-        Dim Angle As Single
+        Dim slope As Single
+        Dim large As Single
+        Dim least As Single
+        Dim angle As Single
         If Abs(Coord.X) > Abs(Coord.Y) Then
-            Large = Abs(Coord.X)
-            Least = Abs(Coord.Y)
+            large = Abs(Coord.X)
+            least = Abs(Coord.Y)
         Else
-            Least = Abs(Coord.X)
-            Large = Abs(Coord.Y)
+            least = Abs(Coord.X)
+            large = Abs(Coord.Y)
         End If
-        Slope = (Least / Large) 'the angle in square form
+        slope = (least / large) 'the angle in square form
         '^^ or tangent, tangable to other axis angles' shared axis
-        If (RetType = AngleValue.Tangent) Then
-            AngleFunction = Slope
-            Exit Function
-        End If
-
-        Angle = (((Coord.X ^ 2) + (Coord.Y ^ 2)) ^ (1 / 2)) 'distance
-        Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
-        Least = (((Angle ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
-        Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * Slope) * (Large / Angle)) * (Least / Angle))
+        angle = (((Coord.X ^ 2) + (Coord.Y ^ 2)) ^ (1 / 2)) 'distance, for now
+        large = (((large ^ 2) - (least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
+        least = (((angle ^ 2) - (least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
+        least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (large / angle)) * (least / angle))
         '^^ rounding remainder cosine of the angle, to make up for the bulk sine not suffecient a curve
         'in 16's, we are also adding the two degrees that are one removed from the pi in 4's done next
-        If (RetType = AngleValue.Cosine) Then
-            AngleFunction = Least
-            Exit Function
-        End If
-        
-        Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * Slope) 'bulk sine of the angle in 45 degree slices
+        large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope) 'bulk sine of the angle in 45 degree slices
         '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
-        If (RetType = AngleValue.Sine) Then
-            AngleFunction = Large
-            Exit Function
-        End If
-
-        Angle = Large + Least
+        angle = large + least
         If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
            (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
-            Angle = (PI / 4) - Angle
-            If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then AngleFunction = AngleFunction + (PI / 4)
+            angle = (PI / 4) - angle
+            AngleOfCoord = AngleOfCoord + (PI / 4)
         End If
-        
-        If (RetType = AngleValue.Angle) Then
-            AngleFunction = AngleFunction + Angle
-        End If
+        AngleOfCoord = AngleOfCoord + angle
     End If
 End Function
 
-Public Function AnglesOfPoint(ByRef Point As Point) As Point
-    Static stack As Integer
-    stack = stack + 1
-    If stack = 1 Then
-        '(1,1,1) is high noon
-        'to 45 degree sections
-        Point.X = Point.X + 1
-        Point.Y = Point.Y + 1
-        Point.z = Point.z + 1
-    End If
-    Set AnglesOfPoint = New Point
-    With AnglesOfPoint
-        If stack < 5 Then
-            Dim X As Single
-            Dim Y As Single
-            Dim z As Single
-            'round them off for checking
-            '(6 is for single precision)
-            X = Round(Point.X, 6)
-            Y = Round(Point.Y, 6)
-            z = Round(Point.z, 6)
-            If (X = 0) Then  'slope of 1
-                If (z = 0) Then
-                    'must be 360 or 180
-                    If (Y > 0) Then
-                        .z = (180 * RADIAN)
-                    ElseIf (Y < 0) Then
-                        .z = (360 * RADIAN)
-                    End If
-                Else
-                    AnglesOfPoint.X = Point.Y
-                    AnglesOfPoint.Y = Point.z
-                    AnglesOfPoint.z = Point.X
-                    .z = AnglesOfPoint(AnglesOfPoint).z
-                End If
-            ElseIf (Y = 0) Then   'slope of 0
-                If (z = 0) Then
-                    'must be 90 or 270
-                    If (X > 0) Then
-                        .z = (90 * RADIAN)
-                    ElseIf (X < 0) Then
-                        .z = (270 * RADIAN)
-                    End If
-                Else
-                    AnglesOfPoint.X = Point.Y
-                    AnglesOfPoint.Y = Point.z
-                    AnglesOfPoint.z = Point.X
-                    .z = AnglesOfPoint(AnglesOfPoint).z
-                End If
-            ElseIf (X <> 0) And (Y <> 0) Then
-                Dim Slope As Single
-                Dim Large As Single
-                Dim Least As Single
-                Dim Angle As Single
-                'find the larger coordinate
-                If Abs(Point.X) > Abs(Point.Y) Then
-                    Large = Abs(Point.X)
-                    Least = Abs(Point.Y)
-                Else
-                    Least = Abs(Point.X)
-                    Large = Abs(Point.Y)
-                End If
-                Slope = (Least / Large) 'the angle in square form
-                '^^ or tangent, tangable to other axis angles' shared axis
-                Angle = (((Point.X ^ 2) + (Point.Y ^ 2)) ^ (1 / 2)) 'distance
-                'still traveling for tangents and cosines
-                Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
-                Least = (((Angle ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
-                Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * Slope) * (Large / Angle)) * (Least / Angle))
-                '^^ rounding remainder cosine of the angle, to make up for the bulk sine not suffecient a curve
-                'in 16's, we are also adding the two degrees that are one removed from the pi in 4's done next
-                Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * Slope)  'bulk sine of the angle in 45 degree slices
-                '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
-                If (z <> 0) Then 'two or less axis is one rotation
-                    Dim Ret As Point
-                    AnglesOfPoint.X = Point.Y
-                    AnglesOfPoint.Y = Point.z
-                    AnglesOfPoint.z = Point.X
-                    Set Ret = AnglesOfPoint(AnglesOfPoint)
-                    If stack = 2 Then
-                        .X = -Ret.z
-                    End If
-                    If stack = 1 Then
-                        .X = -Ret.X
-                        .Y = Ret.z
-                    End If
-                    Set Ret = Nothing
-                End If
-                'get the base angle
-                '(up to the quardrant)
-                If ((X > 0) And (Y > 0)) Then
-                    .z = (90 * RADIAN)
-                ElseIf ((X < 0) And (Y > 0)) Then
-                    .z = (180 * RADIAN)
-                ElseIf ((X < 0) And (Y < 0)) Then
-                    .z = (270 * RADIAN)
-                ElseIf ((X > 0) And (Y < 0)) Then
-                    .z = (360 * RADIAN)
-                End If
-                'develop the final angle Z for this duel coordinate X,Y axis only
-                Angle = (Large + Least)
-                If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
-                   (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
-                   'the angle for 45 to 90 is in reverse, and doesn't start at 45, but because we
-                   'are calculating a second 45 of 90, the offset (-1 not 0) is included if inverse
-                    Angle = (PI / 4) - Angle
-                    'then also add 45 to the base
-                    .z = .z + (PI / 4)
-                End If
-                'add it to the base, returing as .Z
-                .z = .z + Angle
-                If stack = 1 Then
-                    'reorganization
-                    Angle = .Y
-                    .Y = .z
-                    .z = Angle
-                    Angle = .X
-                    .X = .Y
-                    .Y = .z
-                    .z = Angle
-                    Angle = .X
-                    .X = .Y
-                    .Y = .z
-                    .z = Angle
-                End If
-            End If
-        End If
-    End With
-    If stack = 1 Then 'undo
-        Point.X = Point.X - 1
-        Point.Y = Point.Y - 1
-        Point.z = Point.z - 1
-    End If
-    stack = stack - 1
-End Function
 
-Private Function SwapAxisLeft(ByRef Point As Point)
-    Dim W As Single
-    W = Point.X
-    Point.X = Point.Y
-    Point.Y = Point.z
-    Point.z = W
-End Function
-
-Private Function SwapAxisRight(ByRef Point As Point)
-    Dim W As Single
-    W = Point.z
-    Point.z = Point.Y
-    Point.Y = Point.X
-    Point.X = W
-End Function
-
-Private Function AngleAxisRotations(ByRef Point As Point, Optional ByRef Angles As Point = Nothing) As Point
-    'returns the angles of Point *if Angles is supplied, the Point is modified and
-    'rotated by each axis of Angles, the return is not different if Angles is present
-    Static stack As Integer
-    If (stack < 0) Or (Not (Angles Is Nothing)) Then
-        stack = stack - 1 'using stack in reverse if angles is passed
-        'then we are also rotating Point after calculating it's angles
-        If Angles Is Nothing Then Set Angles = New Point
-    Else 'otherwise stack forward if not also rotating a point
-        stack = stack + 1
-    End If
-    If Abs(stack) = 1 Then
-        '(1,1,1) is high noon to 45 degree sections
-        'when 1 is above a axis line, and -1 is below
-        Point.X = Point.X + 1
-        Point.Y = Point.Y + 1
-        Point.z = Point.z + 1
-    End If
-    Set AngleAxisRotations = New Point
-    With AngleAxisRotations
-        Dim z As Single
-        If Abs(stack) < 5 Then 'most things are stopped on the
-            '4th pass the fith we aren't doing anything beyond
-            Dim X As Single
-            Dim Y As Single
-
-            'round them off for checking (6 is for single precision)
-            'you could pass 0 as the second arg for a snap-to effect
-            X = Round(Point.X, 6)
-            Y = Round(Point.Y, 6)
-            z = Round(Point.z, 6)
-            If (X = 0) Then  'slope of 1
-                If (z = 0) Then
-                    'must be 360 or 180
-                    If (Y > 0) Then
-                        .z = (180 * RADIAN)
-                    ElseIf (Y < 0) Then
-                        .z = (360 * RADIAN)
-                    End If
-                Else
-                    SwapAxisLeft Point
-                    SwapAxisLeft Angles
-                    .z = AngleAxisRotations(Point, Angles).z
-                    SwapAxisRight Point
-                    SwapAxisRight Angles
-                End If
-            ElseIf (Y = 0) Then   'slope of 0
-                If (z = 0) Then
-                    'must be 90 or 270
-                    If (X > 0) Then
-                        .z = (90 * RADIAN)
-                    ElseIf (X < 0) Then
-                        .z = (270 * RADIAN)
-                    End If
-                Else
-                    SwapAxisLeft Point
-                    SwapAxisLeft Angles
-                    .z = AngleAxisRotations(Point, Angles).z
-                    SwapAxisRight Point
-                    SwapAxisRight Angles
-                End If
-            ElseIf (X <> 0) And (Y <> 0) Then 'these assumptions
-                'are already checked and to escape division by zero
-                Dim dist As Single
-                Dim Slope As Single
-                Dim Large As Single
-                Dim Least As Single
-                Dim Angle As Single
-                'find the larger coordinate
-                If Abs(Point.X) > Abs(Point.Y) Then
-                    Large = Abs(Point.X)
-                    Least = Abs(Point.Y)
-                Else
-                    Least = Abs(Point.X)
-                    Large = Abs(Point.Y)
-                End If
-                Slope = (Least / Large) 'the angle in square form
-                '^^ or tangent, "tangable" to other axis angles'
-                'i.e. x/y, shares x in z/x, and y in y/z views
-                dist = (((Point.X ^ 2) + (Point.Y ^ 2)) ^ (1 / 2))
-                '^^^distance, from (0,0,0) to (0,0) leaving out Z
-                Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2))
-                '^^^hypotenus made of the larger coord less the
-                'least coord, will always be smaller then dist
-                Least = (((dist ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, between the smaller hypotenus and dist
-                'this will always be median, smaller to dist, but bigger then "large" hypotneus solved for
-                Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * Slope) * (Large / dist)) * (Least / dist))
-                '^^ rounding remainder of the angle, to make up for the bulk not suffecient a curve in 16th's
-                'we are also adding the two degrees that are one removed from the pi in 4th's done next step
-                Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * Slope)  'bulk of the angle in 45 degree slices
-                '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
-                'develop the 0 to 45 degree angle, still no identity
-                'and is just the same if it is to be a 45 to 90 angle
-                Angle = (Least + Large)
-                If (z <> 0) Then 'two or less axis is one rotation
-                    'and three axis rotations can be done in two axis
-                    Dim Ret As Point
-                    SwapAxisLeft Point
-                    SwapAxisLeft Angles
-                    Set Ret = AngleAxisRotations(Point, Angles)
-                    SwapAxisRight Point
-                    SwapAxisRight Angles
-                    If Abs(stack) = 2 Then
-                        .X = -Ret.z
-                    End If
-                    If Abs(stack) = 1 Then
-                        .X = -Ret.X
-                        .Y = Ret.z
-                    End If
-                    Set Ret = Nothing
-                End If
-                'get the base angle
-                '(up to the quardrant)
-                If ((X > 0) And (Y > 0)) Then
-                    .z = (90 * RADIAN)
-                ElseIf ((X < 0) And (Y > 0)) Then
-                    .z = (180 * RADIAN)
-                ElseIf ((X < 0) And (Y < 0)) Then
-                    .z = (270 * RADIAN)
-                ElseIf ((X > 0) And (Y < 0)) Then
-                    .z = (360 * RADIAN)
-                End If
-                'develop the final angle Z for this duel coordinate X,Y axis only
-                Angle = (Large + Least)
-                If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
-                   (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
-                   'the angle for 45 to 90 is in reverse, and doesn't start at 45, but because we
-                   'are calculating a second 45 of 90, the offset (-1 not 0) is included if inverse
-                    Angle = (PI / 4) - Angle
-                    'then also add 45 to the base
-                    .z = .z + (PI / 4)
-                End If
-                'add it to the base, returing as .Z
-                .z = .z + Angle
-                If stack < 0 And Abs(stack) < 5 And dist > 0 Then
-                    If Angles.z <> 0 Then
-                        'if the angles.z argument is
-                        'passed we will do the rotate
-                        'reusing some variables
-                        Large = Point.X
-                        Least = Point.Y
-                        If (.z + Angles.z) <> 0 Then
-                                                    Slope = Round(.z / (.z + Angles.z), 6)
-                            If (dist * Slope <> 0) Then
-                                If Point.X <> 0 Then Large = ((Point.X - (dist * (Point.Y / Point.X)) * (Point.X * (Slope / (dist * Slope)))) / (PI / 4)) * 0.5
-                                '.5 is 45 in square form, i.e. (8,8) from (0,0) has a slope of .5, actual fraction would say 1, or diagnal
-                                If Point.Y <> 0 Then Least = ((Point.Y + (dist * (Point.X / Point.Y)) * (Point.Y * (Slope / (dist * Slope)))) / (PI / 4)) * 0.5
-                            End If
-                        End If
-                        Point.X = Large
-                        Point.Y = Least
-                    End If
-                End If
-                If Abs(stack) = 1 Then
-                    'reorganization
-                    z = .X
-                    .X = .Y
-                    .Y = z
-                End If
-            End If
-        End If
-    End With
-    If stack < 0 Then
-        Point.z = -Point.z
-        Point.X = -Point.X
-        Point.Y = -Point.Y
-        If Abs(stack) <> 2 Then
-            z = Point.z
-            Point.z = Point.Y
-            Point.Y = z
-            Point.z = -Point.z
-            Point.X = -Point.X
-            Point.Y = -Point.Y
-        End If
-    End If
-    If stack = 1 Then 'undo
-        Point.X = (Point.X - 1)
-        Point.Y = (Point.Y - 1)
-        Point.z = (Point.z - 1)
-    End If
-    If (stack < 0) Then
-        stack = stack + 1
-    Else
-        stack = stack - 1
-    End If
-End Function
+'Private Function AngleFunction(ByRef Coord As Coord, ByRef RetType As AngleValue) As Single
+'    Dim X As Single
+'    Dim Y As Single
+'    'round them off for checking
+'    X = Round(Coord.X, 6)
+'    Y = Round(Coord.Y, 6)
+'    'returns the z axis angle of the x and y in p
+'    If (X = 0) Then 'slope of 1
+'        'must be 360 or 180
+'        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
+'            If (Y > 0) Then
+'                AngleFunction = (180 * RADIAN)
+'            ElseIf (Y < 0) Then
+'                AngleFunction = (360 * RADIAN)
+'            End If
+'        End If
+'    ElseIf (Y = 0) Then 'slope of 0
+'        'must be 90 or 270
+'        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
+'            If (X > 0) Then
+'                AngleFunction = (90 * RADIAN)
+'            ElseIf (X < 0) Then
+'                AngleFunction = (270 * RADIAN)
+'            End If
+'        End If
+'    Else
+'        'get the base angle
+'        '(up to the quardrant)
+'        If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then
+'            If ((X > 0) And (Y > 0)) Then
+'                AngleFunction = (90 * RADIAN)
+'            ElseIf ((X < 0) And (Y > 0)) Then
+'                AngleFunction = (180 * RADIAN)
+'            ElseIf ((X < 0) And (Y < 0)) Then
+'                AngleFunction = (270 * RADIAN)
+'            ElseIf ((X > 0) And (Y < 0)) Then
+'                AngleFunction = (360 * RADIAN)
+'            End If
+'        End If
+'        'all the trickery
+'        Dim slope As Single
+'        Dim Large As Single
+'        Dim Least As Single
+'        Dim Angle As Single
+'        If Abs(Coord.X) > Abs(Coord.Y) Then
+'            Large = Abs(Coord.X)
+'            Least = Abs(Coord.Y)
+'        Else
+'            Least = Abs(Coord.X)
+'            Large = Abs(Coord.Y)
+'        End If
+'        slope = (Least / Large) 'the angle in square form
+'        '^^ or tangent, tangable to other axis angles' shared axis
+'        If (RetType = AngleValue.Tangent) Then
+'            AngleFunction = slope
+'            Exit Function
+'        End If
+'
+'        Angle = (((Coord.X ^ 2) + (Coord.Y ^ 2)) ^ (1 / 2)) 'distance
+'        Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
+'        Least = (((Angle ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
+'        Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (Large / Angle)) * (Least / Angle))
+'        '^^ rounding remainder cosine of the angle, to make up for the bulk sine not suffecient a curve
+'        'in 16's, we are also adding the two degrees that are one removed from the pi in 4's done next
+'        If (RetType = AngleValue.Cosine) Then
+'            AngleFunction = Least
+'            Exit Function
+'        End If
+'
+'        Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope) 'bulk sine of the angle in 45 degree slices
+'        '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
+'        If (RetType = AngleValue.Sine) Then
+'            AngleFunction = Large
+'            Exit Function
+'        End If
+'
+'        Angle = Large + Least
+'        If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
+'           (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
+'            Angle = (PI / 4) - Angle
+'            If (RetType = AngleValue.Base) Or (RetType = AngleValue.Angle) Then AngleFunction = AngleFunction + (PI / 4)
+'        End If
+'
+'        If (RetType = AngleValue.Angle) Then
+'            AngleFunction = AngleFunction + Angle
+'        End If
+'    End If
+'End Function
+'
+'Public Function AnglesOfPoint(ByRef Point As Point) As Point
+'    Static stack As Integer
+'    stack = stack + 1
+'    If stack = 1 Then
+'        '(1,1,1) is high noon
+'        'to 45 degree sections
+'        'when going clockwise
+'        Point.X = Point.X + 1
+'        Point.Y = Point.Y + 1
+'        Point.z = Point.z + 1
+'    End If
+'    Set AnglesOfPoint = New Point
+'    With AnglesOfPoint
+'        If stack < 5 Then
+'            Dim X As Single
+'            Dim Y As Single
+'            Dim z As Single
+'            'round them off for checking
+'            '(6 is for single precision)
+'            X = Round(Point.X, 6)
+'            Y = Round(Point.Y, 6)
+'            z = Round(Point.z, 6)
+'            If (X = 0) Then
+'                If (z = 0) Then
+'                    'must be 360 or 180
+'                    If (Y > 0) Then
+'                        .z = (180 * RADIAN)
+'                    ElseIf (Y < 0) Then
+'                        .z = (360 * RADIAN)
+'                    End If
+'                Else
+'                    AnglesOfPoint.X = Point.Y
+'                    AnglesOfPoint.Y = Point.z
+'                    AnglesOfPoint.z = Point.X
+'                    .X = AnglesOfPoint(AnglesOfPoint).z
+'                End If
+'            ElseIf (Y = 0) Then
+'                If (z = 0) Then
+'                    'must be 90 or 270
+'                    If (X > 0) Then
+'                        .z = (90 * RADIAN)
+'                    ElseIf (X < 0) Then
+'                        .z = (270 * RADIAN)
+'                    End If
+'                Else
+'                    AnglesOfPoint.X = Point.z
+'                    AnglesOfPoint.Y = Point.X
+'                    AnglesOfPoint.z = Point.Y
+'                    .Y = -AnglesOfPoint(AnglesOfPoint).z
+'                End If
+'            ElseIf (X <> 0) And (Y <> 0) Then
+'                Dim slope As Single
+'                Dim dist As Single
+'                Dim Large As Single
+'                Dim Least As Single
+'                Dim Angle As Single
+'                'find the larger coordinate
+'                If Abs(Point.X) > Abs(Point.Y) Then
+'                    Large = Abs(Point.X)
+'                    Least = Abs(Point.Y)
+'                Else
+'                    Least = Abs(Point.X)
+'                    Large = Abs(Point.Y)
+'                End If
+'                slope = (Least / Large) 'the angle in square form
+'                '^^ or tangent, tangable to other axis angles' shared axis
+'                dist = (((Point.X ^ 2) + (Point.Y ^ 2)) ^ (1 / 2)) 'distance
+'                'still traveling for tangents and cosines
+'                Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'hypotenus, acute distance
+'                Least = (((dist ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, obtuse to the hypotneus and distance
+'                Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (Large / dist)) * (Least / dist))
+'                '^^ rounding remainder cosine of the angle, to make up for the bulk sine not suffecient a curve
+'                'in 16's, we are also adding the two degrees that are one removed from the pi in 4's done next
+'                Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope)  'bulk sine of the angle in 45 degree slices
+'                '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
+'                If (z <> 0) Then 'two or less axis is one rotation
+'                    Dim Ret As Point
+'                    AnglesOfPoint.X = Point.Y
+'                    AnglesOfPoint.Y = Point.z
+'                    AnglesOfPoint.z = Point.X
+'                    Set Ret = AnglesOfPoint(AnglesOfPoint)
+'                    .X = Ret.Y
+'                    .Y = Ret.z
+'                    .z = Ret.X
+'                    Set Ret = Nothing
+'                End If
+'                'get the base angle
+'                '(up to the quardrant)
+'                If ((X > 0) And (Y > 0)) Then
+'                    .z = (90 * RADIAN)
+'                ElseIf ((X < 0) And (Y > 0)) Then
+'                    .z = (180 * RADIAN)
+'                ElseIf ((X < 0) And (Y < 0)) Then
+'                    .z = (270 * RADIAN)
+'                ElseIf ((X > 0) And (Y < 0)) Then
+'                    .z = (360 * RADIAN)
+'                End If
+'                'develop the final angle Z for this duel coordinate X,Y axis only
+'                Angle = (Large + Least)
+'                If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
+'                   (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
+'                   'the angle for 45 to 90 is in reverse, and doesn't start at 45, but because we
+'                   'are calculating a second 45 of 90, the offset (-1 not 0) is included if inverse
+'                    Angle = (PI / 4) - Angle
+'                    'then also add 45 to the base
+'                    .z = .z + (PI / 4)
+'                End If
+'                'add it to the base, returing as .Z
+'                .z = .z + Angle
+'
+'                If stack = 1 Then
+'                    'reorganization
+'                    Angle = .Y
+'                    .Y = .z
+'                    .z = Angle
+'                    Angle = .X
+'                    .X = .Y
+'                    .Y = .z
+'                    .z = Angle
+'                    Angle = .X
+'                    .X = .Y
+'                    .Y = .z
+'                    .z = Angle
+'                End If
+'            End If
+'        End If
+'    End With
+'    If stack = 1 Then 'undo
+'        Point.X = Point.X - 1
+'        Point.Y = Point.Y - 1
+'        Point.z = Point.z - 1
+'    End If
+'    stack = stack - 1
+'End Function
+'Private Function SwapAxisLeft(ByRef Point As Point)
+'    Dim W As Single
+'    W = Point.X
+'    Point.X = Point.Y
+'    Point.Y = Point.z
+'    Point.z = W
+'End Function
+'
+'Private Function SwapAxisRight(ByRef Point As Point)
+'    Dim W As Single
+'    W = Point.z
+'    Point.z = Point.Y
+'    Point.Y = Point.X
+'    Point.X = W
+'End Function
+'
+'Private Function AngleRotation(ByRef Point As Point, Optional ByRef Angles As Point) As Point
+'    'returns the angles of Point *if Angles is supplied, the Point is modified and
+'    'rotated by each axis of Angles, the return is not different if Angles is present
+'    Static stack As Integer
+'    If (stack < 0) Or (Not (Angles Is Nothing)) Then
+'        stack = stack - 1 'using stack in reverse if angles is passed
+'        'then we are also rotating Point after calculating it's angles
+'        If Angles Is Nothing Then Set Angles = New Point
+'    Else 'otherwise stack forward if not also rotating a point
+'        stack = stack + 1
+'    End If
+'    Dim z As Single
+'    Set AngleRotation = New Point
+'    With AngleRotation
+'        If Abs(stack) < 5 Then 'most things are stopped on the
+'            '4th pass the fith we aren't doing anything beyond
+'            Dim X As Single
+'            Dim Y As Single
+'            Dim Ret As Point
+'            'round them off for checking (6 is for single precision)
+'            'you could pass 0 as the second arg for a snap-to effect
+'            X = Round(Point.X, 6)
+'            Y = Round(Point.Y, 6)
+'            z = Round(Point.z, 6)
+'            If (X = 0) Then  'slope of 1
+'                If (z = 0) Then
+'                    'must be 360 or 180
+'                    If (Y > 0) Then
+'                        .z = (180 * RADIAN)
+'                    ElseIf (Y < 0) Then
+'                        .z = (360 * RADIAN)
+'                    End If
+'                Else
+'                    SwapAxisLeft Point
+'                    SwapAxisLeft Angles
+'                    Set Ret = AngleRotation(Point, Angles)
+'                    SwapAxisRight Point
+'                    SwapAxisRight Angles
+'                End If
+'            ElseIf (Y = 0) Then   'slope of 0
+'                If (z = 0) Then
+'                    'must be 90 or 270
+'                    If (X > 0) Then
+'                        .z = (90 * RADIAN)
+'                    ElseIf (X < 0) Then
+'                        .z = (270 * RADIAN)
+'                    End If
+'                Else
+'                    SwapAxisLeft Point
+'                    SwapAxisLeft Angles
+'                    Set Ret = AngleRotation(Point, Angles)
+'                    SwapAxisRight Point
+'                    SwapAxisRight Angles
+'                End If
+'            ElseIf (X <> 0) And (Y <> 0) Then 'these assumptions
+'                'are already checked and to escape division by zero
+'                Dim dist As Single
+'                Dim slope As Single
+'                Dim Large As Single
+'                Dim Least As Single
+'                Dim Angle As Single
+'                'find the larger coordinate
+'                If Abs(Point.X) > Abs(Point.Y) Then
+'                    Large = Abs(Point.X)
+'                    Least = Abs(Point.Y)
+'                Else
+'                    Least = Abs(Point.X)
+'                    Large = Abs(Point.Y)
+'                End If
+'                slope = (Least / Large) 'the angle in square form
+'                '^^ or tangent, "tangable" to other axis angles'
+'                'i.e. x/y, shares x in z/x, and y in y/z views
+'                dist = (((Point.X ^ 2) + (Point.Y ^ 2)) ^ (1 / 2))
+'                '^^^distance, from (0,0,0) to (0,0) leaving out Z
+'                Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2))
+'                '^^^hypotenus made of the larger coord less the
+'                'least coord, will always be smaller then dist
+'                Least = (((dist ^ 2) - (Least ^ 2)) ^ (1 / 2)) 'arc, between the smaller hypotenus and dist
+'                'this will always be median, smaller to dist, but bigger then "large" hypotneus solved for
+'                Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (Large / dist)) * (Least / dist))
+'                '^^ rounding remainder of the angle, to make up for the bulk not suffecient a curve in 16th's
+'                'we are also adding the two degrees that are one removed from the pi in 4th's done next step
+'                Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope)  'bulk of the angle in 45 degree slices
+'                '^^ where as 0 and 45 are not logical angles, as they blend portion of neighboring 45 degree slices
+'                'develop the 0 to 45 degree angle, still no identity
+'                'and is just the same if it is to be a 45 to 90 angle
+'                Angle = (Least + Large)
+'                If (z <> 0) Then 'two or less axis is one rotation
+'                    'and three axis rotations can be done in two axis
+'                    SwapAxisLeft Point
+'                    SwapAxisLeft Angles
+'                    Set Ret = AngleRotation(Point, Angles)
+'                    SwapAxisRight Point
+'                    SwapAxisRight Angles
+'                End If
+'                'get the base angle
+'                '(up to the quardrant)
+'                If ((X > 0) And (Y > 0)) Then
+'                    .z = (90 * RADIAN)
+'                ElseIf ((X < 0) And (Y > 0)) Then
+'                    .z = (180 * RADIAN)
+'                ElseIf ((X < 0) And (Y < 0)) Then
+'                    .z = (270 * RADIAN)
+'                ElseIf ((X > 0) And (Y < 0)) Then
+'                    .z = (360 * RADIAN)
+'                End If
+'                'develop the final angle Z for this duel coordinate X,Y axis only
+'                Angle = (Large + Least)
+'                If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
+'                   (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
+'                   'the angle for 45 to 90 is in reverse, and doesn't start at 45, but because we
+'                   'are calculating a second 45 of 90, the offset (-1 not 0) is included if inverse
+'                    Angle = (PI / 4) - Angle
+'                    'then also add 45 to the base
+'                    .z = .z + (PI / 4)
+'                End If
+'                'add it to the base, returing as .Z
+'                .z = .z + Angle
+'                If stack < 0 And Abs(stack) < 5 And dist > 0 Then
+'                    'if the angles.z argument is
+'                    'passed we will do the rotate
+'                    'reusing some variables:
+'                    If (.z + Angles.z) <> 0 Then
+'                        Dim Angle2 As Single
+'                        Dim Dist2 As Single
+'                        Dim Large2 As Single
+'                        Angle = (.z + Angles.z) * DEGREE
+'                        Do While Angle > 360
+'                            Angle = Angle - 360
+'                        Loop
+'                        Do While Angle <= 0
+'                            Angle = Angle + 360
+'                        Loop
+'                        Angle2 = ((Angle - (Angle \ ((PI / 2) * DEGREE)) * _
+'                                ((PI / 2) * DEGREE)) / ((PI / 2) * DEGREE))
+'                        Dist2 = (((dist ^ 2) * 2) ^ (1 / 2))
+'                        If ((Angle > 0) And (Angle <= 90)) Then
+'                            Large = (Dist2 * Angle2)
+'                            Least = -(Dist2 * (1 - Angle2))
+'                        ElseIf ((Angle > 90) And (Angle <= 180)) Then
+'                            Large = (Dist2 * (1 - Angle2))
+'                            Least = (Dist2 * Angle2)
+'                       ElseIf ((Angle > 180) And (Angle <= 270)) Then
+'                            Large = -(Dist2 * Angle2)
+'                            Least = (Dist2 * (1 - Angle2))
+'                        ElseIf ((Angle > 270) And (Angle <= 360)) Then
+'                            Large = -(Dist2 * (1 - Angle2))
+'                            Least = -(Dist2 * Angle2)
+'                        End If
+'                        Dist2 = ((((Large ^ 2) + (Least ^ 2)) ^ (1 / 2)) - dist)
+'                        Point.X = (Large - (Dist2 * (Large / dist) * (PI / 4)))
+'                        Point.Y = (Least - (Dist2 * (Least / dist) * (PI / 4)))
+'                    End If
+'                End If
+'                'reorganization
+'                If Abs(stack) = 2 Then
+'                    z = .z
+'                    .z = .Y
+'                    .Y = .X
+'                    .X = z
+'                ElseIf Abs(stack) = 3 Then
+'                    z = .Y
+'                    .Y = .z
+'                    .z = z
+'                ElseIf Abs(stack) = 1 Then
+'                    z = .z
+'                    .z = .Y
+'                    .Y = .X
+'                    .X = z
+'                    z = .z
+'                    .z = .X
+'                    .X = z
+'                End If
+'            End If
+'            'sorting out the recursion returns
+'            If Not Ret Is Nothing Then
+'                If Abs(stack) = 3 Then
+'                    .Y = -Ret.z
+'                End If
+'                If Abs(stack) = 2 Then
+'                    .X = -Ret.z
+'                    .Y = Ret.Y
+'                End If
+'                If Abs(stack) = 1 Then
+'                    .X = Ret.X
+'                    .Y = Ret.Y
+'                    .z = -Ret.z
+'                End If
+'                Set Ret = Nothing
+'            End If
+'        End If
+'    End With
+'    If (stack < 0) Then
+'        stack = stack + 1
+'    Else
+'        stack = stack - 1
+'    End If
+'End Function
 
 
 
 
 
 Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Set VectorAxisAngles = New Point
-'    With VectorAxisAngles
-'        Dim magnitude As Single
-'        Dim heading As Single
-'        Dim pitch As Single
-'        Dim slope As Single
-'
-'        slope = VectorSlope(MakePoint(0, 0, 0), Point)
-'
-'        magnitude = Sqr(Point.X * Point.X + Point.Y * Point.Y + Point.z * Point.z)
-'        If magnitude < 100 Then magnitude = 100
-'        heading = ATan2(Point.z, Point.X)
-'        pitch = ATan2(Point.Y, Sqr(Point.X * Point.X + Point.z * Point.z))
-'
-'        .X = (((heading / magnitude) - pitch) * (slope / magnitude))
-'        .z = ((PI / (2)) + (-pitch + (heading / magnitude))) * ((1) - (slope / magnitude))
-'        .Y = ((-heading + (pitch / magnitude)) * ((1) - (slope / magnitude)))
-'        .Y = -(.Y + ((.X * (slope / magnitude)) / (2)) - (.Y * (2)) - ((.z * (slope / magnitude)) / (2)))
-'        .X = (PI * (2)) - (.X - ((PI / (2)) * (slope / magnitude)))
-'        .z = (PI * (2)) - (.z - ((PI / (2)) * (slope / magnitude)))
-'    End With
-
     Set VectorAxisAngles = New Point
     With VectorAxisAngles
+        Dim magnitude As Single
+        Dim heading As Single
+        Dim pitch As Single
+        Dim slope As Single
 
-    .z = AngleFunction(MakePoint(Point.X, Point.Y, Point.z), Angle)
-    
-   ' .X = AngleFunction(MakePoint(Point.Y, Point.z, Point.X), angle)
-    
-    .Y = AngleFunction(MakePoint(Point.z, Point.X, Point.Y), Angle)
-    
+        slope = VectorSlope(MakePoint(0, 0, 0), Point)
+
+        magnitude = Sqr(Point.X * Point.X + Point.Y * Point.Y + Point.z * Point.z)
+        If magnitude < 100 Then magnitude = 100
+        heading = ATan2(Point.z, Point.X)
+        pitch = ATan2(Point.Y, Sqr(Point.X * Point.X + Point.z * Point.z))
+
+        .X = (((heading / magnitude) - pitch) * (slope / magnitude))
+        .z = ((PI / (2)) + (-pitch + (heading / magnitude))) * ((1) - (slope / magnitude))
+        .Y = ((-heading + (pitch / magnitude)) * ((1) - (slope / magnitude)))
+        .Y = -(.Y + ((.X * (slope / magnitude)) / (2)) - (.Y * (2)) - ((.z * (slope / magnitude)) / (2)))
+        .X = (PI * (2)) - (.X - ((PI / (2)) * (slope / magnitude)))
+        .z = (PI * (2)) - (.z - ((PI / (2)) * (slope / magnitude)))
     End With
+
 End Function
 
 Public Sub VectorAxisSwapLeft(ByRef Point As Point)
@@ -1326,7 +1326,7 @@ Public Function VectorYIntercept(ByRef p1 As Point, ByRef p2 As Point) As Single
 End Function
 
 Public Function VectorRise(ByRef p1 As Point, Optional ByRef p2 As Point = "[0,0,0]") As Single
-    VectorRise = (Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y))
+    VectorRise = (large(p1.Y, p2.Y) - least(p1.Y, p2.Y))
 End Function
 Public Function VectorRun(ByRef p1 As Point, Optional ByRef p2 As Point = "[0,0,0]") As Single
     VectorRun = DistanceEx(MakePoint(p1.X, 0, p1.z), MakePoint(p2.X, 0, p2.z))
@@ -1496,17 +1496,17 @@ Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Poi
     
     Set AngleAxisDifference = New Point
     With AngleAxisDifference
-        c1 = Large(d1.X, d2.X)
-        C2 = Least(d1.X, d2.X)
-        .X = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
+        c1 = large(d1.X, d2.X)
+        C2 = least(d1.X, d2.X)
+        .X = least(((360 - c1) + C2), (c1 - C2)) * RADIAN
         
-        c1 = Large(d1.Y, d2.Y)
-        C2 = Least(d1.Y, d2.Y)
-        .Y = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
+        c1 = large(d1.Y, d2.Y)
+        C2 = least(d1.Y, d2.Y)
+        .Y = least(((360 - c1) + C2), (c1 - C2)) * RADIAN
         
-        c1 = Large(d1.z, d2.z)
-        C2 = Least(d1.z, d2.z)
-        .z = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
+        c1 = large(d1.z, d2.z)
+        C2 = least(d1.z, d2.z)
+        .z = least(((360 - c1) + C2), (c1 - C2)) * RADIAN
     End With
     AngleAxisRestrict AngleAxisDifference
     
@@ -1525,7 +1525,7 @@ Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, O
     ValueInfluence = Current
     If ValueInfluence <> Final Then
         Dim n As Single
-        n = (Large(Final, ValueInfluence) - Least(Final, ValueInfluence))
+        n = (large(Final, ValueInfluence) - least(Final, ValueInfluence))
         If (n > SnapMaximum And SnapMaximum > 0) Or _
             (n < SnapMinimum And SnapMinimum > 0) Then
             ValueInfluence = Final
@@ -1578,8 +1578,8 @@ Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, O
     If AngleInfluence <> Final Then
         Dim lrg As Single
         Dim low As Single
-        lrg = Large(AngleInfluence, Final)
-        low = Least(AngleInfluence, Final)
+        lrg = large(AngleInfluence, Final)
+        low = least(AngleInfluence, Final)
         If ((lrg - low) > SnapMaximum And SnapMaximum > 0) Or _
             ((lrg - low) < SnapMinimum And SnapMinimum > 0) Then
             AngleInfluence = Final
@@ -1700,9 +1700,9 @@ End Function
 Public Function VectorOffset(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorOffset = New Point
     With VectorOffset
-        .X = (Large(p1.X, p2.X) - Least(p1.X, p2.X))
-        .Y = (Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y))
-        .z = (Large(p1.z, p2.z) - Least(p1.z, p2.z))
+        .X = (large(p1.X, p2.X) - least(p1.X, p2.X))
+        .Y = (large(p1.Y, p2.Y) - least(p1.Y, p2.Y))
+        .z = (large(p1.z, p2.z) - least(p1.z, p2.z))
     End With
 End Function
 
@@ -1785,9 +1785,9 @@ End Function
 Public Function VectorMidPoint(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorMidPoint = New Point
     With VectorMidPoint
-        .X = ((Large(p1.X, p2.X) - Least(p1.X, p2.X)) / 2) + Least(p1.X, p2.X)
-        .Y = ((Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y)) / 2) + Least(p1.Y, p2.Y)
-        .z = ((Large(p1.z, p2.z) - Least(p1.z, p2.z)) / 2) + Least(p1.z, p2.z)
+        .X = ((large(p1.X, p2.X) - least(p1.X, p2.X)) / 2) + least(p1.X, p2.X)
+        .Y = ((large(p1.Y, p2.Y) - least(p1.Y, p2.Y)) / 2) + least(p1.Y, p2.Y)
+        .z = ((large(p1.z, p2.z) - least(p1.z, p2.z)) / 2) + least(p1.z, p2.z)
     End With
 End Function
 
@@ -1843,35 +1843,35 @@ End Function
 
 Public Function AbsoluteFactor(ByVal n As Single) As Single
     'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
-   ' AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)
     AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)
 End Function
 
-Public Function AbsoluteValue(ByRef n As Single) As Single
+Public Function AbsoluteValue(ByVal n As Single) As Single
     'same as abs(), returns a number as positive quantified
     AbsoluteValue = (-((-(n * -1) * n) ^ (1 / 2) * -1))
 End Function
 
-Public Function AbsoluteWhole(ByRef n As Single) As Single
+Public Function AbsoluteWhole(ByVal n As Single) As Single
     'returns only the digits to the left of a decimal in any numerical
-    AbsoluteWhole = (n \ 1)
+    'AbsoluteWhole = (AbsoluteValue(n) - (AbsoluteValue(n) - (AbsoluteValue(n) Mod (AbsoluteValue(n) + 1)))) * AbsoluteFactor(n)
+    AbsoluteWhole = (n \ 1) 'is also correct
 End Function
 
-Public Function AbsoluteDecimal(ByRef n As Single) As Single
+Public Function AbsoluteDecimal(ByVal n As Single) As Single
     'returns only the digits to the right of a decimal in any numerical
-    AbsoluteDecimal = (n - AbsoluteWhole(n))
+    AbsoluteDecimal = (AbsoluteValue(n) - AbsoluteValue(AbsoluteWhole(n))) * AbsoluteFactor(n)
 End Function
 
-Public Function AngleQuadrant(ByVal Angle As Single) As Single
+Public Function AngleQuadrant(ByVal angle As Single) As Single
     'returns the axis quadrant a radian angle falls with-in
-    Angle = Angle * DEGREE
-    If (Angle > 0 And Angle < 90) Or (Angle = 360) Then
+    angle = angle * DEGREE
+    If (angle > 0 And angle < 90) Or (angle = 360) Then
         AngleQuadrant = 1
-    ElseIf Angle >= 90 And Angle < 180 Then
+    ElseIf angle >= 90 And angle < 180 Then
         AngleQuadrant = 2
-    ElseIf Angle >= 180 And Angle < 270 Then
+    ElseIf angle >= 180 And angle < 270 Then
         AngleQuadrant = 3
-    ElseIf Angle >= 270 And Angle < 360 Then
+    ElseIf angle >= 270 And angle < 360 Then
         AngleQuadrant = 4
     End If
 End Function
@@ -1895,58 +1895,58 @@ Public Function AbsoluteInvert(ByVal Value As Long, Optional ByVal Whole As Long
     AbsoluteInvert = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
-Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+Public Function large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
     If IsMissing(V3) Then
         If (V1 >= V2) Then
-            Large = V1
+            large = V1
         Else
-            Large = V2
+            large = V2
         End If
     ElseIf IsMissing(V4) Then
         If ((V2 >= V3) And (V2 >= V1)) Then
-            Large = V2
+            large = V2
         ElseIf ((V1 >= V3) And (V1 >= V2)) Then
-            Large = V1
+            large = V1
         Else
-            Large = V3
+            large = V3
         End If
     Else
         If ((V2 >= V3) And (V2 >= V1) And (V2 >= V4)) Then
-            Large = V2
+            large = V2
         ElseIf ((V1 >= V3) And (V1 >= V2) And (V1 >= V4)) Then
-            Large = V1
+            large = V1
         ElseIf ((V3 >= V1) And (V3 >= V2) And (V3 >= V4)) Then
-            Large = V3
+            large = V3
         Else
-            Large = V4
+            large = V4
         End If
     End If
 End Function
 
-Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+Public Function least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
     If IsMissing(V3) Then
         If (V1 <= V2) Then
-            Least = V1
+            least = V1
         Else
-            Least = V2
+            least = V2
         End If
     ElseIf IsMissing(V4) Then
         If ((V2 <= V3) And (V2 <= V1)) Then
-            Least = V2
+            least = V2
         ElseIf ((V1 <= V3) And (V1 <= V2)) Then
-            Least = V1
+            least = V1
         Else
-            Least = V3
+            least = V3
         End If
     Else
         If ((V2 <= V3) And (V2 <= V1) And (V2 <= V4)) Then
-            Least = V2
+            least = V2
         ElseIf ((V1 <= V3) And (V1 <= V2) And (V1 <= V4)) Then
-            Least = V1
+            least = V1
         ElseIf ((V3 <= V1) And (V3 <= V2) And (V3 <= V4)) Then
-            Least = V3
+            least = V3
         Else
-            Least = V4
+            least = V4
         End If
     End If
 End Function

@@ -56,7 +56,7 @@ Private IsDebugCount As Long
 Private IsDebugHwnds As String
 
 #If Not modMemory Then
-Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef source As Any, ByVal Length As Long)
+Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef Source As Any, ByVal Length As Long)
 #End If
 
 #If Not modMemory Then

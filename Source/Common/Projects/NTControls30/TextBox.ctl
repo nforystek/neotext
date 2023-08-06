@@ -2766,7 +2766,7 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
         hasLF = InStr(txtLines, vbLf) > 0
         txt = RemoveNextArg(txtLines, vbLf)
         
-        If hasLF Then tmpsel.StopPos = tmpsel.StopPos - 1
+        'If hasLF Then tmpsel.StopPos = tmpsel.StopPos - 1
         
         txt = Replace(txt, vbLf, "")
         If Len(txt) > 0 Then
@@ -2776,7 +2776,8 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
             Else
                 If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
                     txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
-                    tmpsel.StopPos = tmpsel.StopPos - Len(CharStr)
+                    tmpsel.StopPos = tmpsel.StopPos - (Len(CharStr) - 1)
+                    Debug.Print Len(CharStr)
                 End If
             End If
         End If

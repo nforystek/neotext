@@ -16,7 +16,7 @@ Begin VB.Form frmTemp
    StartUpPosition =   3  'Windows Default
    Visible         =   0   'False
    Begin MSScriptControlCtl.ScriptControl ScriptControl1 
-      Left            =   765
+      Left            =   780
       Top             =   90
       _ExtentX        =   1005
       _ExtentY        =   1005
@@ -28,5 +28,3 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Option Explicit
-

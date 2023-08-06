@@ -1,16 +1,12 @@
 <Serial>
-<DateTime>5%2F15%2F2023+6%3A10%3A53+PM</DateTime>
-  <Molecules>
-    <Item>
-      <Key>Player</Key>
-      <Molecule>%5B%5B0%2E12345%2C+2%2E418135%2C+%2D1%2E583607%5D%5B0%2C+0%2C+0%5D%5B%2D0%2E661%2C+1%2E342%2C+0%5D%5B1%2C+1%2C+1%5D%5B0%2C+0%2C+0%2C+0%5D%5D</Molecule>
-    </Item>
-  </Molecules>
+<DateTime>6%2F3%2F2023+2%3A28%3A42+AM</DateTime>
+  <Planets></Planets>
+  <Brilliants></Brilliants>
+  <Molecules></Molecules>
   <Camera>
-Set+Camera%2EPlanet+%3D+Planets%28%22Earth%22%29
 Set+Camera%2EPlayer+%3D+Molecules%28%22Player%22%29
-Camera%2EPlayer%2EOrigin%2EToString+%3D+%22%5B0%2E12345%2C+2%2E418135%2C+%2D1%2E583607%5D%22
-Camera%2EPlayer%2ERotate%2EToString+%3D+%22%5B%2D0%2E661%2C+1%2E342%2C+0%5D%22
+Camera%2EPlayer%2EOrigin%2EToString+%3D+%22%5B529%2E5104%2C+22639%2E25%2C+%2D23413%2E79%5D%22
+Camera%2EPlayer%2ERotate%2EToString+%3D+%22%5B0%2E382999%2C+11%2E01482%2C+0%5D%22
 Camera%2EColor+%3D+%5B+0+%2C+0%2C+0%2C+1%5D
 Camera%2ESerialize+%3D+True
 </Camera>

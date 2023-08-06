@@ -52,13 +52,13 @@ End Function
 Private Function CreateObjectEx(ByRef classname As String)
     On Error Resume Next
     Set CreateObjectEx = CreateObject(classname)
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
         Err.Clear
         Set CreateObjectEx = modFactory.CreateObjectPrivate(classname)
-        If Err.Number <> 0 Then
+        If Err.number <> 0 Then
             Err.Clear
             Set CreateObjectEx = CreateObject(RemoveArg(classname, "."))
-            If Err.Number <> 0 Then
+            If Err.number <> 0 Then
                 Err.Clear
                 Set CreateObjectEx = modFactory.CreateObjectPrivate(RemoveArg(classname, "."))
             End If
@@ -75,7 +75,7 @@ Private Function SerializeObjectEx(ByVal ObjToSerial, Optional ByVal member As S
     frm.ScriptControl1.AddObject "ObjToSerial", ObjToSerial, True 'use the public method and just replace the name/xml tag defaults with nothing
     On Error Resume Next
     frm.ScriptControl1.ExecuteStatement "Set ObjHelper.Holder = ObjToSerial" & IIf(member = "", "", "." & member)
-    If Err.Number = 0 Then
+    If Err.number = 0 Then
         SerializeObjectEx = Replace(Replace(Serialize2(hlp.Holder, LibFilePath), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
     Else
         SerializeObjectEx = ""
@@ -94,7 +94,7 @@ Private Function IsRedundant(ByRef ObjToSerial, ByVal member As String) As Boole
     frm.ScriptControl1.AddObject "ObjHelper", hlp
     On Error Resume Next
     IsRedundant = frm.ScriptControl1.Eval("(ObjHelper.ObjPtr(ObjToSerial)=ObjHelper.ObjPtr(ObjToSerial." & member & "))")
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
         Err.Clear
         IsRedundant = True
     End If
@@ -163,7 +163,7 @@ Private Sub PropertyLetEx(ByVal ObjToSerial, Optional ByRef member As Variant, O
         frm.ScriptControl1.ExecuteStatement "ObjToSerial.Add " & SetToValue & Key
     End If
 failproperty:
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
         Err.Clear
     End If
     frm.ScriptControl1.Reset
@@ -340,7 +340,7 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
     colMem = GetImportantMembers(lib, VBA.TypeName(ObjToSerial))
     cnt = 0
     If ((colMem And SerialObj) = SerialObj) Then
-        If (TypeName(ObjToSerial.Serialize) <> "Boolean") Then
+        If (VBA.TypeName(ObjToSerial.Serialize) <> "Boolean") Then
             tmp = URLEncode(ObjToSerial.Serialize)
             If tmp <> "" Then
                 Serialize2 = Serialize2 & tmp
@@ -348,7 +348,7 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
             End If
         End If
     ElseIf ((colMem And ToStringObj) = ToStringObj) Then
-        If (TypeName(ObjToSerial.ToString) <> "Boolean") Then
+        If (VBA.TypeName(ObjToSerial.ToString) <> "Boolean") Then
             tmp = URLEncode(ObjToSerial.ToString)
             If tmp <> "" Then
                 Serialize2 = Serialize2 & tmp
@@ -358,14 +358,14 @@ Private Function Serialize2(ByRef ObjToSerial, Optional ByVal LibFilePath As Str
     End If
     
     If ((colMem And SerialFlag) = SerialFlag) Then
-        If (TypeName(ObjToSerial.Serialize) = "Boolean") Then
+        If (VBA.TypeName(ObjToSerial.Serialize) = "Boolean") Then
             If Not ObjToSerial.Serialize Then
                 cnt = -1 'skip it
             End If
         End If
     End If
     If ((colMem And ToStringFlag) = ToStringFlag) Then
-        If (TypeName(ObjToSerial.ToString) = "Boolean") Then
+        If (VBA.TypeName(ObjToSerial.ToString) = "Boolean") Then
             If Not ObjToSerial.ToString Then
                 cnt = -1 'skip it
             End If

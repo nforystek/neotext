@@ -30,7 +30,6 @@ Public BackColor As Long
 Public matWorld As D3DMATRIX
 Public matView As D3DMATRIX
 Public matProj As D3DMATRIX
-
     
 Public dx As DirectX8
 Public D3D As Direct3D8
@@ -322,18 +321,18 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     If Not Camera.Player Is Nothing Then
 
         If Not Camera.Planet Is Nothing Then
-            
+
             D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-            
+
             D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-
+            
             D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
@@ -348,7 +347,11 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
+            DDevice.SetTransform D3DTS_VIEW, matView
 
+            D3DXMatrixTranslation matPos, -Camera.Planet.Origin.X, -Camera.Planet.Origin.Y, -Camera.Planet.Origin.z
+            D3DXMatrixMultiply matView, matPos, matView
+            
        Else
             
             D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X

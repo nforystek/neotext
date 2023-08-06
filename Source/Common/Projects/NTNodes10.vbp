@@ -16,6 +16,9 @@ Module=modFactory; ..\..\Shared\modFactory.bas
 Form=NTNodes10\frmTemp.frm
 Class=Serializer; NTNodes10\Serializer.cls
 Class=Helper; NTNodes10\Helper.cls
+Class=Nodes; NTNodes10\Nodes.cls
+Module=modBase; NTNodes10\modBase.bas
+Class=INode; NTNodes10\INode.cls
 Startup="Sub Main"
 HelpFile=""
 Title="NTNodes10"
@@ -61,4 +64,4 @@ DebugStartupOption=0
 AutoRefresh=1
 
 [Neotext]
-CompCond="modStrands=-1:modIndexer=-1:modCommon=-1:modFactory=-1"
+CompCond="modStrands=-1:modIndexer=-1:modCommon=-1:modFactory=-1:modBase=-1"
