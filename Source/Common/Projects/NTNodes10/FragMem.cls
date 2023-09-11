@@ -12,6 +12,11 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
+'This class is for memory structure similar to hard drive memory, a heap literally,
+'with the exception that it uses an index instead of cylinder/head/partitions, and
+'therefore it fragments allocations the more use and deallocation that goes on, all
+'depending on size of allocations of course
+
 Private FileSafe As Boolean
 Private FileDel As Boolean
 Private FileLoc As String
@@ -19,24 +24,20 @@ Private FileCount As Long
 Private FileIndex() As FileData
 
 Public Property Get Ensured() As Boolean ' _
-Gets whether the memory is ensured by saving it to the a file upon any use of the allocations.
-Attribute Ensured.VB_Description = "Gets whether the memory is ensured by saving it to the a file upon any use of the allocations."
+Gets whether the memory is ensured by saving it to the a file upon any use of the allocations., Sets whether the memory is ensured by saving it to the a file upon any use of the allocations.
+Attribute Ensured.VB_Description = "Gets whether the memory is ensured by saving it to the a file upon any use of the allocations., Sets whether the memory is ensured by saving it to the a file upon any use of the allocations."
     Ensured = FileSafe
 End Property
-Public Property Let Ensured(ByVal RHS As Boolean) ' _
-Sets whether the memory is ensured by saving it to the a file upon any use of the allocations.
-Attribute Ensured.VB_Description = "Sets whether the memory is ensured by saving it to the a file upon any use of the allocations."
+Public Property Let Ensured(ByVal RHS As Boolean)
     FileSafe = RHS
 End Property
 
 Public Property Get FilePath() As String ' _
-Gets the file path that the memory will be used when the Ensured property is set to true.
-Attribute FilePath.VB_Description = "Gets the file path that the memory will be used when the Ensured property is set to true."
+Gets the file path that the memory will be used when the Ensured property is set to true., Sets the file path that the memory will be used when the Ensured property is set to true.
+Attribute FilePath.VB_Description = "Gets the file path that the memory will be used when the Ensured property is set to true., Sets the file path that the memory will be used when the Ensured property is set to true."
     FilePath = FileLoc
 End Property
-Public Property Let FilePath(ByVal RHS As String) ' _
-Sets the file path that the memory will be used when the Ensured property is set to true.
-Attribute FilePath.VB_Description = "Sets the file path that the memory will be used when the Ensured property is set to true."
+Public Property Let FilePath(ByVal RHS As String)
     If RHS <> "" Then
         FileLoc = RHS
         FileDel = False
@@ -66,14 +67,12 @@ Attribute SizeOf.VB_Description = "Retruns the size of the allocated memory held
 End Property
 
 Public Property Get Data(ByVal Handle As Long) As String ' _
-Gets the data stored at the allocated memory held at the Handle supplied, in string form.
-Attribute Data.VB_Description = "Gets the data stored at the allocated memory held at the Handle supplied, in string form."
+Gets the data stored at the allocated memory held at the Handle supplied, in string form., Sets the data stored at the allocated memory held at the Handle supplied, in string form.
+Attribute Data.VB_Description = "Gets the data stored at the allocated memory held at the Handle supplied, in string form., Sets the data stored at the allocated memory held at the Handle supplied, in string form."
     Data = GetAlloc(FileCount, FileIndex, Handle, FileLoc)
 End Property
 
-Public Property Let Data(ByVal Handle As Long, ByVal RHS As String) ' _
-Sets the data stored at the allocated memory held at the Handle supplied, in string form.
-Attribute Data.VB_Description = "Sets the data stored at the allocated memory held at the Handle supplied, in string form."
+Public Property Let Data(ByVal Handle As Long, ByVal RHS As String)
     SetAlloc FileCount, FileIndex, Handle, RHS, FileLoc
 End Property
 

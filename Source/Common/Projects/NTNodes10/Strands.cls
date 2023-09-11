@@ -15,6 +15,10 @@ Option Explicit
 
 Option Compare Binary
 
+'This class is an implementation of Stream that makes use of collection
+'style methods for strings in text delimited by line feed/carriage return.
+'It also is designed to make quick and easy mirroring of change to a file.
+
 Implements Stream
 
 Public Enum Behaviors
@@ -373,16 +377,16 @@ Attribute Insert.VB_Description = "Adds lines to the strand collection at the li
     End If
 End Function
 
-Public Property Get Offset(Optional ByVal Number As Long = -1&) As Long ' _
+Public Property Get Offset(Optional ByVal number As Long = -1&) As Long ' _
 Gets the number of bytes existing before the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    Offset = Breaks(Number - 1)
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    Offset = Breaks(number - 1)
                 End If
             Else
                 Offset = Stream.Length
@@ -395,18 +399,18 @@ Gets the number of bytes existing before the line expressed by the Number argume
     End If
 End Property
 
-Public Property Get SizeOf(Optional ByVal Number As Long = -1&) As Long ' _
+Public Property Get SizeOf(Optional ByVal number As Long = -1&) As Long ' _
 Gets the number of bytes in the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    SizeOf = Breaks(Number) - Breaks(Number - 1)
-                ElseIf (Number = 1) Then
-                    SizeOf = Breaks(Number)
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    SizeOf = Breaks(number) - Breaks(number - 1)
+                ElseIf (number = 1) Then
+                    SizeOf = Breaks(number)
                 End If
             End If
        ' Else
@@ -417,19 +421,19 @@ Gets the number of bytes in the line expressed by the Number argument, if omitte
     End If
 End Property
 
-Public Property Get Item(Optional ByVal Number As Long = -1&) As Byte() ' _
+Public Property Get Item(Optional ByVal number As Long = -1&) As Byte() ' _
 Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number.
 Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number."
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    Item = Stream.Partial(Breaks(Number - 1), Breaks(Number) - Breaks(Number - 1))
-                ElseIf (Number = 1) Then
-                    Item = Stream.Partial(0, Breaks(Number))
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    Item = Stream.Partial(Breaks(number - 1), Breaks(number) - Breaks(number - 1))
+                ElseIf (number = 1) Then
+                    Item = Stream.Partial(0, Breaks(number))
                 End If
             Else
                 ReDim Item(-1 To -1) As Byte
@@ -443,19 +447,19 @@ Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed b
     End If
 End Property
 
-Public Property Let Item(Optional ByVal Number As Long = -1&, ByRef lines() As Byte)
+Public Property Let Item(Optional ByVal number As Long = -1&, ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) And Number >= -1 Then
-            If (Number = 0) Then Number = 1
-            If (Number > Count) Then Number = Count
+        If (Count > 0) And number >= -1 Then
+            If (number = 0) Then number = 1
+            If (number > Count) Then number = Count
         End If
-        If Number = -1 Then Number = Current
+        If number = -1 Then number = Current
         If (Count > 0) Then
             Dim Temp As Long
             Temp = Breaks(0)
-            Breaks(0) = Number
+            Breaks(0) = number
             Delete
-            Breaks(0) = Number
+            Breaks(0) = number
             Insert lines
             Breaks(0) = Temp
         End If
@@ -876,15 +880,15 @@ End Sub
 '###############################################################################
 Public Sub RebreakStream()
     ReDim Preserve Breaks(0 To 0) As Long
-    Dim ret As Long
-    ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
-    Do While ret < Length
+    Dim Ret As Long
+    Ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
+    Do While Ret < Length
         ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-        Breaks(UBound(Breaks)) = ret + 1
-        ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
+        Breaks(UBound(Breaks)) = Ret + 1
+        Ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
     Loop
     ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-    Breaks(UBound(Breaks)) = ret + 1
+    Breaks(UBound(Breaks)) = Ret + 1
     
         
 '    Dim cnt As Long

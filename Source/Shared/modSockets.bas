@@ -1219,3 +1219,39 @@ Public Function IP2ToIP4(ByVal str As String) As String
     IP2ToIP4 = Val("&H" & Left(modCommon.Padding(4, Hex(i1), "0"), 2)) & "." & Val("&H" & Right(modCommon.Padding(4, Hex(i1), "0"), 2)) & "." & Val("&H" & Left(modCommon.Padding(4, Hex(i2), "0"), 2)) & "." & Val("&H" & Right(modCommon.Padding(4, Hex(i2), "0"), 2))
 
 End Function
+
+Function AddressStringToLong(ByVal tmp As String) As Long
+    Dim i As Integer
+    Dim parts(1 To 4) As String
+    i = 0
+    While InStr(tmp, ".") > 0
+        i = i + 1
+        parts(i) = Mid(tmp, 1, InStr(tmp, ".") - 1)
+        tmp = Mid(tmp, InStr(tmp, ".") + 1)
+    Wend
+    i = i + 1
+    parts(i) = tmp
+    If i <> 4 Then
+        AddressStringToLong = 0
+        Exit Function
+    End If
+    AddressStringToLong = Val("&H" & Right("00" & Hex(parts(4)), 2) & _
+    Right("00" & Hex(parts(3)), 2) & _
+    Right("00" & Hex(parts(2)), 2) & _
+    Right("00" & Hex(parts(1)), 2))
+End Function
+
+Function AddressLongToString(ByVal tmp As Long) As String
+    Dim i As String
+    Dim parts(1 To 4) As Byte
+    i = Right("00000000" & Hex(tmp), 8)
+    parts(1) = Val("&H" & Left(i, 2))
+    i = Mid(i, 3)
+    parts(2) = Val("&H" & Left(i, 2))
+    i = Mid(i, 3)
+    parts(3) = Val("&H" & Left(i, 2))
+    i = Mid(i, 3)
+    parts(4) = Val("&H" & Left(i, 2))
+    i = Mid(i, 3)
+    AddressLongToString = parts(4) & "." & parts(3) & "." & parts(2) & "." & parts(1)
+End Function

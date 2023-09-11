@@ -19,7 +19,7 @@ Option Explicit
 '
 'If a Seralize or ToString property exist on the object as a boolean, it will use the value
 'to determine selective serializing, skipping the object if false.  If either Serialize or
-'the ToString function exists as read/write strings, it will use is as the serialized obj.
+'the ToString function exists as read/write strings, it will use it, instead of XML to serial.
 
 Private Const Dent As String = "  "
 Private Indent As String

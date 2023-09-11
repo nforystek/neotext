@@ -14,6 +14,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Option Compare Binary
+'the inner hidden for each object for the collection, making use of this
+'allows for the collection to have mixed types of variable in one list
+'such as object and primitives like a long, it also extents the key and index
+'property to the user when in for each or accessing the variable from the
+'collection, including the user defined interfaces no different via defaults.
+'exposed this object for the most part acts as if hidden, and is also private.
 
 Private propKey As Variant
 Private propType As Boolean

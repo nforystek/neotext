@@ -182,12 +182,12 @@ End Function
 
 Public Function RunProcess(ByVal path As String, Optional ByVal Params As String = "", Optional ByVal Focus As Integer = vbNormalFocus, Optional ByVal Wait As Boolean = False) As Long
     If Wait Then
-        Dim pId As Double
-        pId = Shell(Trim(Trim(path) & " " & Trim(Params)), Focus)
-        Do While ProcessRunning(pId)
+        Dim pid As Double
+        pid = Shell(Trim(Trim(path) & " " & Trim(Params)), Focus)
+        Do While ProcessRunning(pid)
             modCommon.DoTasks
         Loop
-        RunProcess = -CInt((pId > 0))
+        RunProcess = -CInt((pid > 0))
     Else
         RunProcess = Shell(Trim(path & " " & Params), Focus)
     End If
@@ -219,6 +219,7 @@ End Function
 '        If RunProcess = 1 Then RunProcess = Focus
 '    End If
 'End Function
+
 
 
 Public Function ProcessRunning(ByVal EXENameOrPID As Variant) As Long

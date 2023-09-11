@@ -145,12 +145,126 @@ Private Function GetPtr(VarVal As Variant) As Long
     GetMem4 ByVal (GetPtr + 12&), GetPtr
 End Function
 
+'##########################################################################################################################
+'##########################################################################################################################
+'#### Array Push and pop using FIllMemory to increase or diminish a portion of a array quickly based on current value  ####
+'##########################################################################################################################
+'##########################################################################################################################
+
 Public Sub Push(ByRef S() As Byte, Optional ByVal Offset As Long = 0, Optional ByVal Length As Long = 0)
-    FillMemory ByVal VarPtr(S(Offset + 1)), IIf(Length, Length, (UBound(S) - LBound(S)) + 1), IIf(S(Offset + 1) + 1 > 255, 255, S(Offset + 1) + 1)
+    If Length <= 0 Then Length = (UBound(S) - LBound(S)) + 1
+    FillMemory ByVal VarPtr(S(Offset + 1)), Length, IIf(S(Offset + 1) + 1 > 255, 255, S(Offset + 1) + 1)
 End Sub
+
 Public Sub Pop(ByRef S() As Byte, Optional ByVal Offset As Long = 0, Optional ByVal Length As Long = -1)
-    FillMemory ByVal VarPtr(S(Offset + 1)), IIf(Length, Length, (UBound(S) - LBound(S)) + 1), IIf(S(Offset + 1) - 1 < 0, 0, S(Offset + 1) - 1)
+    If Length <= 0 Then Length = (UBound(S) - LBound(S)) + 1
+    FillMemory ByVal VarPtr(S(Offset + 1)), Length, IIf(S(Offset + 1) - 1 < 0, 0, S(Offset + 1) - 1)
 End Sub
+
+'##########################################################################################################################
+'##########################################################################################################################
+'#### VB Class object public interface pointer exposure functions, locates the address and pointer to public elements  ####
+'##########################################################################################################################
+'##########################################################################################################################
+
+
+Public Function ObjectPointers(ObjectClass, ByVal SectionOf As Long, Optional ByVal SimpleCount As Long, Optional ByVal ComplexCount As Long, Optional ByVal MethodCount As Long) As Memory()
+    'Returns an object's pointers for a particular section of the object interface
+    'the SectionOf specified will be which section is returned, and in consequetive
+    'order they are in the following arguments, must also be supplied up to including
+    'the section count you wish to return, so information on the counts are requried.
+    'Those sections being;
+    '1=simpele types, primitive public data types, long, byte, property get/let methods (let and gets will be last for pair methods that maybe read only) etc...
+    '2=complex types, which are variants, objects and property get/set methods...
+    '3=method types, function and subs...
+    'the returned array of addresses and pointers can be used to access the memory using RtlMoveMemroy or change
+    'the address of a method by RtlMoveMemory such that if called, a new address is used in executing. it is great
+    'for making external event driven operations where the user defines any function with out interface overhead
+    'rather, and it may be called by gettings ti's (AddressOf Method), overrighting a implemented blank method
+    
+    Dim FPS() As Memory
+    Dim OBJ1 As Long
+    OBJ1 = ObjPtr(ObjectClass)
+    Dim VTable As Long
+    RtlMoveMemory VTable, ByVal OBJ1, 4
+
+    Dim PTX As Long
+    Dim cnt As Long
+    Select Case SectionOf
+        Case 1 'public simple data types
+            If SimpleCount > 0 Then
+                ReDim FPS(SimpleCount - 1)
+                For cnt = 0 To SimpleCount - 1
+                    PTX = VTable + 28 + (cnt * 2 * 4)
+                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
+                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
+                Next
+
+            End If
+        Case 2 'public objects and variants
+            If ComplexCount > 0 Then
+                ReDim FPS(ComplexCount - 1)
+                For cnt = 0 To ComplexCount - 1
+                    PTX = VTable + 28 + (SimpleCount * 2 * 4) + (cnt * 3 * 4)
+                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
+                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
+                Next
+
+            End If
+        Case 3 'public Functions and Subs
+            If MethodCount > 0 Then
+                ReDim FPS(MethodCount - 1)
+                For cnt = 0 To MethodCount - 1
+                    PTX = VTable + 28 + (SimpleCount * 2 * 4) + (ComplexCount * 3 * 4) + (cnt * 4)
+                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
+                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
+                Next
+
+            End If
+
+    End Select
+    
+    ObjectPointers = FPS
+End Function
+
+Public Function GetObjectFunctionsPointers(obj As Object, ByVal NumberOfMethods As Long, Optional ByVal PublicVarNumber As Long, Optional ByVal PublicObjVariantNumber As Long) As MethodInfo()
+    'just like the above function with out the simple and complex invovled, however the counts still need to be supplied
+    Dim FPS() As MethodInfo
+    ReDim FPS(NumberOfMethods - 1)
+    Dim OBJ1 As Long
+    OBJ1 = ObjPtr(obj)
+    Dim VTable As Long
+    RtlMoveMemory VTable, ByVal OBJ1, 4
+    Dim PTX As Long
+    Dim cnt As Long
+    For cnt = 0 To NumberOfMethods - 1
+        PTX = VTable + 28 + (PublicVarNumber * 2 * 4) + (PublicObjVariantNumber * 3 * 4) + cnt * 4
+        RtlMoveMemory FPS(cnt).MethodPointer, PTX, 4
+        RtlMoveMemory FPS(cnt).MethodAddress, ByVal PTX, 4
+    Next
+    GetObjectFunctionsPointers = FPS
+End Function
+
+'the next two functions are expirmental, and the second one is not anything, other then testing
+'a means to find more information to automatically get counts, that didn't lead to achievement
+
+Public Function AddObjectFunctionsPointers(ByRef FPS() As MethodInfo, obj As Object, ByVal NumberOfMethods As Long, Optional ByVal PublicVarNumber As Long, Optional ByVal PublicObjVariantNumber As Long) As Long
+    Dim ubnds As Long
+    ubnds = UBound(FPS)
+    AddObjectFunctionsPointers = ubnds + 1
+    ReDim FPS(ubnds + NumberOfMethods)
+    Dim OBJ1 As Long
+    OBJ1 = ObjPtr(obj)
+    Dim VTable As Long
+    RtlMoveMemory VTable, ByVal OBJ1, 4
+    Dim PTX As Long
+    Dim cnt As Long
+    For cnt = 1 To NumberOfMethods
+        PTX = VTable + 28 + (PublicVarNumber * 2 * 4) + (PublicObjVariantNumber * 3 * 4) + cnt * 4
+        RtlMoveMemory FPS(ubnds + cnt).MethodPointer, PTX, 4
+        RtlMoveMemory FPS(ubnds + cnt).MethodAddress, ByVal PTX, 4
+    Next
+End Function
 
 Public Function ObjectLongProperties(ObjectClass) As Memory()
     Dim FPS() As Memory
@@ -219,53 +333,17 @@ Public Function ObjectLongProperties(ObjectClass) As Memory()
 
 End Function
 
-Public Function ObjectPointers(ObjectClass, ByVal SectionOf As Long, Optional ByVal SimpleCount As Long, Optional ByVal ComplexCount As Long, Optional ByVal MethodCount As Long) As Memory()
-    Dim FPS() As Memory
-    Dim OBJ1 As Long
-    OBJ1 = ObjPtr(ObjectClass)
-    Dim VTable As Long
-    RtlMoveMemory VTable, ByVal OBJ1, 4
 
-    Dim PTX As Long
-    Dim cnt As Long
-    Select Case SectionOf
-        Case 1 'public simple data types
-            If SimpleCount > 0 Then
-                ReDim FPS(SimpleCount - 1)
-                For cnt = 0 To SimpleCount - 1
-                    PTX = VTable + 28 + (cnt * 2 * 4)
-                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
-                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
-                Next
 
-            End If
-        Case 2 'public objects and variants
-            If ComplexCount > 0 Then
-                ReDim FPS(ComplexCount - 1)
-                For cnt = 0 To ComplexCount - 1
-                    PTX = VTable + 28 + (SimpleCount * 2 * 4) + (cnt * 3 * 4)
-                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
-                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
-                Next
-
-            End If
-        Case 3 'public Functions and Subs
-            If MethodCount > 0 Then
-                ReDim FPS(MethodCount - 1)
-                For cnt = 0 To MethodCount - 1
-                    PTX = VTable + 28 + (SimpleCount * 2 * 4) + (ComplexCount * 3 * 4) + (cnt * 4)
-                    RtlMoveMemory FPS(cnt).Pointer, PTX, 4
-                    RtlMoveMemory FPS(cnt).Address, ByVal PTX, 4
-                Next
-
-            End If
-
-    End Select
-    
-    ObjectPointers = FPS
-End Function
+'##########################################################################################################################
+'##########################################################################################################################
+'###### Safe Array (VB Array) functions ###################################################################################
+'##########################################################################################################################
+'##########################################################################################################################
 
 Public Function ArraySize(InArray, Optional ByVal InBytes As Boolean = False) As Long
+'attempts to get the size of the array in elements index count, with out error bother, or
+'initialization worry, it takes into account 2 dimentions and the offset zero or option base
 On Error GoTo 0
 On Error GoTo -1
 On Error Resume Next
@@ -309,7 +387,8 @@ dimerror:
 End Function
 Public Function Convert(Info)
     'slow method of converting byte
-    'array to string nd vice versa
+    'array to string and vice versa
+    '1:1, byte:character no unicode
     Dim N As Long
     Dim out() As Byte
     Dim ret As String
@@ -334,6 +413,9 @@ Public Function Convert(Info)
     End Select
 End Function
 
+'the following three functrions are for safe arrays in memory structure
+'form by only pointer reference, allowing more control or interop ability
+
 ' + ArrayPtr ++++++++++++++++++++++++Rd+
 ' This function returns a pointer to the
 ' SAFEARRAY header of any Visual Basic
@@ -356,6 +438,34 @@ UnInit:
 End Function
 ' ++++++++++++++++++++++++++++++++++++++
 
+
+Public Function RedimArray(ByVal DataSize As Long, ByVal lNumElements As Long, ByRef sa As SAFEARRAYHEADER, ByVal lDataPointer As Long, ByVal lArrayPointer As Long, Optional LoBound As Long = 0) As Long
+  If lNumElements > 0 And lDataPointer <> 0 And lArrayPointer <> 0 Then
+    With sa
+      .DataSize = DataSize                              ' byte = 1 byte, integer = 2 bytes etc
+      .Dimensions = 1 '2                                ' one dimensional
+      .dataPointer = lDataPointer                       ' to unicode string data (or other?)
+      .sab(0).lLbound = LoBound                         ' lower bound
+      .sab(0).cElements = lNumElements                  ' number of elements
+      '.sab(1).cElements = lNumElements
+      '.sab(1).lLbound = LoBound
+      RtlMoveMemory ByVal lArrayPointer, VarPtr(sa), 4& ' fake VB out
+      RedimArray = True
+    End With
+  End If
+End Function
+
+Public Sub DestroyArray(ByVal lArrayPointer As Long)
+  Dim lZero As Long
+  RtlMoveMemory ByVal lArrayPointer, lZero, 4         ' put the array back to its original state
+End Sub
+
+
+'##########################################################################################################################
+'##########################################################################################################################
+'###### Global memory ANSI String functions for creating, use and destroying based on a pointer being as the string  ######
+'##########################################################################################################################
+'##########################################################################################################################
 
 Public Function CreateANSI(Optional ByVal StringX As String = "") As Long 'global
     'creates the ansi memory for a stringx
@@ -399,6 +509,13 @@ Public Function DeployANSI(ByRef ansi As Long) As String 'global
     GlobalFree ansi
 End Function
 
+
+'##########################################################################################################################
+'##########################################################################################################################
+'###### Conversion functions VBArray to global memory ANSI String, via ANSI pointer variable (from above) and back ########
+'##########################################################################################################################
+'##########################################################################################################################
+
 Public Function ArrayOfANSI(ByRef ansi As Long) As Byte() 'global
     'converts the ansi to array making it able native array use
     Dim out() As Byte
@@ -421,6 +538,13 @@ Public Function ArrayToANSI(ByRef ansi() As Byte) As Long 'global
     RtlMoveMemory ByVal out, ByVal VarPtr(ansi(LBound(ansi))), ArraySize(ansi)
     ArrayToANSI = out
 End Function
+
+
+'##########################################################################################################################
+'##########################################################################################################################
+'###### local memory ANSI String functions for creating, use and destroying based on a pointer being as the string  #######
+'##########################################################################################################################
+'##########################################################################################################################
 
 Public Function lCreateANSI(Optional ByVal StringX As String = "") As Long 'local
     'creates the ansi memory for a stringx
@@ -464,6 +588,12 @@ Public Function lDeployANSI(ByRef ansi As Long) As String 'local
     LocalFree ansi
 End Function
 
+'##########################################################################################################################
+'##########################################################################################################################
+'####### Conversion functions VBArray to local memory ANSI String, via ANSI pointer variable (from above) and back ########
+'##########################################################################################################################
+'##########################################################################################################################
+
 Public Function lArrayOfANSI(ByRef ansi As Long) As Byte() 'local
     'converts the ansi to array making it able native array use
     Dim out() As Byte
@@ -486,6 +616,12 @@ Public Function lArrayToANSI(ByRef ansi() As Byte) As Long 'local
     RtlMoveMemory ByVal out, ByVal VarPtr(ansi(LBound(ansi))), ArraySize(ansi)
     lArrayToANSI = out
 End Function
+
+'##########################################################################################################################
+'##########################################################################################################################
+'########## Conversion functions VBArray to local memory ANSI String, via String variable (StrConv()) and back ############
+'##########################################################################################################################
+'##########################################################################################################################
 
 Public Function nArrayOfString(ByVal str As String) As Byte()
     'transfer of string to array using ansi as the vessle
@@ -513,61 +649,5 @@ Public Function nArrayToString(ByRef ary() As Byte) As String
     lDestroyANSI ansi
 End Function
 
-Public Function RedimArray(ByVal DataSize As Long, ByVal lNumElements As Long, ByRef sa As SAFEARRAYHEADER, ByVal lDataPointer As Long, ByVal lArrayPointer As Long, Optional LoBound As Long = 0) As Long
-  If lNumElements > 0 And lDataPointer <> 0 And lArrayPointer <> 0 Then
-    With sa
-      .DataSize = DataSize                              ' byte = 1 byte, integer = 2 bytes etc
-      .Dimensions = 1 '2                                ' one dimensional
-      .dataPointer = lDataPointer                       ' to unicode string data (or other?)
-      .sab(0).lLbound = LoBound                         ' lower bound
-      .sab(0).cElements = lNumElements                  ' number of elements
-      '.sab(1).cElements = lNumElements
-      '.sab(1).lLbound = LoBound
-      RtlMoveMemory ByVal lArrayPointer, VarPtr(sa), 4& ' fake VB out
-      RedimArray = True
-    End With
-  End If
-End Function
-
-Public Sub DestroyArray(ByVal lArrayPointer As Long)
-  Dim lZero As Long
-  RtlMoveMemory ByVal lArrayPointer, lZero, 4         ' put the array back to its original state
-End Sub
-
-Public Function GetObjectFunctionsPointers(obj As Object, ByVal NumberOfMethods As Long, Optional ByVal PublicVarNumber As Long, Optional ByVal PublicObjVariantNumber As Long) As MethodInfo()
-    Dim FPS() As MethodInfo
-    ReDim FPS(NumberOfMethods - 1)
-    Dim OBJ1 As Long
-    OBJ1 = ObjPtr(obj)
-    Dim VTable As Long
-    RtlMoveMemory VTable, ByVal OBJ1, 4
-    Dim PTX As Long
-    Dim cnt As Long
-    For cnt = 0 To NumberOfMethods - 1
-        PTX = VTable + 28 + (PublicVarNumber * 2 * 4) + (PublicObjVariantNumber * 3 * 4) + cnt * 4
-        RtlMoveMemory FPS(cnt).MethodPointer, PTX, 4
-        RtlMoveMemory FPS(cnt).MethodAddress, ByVal PTX, 4
-    Next
-    GetObjectFunctionsPointers = FPS
-End Function
-
-Public Function AddObjectFunctionsPointers(ByRef FPS() As MethodInfo, obj As Object, ByVal NumberOfMethods As Long, Optional ByVal PublicVarNumber As Long, Optional ByVal PublicObjVariantNumber As Long) As Long
-    Dim ubnds As Long
-    ubnds = UBound(FPS)
-    AddObjectFunctionsPointers = ubnds + 1
-    ReDim FPS(ubnds + NumberOfMethods)
-    Dim OBJ1 As Long
-    OBJ1 = ObjPtr(obj)
-    Dim VTable As Long
-    RtlMoveMemory VTable, ByVal OBJ1, 4
-    Dim PTX As Long
-    Dim cnt As Long
-    For cnt = 1 To NumberOfMethods
-        PTX = VTable + 28 + (PublicVarNumber * 2 * 4) + (PublicObjVariantNumber * 3 * 4) + cnt * 4
-        RtlMoveMemory FPS(ubnds + cnt).MethodPointer, PTX, 4
-        RtlMoveMemory FPS(ubnds + cnt).MethodAddress, ByVal PTX, 4
-    Next
-End Function
-
-
-
+'##########################################################################################################################
+'##########################################################################################################################

@@ -31,7 +31,7 @@ Moves to the prior node in the list.  This function projects along with forth if
 Attribute Backward.VB_Description = "Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
 
     MoveNode List, True
-
+    
 End Sub
 
 
@@ -75,7 +75,7 @@ Public Function Exists() As Boolean ' _
 Checks the existance of nodes in the list, the count property may be checked against zero for a similar indicator.
 Attribute Exists.VB_Description = "Checks the existance of nodes in the list, the count property may be checked against zero for a similar indicator."
 
-    Exists = IsValidNode(List)
+    Exists = IsValidList(List)
 
 End Function
 
@@ -107,11 +107,11 @@ Attribute Forward.VB_Description = "Moves to the next node in the list.  This fu
 End Sub
 
 
-Public Property Get handle() As Long ' _
+Public Property Get Handle() As Long ' _
 Returns the handle of the list, that is the memory location and identifyer for the list of nodes.
-Attribute handle.VB_Description = "Returns the handle of the list, that is the memory location and identifyer for the list of nodes."
+Attribute Handle.VB_Description = "Returns the handle of the list, that is the memory location and identifyer for the list of nodes."
 
-    handle = VarPtr(List)
+    Handle = VarPtr(List)
 
 End Property
 

@@ -941,14 +941,14 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '
 '            End If
 
-            'Rotation VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin)), p
-            
-             '           Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, amera.Player.Origin))
-           ' Set p.Rotate = AnglesOfPoint(VectorDeduction(p.Origin, Camera.Player.Origin))
+'                        Set p.Rotate = VectorRotateAimAt(p.Origin, VectorDeduction(p.Origin, Camera.Player.Origin))
+'          '  Set p.Rotate = AnglesOfPoint(VectorDeduction(p.Origin, Camera.Player.Origin))
 '            Set p.Rotate = VectorAxisAngles(VectorDeduction(p.Origin, Camera.Player.Origin))
 '            Set p.Absolute.Rotate = p.Rotate
                         
-                        
+            Set Camera.Player.Rotate = AngleAxisCombine(p.Rotate, Camera.Player.Rotate)
+            Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
+            
             SubRenderPlateau UserControl, Camera, p
 
         End If

@@ -178,7 +178,14 @@ Public Function PointOnPlaneNearestPoint(ByRef v0 As Point, ByRef V1 As Point, B
     Set PointOnPlaneNearestPoint = VectorAddition(p, PointOnPlaneNearestPoint)
     
 End Function
-
+Public Function LinePointByPercent(ByRef p1 As Point, ByRef p2 As Point, ByVal Factor As Single) As Point
+    Set LinePointByPercent = New Point
+    With LinePointByPercent
+        .X = least(p1.X, p2.X) + ((large(p1.X, p2.X) - least(p1.X, p2.X)) * Factor)
+        .Y = least(p1.Y, p2.Y) + ((large(p1.Y, p2.Y) - least(p1.Y, p2.Y)) * Factor)
+        .z = least(p1.z, p2.z) + ((large(p1.z, p2.z) - least(p1.z, p2.z)) * Factor)
+    End With
+End Function
 Public Function LineOpposite(ByVal Length1 As Single, ByVal Length2 As Single, ByVal Length3 As Single) As Single
     LineOpposite = least(Length1, Length2, Length3)
 End Function
@@ -1472,6 +1479,30 @@ End Function
 Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set AngleAxisAddition = VectorAddition(p1, p2)
     AngleAxisRestrict AngleAxisAddition
+End Function
+
+Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
+    Dim p3 As New Point
+    Dim P4 As New Point
+    Set p3 = AngleAxisInvert(p1)
+    Set P4 = AngleAxisInvert(p2)
+    Set AngleAxisCombine = New Point
+    With AngleAxisCombine
+    
+        Set p3 = AngleAxisDeduction(p1, p2)
+        Set P4 = AngleAxisDifference(p1, p3)
+       .X = P4.X
+       .Y = P4.Y
+       .z = -P4.z
+        
+        
+       ' .X = ((p1.X * p2.X + p3.X * P4.X + p1.X * p3.X + p2.X * P4.X) ^ (1 / 4))
+       ' .Y = ((p1.Y * p2.Y + p3.Y * P4.Y + p1.Y * p3.Y + p2.Y * P4.Y) ^ (1 / 4))
+       ' .z = ((p1.z * p2.z + p3.z * P4.z + p1.z * p3.z + p2.z * P4.z) ^ (1 / 4))
+        
+        
+    End With
+    AngleAxisRestrict AngleAxisCombine
 End Function
 
 Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Point

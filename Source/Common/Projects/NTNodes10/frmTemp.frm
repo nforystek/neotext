@@ -28,3 +28,5 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+'a helper form used with serialization, which needs the ScriptControl
+'to gather information about objects in a evaluation manor to serialize

@@ -15,6 +15,8 @@ Option Explicit
 'TOP DOWN
 Option Compare Binary
 
+'A class built for fast altering of concurrent byte arrays in memroy.
+
 Public Enum MemoryScopes
     heap = 0
     Locking = 1

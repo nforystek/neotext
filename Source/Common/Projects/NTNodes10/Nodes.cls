@@ -15,7 +15,8 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Option Compare Binary
-
+'A class that implements a linked list which allows objects, variants, and primitives mixed
+'in one concurrent list that has the add and remove of both queue and stack type of list
 
 Implements INode
 
@@ -126,7 +127,7 @@ End Sub
 
 Private Property Get INode_Handle() As Long
 
-    INode_Handle = Me.handle
+    INode_Handle = Me.Handle
 
 End Property
 
@@ -320,11 +321,11 @@ End Sub
 
 
 
-Public Property Get handle() As Long ' _
+Public Property Get Handle() As Long ' _
 Returns the handle of the list, that is the memory location and identifyer for the list of nodes.
 
 
-    handle = INode.handle
+    Handle = INode.Handle
 
 End Property
 

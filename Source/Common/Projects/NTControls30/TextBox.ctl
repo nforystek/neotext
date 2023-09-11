@@ -400,10 +400,10 @@ Private Sub AddUndo()
 End Sub
 
 Public Function CanUndo() As Boolean
-    CanUndo = ((UBound(xUndoActs) > 0) And (xUndoStage > 0)) And (Not Locked)
+    CanUndo = ((UBound(xUndoActs) > 0) And (xUndoStage > 0)) And (Not Locked) And (PasswordChar = "")
 End Function
 Public Function CanRedo() As Boolean
-    CanRedo = ((xUndoStage < UBound(xUndoActs)) And (UBound(xUndoActs) > 0)) And (Not Locked)
+    CanRedo = ((xUndoStage < UBound(xUndoActs)) And (UBound(xUndoActs) > 0)) And (Not Locked) And (PasswordChar = "")
 End Function
 
 Public Sub Undo()
@@ -603,7 +603,7 @@ Public Sub Cut() ' _
 Preforms a removal of any selected text and puts it in the clipboard.
 Attribute Cut.VB_Description = "Preforms a removal of any selected text and puts it in the clipboard."
 
-    If Not Locked And Enabled Then
+    If (Not Locked) And Enabled And (PasswordChar = "") Then
 
         If SelLength > 0 Then
             Cancel = True
@@ -637,7 +637,7 @@ End Sub
 Public Sub Copy() ' _
 Places any selected text into the clipboard.
 Attribute Copy.VB_Description = "Places any selected text into the clipboard."
-    If Enabled Then
+    If Enabled And (PasswordChar = "") Then
         If SelLength > 0 Then
             Clipboard.SetText SelText
         End If
