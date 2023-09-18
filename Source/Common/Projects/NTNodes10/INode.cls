@@ -31,17 +31,19 @@ Moves to the prior node in the list.  This function projects along with forth if
 Attribute Backward.VB_Description = "Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
 
     MoveNode List, True
+    MoveNode List, True
+    MoveNode List, False
+
+    'MoveNode List, True
+    'MoveNode List, False
     
 End Sub
 
-
-Public Property Get Check() As Long ' _
-Refers to the address of the Prior pointer node of the list, this changes with the pointer in movements relative to the First and Final.
-Attribute Check.VB_Description = "Refers to the address of the Prior pointer node of the list, this changes with the pointer in movements relative to the First and Final."
-
-    Check = Abs(List.Check)
-    
-End Property
+Public Function BeginOfList() As Boolean ' _
+Checks whether the point is at the beginning of the list or not.
+Attribute BeginOfList.VB_Description = "Checks whether the point is at the beginning of the list or not."
+    BeginOfList = modBase.BOL(List)
+End Function
 
 
 Public Sub Clear() ' _
@@ -61,6 +63,16 @@ Attribute Count.VB_Description = "Returns the amount of total nodes taht exist w
     
 End Property
 
+#If VBIDE = -1 Then
+Public Property Get Count2() As Long ' _
+Returns the amount of total nodes taht exist with in the node list.
+Attribute Count2.VB_Description = "Returns the amount of total nodes taht exist with in the node list."
+
+    Count2 = sec.Count
+    
+End Property
+#End If
+
 
 Public Sub Delete() ' _
 Deletes a node at the current position of the lists Point node.
@@ -70,6 +82,11 @@ Attribute Delete.VB_Description = "Deletes a node at the current position of the
 
 End Sub
 
+Public Function EndOfList() As Boolean ' _
+Checks whether the point is at the end of the list or not.
+Attribute EndOfList.VB_Description = "Checks whether the point is at the end of the list or not."
+    EndOfList = modBase.EOL(List)
+End Function
 
 Public Function Exists() As Boolean ' _
 Checks the existance of nodes in the list, the count property may be checked against zero for a similar indicator.
@@ -81,8 +98,8 @@ End Function
 
 
 Public Property Get Final() As Long ' _
-The final node is the lists theoretical very last node, it may not always reflect last added node to the list.
-Attribute Final.VB_Description = "The final node is the lists theoretical very last node, it may not always reflect last added node to the list."
+Refers to the address of the final node is the list.
+Attribute Final.VB_Description = "Refers to the address of the final node is the list."
 
     Final = Abs(List.Final)
 
@@ -90,8 +107,8 @@ End Property
 
 
 Public Property Get First() As Long ' _
-The first node is the lists theoretical very first node, this is used to obtain logical reference and may not always reflect first added node to diminish itteration of the entire node list.
-Attribute First.VB_Description = "The first node is the lists theoretical very first node, this is used to obtain logical reference and may not always reflect first added node to diminish itteration of the entire node list."
+Refers to the address of the first node is the list.
+Attribute First.VB_Description = "Refers to the address of the first node is the list."
 
     First = Abs(List.First)
     
@@ -99,8 +116,8 @@ End Property
 
 
 Public Sub Forward() ' _
-Moves to the next node in the list.  This function projects along with prior if it is called infrequent to prior.  At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists.
-Attribute Forward.VB_Description = "Moves to the next node in the list.  This function projects along with prior if it is called infrequent to prior.  At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
+Moves to the next node in the list.
+Attribute Forward.VB_Description = "Moves to the next node in the list."
 
     MoveNode List, False
 
@@ -124,6 +141,9 @@ Attribute Insert.VB_Description = "Inserts a node into the list at the current P
 
 End Sub
 
+Public Function Inverse() As Boolean
+    Inverse = (List.Total < 0)
+End Function
 
 Public Property Get IsObject() As Boolean ' _
 Gets whether or not the current node at Point in the List is set to a object data type.
@@ -172,13 +192,20 @@ End Property
 
 
 Public Property Get Point() As Long ' _
-Refers to the address of the current Pointer node of the list, this changes in movements relative to the First and Final.
-Attribute Point.VB_Description = "Refers to the address of the current Pointer node of the list, this changes in movements relative to the First and Final."
+Refers to the address of the node at the current point in the list.
+Attribute Point.VB_Description = "Refers to the address of the node at the current point in the list."
 
     Point = Abs(List.Point)
     
 End Property
 
+Public Property Get Prior() As Long ' _
+Refers to the address of the Prior pointer node of the list.
+Attribute Prior.VB_Description = "Refers to the address of the Prior pointer node of the list."
+
+    Prior = Abs(List.Check)
+    
+End Property
 
 Public Sub Remove() ' _
 Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
@@ -234,8 +261,6 @@ Public Property Get Value() As Variant
     Value = Node.Value
 
 End Property
-
-
 
 
 

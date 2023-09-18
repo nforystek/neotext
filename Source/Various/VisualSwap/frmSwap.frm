@@ -80,6 +80,15 @@ Begin VB.Form frmSwap
       Width           =   1875
    End
    Begin VB.TextBox Text1 
+      BeginProperty Font 
+         Name            =   "Lucida Console"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   2355
       Left            =   60
       MultiLine       =   -1  'True

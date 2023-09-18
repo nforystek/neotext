@@ -60,13 +60,11 @@ Private Sub INode_Backward()
 End Sub
 
 
+Private Function INode_BeginOfList() As Boolean
 
-Private Property Get INode_Check() As Long
-
-    INode_Check = Me.Check
-
-End Property
-
+    INode_BeginOfList = Me.BeginOfList
+    
+End Function
 
 
 Private Sub INode_Clear()
@@ -84,14 +82,24 @@ Private Property Get INode_Count() As Long
 End Property
 
 
+#If VBIDE = -1 Then
+Private Property Get INode_Count2() As Long
+    INode_Count2 = Me.Count2
+End Property
+#End If
 
 Private Sub INode_Delete()
 
     Me.Delete
-
+    
 End Sub
 
 
+Private Function INode_EndOfList() As Boolean
+
+    INode_EndOfList = Me.EndOfList
+    
+End Function
 
 Private Function INode_Exists() As Boolean
 
@@ -140,6 +148,11 @@ Private Sub INode_Insert()
 End Sub
 
 
+Private Function INode_Inverse() As Boolean
+
+    INode_Inverse = Me.Inverse
+    
+End Function
 
 Private Property Get INode_IsObject() As Boolean
 
@@ -180,6 +193,11 @@ Private Property Get INode_Point() As Long
 End Property
 
 
+Private Property Get INode_Prior() As Long
+    
+    INode_Prior = Me.Prior
+    
+End Property
 
 Private Sub INode_Remove()
 
@@ -239,13 +257,17 @@ Moves to the prior node in the list.  This function projects along with forward 
 
 End Sub
 
+Public Function BeginOfList()
 
+    BeginOfList = INode.BeginOfList
+    
+End Function
 
-Public Property Get Check() As Long ' _
+Public Property Get Prior() As Long ' _
 Refers to the address of the Prior pointer node of the list, this changes with the pointer in movements relative to the First and Final.
 
 
-    Check = INode.Check
+    Prior = INode.Prior
 
 End Property
 
@@ -269,7 +291,14 @@ Returns the amount of total nodes taht exist with in the node list.
 
 End Property
 
+#If VBIDE = -1 Then
+Public Property Get Count2() As Long ' _
+Returns the amount of total nodes taht exist with in the node list.
 
+
+    Count2 = INode.Count2
+End Property
+#End If
 
 Public Sub Delete() ' _
 Deletes the node that is located at the current point in the list.
@@ -279,6 +308,11 @@ Deletes the node that is located at the current point in the list.
 
 End Sub
 
+Public Function EndOfList()
+
+    EndOfList = INode.EndOfList
+    
+End Function
 
 
 Public Function Exists() As Boolean ' _
@@ -289,8 +323,11 @@ Checks the existance of a node or node list with the specified lsit.
 
 End Function
 
+Public Function Inverse() As Boolean
 
-
+    Inverse = INode.Inverse
+    
+End Function
 Public Property Get Final() As Long ' _
 The final node is the lists theoretical very last node, this is used to obtain logical reference and may not always reflect last added node to diminish itteration of the entire node list.
 
@@ -438,9 +475,6 @@ Sets or gets the variable or object to this node.
     Value = INode.Value
 
 End Property
-
-
-
 
 
 
