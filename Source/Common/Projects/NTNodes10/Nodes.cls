@@ -45,11 +45,11 @@ End Sub
 
 
 
-Private Sub INode_Append()
+Private Function INode_Append() As Long
 
-    Me.Append
+    INode_Append = Me.Append
 
-End Sub
+End Function
 
 
 
@@ -88,11 +88,11 @@ Private Property Get INode_Count2() As Long
 End Property
 #End If
 
-Private Sub INode_Delete()
+Private Function INode_Delete() As Long
 
-    Me.Delete
+    INode_Delete = Me.Delete
     
-End Sub
+End Function
 
 
 Private Function INode_EndOfList() As Boolean
@@ -141,11 +141,11 @@ End Property
 
 
 
-Private Sub INode_Insert()
+Private Function INode_Insert() As Long
 
-    Me.Insert
+    INode_Insert = Me.Insert
 
-End Sub
+End Function
 
 
 Private Function INode_Inverse() As Boolean
@@ -199,11 +199,11 @@ Private Property Get INode_Prior() As Long
     
 End Property
 
-Private Sub INode_Remove()
+Private Function INode_Remove() As Long
 
-    Me.Remove
+    INode_Remove = Me.Remove
 
-End Sub
+End Function
 
 
 
@@ -214,6 +214,13 @@ Private Sub INode_Save(Optional ByVal FileName As String, Optional ByVal Clear A
 End Sub
 
 
+Private Property Get INode_Total() As Long
+    INode_Total Me.Total
+End Property
+
+Private Property Get INode_Track() As Long
+    INode_Track = Me.Track
+End Property
 
 Private Property Get INode_TypeName() As String
 
@@ -239,13 +246,13 @@ End Property
 
 
 
-Public Sub Append() ' _
+Public Function Append() As Long ' _
 Adds a node to the end of the list, the point location reflects the new node after Append is called.
 
 
-    INode.Append
+    Append = INode.Append
 
-End Sub
+End Function
 
 
 
@@ -292,6 +299,12 @@ Returns the amount of total nodes taht exist with in the node list.
 End Property
 
 #If VBIDE = -1 Then
+'Public Property Get Track() As Long
+'    Track = INode.Track
+'End Property
+'Public Property Get Total() As Long
+'    Total = INode.Total
+'End Property
 Public Property Get Count2() As Long ' _
 Returns the amount of total nodes taht exist with in the node list.
 
@@ -300,13 +313,13 @@ Returns the amount of total nodes taht exist with in the node list.
 End Property
 #End If
 
-Public Sub Delete() ' _
+Public Function Delete() As Long ' _
 Deletes the node that is located at the current point in the list.
 
 
-    INode.Delete
+    Delete = INode.Delete
 
-End Sub
+End Function
 
 Public Function EndOfList()
 
@@ -368,13 +381,13 @@ End Property
 
 
 
-Public Sub Insert() ' _
+Public Function Insert() As Long ' _
 Inserts a node at the current point in the list.  Nodes can be added to the end by using the Append function.
 
 
-    INode.Insert
+    Insert = INode.Insert
 
-End Sub
+End Function
 
 
 
@@ -428,13 +441,13 @@ End Property
 
 
 
-Public Sub Remove() ' _
+Public Function Remove() As Long ' _
 Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
 
 
-    INode.Remove
+    Remove = INode.Remove
 
-End Sub
+End Function
 
 
 

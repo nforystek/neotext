@@ -9,14 +9,13 @@ Public Type ListType
     First As Long 'first node of the list
     Point As Long 'current node in the list
     Final As Long 'last node of the list
-    Check As Long 'node after this one
+    prior As Long 'node after this one
+    
+
     Total As Long 'total count of nodes
+    Track As Long 'an offset with total
 End Type
 
-Public Type NodeType
-    Value As Long 'value of the node
-    Check As Long 'node after this one
-End Type
 
 'memory allocating flags
 Private Const GMEM_FIXED = &H0
@@ -36,12 +35,9 @@ Private Declare Sub PutLong Lib "kernel32" Alias "RtlMoveMemory" (ByVal ptr As L
 Private Declare Sub GetLong Lib "kernel32" Alias "RtlMoveMemory" (num As Any, ByVal ptr As Long, Optional ByVal Size As Long = 4&)
 Private Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
 
-
-Dim lastfree As Long
-
 #If VBIDE = -1 Then
 Public sec As Object
-
+Public DebugLate As String
 Public Sub Setup()
 
     Set sec = CreateObject("AddrPool.Addresses")
@@ -50,7 +46,7 @@ End Sub
 Public Sub CleanUp()
     Dim Addr As Variant
     For Each Addr In sec
-        Debug.Print "Freeing: " & CLng(Addr)
+       ' Debug.Print "Freeing: " & CLng(Addr)
         sec.Free CLng(Addr)
     Next
 End Sub
@@ -60,8 +56,9 @@ End Sub
 Public Sub Main()
 #If VBIDE = -1 Then
     Setup
-   ' Form1.Show
-    
+#If TestNodes = -1 Then
+    Form1.Show
+#End If
 #End If
 End Sub
 
@@ -76,13 +73,12 @@ Public Sub SaveNodes(ByRef List As ListType, ByVal SourceFileName As String, Opt
     Dim Totalsize As Long
     Dim Val As Long
     Dim fSize As Long
-    Dim Node As NodeType
     fSize = Abs(List.Total) 'save the total size in temp
     Put #hFile, Totalsize + 1, fSize& 'put total
     Totalsize = Totalsize + 4 'at the frst record
     Do Until fSize = 0 'until last node
-        Node = GetNode(List.Point) 'get the node
-        Val = Node.Value 'save the nodes value
+        node = GetNode(List.Point) 'get the node
+        Val = Register(List.Point, Val) 'save the nodes value
         Put #hFile, Totalsize + 1, Val&
         fSize = fSize - 1 'deincrement count
         Totalsize = Totalsize + 4 'location ptr
@@ -102,7 +98,6 @@ Public Sub LoadNodes(ByRef List As ListType, ByVal SourceFileName As String, Opt
     Dim Totalsize As Long
     Dim Val As Long
     Dim fSize As Long
-    Dim Node As NodeType
     If Clear Then
         DisposeOfAll List 'clear all current node
         List.Total = 0 'get the first record, count
@@ -111,67 +106,47 @@ Public Sub LoadNodes(ByRef List As ListType, ByVal SourceFileName As String, Opt
     Totalsize = Totalsize + 4 'keep loc track
     Do Until Abs(List.Total) >= fSize  'until past eof
         AddToLastNode List 'add a new node to list
-        Node = GetNode(List.Final) 'get the node
         Get #hFile, Totalsize + 1, Val& 'from file
-        Node.Value = Val 'set the nodes value
-        SetNode List.Final, Node 'commit the value
+        Register(List.Final, 0) = Val 'set the nodes value
         Totalsize = Totalsize + 4 'loation track
     Loop 'close the file
     Close #hFile
 End Sub
-Private Property Get Pointer(ByVal Addr As Long) As Long
-    Pointer = Register(Addr, 4)
-End Property
-Private Property Let Pointer(ByVal Addr As Long, ByVal RHS As Long)
-    Register(Addr, 4) = RHS
-End Property
 
-Public Function GetNode(ByRef Addr As Long) As NodeType
-    If Addr = 0 Then Exit Function 'exit if no addr
-    GetNode.Check = Register(Addr, 4)
-    GetNode.Value = Register(Addr, 0)
-End Function
 
-Public Sub SetNode(ByRef Addr As Long, ByRef Node As NodeType)
-    If Addr = 0 Then Exit Sub 'exit if no addr
-    Register(Addr, 4) = Node.Check
-    Register(Addr, 0) = Node.Value
-End Sub
-
-Public Property Get Register(ByVal Addr As Long, Optional ByVal OffSet As Long = 0) As Long
+Public Property Get Register(ByVal Addr As Long, Optional ByVal offset As Long = 0) As Long
     If Addr <> 0 Then
 #If VBIDE = -1 Then
-        Register = sec.Register(Abs(Addr), OffSet)
+        Register = sec.Register(Abs(Addr), offset)
 #Else
-        GetLong Register, Abs(Addr) + OffSet
+        GetLong Register, Abs(Addr) + offset
 #End If
     End If
 End Property
-Public Property Let Register(ByVal Addr As Long, Optional ByVal OffSet As Long = 0, ByVal RHS As Long)
+Public Property Let Register(ByVal Addr As Long, Optional ByVal offset As Long = 0, ByVal RHS As Long)
     If Addr <> 0 Then
 #If VBIDE = -1 Then
-        sec.Register(Abs(Addr), OffSet) = RHS
+        sec.Register(Abs(Addr), offset) = RHS
 #Else
-        PutLong Abs(Addr) + OffSet, RHS
+        PutLong Abs(Addr) + offset, RHS
 #End If
     End If
 End Property
 
 Public Function GetVariant(ByRef Addr As Long) As Variant
     If Addr = 0 Then Exit Function 'exit if no addr
-    Dim Node As NodeType
-    Node = GetNode(Addr)
+
     Dim Var1 As Long
-    Var1 = Node.Value
+    Var1 = Register(Addr, 0)
 #If VBIDE = -1 Then
     If sec.Size(Var1) = 4 Then
-        GetVariant = PtrVar(Node.Value)
-        sec.rtlMovMem GetVariant, False, Node.Value, True, LenB(GetVariant)
+        GetVariant = PtrVar(Var1)
+        sec.rtlMovMem GetVariant, False, Var1, True, LenB(GetVariant)
     End If
 #Else
     If LocalSize(Var1) = 4 Then
-        GetVariant = PtrVar(Node.Value)
-        rtlMovMem GetVariant, ByVal Node.Value, LenB(GetVariant)
+        GetVariant = PtrVar(Var1)
+        rtlMovMem GetVariant, ByVal Var1, LenB(GetVariant)
     End If
 #End If
 
@@ -179,23 +154,23 @@ End Function
 
 Public Sub SetVariant(ByRef Addr As Long, ByRef Var As Variant)
     If Addr = 0 Then Exit Sub 'exit if no addr
-    Dim Node As NodeType
-    Node = GetNode(Addr)
-#If VBIDE = -1 Then
-    If Not sec.Size(Node.Value) = 4 Then
-        Node.Value = sec.Alloc(GMEM_FIXED And VarPtr(Var), LenB(Var)) 'allocate 12 bytes and set to mid struct
-        If Not Node.Value = sec.Lock(Node.Value) Then Err.Raise 8, App.Title, "Memory lock error."
-    End If
-    sec.rtlMovMem Node.Value, True, Var, False, LenB(Var)
-#Else
-    If Not LocalSize(Node.Value) = 4 Then
-        Node.Value = LocalAlloc(GMEM_FIXED And VarPtr(Var), LenB(Var)) 'allocate 12 bytes and set to mid struct
-        If Not Node.Value = LocalLock(Node.Value) Then Err.Raise 8, App.Title, "Memory lock error."
-    End If
-    rtlMovMem ByVal Node.Value, Var, LenB(Var)
-#End If
 
-    SetNode Addr, Node
+    Dim Var1 As Long
+    Var1 = Register(Addr, 0)
+#If VBIDE = -1 Then
+    If Not sec.Size(Var1) = 4 Then
+        Var1 = sec.Alloc(GMEM_FIXED And VarPtr(Var), LenB(Var)) 'allocate 12 bytes and set to mid struct
+        If Not Var1 = sec.Lock(Var1) Then Err.Raise 8, App.Title, "Memory lock error."
+    End If
+    sec.rtlMovMem Var1, True, Var, False, LenB(Var)
+#Else
+    If Not LocalSize(Var1) = 4 Then
+        Var1 = LocalAlloc(GMEM_FIXED And VarPtr(Var), LenB(Var)) 'allocate 12 bytes and set to mid struct
+        If Not Var1 = LocalLock(Var1) Then Err.Raise 8, App.Title, "Memory lock error."
+    End If
+    rtlMovMem ByVal Var1, Var, LenB(Var)
+#End If
+    Register(Addr, 0) = Var1
 End Sub
 
 Public Property Get NodeObject(ByRef Addr As Long) As Object
@@ -236,16 +211,17 @@ End Property
 Public Property Get TypeName(ByRef List As ListType) As String ' _
 Gets the type name of the data of the current node at Point in the list.
   '  TypeName = modBase.TypeName(List)
-    Dim Node As NodeType
-    Node = GetNode(List.Point)
-    TypeName = VBA.TypeName(PtrVar(Node.Check))
+    Dim Var1 As Long
+
+    TypeName = VBA.TypeName(PtrVar(Register(List.Point, 4)))
+    Var1 = Register(List.Point, 0)
 #If VBIDE = -1 Then
-    If sec.Size(Node.Value) <> 0 Then
-        TypeName = VBA.TypeName(NodeObject(VarPtr(Node.Value)))
+    If sec.Size(Var1) <> 0 Then
+        TypeName = VBA.TypeName(NodeObject(VarPtr(Var1)))
     End If
 #Else
-    If LocalSize(Node.Value) <> 0 Then
-        TypeName = VBA.TypeName(NodeObject(VarPtr(Node.Value)))
+    If LocalSize(Var1) <> 0 Then
+        TypeName = VBA.TypeName(NodeObject(VarPtr(Var1)))
     End If
 #End If
 End Property
@@ -268,20 +244,25 @@ End Function
 
 
 Public Property Get IsObject(ByRef List As ListType) As Boolean
-    Dim Node As NodeType
-    Node = GetNode(List.Point)
-    IsObject = VBA.IsObject(PtrVar(Node.Check))
+    Dim Var1 As Long
+    IsObject = VBA.IsObject(PtrVar(Register(List.Point, 4)))
+    Var1 = Register(List.Point, 0)
 #If VBIDE = -1 Then
-    If sec.Size(Node.Value) <> 0 Then
-        IsObject = VBA.IsObject(NodeObject(VarPtr(Node.Value)))
+    If sec.Size(Var1) <> 0 Then
+        IsObject = VBA.IsObject(NodeObject(VarPtr(Var1)))
     End If
 #Else
-    If LocalSize(Node.Value) <> 0 Then
-        IsObject = VBA.IsObject(NodeObject(VarPtr(Node.Value)))
+    If LocalSize(Var1) <> 0 Then
+        IsObject = VBA.IsObject(NodeObject(VarPtr(Var1)))
     End If
 #End If
 End Property
 
+Public Function Total(ByRef List As ListType) As Long
+    With List
+        Total = Abs(.Track + .Total - .Track + .Total + -.Total)
+    End With
+End Function
 
 Public Function IsValidList(ByRef List As ListType) As Boolean
     IsValidList = ((List.Point <> 0) And (List.First <> 0) And (List.Final <> 0))
@@ -289,194 +270,177 @@ Public Function IsValidList(ByRef List As ListType) As Boolean
 End Function
 
 Public Function BOL(ByRef List As ListType) As Boolean
-    BOL = ((List.Point = List.First) And (List.Total > 0)) Or ((List.Point = List.Final) And (List.Total < 0))
+    BOL = (List.Point = List.First) Or (List.First = 0)
+    'BOL =((List.Point = List.First) And (List.Total > 0)) Or ((List.Point = List.Final) And (List.Total < 0))
 End Function
 
 Public Function EOL(ByRef List As ListType) As Boolean
-    EOL = ((List.Point = List.Final) And (List.Total > 0)) Or ((List.Point = List.First) And (List.Total < 0))
+    EOL = (List.Point = List.Final) Or (List.Final = 0)
+    'EOL = ((List.Point = List.Final) And (List.Total > 0)) Or ((List.Point = List.First) And (List.Total < 0))
 End Function
 
-
-Public Sub AddDelMiddleNode(ByRef List As ListType, ByVal AddOrDel As Boolean)
-    If (AddOrDel And (EOL(List) Or (List.Total = 0))) Then
+Public Function AddDelMiddleNode(ByRef List As ListType, ByVal AddOrDel As Boolean) As Long
+    If (AddOrDel And (EOL(List) Or (Total(List) = 0))) Then
         'list is at final already just delete
-        AddToLastNode List
+
+        AddDelMiddleNode = AddToLastNode(List)
+
     ElseIf ((Not AddOrDel) And BOL(List)) Then
         'list is at first already just delete
 
-        DelFirstNode List
+
+        AddDelMiddleNode = DelFirstNode(List)
+
     ElseIf IsValidList(List) Or List.Total <> 0 Then
         Dim lFirst As Long
         Dim lFinal As Long
         If AddOrDel Then
-            lFinal = List.Final
-            lFirst = List.First
-            Swap List.Point, List.First
-            Swap List.Check, List.Final
-            AddToLastNode List
-            List.First = lFirst
+
+           ' lFinal = List.Final
+'            Swap List.Point, List.First
+'            Swap List.prior, List.Final
+            
+           ' MoveNode List, True
+            AddDelMiddleNode = AddToLastNode(List)
+           
+           ' List.Final = lFinal
+
         Else
-            lFinal = List.Final
-            lFirst = List.First
-            MoveNode List, False
-            DelFirstNode List
+
+            'MoveNode List, False
+            'Swap List.Final, List.First
+            AddDelMiddleNode = DelFirstNode(List)
+
+'            Swap List.Point, List.First
+'            Swap List.prior, List.Final
         End If
     End If
-End Sub
+End Function
 
-Public Sub AddToLastNode(ByRef List As ListType)
+Public Function AddToLastNode(ByRef List As ListType) As Long
 
-    Dim Node As NodeType
-    If IsValidList(List) Then
-        Node = GetNode(List.Point)
-        List.Check = Node.Check
-    End If
+    Dim Point As Long
+'    List.Total = (-List.Total)
+'    List.Track = (-List.Track)
+
+
+    Swap List.Point, List.prior
+    If IsValidList(List) Then List.prior = Register(List.Point, 4)
 
 #If VBIDE = -1 Then
-    Node.Check = sec.Alloc(0, 8)
-    If (Not ((Node.Check = sec.Freeze(Node.Check)))) Then Err.Raise 8, App.Title, "Memory lock error."
-    Debug.Print "Alloc: " & Node.Check
-#Else
-    Node.Check = LocalAlloc(GMEM_FIXED, 8)
-    If (Not ((Node.Check = LocalLock(ByVal Node.Check)))) Then Err.Raise 8, App.Title, "Memory lock error."
+    Point = sec.Alloc(0, 8)
+    If (Not ((Point = sec.Freeze(Point)))) Then Err.Raise 8, App.Title, "Memory lock error."
+#If TestNodes = -1 Then
+    Debug.Print "Alloc: " & Point
 #End If
-    If lastfree = Node.Check Then lastfree = 0
+#Else
+    Point = LocalAlloc(GMEM_FIXED, 8)
+    If (Not ((Point = LocalLock(ByVal Point)))) Then Err.Raise 8, App.Title, "Memory lock error."
+#End If
+    AddToLastNode = Point
 
-
-        
-    If IsValidList(List) Then
-        SetNode List.Point, Node
-    Else
-        List.Check = Node.Check
-        List.First = Node.Check
-    End If
     
-    List.Point = Node.Check
-    Node.Check = List.Check
+    If IsValidList(List) Then
+        Register(List.Point, 4) = Point
+        
+    Else
+        List.prior = Point
+        List.First = Point
+    End If
+
+    
+    List.Point = Point
+    Point = List.prior
     List.Final = List.Point
     'commit the current node
-    SetNode List.Point, Node
-    
-    Swap List.Check, List.Point
-    
-    If (List.Total > 0) Then
-        List.Total = List.Total + 1
-    Else
-        List.Total = -((-List.Total) + 1)
-    End If
-    List.Total = -(List.Total)
-End Sub
 
-Public Sub DelFirstNode(ByRef List As ListType)
-    Dim Node As NodeType
+    Register(List.Point, 4) = Point
+    
+    Swap List.Point, List.prior
 
-    If List.Total <> 0 Then
+    List.Track = (-(List.Total - Abs(List.Track)))
+    List.Total = (List.Total + IIf(List.Total > 0, 1, -1))
+
+End Function
+
+Public Function DelFirstNode(ByRef List As ListType) As Long
+    
+    If IsValidList(List) Then
+               
+        Dim Revert As Boolean
+        List.Total = (-List.Total)
+        Revert = (List.Track < 0)
+        List.Track = Abs(List.Track)
+
+        Swap List.First, List.Final
+
+        Dim Point As Long
         'get the first node in list
-        Node = GetNode(List.Point)
+        Point = Register(List.Point, 0)
     #If VBIDE = -1 Then
-        If (sec.Size(Node.Value) = 4) Then
-            sec.UnFreeze Node.Value
-            sec.Free Node.Value
+        If (sec.Size(Point) = 4) Then
+            sec.UnFreeze Point
+            sec.Free Point
         End If
     #Else
-        If (LocalSize(Node.Value) = 4) Then
-            LocalUnlock Node.Value
-            LocalFree Node.Value
+        If (LocalSize(Point) = 4) Then
+            LocalUnlock Point
+            LocalFree Point
         End If
     #End If
-    
-        Dim Point As Long
-        Point = Node.Check 'save impass
-        If (Point <> 0) Then ' And (Not (Abs(List.Total) = 1))) Then
-            'arrange first and final
-            Node = GetNode(List.Check)
-            Node.Check = Point
-            SetNode List.Check, Node
-            'set the new Check of
-            Node = GetNode(Point)
-            Swap List.Final, Node.Check
-        Else
-            Swap List.Check, List.Point
+        Point = Register(List.Point, 4)
+
+        If (Point <> 0) Then
+            Register(List.prior, 4) = Point
+            List.Final = Register(Point, 4)
+
         End If
         
-'        Swap List.Final, List.First
-        
-        
+        DelFirstNode = List.Point
     #If VBIDE = -1 Then
         sec.UnFreeze List.Point
         sec.Free List.Point
-        
+    #If TestNodes = -1 Then
         Debug.Print "Free: " & List.Point
+    #End If
     #Else
         LocalUnlock List.Point
         LocalFree List.Point
     #End If
-    
+        
         'set list to retained value
-        If (Abs(List.Total) = 1) Then
+        If (Total(List) = 1) Then
             List.Point = 0
             List.First = 0
             List.Final = 0
+            List.Track = 0
         Else
             List.First = Point
             List.Point = Point
         End If
-           
-        
 
-        If (List.Total > 0) Then
-            List.Total = List.Total - 1
-        Else
-            List.Total = List.Total + 1
-        End If
-        List.Total = -Abs(List.Total)
+        Swap List.First, List.Final
+
+        List.Track = ((-List.Track) + IIf(List.Track > 0, 1, -1))
+        List.Total = (List.Total + IIf(List.Total > 0, -1, 1))
+        List.Track = Abs(List.Track) * IIf(Revert, -1, 1)
 
     End If
-End Sub
+End Function
 
 Public Sub MoveNode(ByRef List As ListType, ByVal Reverse As Boolean)
-    'If (List.Point = 0) Then Exit Sub
+    If (List.Point = 0) Then Exit Sub
     If (Reverse And (List.Total > 0)) Or ((Not Reverse) And (List.Total < 0)) Then
-    'If (Reverse Xor (List.Total < 0)) Then
-        Swap List.Check, List.Final
+        Swap List.prior, List.Final
         Swap List.Point, List.Final
-        Swap List.First, List.Check
-        
+        Swap List.First, List.prior
+        List.Total = -List.Total
     Else
-        Swap List.Check, List.Point
+        Swap List.prior, List.Point
+        List.Point = Register(List.prior, 4)
     End If
-
-    
-    
-    
-    If Reverse Then  'preform a reverse
-        List.Check = GetNode(List.Point).Check
-    Else 'else preform a normal forward
-        List.Point = GetNode(List.Check).Check
-    End If
-    
-    
-    List.Total = -List.Total
-    
     
 End Sub
-'Public Sub MoveNode(ByRef List As ListType, ByVal Reverse As Boolean)
-'    If (List.Point = 0) Then Exit Sub
-'    If (Reverse And (List.Total > 0)) Or ((Not Reverse) And (List.Total < 0)) Then
-'    'If (Reverse Xor (List.Total < 0)) Then
-'        Swap List.Check, List.Final
-'        Swap List.Point, List.Final
-'        Swap List.First, List.Check
-'        List.Total = -List.Total
-'    Else
-'        Swap List.Check, List.Point
-'        If Reverse Then  'preform a reverse
-'            List.Check = GetNode(List.Point).Check
-'        Else 'else preform a normal forward
-'            List.Point = GetNode(List.Check).Check
-'        End If
-'    End If
-'End Sub
 
 Public Sub DisposeOfAll(ByRef List As ListType)
     Do While IsValidList(List) 'until we are done
@@ -560,7 +524,7 @@ End Sub
 'Public Property Get IsObject(ByRef List As ListType) As Boolean
 '    Dim Node As NodeType
 '    Node = GetNode(List.Point)
-'    IsObject = VBA.IsObject(PtrVar(Node.Check))
+'    IsObject = VBA.IsObject(PtrVar(Node.Prior))
 '    If LocalSize(Node.Value) <> 0 Then
 '        IsObject = VBA.IsObject(NodeObject(VarPtr(Node.Value)))
 '    End If
@@ -571,7 +535,7 @@ End Sub
 '  '  TypeName = modBase.TypeName(List)
 '    Dim Node As NodeType
 '    Node = GetNode(List.Point)
-'    TypeName = VBA.TypeName(PtrVar(Node.Check))
+'    TypeName = VBA.TypeName(PtrVar(Node.Prior))
 '    If LocalSize(Node.Value) <> 0 Then
 '        TypeName = VBA.TypeName(NodeObject(VarPtr(Node.Value)))
 '    End If
@@ -603,13 +567,13 @@ End Sub
 '    First As Long 'first node of the list
 '    Point As Long 'current node in the list
 '    Final As Long 'last node of the list
-'    Check As Long 'node after this one
+'    Prior As Long 'node after this one
 '    Total As Long 'total count of nodes
 'End Type
 '
 'Public Type NodeType
 '    Value As Long 'value of the node
-'    Check As Long 'node after this one
+'    Prior As Long 'node after this one
 'End Type
 '
 ''memory allocating flags
@@ -760,12 +724,12 @@ End Sub
 '        Dim lFinal As Long
 '        If AddOrDel Then
 '            'If Not (List.Final = List.Point) Then
-'                MoveNode List, (List.Check = List.First)
+'                MoveNode List, (List.Prior = List.First)
 '            'End If 'call add node
 '            AddLastNode List
 '        Else
 '            'If Not (List.First = List.Point) Then
-'                MoveNode List, (List.Check = List.Final)
+'                MoveNode List, (List.Prior = List.Final)
 '            'End If 'call delete node
 '            DelFirstNode List
 '        End If
@@ -778,8 +742,8 @@ End Sub
 '        List.Point = LocalAlloc(GMEM_FIXED, 8) + 2 'allocate 12 bytes and set to mid struct
 '        If Not (List.Point - 2) = LocalLock(List.Point - 2) Then Err.Raise 8, App.Title, "Memory lock error."
 '        'initial node values
-'        List.Check = List.Point
-'        Node.Check = List.Point
+'        List.Prior = List.Point
+'        Node.Prior = List.Point
 '        'initial list values
 '        List.First = List.Point
 '        List.Final = List.Point
@@ -787,16 +751,16 @@ End Sub
 '        SetNode List.Point, Node
 '    Else
 '        Node = GetNode(List.Point) 'get the last node of list
-'        List.Check = Node.Check
-'        Node.Check = LocalAlloc(GMEM_FIXED, 8) + 2  'allocate 12 bytes and set to mid struct
-'        If Not (Node.Check - 2) = LocalLock(Node.Check - 2) Then Err.Raise 8, App.Title, "Memory lock error."
-'        'commit the final nodes Check
+'        List.Prior = Node.Prior
+'        Node.Prior = LocalAlloc(GMEM_FIXED, 8) + 2  'allocate 12 bytes and set to mid struct
+'        If Not (Node.Prior - 2) = LocalLock(Node.Prior - 2) Then Err.Raise 8, App.Title, "Memory lock error."
+'        'commit the final nodes Prior
 '        SetNode List.Point, Node
-'        'set the current nodes Check
+'        'set the current nodes Prior
 '        'and the initial list values
-'        List.Point = Node.Check
+'        List.Point = Node.Prior
 '        List.Final = List.Point
-'        Node.Check = List.Check
+'        Node.Prior = List.Prior
 '        'commit the current node
 '        SetNode List.Point, Node
 '    End If
@@ -813,7 +777,7 @@ End Sub
 '    If IsValidNode(List) Then
 '        'get the first node in list
 '        Node = GetNode(List.Point)
-'        Point = Node.Check 'save impass
+'        Point = Node.Prior 'save impass
 '        If (List.First = List.Final) Then 'eol
 '            'unlock and release memory
 '            If LocalSize(Node.Value) = 4 Then
@@ -843,12 +807,12 @@ End Sub
 '            End If
 '            If Point <> 0 Then
 '                'arrange first and final
-'                Node = GetNode(List.Check)
-'                Node.Check = Point
-'                SetNode List.Check, Node
-'                'set the new Check of
+'                Node = GetNode(List.Prior)
+'                Node.Prior = Point
+'                SetNode List.Prior, Node
+'                'set the new Prior of
 '                Node = GetNode(Point)
-'                Swap List.Final, Node.Check
+'                Swap List.Final, Node.Prior
 '            End If
 '            'unlock and release memory
 '            LocalUnlock List.Point - 2
@@ -870,13 +834,13 @@ End Sub
 '    Dim Back As NodeType
 '    Dim Node As NodeType
 '    If Reverse Then 'preform a reverse
-'        Node = GetNode(List.Check) 'get the Check as node
+'        Node = GetNode(List.Prior) 'get the Prior as node
 '        Back = GetNode(List.Point) 'and the point as back
-'        List.Check = ShiftNode(List, List.Point, Node.Check, Reverse)
+'        List.Prior = ShiftNode(List, List.Point, Node.Prior, Reverse)
 '    Else 'else preform a normal forward
 '        Node = GetNode(List.Point) 'get the point as node
-'        Back = GetNode(List.Check) 'and the Check as back
-'        List.Point = ShiftNode(List, Back.Check, Node.Check, Reverse)
+'        Back = GetNode(List.Prior) 'and the Prior as back
+'        List.Point = ShiftNode(List, Back.Prior, Node.Prior, Reverse)
 '    End If
 'End Sub
 '
@@ -886,22 +850,22 @@ End Sub
 '    ShiftNode = hNode
 '    Node = GetNode(hBack)
 '    Back = GetNode(hNode)
-'    Swap List.Check, List.Point
-'    If (Not (((List.Point = List.Final) Xor (List.First = List.Check)) And _
-'        ((List.Point = List.First) Xor (List.Final = List.Check)))) Then
+'    Swap List.Prior, List.Point
+'    If (Not (((List.Point = List.Final) Xor (List.First = List.Prior)) And _
+'        ((List.Point = List.First) Xor (List.Final = List.Prior)))) Then
 '        If Reverse Then
-'           Swap Node.Check, Back.Check
-'            Swap List.Check, List.Point, Node.Check
-'            List.Check = ShiftNode(List, Node.Check, Back.Check, Not Reverse)
-'            Swap Node.Check, Back.Check
+'           Swap Node.Prior, Back.Prior
+'            Swap List.Prior, List.Point, Node.Prior
+'            List.Prior = ShiftNode(List, Node.Prior, Back.Prior, Not Reverse)
+'            Swap Node.Prior, Back.Prior
 '        Else
-'            Swap Back.Check, Node.Check, List.Point
-'            Swap Node.Check, Back.Check
+'            Swap Back.Prior, Node.Prior, List.Point
+'            Swap Node.Prior, Back.Prior
 '        End If
 '    ElseIf Not Reverse Then
-'        Swap List.Point, Node.Check, List.Check
+'        Swap List.Point, Node.Prior, List.Prior
 '    End If
-'    Swap List.Point, hNode, Back.Check
+'    Swap List.Point, hNode, Back.Prior
 '    Swap hBack, ShiftNode
 'End Function
 '
@@ -934,7 +898,7 @@ End Sub
 '
 '    Dim Node As NodeType
 '    Node = GetNode(List.Point)
-'    IsObject = VBA.IsObject(PtrVar(Node.Check))
+'    IsObject = VBA.IsObject(PtrVar(Node.Prior))
 '    If LocalSize(Node.Value) <> 0 Then
 '        IsObject = VBA.IsObject(NodeObject(VarPtr(Node.Value)))
 '    End If
@@ -945,7 +909,7 @@ End Sub
 '  '  TypeName = modBase.TypeName(List)
 '    Dim Node As NodeType
 '    Node = GetNode(List.Point)
-'    TypeName = VBA.TypeName(PtrVar(Node.Check))
+'    TypeName = VBA.TypeName(PtrVar(Node.Prior))
 '    If LocalSize(Node.Value) <> 0 Then
 '        TypeName = VBA.TypeName(NodeObject(VarPtr(Node.Value)))
 '    End If

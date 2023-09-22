@@ -15,29 +15,49 @@ Option Explicit
 
 Private List As ListType
 
+Private LastMove As Integer
 
-Public Sub Append() ' _
+Public Function Append() As Long ' _
 Adds a node to the end of the list, the point location reflects the new node after Append is called.
 Attribute Append.VB_Description = "Adds a node to the end of the list, the point location reflects the new node after Append is called."
 
-    AddToLastNode List
-
-End Sub
-
+   Append = AddToLastNode(List)
+    
+End Function
 
 
 Public Sub Backward() ' _
-Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists.
+Moves to the prior node in the list.
 Attribute Backward.VB_Description = "Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
 
     MoveNode List, True
     MoveNode List, True
-    MoveNode List, False
-
-    'MoveNode List, True
-    'MoveNode List, False
     
+    If List.Total < 0 Then
+        MoveNode List, True
+        MoveNode List, True
+    Else
+        MoveNode List, False
+    End If
+
+#If TestNodes = -1 Then
+    Debug.Print "Point: " & List.Point
+#End If
 End Sub
+
+
+Public Sub Forward() ' _
+Moves to the next node in the list.
+
+    MoveNode List, (List.Total < 0)
+
+#If TestNodes = -1 Then
+    Debug.Print "Point: " & List.Point
+#End If
+
+End Sub
+
+
 
 Public Function BeginOfList() As Boolean ' _
 Checks whether the point is at the beginning of the list or not.
@@ -64,6 +84,12 @@ Attribute Count.VB_Description = "Returns the amount of total nodes taht exist w
 End Property
 
 #If VBIDE = -1 Then
+'Public Property Get Track() As Long
+'    Track = List.Track
+'End Property
+'Public Property Get Total() As Long
+'    Total = List.Total
+'End Property
 Public Property Get Count2() As Long ' _
 Returns the amount of total nodes taht exist with in the node list.
 Attribute Count2.VB_Description = "Returns the amount of total nodes taht exist with in the node list."
@@ -74,13 +100,13 @@ End Property
 #End If
 
 
-Public Sub Delete() ' _
+Public Function Delete() As Long ' _
 Deletes a node at the current position of the lists Point node.
 Attribute Delete.VB_Description = "Deletes a node at the current position of the lists Point node."
 
-    AddDelMiddleNode List, False
+    Delete = AddDelMiddleNode(List, False)
 
-End Sub
+End Function
 
 Public Function EndOfList() As Boolean ' _
 Checks whether the point is at the end of the list or not.
@@ -101,7 +127,12 @@ Public Property Get Final() As Long ' _
 Refers to the address of the final node is the list.
 Attribute Final.VB_Description = "Refers to the address of the final node is the list."
 
-    Final = Abs(List.Final)
+    If List.Total < 0 Or List.Point = List.Final Then
+        Final = Abs(List.First)
+    Else
+        Final = Abs(List.Final)
+    End If
+
 
 End Property
 
@@ -110,18 +141,14 @@ Public Property Get First() As Long ' _
 Refers to the address of the first node is the list.
 Attribute First.VB_Description = "Refers to the address of the first node is the list."
 
-    First = Abs(List.First)
+    If List.Total < 0 Or List.Point = List.First Then
+        First = Abs(List.Final)
+    Else
+        First = Abs(List.First)
+    End If
+
     
 End Property
-
-
-Public Sub Forward() ' _
-Moves to the next node in the list.
-Attribute Forward.VB_Description = "Moves to the next node in the list."
-
-    MoveNode List, False
-
-End Sub
 
 
 Public Property Get Handle() As Long ' _
@@ -133,13 +160,13 @@ Attribute Handle.VB_Description = "Returns the handle of the list, that is the m
 End Property
 
 
-Public Sub Insert() ' _
+Public Function Insert() As Long ' _
 Inserts a node into the list at the current Point in the list.
 Attribute Insert.VB_Description = "Inserts a node into the list at the current Point in the list."
 
-    AddDelMiddleNode List, True
+    Insert = AddDelMiddleNode(List, True)
 
-End Sub
+End Function
 
 Public Function Inverse() As Boolean
     Inverse = (List.Total < 0)
@@ -169,24 +196,14 @@ Public Property Set Object(ByVal RHS As Object) ' _
 Gets or sets the currnet node at Point as an object.
 Attribute Object.VB_Description = "Gets or sets the currnet node at Point as an object."
 
-    Dim Node As NodeType
-
-    Node = GetNode(List.Point)
-
-    Set NodeObject(VarPtr(Node.Value)) = RHS
-
-    SetNode List.Point, Node
-
+    Set NodeObject(VarPtr(Register(List.Point, 0))) = RHS
+    
 End Property
 
 
 Public Property Get Object() As Object
 
-    Dim Node As NodeType
-
-    Node = GetNode(List.Point)
-
-    Set Object = NodeObject(VarPtr(Node.Value))
+    Set Object = NodeObject(VarPtr(Register(List.Point, 0)))
 
 End Property
 
@@ -196,24 +213,30 @@ Refers to the address of the node at the current point in the list.
 Attribute Point.VB_Description = "Refers to the address of the node at the current point in the list."
 
     Point = Abs(List.Point)
-    
+
 End Property
 
-Public Property Get Prior() As Long ' _
+Public Property Get prior() As Long ' _
 Refers to the address of the Prior pointer node of the list.
-Attribute Prior.VB_Description = "Refers to the address of the Prior pointer node of the list."
+Attribute prior.VB_Description = "Refers to the address of the Prior pointer node of the list."
 
-    Prior = Abs(List.Check)
+    prior = Abs(List.prior)
+   
     
 End Property
 
-Public Sub Remove() ' _
+Public Function Remove() As Long ' _
 Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
 Attribute Remove.VB_Description = "Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point."
 
-    DelFirstNode List
+'Swap List.First, List.Final
 
-End Sub
+
+    Remove = DelFirstNode(List)
+
+ '   MoveNode List, False
+'Swap List.Point, List.Prior
+End Function
 
 
 Public Sub Save(Optional ByVal FileName As String, Optional ByVal Clear As Boolean = False) ' _
@@ -241,24 +264,14 @@ Public Property Let Value(ByVal RHS As Variant) ' _
 Sets or gets the variable or object to this node.
 Attribute Value.VB_Description = "Sets or gets the variable or object to this node."
 
-    Dim Node As NodeType
-
-    Node = GetNode(List.Point)
-
-    Node.Value = RHS
-
-    SetNode List.Point, Node
+    Register(List.Point, 0) = RHS
 
 End Property
 
 
 Public Property Get Value() As Variant
 
-    Dim Node As NodeType
-
-    Node = GetNode(List.Point)
-
-    Value = Node.Value
+    Value = Register(List.Point, 0)
 
 End Property
 
