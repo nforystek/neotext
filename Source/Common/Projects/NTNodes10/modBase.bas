@@ -9,7 +9,7 @@ Public Type ListType
     First As Long 'first node of the list
     Point As Long 'current node in the list
     Final As Long 'last node of the list
-    prior As Long 'node after this one
+    Prior As Long 'node after this one
     
 
     Total As Long 'total count of nodes
@@ -279,6 +279,7 @@ Public Function EOL(ByRef List As ListType) As Boolean
     'EOL = ((List.Point = List.Final) And (List.Total > 0)) Or ((List.Point = List.First) And (List.Total < 0))
 End Function
 
+
 Public Function AddDelMiddleNode(ByRef List As ListType, ByVal AddOrDel As Boolean) As Long
     If (AddOrDel And (EOL(List) Or (Total(List) = 0))) Then
         'list is at final already just delete
@@ -288,14 +289,16 @@ Public Function AddDelMiddleNode(ByRef List As ListType, ByVal AddOrDel As Boole
     ElseIf ((Not AddOrDel) And BOL(List)) Then
         'list is at first already just delete
 
-
         AddDelMiddleNode = DelFirstNode(List)
 
     ElseIf IsValidList(List) Or List.Total <> 0 Then
-        Dim lFirst As Long
-        Dim lFinal As Long
-        If AddOrDel Then
 
+        If AddOrDel Then
+        
+            'todo: use the short cut instead of looping
+            Do Until EOL(List)
+                MoveNode List, (List.Total < 0)
+            Loop
            ' lFinal = List.Final
 '            Swap List.Point, List.First
 '            Swap List.prior, List.Final
@@ -307,6 +310,10 @@ Public Function AddDelMiddleNode(ByRef List As ListType, ByVal AddOrDel As Boole
 
         Else
 
+            'todo: use the short cut instead of looping
+            Do Until BOL(List)
+                MoveNode List, (List.Total < 0)
+            Loop
             'MoveNode List, False
             'Swap List.Final, List.First
             AddDelMiddleNode = DelFirstNode(List)
@@ -323,9 +330,8 @@ Public Function AddToLastNode(ByRef List As ListType) As Long
 '    List.Total = (-List.Total)
 '    List.Track = (-List.Track)
 
-
-    Swap List.Point, List.prior
-    If IsValidList(List) Then List.prior = Register(List.Point, 4)
+    Swap List.Point, List.Prior
+    If IsValidList(List) Then List.Prior = Register(List.Point, 4)
 
 #If VBIDE = -1 Then
     Point = sec.Alloc(0, 8)
@@ -338,25 +344,23 @@ Public Function AddToLastNode(ByRef List As ListType) As Long
     If (Not ((Point = LocalLock(ByVal Point)))) Then Err.Raise 8, App.Title, "Memory lock error."
 #End If
     AddToLastNode = Point
-
     
     If IsValidList(List) Then
         Register(List.Point, 4) = Point
         
     Else
-        List.prior = Point
+        List.Prior = Point
         List.First = Point
     End If
 
-    
     List.Point = Point
-    Point = List.prior
+    Point = List.Prior
     List.Final = List.Point
     'commit the current node
 
     Register(List.Point, 4) = Point
     
-    Swap List.Point, List.prior
+    Swap List.Point, List.Prior
 
     List.Track = (-(List.Total - Abs(List.Track)))
     List.Total = (List.Total + IIf(List.Total > 0, 1, -1))
@@ -391,7 +395,7 @@ Public Function DelFirstNode(ByRef List As ListType) As Long
         Point = Register(List.Point, 4)
 
         If (Point <> 0) Then
-            Register(List.prior, 4) = Point
+            Register(List.Prior, 4) = Point
             List.Final = Register(Point, 4)
 
         End If
@@ -431,13 +435,13 @@ End Function
 Public Sub MoveNode(ByRef List As ListType, ByVal Reverse As Boolean)
     If (List.Point = 0) Then Exit Sub
     If (Reverse And (List.Total > 0)) Or ((Not Reverse) And (List.Total < 0)) Then
-        Swap List.prior, List.Final
+        Swap List.Prior, List.Final
         Swap List.Point, List.Final
-        Swap List.First, List.prior
+        Swap List.First, List.Prior
         List.Total = -List.Total
     Else
-        Swap List.prior, List.Point
-        List.Point = Register(List.prior, 4)
+        Swap List.Prior, List.Point
+        List.Point = Register(List.Prior, 4)
     End If
     
 End Sub

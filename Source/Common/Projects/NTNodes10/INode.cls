@@ -30,16 +30,22 @@ Public Sub Backward() ' _
 Moves to the prior node in the list.
 Attribute Backward.VB_Description = "Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
 
-    MoveNode List, True
-    MoveNode List, True
-    
-    If List.Total < 0 Then
-        MoveNode List, True
-        MoveNode List, True
+    If Total(List) < 5 Then
+        Dim i As Long
+        For i = 1 To Total(List) - 1
+            MoveNode List, (List.Total < 0)
+        Next
     Else
-        MoveNode List, False
+        MoveNode List, True
+        MoveNode List, True
+        
+        If List.Total < 0 Then
+            MoveNode List, True
+            MoveNode List, True
+        Else
+            MoveNode List, False
+        End If
     End If
-
 #If TestNodes = -1 Then
     Debug.Print "Point: " & List.Point
 #End If
@@ -216,11 +222,11 @@ Attribute Point.VB_Description = "Refers to the address of the node at the curre
 
 End Property
 
-Public Property Get prior() As Long ' _
+Public Property Get Prior() As Long ' _
 Refers to the address of the Prior pointer node of the list.
-Attribute prior.VB_Description = "Refers to the address of the Prior pointer node of the list."
+Attribute Prior.VB_Description = "Refers to the address of the Prior pointer node of the list."
 
-    prior = Abs(List.prior)
+    Prior = Abs(List.Prior)
    
     
 End Property
