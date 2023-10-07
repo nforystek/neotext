@@ -27,6 +27,7 @@ Private pLength As Single
 Private pSegments As Long
 Private pFollow As Boolean
 Private pHoning As Boolean
+Private pSnapping As Boolean
 
 Private pOuterEdge As Single
 Private pInnerEdge As Single
@@ -46,11 +47,14 @@ Private pParent As Molecule
 
 Private pSerialize As Boolean
 
+Public Property Let Snapping(ByVal RHS As Boolean)
+    Molecule.Snapping = RHS
+End Property
+Public Property Get Snapping() As Boolean
+    Snapping = Molecule.Snapping
+End Property
+
 Public Property Get Planets() As Planets
-'    If pPlanets Is Nothing Then
-'        Set pPlanets = New Planets
-'        Set pPlanets.Parent = Me
-'    End If
     Set Planets = pPlanets
 End Property
 Public Property Set Planets(ByRef RHS As Planets)
@@ -806,6 +810,14 @@ Private Property Get Molecule_Serialize() As Boolean
     Molecule_Serialize = Molecule.Serialize
 End Property
 
+
+Private Property Let Molecule_Snapping(ByVal RHS As Boolean)
+    Molecule.Snapping = RHS
+End Property
+
+Private Property Get Molecule_Snapping() As Boolean
+    Molecule_Snapping = Molecule.Snapping
+End Property
 
 Private Property Let Molecule_ToString(ByVal RHS As String)
     Molecule.ToString = RHS

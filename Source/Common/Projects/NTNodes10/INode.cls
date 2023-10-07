@@ -21,8 +21,9 @@ Public Function Append() As Long ' _
 Adds a node to the end of the list, the point location reflects the new node after Append is called.
 Attribute Append.VB_Description = "Adds a node to the end of the list, the point location reflects the new node after Append is called."
 
-   Append = AddToLastNode(List)
-    
+'    Backward
+    Append = AddToLastNode(List)
+'    Forward
 End Function
 
 
@@ -30,6 +31,9 @@ Public Sub Backward() ' _
 Moves to the prior node in the list.
 Attribute Backward.VB_Description = "Moves to the prior node in the list.  This function projects along with forth if it is called infrequent to forth. At first calls it is projecting reversal not resulting in movement to diminish iteration of full lists."
 
+'    MoveNode List, True
+'    MoveNode List, True
+'    MoveNode List, False
     If Total(List) < 5 Then
         Dim i As Long
         For i = 1 To Total(List) - 1
@@ -38,7 +42,7 @@ Attribute Backward.VB_Description = "Moves to the prior node in the list.  This 
     Else
         MoveNode List, True
         MoveNode List, True
-        
+
         If List.Total < 0 Then
             MoveNode List, True
             MoveNode List, True
@@ -55,6 +59,8 @@ End Sub
 Public Sub Forward() ' _
 Moves to the next node in the list.
 
+    
+    'MoveNode List, False
     MoveNode List, (List.Total < 0)
 
 #If TestNodes = -1 Then
@@ -109,7 +115,7 @@ End Property
 Public Function Delete() As Long ' _
 Deletes a node at the current position of the lists Point node.
 Attribute Delete.VB_Description = "Deletes a node at the current position of the lists Point node."
-
+    
     Delete = AddDelMiddleNode(List, False)
 
 End Function
@@ -235,13 +241,8 @@ Public Function Remove() As Long ' _
 Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
 Attribute Remove.VB_Description = "Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point."
 
-'Swap List.First, List.Final
-
-
     Remove = DelFirstNode(List)
 
- '   MoveNode List, False
-'Swap List.Point, List.Prior
 End Function
 
 

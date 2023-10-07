@@ -467,49 +467,13 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     DDevice.SetMaterial GenericMaterial
     DDevice.SetTexture 1, Nothing
     
-    Dim matRoll As D3DMATRIX
-    Dim matPitch As D3DMATRIX
-    Dim matYaw As D3DMATRIX
-    Dim matPos As D3DMATRIX
-        
-    Dim matMat As D3DMATRIX
-    D3DXMatrixIdentity matMat
-    DDevice.SetTransform D3DTS_WORLD, matMat
-        
-    If Not Camera.Planet Is Nothing Then
 
-        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
-        D3DXMatrixMultiply matMat, matPitch, matMat
 
-        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
-        D3DXMatrixMultiply matMat, matYaw, matMat
 
-        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-        D3DXMatrixMultiply matMat, matRoll, matMat
 
-        DDevice.SetTransform D3DTS_WORLD, matMat
 
-   End If
-'    If Not Camera.Planet Is Nothing Then
-'
-'        D3DXMatrixIdentity matMat
-'
-'        D3DXMatrixTranslation matPos, -Camera.Planet.Origin.X, -Camera.Planet.Origin.Y, -Camera.Planet.Origin.z
-'        D3DXMatrixMultiply matMat, matPos, matMat
-'
-'        DDevice.SetTransform D3DTS_WORLD, matMat
-'
-'        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
-'        D3DXMatrixMultiply matMat, matPitch, matMat
-'
-'        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
-'        D3DXMatrixMultiply matMat, matYaw, matMat
-'
-'        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-'        D3DXMatrixMultiply matMat, matRoll, matMat
-'
-'
-'    End If
+
+
     
     RenderOrbits Molecules, True
 '    For Each m In Molecules
@@ -517,28 +481,12 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '            AllCommitRoutine m, Nothing
 '        End If
 '    Next
-    
-'    If Not Camera.Planet Is Nothing Then
-'
-'        D3DXMatrixIdentity matMat
-'
-'        D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.z
-'        D3DXMatrixMultiply matMat, matPos, matMat
-'
-'        D3DXMatrixRotationX matPitch, Camera.Planet.Rotate.X
-'        D3DXMatrixMultiply matMat, matPitch, matMat
-'
-'        D3DXMatrixRotationY matYaw, Camera.Planet.Rotate.Y
-'        D3DXMatrixMultiply matMat, matYaw, matMat
-'
-'        D3DXMatrixRotationZ matRoll, Camera.Planet.Rotate.z
-'        D3DXMatrixMultiply matMat, matRoll, matMat
-'
-'        DDevice.SetTransform D3DTS_WORLD, matMat
-'
-'    End If
+
     
     For Each p In Planets
+
+
+    
         RenderOrbits p.Molecules, False
     Next
 '    For Each p In Planets
@@ -548,7 +496,20 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 ''            AllCommitRoutine m, p
 ''        Next
 '    Next
+
+    Dim matRoll As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPos As D3DMATRIX
+        
+    Dim matMat As D3DMATRIX
+    
 '    If Not Camera.Player Is Nothing Then
+'
+'        D3DXMatrixIdentity matMat
+'
+'        D3DXMatrixTranslation matPos, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z
+'        D3DXMatrixMultiply matMat, matPos, matMat
 '
 '        D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
 '        D3DXMatrixMultiply matMat, matPitch, matMat
@@ -559,7 +520,7 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '        D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
 '        D3DXMatrixMultiply matMat, matRoll, matMat
 '
-'        DDevice.SetTransform D3DTS_WORLD, matMat
+'        DDevice.SetTransform D3DTS_VIEW, matMat
 '
 '   End If
 
@@ -756,24 +717,24 @@ Public Function RemoveTriangleArray(ByRef TriangleIndex As Long)
     RebuildTriangleArray
 End Function
 
-Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef p4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Molecule
-    If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(p4))) And _
-        (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(p4))) And _
-        (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(p4))) And _
-        (Not (p4.Equals(p2) Or p4.Equals(p3) Or p4.Equals(p1)))) And _
+Public Function CreateMoleculeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef P4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Molecule
+    If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(P4))) And _
+        (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(P4))) And _
+        (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(P4))) And _
+        (Not (P4.Equals(p2) Or P4.Equals(p3) Or P4.Equals(p1)))) And _
         PathExists(TextureFileName, True)) Then
         
         Dim r As New Molecule
-        Set r.Volume = CreateVolumeFace(TextureFileName, p1, p2, p3, p4, ScaleX, ScaleY)
+        Set r.Volume = CreateVolumeFace(TextureFileName, p1, p2, p3, P4, ScaleX, ScaleY)
         r.Visible = True
         Set CreateMoleculeFace = r
     End If
 End Function
-Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef p4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Volume
-    If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(p4))) And _
-        (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(p4))) And _
-        (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(p4))) And _
-        (Not (p4.Equals(p2) Or p4.Equals(p3) Or p4.Equals(p1)))) And _
+Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef P4 As Point, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Volume
+    If (((Not (p1.Equals(p2) Or p1.Equals(p3) Or p1.Equals(P4))) And _
+        (Not (p3.Equals(p2) Or p3.Equals(p1) Or p3.Equals(P4))) And _
+        (Not (p2.Equals(p1) Or p2.Equals(p3) Or p2.Equals(P4))) And _
+        (Not (P4.Equals(p2) Or P4.Equals(p3) Or P4.Equals(p1)))) And _
         PathExists(TextureFileName, True)) Then
         If ScaleX = 0 Then ScaleX = 1
         If ScaleY = 0 Then ScaleY = 1
@@ -906,7 +867,7 @@ Public Function CreateVolumeFace(ByRef TextureFileName As String, ByRef p1 As Po
 
             Set .Point1 = p1
             Set .Point2 = p3
-            Set .Point3 = p4
+            Set .Point3 = P4
             
 '            .U1 = 0
 '            .V1 = ScaleY

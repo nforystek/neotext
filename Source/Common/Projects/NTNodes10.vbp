@@ -41,7 +41,7 @@ VersionCompanyName="Nicholas Randall Forystek"
 VersionFileDescription="Neotext Hyper Node Objects 1.0"
 VersionLegalTrademarks="Nicholas Randall Forystek, Visual Basic"
 VersionProductName="HyperNodes 3.1"
-CondComp="NTNodes10 = -1 : VBIDE = -1 : modBase = -1 : modStrands = -1 : modIndexer = -1 : modCommon = -1 : modFactory = -1"
+CondComp="NTNodes10 = -1 : VBIDE = 0 : modBase = -1 : modStrands = -1 : modIndexer = -1 : modCommon = -1 : modFactory = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

@@ -20,6 +20,7 @@ Private pMolecules As Molecules
 Private pParent As Molecule
 Private pFileName As String
 Private pKey As String
+Private pSnapping As Boolean
 
 Private pSerialize As Boolean
 
@@ -169,6 +170,13 @@ Public Property Get Visible() As Boolean
 End Property
 Public Property Let Visible(ByVal RHS As Boolean)
     Orbit.Visible = RHS
+End Property
+
+Public Property Let Snapping(ByVal RHS As Boolean)
+    pSnapping = RHS
+End Property
+Public Property Get Snapping() As Boolean
+    Snapping = pSnapping
 End Property
 
 Private Sub Class_Initialize()

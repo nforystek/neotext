@@ -115,9 +115,9 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderBrilliants UserControl, Camera
 
             RenderPlanets UserControl, Camera
-
+            
             RenderMolecules UserControl, Camera
-                    
+            
             RenderEvents UserControl, Camera
 
             InputScene UserControl
@@ -235,49 +235,17 @@ Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     For Each ev In OnEvents
         Select Case ev.EventType
             Case EventTypes.Ranged
-            
-            
+                        
             
             Case EventTypes.Contact
-            
-            
+                        
             
         End Select
     Next
-    
-    
+        
     
 End Sub
 
-'Public Sub PresentScene(ByRef UserControl As Macroscopic)
-'
-'    On Error Resume Next
-'
-'    Do
-'        If Err.number <> 0 Then
-'            Err.Clear
-'            If IsScreenSaverActive And (Not ScreenSaver) Then
-'                ScreenSaver = True
-'                UserControl.PauseRendering
-'                TrapMouse = False
-'            End If
-'            DoTasks
-'        End If
-'        If ((Not IsScreenSaverActive) And ScreenSaver) Or (Not ScreenSaver) Then
-'
-'            DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-'
-'        End If
-'
-'    Loop Until Err.number = 0
-'
-'    If ScreenSaver Then
-'        UserControl.ResumeRendering
-'        ScreenSaver = False
-'    End If
-'
-'    On Error GoTo 0
-'End Sub
 
 Public Sub PresentScene(ByRef UserControl As Macroscopic)
 
@@ -321,19 +289,19 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     If Not Camera.Player Is Nothing Then
 
         If Not Camera.Planet Is Nothing Then
-
-            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
+            
+            D3DXMatrixRotationX matPitch, -Camera.Player.Absolute.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
+            D3DXMatrixRotationY matYaw, -Camera.Player.Absolute.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
+            D3DXMatrixRotationZ matRoll, -Camera.Player.Absolute.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
             
-            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
+            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
@@ -347,36 +315,30 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
-            DDevice.SetTransform D3DTS_VIEW, matView
-
-            D3DXMatrixTranslation matPos, -Camera.Planet.Origin.X, -Camera.Planet.Origin.Y, -Camera.Planet.Origin.z
-            D3DXMatrixMultiply matView, matPos, matView
-            
        Else
-            
+
             D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
             D3DXMatrixMultiply matView, matYaw, matView
-            
+
             D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-
+            
             D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
-
+            
         End If
     Else
-        
         D3DXMatrixRotationX matPitch, 0
         D3DXMatrixMultiply matView, matPitch, matView
-
+    
         D3DXMatrixRotationY matYaw, 0
         D3DXMatrixMultiply matView, matYaw, matView
-
+        
         D3DXMatrixRotationZ matRoll, 0
         D3DXMatrixMultiply matView, matRoll, matView
         

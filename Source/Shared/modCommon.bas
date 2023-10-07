@@ -570,11 +570,11 @@ End Function
 'End Function
 
 Public Function System64Bit() As Boolean
-    Dim handle As Long
+    Dim Handle As Long
     Dim is64Bit As Boolean
     is64Bit = False
-    handle = GetProcAddress(GetModuleHandle("kernel32"), "IsWow64Process")
-    If handle <> 0 Then
+    Handle = GetProcAddress(GetModuleHandle("kernel32"), "IsWow64Process")
+    If Handle <> 0 Then
         IsWow64Process GetCurrentProcess(), is64Bit
     End If
     System64Bit = is64Bit
