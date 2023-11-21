@@ -93,312 +93,312 @@ End Sub
 
 
 
-' Return the dot product AB � BC.
-' Note that AB � BC = |AB| * |BC| * Cos(theta).
-Private Function DotProduct( _
-    ByVal Ax As Single, ByVal Ay As Single, _
-    ByVal Bx As Single, ByVal By As Single, _
-    ByVal cx As Single, ByVal cy As Single _
-  ) As Single
-    Dim BAx As Single
-    Dim BAy As Single
-    Dim BCx As Single
-    Dim BCy As Single
-
-    ' Get the vectors' coordinates.
-    BAx = Ax - Bx
-    BAy = Ay - By
-    BCx = cx - Bx
-    BCy = cy - By
-
-    ' Calculate the dot product.
-    DotProduct = BAx * BCx + BAy * BCy
-End Function
-
-
-Public Function CrossProductLength( _
-    ByVal Ax As Single, ByVal Ay As Single, ByVal Az As Single, _
-    ByVal Bx As Single, ByVal By As Single, ByVal Bz As Single, _
-    ByVal cx As Single, ByVal cy As Single, ByVal cz As Single _
-  ) As Single
-    Dim BAx As Single
-    Dim BAy As Single
-    Dim BAz As Single
-    Dim BCx As Single
-    Dim BCy As Single
-    Dim BCz As Single
-
-    ' Get the vectors' coordinates.
-    BAx = Ax - Bx
-    BAy = Ay - By
-    BAz = Az - Bz
-    BCx = cx - Bx
-    BCy = cy - By
-    BCz = cz - Bz
-    
-    ' Calculate the Z coordinate of the cross product.
-    CrossProductLength = BAx * BCy - BAy * BCz - BAz * BCx
-End Function
-
-'' Return the angle ABC.
-'' Return a value between PI and -PI.
-'' Note that the value is the opposite of what you might
-'' expect because Y coordinates increase downward.
-Public Function GetAngle(ByRef p1 As Point, ByRef p2 As Point) As Single
-'ByVal Ax As Single, ByVal Ay As _
-    'Single, ByVal Bx As Single, ByVal By As Single, ByVal _
-    'Cx As Single, ByVal Cy As Single) As Single
-    Dim dot_product As Single
-    Dim cross_product As Single
-
-    ' Get the dot product and cross product.
-    dot_product = VectorDotProduct(p1, p2) 'dotproduct(p1.x, p1.y, 0, 0, p3.x, p3.y)
-    cross_product = DistanceEx(MakePoint(0, 0, 0), VectorCrossProduct(p1, p2)) 'CrossProductLength(p1.x, p1.y, p1.z, 0, 0, 0, p2.x, p2.y, p2.z) 'CrossProductLength(p1.x, p1.y, 0, 0, p3.x, p3.y)
-
-    ' Calculate the angle.
-    GetAngle = ATan2(CDbl(cross_product), CDbl(dot_product)) * DEGREE
-End Function
-
-
-Public Function GetAngle2(ByVal x1 As Double, ByVal y1 As Double, ByVal x2 As Double, ByVal y2 As Double) As Double
-    Dim XDiff As Double
-    Dim YDiff As Double
-    Dim TempAngle As Double
-
-    YDiff = Abs(y2 - y1)
-
-    If x1 = x2 And y1 = y2 Then Exit Function
-
-    If YDiff = 0 And x1 < x2 Then
-        GetAngle2 = 0
-        Exit Function
-    ElseIf YDiff = 0 And x1 > x2 Then
-        GetAngle2 = 3.14159265358979
-        Exit Function
-    End If
-
-    XDiff = Abs(x2 - x1)
-
-    TempAngle = Atn(XDiff / YDiff)
-
-    If y2 > y1 Then TempAngle = 3.14159265358979 - TempAngle
-    If x2 < x1 Then TempAngle = -TempAngle
-    TempAngle = 1.5707963267949 - TempAngle
-    If TempAngle < 0 Then TempAngle = 6.28318530717959 + TempAngle
-
-    GetAngle2 = TempAngle
-End Function
-
-
-Public Function GetAngle3(ByRef p1 As Point, ByRef p2 As Point) As Single
-If p1.X = p2.X Then
-    If p1.Y < p2.Y Then
-        GetAngle3 = 90
-    Else
-        GetAngle3 = 270
-    End If
-    Exit Function
-ElseIf p1.Y = p2.Y Then
-    If p1.X < p2.X Then
-        GetAngle3 = 0
-    Else
-        GetAngle3 = 180
-    End If
-    Exit Function
-Else
-    GetAngle3 = Atn(VectorSlope(p1, p2))
-    GetAngle3 = GetAngle3 * 180 / PI
-    If GetAngle3 < 0 Then GetAngle3 = GetAngle3 + 360
-    '----------Test for direction--------
-    If p1.X > p2.X And GetAngle3 <> 180 Then GetAngle3 = GetAngle3 + 180
-    If p1.Y > p2.Y And GetAngle3 = 90 Then GetAngle3 = GetAngle3 + 180
-    If GetAngle3 > 360 Then GetAngle3 = GetAngle3 - 360
-End If
-End Function
-
-Public Function Sine(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Degree Input Radian Output
-    On Error GoTo PROC_ERR
-    Dim dblPi As Single
-    Dim dblRadian As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert degrees to radians,
-    'multiply degrees by Pi / 180.
-    dblRadian = dblPi / 180
-    p_dblVal = Val(p_dblVal * dblRadian)
-    Sine = Sin(p_dblVal)
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Sine = 0
-    MsgBox Err.description, vbExclamation
-    Resume PROC_EXIT
-End Function
-
-
-Public Function Cosine(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Degree Input Radian Output
-    On Error GoTo PROC_ERR
-    Dim dblPi As Single
-    Dim dblRadian As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert degrees to radians,
-    'multiply degrees by Pi / 180.
-    dblRadian = dblPi / 180
-    p_dblVal = Val(p_dblVal * dblRadian)
-    Cosine = Cos(p_dblVal)
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Cosine = 0
-    MsgBox Err.description, vbExclamation
-    Resume PROC_EXIT
-End Function
-
-
-Public Function Tangent(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Degree Input Radian Output
-    On Error GoTo PROC_ERR
-    Dim dblPi As Single
-    Dim dblRadian As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert degrees to radians,
-    'multiply degrees by Pi / 180.
-    dblRadian = dblPi / 180
-
-    p_dblVal = Val(p_dblVal * dblRadian)
-    Tangent = Tan(p_dblVal)
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    Tangent = 0
-    'MsgBox Err.Description, vbExclamation
-    Resume PROC_EXIT
-End Function
-
-
-Public Function ArcSine(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Radian Input Degree Output
-    On Error GoTo PROC_ERR
-    Dim dblSqr As Single
-    Dim dblPi As Single
-    Dim dblDegree As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert radians to degrees,
-    ' multiply radians by 180/pi.
-    dblDegree = 180 / dblPi
-    p_dblVal = Val(p_dblVal)
-    dblSqr = Sqr(-p_dblVal * p_dblVal + 1)
-    ' xx Prevent division by Zero error
-
-    If dblSqr = 0 Then
-        dblSqr = 1E-30
-    End If
-
-    ArcSine = Atn(p_dblVal / dblSqr) * dblDegree
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    ArcSine = 0
-    'MsgBox Err.Description, vbExclamation
-    Resume PROC_EXIT
-End Function
-
-
-Public Function ArcCosine(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Radian Input Degree Output
-    On Error GoTo PROC_ERR
-    Dim dblSqr As Single
-    Dim dblPi As Single
-    Dim dblDegree As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert radians to degrees,
-    ' multiply radians by 180/pi.
-    dblDegree = 180 / dblPi
-    p_dblVal = Val(p_dblVal)
-    dblSqr = Sqr(-p_dblVal * p_dblVal + 1)
-    ' xx Prevent division by Zero error
-
-    If dblSqr = 0 Then
-        dblSqr = 1E-30
-    End If
-
-    ArcCosine = (Atn(-p_dblVal / dblSqr) + 2 * Atn(1)) * dblDegree
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    ArcCosine = 0
-    'MsgBox Err.Description, vbExclamation
-    Resume PROC_EXIT
-End Function
-
-
-Public Function ArcTangent(p_dblVal As Single) As Single
-
-    ' Comments :
-    ' Parameters: p_dblVal -
-    ' Returns: Double -
-    ' Modified :
-    '
-    ' -------------------------
-    'Radian Input Degree Output
-    On Error GoTo PROC_ERR
-    Dim dblPi As Single
-    Dim dblDegree As Single
-    ' xx Calculate the value of Pi.
-    dblPi = 4 * Atn(1)
-    ' xx To convert radians to degrees,
-    ' multiply radians by 180/pi.
-    dblDegree = 180 / dblPi
-    p_dblVal = Val(p_dblVal)
-    ArcTangent = Atn(p_dblVal) * dblDegree
-PROC_EXIT:
-    Exit Function
-PROC_ERR:
-    ArcTangent = 0
-    'MsgBox Err.Description, vbExclamation
-    Resume PROC_EXIT
-End Function
+'' Return the dot product AB � BC.
+'' Note that AB � BC = |AB| * |BC| * Cos(theta).
+'Private Function DotProduct( _
+'    ByVal Ax As Single, ByVal Ay As Single, _
+'    ByVal Bx As Single, ByVal By As Single, _
+'    ByVal cx As Single, ByVal cy As Single _
+'  ) As Single
+'    Dim BAx As Single
+'    Dim BAy As Single
+'    Dim BCx As Single
+'    Dim BCy As Single
+'
+'    ' Get the vectors' coordinates.
+'    BAx = Ax - Bx
+'    BAy = Ay - By
+'    BCx = cx - Bx
+'    BCy = cy - By
+'
+'    ' Calculate the dot product.
+'    DotProduct = BAx * BCx + BAy * BCy
+'End Function
+'
+'
+'Public Function CrossProductLength( _
+'    ByVal Ax As Single, ByVal Ay As Single, ByVal Az As Single, _
+'    ByVal Bx As Single, ByVal By As Single, ByVal Bz As Single, _
+'    ByVal cx As Single, ByVal cy As Single, ByVal cz As Single _
+'  ) As Single
+'    Dim BAx As Single
+'    Dim BAy As Single
+'    Dim BAz As Single
+'    Dim BCx As Single
+'    Dim BCy As Single
+'    Dim BCz As Single
+'
+'    ' Get the vectors' coordinates.
+'    BAx = Ax - Bx
+'    BAy = Ay - By
+'    BAz = Az - Bz
+'    BCx = cx - Bx
+'    BCy = cy - By
+'    BCz = cz - Bz
+'
+'    ' Calculate the Z coordinate of the cross product.
+'    CrossProductLength = BAx * BCy - BAy * BCz - BAz * BCx
+'End Function
+'
+''' Return the angle ABC.
+''' Return a value between PI and -PI.
+''' Note that the value is the opposite of what you might
+''' expect because Y coordinates increase downward.
+'Public Function GetAngle(ByRef p1 As Point, ByRef p2 As Point) As Single
+''ByVal Ax As Single, ByVal Ay As _
+'    'Single, ByVal Bx As Single, ByVal By As Single, ByVal _
+'    'Cx As Single, ByVal Cy As Single) As Single
+'    Dim dot_product As Single
+'    Dim cross_product As Single
+'
+'    ' Get the dot product and cross product.
+'    dot_product = VectorDotProduct(p1, p2) 'dotproduct(p1.x, p1.y, 0, 0, p3.x, p3.y)
+'    cross_product = DistanceEx(MakePoint(0, 0, 0), VectorCrossProduct(p1, p2)) 'CrossProductLength(p1.x, p1.y, p1.z, 0, 0, 0, p2.x, p2.y, p2.z) 'CrossProductLength(p1.x, p1.y, 0, 0, p3.x, p3.y)
+'
+'    ' Calculate the angle.
+'    GetAngle = ATan2(CDbl(cross_product), CDbl(dot_product)) * DEGREE
+'End Function
+'
+'
+'Public Function GetAngle2(ByVal x1 As Double, ByVal y1 As Double, ByVal x2 As Double, ByVal y2 As Double) As Double
+'    Dim XDiff As Double
+'    Dim YDiff As Double
+'    Dim TempAngle As Double
+'
+'    YDiff = Abs(y2 - y1)
+'
+'    If x1 = x2 And y1 = y2 Then Exit Function
+'
+'    If YDiff = 0 And x1 < x2 Then
+'        GetAngle2 = 0
+'        Exit Function
+'    ElseIf YDiff = 0 And x1 > x2 Then
+'        GetAngle2 = 3.14159265358979
+'        Exit Function
+'    End If
+'
+'    XDiff = Abs(x2 - x1)
+'
+'    TempAngle = Atn(XDiff / YDiff)
+'
+'    If y2 > y1 Then TempAngle = 3.14159265358979 - TempAngle
+'    If x2 < x1 Then TempAngle = -TempAngle
+'    TempAngle = 1.5707963267949 - TempAngle
+'    If TempAngle < 0 Then TempAngle = 6.28318530717959 + TempAngle
+'
+'    GetAngle2 = TempAngle
+'End Function
+'
+'
+'Public Function GetAngle3(ByRef p1 As Point, ByRef p2 As Point) As Single
+'If p1.X = p2.X Then
+'    If p1.Y < p2.Y Then
+'        GetAngle3 = 90
+'    Else
+'        GetAngle3 = 270
+'    End If
+'    Exit Function
+'ElseIf p1.Y = p2.Y Then
+'    If p1.X < p2.X Then
+'        GetAngle3 = 0
+'    Else
+'        GetAngle3 = 180
+'    End If
+'    Exit Function
+'Else
+'    GetAngle3 = Atn(VectorSlope(p1, p2))
+'    GetAngle3 = GetAngle3 * 180 / PI
+'    If GetAngle3 < 0 Then GetAngle3 = GetAngle3 + 360
+'    '----------Test for direction--------
+'    If p1.X > p2.X And GetAngle3 <> 180 Then GetAngle3 = GetAngle3 + 180
+'    If p1.Y > p2.Y And GetAngle3 = 90 Then GetAngle3 = GetAngle3 + 180
+'    If GetAngle3 > 360 Then GetAngle3 = GetAngle3 - 360
+'End If
+'End Function
+'
+'Public Function Sine(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Degree Input Radian Output
+'    On Error GoTo PROC_ERR
+'    Dim dblPi As Single
+'    Dim dblRadian As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert degrees to radians,
+'    'multiply degrees by Pi / 180.
+'    dblRadian = dblPi / 180
+'    p_dblVal = Val(p_dblVal * dblRadian)
+'    Sine = Sin(p_dblVal)
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    Sine = 0
+'    MsgBox Err.description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
+'
+'
+'Public Function Cosine(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Degree Input Radian Output
+'    On Error GoTo PROC_ERR
+'    Dim dblPi As Single
+'    Dim dblRadian As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert degrees to radians,
+'    'multiply degrees by Pi / 180.
+'    dblRadian = dblPi / 180
+'    p_dblVal = Val(p_dblVal * dblRadian)
+'    Cosine = Cos(p_dblVal)
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    Cosine = 0
+'    MsgBox Err.description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
+'
+'
+'Public Function Tangent(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Degree Input Radian Output
+'    On Error GoTo PROC_ERR
+'    Dim dblPi As Single
+'    Dim dblRadian As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert degrees to radians,
+'    'multiply degrees by Pi / 180.
+'    dblRadian = dblPi / 180
+'
+'    p_dblVal = Val(p_dblVal * dblRadian)
+'    Tangent = Tan(p_dblVal)
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    Tangent = 0
+'    'MsgBox Err.Description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
+'
+'
+'Public Function ArcSine(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Radian Input Degree Output
+'    On Error GoTo PROC_ERR
+'    Dim dblSqr As Single
+'    Dim dblPi As Single
+'    Dim dblDegree As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert radians to degrees,
+'    ' multiply radians by 180/pi.
+'    dblDegree = 180 / dblPi
+'    p_dblVal = Val(p_dblVal)
+'    dblSqr = Sqr(-p_dblVal * p_dblVal + 1)
+'    ' xx Prevent division by Zero error
+'
+'    If dblSqr = 0 Then
+'        dblSqr = 1E-30
+'    End If
+'
+'    ArcSine = Atn(p_dblVal / dblSqr) * dblDegree
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    ArcSine = 0
+'    'MsgBox Err.Description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
+'
+'
+'Public Function ArcCosine(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Radian Input Degree Output
+'    On Error GoTo PROC_ERR
+'    Dim dblSqr As Single
+'    Dim dblPi As Single
+'    Dim dblDegree As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert radians to degrees,
+'    ' multiply radians by 180/pi.
+'    dblDegree = 180 / dblPi
+'    p_dblVal = Val(p_dblVal)
+'    dblSqr = Sqr(-p_dblVal * p_dblVal + 1)
+'    ' xx Prevent division by Zero error
+'
+'    If dblSqr = 0 Then
+'        dblSqr = 1E-30
+'    End If
+'
+'    ArcCosine = (Atn(-p_dblVal / dblSqr) + 2 * Atn(1)) * dblDegree
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    ArcCosine = 0
+'    'MsgBox Err.Description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
+'
+'
+'Public Function ArcTangent(p_dblVal As Single) As Single
+'
+'    ' Comments :
+'    ' Parameters: p_dblVal -
+'    ' Returns: Double -
+'    ' Modified :
+'    '
+'    ' -------------------------
+'    'Radian Input Degree Output
+'    On Error GoTo PROC_ERR
+'    Dim dblPi As Single
+'    Dim dblDegree As Single
+'    ' xx Calculate the value of Pi.
+'    dblPi = 4 * Atn(1)
+'    ' xx To convert radians to degrees,
+'    ' multiply radians by 180/pi.
+'    dblDegree = 180 / dblPi
+'    p_dblVal = Val(p_dblVal)
+'    ArcTangent = Atn(p_dblVal) * dblDegree
+'PROC_EXIT:
+'    Exit Function
+'PROC_ERR:
+'    ArcTangent = 0
+'    'MsgBox Err.Description, vbExclamation
+'    Resume PROC_EXIT
+'End Function
 
 Private Function CombineOrbits(ByRef o1 As Orbit, ByRef o2 As Orbit) As Orbit
     Set CombineOrbits = New Orbit
@@ -419,8 +419,6 @@ Private Function CombineOrbits(ByRef o1 As Orbit, ByRef o2 As Orbit) As Orbit
         End If
     End With
 End Function
-
-
 
 
 Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
@@ -468,11 +466,12 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     DDevice.SetTexture 1, Nothing
     
 
+    Dim matRoll As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPos As D3DMATRIX
 
-
-
-
-
+    Dim matMat As D3DMATRIX
 
     
     RenderOrbits Molecules, True
@@ -485,10 +484,17 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     
     For Each p In Planets
 
+        
+    
+
+  
+
 
     
         RenderOrbits p.Molecules, False
     Next
+    
+    
 '    For Each p In Planets
 '        AllCommitRoutine p, Nothing
 ''        Set ms = RangedMolecules(p)
@@ -497,13 +503,13 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 ''        Next
 '    Next
 
-    Dim matRoll As D3DMATRIX
-    Dim matPitch As D3DMATRIX
-    Dim matYaw As D3DMATRIX
-    Dim matPos As D3DMATRIX
-        
-    Dim matMat As D3DMATRIX
-    
+'    Dim matRoll As D3DMATRIX
+'    Dim matPitch As D3DMATRIX
+'    Dim matYaw As D3DMATRIX
+'    Dim matPos As D3DMATRIX
+'
+'    Dim matMat As D3DMATRIX
+'
 '    If Not Camera.Player Is Nothing Then
 '
 '        D3DXMatrixIdentity matMat
@@ -511,13 +517,13 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '        D3DXMatrixTranslation matPos, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.z
 '        D3DXMatrixMultiply matMat, matPos, matMat
 '
-'        D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
+'        D3DXMatrixRotationX matPitch, AngleRestrict(Camera.Player.Rotate.X)
 '        D3DXMatrixMultiply matMat, matPitch, matMat
 '
-'        D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
+'        D3DXMatrixRotationY matYaw, AngleRestrict(Camera.Player.Rotate.Y)
 '        D3DXMatrixMultiply matMat, matYaw, matMat
 '
-'        D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(Camera.Player.Rotate.z)
 '        D3DXMatrixMultiply matMat, matRoll, matMat
 '
 '        DDevice.SetTransform D3DTS_VIEW, matMat
@@ -561,13 +567,13 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z
     D3DXMatrixMultiply matMat, matPos, matMat
    
-    D3DXMatrixRotationX matPitch, ApplyTo.Rotate.X
+    D3DXMatrixRotationX matPitch, AngleRestrict(ApplyTo.Rotate.X)
     D3DXMatrixMultiply matMat, matPitch, matMat
      
-    D3DXMatrixRotationY matYaw, ApplyTo.Rotate.Y
+    D3DXMatrixRotationY matYaw, AngleRestrict(ApplyTo.Rotate.Y)
     D3DXMatrixMultiply matMat, matYaw, matMat
 
-    D3DXMatrixRotationZ matRoll, ApplyTo.Rotate.z
+    D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(ApplyTo.Rotate.z)
     D3DXMatrixMultiply matMat, matRoll, matMat
     
     D3DXMatrixTranslation matPos, ApplyTo.Offset.X, ApplyTo.Offset.Y, ApplyTo.Offset.z
@@ -646,13 +652,13 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.z
     D3DXMatrixMultiply matMat, matPos, matMat
     
-    D3DXMatrixRotationZ matRoll, -ApplyTo.Rotate.z
+    D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-ApplyTo.Rotate.z)
     D3DXMatrixMultiply matMat, matRoll, matMat
     
-    D3DXMatrixRotationY matYaw, -ApplyTo.Rotate.Y
+    D3DXMatrixRotationY matYaw, AngleRestrict(-ApplyTo.Rotate.Y)
     D3DXMatrixMultiply matMat, matYaw, matMat
     
-    D3DXMatrixRotationX matPitch, -ApplyTo.Rotate.X
+    D3DXMatrixRotationX matPitch, AngleRestrict(-ApplyTo.Rotate.X)
     D3DXMatrixMultiply matMat, matPitch, matMat
     
     D3DXMatrixTranslation matPos, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.z

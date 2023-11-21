@@ -10,6 +10,7 @@ Public Type POINTAPI
         X As Long
         Y As Long
 End Type
+
 #If Not modBitBlt = -1 Then
 Public Type RECT
     Left As Long
@@ -51,7 +52,7 @@ End Type
 Public Type POLYTEXT
         X As Long
         Y As Long
-        n As Long
+        N As Long
         lpStr As String
         uiFlags As Long
         rcl As RECT
@@ -153,8 +154,8 @@ Public Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirect
 Public Const FW_NORMAL = 400
 Public Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 Public Declare Function SetBkMode Lib "gdi32" (ByVal hdc As Long, ByVal nBkMode As Long) As Long
-Public Const Transparent = 1
-Public Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal e As Long, ByVal o As Long, ByVal W As Long, ByVal i As Long, ByVal u As Long, ByVal S As Long, ByVal C As Long, ByVal Op As Long, ByVal cP As Long, ByVal q As Long, ByVal PAF As Long, ByVal F As String) As Long
+
+Public Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal e As Long, ByVal o As Long, ByVal W As Long, ByVal i As Long, ByVal u As Long, ByVal S As Long, ByVal c As Long, ByVal Op As Long, ByVal cP As Long, ByVal Q As Long, ByVal PAF As Long, ByVal F As String) As Long
 Public Const FW_DONTCARE = 0
 Public Const FW_THIN = 100
 Public Const FW_EXTRALIGHT = 200
@@ -478,7 +479,7 @@ Private Type EncoderParameter
 End Type
 
 Private Type EncoderParameters
-   Count As Long
+   count As Long
    Parameter As EncoderParameter
 End Type
 
@@ -548,22 +549,22 @@ Public Function RECT(Left, Top, Right, Bottom) As RECT
     End With
 End Function
 
-Public Function ConvertColor(ByVal color As Variant, Optional ByRef red As Long, Optional ByRef green As Long, Optional ByRef blue As Long) As Long
+Public Function ConvertColor(ByVal Color As Variant, Optional ByRef Red As Long, Optional ByRef Green As Long, Optional ByRef Blue As Long) As Long
 On Error GoTo catch
     Dim lngColor As Long
-    If InStr(CStr(color), "#") > 0 Then
+    If InStr(CStr(Color), "#") > 0 Then
         GoTo HTMLorHexColor
-    ElseIf InStr(CStr(color), "&H") > 0 Then
+    ElseIf InStr(CStr(Color), "&H") > 0 Then
         GoTo SysOrLongColor
-    ElseIf IsAlphaNumeric(color) Then
-        If (Not (Len(color) = 6)) And (Not Left(color, 1) = "0") Then
+    ElseIf IsAlphaNumeric(Color) Then
+        If (Not (Len(Color) = 6)) And (Not Left(Color, 1) = "0") Then
             GoTo SysOrLongColor
         Else
             GoTo HTMLorHexColor2
         End If
     End If
 SysOrLongColor:
-    lngColor = CLng(color)
+    lngColor = CLng(Color)
     If Not (lngColor >= 0 And lngColor <= 16777215) Then 'if system colour
         Select Case lngColor
             Case SystemColorConstants.vbScrollBars
@@ -617,13 +618,13 @@ SysOrLongColor:
 '
     End If
 HTMLorHexColor2:
-    color = Right("000000" & Hex(lngColor), 6)
+    Color = Right("000000" & Hex(lngColor), 6)
 HTMLorHexColor:
-    red = CByte("&h" & Mid(color, 5, 2))
-    green = CByte("&h" & Mid(color, 3, 2))
-    blue = CByte("&h" & Mid(color, 1, 2))
+    Red = CByte("&h" & Mid(Color, 5, 2))
+    Green = CByte("&h" & Mid(Color, 3, 2))
+    Blue = CByte("&h" & Mid(Color, 1, 2))
     
-    ConvertColor = RGB(red, green, blue)
+    ConvertColor = RGB(Red, Green, Blue)
     If ConvertColor <> lngColor Then
         Err.Raise 8, "Exception."
     End If
@@ -679,7 +680,7 @@ Dim lBitmap As Long
 
       ' Create the GDI+ bitmap
       ' from the image handle
-      lRes = GdipCreateBitmapFromHBITMAP(pict.handle, pict.hPal, lBitmap)
+      lRes = GdipCreateBitmapFromHBITMAP(pict.Handle, pict.hPal, lBitmap)
 
       If lRes = 0 Then
          Dim tJpgEncoder As GUID
@@ -689,7 +690,7 @@ Dim lBitmap As Long
          CLSIDFromString StrPtr("{557CF401-1A04-11D3-9A73-0000F81EF32E}"), tJpgEncoder
 
          ' Initialize the encoder parameters
-         tParams.Count = 1
+         tParams.count = 1
          With tParams.Parameter ' Quality
             ' Set the Quality GUID
             CLSIDFromString StrPtr("{1D5BE4B5-FA4A-452D-9CDD-5DB35105E7EB}"), .GUID
@@ -720,7 +721,7 @@ Dim lBitmap As Long
    End If
 
 End Sub
-Public Sub WriteBytes(ByVal FileName As String, ByRef C() As Byte)
+Public Sub WriteBytes(ByVal FileName As String, ByRef c() As Byte)
     Dim FileNo As Integer
     On Error GoTo Err_Init
     If PathExists(FileName, True) Then Kill FileName
@@ -730,33 +731,33 @@ Public Sub WriteBytes(ByVal FileName As String, ByRef C() As Byte)
     FileNo = FreeFile
     Open FileName For Binary Access Write As #FileNo
 
-    Put #FileNo, , C
+    Put #FileNo, , c
     Close #FileNo
     
     Exit Sub
 Err_Init:
-    MsgBox Err.Number & " - " & Err.Description
+    MsgBox Err.number & " - " & Err.Description
 End Sub
 
 
 Public Function LoadFile(ByVal FileName As String) As Byte()
-    Dim FileNo As Integer, b() As Byte
+    Dim FileNo As Integer, B() As Byte
     On Error GoTo Err_Init
     If Dir(FileName, vbNormal Or vbArchive) = "" Then
         Exit Function
     End If
     FileNo = FreeFile
     Open FileName For Binary Access Read As #FileNo
-    ReDim b(0 To LOF(FileNo) - 1)
-    Get #FileNo, , b
+    ReDim B(0 To LOF(FileNo) - 1)
+    Get #FileNo, , B
     Close #FileNo
-    LoadFile = b
+    LoadFile = B
     Exit Function
 Err_Init:
-    MsgBox Err.Number & " - " & Err.Description
+    MsgBox Err.number & " - " & Err.Description
 End Function
 
-Public Function PictureFromByteStream(b() As Byte) As IPicture
+Public Function PictureFromByteStream(B() As Byte) As IPicture
     Dim LowerBound As Long
     Dim ByteCount  As Long
     Dim hMem  As Long
@@ -765,17 +766,17 @@ Public Function PictureFromByteStream(b() As Byte) As IPicture
     Dim istm As stdole.IUnknown
 
     On Error GoTo Err_Init
-    If UBound(b, 1) < 0 Then
+    If UBound(B, 1) < 0 Then
         Exit Function
     End If
     
-    LowerBound = LBound(b)
-    ByteCount = (UBound(b) - LowerBound) + 1
+    LowerBound = LBound(B)
+    ByteCount = (UBound(B) - LowerBound) + 1
     hMem = GlobalAlloc(&H2, ByteCount)
     If hMem <> 0 Then
         lpMem = GlobalLock(hMem)
         If lpMem <> 0 Then
-            MoveMemory ByVal lpMem, b(LowerBound), ByteCount
+            MoveMemory ByVal lpMem, B(LowerBound), ByteCount
             Call GlobalUnlock(hMem)
             If CreateStreamOnHGlobal(hMem, 1, istm) = 0 Then
 
@@ -789,11 +790,11 @@ Public Function PictureFromByteStream(b() As Byte) As IPicture
     Exit Function
     
 Err_Init:
-    If Err.Number = 9 Then
+    If Err.number = 9 Then
         'Uninitialized array
         MsgBox "You must pass a non-empty byte array to this function!"
     Else
-        MsgBox Err.Number & " - " & Err.Description
+        MsgBox Err.number & " - " & Err.Description
     End If
 End Function
 
@@ -816,15 +817,15 @@ Public Function ImageDimensions(ByVal FileName As String, ByRef imgdim As ImageD
     If PathExists(FileName, True) Then
 
         'declare vars
-        Dim handle As Integer
+        Dim Handle As Integer
         Dim byteArr(255) As Byte
         
         'open file and get 256 byte chunk
-        handle = FreeFile
+        Handle = FreeFile
         On Error GoTo endFunction
-        Open FileName For Binary Access Read As #handle
-            Get handle, , byteArr
-        Close #handle
+        Open FileName For Binary Access Read As #Handle
+            Get Handle, , byteArr
+        Close #Handle
         
         ImageDimensions = ImageDimensionsFromBytes(byteArr, imgdim, ext)
 

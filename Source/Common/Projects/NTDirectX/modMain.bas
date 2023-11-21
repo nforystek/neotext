@@ -109,9 +109,8 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             On Error GoTo 0 'temporary
             
             DDevice.BeginScene
-                    
-            RenderCamera UserControl, Camera
             
+
             RenderBrilliants UserControl, Camera
 
             RenderPlanets UserControl, Camera
@@ -121,9 +120,13 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderEvents UserControl, Camera
 
             InputScene UserControl
-            
-            RenderMotions UserControl, Camera
 
+
+            RenderMotions UserControl, Camera
+            
+                    
+            RenderCamera UserControl, Camera
+            
             If Not PauseGame Then
                 
                 RenderCmds UserControl
@@ -290,46 +293,50 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
         If Not Camera.Planet Is Nothing Then
             
-            D3DXMatrixRotationX matPitch, -Camera.Player.Absolute.Rotate.X
+            D3DXMatrixRotationX matPitch, AngleRestrict(-Camera.Player.Absolute.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -Camera.Player.Absolute.Rotate.Y
+            D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Player.Absolute.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -Camera.Player.Absolute.Rotate.z
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Absolute.Rotate.z)
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-            
-            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z
+
+            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X - Camera.Planet.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y - Camera.Planet.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z - Camera.Planet.Absolute.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
-            D3DXMatrixRotationX matPitch, -Camera.Planet.Rotate.X
+            D3DXMatrixRotationX matPitch, AngleRestrict(-Camera.Planet.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -Camera.Planet.Rotate.Y
+            D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Planet.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -Camera.Planet.Rotate.z
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Planet.Rotate.z)
             D3DXMatrixMultiply matView, matRoll, matView
+            
+            DDevice.SetTransform D3DTS_VIEW, matView
 
        Else
 
-            D3DXMatrixRotationX matPitch, -Camera.Player.Rotate.X
+            D3DXMatrixRotationX matPitch, AngleRestrict(-Camera.Player.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, -Camera.Player.Rotate.Y
+            D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Player.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, -Camera.Player.Rotate.z
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Rotate.z)
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
             
             D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
             D3DXMatrixMultiply matView, matPos, matView
+            
+            DDevice.SetTransform D3DTS_VIEW, matView
             
         End If
     Else
@@ -344,9 +351,9 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
         
         D3DXMatrixTranslation matPos, 0, 0, 0
         D3DXMatrixMultiply matView, matPos, matView
+        
+        DDevice.SetTransform D3DTS_VIEW, matView
     End If
-
-    DDevice.SetTransform D3DTS_VIEW, matView
 
     D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
         ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far

@@ -14,6 +14,10 @@ Public Type FileData
     Indecies() As IndexData
 End Type
 
+Public Sub Main()
+
+End Sub
+
 'todo: if the heads are strict zero's on the chew, by a starting by cylinder sized to
 'a whole, then clusters of indicies would amount to zero extra size serving partition
 'everty read/write would bi toggle and operate intermeidently to a continuous motions

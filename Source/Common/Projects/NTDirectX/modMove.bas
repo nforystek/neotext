@@ -4,14 +4,31 @@ Option Explicit
 Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
     If Not Relative Then
-        Set ApplyTo.Origin = VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin)
-        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+        Set ApplyTo.Origin = ApplyTo.Absolute.Origin
+'        Set ApplyTo.Origin = VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin)
+'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+        
     Else
+'        Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
+'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+'        Set ApplyTo.Relative.Origin = Nothing
+'###
+'        Dim p As New Point
+'        p.X = ApplyTo.Relative.Origin.X
+'        p.Y = ApplyTo.Relative.Origin.Y
+'        p.z = ApplyTo.Relative.Origin.z
+'        AnglesOfPoint p, ApplyTo.Rotate
+'        Set ApplyTo.Origin = VectorAddition(p, ApplyTo.Origin)
+'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+'        Set ApplyTo.Relative.Origin = Nothing
+'###
         Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
         Set ApplyTo.Absolute.Origin = ApplyTo.Origin
         Set ApplyTo.Relative.Origin = Nothing
-    End If
 
+    End If
+    
+    
 '    Static stacked As Integer
 '    stacked = stacked + 1
 '    Dim m As Molecule
@@ -37,13 +54,16 @@ End Sub
 Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
     If Not Relative Then
-        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
-        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+        Set ApplyTo.Rotate = ApplyTo.Absolute.Rotate
+'        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
+'        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
     Else
         Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
         Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
         Set ApplyTo.Relative.Rotate = Nothing
     End If
+
+    
 
 
 End Sub
@@ -51,14 +71,17 @@ End Sub
 Private Static Sub ApplyScaled(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
     If Not Relative Then
-        Set ApplyTo.Scaled = VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled)
-        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
+        Set ApplyTo.Scaled = ApplyTo.Absolute.Scaled
+'        Set ApplyTo.Scaled = VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled)
+'        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
     Else
         Set ApplyTo.Scaled = VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled)
         Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
         Set ApplyTo.Relative.Scaled = Nothing
-    End If
 
+    End If
+    
+    
 '    Static stacked As Integer
 '    stacked = stacked + 1
 '    Dim m As Molecule
@@ -83,13 +106,16 @@ End Sub
 Private Static Sub ApplyOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
     If Not Relative Then
-        Set ApplyTo.Offset = VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset)
-        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
+        Set ApplyTo.Offset = ApplyTo.Absolute.Offset
+'        Set ApplyTo.Offset = VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset)
+'        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
     Else
         Set ApplyTo.Offset = VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset)
         Set ApplyTo.Absolute.Offset = ApplyTo.Offset
         Set ApplyTo.Relative.Offset = Nothing
     End If
+    
+    
 
 '    Static stacked As Integer
 '    stacked = stacked + 1

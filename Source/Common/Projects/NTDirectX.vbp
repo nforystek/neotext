@@ -46,8 +46,8 @@ Module=modColors; NTDirectX\modColors.bas
 Class=Coord; NTDirectX\Coord.cls
 Class=OnEvent; NTDirectX\OnEvent.cls
 Class=OnEvents; NTDirectX\OnEvents.cls
-ResFile32="NTDirectX\NTDirectX.RES"
 Module=modMove; NTDirectX\modMove.bas
+ResFile32="NTDirectX\NTDirectX.RES"
 IconForm="frmMain"
 Startup="(None)"
 HelpFile=""
@@ -65,7 +65,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Computer Science"
-CondComp="NTDirectX=-1:VBIDE=-1:DxVBLibA=-1:modCmd=-1:modDecs=-1:modInfo=-1:modMaths=-1:modProj=-1:modTexts=-1:modCommon=-1:modGraphics=-1:modFolders=-1:modMain=-1:modHits=-1:modParser=-1:modFactory=-1:modParse=-1:modGuid=-1:modMove=-1:modDoTasks=-1:modGeometry=-1:modCmds=-1:mod3DObj=-1:modColors=-1"
+CondComp="NTDirectX = -1 : VBIDE = -1 : DxVBLibA = -1 : modCmd = -1 : modDecs = -1 : modInfo = -1 : modMaths = -1 : modProj = -1 : modTexts = -1 : modCommon = -1 : modGraphics = -1 : modFolders = -1 : modMain = -1 : modHits = -1 : modParser = -1 : modFactory = -1 : modParse = -1 : modGuid = -1 : modMove = -1 : modDoTasks = -1 : modGeometry = -1 : modCmds = -1 : mod3DObj = -1 : modColors = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
