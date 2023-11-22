@@ -720,7 +720,6 @@ Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As
     Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.z)
     Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.X)
     Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.Y)
-
     Set VectorRotateAxis = tmp
     Set tmp = Nothing
 End Function
