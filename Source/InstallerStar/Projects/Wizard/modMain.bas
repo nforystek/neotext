@@ -74,50 +74,50 @@ Public Sub UninstallFirst()
 End Sub
 
 Public Function InstallLocation(Optional ItemType As String = "?") As String
-    Dim retVal As String
+    Dim retval As String
 
     If (Not Program.Legacy) Then
 
         Select Case ItemType
             Case "!", "-!"
-                retVal = GetCurrentAppDataFolder
+                retval = GetCurrentAppDataFolder
             Case "?", "-?"
-                retVal = GetProgramFilesFolder
+                retval = GetProgramFilesFolder
             Case "$", "-$"
-                retVal = GetAllUsersAppDataFolder
+                retval = GetAllUsersAppDataFolder
         End Select
 
     End If
 
-    If retVal = "" Then
+    If retval = "" Then
         If PathExists(GetCurrentAppDataFolder & "\" & Program.AppValue & "\" & Program.Default, True) Then
-            retVal = GetCurrentAppDataFolder
+            retval = GetCurrentAppDataFolder
 
         Else
-            retVal = GetProgramFilesFolder
+            retval = GetProgramFilesFolder
         End If
     End If
-    If Right(retVal, 1) = "\" Then retVal = left(retVal, Len(retVal) - 1)
+    If Right(retval, 1) = "\" Then retval = Left(retval, Len(retval) - 1)
 
     UninstallFirst
-    InstallLocation = retVal
+    InstallLocation = retval
     
 End Function
 
 Public Function System32Location(Optional ByVal ItemName As String) As String
-    Dim retVal As String
+    Dim retval As String
     If (InStr(LCase(WinVerInfo), "server") > 0) Then
         If PathExists(GetSystem32Folder & "inetsrv", False) Then
             If ItemName <> "" Then
                 If Not PathExists(GetSystem32Folder & ItemName, True) Then
-                    retVal = GetSystem32Folder & "inetsrv"
+                    retval = GetSystem32Folder & "inetsrv"
                 End If
             End If
         End If
     End If
-    If retVal = "" Then retVal = GetSystem32Folder
-    If Right(retVal, 1) = "\" Then retVal = left(retVal, Len(retVal) - 1)
-    System32Location = retVal & IIf(ItemName <> "", "\" & ItemName, "")
+    If retval = "" Then retval = GetSystem32Folder
+    If Right(retval, 1) = "\" Then retval = Left(retval, Len(retval) - 1)
+    System32Location = retval & IIf(ItemName <> "", "\" & ItemName, "")
 End Function
 Public Sub Main()
 
@@ -136,7 +136,7 @@ Public Sub Main()
             SimSilence = Normal
     End Select
 
-    If IsDebugger Or SimCommand = "" Then SimCommand = left(AppPath, Len(AppPath) - 1)
+    If IsDebugger Or SimCommand = "" Then SimCommand = Left(AppPath, Len(AppPath) - 1)
     
     If IsDebugger Then
         Const NeotextAppFolder = "Max-FTP"
@@ -297,7 +297,7 @@ Public Sub Main()
 
     SimCommand = GetLongPath(SimCommand)
     
-    ChDir left(AppPath, Len(AppPath) - 1)
+    ChDir Left(AppPath, Len(AppPath) - 1)
     
     LoadManifest AppPath & "Manifest.ini"
 

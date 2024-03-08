@@ -427,7 +427,7 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
 'True if the function was successful.
 
   'declare vars
-  Dim handle As Integer, isValidImage As Boolean
+  Dim Handle As Integer, isValidImage As Boolean
   Dim byteArr(255) As Byte, i As Integer
 
   'init vars
@@ -436,11 +436,11 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
   imgdim.Width = 0
   
   'open file and get 256 byte chunk
-  handle = FreeFile
+  Handle = FreeFile
   On Error GoTo endFunction
-  Open FileName For Binary Access Read As #handle
-  Get handle, , byteArr
-  Close #handle
+  Open FileName For Binary Access Read As #Handle
+  Get Handle, , byteArr
+  Close #Handle
 
   'check for jpg header (SOI): &HFF and &HD8
   ' contained in first 2 bytes
@@ -540,7 +540,7 @@ Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8
 
     If BitmapDimensions(FileName, Dimensions, t) Then
         Set LoadTexture = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
-            D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, modDecs.Transparent, ByVal 0, ByVal 0)
+            D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DWRAPCOORD_2, D3DX_FILTER_LINEAR, modDecs.Transparent, ByVal 0, ByVal 0)
     End If
 
 End Function

@@ -73,7 +73,7 @@ End Enum
 
 Public Enum LineStyles
     Default = 0
-    [b] = 1
+    [B] = 1
     [bf] = 2
     Box = 1
     boxfilled = 2
@@ -147,7 +147,7 @@ Private Function UpdateFont()
     End If
     pOldFont = SelectObject(myBackBuffer, hFont)
     
-    SetBkMode myBackBuffer, TRANSPARENT
+    SetBkMode myBackBuffer, -1
     
 End Function
 
@@ -370,18 +370,18 @@ Public Sub DrawLine(ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal 
     End If
 
     Select Case LineStyle
-        Case LineStyles.[b], LineStyles.Box
+        Case LineStyles.[B], LineStyles.Box
             MoveToEx myBackBuffer, X1, Y1, pt
-            LineTo myBackBuffer, X1, Y2
-            LineTo myBackBuffer, X2, Y2
-            LineTo myBackBuffer, X2, Y1
-            LineTo myBackBuffer, X1, Y1
+            lineto myBackBuffer, X1, Y2
+            lineto myBackBuffer, X2, Y2
+            lineto myBackBuffer, X2, Y1
+            lineto myBackBuffer, X1, Y1
         Case LineStyles.[bf], LineStyles.boxfilled
             Rectangle myBackBuffer, X1, Y1, X2, Y2
             
         Case Else
             MoveToEx myBackBuffer, X1, Y1, pt
-            LineTo myBackBuffer, X2, Y2
+            lineto myBackBuffer, X2, Y2
     End Select
     
     Forecolor = hold

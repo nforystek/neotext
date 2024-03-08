@@ -21,6 +21,7 @@ Implements NTNodes10.Collection
 
 Private this As NTNodes10.Collection
 Private pSerialize As Boolean
+
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property

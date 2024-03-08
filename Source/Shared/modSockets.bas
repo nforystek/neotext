@@ -560,7 +560,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.number, App.EXEName, Err.Description
+    Err.Raise Err.Number, App.EXEName, Err.Description
 End Function
 
 Function LoByte(ByVal wParam As Integer)
@@ -570,7 +570,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.number, App.EXEName, Err.Description
+    Err.Raise Err.Number, App.EXEName, Err.Description
 End Function
 #End If
 
@@ -647,7 +647,7 @@ On Error GoTo catch
             
 Exit Function
 catch:
-    Err.Raise Err.number, App.EXEName, Err.Description
+    Err.Raise Err.Number, App.EXEName, Err.Description
 End Function
 
 Function SocketsCleanUp() As Long
@@ -671,7 +671,7 @@ On Error GoTo catch
     
 Exit Function
 catch:
-    Err.Raise Err.number, App.EXEName, Err.Description
+    Err.Raise Err.Number, App.EXEName, Err.Description
 End Function
 
 Public Function GetPortIP(Optional ByVal Domain As String = "") As Collection
@@ -775,7 +775,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Raise Err.number, App.EXEName, Err.Description
+    Err.Raise Err.Number, App.EXEName, Err.Description
 End Function
 
 
@@ -915,7 +915,7 @@ Public Function ipaddressByhost(ByVal sock As Long) As VBA.Collection
         Dim sck As sockaddr
         If getsockname(sock, sck, LenB(sck)) = 0 Then
             Dim col As VBA.Collection
-            Set col = IPAddress(sck.sin_addr)
+            Set col = IPsByAddrHandle(sck.sin_addr)
             If col.count > 0 Then
                 Set ipaddressByhost = col
          '   Else
@@ -928,74 +928,6 @@ Public Function ipaddressByhost(ByVal sock As Long) As VBA.Collection
 '    Set ipaddressByhost = IPAddress(inet_ntoa(sock))
 End Function
 
-
-Public Function IPAddress(ByVal Addr As Long) As VBA.Collection
-
-    Dim IPList As New VBA.Collection
-
-   ' Dim heDestHost As HOSTENT
-    'Dim addrList As Long
-    'Dim ret As String
-    Dim rc As Long
-    Dim i As Integer
-    Dim ip_address As String
-    'Dim HostName As String * 256
-    Dim Host As hostent
-    Dim hostip_addr As Long
-    Dim temp_ip_address() As Byte
-        
-
-'    Dim tmp As String
-'    tmp = String(256, Chr(0))
-'
-'
-'        If rc <> 0 Then
-' '       Addr = GetHostByName(host)
-''
-'    rc = inet_addr(Addr)
-'    If rc = Socket_ERROR Then
-'        rc = gethostname(tmp, 256)
-'        If rc = 0 Then
-'            Addr = GetHostByName(tmp)
-'       End If
-'    Else
-'
-'
-'
-'    End If
-'    If rc = 0 Then
-     rc = gethostbyaddr(Addr, LenB(Host), IPPROTO_TCP)
-  '  End If
-    
-    If rc <> 0 Then
-'        phe = gethostbyName(Domain)
-'        If phe <> 0 Then
-                
-        CopyMemoryHost Host, rc, LenB(Host)
-        CopyMemory hostip_addr, Host.h_addr_list, 4
-
-        Do
-            ReDim temp_ip_address(1 To Host.h_length)
-            RtlMoveMemory3 temp_ip_address(1), hostip_addr, Host.h_length
-
-            For i = 1 To Host.h_length
-                ip_address = ip_address & temp_ip_address(i) & "."
-            Next
-            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
-
-            IPList.Add ip_address
-
-            ip_address = ""
-            Host.h_addr_list = Host.h_addr_list + LenB(Host.h_addr_list)
-            RtlMoveMemory3 hostip_addr, Host.h_addr_list, 4
-        Loop While (hostip_addr <> 0)
-    End If
-
-
-    
-    Set IPAddress = IPList
-
-End Function
 
 'Public Function GetRemoteInfo(ByVal lngSocket As Long, ByRef lngRemotePort As Long, ByRef strRemoteHostIP As String, ByRef strRemoteHost As String) As Boolean
 '    'Retrieves remote info from a connected socket.
@@ -1191,6 +1123,185 @@ Public Function GetErrorDescription(ByVal lngErrorCode As Long) As String
 
  GetErrorDescription = strDesc
 End Function
+
+Public Function IPsByAddrHandle(ByVal AddrHandle As Long) As VBA.Collection
+
+    Dim IPList As New VBA.Collection
+
+    Dim rc As Long
+    Dim i As Integer
+    Dim ip_address As String
+    Dim Host As hostent
+    Dim hostip_addr As Long
+    Dim temp_ip_address() As Byte
+
+    rc = gethostbyaddr(AddrHandle, LenB(Host), IPPROTO_TCP)
+   
+    If rc <> 0 Then
+                
+        CopyMemoryHost Host, rc, LenB(Host)
+        CopyMemory hostip_addr, Host.h_addr_list, 4
+
+        Do
+            ReDim temp_ip_address(1 To Host.h_length)
+            RtlMoveMemory3 temp_ip_address(1), hostip_addr, Host.h_length
+
+            For i = 1 To Host.h_length
+                ip_address = ip_address & temp_ip_address(i) & "."
+            Next
+            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+
+            IPList.Add ip_address
+
+            ip_address = ""
+            Host.h_addr_list = Host.h_addr_list + LenB(Host.h_addr_list)
+            RtlMoveMemory3 hostip_addr, Host.h_addr_list, 4
+        Loop While (hostip_addr <> 0)
+    End If
+    
+    Set IPsByAddrHandle = IPList
+
+End Function
+
+
+
+Public Function RemoteIP(ByVal PeerHandle As Long) As String
+    RemoteIP = WhoseIs(PeerHandle)
+End Function
+
+Public Function Whois(ByVal SockHandle As Long) As String
+    Dim col As VBA.Collection
+    Set col = IPsByAddrHandle(SockHandle)
+    If col.count > 0 Then
+        Whois = col.Item(1)
+    Else
+        Whois = "#INVALID#"
+    End If
+End Function
+
+Public Function WhoseIs(ByVal PeerHandle As Long) As String
+    Dim sck As sockaddr
+    If getpeername(PeerHandle, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPsByAddrHandle(sck.sin_addr)
+        If col.count > 0 Then
+            WhoseIs = col.Item(1)
+        Else
+            WhoseIs = "#INVALID#"
+        End If
+    Else
+        WhoseIs = "#INVALID#"
+    End If
+End Function
+Public Function WhoAmI(ByVal SockHandle As Long) As String
+    Dim sck As sockaddr
+    If getsockname(SockHandle, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPsByAddrHandle(sck.sin_addr)
+        If col.count > 0 Then
+            WhoAmI = col.Item(1)
+        Else
+            WhoAmI = "#INVALID#"
+        End If
+    Else
+        WhoAmI = "#INVALID#"
+    End If
+End Function
+
+Public Function LocalIP(ByVal SockHandle As Long) As String
+    LocalIP = WhoAmI(SockHandle)
+    If LocalIP = "#INVALID#" Then
+        If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
+            LocalIP = LocalHost
+        Else
+            LocalIP = ResolveIP(LocalHost)
+        End If
+    End If
+End Function
+
+'Public Function LocalHost() As String
+'    Dim Buf As String
+'    Dim rc As Long
+'
+'    Buf = Space$(255)
+'
+'    rc = gethostname(Buf, Len(Buf))
+'    rc = InStr(Buf, vbNullChar)
+'
+'    If rc > 0 Then
+'        LocalHost = Left$(Buf, rc - 1)
+'    Else
+'        LocalHost = "#INVALID#"
+'    End If
+'End Function
+'Public Function ResolveIP(ByVal Host As String) As String
+'
+'    Dim phe As Long
+'    Dim heDestHost As hostent
+'    Dim addrList As Long
+'    Dim rc As Long
+'
+'    Dim hostip_addr As Long
+'
+'    Dim temp_ip_address() As Byte
+'    Dim i As Integer
+'    Dim ip_address As String
+'
+'    rc = inet_addr(Host)
+'    If rc = Socket_ERROR Then
+'
+'        phe = GetHostByName(Host)
+'        If phe <> 0 Then
+'
+'            CopyMemoryHost heDestHost, phe, hostent_size
+'            CopyMemory addrList, heDestHost.h_addr_list, 4
+'            CopyMemory hostip_addr, addrList, heDestHost.h_length
+'            rc = hostip_addr
+'
+'            ReDim temp_ip_address(1 To heDestHost.h_length)
+'            RtlMoveMemory temp_ip_address(1), hostip_addr, heDestHost.h_length
+'
+'            For i = 1 To heDestHost.h_length
+'                ip_address = ip_address & temp_ip_address(i) & "."
+'            Next
+'            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+'
+'            ResolveIP = ip_address
+'
+'        Else
+'            rc = INADDR_NONE
+'        End If
+'
+'    End If
+'
+'
+'End Function
+'
+'Public Function Resolve(ByVal Host As String) As Long
+'
+'    Dim phe As Long
+'    Dim heDestHost As hostent
+'    Dim addrList As Long
+'    Dim rc As Long
+'
+'    rc = inet_addr(Host)
+'    If rc = Socket_ERROR Then
+'
+'        phe = GetHostByName(Host)
+'        If phe <> 0 Then
+'
+'            CopyMemoryHost heDestHost, phe, hostent_size
+'            CopyMemory addrList, heDestHost.h_addr_list, 4
+'            CopyMemory rc, addrList, heDestHost.h_length
+'
+'        Else
+'            rc = INADDR_NONE
+'        End If
+'
+'    End If
+'
+'    Resolve = rc
+'End Function
 
 Public Function IP4ToIP2(ByVal str As String) As String
 

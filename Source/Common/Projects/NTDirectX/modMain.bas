@@ -72,7 +72,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                 If TestDirectX(UserControl) Then
     
                     On Error Resume Next
-                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color.RGBA, 1, 0
+                    DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.RGBA, 1, 0
                     DDevice.BeginScene
                     DDevice.EndScene
 
@@ -103,29 +103,33 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             On Error GoTo nofocus
 
             'BeginMirrors UserControl, Camera.Player
-
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
+            
+            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0    ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
 
             On Error GoTo 0 'temporary
+     
+
+            RenderCamera UserControl, Camera
             
             DDevice.BeginScene
-            
 
-            RenderBrilliants UserControl, Camera
-
-            RenderPlanets UserControl, Camera
-            
-            RenderMolecules UserControl, Camera
             
             RenderEvents UserControl, Camera
+         '   RenderMotions UserControl, Camera
+            
+            RenderBrilliants UserControl, Camera
+
+
+                        
+            RenderPlanets UserControl, Camera
+
+            
+            RenderMolecules UserControl, Camera
+
 
             InputScene UserControl
 
 
-            RenderMotions UserControl, Camera
-            
-                    
-            RenderCamera UserControl, Camera
             
             If Not PauseGame Then
                 
@@ -212,6 +216,7 @@ End Sub
 
 Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
 
+
     If Millis <> 0 Then
         If Timer - Millis >= 0.1 Then
             Millis = Timer
@@ -229,6 +234,7 @@ Public Sub RenderEvents(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     If Frame Then
         
         frmMain.Run "Frame"
+
     End If
     
     
@@ -283,28 +289,29 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     Dim matPos As D3DMATRIX
     Dim matRot As D3DMATRIX
 
-    D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
-    
-    D3DXMatrixIdentity matView
-    DDevice.SetTransform D3DTS_VIEW, matView
+    D3DXMatrixIdentity matWorld
 
+    D3DXMatrixIdentity matView
+'    DDevice.SetTransform D3DTS_VIEW, matView
+
+        
     If Not Camera.Player Is Nothing Then
 
         If Not Camera.Planet Is Nothing Then
-            
+
             D3DXMatrixRotationX matPitch, AngleRestrict(-Camera.Player.Absolute.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
             D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Player.Absolute.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Absolute.Rotate.z)
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Absolute.Rotate.Z)
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-
-            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X - Camera.Planet.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y - Camera.Planet.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.z - Camera.Planet.Absolute.Origin.z
+            
+            D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X + Camera.Planet.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y + Camera.Planet.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.Z + Camera.Planet.Absolute.Origin.Z
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
@@ -315,9 +322,9 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Planet.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Planet.Rotate.z)
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Planet.Rotate.Z)
             D3DXMatrixMultiply matView, matRoll, matView
-            
+
             DDevice.SetTransform D3DTS_VIEW, matView
 
        Else
@@ -328,17 +335,18 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
             D3DXMatrixRotationY matYaw, AngleRestrict(-Camera.Player.Rotate.Y)
             D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Rotate.z)
+            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(-Camera.Player.Rotate.Z)
             D3DXMatrixMultiply matView, matRoll, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
-            
-            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.z
+
+            D3DXMatrixTranslation matPos, -Camera.Player.Origin.X, -Camera.Player.Origin.Y, -Camera.Player.Origin.Z
             D3DXMatrixMultiply matView, matPos, matView
-            
+
             DDevice.SetTransform D3DTS_VIEW, matView
-            
+
         End If
+
     Else
         D3DXMatrixRotationX matPitch, 0
         D3DXMatrixMultiply matView, matPitch, matView
@@ -354,11 +362,12 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
         
         DDevice.SetTransform D3DTS_VIEW, matView
     End If
-
+    
     D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
         ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far
     DDevice.SetTransform D3DTS_PROJECTION, matProj
 
+    
 End Sub
 
 Public Sub InitDirectX(ByRef UserControl As Macroscopic)
@@ -376,9 +385,11 @@ Public Sub InitDirectX(ByRef UserControl As Macroscopic)
 End Sub
 
 Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
+    
     D3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, Display
 
-    D3DWindow.BackBufferCount = 2
+    D3DWindow.BackBufferCount = 1
+    
     D3DWindow.BackBufferWidth = (VB.Screen.Width / VB.Screen.TwipsPerPixelX)
     D3DWindow.BackBufferHeight = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
     D3DWindow.BackBufferFormat = Display.Format
@@ -394,7 +405,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     End If
     D3DWindow.hDeviceWindow = hwnd
     D3DWindow.AutoDepthStencilFormat = D3DFMT_D16
-    D3DWindow.EnableAutoDepthStencil = True
+    D3DWindow.EnableAutoDepthStencil = 1
     
     DViewPort.MaxZ = Far
     DViewPort.MinZ = Near
@@ -402,6 +413,8 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
     DViewPort.Height = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
     
     On Error Resume Next
+'    D3DFMT_X8R8G8B8 , D3DUSAGE_DEPTHSTENCIL, _
+'        D3DRTYPE_SURFACE, D3DFMT_D16
     Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, D3DWindow)
     If Err.number <> 0 Then
         Err.Clear
@@ -409,6 +422,10 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         If Err.number <> 0 Then
             Err.Clear
             Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, D3DWindow)
+            If Err.number <> 0 Then
+               ' MsgBox "Error: " & Err.description
+            Err.Clear
+            End If
         End If
     End If
     On Error GoTo 0
@@ -417,62 +434,74 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
 
          DDevice.GetViewport DViewPort
          
-       '  DViewPort.X = (((Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-       '  DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
+         'DViewPort.X = (((Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+         'DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
 
-       '  DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
-       '  DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
-         
+         'DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+         'DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
+
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
-        DDevice.SetRenderState D3DRS_DITHERENABLE, False
-        DDevice.SetRenderState D3DRS_EDGEANTIALIAS, False
-    
-        DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
-        DDevice.SetRenderState D3DRS_VERTEXBLEND, False
-    
+        DDevice.SetRenderState D3DRS_DITHERENABLE, 0
+        DDevice.SetRenderState D3DRS_EDGEANTIALIAS, 0
+
+        DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, 0
+        DDevice.SetRenderState D3DRS_VERTEXBLEND, 0
+
         DDevice.SetRenderState D3DRS_CLIPPING, 1
-    
+       ' DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 1
+
         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-    
-        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
+
+        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-    
+
+        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+
+        DDevice.SetRenderState D3DRS_ALPHAREF, Transparent
+        DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL
+        DDevice.SetRenderState D3DRS_ZFUNC, D3DCMP_LESSEQUAL
+ 
+'        DDevice.SetRenderState D3DRS_SHADEMODE, D3DSHADE_GOURAUD
+
+'        DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE
+'        DDevice.SetTextureStageState 0, D3DTSS_COLOROP, D3DTOP_MODULATE
+'        DDevice.SetTextureStageState 0, D3DTSS_COLORARG1, D3DTA_TEXTURE
+'        DDevice.SetTextureStageState 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE
+ 
+ 
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-        
+
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_MAXANISOTROPY, 16
         DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-        
+
+'        DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_DISABLE
+'        DDevice.SetTextureStageState 1, D3DTSS_COLOROP, D3DTOP_MODULATE
+'        DDevice.SetTextureStageState 1, D3DTSS_COLORARG1, D3DTA_TEXTURE
+'        DDevice.SetTextureStageState 1, D3DTSS_COLORARG2, D3DTA_DIFFUSE
+
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-    
+
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_MAXANISOTROPY, 16
         DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-        
-        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-    
-        DDevice.SetRenderState D3DRS_ALPHAREF, modDecs.Transparent
-        DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL
-        DDevice.SetRenderState D3DRS_ZFUNC, D3DCMP_LESSEQUAL
 
-'        DDevice.SetRenderState D3DRS_FOGENABLE, 0
-'        DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
-'        DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
-'        DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
-'        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 4)
-'        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
-'        DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
-
-        
+        DDevice.SetRenderState D3DRS_FOGENABLE, 0
+        DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
+        DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
+        DDevice.SetRenderState D3DRS_RANGEFOGENABLE, 0
+        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 4)
+        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
+        DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
 
         If frmMain.WindowState = vbMinimized Then frmMain.WindowState = IIf(FullScreen, vbMaximized, vbNormal)
 
@@ -482,19 +511,12 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         If Err.number <> 0 Then Err.Clear
         On Error GoTo 0
 
+
         Dim shArray() As Long
         Dim shLength As Long
         Dim shCode As D3DXBuffer
 
-        Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
-                                            "tex t0" & vbCrLf & _
-                                            "mov r0,t0" & vbCrLf, 0, Nothing)
-        shLength = shCode.GetBufferSize() / 4
-        ReDim shArray(shLength - 1) As Long
-        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
-        PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
-        Set shCode = Nothing
-        
+
         Set shCode = D3DX.AssembleShader("ps.1.0" & vbCrLf & _
                                             "tex t0" & vbCrLf & _
                                             "mul r0, t0,v0" & vbCrLf, 0, Nothing)
@@ -503,116 +525,41 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
         PixelShaderDefault = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
+        
+        Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
+                                            "tex t0" & vbCrLf & _
+                                            "mov r0,t0" & vbCrLf, 0, Nothing)
+        shLength = shCode.GetBufferSize() / 4
+        ReDim shArray(shLength - 1) As Long
+        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
+        PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
+        Set shCode = Nothing
 
 
         GravityVector.Y = -0.05
         
         LiquidVector.Y = -0.005
         
-        Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, False, D3DFMT_D16)
+        Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
+        
     End If
     
 End Sub
-
-'Public Sub DoPauseGame(ByRef UserControl As Macroscopic)
-'
-'    On Error Resume Next
-'    If Not PauseGame Then
-'        PauseGame = True
-'        TermGameData UserControl
-'        TermDirectX UserControl
-'    End If
-'End Sub
 
 Public Sub InitGameData(ByRef UserControl As Macroscopic)
 
     CreateCmds
     CreateText
-    CreateObjs
     CreateProj
+    CreateObjs
 
 
-  '  Molecules.Add CreateMoleculeFace("C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Land\gravel.bmp", MakePoint(1, 0, -1), MakePoint(-1, 0, -1), MakePoint(-1, 0, 1), MakePoint(1, 0, 1), 1, 1)
-    
-    
-   ' Molecules.Add CreateMoleculeLanding("C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Land\gravel.bmp", 128, 12, 0, 128, 128)
-    
-   ' Molecules.Add CreateMoleculeFace("C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.bmp", MakePoint(-2, -1, -2), MakePoint(-2, -1, 2), MakePoint(2, -1, 2), MakePoint(2, -1, -2)), Include.Unnamed(Molecules)
-    
-   ' Molecules.Add CreateMoleculeFace("C:\Development\Neotext\Common\Projects\NTDirectX\Test\ToggleBox\Box\Box.bmp", MakePoint(-1, 1, 100), MakePoint(-1, -1, 100), MakePoint(1, -1, 100), MakePoint(1, 1, 100)), Include.Unnamed(Molecules)
- 
- 
-'                    Dim p1 As Point
-'                    Dim p2 As Point
-'                    Dim p3 As Point
-'                    Dim p4 As Point
-'                    Dim tmp As String
-'
-'                    Const Width = 2048
-'                    Const Height = 2048
-'                    Const Length = 2048
-'
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyBottom.bmp"
-'                    'pSkyIndex(3) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                    Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-'                    Set p4 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p3, p2, p4), Include.Unnamed(Molecules)
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyTop.bmp"
-'                   ' pSkyIndex(3) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p2 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p3 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
-'                    Set p4 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p2, p3, p4), Include.Unnamed(Molecules)
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyLeft.bmp"
-'                  '  pSkyIndex(3) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p2 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-'                    Set p3 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-'                    Set p4 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p2, p3, p4), Include.Unnamed(Molecules)
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyFront.bmp"
-'                   ' pSkyIndex(3) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint((Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p2 = MakePoint(-(Width / 2), -(Height / 2), -(Length / 2))
-'                    Set p3 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                    Set p4 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p2, p3, p4), Include.Unnamed(Molecules)
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyRight.bmp"
-'                 '   pSkyIndex(4) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint((Width / 2), -(Height / 2), (Length / 2))
-'                    Set p2 = MakePoint(-(Width / 2), -(Height / 2), (Length / 2))
-'                    Set p3 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-'                    Set p4 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p2, p3, p4), Include.Unnamed(Molecules)
-'
-'
-'                    tmp = GetTemporaryFolder & "\SkyBack.bmp"
-'                  '  pSkyIndex(5) = GetFileIndex(tmp)
-'                    Set p1 = MakePoint((Width / 2), (Height / 2), (Length / 2))
-'                    Set p2 = MakePoint(-(Width / 2), (Height / 2), (Length / 2))
-'                    Set p3 = MakePoint(-(Width / 2), (Height / 2), -(Length / 2))
-'                    Set p4 = MakePoint((Width / 2), (Height / 2), -(Length / 2))
-'                    Molecules.Add CreateMoleculeFace(tmp, p1, p2, p3, p4), Include.Unnamed(Molecules)
-    
 End Sub
 
 Public Sub TermGameData(ByRef UserControl As Macroscopic)
     
-    CleanUpProj
     CleanUpObjs
+    CleanUpProj
     CleanupText
     CleanupCmds
 

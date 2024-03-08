@@ -1,7 +1,7 @@
 Type=Control
 Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; richtx32.ocx
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
-Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#140.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#140.0#0#..\Binary\NTNodes10.dll#Neotext Hyper Node Objects 1.0
 Module=modEditor; NTControls30\modEditor.bas
 Module=modCommon; ..\..\Shared\modCommon.bas
 Module=modMemory; ..\..\Shared\modMemory.bas
@@ -50,7 +50,7 @@ ThreadPerObject=0
 MaxNumberOfThreads=1
 ThreadingModel=1
 DebugStartupOption=1
-DebugStartupComponent=Textbox
+DebugStartupComponent=TextBox
 
 [MS Transaction Server]
 AutoRefresh=1

@@ -66,6 +66,19 @@ Public Enum CertificateFields
 
     IntendedUses = 10: IntendedUses1 = 11: IntendedUses2 = 12: IntendedUses3 = 13: IntendedUses4 = 14
     IntendedUses5 = 15: IntendedUses6 = 16: IntendedUses7 = 17: IntendedUses8 = 18: IntendedUses9 = 19
+    
+    ServerAuthentication = 12 ' (1.3.6.1.5.5.7.3.1)
+    ClientAuthentication = 13 ' (1.3.6.1.5.5.7.3.2)
+
+    CodeSigning = 14 ' (1.3.6.1.5.5.7.3.3)
+    SecureEmail = 15 ' (1.3.6.1.5.5.7.3.4)
+    TimeStamping = 16 ' (1.3.6.1.5.5.7.3.8)
+    
+    EncryptingFileSystem = 17 ' (1.3.6.1.4.1.311.10.3.4)
+    MicrosoftTrustListSigning = 18 ' (1.3.6.1.4.1.311.10.3.1)
+
+    AllIssuancePolicies = 11
+    IssuancePolicyRevoked = 19
 
     Extensions = 50: Extensions1 = 51: Extensions2 = 52: Extensions3 = 53: Extensions4 = 54
     Extensions5 = 55: Extensions6 = 56: Extensions7 = 57: Extensions8 = 58: Extensions9 = 59
@@ -95,8 +108,49 @@ Private pKeySize As Integer
 Private pKeys As Collection
 Private pFields As Collection
 
+Public Function CertParseCheck(ByVal ToFile As String) As Boolean
+    CertParseCheck = (ToString(pFields(CertificateSequence)) = ReadFile(ToFile))
+End Function
+
+Public Function CertificateDetailed() As String
+
+    Dim num As Integer
+    For num = 1 To pFields.count
+        CertificateDetailed = CertificateDetailed & Me.Keys(num) & " " & Me.HexStream(Me.Fields(Me.Keys(num))) & vbCrLf
+        CertificateDetailed = CertificateDetailed & Me.Namely(Me.Keys(num)) & " " & Me.Terms(Me.Keys(num)) & vbCrLf '& vbCrLf
+    Next
+    Debug.Print CertificateDetailed
+    
+End Function
+
+Public Function CertificateOverview() As String
+
+    CertificateOverview = "Version " & HexStream(pFields(Version)) & vbCrLf & _
+        vbCrLf & _
+        "SerialNumber " & HexStream(pFields(SerialNumber)) & vbCrLf & _
+        vbCrLf & _
+        "Algorithm " & HexStream(pFields(Algorithm)) & vbCrLf & _
+        vbCrLf & _
+        "Issuer " & HexStream(pFields(Issuer)) & vbCrLf & _
+        vbCrLf & _
+        "Validity " & HexStream(pFields(Validity)) & vbCrLf & _
+        vbCrLf & _
+        "Subject " & HexStream(pFields(Subject)) & vbCrLf & _
+        vbCrLf & _
+        "PublicKey " & HexStream(pFields(PublicKey)) & vbCrLf & _
+        vbCrLf & _
+        "Extensions " & HexStream(pFields(Extensions)) & vbCrLf & _
+        vbCrLf & _
+        "SignatureAlgorithm " & HexStream(pFields(SignatureAlgorithm)) & vbCrLf & _
+        vbCrLf & _
+        "Signature " & HexStream(pFields(Signature))
+    Debug.Print CertificateOverview
+    
+End Function
+
 Public Property Get RSAKeySize() As Integer ' _
 Returns the PublicKey length of the RSA cipher.
+Attribute RSAKeySize.VB_Description = "Returns the PublicKey length of the RSA cipher."
     RSAKeySize = pKeySize
 End Property
     
@@ -130,9 +184,13 @@ Friend Property Let Accepted(ByVal RHS As Boolean)
     pAccepted = RHS
 End Property
 
+Public Property Get ContextBit() As Integer
+    ContextBit = pContextBit
+End Property
 
 Public Sub LoadCertificateFile(ByVal FileName As String) ' _
 Loads a certificate in binary form by the FileName supplied, if it is a .CER file.
+Attribute LoadCertificateFile.VB_Description = "Loads a certificate in binary form by the FileName supplied, if it is a .CER file."
     If PathExists(FileName, True) Then
         LoadCertificate Stream(ReadFile(FileName))
     Else
@@ -277,7 +335,7 @@ End Property
 
 Public Property Get Terms(ByVal Refer As Variant) As String ' _
 Returns the specified Refer property of the certificate fields as humanly understandable as possible, i.e. English terminology.
-Attribute Terms.VB_Description = "Returns the specified Refer property of the certificate fields as humanly understandable as possible, i.e. English."
+Attribute Terms.VB_Description = "Returns the specified Refer property of the certificate fields as humanly understandable as possible, i.e. English terminology."
 
     Dim tmp As Stream
 
@@ -296,8 +354,10 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
     End If
     
     Dim inc As Integer
-    
+
+
     Select Case CInt(name)
+
         Case CertificateCollection
 
         Case Version
@@ -311,12 +371,21 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
             Set tmp = Nothing
         Case Is >= ObjectIdentifyer
             inc = -2
-        Case Signature, Algorithm, IntendedUses, PublicKeyBlock, SerialNumber, Extensions, SignatureAlgorithm, Subject, Issuer
+        Case IntendedUses
+            inc = -2
+            
+        Case Algorithm
+            inc = -2
+        Case PublicKeyBlock, SerialNumber, Extensions
             inc = -1
+        Case Signature, Algorithm, SignatureAlgorithm
+            inc = -2
+        Case Issuer, Subject
+            inc = -2
         Case Is > SignatureAlgorithm
-            inc = -2
+            inc = -1
         Case Is > Algorithm
-            inc = -2
+            inc = -1
         Case Is > Extensions
             inc = -2
         Case Is > Subject
@@ -324,7 +393,7 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
         Case Is > Issuer
             inc = -2
         Case Is > IntendedUses
-            inc = -2
+            inc = -1
 
         Case ValidityBeginDate, ValidityExpireDate, Validity
 
@@ -343,8 +412,10 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
 
     End Select
     
+    
+    
     If inc = -1 Then
-        Terms = RemoveArg(HexStream(pFields(Refer)), ":")
+       Terms = RemoveArg(HexStream(pFields(Refer)), ":")
         
     ElseIf inc = -2 Then
         If CInt(name) >= ObjectIdentifyer Then
@@ -355,6 +426,7 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
         End If
 
         Set tmp = Stream(pFields(Refer))
+        If tmp.Length > 0 Then
         
         If tmp.Partial(0, 1)(1) = CERT_SEQUENCE Or tmp.Partial(0, 1)(1) = CERT_SETTINGS Then
             inc = inc - 2
@@ -370,6 +442,7 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
             Terms = GetInteger(tmp)
         Else
             GetInteger tmp
+
             Set tmp = GetSequence(tmp)
 
             Do Until tmp.Length = 0
@@ -384,10 +457,23 @@ Attribute Terms.VB_Description = "Returns the specified Refer property of the ce
             Loop
 
         End If
-
+        End If
         Set tmp = Nothing
+        
     End If
-    
+
+'    If IsAlphaNumeric(Replace(Terms, " ", "")) And _
+'         (((Len(Replace(Terms, " ", "")) \ 2) - 1) = _
+'         (Len(Terms) - Len(Replace(Terms, " ", "")))) Then
+        
+    Select Case ((CInt(name) \ 10) * 10)
+        Case SignatureAlgorithm, IntendedUses, Algorithm
+
+            Terms = GetObjectID(Stream(pFields(Refer)))
+            
+            inc = -3
+    End Select
+
 End Property
 
 
@@ -402,7 +488,20 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
             Refer = Replace(Refer, "ID_", "")
         End If
     End If
-                
+       
+    Select Case ((Refer \ 10) * 10)
+        Case Extensions, SignatureAlgorithm, IntendedUses, Algorithm
+        
+         If Not Exists("ID_" & Refer) And ((Refer Mod 10) = 0) Then
+             If Refer Mod 10 = 0 Then
+                 If Not Exists(Refer) And Exists(Refer & "1") Then
+                     Refer = Refer & "1"
+                 End If
+             End If
+         End If
+
+    End Select
+        
     If Refer = CertificateCollection Then
         Set Fields = pFields
     Else
@@ -410,6 +509,8 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
         Dim out As Stream
         
         Dim inc As Integer
+
+
         Select Case Refer
             Case Validity, ValidityBeginDate, ValidityExpireDate
                 Set out = New Stream
@@ -454,12 +555,14 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
                 Fields = out.Partial
             
             Case Extensions, Subject, Issuer, SerialNumber, Signature, Algorithm, SignatureAlgorithm
-            
-                Set out = New Stream
-                out.Concat ToBytes(pFields("ID_" & Refer))
-                AddLength out
-                out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
-                Fields = out.Partial
+                
+                If Exists("ID_" & Refer) Then
+                    Set out = New Stream
+                    out.Concat ToBytes(pFields("ID_" & Refer))
+                    AddLength out
+                    out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
+                    Fields = out.Partial
+                End If
                 
             Case Is > SignatureAlgorithm
                 inc = CERT_TYPE_OIDS
@@ -475,21 +578,26 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
                 inc = CERT_TYPE_OIDS
                 
             Case CertificateSequence, CertificateInfoSequence
-                Set out = New Stream
-                out.Clone pFields("ID_" & Refer)
-                AddLength out
-                out.Prepend ToBytes(Chr(CERT_SEQUENCE))
-                Fields = out.Partial
+
+                If Exists("ID_" & Refer) Then
+                    Set out = New Stream
+                    out.Clone pFields("ID_" & Refer)
+                    AddLength out
+                    out.Prepend ToBytes(Chr(CERT_SEQUENCE))
+                    Fields = out.Partial
+                
+                End If
                 
             Case Version
-                Dim b As Byte
-                b = CByte(pFields("ID_" & Refer))
-                Set out = New Stream
-                out.Concat ToBytes(Chr(CERT_CONTEXT_CERTFORMAT) & Chr(LenB(b) + CERT_HEX_UNIT) & _
-                            Chr(CERT_LEN_WORD) & Chr(LenB(b)) & Chr(b))
-      
-                Fields = out.Partial
-
+                If Exists("ID_" & Refer) Then
+                  Dim b As Byte
+                  b = CByte(pFields("ID_" & Refer))
+                  Set out = New Stream
+                  out.Concat ToBytes(Chr(CERT_CONTEXT_CERTFORMAT) & Chr(LenB(b) + CERT_HEX_UNIT) & _
+                              Chr(CERT_LEN_WORD) & Chr(LenB(b)) & Chr(b))
+        
+                  Fields = out.Partial
+                End If
             Case Else
                 If Exists("ID_" & Refer) Then
                     Select Case TypeName(pFields("ID_" & Refer))
@@ -506,23 +614,24 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
                 End If
         End Select
         If inc = CERT_TYPE_OIDS Or inc = CERT_SETTINGS Then
-            Set out = New Stream
-            Set itm = New Stream
-
-            Set itm = pFields("ID_" & Refer)
-            If inc = CERT_SETTINGS Then
-                AddLength itm
-                out.Concat ToBytes(Chr(inc))
-            ElseIf inc = CERT_TYPE_OIDS Then
-                out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
+            If Exists("ID_" & Refer) Then
+                Set out = New Stream
+                Set itm = New Stream
+    
+                Set itm = pFields("ID_" & Refer)
+                If inc = CERT_SETTINGS Then
+                    AddLength itm
+                    out.Concat ToBytes(Chr(inc))
+                ElseIf inc = CERT_TYPE_OIDS Then
+                    out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
+                End If
+                out.Concat itm.Partial
+    
+                If inc = CERT_TYPE_OIDS Then
+                    out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
+                End If
+                Fields = out.Partial
             End If
-            out.Concat itm.Partial
-
-            If inc = CERT_TYPE_OIDS Then
-                out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
-            End If
-            Fields = out.Partial
-
         End If
 
         Set out = Nothing
@@ -690,8 +799,32 @@ doagain:
         End If
     End If
 End Function
+
+Private Function GetObjectID(ByRef FromData As Stream) As String
+
+    Dim list As String
+    
+    Dim num As Long
+    Dim i As Long
+    For i = 1 To FromData.Length
+                        
+        num = NextByte(FromData)
+        If num = 1 Or num = 11 Or num = 111 Or num = 2 Or num = 22 Or num = 222 Or num = 0 Then Exit For
+            
+        If InStr(list, num & ",") = 0 Then list = list & num & ","
+
+    Next
+
+    If list <> "" Then list = Left(list, Len(list) - 1)
+    
+    GetObjectID = list
+   ' Debug.Print list
+
+End Function
+
 Public Property Get IssuerName() As String ' _
 Gets the terminology of the last issuer related property entry of the loaded certificate.
+Attribute IssuerName.VB_Description = "Gets the terminology of the last issuer related property entry of the loaded certificate."
     Dim inc As Integer
     inc = 9
     Do Until Exists("ID_" & (Issuer + inc)) Or inc = 0
@@ -701,6 +834,7 @@ Gets the terminology of the last issuer related property entry of the loaded cer
 End Property
 Public Property Get SubjectName() As String ' _
 Gets the terminology of the last subject related property entry of the loaded certificate.
+Attribute SubjectName.VB_Description = "Gets the terminology of the last subject related property entry of the loaded certificate."
     Dim inc As Integer
     inc = 9
     Do Until Exists("ID_" & (Subject + inc)) Or inc = 0
@@ -710,6 +844,7 @@ Gets the terminology of the last subject related property entry of the loaded ce
 End Property
 Public Property Get Keys(ByVal Number As Integer) As String ' _
 Returns the key of a specific ordinal Number in the collection of properties for the loaded certificate.
+Attribute Keys.VB_Description = "Returns the key of a specific ordinal Number in the collection of properties for the loaded certificate."
 
     If Number > 0 And Number <= pKeys.count Then
         Keys = pKeys(Number)
@@ -720,6 +855,7 @@ Returns the key of a specific ordinal Number in the collection of properties for
 End Property
 Public Function Exists(Optional ByVal Refer As Variant = CertificateCollection) As Boolean ' _
 Checks for the existance of a property in the loaded certificate by key or name supplied as Refer parameter.
+Attribute Exists.VB_Description = "Checks for the existance of a property in the loaded certificate by key or name supplied as Refer parameter."
     If Refer = CertificateCollection Then
         Exists = pFields.count > 0
     ElseIf pFields.count > 0 Then
@@ -755,6 +891,7 @@ Private Sub AddField(ByRef Anything, ByVal Key As Variant)
 End Sub
 Public Function LoadCertificate(ByRef CertData As Stream) As Boolean ' _
 Load a certificate in binary form contained in the CertData stream object.
+Attribute LoadCertificate.VB_Description = "Load a certificate in binary form contained in the CertData stream object."
     On Error GoTo badload
     
     Dim FromData As New Stream
@@ -913,6 +1050,8 @@ Load a certificate in binary form contained in the CertData stream object.
     Else
         pKeySize = 256
     End If
+    
+    
 badload:
     
     Set tmp = Nothing

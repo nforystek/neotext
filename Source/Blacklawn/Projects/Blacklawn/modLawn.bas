@@ -1,6 +1,4 @@
 Attribute VB_Name = "modLawn"
-#Const [True] = -1
-#Const [False] = 0
 
 #Const modLawn = -1
 Option Explicit

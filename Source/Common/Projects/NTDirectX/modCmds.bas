@@ -731,10 +731,10 @@ Public Function Row(ByVal num As Long) As Long
     Row = ((TextHeight \ VB.Screen.TwipsPerPixelY) * num) + (2 * num)
 End Function
 
-Public Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
+Public Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal Z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
     MakeScreen.X = X
     MakeScreen.Y = Y
-    MakeScreen.z = z
+    MakeScreen.Z = Z
     MakeScreen.rhw = 1
     MakeScreen.clr = D3DColorARGB(255, 255, 255, 255)
     MakeScreen.tu = tu
@@ -1053,6 +1053,8 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
         
         DDevice.SetTexture 0, Backdrop
         DDevice.SetTexture 1, Nothing
+        
+        DDevice.SetTransform D3DTS_WORLD, matWorld
         DDevice.DrawPrimitiveUP D3DPT_TRIANGLESTRIP, 2, Vertex(0), LenB(Vertex(0))
     
         If Len(CommandLine) > 0 Then
@@ -1101,7 +1103,12 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetRenderState D3DRS_LIGHTING, 1
-        
+ 
+    DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
+    DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDefault
 
 End Sub

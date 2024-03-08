@@ -16,6 +16,9 @@ Option Explicit
 
 Option Compare Binary
 
+'Public Function EnKrimptString(Info As String, Seed As String) As String
+'    EnKrimptString = Convert(EnKrimpt(Convert(Info), Convert(Seed)))
+'End Function
 Public Function EnKrimpt(Info() As Byte, Seed() As Byte) As Byte()
     
     Dim pin As Byte
@@ -180,6 +183,9 @@ Public Function EnKrimpt(Info() As Byte, Seed() As Byte) As Byte()
         
 End Function
 
+'Public Function DeKrimptString(Info As String, Seed As String) As String
+'    DeKrimptString = Convert(DeKrimpt(Convert(Info), Convert(Seed)))
+'End Function
 Public Function DeKrimpt(Info() As Byte, Seed() As Byte) As Byte()
     
     Dim pin As Byte

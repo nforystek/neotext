@@ -38,8 +38,8 @@ Private Function GetFileEntry(ByVal Folder As String, ByVal File As String, ByVa
         If GetFileExt(File) <> ".vbp" Then
             If InStr(1, ddfText, GetFileName(File), vbTextCompare) = 0 Then
                 inc = True
-                If Program.Excludes.Count > 0 Then
-                    For cnt = 1 To Program.Excludes.Count
+                If Program.Excludes.count > 0 Then
+                    For cnt = 1 To Program.Excludes.count
                         ex = Program.Excludes(cnt)
                         Select Case RemoveNextArg(ex, " ")
                             Case "*"
@@ -64,8 +64,8 @@ Private Function GetFileEntry(ByVal Folder As String, ByVal File As String, ByVa
         If GetFileExt(File) <> ".vbp" Then
             If InStr(1, ddfText, GetFileName(File), vbTextCompare) = 0 Then
                 inc = True
-                If Program.Excludes.Count > 0 Then
-                    For cnt = 1 To Program.Excludes.Count
+                If Program.Excludes.count > 0 Then
+                    For cnt = 1 To Program.Excludes.count
                         ex = Program.Excludes(cnt)
                         Select Case RemoveNextArg(ex, " ")
                             Case "*"
@@ -91,8 +91,8 @@ Private Function GetFileEntry(ByVal Folder As String, ByVal File As String, ByVa
         If GetFileExt(File) <> ".vbp" Then
             If InStr(1, ddfText, GetFileName(File), vbTextCompare) = 0 Then
                 inc = True
-                If Program.Excludes.Count > 0 Then
-                    For cnt = 1 To Program.Excludes.Count
+                If Program.Excludes.count > 0 Then
+                    For cnt = 1 To Program.Excludes.count
                         ex = Program.Excludes(cnt)
                         Select Case RemoveNextArg(ex, " ")
                             Case "*"
@@ -120,8 +120,8 @@ Private Function GetFileEntry(ByVal Folder As String, ByVal File As String, ByVa
             If GetFileExt(File) <> ".vbp" Then
                 If InStr(1, ddfText, GetFileName(File), vbTextCompare) = 0 Then
                     inc = True
-                    If Program.Excludes.Count > 0 Then
-                        For cnt = 1 To Program.Excludes.Count
+                    If Program.Excludes.count > 0 Then
+                        For cnt = 1 To Program.Excludes.count
                             ex = Program.Excludes(cnt)
                             Select Case RemoveNextArg(ex, " ")
                                 Case "*"
@@ -444,15 +444,17 @@ Private Sub FolderGetItems(ByVal Folder As String, ByRef f As Object, ByVal l As
     Dim ex As String
     For Each i In f.Files
         inc = True
-        If Program.Excludes.Count > 0 Then
-            For cnt = 1 To Program.Excludes.Count
+        If Program.Excludes.count > 0 Then
+            For cnt = 1 To Program.Excludes.count
                 ex = Program.Excludes(cnt)
+
                 Select Case RemoveNextArg(ex, " ")
                     Case "*"
                         If LikeCompare(LCase(Replace(i.Path, Folder & "\", "", , , vbTextCompare)), LCase(ex)) Then inc = False
                     Case "?"
                         If LCase(Replace(i.Path, Folder & "\", "", , , vbTextCompare)) = LCase(ex) Then inc = False
                 End Select
+
                 If Not inc Then Exit For
             Next
         End If
@@ -479,8 +481,8 @@ Private Sub FolderGetItems(ByVal Folder As String, ByRef f As Object, ByVal l As
     Next
     For Each s In f.SubFolders
         inc = True
-        If Program.Excludes.Count > 0 Then
-            For cnt = 1 To Program.Excludes.Count
+        If Program.Excludes.count > 0 Then
+            For cnt = 1 To Program.Excludes.count
                 ex = Program.Excludes(cnt)
                 Select Case RemoveNextArg(ex, " ")
                     Case "*"

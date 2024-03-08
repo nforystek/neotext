@@ -150,7 +150,7 @@ Public Sub CommitOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
 End Sub
 Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
     'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Origin.X <> 0 Or Origin.Y <> 0 Or Origin.z <> 0 Then
+    If Origin.X <> 0 Or Origin.Y <> 0 Or Origin.Z <> 0 Then
         Dim o As Orbit
         Dim m As Molecule
         Select Case TypeName(ApplyTo)
@@ -159,10 +159,10 @@ Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If ApplyTo.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.r = -1 Then
                         LocPos Origin, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.W > 0 Then
-                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.r > 0 Then
+                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
                             LocPos Origin, Relative, p, ApplyTo
                         End If
                     End If
@@ -175,22 +175,24 @@ Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional By
                 Else
                     Set ApplyTo.Absolute.Origin = Origin
                 End If
-                'change all molecules with in the specified planets range
+'                'change all molecules with in the specified planets range
 '                If TypeName(ApplyTo) = "Planet" Then
-''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.W = -1 Then
-''                            LocPos Origin, Relative, m
-''                        ElseIf ApplyTo.Ranges.W > 0 Then
-''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-''                                LocPos Origin, Relative, m
-''                            End If
-''                        End If
-''                    Next
-''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-''                    For Each m In ApplyTo.Molecules
-''                        LocPos Origin, Relative, m
-''                    Next
+'                    For Each m In Molecules
+'                        If m.Parent Is Nothing Then
+'                            If ApplyTo.Ranges.R = -1 Then
+'                                LocPos Origin, Relative, m
+'                            ElseIf ApplyTo.Ranges.R > 0 Then
+'                                If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.Z, _
+'                                    ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z) Then
+'                                    LocPos Origin, Relative, m
+'                                End If
+'                            End If
+'                        End If
+'                    Next
+'                ElseIf TypeName(ApplyTo) = "Molecule" Then
+'                    For Each m In ApplyTo.Molecules
+'                        LocPos Origin, Relative, m
+'                    Next
 '                End If
         End Select
     End If
@@ -207,7 +209,7 @@ Public Sub CommitRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
 End Sub
 Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
     'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Degrees.X <> 0 Or Degrees.Y <> 0 Or Degrees.z <> 0 Then
+    If Degrees.X <> 0 Or Degrees.Y <> 0 Or Degrees.Z <> 0 Then
         Dim m As Molecule
         Dim o As Point
         Select Case TypeName(ApplyTo)
@@ -216,10 +218,10 @@ Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional B
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If ApplyTo.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.r = -1 Then
                         RotOri Degrees, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.W > 0 Then
-                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.r > 0 Then
+                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
                             RotOri Degrees, Relative, p, ApplyTo
                         End If
                     End If
@@ -235,10 +237,10 @@ Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional B
                 'change all molecules with in the specified planets range
 '                If TypeName(ApplyTo) = "Planet" Then
 ''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.W = -1 Then
+''                        If ApplyTo.Ranges.R = -1 Then
 ''                            RotOri Degrees, Relative, m
-''                        ElseIf ApplyTo.Ranges.W > 0 Then
-''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                        ElseIf ApplyTo.Ranges.R > 0 Then
+''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
 ''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
 ''                                RotOri Degrees, Relative, m
 ''                            End If
@@ -265,7 +267,7 @@ Public Sub CommitScaling(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
 End Sub
 Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
     'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Abs(Scalar.X) <> 1 Or Abs(Scalar.Y) <> 1 Or Abs(Scalar.z) <> 1 Then
+    If Abs(Scalar.X) <> 1 Or Abs(Scalar.Y) <> 1 Or Abs(Scalar.Z) <> 1 Then
         Dim m As Molecule
         Dim o As Orbit
         Select Case TypeName(ApplyTo)
@@ -274,10 +276,10 @@ Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If ApplyTo.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.r = -1 Then
                         ScaExp Scalar, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.W > 0 Then
-                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.r > 0 Then
+                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
                             ScaExp Scalar, Relative, p, ApplyTo
                         End If
                     End If
@@ -293,10 +295,10 @@ Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional By
                 'change all molecules with in the specified planets range
 '                If TypeName(ApplyTo) = "Planet" Then
 ''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.W = -1 Then
+''                        If ApplyTo.Ranges.R = -1 Then
 ''                            ScaExp Scalar, Relative, m
-''                        ElseIf ApplyTo.Ranges.W > 0 Then
-''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                        ElseIf ApplyTo.Ranges.R > 0 Then
+''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
 ''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
 ''                                ScaExp Scalar, Relative, m
 ''                            End If
@@ -322,7 +324,7 @@ Public Sub CommitOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
 End Sub
 Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
     'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Offset.X <> 0 Or Offset.Y <> 0 Or Offset.z <> 0 Then
+    If Offset.X <> 0 Or Offset.Y <> 0 Or Offset.Z <> 0 Then
         Dim dist As Single
         Dim m As Molecule
         Dim o As Orbit
@@ -332,10 +334,10 @@ Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional By
                 'and call change all molucules with in each of those planets as well
                 Dim p As Planet
                 For Each p In Planets
-                    If ApplyTo.Ranges.W = -1 Then
+                    If ApplyTo.Ranges.r = -1 Then
                         DisBal Offset, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.W > 0 Then
-                        If ApplyTo.Ranges.W <= Distance(p.Origin.X, p.Origin.Y, p.Origin.z, 0, 0, 0) > 0 Then
+                    ElseIf ApplyTo.Ranges.r > 0 Then
+                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
                             DisBal Offset, Relative, p, ApplyTo
                         End If
                     End If
@@ -351,10 +353,10 @@ Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional By
                 'change all molecules with in the specified planets range
 '                If TypeName(ApplyTo) = "Planet" Then
 ''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.W = -1 Then
+''                        If ApplyTo.Ranges.R = -1 Then
 ''                            DisBal Offset, Relative, m
-''                        ElseIf ApplyTo.Ranges.W > 0 Then
-''                            If ApplyTo.Ranges.W <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
+''                        ElseIf ApplyTo.Ranges.R > 0 Then
+''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
 ''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
 ''                                DisBal Offset, Relative, m
 ''                            End If
@@ -376,11 +378,11 @@ Private Function RangedMolecules(ByRef ApplyTo As Molecule) As NTNodes10.Collect
     Dim dist As Single
     For Each m In Molecules
         If ((m.Parent Is Nothing) And (Not TypeName(ApplyTo) = "Planet")) Or (TypeName(ApplyTo) = "Planet") Then
-            If ApplyTo.Ranges.W = -1 Then
+            If ApplyTo.Ranges.r = -1 Then
                 RangedMolecules.Add m, m.Key
-            ElseIf ApplyTo.Ranges.W > 0 Then
-                dist = Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z)
-                If ApplyTo.Ranges.W <= dist Then
+            ElseIf ApplyTo.Ranges.r > 0 Then
+                dist = Distance(m.Origin.X, m.Origin.Y, m.Origin.Z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z)
+                If ApplyTo.Ranges.r <= dist Then
                     RangedMolecules.Add m, m.Key
                 End If
             End If
@@ -396,52 +398,61 @@ Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, By
     Static stacked As Boolean
     If Not stacked Then
         stacked = True
-
+        ApplyTo.Moved = False
+        
         'any absolute position comes first, pending is a difference from the actual
         If Not ApplyTo.Absolute.Origin.Equals(Nothing) Then
             If (Not ApplyTo.Origin.Equals(ApplyTo.Absolute.Origin)) And ((DoOrigin And DoAbsolute) Or ((Not DoOrigin) And (Not DoAbsolute))) Then
                 ApplyOrigin ApplyTo, Parent, False
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Absolute.Offset.Equals(Nothing) Then
             If (Not ApplyTo.Offset.Equals(ApplyTo.Absolute.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
                 ApplyOffset ApplyTo, Parent, False
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Absolute.Rotate.Equals(Nothing) Then
             If (Not ApplyTo.Rotate.Equals(ApplyTo.Absolute.Rotate)) And ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
                 ApplyRotate ApplyTo, Parent, False
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Absolute.Scaled.Equals(Nothing) Then
             If (Not ApplyTo.Scaled.Equals(ApplyTo.Absolute.Scaled)) And ((DoScaled And DoAbsolute) Or ((Not DoScaled) And (Not DoAbsolute))) Then
                 ApplyScaled ApplyTo, Parent, False
+                ApplyTo.Moved = True
             End If
         End If
 
 
         'relative positioning comes secondly, pending is there is any value not empty
         If Not ApplyTo.Relative.Rotate.Equals(Nothing) Then
-            If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
+            If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.Z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
                 ApplyRotate ApplyTo, Parent, True
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Relative.Origin.Equals(Nothing) Then
-            If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
+            If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.Z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
                 ApplyOrigin ApplyTo, Parent, True
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Relative.Offset.Equals(Nothing) Then
-            If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
+            If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.Z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
                 ApplyOffset ApplyTo, Parent, True
+                ApplyTo.Moved = True
             End If
         End If
         If Not ApplyTo.Relative.Scaled.Equals(Nothing) Then
-            If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
+            If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.Z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
                 ApplyScaled ApplyTo, Parent, True
+                ApplyTo.Moved = True
             End If
         End If
-
+        
         stacked = False
     End If
 End Sub
@@ -475,11 +486,7 @@ Public Sub RenderMotions(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     For Each p In Planets
         AllCommitRoutine p, Nothing
     Next
-    
-    
-    
-    
-    
+
     
 End Sub
 

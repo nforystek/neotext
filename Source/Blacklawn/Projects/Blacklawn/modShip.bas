@@ -1,7 +1,5 @@
-#Const [True] = -1
-#Const [False] = 0
-
 Attribute VB_Name = "modShip"
+
 #Const modShip = -1
 Option Explicit
 'TOP DOWN
@@ -901,4 +899,4 @@ Public Sub CleanupShips()
         Erase Partners
         PlayerCount = 0
     End If
-End Sub
+End Sub

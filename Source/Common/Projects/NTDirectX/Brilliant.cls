@@ -39,6 +39,8 @@ Public Attenuation As Point
 Private pKey As String
 
 Private pSerialize As Boolean
+
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -91,6 +93,12 @@ Public Property Set Absolute(ByRef RHS As Orbit)
     Set Orbit.Absolute = RHS
 End Property
 
+Public Property Get Moved() As Boolean
+    Moved = Orbit.Moved
+End Property
+Public Property Let Moved(ByVal RHS As Boolean)
+    Orbit.Moved = RHS
+End Property
 
 Public Property Get Origin() As Point
     Set Origin = Orbit.Origin
@@ -198,15 +206,15 @@ Friend Sub UpdateValues()
  
     Lights(LightIndex).Attenuation0 = Attenuation.X
     Lights(LightIndex).Attenuation1 = Attenuation.Y
-    Lights(LightIndex).Attenuation2 = Attenuation.z
+    Lights(LightIndex).Attenuation2 = Attenuation.Z
 
     Lights(LightIndex).Position.X = Origin.X
     Lights(LightIndex).Position.Y = Origin.Y
-    Lights(LightIndex).Position.z = Origin.z
+    Lights(LightIndex).Position.Z = Origin.Z
     
     Lights(LightIndex).Direction.X = Rotate.X
     Lights(LightIndex).Direction.Y = Rotate.Y
-    Lights(LightIndex).Direction.z = Rotate.z
+    Lights(LightIndex).Direction.Z = Rotate.Z
     
 End Sub
 
@@ -263,6 +271,14 @@ End Property
 
 Private Property Get Orbit_Motions() As Motions
     Set Orbit_Motions = Orbit.Motions
+End Property
+
+Private Property Let Orbit_Moved(ByVal RHS As Boolean)
+    Orbit.Moved = RHS
+End Property
+
+Private Property Get Orbit_Moved() As Boolean
+    Orbit_Moved = Orbit.Moved
 End Property
 
 Private Property Set Orbit_Relative(RHS As Orbit)

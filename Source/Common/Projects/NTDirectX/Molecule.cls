@@ -24,7 +24,6 @@ Private pSnapping As Boolean
 
 Private pSerialize As Boolean
 
-
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -53,6 +52,13 @@ End Property
 'Public Property Set Parent(ByRef RHS As Orbit)
 '    Set Orbit.Parent = RHS
 'End Property
+
+Public Property Get Moved() As Boolean
+    Moved = Orbit.Moved
+End Property
+Public Property Let Moved(ByVal RHS As Boolean)
+    Orbit.Moved = RHS
+End Property
 
 Public Property Get Relative() As Orbit
     Set Relative = Orbit.Relative
@@ -224,6 +230,14 @@ End Property
 
 Private Property Get Orbit_Motions() As Motions
     Set Orbit_Motions = Orbit.Motions
+End Property
+
+Private Property Let Orbit_Moved(ByVal RHS As Boolean)
+    Orbit.Moved = RHS
+End Property
+
+Private Property Get Orbit_Moved() As Boolean
+    Orbit_Moved = Orbit.Moved
 End Property
 
 Private Property Set Orbit_Relative(RHS As Orbit)

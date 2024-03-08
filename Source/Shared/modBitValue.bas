@@ -70,6 +70,11 @@ Public Const Num_2147418112 = &H7FFF0000
 Public Const Num_Neg_2147483648 = &H80000000
 Public Const Num_Neg_285212672 = &HEF000000
 
+Private Type TwoLong
+   lVal(0 To 1) As Long
+End Type
+
+Private Declare Sub GetMem8 Lib "msvbvm60.dll" (ByRef pSrc As Any, ByRef pDest As Any)
 
 '########################################################################################
 Private Function FindBit(ByVal Index As Variant) As Variant
@@ -252,145 +257,85 @@ Public Property Let HiWord(ByRef lThis As Long, ByVal lHiWord As Long)
    End If
 End Property
 
-
-'Public Property Get LoWord(ByRef lThis As Long) As Integer
-'    LoWord = (lThis And Num_32767) Or (Num_Neg_32768 And ((lThis And Num_Neg_32768) = Num_Neg_32768))
-'End Property
-'Public Property Get HiWord(ByRef lThis As Long) As Integer
-'    HiWord = ((lThis And Num_2147418112) \ Num_65536) Or (Num_Neg_2147483648 And (lThis < 0))
-'End Property
-'Public Property Let LoWord(ByRef lThis As Long, ByVal lLoWord As Integer)
-'    lThis = lThis And Not Num_65535 Or lLoWord
-'End Property
-'Public Property Let HiWord(ByRef lThis As Long, ByVal lHiWord As Integer)
-'    If (lHiWord And Num_32768) = Num_32768 Then
-'       lThis = lThis And Not Num_Neg_65536 Or ((lHiWord And Num_32767) * Num_65536) Or Num_Neg_2147483648
-'    Else
-'       lThis = lThis And Not Num_Neg_65536 Or (lHiWord * Num_65536)
-'    End If
-'End Property
-
-
 '########################################################################################
+
 Public Property Get LoLong(ByRef dThis As Double) As Long
-    If (dThis And Num_285212671) > Num_142606336 Then
-        LoLong = (dThis And Num_285212671) - (Num_285212672 * (dThis \ Num_285212672))
-    Else
-        LoLong = dThis And Num_285212671
-    End If
+    Dim rec As TwoLong
+    GetMem8 dThis, rec
+    LoLong = rec.lVal(0)
 End Property
 Public Property Let LoLong(ByRef dThis As Double, ByVal lLoLong As Long)
-    dThis = lLoLong + (((dThis And Num_Neg_65536) \ Num_65536) * Num_65536)
+    Dim rec As TwoLong
+    rec.lVal(1) = HiLong(dThis)
+    GetMem8 rec, dThis
+    rec.lVal(0) = lLoLong
+    GetMem8 rec, dThis
 End Property
 Public Property Get HiLong(ByRef dThis As Double) As Long
-    If ((dThis And Num_Neg_285212672) \ Num_285212672) + (dThis Mod Num_285212672) < 0 Then
-        HiLong = -(((dThis And Num_Neg_285212672) \ Num_285212672) + (dThis Mod Num_285212672))
-    Else
-        HiLong = ((dThis And Num_Neg_285212672) \ Num_285212672)
-    End If
+    Dim rec As TwoLong
+    GetMem8 dThis, rec
+    HiLong = rec.lVal(1)
 End Property
+
 Public Property Let HiLong(ByRef dThis As Double, ByVal lHiLong As Long)
-    dThis = ((lHiLong And Num_Neg_65536) \ Num_65536) * Num_65536
+    Dim rec As TwoLong
+    rec.lVal(0) = LoLong(dThis)
+    GetMem8 rec, dThis
+    rec.lVal(1) = lHiLong
+    GetMem8 rec, dThis
 End Property
 
-
-'Public Property Let LoLong(ByRef dThis As Double, ByVal lLoLong As Long)
-'    dThis = (lLoLong And Num_Neg_65536) \ Num_65536
-'End Property
-'Public Property Get LoLong(ByRef dThis As Double) As Long
-'    If (dThis And Num_285212671) > Num_142606336 Then
-'        LoLong = (dThis And Num_285212671) - (Num_285212672 * (dThis \ Num_285212672))
-'    Else
-'        LoLong = dThis And Num_285212671
-'    End If
-'End Property
-'Public Property Let HiLong(ByRef dThis As Double, ByVal lHiLong As Long)
-'    dThis = ((lHiLong And Num_Neg_65536) \ Num_65536) * Num_65536
-'End Property
-'Public Property Get HiLong(ByRef dThis As Double) As Long
-'    If ((dThis And Num_Neg_285212672) \ Num_285212672) + (dThis Mod Num_285212672) < 0 Then
-'        HiLong = -(((dThis And Num_Neg_285212672) \ Num_285212672) + (dThis Mod Num_285212672))
-'    Else
-'        HiLong = ((dThis And Num_Neg_285212672) \ Num_285212672)
-'    End If
-'End Property
 '########################################################################################
 
-
-Public Property Get lo(ByVal Op As Variant) As Variant
-    Select Case TypeName(Op)
-        Case "Integer"
-            'return lo byte of op
-             lo = LoByte(CInt(Op))
-        Case "Long"
-            'return lo word of op
-            lo = HiWord(CLng(Op))
-        Case Else
-            Err.Raise 8, "Lo", "Invalid arguments."
-    End Select
-End Property
-Public Property Get hi(ByVal Op As Variant) As Variant
-    Select Case TypeName(Op)
-        Case "Integer"
-            'return lo byte of op
-             hi = HiByte(CInt(Op))
-        Case "Long"
-            'return lo word of op
-            hi = LoWord(CLng(Op))
-        Case Else
-            Err.Raise 8, "Hi", "Invalid arguments."
-    End Select
-End Property
-
-Public Property Get Wo(ByVal lo As Variant, ByVal hi As Variant) As Variant
-    Select Case TypeName(lo)
-        Case "Byte"
-            Select Case TypeName(hi)
-                Case "Byte"
-                    If hi And Num_128 Then
-                       Wo = ((hi * Num_256) Or lo) Or Num_Neg_65536
-                    Else
-                       Wo = (hi * Num_256) Or lo
-                    End If
-                Case Else
-                    Err.Raise 8, "Hi", "Invalid arguments."
-            End Select
-        Case "Integer", "Long"
-            Select Case TypeName(hi)
-                Case "Integer", "Long"
-'                    Dim ret As Long
-'                    LoWord(ret) = Lo
-'                    HiWord(ret) = Hi
+'Public Property Get lo(ByVal Op As Variant) As Variant
+'    Select Case TypeName(Op)
+'        Case "Integer"
+'            'return lo byte of op
+'             lo = LoByte(CInt(Op))
+'        Case "Long"
+'            'return lo word of op
+'            lo = HiWord(CLng(Op))
+'        Case Else
+'            Err.Raise 8, "Lo", "Invalid arguments."
+'    End Select
+'End Property
+'Public Property Get hi(ByVal Op As Variant) As Variant
+'    Select Case TypeName(Op)
+'        Case "Integer"
+'            'return lo byte of op
+'             hi = HiByte(CInt(Op))
+'        Case "Long"
+'            'return lo word of op
+'            hi = LoWord(CLng(Op))
+'        Case Else
+'            Err.Raise 8, "Hi", "Invalid arguments."
+'    End Select
+'End Property
 '
-'
-'                    Wo = CLng(ret)
-
-                    Wo = (hi * Num_65536) Or (lo And Num_65535)
-                Case Else
-                    Err.Raise 8, "Hi", "Invalid arguments."
-            End Select
-        Case Else
-            Err.Raise 8, "Hi", "Invalid arguments."
-    End Select
-End Property
-
-'Public Property Get Wo(ByRef Lo As Variant, ByVal Hi As Variant) As Variant
-'    Select Case TypeName(Lo)
+'Public Property Get Wo(ByVal lo As Variant, ByVal hi As Variant) As Variant
+'    Select Case TypeName(lo)
 '        Case "Byte"
-'            Select Case TypeName(Hi)
+'            Select Case TypeName(hi)
 '                Case "Byte"
-'                    If Hi And Num_128 Then
-'                       Wo = ((Hi * Num_Num_256) Or Lo) Or Num_Neg_65536
+'                    If hi And Num_128 Then
+'                       Wo = ((hi * Num_256) Or lo) Or Num_Neg_65536
 '                    Else
-'                       Wo = (Hi * Num_Num_256) Or Lo
+'                       Wo = (hi * Num_256) Or lo
 '                    End If
 '                Case Else
 '                    Err.Raise 8, "Hi", "Invalid arguments."
 '            End Select
 '        Case "Integer", "Long"
-'            Select Case TypeName(Hi)
+'            Select Case TypeName(hi)
 '                Case "Integer", "Long"
-'                    Wo = (Hi * Num_65536) Or (Lo And Num_65535)
+''                    Dim ret As Long
+''                    LoWord(ret) = Lo
+''                    HiWord(ret) = Hi
+''
+''
+''                    Wo = CLng(ret)
+'
+'                    Wo = (hi * Num_65536) Or (lo And Num_65535)
 '                Case Else
 '                    Err.Raise 8, "Hi", "Invalid arguments."
 '            End Select
@@ -398,3 +343,29 @@ End Property
 '            Err.Raise 8, "Hi", "Invalid arguments."
 '    End Select
 'End Property
+'
+''Public Property Get Wo(ByRef Lo As Variant, ByVal Hi As Variant) As Variant
+''    Select Case TypeName(Lo)
+''        Case "Byte"
+''            Select Case TypeName(Hi)
+''                Case "Byte"
+''                    If Hi And Num_128 Then
+''                       Wo = ((Hi * Num_Num_256) Or Lo) Or Num_Neg_65536
+''                    Else
+''                       Wo = (Hi * Num_Num_256) Or Lo
+''                    End If
+''                Case Else
+''                    Err.Raise 8, "Hi", "Invalid arguments."
+''            End Select
+''        Case "Integer", "Long"
+''            Select Case TypeName(Hi)
+''                Case "Integer", "Long"
+''                    Wo = (Hi * Num_65536) Or (Lo And Num_65535)
+''                Case Else
+''                    Err.Raise 8, "Hi", "Invalid arguments."
+''            End Select
+''        Case Else
+''            Err.Raise 8, "Hi", "Invalid arguments."
+''    End Select
+''End Property
+

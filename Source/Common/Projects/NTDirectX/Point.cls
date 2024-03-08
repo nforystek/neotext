@@ -36,18 +36,18 @@ Public Property Let Y(ByVal RHS As Single)
     Coord.Y = RHS
 End Property
 
-Public Property Get z() As Single
-    z = pZ
+Public Property Get Z() As Single
+    Z = pZ
 End Property
-Public Property Let z(ByVal RHS As Single)
+Public Property Let Z(ByVal RHS As Single)
     pZ = RHS
 End Property
 
 Public Function Equals(ByRef Point As Point) As Boolean
     If Point Is Nothing Then
-        Equals = (Coord.Equals(Point) And z = 0)
+        Equals = (Coord.Equals(Point) And Z = 0)
     Else
-        Equals = (Coord.Equals(Point) And Point.z = z)
+        Equals = (Coord.Equals(Point) And Point.Z = Z)
     End If
 End Function
 

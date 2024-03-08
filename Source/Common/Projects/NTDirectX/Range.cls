@@ -15,7 +15,7 @@ Option Explicit
 
 Implements Point
 
-Private pW As Single
+Private pR As Single
 
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
@@ -35,28 +35,28 @@ Public Property Let Y(ByVal RHS As Single)
     Point.Y = RHS
 End Property
 
-Public Property Get z() As Single
-    z = Point.z
+Public Property Get Z() As Single
+    Z = Point.Z
 End Property
-Public Property Let z(ByVal RHS As Single)
-    Point.z = RHS
+Public Property Let Z(ByVal RHS As Single)
+    Point.Z = RHS
 End Property
 
-Public Property Get W() As Single
-    W = pW
+Public Property Get R() As Single
+    R = pR
 End Property
-Public Property Let W(ByVal RHS As Single)
-    pW = RHS
+Public Property Let R(ByVal RHS As Single)
+    pR = RHS
 End Property
 
 Public Function Equals(ByRef Range As Range) As Boolean
-    Equals = (Point.Equals(Range) And Range.W = W)
+    Equals = (Point.Equals(Range) And Range.R = R)
 End Function
 
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
 Attribute ToString.VB_MemberFlags = "640"
-    ToString = "[" & Round(Point.X, 6) & ", " & Round(Point.Y, 6) & ", " & Round(Point.z, 6) & ", " & Round(pW, 6) & "]"
+    ToString = "[" & Round(Point.X, 6) & ", " & Round(Point.Y, 6) & ", " & Round(Point.Z, 6) & ", " & Round(pR, 6) & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
 Attribute ToString.VB_UserMemId = 0
@@ -66,8 +66,8 @@ Attribute ToString.VB_MemberFlags = "240"
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
         Point.X = ParseNumerical(RHS)
         Point.Y = ParseNumerical(RHS)
-        Point.z = ParseNumerical(RHS)
-        pW = ParseNumerical(RHS)
+        Point.Z = ParseNumerical(RHS)
+        pR = ParseNumerical(RHS)
     End If
 End Property
 
@@ -117,7 +117,7 @@ Private Property Get Point_Y() As Single
 End Property
 
 Private Property Let Point_Z(ByVal RHS As Single)
-    Point.z = RHS
+    Point.Z = RHS
 End Property
 
 Private Property Get Point_Z() As Single

@@ -47,6 +47,13 @@ Private pParent As Molecule
 
 Private pSerialize As Boolean
 
+Public Property Get Moved() As Boolean
+    Moved = Molecule.Moved
+End Property
+Public Property Let Moved(ByVal RHS As Boolean)
+    Molecule.Moved = RHS
+End Property
+
 Public Property Let Snapping(ByVal RHS As Boolean)
     Molecule.Snapping = RHS
 End Property
@@ -97,14 +104,22 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
         RelativeColorFactor = 1
     ElseIf Checkto <= OuterEdge + Field Then
         If PlateauIsland Or (PlateauDoughnut And (Checkto >= InnerEdge)) Then
+'            If Checkto <= OuterEdge And Checkto >= InnerEdge Then
+'                RelativeColorFactor = 1
+'            ElseIf Checkto - OuterEdge < Field And (OuterEdge - InnerEdge) - Distance > 0 Then
+'                RelativeColorFactor = Round(CSng((CSng(Distance - OuterEdge)) / Field), 6)
+'            Else
+'                RelativeColorFactor = 1
+'            End If
             If Checkto <= OuterEdge And Checkto >= InnerEdge Then
                 RelativeColorFactor = 1
             ElseIf Checkto - OuterEdge < Field And (OuterEdge - InnerEdge) > 0 Then
-                RelativeColorFactor = CSng((CSng(Distance - OuterEdge)) / Field)
+                RelativeColorFactor = Round(CSng((CSng(Distance - OuterEdge)) / Field), 6)
             End If
-        ElseIf PlateauHole Or (PlateauDoughnut And Checkto < InnerEdge) Then
+            
+        ElseIf PlateauHole Or (PlateauDoughnut And Checkto < OuterEdge) Then
             If Checkto >= (OuterEdge - (InnerEdge + Field)) Then
-                RelativeColorFactor = CSng(CSng(Field - CSng(Distance - CSng(OuterEdge - CSng(InnerEdge + Field)))) / Field)
+                RelativeColorFactor = Round(CSng(CSng(Field - CSng(Distance - CSng(OuterEdge - CSng(InnerEdge + Field)))) / Field), 6)
             End If
         ElseIf (Field > 0) Then
         
@@ -123,7 +138,7 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
     End If
     If RelativeColorFactor > 1 Then RelativeColorFactor = 1
     If RelativeColorFactor < 0 Then RelativeColorFactor = 0
-    RelativeColorFactor = Round(RelativeColorFactor, 2)
+    RelativeColorFactor = Round(RelativeColorFactor, 6)
 End Function
 
 Public Property Get Color() As Color
@@ -287,7 +302,7 @@ Public Property Get OuterEdge() As Single
 End Property
 Public Property Let OuterEdge(ByVal RHS As Single)
     pOuterEdge = RHS
-    Ranges.W = IIf(Field > -1, Field, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    Ranges.r = IIf(Field > -1, Field, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
     If RHS > pInnerEdge Or RHS = -1 Then
         If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
@@ -333,7 +348,7 @@ Public Property Get Field() As Single
 End Property
 Public Property Let Field(ByVal RHS As Single)
     pField = RHS
-    Ranges.W = IIf(pField > -1, pField, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    Ranges.r = IIf(pField > -1, pField, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
 End Property
 
 Public Property Get Rows() As Single
@@ -404,7 +419,7 @@ Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Colu
 End Property
 
 Friend Property Get PlateauInfinite()
-    PlateauInfinite = ((pFileIndex(0) > 0) And ((((Form = World) And (Field = 0)) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
+    PlateauInfinite = ((pFileIndex(0) > 0) And ((((Form = Plateau) And ((Field = 0) Or (Field = Far))) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
 End Property
 Friend Property Get PlateauIsland()
     PlateauIsland = ((pFileIndex(0) > 0) And ((OuterEdge > 0) And (InnerEdge = 0)))
@@ -648,7 +663,7 @@ Private Sub RebuildPlanet()
 
             Volume.Clear
 
-            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width * Far, Size.Height * Far)
+            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width * (Far / Size.Width), Size.Height * (Far / Size.Height))
 
             For Each v In m.Volume
                 Volume.Add v
@@ -720,6 +735,14 @@ End Property
 
 Private Property Get Molecule_Key() As String
     Molecule_Key = Molecule.Key
+End Property
+
+Private Property Let Molecule_Moved(ByVal RHS As Boolean)
+    Molecule.Moved = RHS
+End Property
+
+Private Property Get Molecule_Moved() As Boolean
+    Molecule_Moved = Molecule.Moved
 End Property
 
 Private Property Set Molecule_Parent(RHS As Molecule)

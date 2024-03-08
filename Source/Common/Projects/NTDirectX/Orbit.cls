@@ -28,7 +28,13 @@ Private pAbsolute As Orbit
 Private pMotions As Motions
 
 Private pSerialize As Boolean
-
+Private pMoved As Boolean
+Public Property Get Moved() As Boolean
+    Moved = pMoved
+End Property
+Public Property Let Moved(ByVal RHS As Boolean)
+    pMoved = RHS
+End Property
 Public Property Get Motions() As Motions
     Set Motions = pMotions
 End Property
@@ -125,7 +131,7 @@ Public Property Get Scaled() As Point
         Set pScaled = New Point
         pScaled.X = 1
         pScaled.Y = 1
-        pScaled.z = 1
+        pScaled.Z = 1
     End If
     Set Scaled = pScaled
 End Property
@@ -186,6 +192,7 @@ End Property
 
 Private Sub Class_Initialize()
     Stats_Orbit_Count = Stats_Orbit_Count + 1
+    pMoved = True
 End Sub
 
 Friend Sub Class_Terminate()
