@@ -1,0 +1,57 @@
+Type=OleExe
+Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#188.0#0#C:\WINDOWS\system32\NTService20.dll#Neotext Windows Service Object 2.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#165.0#0#C:\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#58d.0#0#C:\WINDOWS\system32\NTSchedule20.dll#Neotext Schedule Object 2.0
+Module=modMain; modMain.bas
+Class=Address; Address.cls
+Form=frmProcess.frm
+Module=modDeclares; modDeclares.bas
+Class=Shore; Shore.cls
+Class=Account; Account.cls
+Class=Bank; Bank.cls
+Class=Exchange; Exchange.cls
+IconForm="frmProcess"
+Startup="Sub Main"
+HelpFile=""
+Title="Continent"
+ExeName32="Continent.exe"
+Command32=""
+Name="Continent"
+HelpContextID="0"
+Description="A custom service for matters."
+CompatibleMode="1"
+CompatibleEXE32="Continent.exe"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionComments="Memory management pooling for development in the Visual Basic 6.0 environment with pointers."
+VersionCompanyName="Neotext"
+VersionLegalTrademarks="Nicholas Forystek"
+VersionProductName="Bank"
+CondComp="Continent=-1:VBIDE=-1:Bank=-1:AddrPool=-1:Securities=-1:modMain=-1:modCommon=-1:modGuid=-1:modSystem=-1:modHexStr=-1:modGraphics=-1:modLocate=-1:modBitValue=-1:modMemory=-1:modDeclares=-1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1
+
+[Neotext]
+CompCond="modMain=-1:modDeclares=-1"
