@@ -1004,10 +1004,10 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
 
-    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-    DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
+'    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+'    DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
     
 '    If Billboards.Count > 0 Then
 '

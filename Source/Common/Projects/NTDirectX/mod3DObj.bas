@@ -440,11 +440,11 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     DDevice.SetPixelShader PixelShaderDefault
 
     DDevice.SetRenderState D3DRS_LIGHTING, 1
-    DDevice.SetRenderState D3DRS_ZENABLE, 1
-    DDevice.SetRenderState D3DRS_CLIPPING, 1
+  '  DDevice.SetRenderState D3DRS_ZENABLE, 1
+ '  DDevice.SetRenderState D3DRS_CLIPPING, 1
 
-    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
     
 '    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
@@ -512,6 +512,8 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '
 '    D3DXMatrixIdentity matMat
     
+    
+    
     For Each p In Planets
         RenderOrbits p.Molecules, False
     Next
@@ -556,6 +558,7 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
     
         Dim m As Molecule
         For Each m In col
+    
             If NoParentOnly Then
                 If m.Parent Is Nothing Then
                     RenderMolecule m, Nothing, matMat
@@ -563,10 +566,10 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
             Else
                 RenderMolecule m, Nothing, matMat
             End If
-
-    
+        
         Next
     End If
+
 End Sub
 
 Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX)
@@ -601,12 +604,13 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     D3DXMatrixMultiply matScale, matScale, matMat
            
     Dim m As Molecule
+    
     If Not ApplyTo.Molecules Is Nothing Then
         For Each m In ApplyTo.Molecules
-            RenderMolecule m, ApplyTo, matMat
+             RenderMolecule m, ApplyTo, matMat
         Next
     End If
-    
+
     Dim v As Matter
     If Not ApplyTo.Volume Is Nothing Then
         For Each v In ApplyTo.Volume
@@ -666,7 +670,7 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
                     If v.TextureIndex > 0 Then DDevice.SetTexture 1, Files(v.TextureIndex).Data
                 End If
 
-                DDevice.SetTransform D3DTS_WORLD, matWorld
+                'DDevice.SetTransform D3DTS_WORLD, matWorld
                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 1, VertexDirectX((v.TriangleIndex * 3)), Len(VertexDirectX(0))
             End If
         Next

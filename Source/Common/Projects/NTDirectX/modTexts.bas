@@ -187,8 +187,8 @@ Public Function DrawText(Text As String, X As Single, Y As Single)
     TextRect.Bottom = Y + (frmMain.TextHeight(Text) / VB.Screen.TwipsPerPixelY)
     TextRect.Right = X + (frmMain.TextWidth(Text) / VB.Screen.TwipsPerPixelX)
 
-    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
-    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+ '   DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
+'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
     DDevice.SetPixelShader PixelShaderDefault
     DDevice.SetVertexShader FVF_RENDER
 

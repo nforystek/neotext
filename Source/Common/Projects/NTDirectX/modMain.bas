@@ -64,6 +64,7 @@ End Sub
 
 Public Sub RenderFrame(ByRef UserControl As Macroscopic)
 
+
     Do While Not StopGame
 
         If PauseGame Then
@@ -103,7 +104,8 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             On Error GoTo nofocus
 
             'BeginMirrors UserControl, Camera.Player
-            
+    
+    
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0    ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
 
             On Error GoTo 0 'temporary
@@ -289,11 +291,11 @@ Public Sub RenderCamera(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     Dim matPos As D3DMATRIX
     Dim matRot As D3DMATRIX
 
-    DDevice.SetTransform D3DTS_WORLD, matWorld
     D3DXMatrixIdentity matWorld
+    DDevice.SetTransform D3DTS_WORLD, matWorld
 
     D3DXMatrixIdentity matView
-'    DDevice.SetTransform D3DTS_VIEW, matView
+    DDevice.SetTransform D3DTS_VIEW, matView
 
         
     If Not Camera.Player Is Nothing Then
@@ -440,7 +442,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
          'DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
          'DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
 
-        DDevice.SetRenderState D3DRS_ZENABLE, 1
+     '   DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
         DDevice.SetRenderState D3DRS_DITHERENABLE, 0
         DDevice.SetRenderState D3DRS_EDGEANTIALIAS, 0
@@ -448,17 +450,17 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, 0
         DDevice.SetRenderState D3DRS_VERTEXBLEND, 0
 
-        DDevice.SetRenderState D3DRS_CLIPPING, 1
+    '    DDevice.SetRenderState D3DRS_CLIPPING, 1
        ' DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 1
 
-        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+'        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+'        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
 
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
 
-        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
 
         DDevice.SetRenderState D3DRS_ALPHAREF, Transparent
         DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL

@@ -118,7 +118,7 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
     fogSTate = DDevice.GetRenderState(D3DRS_FOGENABLE)
     If fogSTate Then DDevice.SetRenderState D3DRS_FOGENABLE, False
     DDevice.SetRenderState D3DRS_LIGHTING, 1
-    DDevice.SetRenderState D3DRS_ZENABLE, False
+  '  DDevice.SetRenderState D3DRS_ZENABLE, False
         
 
     D3DXMatrixIdentity matWorld
@@ -148,9 +148,10 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
 
-    DDevice.SetRenderState D3DRS_CLIPPING, 1
+  '  DDevice.SetRenderState D3DRS_CLIPPING, 1
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetRenderState D3DRS_LIGHTING, 1
+    
 '    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
 '    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
 '    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 0
@@ -547,11 +548,11 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
                     DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
                End If
     
-                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR
-                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA
-
-                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+'                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR
+'                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTALPHA
+'
+'                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+'                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
                 
                 For i = 1 To p.Volume.Count Step 2
                     DDevice.SetMaterial GenericMaterial
@@ -571,11 +572,11 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
                     DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
                 End If
                 
-                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-
-                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 0
-                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 0
+'                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'
+'                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 0
+'                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 0
                 
                 For i = 1 To p.Volume.Count Step 2
                     DDevice.SetMaterial LucentMaterial
@@ -594,13 +595,13 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
                 Else
                     DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 192 * RelativeFactor, 192 * RelativeFactor, 192 * RelativeFactor)
                 End If
-        
-                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-
-                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-    
+'
+'                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'
+'                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+'                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+'
                  For i = 1 To p.Volume.Count Step 2
                     DDevice.SetMaterial LucentMaterial
                     DDevice.SetTexture 0, Files(p.Volume(i).TextureIndex).Data
@@ -865,8 +866,13 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
     DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR
     DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
-    DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Camera.Planet.Field / 2)
-    DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Camera.Planet.Field)
+    If Not Camera.Planet Is Nothing Then
+        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Camera.Planet.Field / 2)
+        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Camera.Planet.Field)
+    Else
+        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 2)
+        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
+    End If
     DDevice.SetRenderState D3DRS_FOGDENSITY, 0.9
 
     DDevice.SetTexture 1, Nothing
@@ -1082,25 +1088,25 @@ End Sub
 
 Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As Boolean)
 
-    If DDevice.GetRenderState(D3DRS_ALPHATESTENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-
-    If Transparent Then
-        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
-        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_DESTCOLOR Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
-        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-    End If
-
-    If Translucent Then
-        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
-        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
-        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-    End If
-
-    If Not (Translucent Or Transparent) Then
-        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-    End If
+'    If DDevice.GetRenderState(D3DRS_ALPHATESTENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+'
+'    If Transparent Then
+'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_DESTCOLOR Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+'    End If
+'
+'    If Translucent Then
+'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
+'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+'    End If
+'
+'    If Not (Translucent Or Transparent) Then
+'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'    End If
 End Sub
 Private Sub BackOfTheLine(ByRef line As NTNodes10.Collection)
     Dim Key As String
