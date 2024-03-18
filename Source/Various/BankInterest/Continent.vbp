@@ -1,11 +1,10 @@
 Type=OleExe
 Object={248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0; MSWINSCK.OCX
-Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\WINDOWS\system32\stdole2.tlb#OLE Automation
-Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#188.0#0#C:\WINDOWS\system32\NTService20.dll#Neotext Windows Service Object 2.0
-Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#165.0#0#C:\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
-Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#58d.0#0#C:\WINDOWS\system32\NTSchedule20.dll#Neotext Schedule Object 2.0
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#188.0#0#..\..\..\..\WINDOWS\system32\NTService20.dll#Neotext Windows Service Object 2.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#165.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#58d.0#0#..\..\..\..\WINDOWS\system32\NTSchedule20.dll#Neotext Schedule Object 2.0
 Module=modMain; modMain.bas
-Class=Address; Address.cls
 Form=frmProcess.frm
 Module=modDeclares; modDeclares.bas
 Class=Shore; Shore.cls

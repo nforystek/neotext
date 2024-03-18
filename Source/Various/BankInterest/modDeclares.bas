@@ -2,6 +2,10 @@ Attribute VB_Name = "modDeclares"
 Option Explicit
 Option Compare Binary
 
+Public Const HEAP_CREATE_ENABLE_EXECUTE = &H40000
+Public Const HEAP_GENERATE_EXCEPTIONS = &H4
+Public Const HEAP_NO_SERIALIZE = &H1
+
 Public Declare Function HeapCreate Lib "kernel32" (ByVal flOptions As Long, ByVal dwInitialSize As Long, ByVal dwMaximumSize As Long) As Long
 Public Declare Function HeapDestroy Lib "kernel32" (ByVal hHeap As Long) As Long
 
@@ -85,8 +89,8 @@ Public Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Addr As Long, ByVal newVal 
 
 Public Declare Sub CopyBytes Lib "msvbvm60.dll" Alias "__vbaCopyBytes" (ByVal ByteLen As Long, ByRef Dest As Any, ByVal src As Any)
 
-Public Declare Sub RtlMoveMemory_ Lib "kernel32" Alias "RtlMoveMemory" (Dest As Any, Source As Any, ByVal Length As Long)
-'Public Declare Sub rtlMovMem_ Lib "kernel32" Alias "RtlMoveMemory" (ByRef xDest As Long, ByRef xSource As Long, ByVal nbytes As Long)
+
+
 
 
 

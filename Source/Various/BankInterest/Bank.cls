@@ -26,7 +26,7 @@ Friend Property Let DownTime(ByVal RHS As Currency)
     pDownTime = RHS
 End Property
 
-Public Property Get Accounts() As NTNodes10.Collection
+Friend Property Get Accounts() As NTNodes10.Collection
     Set Accounts = pAccounts
 End Property
 
@@ -45,13 +45,16 @@ Public Property Get Routing()
 End Property
 
 Public Function OpenAccount() As Double
+    GlobalLock pAddress
     Dim Account As New Account
     Accounts.Add Account, "N" & Account.Number
     OpenAccount = Account.Number
     Set Account = Nothing
+    GlobalUnlock pAddress
 End Function
 
 Public Sub KillAccount(ByVal Number As Double)
+    GlobalLock pAddress
     Dim cnt As Long
     cnt = 1
     Do While cnt <= Accounts.Count
@@ -61,14 +64,15 @@ Public Sub KillAccount(ByVal Number As Double)
         End If
         cnt = cnt + 1
     Loop
+    GlobalUnlock pAddress
 End Sub
 
 Private Sub Class_Initialize()
-    pAddress = frmProcess.MyPooling.Alloc(0, LenB(pDownTime))
+    pAddress = GlobalAlloc(GMEM_SHARE, LenB(pDownTime))
     Set pAccounts = New NTNodes10.Collection
 End Sub
 
 Private Sub Class_Terminate()
-    frmProcess.MyPooling.Free pAddress
+    GlobalFree pAddress
     Set pAccounts = Nothing
 End Sub

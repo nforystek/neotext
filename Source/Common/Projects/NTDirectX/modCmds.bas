@@ -1054,7 +1054,7 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
         DDevice.SetTexture 0, Backdrop
         DDevice.SetTexture 1, Nothing
         
-        DDevice.SetTransform D3DTS_WORLD, matWorld
+        'DDevice.SetTransform D3DTS_WORLD, matWorld
         DDevice.DrawPrimitiveUP D3DPT_TRIANGLESTRIP, 2, Vertex(0), LenB(Vertex(0))
     
         If Len(CommandLine) > 0 Then

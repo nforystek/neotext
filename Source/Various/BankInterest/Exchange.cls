@@ -33,17 +33,17 @@ Public Function Withdraw(ByRef Routing As Double, ByRef Account As Double, ByVal
         Set FromAcct = FromBank.FindAccount(FromBank, Account)
         If Not FromAcct Is Nothing Then
             Dim Funds As Currency
-        
-            frmProcess.MyPooling.UnFreeze FromAcct.Number
-            frmProcess.MyPooling.RtlMoveMemory Funds, FromAcct.Number, LenB(Funds)
+            GlobalLock FromBank.Routing
+            LocalUnlock FromAcct.Number
+            RtlMoveMemory Funds, FromAcct.Number, LenB(Funds)
             If Funds >= Amount Then
                 Funds = Funds - Amount
-                frmProcess.MyPooling.RtlMoveMemory FromAcct.Number, Funds, LenB(Funds)
+                RtlMoveMemory FromAcct.Number, Funds, LenB(Funds)
             Else
                 Withdraw = InvalidFunding
             End If
-            frmProcess.MyPooling.Freeze FromAcct.Number
-
+            LocalLock FromAcct.Number
+            GlobalUnlock FromBank.Routing
         Else
             Withdraw = InvalidAccount
         End If
@@ -67,13 +67,13 @@ Public Function Deposit(ByRef Routing As Double, ByRef Account As Double, ByVal 
         Set ToAcct = ToBank.FindAccount(ToBank, Account)
         If Not ToAcct Is Nothing Then
             Dim Funds As Currency
-        
-            frmProcess.MyPooling.UnFreeze ToAcct.Number
-            frmProcess.MyPooling.RtlMoveMemory Funds, ToAcct.Number, LenB(Funds)
+            GlobalLock ToBank.Routing
+            LocalUnlock ToAcct.Number
+            RtlMoveMemory Funds, ToAcct.Number, LenB(Funds)
             Funds = Funds + Amount
-            frmProcess.MyPooling.RtlMoveMemory ToAcct.Number, Funds, LenB(Funds)
-            frmProcess.MyPooling.Freeze ToAcct.Number
-                
+            RtlMoveMemory ToAcct.Number, Funds, LenB(Funds)
+            LocalLock ToAcct.Number
+            GlobalUnlock ToBank.Routing
         Else
             Deposit = InvalidAccount
         End If
@@ -101,26 +101,25 @@ Public Function Transfer(ByRef RoutingFrom As Double, ByRef AccountFrom As Doubl
             Dim ToAcct As Account
             Set ToAcct = ToBank.FindAccount(ToBank, AccountTo)
             If Not ToAcct Is Nothing Then
-        
                 Dim Funds As Currency
-                
-                frmProcess.MyPooling.UnFreeze FromAcct.Number
-                frmProcess.MyPooling.RtlMoveMemory Funds, FromAcct.Number, LenB(Funds)
+                GlobalLock FromBank.Routing
+                LocalUnlock FromAcct.Number
+                RtlMoveMemory Funds, FromAcct.Number, LenB(Funds)
                 If Funds >= Amount Then
                     Funds = Funds - Amount
-                    frmProcess.MyPooling.RtlMoveMemory FromAcct.Number, Funds, LenB(Funds)
-                
-                    frmProcess.MyPooling.UnFreeze ToAcct.Number
-                    frmProcess.MyPooling.RtlMoveMemory Funds, ToAcct.Number, LenB(Funds)
+                    RtlMoveMemory FromAcct.Number, Funds, LenB(Funds)
+                    GlobalLock ToBank.Routing
+                    LocalUnlock ToAcct.Number
+                    RtlMoveMemory Funds, ToAcct.Number, LenB(Funds)
                     Funds = Funds + Amount
-                    frmProcess.MyPooling.RtlMoveMemory ToAcct.Number, Funds, LenB(Funds)
-                    frmProcess.MyPooling.Freeze ToAcct.Number
-                    
+                    RtlMoveMemory ToAcct.Number, Funds, LenB(Funds)
+                    LocalLock ToAcct.Number
+                    GlobalUnlock ToBank.Routing
                 Else
                     Transfer = InvalidFunding
                 End If
-                frmProcess.MyPooling.Freeze FromAcct.Number
-            
+                LocalLock FromAcct.Number
+                GlobalUnlock FromBank.Routing
             Else
                 Transfer = InvalidAccount
             End If
@@ -176,13 +175,13 @@ Friend Sub LogEvent(ByVal method As String, ByVal result As BANK_RETURNS, ByVal 
 End Sub
 
 Private Function GetLogFilename() As String
-
     GetLogFilename = SysPath & "LogFiles\NTACH\" & "ex" & Padding(2, Right(Year(Now), 2), "0") & Padding(2, Month(Now), "0") & Padding(2, Day(Now), "0") & ".log"
-
 End Function
-Public Function Padding(ByVal Length As Long, ByVal Value As String, Optional ByVal PadWith As String = " ") As String
+
+Private Function Padding(ByVal Length As Long, ByVal Value As String, Optional ByVal PadWith As String = " ") As String
     Padding = String(Abs((Length * Len(PadWith)) - (Len(Value) \ Len(PadWith))), PadWith) & Value
 End Function
+
 Private Sub Class_Initialize()
 
     If Not PathExists(SysPath & "LogFiles", False) Then MkDir SysPath & "LogFiles"

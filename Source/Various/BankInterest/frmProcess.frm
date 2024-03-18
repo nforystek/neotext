@@ -37,7 +37,7 @@ Attribute Interest.VB_VarHelpID = -1
 Public WithEvents Dividens As NTSchedule20.Schedule
 Attribute Dividens.VB_VarHelpID = -1
 
-Public MyPooling As Continent.Address
+'Public MyPooling As Continent.Address
 
 Private Sub Interest_ScheduledEvent()
     'every seven days calculate interest
@@ -49,19 +49,19 @@ Private Sub Interest_ScheduledEvent()
     Dim Inter As Currency
     
     For Each Bank In Shore.Banks
+        GlobalLock Bank.Routing
         For Each Acct In Bank.Accounts
-        
-            frmProcess.MyPooling.UnFreeze Acct.Number
-            frmProcess.MyPooling.RtlMoveMemory Funds, Acct.Number, LenB(Funds)
+            LocalUnlock Acct.Number
+            RtlMoveMemory Funds, Acct.Number, LenB(Funds)
             If Funds > 0 Then
                 Inter = (Funds * Bank.DownTime)
                 Funds = Funds + Inter
-                frmProcess.MyPooling.RtlMoveMemory Acct.Number, Funds, LenB(Funds)
+                RtlMoveMemory Acct.Number, Funds, LenB(Funds)
                 Exchange.LogEvent "Interest", Success, Inter, Bank.Routing, Acct.Number, 0, 0
             End If
-            frmProcess.MyPooling.Freeze Acct.Number
-
+            LocalLock Acct.Number
         Next
+        GlobalUnlock Bank.Routing
         Bank.DownTime = 0
     Next
     
@@ -79,19 +79,19 @@ Private Sub Dividens_ScheduledEvent()
     Dim Divden As Currency
     
     For Each Bank In Shore.Banks
+        GlobalLock Bank.Routing
         For Each Acct In Bank.Accounts
-        
-            frmProcess.MyPooling.UnFreeze Acct.Number
-            frmProcess.MyPooling.RtlMoveMemory Funds, Acct.Number, LenB(Funds)
+            LocalLock Acct.Number
+            RtlMoveMemory Funds, Acct.Number, LenB(Funds)
             If Funds > 0 Then
                 Divden = (Funds * Shore.PassTime)
                 Funds = Funds + Divden
-                frmProcess.MyPooling.RtlMoveMemory Acct.Number, Funds, LenB(Funds)
+                RtlMoveMemory Acct.Number, Funds, LenB(Funds)
                 Exchange.LogEvent "Dividens", Success, Divden, Bank.Routing, Acct.Number, 0, 0
             End If
-            frmProcess.MyPooling.Freeze Acct.Number
-
+            LocalUnlock Acct.Number
         Next
+        GlobalUnlock Bank.Routing
     Next
     
     Shore.PassTime = ElapsedCounter
@@ -121,12 +121,12 @@ Private Sub Form_Unload(Cancel As Integer)
     Set Interest = Nothing
     Set Dividens = Nothing
     
-    Do Until MyPooling.Count = 0
-
-        GlobalFree CLng(MyPooling.AddrCol(1))
-        MyPooling.AddrCol.Remove 1
-
-    Loop
-    
-    Set MyPooling = Nothing
+'    Do Until MyPooling.Count = 0
+'
+'        GlobalFree CLng(MyPooling.AddrCol(1))
+'        MyPooling.AddrCol.Remove 1
+'
+'    Loop
+'
+'    Set MyPooling = Nothing
 End Sub

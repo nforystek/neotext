@@ -13,6 +13,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+Private pAddress As Long
+
 Private pPassTime As Currency
 
 'make our cache object controller and available events
@@ -20,6 +22,10 @@ Public WithEvents Controller As NTService20.Controller
 Attribute Controller.VB_VarHelpID = -1
 
 Private pBanks As NTNodes10.Collection
+
+Friend Property Get Ordinal() As Long
+    Ordinal = pAddress
+End Property
 
 Friend Property Get PassTime() As Currency
     PassTime = pPassTime
@@ -64,9 +70,11 @@ End Sub
 Private Static Sub Class_Initialize()
     Set pBanks = New NTNodes10.Collection
     Set Controller = New NTService20.Controller 'lbind
+    pAddress = HeapCreate(HEAP_NO_SERIALIZE, LenB(pPassTime), 0)
 End Sub
 
 Private Static Sub Class_Terminate()
+    HeapDestroy pAddress
     Set Controller = Nothing 'properlly set to nothing
     Set pBanks = Nothing
 End Sub

@@ -144,23 +144,23 @@ Public Sub CreateText()
     Set DefaultRenderTarget = DDevice.GetRenderTarget
     Set DefaultStencilDepth = DDevice.GetDepthStencilSurface
 
-    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-    
-
- '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
+'    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
 '
-'    DDevice.GetFrontBuffer ReflectFrontBuffer
-                                
-    
-    
-    
- '   DDevice.SetClipPlane
-    
-    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-    
-    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-    
- '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+'
+' '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
+''
+''    DDevice.GetFrontBuffer ReflectFrontBuffer
+'
+'
+'
+'
+' '   DDevice.SetClipPlane
+'
+'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+'
+'    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+'
+' '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
 
 End Sub
 

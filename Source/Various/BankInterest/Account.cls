@@ -23,12 +23,12 @@ End Property
 
 Private Sub Class_Initialize()
     Dim Funds As Currency
-    pAddress = frmProcess.MyPooling.Alloc(0, LenB(Funds))
-    frmProcess.MyPooling.Freeze pAddress
+    pAddress = LocalAlloc(LMEM_NODISCARD, LenB(Funds))
+    LocalLock pAddress
 End Sub
 
 Private Sub Class_Terminate()
-    frmProcess.MyPooling.UnFreeze pAddress
-    frmProcess.MyPooling.Free pAddress
+    LocalUnlock pAddress
+    LocalFree pAddress
 End Sub
 

@@ -121,8 +121,8 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
   '  DDevice.SetRenderState D3DRS_ZENABLE, False
         
 
-    D3DXMatrixIdentity matWorld
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+'    D3DXMatrixIdentity matWorld
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
 
     Dim b As Brilliant
     Dim l As Long
@@ -148,7 +148,7 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
 
-  '  DDevice.SetRenderState D3DRS_CLIPPING, 1
+    DDevice.SetRenderState D3DRS_CLIPPING, 1
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetRenderState D3DRS_LIGHTING, 1
     
@@ -200,20 +200,17 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
         matView = matSave
         matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
         DDevice.SetTransform D3DTS_VIEW, matView
-
     
-'        D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
-'            ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far
-'        DDevice.SetTransform D3DTS_PROJECTION, matProj
 
     Else
         'do stop
+        'DDevice.SetTransform D3DTS_WORLD, matWorld
         DDevice.SetTransform D3DTS_VIEW, matSave
-'        matView = matSave
-        DDevice.SetTransform D3DTS_WORLD, matWorld
-        D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
-            ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far
-        DDevice.SetTransform D3DTS_PROJECTION, matProj
+        matView = matSave
+        'DDevice.SetTransform D3DTS_WORLD, matWorld
+        
+        ResetProjection UserControl, Camera
+
 
     End If
 End Sub
@@ -261,22 +258,22 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                     End If
     
                     DDevice.SetTransform D3DTS_WORLD, matPlane
-                    If Not p.Honing Then
+                  '  If Not p.Honing Then
                     
-                        D3DXMatrixRotationX matPitch, AngleRestrict(p.Rotate.X)
+                        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
                         D3DXMatrixMultiply matPlane, matPitch, matPlane
         
-                        D3DXMatrixRotationY matYaw, AngleRestrict(p.Rotate.Y)
+                        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
                         D3DXMatrixMultiply matPlane, matYaw, matPlane
         
-                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(p.Rotate.Z)
+                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
                         D3DXMatrixMultiply matPlane, matRoll, matPlane
                         
                         D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
                         D3DXMatrixMultiply matPlane, matScale, matPlane
                 
                         DDevice.SetTransform D3DTS_WORLD, matPlane
-                    End If
+                   ' End If
                     
                     With p.Volume((p.Volume.Count / 3) + 1)
             
@@ -294,7 +291,7 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                         
 
                       '  DDevice.DrawIndexedPrimitiveUP D3DPT_TRIANGLELIST, 0, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0)), p.Volume.Count
-                        DDevice.SetTransform D3DTS_WORLD, matWorld
+
                         DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
                         
             
@@ -337,21 +334,21 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                     End If
                                     
                                     DDevice.SetTransform D3DTS_WORLD, matPlane
-                                    If Not p.Honing Then
-                                        D3DXMatrixRotationX matPitch, AngleRestrict(p.Rotate.X)
+                                   ' If Not p.Honing Then
+                                        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
                                         D3DXMatrixMultiply matPlane, matPitch, matPlane
         
-                                        D3DXMatrixRotationY matYaw, AngleRestrict(p.Rotate.Y)
+                                        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
                                         D3DXMatrixMultiply matPlane, matYaw, matPlane
         
-                                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(p.Rotate.Z)
+                                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
                                         D3DXMatrixMultiply matPlane, matRoll, matPlane
                                         
                                         D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
                                         D3DXMatrixMultiply matPlane, matScale, matPlane
                                                 
                                         DDevice.SetTransform D3DTS_WORLD, matPlane
-                                    End If
+                                   ' End If
                                     SetRenderBlends .Transparent, .Translucent
                                     If Not (.Translucent Or .Transparent) Then
                                         DDevice.SetMaterial GenericMaterial
@@ -364,7 +361,6 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 '                                        If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                                     End If
                                     
-                                    DDevice.SetTransform D3DTS_WORLD, matWorld
                                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
     
                                 End With
@@ -384,21 +380,21 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
     
                             DDevice.SetTransform D3DTS_WORLD, matPlane
 
-                            If Not p.Honing Then
-                                D3DXMatrixRotationX matPitch, AngleRestrict(p.Rotate.X)
+                            'If Not p.Honing Then
+                                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
                                 D3DXMatrixMultiply matPlane, matPitch, matPlane
         
-                                D3DXMatrixRotationY matYaw, AngleRestrict(p.Rotate.Y)
+                                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
                                 D3DXMatrixMultiply matPlane, matYaw, matPlane
         
-                                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(p.Rotate.Z)
+                                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
                                 D3DXMatrixMultiply matPlane, matRoll, matPlane
                                 
                                 D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
                                 D3DXMatrixMultiply matPlane, matScale, matPlane
                                 
                                 DDevice.SetTransform D3DTS_WORLD, matPlane
-                            End If
+                         '   End If
                             
                             With p.Volume(1)
                                 SetRenderBlends .Transparent, .Translucent
@@ -413,7 +409,6 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 '                                    If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                                 End If
                                 
-                                DDevice.SetTransform D3DTS_WORLD, matWorld
                                 DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
                                 
                                 
@@ -435,21 +430,21 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                         
                         DDevice.SetTransform D3DTS_WORLD, matPlane
                     
-                        If Not p.Honing Then
-                            D3DXMatrixRotationX matPitch, AngleRestrict(p.Rotate.X)
+                       ' If Not p.Honing Then
+                            D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
                             D3DXMatrixMultiply matPlane, matPitch, matPlane
         
-                            D3DXMatrixRotationY matYaw, AngleRestrict(p.Rotate.Y)
+                            D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
                             D3DXMatrixMultiply matPlane, matYaw, matPlane
         
-                            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(p.Rotate.Z)
+                            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
                             D3DXMatrixMultiply matPlane, matRoll, matPlane
                             
                             D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
                             D3DXMatrixMultiply matPlane, matScale, matPlane
                             
                             DDevice.SetTransform D3DTS_WORLD, matPlane
-                        End If
+                       ' End If
                 
                         With p.Volume(1)
             
@@ -465,7 +460,6 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 '                                If .TextureIndex > 0 Then DDevice.SetTexture 1, Files(.TextureIndex).Data
                             End If
                             
-                            DDevice.SetTransform D3DTS_WORLD, matWorld
                             DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, p.Volume.Count, VertexDirectX((.TriangleIndex * 3)), Len(VertexDirectX(0))
             
                         End With
@@ -479,8 +473,7 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
 
     End With
     
-    'D3DXMatrixIdentity matWorld
-    'DDevice.SetTransform D3DTS_WORLD, matWorld
+
     
     
 End Sub
@@ -517,13 +510,13 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
                        
             If Not p.Honing Then
             
-                D3DXMatrixRotationX matPitch, AngleRestrict(p.Rotate.X)
+                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-p.Rotate.X)
                 D3DXMatrixMultiply matPlane, matPitch, matPlane
             
-                D3DXMatrixRotationY matYaw, AngleRestrict(p.Rotate.Y)
+                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-p.Rotate.Y)
                 D3DXMatrixMultiply matPlane, matYaw, matPlane
             
-                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3D(p.Rotate.Z)
+                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-p.Rotate.Z)
                 D3DXMatrixMultiply matPlane, matRoll, matPlane
                 
                 D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
@@ -560,7 +553,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
 '                    DDevice.SetMaterial GenericMaterial
 '                    DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
 
-                    DDevice.SetTransform D3DTS_WORLD, matWorld
+                   ' DDevice.SetTransform D3DTS_WORLD, matWorld
                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
                 Next
                     
@@ -584,7 +577,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
 '                    DDevice.SetMaterial GenericMaterial
 '                    DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
                      
-                    DDevice.SetTransform D3DTS_WORLD, matWorld
+                   ' DDevice.SetTransform D3DTS_WORLD, matWorld
                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
                 Next
                     
@@ -608,7 +601,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
 '                    DDevice.SetMaterial GenericMaterial
 '                    DDevice.SetTexture 1, Files(p.Volume(i).TextureIndex).Data
                                      
-                    DDevice.SetTransform D3DTS_WORLD, matWorld
+                    'DDevice.SetTransform D3DTS_WORLD, matWorld
                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
                 Next
                 
@@ -693,6 +686,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     Dim p2 As Planet
     Dim rsam As Single
     Dim v As Long
+    
+    Dim matYaw As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matRoll As D3DMATRIX
     
     Dim onkey As String 'setup camera key during this function state
   
@@ -810,24 +807,20 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         If onkey = p.Key Then
                             If dist > p.OuterEdge + p.Field Then
                                 Set Camera.Planet = Nothing
+'                                Debug.Print "Not"
                             End If
                         Else
                             If dist <= p.OuterEdge + p.Field And onkey = "" Then
 
                                 Set Camera.Planet = p
-
-
-
-                                Set p.Rotate = AngleAxisInvert(AngleAxisAddition(Camera.Player.Rotate, p.Absolute.Rotate))
-                                Set p.Absolute.Rotate = p.Rotate
-                                Set p.Relative.Rotate = Nothing
-
-'                                Set Camera.Player.Rotate = VectorDeduction(AngleAxisInvert(Camera.Player.Rotate), p.Rotate)
-'                                Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
-'                                Set Camera.Player.Relative.Rotate = Nothing
-'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'            Set p.Absolute.Rotate = p.Rotate
-'            Set p.Relative.Rotate = Nothing
+                                
+                                If Not Camera.Player Is Nothing Then
+                                    Set Camera.Player.Rotate = AngleAxisAddition(Camera.Player.Rotate, AngleAxisDifference(Camera.Planet.Rotate, Camera.Player.Rotate))
+                                    Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
+                                    Set Camera.Player.Relative.Rotate = Nothing
+                                End If
+'                                Debug.Print "Set"
+                                
                             Else
 
                             End If
@@ -962,10 +955,16 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '                        Set p.Absolute.Rotate = p.Rotate
 '                        Set p.Relative.Rotate = Nothing
 '###
+'                        Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+'                        Set p.Absolute.Rotate = Nothing
+'                        Set p.Relative.Rotate = Nothing
+'                        p.Moved = True
+
                         Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
                         Set p.Absolute.Rotate = p.Rotate
                         Set p.Relative.Rotate = Nothing
                         p.Moved = True
+                    
 '###
 
                         SubRenderPlateau UserControl, Camera, p
@@ -1002,13 +1001,11 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 
 
             Dim snap As Single
-            snap = p.RelativeColorFactor(dist)
-'            If snap <> 1 And snap <> 0 Then snap = 1 - snap
-            If snap = 0 And dist < p.OuterEdge + p.Field Then
-            '    Stop
+            snap = dist / (p.OuterEdge + p.Field)
             
-            End If
-           ' Debug.Print snap
+'            If snap <> 1 And snap <> 0 Then snap = 1 - snap
+
+            
             
 ''Debug.Print dist; snap
 ''           ' Dim pop As Point
@@ -1068,11 +1065,52 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '          Set p.Rotate = AnglesOfPoint(VectorDeduction(Camera.Player.Origin, p.Origin))
 '          Set p.Absolute.Rotate = p.Rotate
 '          Set p.Relative.Rotate = Nothing
-'###
-'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'            Set p.Absolute.Rotate = Nothing
+''###
+'            Dim angled As Point
+'            Set angled = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+'
+'            Dim motion As Point
+'            Set motion = AngleAxisAddition(MakePoint(0, 0.001, 0), p.Rotate)
+'            'AngleAxisAddition(angled, p.Rotate)
+'
+'            Dim ofsnap As Point
+'            Set ofsnap = AngleAxisPercentOf(angled, snap)
+'
+'            Dim tonew As Point
+'            Set tonew = AngleAxisInfluence(angled, motion)
+'
+'            Set p.Rotate = ofsnap
+'            Set p.Absolute.Rotate = p.Rotate
 '            Set p.Relative.Rotate = Nothing
+'            p.Moved = True
 '###
+'          Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+'          Set p.Absolute.Rotate = p.Rotate
+'          Set p.Relative.Rotate = Nothing
+'            p.Moved = True
+      '      Orientate MakePoint(0, 0, 0.001), p
+            
+            
+     '   Set Camera.Player.Origin = VectorInfluence(p.Origin, Camera.Player.Origin, 0.0001, )
+       '   Set Camera.Player.Absolute.Origin = p.Origin
+       If Not Camera.Player.Moved Then
+       
+        Set Camera.Player.Rotate = AngleAxisInfluence(MakePoint(0, 0, 0), Camera.Player.Rotate, 0.1)
+        Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
+        
+        Set Camera.Player.Origin = VectorInfluence(VectorAddition(p.Origin, MakePoint(0, 2, 0)), Camera.Player.Origin, 0.1)
+        Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+         Set Camera.Player.Relative.Origin = Nothing
+       End If
+       
+'        Set Camera.Player.Origin = VectorInfluence(p.Origin, Camera.Player.Origin, 0.1)
+'        Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+      '  Set Camera.Player.Relative.Origin = Nothing
+          
+         Camera.Player.Moved = True
+
+            
+            
             SubRenderPlateau UserControl, Camera, p
 
         End If
@@ -1088,25 +1126,25 @@ End Sub
 
 Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As Boolean)
 
-'    If DDevice.GetRenderState(D3DRS_ALPHATESTENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-'
-'    If Transparent Then
-'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
-'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_DESTCOLOR Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
-'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-'    End If
-'
-'    If Translucent Then
-'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
-'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
-'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-'    End If
-'
-'    If Not (Translucent Or Transparent) Then
-'        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-'        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-'        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-'    End If
+    If DDevice.GetRenderState(D3DRS_ALPHATESTENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+
+    If Transparent Then
+        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_DESTCOLOR Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+    End If
+
+    If Translucent Then
+        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_DESTALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
+        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) = 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+    End If
+
+    If Not (Translucent Or Transparent) Then
+        If DDevice.GetRenderState(D3DRS_ALPHABLENDENABLE) <> 0 Then DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+        If DDevice.GetRenderState(D3DRS_SRCBLEND) <> D3DBLEND_SRCALPHA Then DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        If DDevice.GetRenderState(D3DRS_DESTBLEND) <> D3DBLEND_INVSRCALPHA Then DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+    End If
 End Sub
 Private Sub BackOfTheLine(ByRef line As NTNodes10.Collection)
     Dim Key As String

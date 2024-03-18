@@ -39,9 +39,21 @@ Public Function ToString() As String
     If Not pPlayer Is Nothing Then
         If Molecules.Exists(pPlayer.Key) Then
             ToString = ToString & Include.URLEncode("Set Camera.Player = Molecules(""" & pPlayer.Key & """)") & vbCrLf
+            
             ToString = ToString & Include.URLEncode("Camera.Player.Origin.ToString = """ & pPlayer.Origin.ToString & """") & vbCrLf
             ToString = ToString & Include.URLEncode("Camera.Player.Rotate.ToString = """ & pPlayer.Rotate.ToString & """") & vbCrLf
+        ElseIf Not Camera.Planet Is Nothing Then
+            If Camera.Planet.Molecules.Exists(pPlayer.Key) Then
+                ToString = ToString & Include.URLEncode("Set Camera.Player = Camera.Planet.Molecules(""" & pPlayer.Key & """)") & vbCrLf
+           
+                ToString = ToString & Include.URLEncode("Camera.Player.Origin.ToString = """ & pPlayer.Origin.ToString & """") & vbCrLf
+                ToString = ToString & Include.URLEncode("Camera.Player.Rotate.ToString = """ & pPlayer.Rotate.ToString & """") & vbCrLf
+                
+            End If
         End If
+        
+
+        'End If
     End If
 
     ToString = ToString & Include.URLEncode("Camera.Color = " & pColor) & vbCrLf

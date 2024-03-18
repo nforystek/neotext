@@ -145,15 +145,15 @@ End Function
 
 Public Function Serialize() As String
     With ScriptControl1
-        If .Procedures.Count > 0 Then
-            Dim cnt As Long
-            For cnt = 1 To .Procedures.Count
-                If (LCase(.Procedures.Item(cnt).Name) = "serialize") Then
+'        If .Procedures.Count > 0 Then
+'            Dim cnt As Long
+'            For cnt = 1 To .Procedures.Count
+'                If (LCase(.Procedures.Item(cnt).Name) = "serialize") Then
                     Serialize = .Eval("Serialize")
                     If .Error.number <> 0 Then Err.Raise .Error.number, "Serialize", .Error.description & vbCrLf & "Line Number: " & .Error.line & " of sniplet; " & vbCrLf & .Error.Text
-                End If
-            Next
-        End If
+'                End If
+'            Next
+'        End If
     End With
 End Function
 

@@ -89,68 +89,69 @@ Attribute Serialize.VB_MemberFlags = "40"
 
 End Property
 
-Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As Point
+Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
     Set Point = New Point
     Point.X = X
     Point.Y = Y
-    Point.z = z
+    Point.Z = Z
 End Function
 
 Public Function URLDecode(ByVal encodedString As String) As String
-
-    Dim ReturnString As String
-    Dim currentChar As String
-    
-    Dim i As Long
-    i = 1
-
-    Do Until i > Len(encodedString)
-        currentChar = Mid(encodedString, i, 1)
-
-        If currentChar = "+" Then
-            ReturnString = ReturnString + " "
-            i = i + 1
-        ElseIf currentChar = "%" Then
-            currentChar = Mid(encodedString, i + 1, 2)
-            ReturnString = ReturnString + Chr(Val("&H" & currentChar))
-            i = i + 3
-        Else
-            ReturnString = ReturnString + currentChar
-            i = i + 1
-        End If
-    Loop
-    
-    URLDecode = ReturnString
+URLDecode = encodedString
+'    Dim ReturnString As String
+'    Dim currentChar As String
+'
+'    Dim i As Long
+'    i = 1
+'
+'    Do Until i > Len(encodedString)
+'        currentChar = Mid(encodedString, i, 1)
+'
+'        If currentChar = "+" Then
+'            ReturnString = ReturnString + " "
+'            i = i + 1
+'        ElseIf currentChar = "%" Then
+'            currentChar = Mid(encodedString, i + 1, 2)
+'            ReturnString = ReturnString + Chr(Val("&H" & currentChar))
+'            i = i + 3
+'        Else
+'            ReturnString = ReturnString + currentChar
+'            i = i + 1
+'        End If
+'    Loop
+'
+'    URLDecode = ReturnString
 
 End Function
 
 Public Function URLEncode(ByVal encodeString As String) As String
-    Dim ReturnString As String
-    Dim currentChar As String
-    
-    Dim i As Long
-
-    For i = 1 To Len(encodeString)
-        currentChar = Mid(encodeString, i, 1)
-
-        If Asc(currentChar) < 91 And Asc(currentChar) > 64 Then
-            ReturnString = ReturnString + currentChar
-        ElseIf Asc(currentChar) < 123 And Asc(currentChar) > 96 Then
-            ReturnString = ReturnString + currentChar
-        ElseIf Asc(currentChar) < 58 And Asc(currentChar) > 47 Then
-            ReturnString = ReturnString + currentChar
-        ElseIf Asc(currentChar) = 32 Then
-            ReturnString = ReturnString + "+"
-        Else
-            If Len(Hex(Asc(currentChar))) = 1 Then
-                ReturnString = ReturnString + "%0" + Hex(Asc(currentChar))
-            Else
-                ReturnString = ReturnString + "%" + Hex(Asc(currentChar))
-            End If
-        End If
-    Next
-
-    URLEncode = ReturnString
+URLEncode = encodeString
+'    Dim ReturnString As String
+'    Dim currentChar As String
+'
+'    Dim i As Long
+'
+'    For i = 1 To Len(encodeString)
+'        currentChar = Mid(encodeString, i, 1)
+'
+'        If Asc(currentChar) < 91 And Asc(currentChar) > 64 Then
+'            ReturnString = ReturnString + currentChar
+'        ElseIf Asc(currentChar) < 123 And Asc(currentChar) > 96 Then
+'            ReturnString = ReturnString + currentChar
+'        ElseIf Asc(currentChar) < 58 And Asc(currentChar) > 47 Then
+'            ReturnString = ReturnString + currentChar
+'        ElseIf Asc(currentChar) = 32 Then
+'            ReturnString = ReturnString + "+"
+'        Else
+'            If Len(Hex(Asc(currentChar))) = 1 Then
+'                ReturnString = ReturnString + "%0" + Hex(Asc(currentChar))
+'            Else
+'                ReturnString = ReturnString + "%" + Hex(Asc(currentChar))
+'            End If
+'        End If
+'    Next
+'
+'    URLEncode = ReturnString
 
 End Function
 

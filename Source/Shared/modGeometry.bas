@@ -600,9 +600,8 @@ Public Function LineSlope3D(ByRef p2 As Point, Optional ByRef p1 As Point = Noth
     End If
 End Function
 
-
 Public Function AngleRestrict(ByVal Angle1 As Single) As Single
-    Angle1 = Round(Angle1 * DEGREE, 0)
+    Angle1 = Angle1 * DEGREE
     Do While Round(Angle1, 0) > 360
         Angle1 = Angle1 - 360
     Loop
@@ -611,42 +610,6 @@ Public Function AngleRestrict(ByVal Angle1 As Single) As Single
     Loop
     AngleRestrict = Angle1 * RADIAN
 End Function
-
-'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-'    Dim tmp As Point
-'    Set tmp = Point
-'    If Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.z) And Angles.X <> 0 Then
-'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.X)
-'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.z), MakePoint(0, Angles.Y, Angles.z))
-'    ElseIf Abs(Angles.z) > Abs(Angles.Y) And Abs(Angles.z) > Abs(Angles.X) And Angles.z <> 0 Then
-'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.z)
-'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.z), MakePoint(Angles.X, Angles.Y, 0))
-'    ElseIf Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.z) And Angles.Y <> 0 Then
-'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.Y)
-'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.z), MakePoint(Angles.X, 0, Angles.z))
-'    End If
-'    Set VectorRotateAxis = tmp
-'    Set tmp = Nothing
-'End Function
-
-
-
-'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-'    Dim tmp As New Point
-'    Set VectorRotateAxis = New Point
-'    With VectorRotateAxis
-'        .Y = Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.z
-'        .z = Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.z
-'        tmp.X = Point.X
-'        tmp.Y = .Y
-'        tmp.z = .z
-'        .X = Sin(Angles.Y) * tmp.z + Cos(Angles.Y) * tmp.X
-'        .z = Cos(Angles.Y) * tmp.z - Sin(Angles.Y) * tmp.X
-'        tmp.X = .X
-'        .X = Cos(Angles.z) * tmp.X - Sin(Angles.z) * tmp.Y
-'        .Y = Sin(Angles.z) * tmp.X + Cos(Angles.z) * tmp.Y
-'    End With
-'End Function
 
 Public Function AngleOfCoord(ByRef Coord As Coord) As Single
     Dim X As Single
@@ -702,6 +665,11 @@ Public Function AngleOfCoord(ByRef Coord As Coord) As Single
     End If
 End Function
 
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+
 Public Function VectorAxisAngles(ByRef Point As Point) As Point
     Dim tmp As New Point
     Set VectorAxisAngles = New Point
@@ -719,6 +687,11 @@ Public Function VectorAxisAngles(ByRef Point As Point) As Point
 End Function
 
 
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+
 Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
     Dim tmp As Point
     Set tmp = Point
@@ -729,33 +702,44 @@ Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As
     Set tmp = Nothing
 End Function
 
-'Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Dim tmp As New Point
-'    Set VectorAxisAngles = New Point
-'    With VectorAxisAngles
-'        If Not (Point.X = 0 And Point.Y = 0 And Point.z = 0) Then
-'            Set tmp = Point
-'            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.z, tmp.X)))
-'            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), -.X)
-'            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.z, tmp.X, tmp.Y)))
-'            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), -.Y)
-'            .z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.z)))
-'            Set tmp = Nothing
-'        End If
-'    End With
-'End Function
-
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
 '    Dim tmp As Point
 '    Set tmp = Point
-'    Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.z)
-'    Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.X)
-'    Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.Y)
-'
-'
+'    If Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
+'    ElseIf Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
+'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
+'    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
+'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
+'    End If
 '    Set VectorRotateAxis = tmp
 '    Set tmp = Nothing
 'End Function
+
+'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As New Point
+'    Set VectorRotateAxis = New Point
+'    With VectorRotateAxis
+'        .Y = Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.Z
+'        .Z = Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.Z
+'        tmp.X = Point.X
+'        tmp.Y = .Y
+'        tmp.Z = .Z
+'        .X = Sin(Angles.Y) * tmp.Z + Cos(Angles.Y) * tmp.X
+'        .Z = Cos(Angles.Y) * tmp.Z - Sin(Angles.Y) * tmp.X
+'        tmp.X = .X
+'        .X = Cos(Angles.Z) * tmp.X - Sin(Angles.Z) * tmp.Y
+'        .Y = Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y
+'    End With
+'End Function
+
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
 
 Public Function VectorRotateX(ByRef Point As Point, ByVal Angle As Single) As Point
     Dim CosPhi   As Single
@@ -949,8 +933,7 @@ Public Function AngleInvertRotation(ByVal A As Single) As Single
 
 End Function
 Public Function AngleAddition(ByVal a1 As Single, ByVal a2 As Single) As Single
-    AngleAddition = a1 + a2
-    AngleAxisRestrict AngleAddition
+    AngleAddition = AngleRestrict(a1 + a2)
 End Function
 Public Function AngleAxisInvert(ByVal p As Point) As Point
     Set AngleAxisInvert = New Point
@@ -961,18 +944,41 @@ Public Function AngleAxisInvert(ByVal p As Point) As Point
     End With
 End Function
 Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
-    Set AngleAxisAddition = VectorAddition(p1, p2)
-    AngleAxisRestrict AngleAxisAddition
+    Dim p3 As New Point
+    Dim P4 As New Point
+    Set p3 = AngleAxisRestrict(p1)
+    Set P4 = AngleAxisRestrict(p2)
+    
+    Set AngleAxisAddition = New Point
+    With AngleAxisAddition
+    
+        .X = (p3.X * DEGREE + P4.X * DEGREE) * RADIAN
+        .Y = (p3.Y * DEGREE + P4.Y * DEGREE) * RADIAN
+        .Z = (p3.Z * DEGREE + P4.Z * DEGREE) * RADIAN
+        
+        
+        Set AngleAxisAddition = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+    End With
+    
 End Function
-Public Function AngleConvertWinToDX3D(ByVal Angle As Single) As Single
-    AngleConvertWinToDX3D = AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
+Public Function AngleConvertWinToDX3DX(ByVal Angle As Single) As Single
+    AngleConvertWinToDX3DX = AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
+End Function
+
+Public Function AngleConvertWinToDX3DY(ByVal Angle As Single) As Single
+    AngleConvertWinToDX3DY = AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
+End Function
+
+Public Function AngleConvertWinToDX3DZ(ByVal Angle As Single) As Single
+    AngleConvertWinToDX3DZ = AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
 End Function
 
 Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim p3 As New Point
     Dim P4 As New Point
-    Set p3 = AngleAxisInvert(p1)
-    Set P4 = AngleAxisInvert(p2)
+    Set p3 = AngleAxisRestrict(AngleAxisInvert(p1))
+    Set P4 = AngleAxisRestrict(AngleAxisInvert(p2))
+    
     Set AngleAxisCombine = New Point
     With AngleAxisCombine
     
@@ -987,19 +993,15 @@ Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
        ' .Y = ((p1.Y * p2.Y + p3.Y * P4.Y + p1.Y * p3.Y + p2.Y * P4.Y) ^ (1 / 4))
        ' .z = ((p1.z * p2.z + p3.z * P4.z + p1.z * p3.z + p2.z * P4.z) ^ (1 / 4))
         
-        
+        Set AngleAxisCombine = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
     End With
-    AngleAxisRestrict AngleAxisCombine
 End Function
 
 Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim d1 As Point
     Dim d2 As Point
-    Set d1 = MakePoint(p1.X, p1.Y, p1.Z)
-    Set d2 = MakePoint(p2.X, p2.Y, p2.Z)
-    
-    AngleAxisRestrict d1
-    AngleAxisRestrict d2
+    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.Z))
+    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.Z))
     
     d1.X = d1.X * DEGREE
     d1.Y = d1.Y * DEGREE
@@ -1025,145 +1027,283 @@ Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Poi
         c1 = Large(d1.Z, d2.Z)
         C2 = Least(d1.Z, d2.Z)
         .Z = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
+        
+        Set AngleAxisDifference = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
     End With
-    AngleAxisRestrict AngleAxisDifference
+    
+    
+    Set d1 = Nothing
+    Set d2 = Nothing
+End Function
+
+Public Function AngleAxisSubtraction(ByRef p1 As Point, ByRef p2 As Point) As Point
+    Dim d1 As Point
+    Dim d2 As Point
+    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.Z))
+    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.Z))
+    
+    d1.X = d1.X * DEGREE
+    d1.Y = d1.Y * DEGREE
+    d1.Z = d1.Z * DEGREE
+    
+    d2.X = d2.X * DEGREE
+    d2.Y = d2.Y * DEGREE
+    d2.Z = d2.Z * DEGREE
+    
+    Dim c1 As Single
+    Dim C2 As Single
+    
+    Set AngleAxisSubtraction = New Point
+    With AngleAxisSubtraction
+        .X = (Large(d1.X, d2.X) - Least(d1.X, d2.X)) * RADIAN
+        
+        .Y = (Large(d1.Y, d2.Y) - Least(d1.Y, d2.Y)) * RADIAN
+        
+        .Z = (Large(d1.Z, d2.Z) - Least(d1.Z, d2.Z)) * RADIAN
+        
+        Set AngleAxisSubtraction = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+    End With
     
     Set d1 = Nothing
     Set d2 = Nothing
 End Function
 
 Public Function AngleAxisDeduction(ByRef p1 As Point, ByRef p2 As Point) As Point
-
-    Set AngleAxisDeduction = VectorDeduction(p1, p2)
-    AngleAxisRestrict AngleAxisDeduction
+    Dim d1 As Point
+    Dim d2 As Point
+    Set d1 = AngleAxisRestrict(p1)
+    Set d2 = AngleAxisRestrict(p2)
+    
+    d1.X = d1.X * DEGREE
+    d1.Y = d1.Y * DEGREE
+    d1.Z = d1.Z * DEGREE
+    
+    d2.X = d2.X * DEGREE
+    d2.Y = d2.Y * DEGREE
+    d2.Z = d2.Z * DEGREE
+    
+    Set AngleAxisDeduction = New Point
+    With AngleAxisDeduction
+        .X = (d1.X - d2.X) * RADIAN
+        .Y = (d1.Y - d2.Y) * RADIAN
+        .Z = (d1.Z - d2.Z) * RADIAN
+        
+        Set AngleAxisDeduction = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+    End With
+    
+    
+    Set d1 = Nothing
+    Set d2 = Nothing
 
 End Function
 
-Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, Optional ByVal Amount As Single = 0.001, Optional ByVal Factor As Single = 1, Optional ByVal SnapMinimum As Single = 0, Optional ByVal SnapMaximum As Single = 0) As Single
-    ValueInfluence = Current
-    If ValueInfluence <> Final Then
+Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, _
+                                Optional ByVal Amount As Single = 0.001, _
+                                Optional ByVal SnapRange As Single = 0) As Single
+
+    If (Not ValueSnapCheck(Final, Current, SnapRange)) Then
         Dim n As Single
-        n = (Large(Final, ValueInfluence) - Least(Final, ValueInfluence))
-        If (n > SnapMaximum And SnapMaximum > 0) Or _
-            (n < SnapMinimum And SnapMinimum > 0) Then
+        n = Large(Final, Current) - Least(Final, Current)
+        If (n <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
             ValueInfluence = Final
         Else
-            If ValueInfluence > Final Then
-                If ValueInfluence - Amount * Factor >= Final Then
-                    ValueInfluence = ValueInfluence - Amount * Factor
+            If Current > Final Then
+                If Current - Amount >= Final Then
+                    ValueInfluence = Current - Amount
                 Else
                     ValueInfluence = Final
                 End If
-            ElseIf ValueInfluence < Final Then
-                If ValueInfluence + Amount * Factor <= Final Then
-                    ValueInfluence = ValueInfluence + Amount * Factor
+            ElseIf Current < Final Then
+                If Current + Amount <= Final Then
+                    ValueInfluence = Current + Amount
                 Else
                     ValueInfluence = Final
                 End If
             End If
         End If
+    Else
+        ValueInfluence = Final
     End If
 
 End Function
 
-Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Optional ByVal Amount As Single = 0.001, Optional ByVal Concurrent As Boolean = False, Optional ByVal SnapMinimum As Single = 0, Optional ByVal SnapMaximum As Single = 0) As Point
-    Set VectorInfluence = MakePoint(Current.X, Current.Y, Current.Z)
+Public Function ValueSnapCheck(ByVal Final As Single, ByVal Current As Single, ByVal SnapRange As Single) As Boolean
+    If SnapRange = 0 Or (Current = Final) Then
+        ValueSnapCheck = (Current = Final)
+    Else
+        Dim n As Single
+        n = Abs((Large(Final, Current) - Least(Final, Current)))
+        If (n <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
+            ValueSnapCheck = True
+        End If
+    End If
+End Function
+
+Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Optional ByVal Amount As Single = 0.001, _
+                                Optional ByVal Factor As Single = 1, Optional ByVal Concurrent As Boolean = True, _
+                                Optional ByVal SnapRange As Single = 0) As Point
+                                
+    Set VectorInfluence = VectorDisplace(Current, Final)
     With VectorInfluence
-    
         Dim n As Point
-        If Concurrent Then
-            Set n = VectorNormalize(VectorDeduction(Current, Final))
-            n.X = Abs(n.X)
-            n.Y = Abs(n.Y)
-            n.Z = Abs(n.Z)
+        If Not Concurrent Then
+            Set n = VectorNormalize(VectorInfluence)
+'            n.X = IIf(n.X = 0, Factor, n.X) * 100
+'            n.Y = IIf(n.Y = 0, Factor, n.Y) * 100
+'            n.Z = IIf(n.Z = 0, Factor, n.Z) * 100
+            n.X = IIf(n.X = 0, 1, n.X) * 100
+            n.Y = IIf(n.Y = 0, 1, n.Y) * 100
+            n.Z = IIf(n.Z = 0, 1, n.Z) * 100
         Else
-            Set n = MakePoint(1, 1, 1)
+            Set n = New Point
+            n.X = 100
+            n.Y = 100
+            n.Z = 100
         End If
         
-        .X = ValueInfluence(Final.X, Current.X, Amount, n.X, SnapMinimum, SnapMaximum)
-        .Y = ValueInfluence(Final.Y, Current.Y, Amount, n.Y, SnapMinimum, SnapMaximum)
-        .Z = ValueInfluence(Final.Z, Current.Z, Amount, n.Z, SnapMinimum, SnapMaximum)
+'        If (Not ValueSnapCheck(Final.X, Current.X, SnapRange)) Then .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
+'        If (Not ValueSnapCheck(Final.Y, Current.Y, SnapRange)) Then .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
+'        If (Not ValueSnapCheck(Final.Z, Current.Z, SnapRange)) Then .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / n.Z), SnapRange)
    
+        .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
+        .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
+        .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / n.Z), SnapRange)
+   
+        Set n = Nothing
     End With
 End Function
 
-Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, Optional ByVal Amount As Single = 0.001, Optional ByVal Factor As Single = 1, Optional ByVal SnapMinimum As Single = 0, Optional ByVal SnapMaximum As Single = 0) As Single
-    AngleInfluence = Current
-            
-    AngleRestrict Final
-    AngleRestrict Current
-    
-    If AngleInfluence <> Final Then
-        Dim lrg As Single
-        Dim low As Single
-        lrg = Large(AngleInfluence, Final)
-        low = Least(AngleInfluence, Final)
-        If ((lrg - low) > SnapMaximum And SnapMaximum > 0) Or _
-            ((lrg - low) < SnapMinimum And SnapMinimum > 0) Then
-            AngleInfluence = Final
-        Else
-            Dim n As Single
-            n = InvertNum(lrg, 360)
-            If ((lrg - low) < (low + n)) Then
-            
-                If (AngleInfluence > Final) Then
-                    If AngleInfluence - Amount * Factor >= Final Then
-                        AngleInfluence = AngleInfluence - Amount * Factor
-                    Else
-                        AngleInfluence = Final
+Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, _
+        Optional ByVal Amount As Single = 0.001, Optional ByVal SnapRange As Single = 0) As Single
+        
+        Dim a1 As Single
+        Dim a2 As Single
+        If Not ValueSnapCheck(Final, Current, SnapRange) Then
+            a1 = (Least(Current, Final) * DEGREE + (360 - Large(Current, Final) * DEGREE)) * RADIAN
+            a2 = (Large(Current, Final) * DEGREE - Least(Current, Final) * DEGREE) * RADIAN
+            If a1 < a2 Then
+                AngleInfluence = ValueInfluence(a1, 0, Amount, SnapRange)
+                a1 = AngleRestrict(Current + AngleInfluence)
+                a2 = AngleRestrict(Current - AngleInfluence)
+                If AngleInfluence <> 0 Then
+                    AngleInfluence = Final
+                    If Current > Final Then
+                        If a1 > Final Then AngleInfluence = a1
+                    ElseIf Current < Final Then
+                        If a2 < Final Then AngleInfluence = a2
                     End If
-                ElseIf (AngleInfluence < Final) Then
-                    If AngleInfluence + Amount * Factor <= Final Then
-                        AngleInfluence = AngleInfluence + Amount * Factor
-                    Else
-                        AngleInfluence = Final
-                    End If
+                    AngleInfluence = AngleRestrict(AngleInfluence)
                 End If
-                
-            ElseIf ((lrg - low) > (low + n)) Then
-
-                If (AngleInfluence > Final) Then
-                    If -n + 360 - Amount * Factor <= Final + 360 Then
-                        AngleInfluence = AngleInfluence - Amount * Factor
-                    Else
-                        AngleInfluence = Final
+            ElseIf a1 > a2 Then
+                AngleInfluence = ValueInfluence(a2, 0, Amount, SnapRange)
+                a1 = AngleRestrict(Current - AngleInfluence)
+                a2 = AngleRestrict(Current + AngleInfluence)
+                If AngleInfluence <> 0 Then
+                    AngleInfluence = Final
+                    If Current > Final Then
+                        If a1 > Final Then AngleInfluence = a1
+                    ElseIf Current < Final Then
+                        If a2 < Final Then AngleInfluence = a2
                     End If
-                ElseIf (AngleInfluence < Final) Then
-                    If AngleInfluence + 360 + Amount * Factor >= -n + 360 Then
-                        AngleInfluence = AngleInfluence + Amount * Factor
-                    Else
-                        AngleInfluence = Final
-                    End If
+                    AngleInfluence = AngleRestrict(AngleInfluence)
                 End If
-                
             End If
         End If
-    End If
-        
-    AngleRestrict AngleInfluence
 End Function
 
-
-Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point, Optional ByVal Amount As Single = 0.001, Optional ByVal Concurrent As Boolean = False, Optional ByVal SnapMinimum As Single = 0, Optional ByVal SnapMaximum As Single = 0) As Point
-    Set AngleAxisInfluence = MakePoint(Current.X, Current.Y, Current.Z)
+Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point, Optional ByVal Amount As Single = 0.001, _
+                                    Optional ByVal Factor As Single = 1, Optional ByVal Concurrent As Boolean = False, _
+                                    Optional ByVal SnapRange As Single = 0) As Point
+    
+    Set AngleAxisInfluence = AngleAxisDifference(Current, Final)
     With AngleAxisInfluence
-
         Dim n As Point
-        If Concurrent Then
-            Set n = VectorNormalize(AngleAxisDifference(Current, Final))
-            n.X = Abs(n.X)
-            n.Y = Abs(n.Y)
-            n.Z = Abs(n.Z)
+        If Not Concurrent Then
+            Set n = AngleAxisNormalize(AngleAxisInfluence)
+            n.X = IIf(n.X = 0, 1, n.X) * 100
+            n.Y = IIf(n.Y = 0, 1, n.Y) * 100
+            n.Z = IIf(n.Z = 0, 1, n.Z) * 100
         Else
-            Set n = MakePoint(1, 1, 1)
+            Set n = New Point
+            n.X = 100
+            n.Y = 100
+            n.Z = 100
         End If
         
-        .X = AngleInfluence(Final.X, Current.X, Amount, n.X, SnapMinimum, SnapMaximum)
-        .Y = AngleInfluence(Final.Y, Current.Y, Amount, n.Y, SnapMinimum, SnapMaximum)
-        .Z = AngleInfluence(Final.Z, Current.Z, Amount, n.Z, SnapMinimum, SnapMaximum)
+        .X = AngleInfluence(Final.X, Current.X, Amount * ((.X * Factor) / n.X), SnapRange)
+        .Y = AngleInfluence(Final.Y, Current.Y, Amount * ((.Y * Factor) / n.Y), SnapRange)
+        .Z = AngleInfluence(Final.Z, Current.Z, Amount * ((.Z * Factor) / n.Z), SnapRange)
         
+        Set n = Nothing
     End With
 End Function
+
+Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred As Point, ByVal DecimalPercent As Single) As Point
+
+    Dim d1 As Point
+    Dim d2 As Point
+
+    Set d1 = AngleAxisRestrict(MakePoint(ZeroPercent.X, ZeroPercent.Y, ZeroPercent.Z))
+    Set d2 = AngleAxisRestrict(MakePoint(OneHundred.X, OneHundred.Y, OneHundred.Z))
+    
+    d1.X = d1.X * DEGREE
+    d1.Y = d1.Y * DEGREE
+    d1.Z = d1.Z * DEGREE
+    
+    d2.X = d2.X * DEGREE
+    d2.Y = d2.Y * DEGREE
+    d2.Z = d2.Z * DEGREE
+    
+    Dim c1 As Single
+    Dim C2 As Single
+    
+    Set AngleAxisInbetween = New Point
+    With AngleAxisInbetween
+        c1 = Large(d1.X, d2.X)
+        C2 = Least(d1.X, d2.X)
+        .X = (C2 - c1)
+        
+        c1 = Large(d1.Y, d2.Y)
+        C2 = Least(d1.Y, d2.Y)
+        .Y = (C2 - c1)
+        
+        c1 = Large(d1.Z, d2.Z)
+        C2 = Least(d1.Z, d2.Z)
+        .Z = (C2 - c1)
+        
+        .X = (.X * DecimalPercent) * RADIAN
+        .Y = (.Y * DecimalPercent) * RADIAN
+        .Z = (.Z * DecimalPercent) * RADIAN
+        Set AngleAxisInbetween = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+    End With
+    
+    
+    
+    Set d1 = Nothing
+    Set d2 = Nothing
+
+End Function
+
+Public Function AngleAxisPercentOf(ByRef AngleAxis As Point, ByVal DecimalPercent As Single) As Point
+
+    Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(AngleAxis.X, AngleAxis.Y, AngleAxis.Z))
+    
+
+    With AngleAxisPercentOf
+        
+        .X = .X * DEGREE
+        .Y = .Y * DEGREE
+        .Z = .Z * DEGREE
+
+        .X = .X * DecimalPercent * RADIAN
+        .Y = .Y * DecimalPercent * RADIAN
+        .Z = .Z * DecimalPercent * RADIAN
+        
+        Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+    End With
+
+End Function
+
 
 Public Function VectorDotProduct(ByRef p1 As Point, ByRef p2 As Point) As Single
     VectorDotProduct = ((p1.X * p2.X) + (p1.Y * p2.Y) + (p1.Z * p2.Z))
