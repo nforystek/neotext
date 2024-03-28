@@ -207,32 +207,85 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
         'DDevice.SetTransform D3DTS_WORLD, matWorld
         DDevice.SetTransform D3DTS_VIEW, matSave
         matView = matSave
-        'DDevice.SetTransform D3DTS_WORLD, matWorld
+        DDevice.SetTransform D3DTS_WORLD, matWorld
         
         ResetProjection UserControl, Camera
 
 
     End If
 End Sub
+Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet, ByVal X As Single, ByVal Y As Single, ByVal Z As Single)
+
+    Dim matPlane As D3DMATRIX
+    Dim matPos As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matRoll As D3DMATRIX
+    Dim matScale As D3DMATRIX
+
+    D3DXMatrixIdentity matPlane
+    D3DXMatrixIdentity matPos
+    D3DXMatrixIdentity matYaw
+    D3DXMatrixIdentity matPitch
+    D3DXMatrixIdentity matRoll
+    D3DXMatrixIdentity matScale
+
+    D3DXMatrixScaling matScale, 1, 1, 1
+    D3DXMatrixMultiply matPlane, matScale, matPlane
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
+
+    D3DXMatrixTranslation matPos, 0, 0, 0
+    D3DXMatrixMultiply matPlane, matPos, matPlane
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
+    
+    D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(0)
+    D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+    D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(0)
+    D3DXMatrixMultiply matPlane, matYaw, matPlane
+
+    D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(0)
+    D3DXMatrixMultiply matPlane, matRoll, matPlane
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
+
+    
+    If Not p.Follow Then
+        D3DXMatrixTranslation matPos, X, Y, Z
+        D3DXMatrixMultiply matPlane, matPos, matPlane
+        
+        DDevice.SetTransform D3DTS_WORLD, matPlane
+
+        
+    End If
+
+    If Not p.Honing Then
+    
+        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
+        D3DXMatrixMultiply matPlane, matPitch, matPlane
+
+        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
+        D3DXMatrixMultiply matPlane, matYaw, matPlane
+        
+        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
+        D3DXMatrixMultiply matPlane, matRoll, matPlane
+
+        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
+        D3DXMatrixMultiply matPlane, matScale, matPlane
+    
+        DDevice.SetTransform D3DTS_WORLD, matPlane
+
+    
+    End If
+    
+        
+End Sub
+
 
 Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As Camera, ByRef p As Planet)
     With p
-
-
-        Dim matPlane As D3DMATRIX
-        Dim matRot As D3DMATRIX
-        Dim matPos As D3DMATRIX
-        Dim matScale As D3DMATRIX
-        Dim matYaw As D3DMATRIX
-        Dim matPitch As D3DMATRIX
-        Dim matRoll As D3DMATRIX
-
-        D3DXMatrixIdentity matPlane
-        D3DXMatrixIdentity matPos
-        D3DXMatrixIdentity matYaw
-        D3DXMatrixIdentity matPitch
-        D3DXMatrixIdentity matRoll
-        D3DXMatrixIdentity matScale
    
 
         'render the round portion first
@@ -249,32 +302,9 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                 If (Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Z - p.Origin.Z) > (testFar / 2)))) And p.PlateauHole Then
                     'draws hole type of plane if in range of the hole, else the infinite plane is used further down
     
-                    If Not p.Follow Then
-                        D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.Z
-                        D3DXMatrixMultiply matPlane, matPlane, matPos
-                    Else
-                        D3DXMatrixTranslation matPos, 0, 0, 0
-                        D3DXMatrixMultiply matPlane, matPlane, matPos
-                    End If
     
-                    DDevice.SetTransform D3DTS_WORLD, matPlane
-                  '  If Not p.Honing Then
-                    
-                        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
-                        D3DXMatrixMultiply matPlane, matPitch, matPlane
-        
-                        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
-                        D3DXMatrixMultiply matPlane, matYaw, matPlane
-        
-                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
-                        D3DXMatrixMultiply matPlane, matRoll, matPlane
-                        
-                        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
-                        D3DXMatrixMultiply matPlane, matScale, matPlane
-                
-                        DDevice.SetTransform D3DTS_WORLD, matPlane
-                   ' End If
-                    
+                    SubRenderPlanetSetup UserControl, Camera, p, p.Origin.X, p.Origin.Y, p.Origin.Z
+                   
                     With p.Volume((p.Volume.Count / 3) + 1)
             
                         SetRenderBlends .Transparent, .Translucent
@@ -324,31 +354,9 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                                 
                                 With p.Volume(1)
                                     
-                                    If Not p.Follow Then
-                                        D3DXMatrixTranslation matPos, (p.Origin.X \ (testFar / 2)) * (testFar / 2) + X, _
+                                    SubRenderPlanetSetup UserControl, Camera, p, (p.Origin.X \ (testFar / 2)) * (testFar / 2) + X, _
                                             (p.Origin.Y \ (testFar / 2)) * (testFar / 2), (p.Origin.Z \ (testFar / 2)) * (testFar / 2) + Z
-                                        D3DXMatrixMultiply matPlane, matPlane, matPos
-                                    Else
-                                        D3DXMatrixTranslation matPos, 0, 0, 0
-                                        D3DXMatrixMultiply matPlane, matPlane, matPos
-                                    End If
-                                    
-                                    DDevice.SetTransform D3DTS_WORLD, matPlane
-                                   ' If Not p.Honing Then
-                                        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
-                                        D3DXMatrixMultiply matPlane, matPitch, matPlane
-        
-                                        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
-                                        D3DXMatrixMultiply matPlane, matYaw, matPlane
-        
-                                        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
-                                        D3DXMatrixMultiply matPlane, matRoll, matPlane
-                                        
-                                        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
-                                        D3DXMatrixMultiply matPlane, matScale, matPlane
-                                                
-                                        DDevice.SetTransform D3DTS_WORLD, matPlane
-                                   ' End If
+
                                     SetRenderBlends .Transparent, .Translucent
                                     If Not (.Translucent Or .Transparent) Then
                                         DDevice.SetMaterial GenericMaterial
@@ -370,31 +378,7 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                         ElseIf (p.PlateauIsland Or p.PlateauDoughnut) Then
                         'draws island and doughnut stype plane where as no grid of them exists
     
-                            If Not p.Follow Then
-                                D3DXMatrixTranslation matPos, p.Origin.X, p.Origin.Y, p.Origin.Z
-                                D3DXMatrixMultiply matPlane, matPlane, matPos
-                            Else
-                                D3DXMatrixTranslation matPos, 0, 0, 0
-                                D3DXMatrixMultiply matPlane, matPlane, matPos
-                            End If
-    
-                            DDevice.SetTransform D3DTS_WORLD, matPlane
-
-                            'If Not p.Honing Then
-                                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
-                                D3DXMatrixMultiply matPlane, matPitch, matPlane
-        
-                                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
-                                D3DXMatrixMultiply matPlane, matYaw, matPlane
-        
-                                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
-                                D3DXMatrixMultiply matPlane, matRoll, matPlane
-                                
-                                D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
-                                D3DXMatrixMultiply matPlane, matScale, matPlane
-                                
-                                DDevice.SetTransform D3DTS_WORLD, matPlane
-                         '   End If
+                            SubRenderPlanetSetup UserControl, Camera, p, p.Origin.X, p.Origin.Y, p.Origin.Z
                             
                             With p.Volume(1)
                                 SetRenderBlends .Transparent, .Translucent
@@ -419,33 +403,10 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                     If (p.PlateauInfinite Or p.PlateauHole) Then
                     'draws a infinite stype plane, no escaping it
             
-                        If Not p.Follow Then
-                            D3DXMatrixTranslation matPos, ((Camera.Player.Origin.X - p.Origin.X) \ (testFar / 2)) * (testFar / 2), _
-                                 (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.Z - p.Origin.Z) \ (testFar / 2)) * (testFar / 2)
-                            D3DXMatrixMultiply matPlane, matPlane, matPos
-                        Else
-                            D3DXMatrixTranslation matPos, 0, 0, 0
-                            D3DXMatrixMultiply matPlane, matPlane, matPos
-                        End If
                         
-                        DDevice.SetTransform D3DTS_WORLD, matPlane
-                    
-                       ' If Not p.Honing Then
-                            D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
-                            D3DXMatrixMultiply matPlane, matPitch, matPlane
-        
-                            D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
-                            D3DXMatrixMultiply matPlane, matYaw, matPlane
-        
-                            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
-                            D3DXMatrixMultiply matPlane, matRoll, matPlane
-                            
-                            D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
-                            D3DXMatrixMultiply matPlane, matScale, matPlane
-                            
-                            DDevice.SetTransform D3DTS_WORLD, matPlane
-                       ' End If
-                
+                        SubRenderPlanetSetup UserControl, Camera, p, ((Camera.Player.Origin.X - p.Origin.X) \ (testFar / 2)) * (testFar / 2), _
+                                 (p.Origin.Y \ (testFar / 2)) * (testFar / 2), ((Camera.Player.Origin.Z - p.Origin.Z) \ (testFar / 2)) * (testFar / 2)
+
                         With p.Volume(1)
             
                             SetRenderBlends .Transparent, .Translucent
@@ -483,50 +444,8 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
     If Not p.Volume Is Nothing Then
     
         If p.Volume.Count > 0 Then
-            Dim matPlane As D3DMATRIX
-            Dim matRot As D3DMATRIX
-            Dim matPos As D3DMATRIX
-            Dim matScale As D3DMATRIX
-            Dim matYaw As D3DMATRIX
-            Dim matPitch As D3DMATRIX
-            Dim matRoll As D3DMATRIX
-                    
-            D3DXMatrixIdentity matPlane
-            D3DXMatrixIdentity matPos
-            D3DXMatrixIdentity matYaw
-            D3DXMatrixIdentity matPitch
-            D3DXMatrixIdentity matRoll
-            D3DXMatrixIdentity matScale
-            
-            If Not p.Follow Then
-                D3DXMatrixTranslation matPos, -p.Origin.X, -p.Origin.Y, -p.Origin.Z
-                D3DXMatrixMultiply matPlane, matPlane, matPos
-            Else
-                D3DXMatrixTranslation matPos, 0, 0, 0
-                D3DXMatrixMultiply matPlane, matPlane, matPos
-            End If
-                
-            DDevice.SetTransform D3DTS_WORLD, matPlane
-                       
-            If Not p.Honing Then
-            
-                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-p.Rotate.X)
-                D3DXMatrixMultiply matPlane, matPitch, matPlane
-            
-                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-p.Rotate.Y)
-                D3DXMatrixMultiply matPlane, matYaw, matPlane
-            
-                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-p.Rotate.Z)
-                D3DXMatrixMultiply matPlane, matRoll, matPlane
-                
-                D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
-                D3DXMatrixMultiply matPlane, matScale, matPlane
-                
-                DDevice.SetTransform D3DTS_WORLD, matPlane
-                
-            End If
-            
-    
+
+            SubRenderPlanetSetup UserControl, Camera, p, p.Origin.X, p.Origin.Y, p.Origin.Z
                        
             Dim i As Long
             Dim rsam As Single
@@ -704,7 +623,9 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     Dim nearest As Planet
     
     Dim tmp As Point
-    
+    Dim pop As Point
+    Dim per As Point
+
     If Not Camera.Planet Is Nothing Then onkey = Camera.Planet.Key
     'If Not Camera.Player Is Nothing Then AngleAxisRestrict Camera.Player.Rotate
    ' Camera.Color.RGB = RGB(0, 0, 0)
@@ -747,9 +668,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         If (dist > 0) And (Not (p.Translucent Or p.Transparent Or p.Alphablend)) Then
 
                             SubRenderWorld UserControl, Camera, p, dist
-                        
-                        Else
-                        
+
                         End If
                     End If
                 Case Plateau
@@ -790,14 +709,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                             Set nearest = p
                         End If
                         'find aiming at plaet (dist3 holds closest last aiming at dist)
-                    
-'###
-                        'Set tmp = AnglesOfPoint(VectorNegative(VectorDeduction(Camera.Player.Origin, p.Origin)))
-                        'Set tmp = AngleAxisDifference(AnglesOfPoint(VectorRotateAxis(MakePoint(0, 0, 1), Camera.Player.Rotate)), tmp)
-'###
+
                         Set tmp = VectorAxisAngles(VectorNegative(VectorDeduction(Camera.Player.Origin, p.Origin)))
                         Set tmp = AngleAxisDifference(VectorAxisAngles(VectorRotateAxis(MakePoint(0, 0, 1), Camera.Player.Rotate)), tmp)
-'###
+
                         Dist2 = VectorQuantify(tmp)
                         If dist3 = 0 Or Dist2 < dist3 Then
                             dist3 = Dist2
@@ -813,15 +728,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                             If dist <= p.OuterEdge + p.Field And onkey = "" Then
 
                                 Set Camera.Planet = p
-                                
-                                If Not Camera.Player Is Nothing Then
-                                    Set Camera.Player.Rotate = AngleAxisAddition(Camera.Player.Rotate, AngleAxisDifference(Camera.Planet.Rotate, Camera.Player.Rotate))
-                                    Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
-                                    Set Camera.Player.Relative.Rotate = Nothing
-                                End If
-'                                Debug.Print "Set"
-                                
-                            Else
 
                             End If
                         End If
@@ -834,7 +740,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             i = i + 1
             
         Loop
-        
+
 '        'find greatest dist of x/y/z for max universe size
 '        If sumx >= sumy And sumx >= sumz Then maxdist = sumx * 2
 '        If sumy >= sumx And sumy >= sumz Then maxdist = sumy * 2
@@ -843,8 +749,6 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
     End If
 
     SubRenderWorldSetup UserControl, Camera, False  'the second call returns the view state
-
-
 
     DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
     DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
@@ -943,29 +847,16 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                 End If
 
                 If (p.Form = Plateau) Then
-
-
+                    
                     If onkey = p.Key Then
                         dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.Z)
 
                     ElseIf onkey <> p.Key Then
                     
-'###
-'                        Set p.Rotate = AnglesOfPoint(VectorDeduction(Camera.Player.Origin, p.Origin))
-'                        Set p.Absolute.Rotate = p.Rotate
-'                        Set p.Relative.Rotate = Nothing
-'###
-'                        Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'                        Set p.Absolute.Rotate = Nothing
-'                        Set p.Relative.Rotate = Nothing
-'                        p.Moved = True
-
                         Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
                         Set p.Absolute.Rotate = p.Rotate
                         Set p.Relative.Rotate = Nothing
                         p.Moved = True
-                    
-'###
 
                         SubRenderPlateau UserControl, Camera, p
                         
@@ -981,138 +872,59 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
         
         If p.Key = onkey Then
             'finally render the planet we are on
-'            Static total As Single
-'            total = total + 0.001
-'            Set Camera.Player.Origin = VectorRotateY(Camera.Player.Origin, 0.001)
-'            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-            'Dim ang As Point
-            'Set ang = AnglesOfPoint(Camera.Player.Origin)
-            'ang.X = AngleRestrict(ang.X)
-           ' total = AngleRestrict(total)
-        
-            'z
-            'Debug.Print Round(Round(AngleRestrict(AngleOfCoord(MakePoint(Camera.Player.Origin.x, Camera.Player.Origin.y, 0))), 6) * DEGREE, 0); Round(Round(AngleRestrict(AngleInvertRotation(total - PI)), 6) * DEGREE, 0)
-            
-            'x
-            'Debug.Print Round(Round(AngleRestrict(AngleOfCoord(MakePoint(Camera.Player.Origin.Y, Camera.Player.Origin.z, 0))), 6) * DEGREE, 0); Round(Round(AngleRestrict(total + ((PI / 4) * 2)), 6) * DEGREE, 0)
 
-            'y
-            'Debug.Print Round(Round(AngleRestrict(AngleOfCoord(MakePoint(Camera.Player.Origin.z, Camera.Player.Origin.X, 0))), 6) * DEGREE, 0); Round(Round(AngleRestrict(total + ((PI / 4) * 2)), 6) * DEGREE, 0)
+'            dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.Z)
+          '  Dim snap As Single
+          '  snap = GetWorldRelativeFactor(p, Camera)
 
 
-            Dim snap As Single
-            snap = dist / (p.OuterEdge + p.Field)
-            
-'            If snap <> 1 And snap <> 0 Then snap = 1 - snap
+
+'            Debug.Print snap
+           ' If snap <> 1 And snap <> 0 Then snap = 1 - snap
+
+
+
+'            Set Camera.Player.Rotate = AngleAxisAddition(AngleAxisDeduction(tmp, p.Rotate), Camera.Player.Rotate)
+'            Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
+'            Set Camera.Player.Relative.Rotate = Nothing
+'            Camera.Player.Moved = True
+                
 
             
-            
-''Debug.Print dist; snap
-''           ' Dim pop As Point
-''           ' Set pop = PointOnPlaneNearestPoint(p.Molecules(1).Volume(1).Point1, p.Molecules(1).Volume(1).Point2, p.Molecules(1).Volume(1).Point3, Camera.Player.Origin)
-'            Dim tmpPt As Point
-'            If p.Volume.Count > 0 Then
-'                Set tmpPt = PointOnPlaneNearestPoint(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(1).Point3, Camera.Player.Origin)
-'
-'                If DistanceEx(tmpPt, Camera.Player.Origin) > p.OuterEdge / 2 Then
-'
-'
-'                    Debug.Print "test1"
-'                Else
-'                    Debug.Print "test2"
-'                End If
-'            End If
-'
-'            Set tmpPt = VectorDeduction(Camera.Player.Origin, p.Origin)
-'
-'            Set Camera.Player.Origin = VectorInfluence(p.Origin, tmpPt, snap)
-'            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-
-'            Set tmpPt = VectorAxisAngles(MakePoint(tmpPt.X, tmpPt.Y, tmpPt.Z))
-'             Set Camera.Planet.Rotate = tmpPt
-'            Debug.Print tmpPt
-'
-'            If snap = 1 Then
-'
-''                        Set p.Rotate = AngleAxisInfluence(tmpAngle, p.Rotate, snap)
-''                        Set p.Absolute.Rotate = p.Rotate
-'                       ' Set p.Relative.Rotate = Nothing
-'                Set p.Rotate = AngleAxisInfluence(MakePoint(0, 0, 0), MakePoint(tmpAngle.X, tmpAngle.Y, tmpAngle.Z), snap)
-'                Set p.Absolute.Rotate = p.Rotate
-'
-'            Else
-'           ' snap = p.RelativeColorFactor(dist - p.OuterEdge)
-'           ' If snap <> 1 And snap <> 0 Then snap = 1 - snap
-'            'If snap = 0 And dist < p.OuterEdge + p.Field Then snap = 1
-'
-'              '  If snap <> 0 Then
-'                Set p.Rotate = AngleAxisInfluence(MakePoint(tmpAngle.X, tmpAngle.Y, tmpAngle.Z), MakePoint(0, 0, 0), snap)
-'                Set p.Absolute.Rotate = p.Rotate
-'
-''                        Set p.Rotate = AngleAxisInfluence(tmpAngle, p.Rotate, snap)
-''                        Set p.Absolute.Rotate = p.Rotate
-''                        Set p.Relative.Rotate = Nothing
-'
-'                   ' Set p.Rotate = AngleAxisInfluence(tmpAngle, AngleAxisInfluence(tmpAngle, p.Rotate, snap))
-'                  '  Set p.Absolute.Rotate = p.Rotate
-'               ' Else
-'                  '  Set p.Rotate = tmpAngle
-'                 '   Set p.Absolute.Rotate = p.Rotate
-'               ' End If
-'            End If
-'            Set p.Relative.Rotate = Nothing
-'###
-'          Set p.Rotate = AnglesOfPoint(VectorDeduction(Camera.Player.Origin, p.Origin))
-'          Set p.Absolute.Rotate = p.Rotate
-'          Set p.Relative.Rotate = Nothing
-''###
-'            Dim angled As Point
-'            Set angled = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'
-'            Dim motion As Point
-'            Set motion = AngleAxisAddition(MakePoint(0, 0.001, 0), p.Rotate)
-'            'AngleAxisAddition(angled, p.Rotate)
-'
-'            Dim ofsnap As Point
-'            Set ofsnap = AngleAxisPercentOf(angled, snap)
-'
-'            Dim tonew As Point
-'            Set tonew = AngleAxisInfluence(angled, motion)
-'
-'            Set p.Rotate = ofsnap
+'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
 '            Set p.Absolute.Rotate = p.Rotate
 '            Set p.Relative.Rotate = Nothing
 '            p.Moved = True
-'###
-'          Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'          Set p.Absolute.Rotate = p.Rotate
-'          Set p.Relative.Rotate = Nothing
-'            p.Moved = True
-      '      Orientate MakePoint(0, 0, 0.001), p
+                        
+                        
             
-            
-     '   Set Camera.Player.Origin = VectorInfluence(p.Origin, Camera.Player.Origin, 0.0001, )
-       '   Set Camera.Player.Absolute.Origin = p.Origin
-       If Not Camera.Player.Moved Then
-       
-        Set Camera.Player.Rotate = AngleAxisInfluence(MakePoint(0, 0, 0), Camera.Player.Rotate, 0.1)
-        Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
-        
-        Set Camera.Player.Origin = VectorInfluence(VectorAddition(p.Origin, MakePoint(0, 2, 0)), Camera.Player.Origin, 0.1)
-        Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-         Set Camera.Player.Relative.Origin = Nothing
-       End If
-       
-'        Set Camera.Player.Origin = VectorInfluence(p.Origin, Camera.Player.Origin, 0.1)
-'        Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-      '  Set Camera.Player.Relative.Origin = Nothing
-          
-         Camera.Player.Moved = True
-
-            
+                        
+            SubRenderPlanetSetup UserControl, Camera, p, p.Origin.X, p.Origin.Y, p.Origin.Z
             
             SubRenderPlateau UserControl, Camera, p
 
+'############################################################
+'############################################################
+'###### progressive move to center with grace float #########
+'############################################################
+'                Set pop = PointNearOnPlane(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point1, Camera.Player.Origin)
+'                Set per = VectorAddition(VectorDeduction(Camera.Player.Origin, pop), Camera.Player.Origin)
+'
+'
+'                Set Camera.Player.Origin = per
+
+'############################################################
+'############################################################
+'###### make it restrictive to only up and down #############
+'############################################################
+          '  Set pop = PlaneNormal(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point1)
+         '   Set Camera.Player.Origin = VectorMultiply(Camera.Player.Origin, pop)
+
+'                Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+'                Set Camera.Player.Relative.Origin = Nothing
+
+            Orientate MakePoint(0, 0, 0.001), p
+            
         End If
         Set p = Nothing
 

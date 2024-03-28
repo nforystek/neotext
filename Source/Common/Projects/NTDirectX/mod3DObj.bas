@@ -484,11 +484,7 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     Dim matMat As D3DMATRIX
 
 
-'
 
-'
-'
-  '  DDevice.SetTransform D3DTS_WORLD, matMat
 
 
           
@@ -505,8 +501,50 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
         RenderOrbits p.Molecules, False
     Next
 
-    
-   ' RenderCamera UserControl, Camera
+'    D3DXMatrixIdentity matMat
+'
+'    D3DXMatrixIdentity matMat
+'
+'    If Not Camera.Planet Is Nothing Then
+'
+'        D3DXMatrixTranslation matPos, Camera.Planet.Absolute.Origin.X, Camera.Planet.Absolute.Origin.Y, Camera.Planet.Absolute.Origin.Z
+'        D3DXMatrixMultiply matMat, matPos, matMat
+'
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(Camera.Planet.Absolute.Rotate.X)
+'        D3DXMatrixMultiply matMat, matPitch, matMat
+'
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(Camera.Planet.Absolute.Rotate.Y)
+'        D3DXMatrixMultiply matMat, matYaw, matMat
+'
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(Camera.Planet.Absolute.Rotate.Z)
+'        D3DXMatrixMultiply matMat, matRoll, matMat
+'
+'        DDevice.SetTransform D3DTS_WORLD, matMat
+''        DDevice.SetTransform D3DTS_VIEW, matMat
+'
+'   End If
+'
+'    If Not Camera.Player Is Nothing Then
+'
+'        D3DXMatrixTranslation matPos, Camera.Player.Absolute.Origin.X, Camera.Player.Absolute.Origin.Y, Camera.Player.Absolute.Origin.Z
+'        D3DXMatrixMultiply matMat, matPos, matMat
+'
+'        DDevice.SetTransform D3DTS_VIEW, matMat
+'
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
+'        D3DXMatrixMultiply matMat, matPitch, matMat
+'
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Player.Absolute.Rotate.Y)
+'        D3DXMatrixMultiply matMat, matYaw, matMat
+'
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Player.Absolute.Rotate.Z)
+'        D3DXMatrixMultiply matMat, matRoll, matMat
+'
+'
+'        DDevice.SetTransform D3DTS_VIEW, matMat
+'
+'   End If
+'    RenderCamera UserControl, Camera
 
     
 '    If Not Camera.Planet Is Nothing Then
@@ -528,9 +566,9 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '        DDevice.SetTransform D3DTS_WORLD, matMat
 '
 '   End If
-            
+'
 'D3DXMatrixIdentity matMat
-''
+'
 '    If Not Camera.Player Is Nothing Then
 '
 '
@@ -550,30 +588,30 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '        DDevice.SetTransform D3DTS_VIEW, matMat
 '
 '   End If
+'
+
+
+'            D3DXMatrixIdentity matWorld
+'            DDevice.SetTransform D3DTS_WORLD, matWorld
+            
+    ' DDevice.SetTransform D3DTS_VIEW, matView
    
-'    If Not Camera.Planet Is Nothing Then
+'    If Not Camera.Player Is Nothing Then
 '
-'        D3DXMatrixTranslation matPos, -Camera.Planet.Absolute.Origin.X, -Camera.Planet.Absolute.Origin.Y, -Camera.Planet.Absolute.Origin.Z
-'        D3DXMatrixMultiply matMat, matPos, matMat
-'
-'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Planet.Absolute.Rotate.X)
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
 '        D3DXMatrixMultiply matMat, matPitch, matMat
 '
-'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Planet.Absolute.Rotate.Y)
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Player.Absolute.Rotate.Y)
 '        D3DXMatrixMultiply matMat, matYaw, matMat
 '
-'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Planet.Absolute.Rotate.Z)
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Player.Absolute.Rotate.Z)
 '        D3DXMatrixMultiply matMat, matRoll, matMat
 '
-'        DDevice.SetTransform D3DTS_WORLD, matMat
+'        D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.Z
+'        D3DXMatrixMultiply matMat, matPos, matMat
 '
 '   End If
    
-            'D3DXMatrixIdentity matWorld
-            'DDevice.SetTransform D3DTS_WORLD, matWorld
-            
-   '  DDevice.SetTransform D3DTS_WORLD, matWorld
-     
 End Sub
 
 Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
@@ -590,7 +628,10 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
                 If m.Parent Is Nothing Then
                     RenderMolecule m, Nothing, matMat
                 End If
+                
             Else
+            
+            
                 RenderMolecule m, Nothing, matMat
             End If
         
@@ -611,7 +652,32 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     Dim matRot As D3DMATRIX
     
     D3DXMatrixIdentity matPos
-        
+    
+'    If Not Camera.Player Is Nothing Then
+'        If Not Camera.Planet Is Nothing Then
+'            If ApplyTo.Key = Camera.Player.Key Then
+'
+'                D3DXMatrixTranslation matPos, -Camera.Planet.Offset.X, -Camera.Planet.Offset.Y, -Camera.Planet.Offset.Z
+'                D3DXMatrixMultiply matMat, matPos, matMat
+'
+'                D3DXMatrixScaling matScale, -Camera.Planet.Scaled.X, -Camera.Planet.Scaled.Y, -Camera.Planet.Scaled.Z
+'                D3DXMatrixMultiply matScale, matScale, matMat
+'
+'                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Planet.Rotate.Z)
+'                D3DXMatrixMultiply matMat, matRoll, matMat
+'
+'                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Planet.Rotate.Y)
+'                D3DXMatrixMultiply matMat, matYaw, matMat
+'
+'                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Planet.Rotate.X)
+'                D3DXMatrixMultiply matMat, matPitch, matMat
+'
+'                D3DXMatrixTranslation matPos, -Camera.Planet.Origin.X, -Camera.Planet.Origin.Y, -Camera.Planet.Origin.Z
+'                D3DXMatrixMultiply matMat, matPos, matMat
+'            End If
+'        End If
+'    End If
+    
     D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z
     D3DXMatrixMultiply matMat, matPos, matMat
    
@@ -630,16 +696,18 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     D3DXMatrixScaling matScale, ApplyTo.Scaled.X, ApplyTo.Scaled.Y, ApplyTo.Scaled.Z
     D3DXMatrixMultiply matScale, matScale, matMat
 
+    
+    If Not Parent Is Nothing Then
+        ApplyTo.Moved = ApplyTo.Moved Or Parent.Moved
 
-    If Not Parent Is Nothing Then ApplyTo.Moved = ApplyTo.Moved Or Parent.Moved
-
+    End If
     
     Dim v As Matter
     
     If Not ApplyTo.Volume Is Nothing Then
         For Each v In ApplyTo.Volume
     
-           ' If ApplyTo.Moved Then
+            If ApplyTo.Moved Then
             
                 D3DXVec3TransformCoord vout, ToVector(v.Point1), matScale
                 VertexDirectX((v.TriangleIndex * 3) + 0).X = vout.X
@@ -680,7 +748,7 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
                 VertexZAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).Z
                 VertexZAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).Z
 
-          '  End If
+            End If
 
             If ApplyTo.Visible And (Not (TypeName(ApplyTo) = "Planet")) Then
                 If Not (v.Translucent Or v.Transparent) Then
@@ -707,9 +775,10 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
         Next
     End If
 
+
     
     If ApplyTo.Moved Then ApplyTo.Moved = False
-    
+
     D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.Z
     D3DXMatrixMultiply matMat, matPos, matMat
     
@@ -724,6 +793,32 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     
     D3DXMatrixTranslation matPos, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.Z
     D3DXMatrixMultiply matMat, matPos, matMat
+
+'    If Not Camera.Player Is Nothing Then
+'        If Not Camera.Planet Is Nothing Then
+'            If ApplyTo.Key = Camera.Player.Key Then
+'
+'                D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.Z
+'                D3DXMatrixMultiply matMat, matPos, matMat
+'
+'                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(Camera.Planet.Rotate.X)
+'                D3DXMatrixMultiply matMat, matPitch, matMat
+'
+'                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(Camera.Planet.Rotate.Y)
+'                D3DXMatrixMultiply matMat, matYaw, matMat
+'
+'                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(Camera.Planet.Rotate.Z)
+'                D3DXMatrixMultiply matMat, matRoll, matMat
+'
+'                D3DXMatrixTranslation matPos, Camera.Planet.Offset.X, Camera.Planet.Offset.Y, Camera.Planet.Offset.Z
+'                D3DXMatrixMultiply matMat, matPos, matMat
+'
+'            End If
+'
+'
+'        End If
+'
+'    End If
     
 End Sub
 

@@ -1115,7 +1115,8 @@ Attribute ColorText.VB_Description = "Changes the color of existing text in the 
         End If
 
     Else
-        Err.Raise 8, , "The ColorText function must be used with in the ColorText event and can not be used otherwise.  (IRC style color coding may be used when setting the Text property, outside of the ColorText event)"
+        Err.Raise 8, , "The ColorText function must be used with in the ColorText event and can not be used otherwise." & _
+              vbCrLf & "(IRC style color coding may be used when setting the Text property at anytime no restrictions)"
     End If
 End Sub
 
@@ -1253,13 +1254,17 @@ End Property
 Public Property Set Font(ByRef newVal As StdFont) ' _
 Sets the font that the text is displayed in.
 Attribute Font.VB_Description = "Sets the font that the text is displayed in."
-'    Dim lastFont As StdFont
-'    Set lastFont = UserControl.Font
-'    Dim widthMatch As Boolean
+    Dim lastFont As StdFont
+    Set lastFont = UserControl.Font
+    Dim widthMatch As Boolean
+   
+    Set UserControl.Font = newVal
+    Set pBackBuffer.Font = UserControl.Font
     
+    Exit Property
 resetfont:
 
-    Set UserControl.Font = newVal
+    Set UserControl.Font = lastFont
     Set pBackBuffer.Font = UserControl.Font
     
 '    If widthMatch Then
@@ -1507,34 +1512,20 @@ Private Function ClipPrintText(ByVal X1 As Single, ByVal Y1 As Single, ByVal Str
         If bColor <> pBackcolor Then
             If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
                 pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-            'Else
-            '    ClipPrintText = 0
             End If
         ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
             If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
                 pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-            'Else
-            '    ClipPrintText = 0
             End If
-            'pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        'Else
-        '    ClipPrintText = 0
         End If
     ElseIf BoxFill Then
         If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
             pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        'Else
-        '    ClipPrintText = 0
         End If
     ElseIf ClippingWouldDraw(DrawableRect, RECT(X1, Y1, (Me.TextWidth(StrText) + X1), (Me.TextHeight(StrText) + Y1))) Then
         If ClipLineDraw(X1, Y1, (ClipPrintText + X1), (Me.TextHeight(StrText) + Y1), bColor, True) Then
             pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-        'Else
-        '    ClipPrintText = 0
         End If
-        'pBackBuffer.DrawText X1 / Screen.TwipsPerPixelX + 1, Y1 / Screen.TwipsPerPixelY, StrText, fColor
-    'Else
-    '    ClipPrintText = 0
     End If
 End Function
 
@@ -2266,69 +2257,107 @@ Private Function ClipLineDraw(ByVal X1 As Single, ByVal Y1 As Single, ByVal X2 A
 End Function
 
 Private Sub UserControl_Click()
+    Static lastClick As Byte
+    Static lastStart As Long
+    
+    Dim xy As POINTAPI
+    Dim rct As RECT
+    GetWindowRect UserControl.hWnd, rct
+    GetCursorPos xy
+    If (xy.X - rct.Left) <= (LineColumnWidth / Screen.TwipsPerPixelX) Then
+        lastClick = lastClick + 1
+    End If
+
+    If lastClick <> 0 Then
+        If (dragStart = 0 And (SelLength = 0)) And (lastClick = 2) And (SelStart = lastStart) Then
+            Dim endPos As Long
+            endPos = pText.poll(Asc(vbLf), 1, SelStart)
+            If endPos > 0 Then
+                SelStart = pSel.StartPos
+                SelLength = endPos
+            End If
+            InvalidateCursor
+        ElseIf (dragStart = 0 And (SelLength > 0)) And (lastClick = 1) Then
+            SelLength = 0
+            InvalidateCursor
+        Else
+            lastClick = 1
+        End If
+    End If
+    lastStart = SelStart
+
     dragStart = 0
     RaiseEvent Click
 End Sub
 
 Private Sub UserControl_DblClick()
-    Dim lpos As Long
-    Dim lend As Long
-    Dim ltmp1 As Long
-    Dim ltmp2 As Long
-    Dim ltmp3 As Long
-    Dim usechar As Byte
-    usechar = Asc(" ")
+
+    Dim xy As POINTAPI
+    Dim rct As RECT
+    GetWindowRect UserControl.hWnd, rct
+    GetCursorPos xy
+
+    If xy.X - rct.Left > LineColumnWidth / Screen.TwipsPerPixelX Then
     
-    ltmp1 = pText.Pass(Asc(" "), 0, SelStart)
-    ltmp2 = pText.Pass(Asc(vbTab), 0, SelStart)
-    ltmp3 = pText.Pass(Asc(vbLf), 0, SelStart)
-    
-    If ltmp1 > ltmp2 And ltmp1 > ltmp3 Then
+        Dim lpos As Long
+        Dim lend As Long
+        Dim ltmp1 As Long
+        Dim ltmp2 As Long
+        Dim ltmp3 As Long
+        Dim usechar As Byte
         usechar = Asc(" ")
-    ElseIf ltmp2 > ltmp1 And ltmp2 > ltmp3 Then
-        usechar = Asc(vbTab)
-    ElseIf ltmp3 > ltmp1 And ltmp3 > ltmp2 Then
-        usechar = Asc(vbLf)
+        
+        ltmp1 = pText.Pass(Asc(" "), 0, SelStart)
+        ltmp2 = pText.Pass(Asc(vbTab), 0, SelStart)
+        ltmp3 = pText.Pass(Asc(vbLf), 0, SelStart)
+        
+        If ltmp1 > ltmp2 And ltmp1 > ltmp3 Then
+            usechar = Asc(" ")
+        ElseIf ltmp2 > ltmp1 And ltmp2 > ltmp3 Then
+            usechar = Asc(vbTab)
+        ElseIf ltmp3 > ltmp1 And ltmp3 > ltmp2 Then
+            usechar = Asc(vbLf)
+        End If
+        
+        lpos = pText.Pass(usechar, 0, SelStart)
+    
+        If lpos > 0 Then
+            lpos = pText.poll(usechar, lpos, 0, SelStart) + 1
+    
+            ltmp1 = pText.poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
+            ltmp2 = pText.poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
+            ltmp3 = pText.poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
+            
+            If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
+                lend = ltmp1
+            ElseIf ltmp2 < ltmp1 And ltmp2 < ltmp3 And ltmp2 > 0 Then
+                lend = ltmp2
+            ElseIf ltmp3 < ltmp1 And ltmp3 < ltmp2 And ltmp3 > 0 Then
+                lend = ltmp3
+            End If
+    
+            SelStart = lpos
+            SelLength = ((lpos + 1) + lend) - lpos
+        Else
+    
+            ltmp1 = pText.poll(Asc(" "), 1, 0, pText.Length)
+            ltmp2 = pText.poll(Asc(vbTab), 1, 0, pText.Length)
+            ltmp3 = pText.poll(Asc(vbLf), 1, 0, pText.Length)
+            lend = pText.Length
+            
+            If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
+                lend = ltmp1
+            ElseIf ltmp2 < ltmp1 And ltmp2 < ltmp3 And ltmp2 > 0 Then
+                lend = ltmp2
+            ElseIf ltmp3 < ltmp1 And ltmp3 < ltmp2 And ltmp3 > 0 Then
+                lend = ltmp3
+            End If
+            
+            SelStart = 0
+            SelLength = lend
+        End If
     End If
     
-    lpos = pText.Pass(usechar, 0, SelStart)
-
-    If lpos > 0 Then
-        lpos = pText.poll(usechar, lpos, 0, SelStart) + 1
-
-        ltmp1 = pText.poll(Asc(" "), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp2 = pText.poll(Asc(vbTab), 1, lpos + 1, pText.Length - (lpos + 1))
-        ltmp3 = pText.poll(Asc(vbLf), 1, lpos + 1, pText.Length - (lpos + 1))
-        
-        If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
-            lend = ltmp1
-        ElseIf ltmp2 < ltmp1 And ltmp2 < ltmp3 And ltmp2 > 0 Then
-            lend = ltmp2
-        ElseIf ltmp3 < ltmp1 And ltmp3 < ltmp2 And ltmp3 > 0 Then
-            lend = ltmp3
-        End If
-
-        SelStart = lpos
-        SelLength = ((lpos + 1) + lend) - lpos
-    Else
-
-        ltmp1 = pText.poll(Asc(" "), 1, 0, pText.Length)
-        ltmp2 = pText.poll(Asc(vbTab), 1, 0, pText.Length)
-        ltmp3 = pText.poll(Asc(vbLf), 1, 0, pText.Length)
-        lend = pText.Length
-        
-        If ltmp1 < ltmp2 And ltmp1 < ltmp3 And ltmp1 > 0 Then
-            lend = ltmp1
-        ElseIf ltmp2 < ltmp1 And ltmp2 < ltmp3 And ltmp2 > 0 Then
-            lend = ltmp2
-        ElseIf ltmp3 < ltmp1 And ltmp3 < ltmp2 And ltmp3 > 0 Then
-            lend = ltmp3
-        End If
-        
-        SelStart = 0
-        SelLength = lend
-    End If
-
     RaiseEvent DblClick
 End Sub
 
@@ -2766,8 +2795,6 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
         hasLF = InStr(txtLines, vbLf) > 0
         txt = RemoveNextArg(txtLines, vbLf)
         
-        'If hasLF Then tmpsel.StopPos = tmpsel.StopPos - 1
-        
         txt = Replace(txt, vbLf, "")
         If Len(txt) > 0 Then
             If InStr(CharStr, Chr(8)) = 0 Then
@@ -2955,10 +2982,10 @@ End Sub
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent MouseDown(Button, Shift, X, Y)
     If Button = 1 And Shift = 0 Then
+    
 
         Dim lpos As Long
         lpos = CaretFromPoint(X, Y)
-
         If (SelLength > 0 And lpos > SelStart And lpos < SelStart + SelLength) And dragStart = 0 Then
             If pSel.StartPos > pSel.StopPos Then
                 dragStart = lpos - pSel.StopPos
@@ -2969,24 +2996,19 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
             pSel.StartPos = lpos
             If Shift = 0 Then pSel.StopPos = pSel.StartPos
         End If
-    
-        InvalidateCursor
 
+                        
+        InvalidateCursor
     Else
         dragStart = 0
     End If
-
 End Sub
 
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent MouseMove(Button, Shift, X, Y)
-
     If Button = 1 And hasFocus Then
-
         Dim lpos As Long
-
         lpos = CaretFromPoint(X, Y)
-    
         If lpos < pSel.StopPos And (dragStart = -1 Or dragStart = 0) Then
             pSel.StopPos = lpos
             dragStart = -1
@@ -2995,30 +3017,24 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             dragStart = -2
         ElseIf (dragStart > 0) Then
             If dText Is Nothing Then
-
                 UserControl.OLEDrag
             Else
                 pSel.StartPos = lpos
                 pSel.StopPos = lpos
                 UserControl_Paint
             End If
-            
         End If
-
         Dim Loc As POINTAPI
         Loc = CaretLocation
-
         Dim newloc As POINTAPI
         newloc.X = Loc.X
         newloc.Y = Loc.Y
-
         If X < 0 Then
             If (-X < (UsercontrolWidth / 2)) Then 'slow
                 newloc.X = newloc.X - TextWidth
             Else
                 newloc.X = newloc.X - (TextWidth * 4)
             End If
-
         ElseIf X > UsercontrolWidth + LineColumnWidth Then
             If (X - (UsercontrolWidth + LineColumnWidth) < (UsercontrolWidth / 2)) Then 'slow
                 newloc.X = newloc.X + TextWidth
@@ -3026,7 +3042,6 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
                 newloc.X = newloc.X + (TextWidth * 4)
             End If
         End If
-
         If Y < 0 Then
             If (-Y < (UsercontrolWidth / 2)) Then 'slow
                 newloc.Y = newloc.Y - TextHeight
@@ -3040,16 +3055,12 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
                 newloc.Y = newloc.Y + (TextHeight * 4)
             End If
         End If
-
         If Loc.X <> newloc.X Or Loc.Y <> newloc.Y Then
             MakeCaretVisible newloc, False
         End If
-
     Else
         dragStart = 0
-
     End If
-    
     If dragStart > 0 Then
         UserControl.MousePointer = 99
     Else
@@ -3329,12 +3340,10 @@ Public Static Sub Refresh()
                     End If
     
                 Else
-                    'If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, , , False)
                     If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(), bpos, , , False)
                 End If
                     
             Else
-                'If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, pText.Partial(bpos, epos - bpos), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
                 If epos - bpos > 0 Then reClean = ClipPrintTextBlock(curX, curY, tText.Partial(), bpos, GetSysColor(COLOR_GRAYTEXT), GetSysColor(COLOR_WINDOW), False)
             End If
          

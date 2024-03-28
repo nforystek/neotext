@@ -98,7 +98,8 @@ End Function
 Public Function ToPlane(ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Range
         
     Dim pNormal As Point
-    Set pNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(V2, V1), VectorDeduction(V3, V1)))
+    Set pNormal = VectorCrossProduct(VectorDeduction(V2, V1), VectorDeduction(V3, V1))
+    Set pNormal = VectorNormalize(pNormal)
         
     Set ToPlane = New Range
     With ToPlane
@@ -177,33 +178,25 @@ End Function
 Public Function PointOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
     Dim r As Range
     Set r = ToPlane(v0, V1, V2)
-    PointOnPlane = (r.X * (p.X - v0.X)) + (r.Y * (p.Y - v0.Y)) + (r.Z * (p.Z - v0.Z)) = 0
+    PointOnPlane = ((r.X * (p.X - v0.X)) + (r.Y * (p.Y - v0.Y)) + (r.Z * (p.Z - v0.Z)) = 0)
 End Function
 Public Function PointSideOfPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
     PointSideOfPlane = VectorDotProduct(PlaneNormal(v0, V1, V2), p) > 0
 End Function
 
-Public Function PointOnPlaneNearestPoint(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Point
-
-    Set PointOnPlaneNearestPoint = New Point
-    With PointOnPlaneNearestPoint
-    
+Public Function PointNearOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Point
+    Set PointNearOnPlane = New Point
+    With PointNearOnPlane
         Dim r As Range
         Set r = ToPlane(v0, V1, V2)
-        
         Dim n As Point
         Set n = PlaneNormal(v0, V1, V2)
-    
         Dim d As Single
         d = DistanceToPlane(p, r)
-        
-        .X = (d * n.X)
-        .Y = (d * n.Y)
-        .Z = (d * n.Z)
-        
+        .X = p.X - (d * n.X)
+        .Y = p.Y - (d * n.Y)
+        .Z = p.Z - (d * n.Z)
     End With
-    Set PointOnPlaneNearestPoint = VectorAddition(p, PointOnPlaneNearestPoint)
-    
 End Function
 Public Function LinePointByPercent(ByRef p1 As Point, ByRef p2 As Point, ByVal Factor As Single) As Point
     Set LinePointByPercent = New Point
@@ -270,45 +263,45 @@ Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir A
 End Function
 
 Public Function TriangleIntersect(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef t1p3 As Point, ByRef t2p1 As Point, ByRef t2p2 As Point, ByRef t2p3 As Point) As Point
-    'Debug.Print TriangleIntersect(MakePoint(-5, 0, 0), MakePoint(5, 0, -5), MakePoint(5, 0, 5), MakePoint(-2.5, 2.5, 0), MakePoint(2.5, 2.5, 0), MakePoint(0, -2.5, 0))
-    'compute another way of representing triangles, the center, normal and side lengths
-    Dim t1n As New Point
-    Dim t2n As New Point
-    Dim t1a As New Point
-    Dim t2a As New Point
-    Dim t1l As New Point
-    Dim t2l As New Point
-    
-    t1n = TriangleNormal(t1p1, t1p2, t1p3)
-    t2n = TriangleNormal(t2p1, t2p2, t2p3)
-
-    'Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
-
-'    t1n = PlaneNormal(t1p1, t1p2, t1p3)
-'    t2n = PlaneNormal(t2p1, t2p2, t2p3)
-'    Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
-    
-    t1a = TriangleAxii(t1p1, t1p2, t1p3)
-    t2a = TriangleAxii(t2p1, t2p2, t2p3)
-    
-    Debug.Print t1a; t2a
-    
-    t1l.X = DistanceEx(t1p1, t1p2)
-    t1l.Y = DistanceEx(t1p2, t1p3)
-    t1l.Z = DistanceEx(t1p3, t1p1)
-    
-    t2l.X = DistanceEx(t2p1, t2p2)
-    t2l.Y = DistanceEx(t2p2, t2p3)
-    t2l.Z = DistanceEx(t2p3, t2p1)
-     
-    Debug.Print t1l; t2l
-       
-    
-    Set TriangleIntersect = New Point
-    With TriangleIntersect
-
-
-    End With
+'    'Debug.Print TriangleIntersect(MakePoint(-5, 0, 0), MakePoint(5, 0, -5), MakePoint(5, 0, 5), MakePoint(-2.5, 2.5, 0), MakePoint(2.5, 2.5, 0), MakePoint(0, -2.5, 0))
+'    'compute another way of representing triangles, the center, normal and side lengths
+'    Dim t1n As New Point
+'    Dim t2n As New Point
+'    Dim t1a As New Point
+'    Dim t2a As New Point
+'    Dim t1l As New Point
+'    Dim t2l As New Point
+'
+'    t1n = TriangleNormal(t1p1, t1p2, t1p3)
+'    t2n = TriangleNormal(t2p1, t2p2, t2p3)
+'
+'    'Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
+'
+''    t1n = PlaneNormal(t1p1, t1p2, t1p3)
+''    t2n = PlaneNormal(t2p1, t2p2, t2p3)
+''    Debug.Print t1n; VectorIsNormal(t1n); t2n; VectorIsNormal(t2n)
+'
+'    t1a = TriangleAxii(t1p1, t1p2, t1p3)
+'    t2a = TriangleAxii(t2p1, t2p2, t2p3)
+'
+'    Debug.Print t1a; t2a
+'
+'    t1l.X = DistanceEx(t1p1, t1p2)
+'    t1l.Y = DistanceEx(t1p2, t1p3)
+'    t1l.Z = DistanceEx(t1p3, t1p1)
+'
+'    t2l.X = DistanceEx(t2p1, t2p2)
+'    t2l.Y = DistanceEx(t2p2, t2p3)
+'    t2l.Z = DistanceEx(t2p3, t2p1)
+'
+'    Debug.Print t1l; t2l
+'
+'
+'    Set TriangleIntersect = New Point
+'    With TriangleIntersect
+'
+'
+'    End With
 End Function
 
 Public Function RandomPositive(ByVal LowerBound As Long, ByVal UpperBound As Long) As Single
@@ -1096,10 +1089,8 @@ Public Function AngleAxisDeduction(ByRef p1 As Point, ByRef p2 As Point) As Poin
     Set d2 = Nothing
 
 End Function
-
-Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, _
-                                Optional ByVal Amount As Single = 0.001, _
-                                Optional ByVal SnapRange As Single = 0) As Single
+Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, Optional ByVal Amount As Single = 0.001, _
+                                Optional ByVal Factor As Single = 1, Optional ByVal SnapRange As Single = 0) As Single
 
     If (Not ValueSnapCheck(Final, Current, SnapRange)) Then
         Dim n As Single
@@ -1148,9 +1139,6 @@ Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Op
         Dim n As Point
         If Not Concurrent Then
             Set n = VectorNormalize(VectorInfluence)
-'            n.X = IIf(n.X = 0, Factor, n.X) * 100
-'            n.Y = IIf(n.Y = 0, Factor, n.Y) * 100
-'            n.Z = IIf(n.Z = 0, Factor, n.Z) * 100
             n.X = IIf(n.X = 0, 1, n.X) * 100
             n.Y = IIf(n.Y = 0, 1, n.Y) * 100
             n.Z = IIf(n.Z = 0, 1, n.Z) * 100
@@ -1160,10 +1148,6 @@ Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Op
             n.Y = 100
             n.Z = 100
         End If
-        
-'        If (Not ValueSnapCheck(Final.X, Current.X, SnapRange)) Then .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
-'        If (Not ValueSnapCheck(Final.Y, Current.Y, SnapRange)) Then .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
-'        If (Not ValueSnapCheck(Final.Z, Current.Z, SnapRange)) Then .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / n.Z), SnapRange)
    
         .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
         .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
@@ -1173,8 +1157,8 @@ Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Op
     End With
 End Function
 
-Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, _
-        Optional ByVal Amount As Single = 0.001, Optional ByVal SnapRange As Single = 0) As Single
+Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, Optional ByVal Amount As Single = 0.001, _
+                                Optional ByVal Factor As Single = 1, Optional ByVal SnapRange As Single = 0) As Single
         
         Dim a1 As Single
         Dim a2 As Single
@@ -1212,7 +1196,7 @@ Public Function AngleInfluence(ByVal Final As Single, ByVal Current As Single, _
 End Function
 
 Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point, Optional ByVal Amount As Single = 0.001, _
-                                    Optional ByVal Factor As Single = 1, Optional ByVal Concurrent As Boolean = False, _
+                                    Optional ByVal Factor As Single = 1, Optional ByVal Concurrent As Boolean = True, _
                                     Optional ByVal SnapRange As Single = 0) As Point
     
     Set AngleAxisInfluence = AngleAxisDifference(Current, Final)
@@ -1220,25 +1204,26 @@ Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point,
         Dim n As Point
         If Not Concurrent Then
             Set n = AngleAxisNormalize(AngleAxisInfluence)
-            n.X = IIf(n.X = 0, 1, n.X) * 100
-            n.Y = IIf(n.Y = 0, 1, n.Y) * 100
-            n.Z = IIf(n.Z = 0, 1, n.Z) * 100
+            n.X = IIf(n.X = 0, 1, n.X) '* 100
+            n.Y = IIf(n.Y = 0, 1, n.Y) ' * 100
+            n.Z = IIf(n.Z = 0, 1, n.Z) '* 100
         Else
             Set n = New Point
-            n.X = 100
-            n.Y = 100
-            n.Z = 100
+            n.X = 0.01 '100
+            n.Y = 0.01 '100
+            n.Z = 0.01 ' 100
         End If
         
-        .X = AngleInfluence(Final.X, Current.X, Amount * ((.X * Factor) / n.X), SnapRange)
-        .Y = AngleInfluence(Final.Y, Current.Y, Amount * ((.Y * Factor) / n.Y), SnapRange)
-        .Z = AngleInfluence(Final.Z, Current.Z, Amount * ((.Z * Factor) / n.Z), SnapRange)
+        .X = AngleInfluence(Final.X, Current.X, Amount, ((.X * Factor) / n.X), SnapRange)
+        .Y = AngleInfluence(Final.Y, Current.Y, Amount, ((.Y * Factor) / n.Y), SnapRange)
+        .Z = AngleInfluence(Final.Z, Current.Z, Amount, ((.Z * Factor) / n.Z), SnapRange)
         
         Set n = Nothing
     End With
 End Function
 
-Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred As Point, ByVal DecimalPercent As Single) As Point
+
+Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred As Point, Optional ByVal DecimalPercent As Single = 0.5) As Point
 
     Dim d1 As Point
     Dim d2 As Point
@@ -1261,15 +1246,15 @@ Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred 
     With AngleAxisInbetween
         c1 = Large(d1.X, d2.X)
         C2 = Least(d1.X, d2.X)
-        .X = (C2 - c1)
+        .X = (c1 - C2)
         
         c1 = Large(d1.Y, d2.Y)
         C2 = Least(d1.Y, d2.Y)
-        .Y = (C2 - c1)
+        .Y = (c1 - C2)
         
         c1 = Large(d1.Z, d2.Z)
         C2 = Least(d1.Z, d2.Z)
-        .Z = (C2 - c1)
+        .Z = (c1 - C2)
         
         .X = (.X * DecimalPercent) * RADIAN
         .Y = (.Y * DecimalPercent) * RADIAN
@@ -1305,10 +1290,6 @@ Public Function AngleAxisPercentOf(ByRef AngleAxis As Point, ByVal DecimalPercen
 End Function
 
 
-Public Function VectorDotProduct(ByRef p1 As Point, ByRef p2 As Point) As Single
-    VectorDotProduct = ((p1.X * p2.X) + (p1.Y * p2.Y) + (p1.Z * p2.Z))
-End Function
-
 Public Function VectorMultiply(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorMultiply = New Point
     With VectorMultiply
@@ -1318,6 +1299,11 @@ Public Function VectorMultiply(ByRef p1 As Point, ByRef p2 As Point) As Point
     End With
 End Function
 
+Public Function VectorDotProduct(ByRef p1 As Point, ByRef p2 As Point) As Single
+    VectorDotProduct = ((p1.X * p2.X) + (p1.Y * p2.Y) + (p1.Z * p2.Z))
+End Function
+
+
 Public Function VectorCrossProduct(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorCrossProduct = New Point
     With VectorCrossProduct
@@ -1325,6 +1311,10 @@ Public Function VectorCrossProduct(ByRef p1 As Point, ByRef p2 As Point) As Poin
         .Y = ((p1.Z * p2.X) - (p1.X * p2.Z))
         .Z = ((p1.X * p2.Y) - (p1.Y * p2.X))
     End With
+End Function
+
+Public Function CrossProductLength(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Single
+    CrossProductLength = ((p1.X - p2.X) * (p2.Y - p2.Y) - (p1.Y - p2.Y) * (p2z - p2.Z) - (p1.Z - p2.Z) * (p2.X - p2.X))
 End Function
 
 Public Function VectorSubtraction(ByRef p1 As Point, ByRef p2 As Point) As Point
@@ -1424,28 +1414,28 @@ Public Function AngleAxisNormalize(ByRef p1 As Point) As Point
     End With
 End Function
 Public Function VectorNormalize(ByRef p1 As Point) As Point
-'    Set VectorNormalize = New Point
-'    With VectorNormalize
-'        .z = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.z))
-'        If (Round(.z, 6) > 0) Then
-'            .z = (1 / .z)
-'            .X = (p1.X * .z)
-'            .Y = (p1.Y * .z)
-'            .z = (p1.z * .z)
-'        End If
-'    End With
-
     Set VectorNormalize = New Point
     With VectorNormalize
-        .Z = VectorMagnitude(p1)
-        If .Z <= epsilon Then .Z = 1
-        .X = (p1.X / .Z)
-        .Y = (p1.Y / .Z)
-        .Z = (p1.Z / .Z)
-        If Abs(.X) < epsilon Then .X = 0
-        If Abs(.Y) < epsilon Then .Y = 0
-        If Abs(.Z) < epsilon Then .Z = 0
+        .Z = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.Z))
+        If (Round(.Z, 6) > 0) Then
+            .Z = (1 / .Z)
+            .X = (p1.X * .Z)
+            .Y = (p1.Y * .Z)
+            .Z = (p1.Z * .Z)
+        End If
     End With
+
+'    Set VectorNormalize = New Point
+'    With VectorNormalize
+'        .Z = VectorMagnitude(p1)
+'        If .Z <= epsilon Then .Z = 1
+'        .X = (p1.X / .Z)
+'        .Y = (p1.Y / .Z)
+'        .Z = (p1.Z / .Z)
+'        If Abs(.X) < epsilon Then .X = 0
+'        If Abs(.Y) < epsilon Then .Y = 0
+'        If Abs(.Z) < epsilon Then .Z = 0
+'    End With
 End Function
 Public Function VectorMagnitude(ByVal p1 As Point) As Single
     VectorMagnitude = (p1.X * p1.X + p1.Y * p1.Y + p1.Z * p1.Z)
