@@ -1388,7 +1388,10 @@ Private Function InsertCharacter(ByVal StrText As String) As String
     InsertCharacter = IIf(StrText = vbLf, " ", StrText)
 End Function
 Private Sub Timer1_Timer()
+'Debug.Print "Timer " & Timer1.Interval
     Static cursorBlink As Boolean
+    Static cursorElapse As Single
+    
     Static lastLoc As POINTAPI
     Dim ClrRec As Long
     Dim newloc As POINTAPI
@@ -1407,7 +1410,9 @@ Private Sub Timer1_Timer()
     If (lastSel.StartPos <> pSel.StartPos Or lastSel.StopPos <> pSel.StopPos) Then
         
         MakeCaretVisible newloc, True
-        cursorBlink = False
+        
+        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then cursorBlink = False
+        
     End If
     lastSel.StartPos = pSel.StartPos
     lastSel.StopPos = pSel.StopPos
@@ -1432,15 +1437,25 @@ Private Sub Timer1_Timer()
     
     lastLoc.X = newloc.X
     lastLoc.Y = newloc.Y
-    
-    cursorBlink = Not cursorBlink
-    
+  
+    If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
+
+        cursorBlink = Not cursorBlink
+
+    End If
+
+        
     If Not Timer1.Enabled Then
         Timer1.Enabled = cursorBlink
         If Not Timer1.Enabled Then
             Timer1_Timer
         End If
     End If
+    
+    If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
+        cursorElapse = Timer
+    End If
+    
 End Sub
 Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
     If Enabled Then
@@ -2392,7 +2407,7 @@ Private Sub UserControl_Initialize()
     ResetUndoRedo
         
     SystemParametersInfo SPI_GETKEYBOARDSPEED, 0, keySpeed, 0
-    Timer1.Interval = keySpeed * 10
+    Timer1.Interval = 1 ' keySpeed * 10
 
     Set pBackBuffer = New Backbuffer
     pBackBuffer.hWnd = UserControl.hWnd
