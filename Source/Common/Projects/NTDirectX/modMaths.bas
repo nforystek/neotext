@@ -1,5 +1,6 @@
 Attribute VB_Name = "modMaths"
 
+
 Option Explicit
 
 Public Function DistanceBetweenTwo3DPoints(p1 As D3DVECTOR, p2 As D3DVECTOR) As Single

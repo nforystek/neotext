@@ -1442,8 +1442,6 @@ Private Sub Timer1_Timer()
 
         cursorBlink = Not cursorBlink
 
-    End If
-
         
     If Not Timer1.Enabled Then
         Timer1.Enabled = cursorBlink
@@ -1451,6 +1449,9 @@ Private Sub Timer1_Timer()
             Timer1_Timer
         End If
     End If
+    
+    End If
+
     
     If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
         cursorElapse = Timer

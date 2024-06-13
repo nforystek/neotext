@@ -11,7 +11,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-
 Option Explicit
 
 Option Compare Binary
@@ -137,15 +136,15 @@ Private ftpWriteTextStream As Scripting.TextStream
 Private ftpReadFileNum As Integer
 Private ftpReadTextStream As Scripting.TextStream
 
-Public Event Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
+Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 Public Event LogMessage(ByVal MessageType As MessageTypes, ByVal AddedText As String)
 Public Event ItemListing(ByVal ItemName As String, ByVal ItemSize As String, ByVal ItemDate As String, ByVal ItemAccess As String)
 Public Event DataProgress(ByVal ProgressType As ProgressTypes, ByVal ReceivedBytes As Double) ' _
 Event that is called during a data socket transfering data and has progressed.
 Attribute DataProgress.VB_Description = "Event that is called during a data socket transfering data and has progressed."
 Public Event DataComplete(ByVal ProgressType As ProgressTypes) ' _
-Event that is called when the data socket has finished transfering and has closed.
-Attribute DataComplete.VB_Description = "Event that is called when the data socket has finished transfering and has closed."
+Event that is called when the data socket has finished transfering and has closed. ' _
+Attribute DataComplete.VB_Description = "Event that is called when the data socket has finished transfering and has closed. ' _"
 
 Private myObj As Client
 Private myServerObj As Client
@@ -2231,7 +2230,7 @@ Private Sub mData_Disconnected()
    ' End If
 End Sub
 
-Private Sub mData_Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
+Private Sub mData_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
     SetLastError RaiseError, Number, Description
 End Sub
 
@@ -2246,7 +2245,7 @@ On Error GoTo failerror
         lSize = -1
         Do
                 
-            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
+            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
     
                 mData.Disconnect
                 TerminateTransfer
@@ -2321,7 +2320,7 @@ On Error GoTo failerror
         lSize = -1
         Do
             If ftpLargeFileMode Then
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2335,7 +2334,7 @@ On Error GoTo failerror
                     End If
                 End If
             Else
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2754,6 +2753,6 @@ Private Sub DoOutCommands()
 
 End Sub
 
-Private Sub mTCP_Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
+Private Sub mTCP_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
     SetLastError RaiseError, Number, Description
 End Sub

@@ -1,7 +1,5 @@
 Attribute VB_Name = "modSockets"
 
-
-
 #Const modSockets = -1
 Option Explicit
 'TOP DOWN
@@ -30,42 +28,42 @@ Public Declare Function getservbyname Lib "ws2_32.dll" (ByVal serv_Name As Strin
 'Public Declare Function getprotobynumber Lib "ws2_32.dll" (ByVal proto As Long) As Long
 'Public Declare Function getprotobyname Lib "ws2_32.dll" (ByVal proto_Name As String) As Long
 'Public Declare Function getservbyport Lib "ws2_32.dll" (ByVal Port As Integer, ByVal proto As Long) As Long
-Public Declare Function getsockname Lib "ws2_32.dll" (ByVal S As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
-Public Declare Function getpeername Lib "ws2_32.dll" (ByVal S As Long, ByRef name As Any, ByRef namelen As Long) As Long
-Public Declare Function SocketAccept Lib "ws2_32.dll" Alias "accept" (ByVal S As Long, Addr As Any, addrlen As Long) As Long
-Public Declare Function Bind Lib "ws2_32.dll" Alias "bind" (ByVal S As Long, Addr As sockaddr, ByVal namelen As Long) As Long
-Public Declare Function socketclose Lib "ws2_32.dll" Alias "closesocket" (ByVal S As Long) As Long
-Public Declare Function SocketConnect Lib "ws2_32.dll" Alias "connect" (ByVal S As Long, ByRef Addr As Any, ByVal namelen As Long) As Long
+Public Declare Function getsockname Lib "ws2_32.dll" (ByVal s As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
+Public Declare Function getpeername Lib "ws2_32.dll" (ByVal s As Long, ByRef name As Any, ByRef namelen As Long) As Long
+Public Declare Function SocketAccept Lib "ws2_32.dll" Alias "accept" (ByVal s As Long, Addr As Any, addrlen As Long) As Long
+Public Declare Function Bind Lib "ws2_32.dll" Alias "bind" (ByVal s As Long, Addr As sockaddr, ByVal namelen As Long) As Long
+Public Declare Function socketclose Lib "ws2_32.dll" Alias "closesocket" (ByVal s As Long) As Long
+Public Declare Function SocketConnect Lib "ws2_32.dll" Alias "connect" (ByVal s As Long, ByRef Addr As Any, ByVal namelen As Long) As Long
 Public Declare Function gethostbyaddr Lib "ws2_32.dll" (Addr As Long, addrlen As Long, addrtype As Long) As Long
 Public Declare Function GetHostByName Lib "ws2_32.dll" Alias "gethostbyname" (ByVal host_name As String) As Long
 Public Declare Function gethostname Lib "ws2_32.dll" (ByVal host_name As String, ByVal namelen As Long) As Long
-Public Declare Function SocketListen Lib "ws2_32.dll" Alias "listen" (ByVal S As Long, ByVal backlog As Long) As Long
-Public Declare Function SocketRecvLngPtr Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long 'removed ByVal from buf
+Public Declare Function SocketListen Lib "ws2_32.dll" Alias "listen" (ByVal s As Long, ByVal backlog As Long) As Long
+Public Declare Function SocketRecvLngPtr Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long 'removed ByVal from buf
 'Public Declare Function recvfrom Lib "ws2_32.dll" (ByVal s As Long, buf As Any, ByVal buflen As Long, ByVal flags As Long, ByRef fromaddr As sockaddr, ByRef fromlen As Long) As Long
-Public Declare Function SocketSendLngPtr Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketSendLngPtr Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByVal Buf As Long, ByVal buflen As Long, ByVal Flags As Long) As Long
 'Public Declare Function sendto Lib "ws2_32.dll" (ByVal s As Long, buf As Any, ByVal buflen As Long, ByVal flags As Long, toaddr As sockaddr, ByVal tolen As Long) As Long
-Public Declare Function setsockopt Lib "ws2_32.dll" (ByVal S As Long, ByVal Level As Long, ByVal optname As Long, ByRef optval As Long, ByVal optlen As Long) As Long
-Public Declare Function getsockopt Lib "ws2_32.dll" (ByVal S As Long, ByVal Level As Long, ByVal optname As Long, ByVal optval As Long, optlen As Long) As Long
+Public Declare Function setsockopt Lib "ws2_32.dll" (ByVal s As Long, ByVal Level As Long, ByVal optname As Long, ByRef optval As Long, ByVal optlen As Long) As Long
+Public Declare Function getsockopt Lib "ws2_32.dll" (ByVal s As Long, ByVal Level As Long, ByVal optname As Long, ByVal optval As Long, optlen As Long) As Long
 'Public Declare Function shutdown Lib "ws2_32.dll" (ByVal s As Long, ByVal how As Long) As Long
 Public Declare Function Socket Lib "ws2_32.dll" Alias "socket" (ByVal af As Long, ByVal s_type As Long, ByVal Protocol As Long) As Long
-Public Declare Function SocketSendString Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
-Public Declare Function SocketRecvString Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketSendString Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function SocketRecvString Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByVal Buf As String, ByVal buflen As Long, ByVal Flags As Long) As Long
 
 
 
 'Reciving and sending data on winsock functions
-Public Declare Function WSARecv Lib "ws2_32.dll" Alias "recv" (ByVal S As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
-Public Declare Function WSASend Lib "ws2_32.dll" Alias "send" (ByVal S As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function WSARecv Lib "ws2_32.dll" Alias "recv" (ByVal s As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
+Public Declare Function WSASend Lib "ws2_32.dll" Alias "send" (ByVal s As Long, ByRef Buf As Any, ByVal buflen As Long, ByVal Flags As Long) As Long
 
 'Winsock API functions to create a listening server
-Public Declare Function WSABind Lib "ws2_32.dll" Alias "bind" (ByVal S As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
-Public Declare Function WSAListen Lib "ws2_32.dll" Alias "listen" (ByVal S As Long, ByVal backlog As Long) As Long
-Public Declare Function WSAAccept Lib "ws2_32.dll" Alias "accept" (ByVal S As Long, ByRef Addr As sockaddr, ByRef addrlen As Long) As Long
+Public Declare Function WSABind Lib "ws2_32.dll" Alias "bind" (ByVal s As Long, ByRef name As sockaddr, ByRef namelen As Long) As Long
+Public Declare Function WSAListen Lib "ws2_32.dll" Alias "listen" (ByVal s As Long, ByVal backlog As Long) As Long
+Public Declare Function WSAAccept Lib "ws2_32.dll" Alias "accept" (ByVal s As Long, ByRef Addr As sockaddr, ByRef addrlen As Long) As Long
 
 Public Declare Function WSAStartup Lib "ws2_32.dll" (ByVal wVR As Long, lpWSAD As WSADATA) As Long
 Public Declare Function WSACleanup Lib "ws2_32.dll" () As Long
 Public Declare Function WSAGetLastError Lib "ws2_32.dll" () As Long
-Public Declare Function WSAAsyncSelect Lib "ws2_32.dll" (ByVal S As Long, ByVal hwnd As Long, ByVal wMsg As Long, ByVal lEvent As Long) As Long
+Public Declare Function WSAAsyncSelect Lib "ws2_32.dll" (ByVal s As Long, ByVal hwnd As Long, ByVal wMsg As Long, ByVal lEvent As Long) As Long
 
 
 
@@ -80,7 +78,7 @@ Public Declare Function ntohl Lib "ws2_32.dll" (ByVal netlong As Long) As Long
 Public Declare Function htons Lib "ws2_32.dll" (ByVal hostshort As Long) As Integer
 Public Declare Function ntohs Lib "ws2_32.dll" (ByVal netshort As Long) As Integer
 
-Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal S As Long, ByVal cmd As Long, argp As Long) As Long '
+Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal s As Long, ByVal cmd As Long, argp As Long) As Long '
 
 ''Public Declare Function gethostbyName Lib "wsock32.dll" (ByVal host_Name As String) As Long
 'Public Declare Function gethostname Lib "wsock32.dll" Alias "gethostName" (ByVal host_name As String, ByVal namelen As Long) As Long
@@ -111,7 +109,7 @@ Public Declare Function ioctlsocket Lib "wsock32.dll" (ByVal S As Long, ByVal cm
 Public Declare Sub CopyMemoryHost Lib "kernel32" Alias "RtlMoveMemory" (ByRef xDest As hostent, ByVal xSource As Long, ByVal nbytes As Long)
 Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef xDest As Long, ByVal xSource As Long, ByVal nbytes As Long)
 Public Declare Sub RtlMoveMemory3 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, ByVal hpvSource&, ByVal cbCopy&)
-Public Declare Sub RtlMoveMemory2 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, source As Any, ByVal cbCopy As Long)
+Public Declare Sub RtlMoveMemory2 Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, Source As Any, ByVal cbCopy As Long)
 
 Public Const FD_READ       As Long = &H1
 Public Const FD_WRITE      As Long = &H2
@@ -680,12 +678,12 @@ On Error GoTo catch
     Dim IPList As New Collection
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
             
         Dim phe As Long
         Dim heDestHost As hostent
@@ -702,13 +700,13 @@ On Error GoTo catch
         If Domain = "" Then
             HostName = Space(256)
             If gethostname(HostName, 256) = Socket_ERROR Then
-                retval = 1
+                retVal = 1
             Else
                 HostName = Trim$(HostName)
                 Hostent_addr = GetHostByName(HostName)
     
                 If Hostent_addr = 0 Then
-                    retval = 2
+                    retVal = 2
                 Else
                     
                     CopyMemoryHost Host, Hostent_addr, LenB(Host)
@@ -765,7 +763,7 @@ On Error GoTo catch
         End If
         
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -782,12 +780,12 @@ End Function
 Public Function ResolveIP(ByVal Host As String) As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         Dim phe As Long
         Dim heDestHost As hostent
@@ -828,7 +826,7 @@ Public Function ResolveIP(ByVal Host As String) As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -839,12 +837,12 @@ End Function
 Public Function Resolve(ByVal Host As String) As Long
    
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
         
         Dim phe As Long
         Dim heDestHost As hostent
@@ -868,7 +866,7 @@ Public Function Resolve(ByVal Host As String) As Long
         End If
             
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If
@@ -879,12 +877,12 @@ End Function
 Public Function LocalHost() As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         
         Dim Buf As String
@@ -899,7 +897,7 @@ Public Function LocalHost() As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If
@@ -915,8 +913,8 @@ Public Function ipaddressByhost(ByVal sock As Long) As VBA.Collection
         Dim sck As sockaddr
         If getsockname(sock, sck, LenB(sck)) = 0 Then
             Dim col As VBA.Collection
-            Set col = IPsByAddrHandle(sck.sin_addr)
-            If col.count > 0 Then
+            Set col = IPAddress(sck.sin_addr)
+            If col.Count > 0 Then
                 Set ipaddressByhost = col
          '   Else
         '        RemoteIP = "#INVALID#"
@@ -928,6 +926,74 @@ Public Function ipaddressByhost(ByVal sock As Long) As VBA.Collection
 '    Set ipaddressByhost = IPAddress(inet_ntoa(sock))
 End Function
 
+
+Public Function IPAddress(ByVal Addr As Long) As VBA.Collection
+
+    Dim IPList As New VBA.Collection
+
+   ' Dim heDestHost As HOSTENT
+    'Dim addrList As Long
+    'Dim ret As String
+    Dim rc As Long
+    Dim i As Integer
+    Dim ip_address As String
+    'Dim HostName As String * 256
+    Dim Host As hostent
+    Dim hostip_addr As Long
+    Dim temp_ip_address() As Byte
+        
+
+'    Dim tmp As String
+'    tmp = String(256, Chr(0))
+'
+'
+'        If rc <> 0 Then
+' '       Addr = GetHostByName(host)
+''
+'    rc = inet_addr(Addr)
+'    If rc = Socket_ERROR Then
+'        rc = gethostname(tmp, 256)
+'        If rc = 0 Then
+'            Addr = GetHostByName(tmp)
+'       End If
+'    Else
+'
+'
+'
+'    End If
+'    If rc = 0 Then
+     rc = gethostbyaddr(Addr, LenB(Host), IPPROTO_TCP)
+  '  End If
+    
+    If rc <> 0 Then
+'        phe = gethostbyName(Domain)
+'        If phe <> 0 Then
+                
+        CopyMemoryHost Host, rc, LenB(Host)
+        CopyMemory hostip_addr, Host.h_addr_list, 4
+
+        Do
+            ReDim temp_ip_address(1 To Host.h_length)
+            RtlMoveMemory3 temp_ip_address(1), hostip_addr, Host.h_length
+
+            For i = 1 To Host.h_length
+                ip_address = ip_address & temp_ip_address(i) & "."
+            Next
+            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+
+            IPList.Add ip_address
+
+            ip_address = ""
+            Host.h_addr_list = Host.h_addr_list + LenB(Host.h_addr_list)
+            RtlMoveMemory3 hostip_addr, Host.h_addr_list, 4
+        Loop While (hostip_addr <> 0)
+    End If
+
+
+    
+    Set IPAddress = IPList
+
+End Function
 
 'Public Function GetRemoteInfo(ByVal lngSocket As Long, ByRef lngRemotePort As Long, ByRef strRemoteHostIP As String, ByRef strRemoteHost As String) As Boolean
 '    'Retrieves remote info from a connected socket.
@@ -1124,185 +1190,6 @@ Public Function GetErrorDescription(ByVal lngErrorCode As Long) As String
  GetErrorDescription = strDesc
 End Function
 
-Public Function IPsByAddrHandle(ByVal AddrHandle As Long) As VBA.Collection
-
-    Dim IPList As New VBA.Collection
-
-    Dim rc As Long
-    Dim i As Integer
-    Dim ip_address As String
-    Dim Host As hostent
-    Dim hostip_addr As Long
-    Dim temp_ip_address() As Byte
-
-    rc = gethostbyaddr(AddrHandle, LenB(Host), IPPROTO_TCP)
-   
-    If rc <> 0 Then
-                
-        CopyMemoryHost Host, rc, LenB(Host)
-        CopyMemory hostip_addr, Host.h_addr_list, 4
-
-        Do
-            ReDim temp_ip_address(1 To Host.h_length)
-            RtlMoveMemory3 temp_ip_address(1), hostip_addr, Host.h_length
-
-            For i = 1 To Host.h_length
-                ip_address = ip_address & temp_ip_address(i) & "."
-            Next
-            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
-
-            IPList.Add ip_address
-
-            ip_address = ""
-            Host.h_addr_list = Host.h_addr_list + LenB(Host.h_addr_list)
-            RtlMoveMemory3 hostip_addr, Host.h_addr_list, 4
-        Loop While (hostip_addr <> 0)
-    End If
-    
-    Set IPsByAddrHandle = IPList
-
-End Function
-
-
-
-Public Function RemoteIP(ByVal PeerHandle As Long) As String
-    RemoteIP = WhoseIs(PeerHandle)
-End Function
-
-Public Function Whois(ByVal SockHandle As Long) As String
-    Dim col As VBA.Collection
-    Set col = IPsByAddrHandle(SockHandle)
-    If col.count > 0 Then
-        Whois = col.Item(1)
-    Else
-        Whois = "#INVALID#"
-    End If
-End Function
-
-Public Function WhoseIs(ByVal PeerHandle As Long) As String
-    Dim sck As sockaddr
-    If getpeername(PeerHandle, sck, LenB(sck)) = 0 Then
-        Dim col As VBA.Collection
-        Set col = IPsByAddrHandle(sck.sin_addr)
-        If col.count > 0 Then
-            WhoseIs = col.Item(1)
-        Else
-            WhoseIs = "#INVALID#"
-        End If
-    Else
-        WhoseIs = "#INVALID#"
-    End If
-End Function
-Public Function WhoAmI(ByVal SockHandle As Long) As String
-    Dim sck As sockaddr
-    If getsockname(SockHandle, sck, LenB(sck)) = 0 Then
-        Dim col As VBA.Collection
-        Set col = IPsByAddrHandle(sck.sin_addr)
-        If col.count > 0 Then
-            WhoAmI = col.Item(1)
-        Else
-            WhoAmI = "#INVALID#"
-        End If
-    Else
-        WhoAmI = "#INVALID#"
-    End If
-End Function
-
-Public Function LocalIP(ByVal SockHandle As Long) As String
-    LocalIP = WhoAmI(SockHandle)
-    If LocalIP = "#INVALID#" Then
-        If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
-            LocalIP = LocalHost
-        Else
-            LocalIP = ResolveIP(LocalHost)
-        End If
-    End If
-End Function
-
-'Public Function LocalHost() As String
-'    Dim Buf As String
-'    Dim rc As Long
-'
-'    Buf = Space$(255)
-'
-'    rc = gethostname(Buf, Len(Buf))
-'    rc = InStr(Buf, vbNullChar)
-'
-'    If rc > 0 Then
-'        LocalHost = Left$(Buf, rc - 1)
-'    Else
-'        LocalHost = "#INVALID#"
-'    End If
-'End Function
-'Public Function ResolveIP(ByVal Host As String) As String
-'
-'    Dim phe As Long
-'    Dim heDestHost As hostent
-'    Dim addrList As Long
-'    Dim rc As Long
-'
-'    Dim hostip_addr As Long
-'
-'    Dim temp_ip_address() As Byte
-'    Dim i As Integer
-'    Dim ip_address As String
-'
-'    rc = inet_addr(Host)
-'    If rc = Socket_ERROR Then
-'
-'        phe = GetHostByName(Host)
-'        If phe <> 0 Then
-'
-'            CopyMemoryHost heDestHost, phe, hostent_size
-'            CopyMemory addrList, heDestHost.h_addr_list, 4
-'            CopyMemory hostip_addr, addrList, heDestHost.h_length
-'            rc = hostip_addr
-'
-'            ReDim temp_ip_address(1 To heDestHost.h_length)
-'            RtlMoveMemory temp_ip_address(1), hostip_addr, heDestHost.h_length
-'
-'            For i = 1 To heDestHost.h_length
-'                ip_address = ip_address & temp_ip_address(i) & "."
-'            Next
-'            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
-'
-'            ResolveIP = ip_address
-'
-'        Else
-'            rc = INADDR_NONE
-'        End If
-'
-'    End If
-'
-'
-'End Function
-'
-'Public Function Resolve(ByVal Host As String) As Long
-'
-'    Dim phe As Long
-'    Dim heDestHost As hostent
-'    Dim addrList As Long
-'    Dim rc As Long
-'
-'    rc = inet_addr(Host)
-'    If rc = Socket_ERROR Then
-'
-'        phe = GetHostByName(Host)
-'        If phe <> 0 Then
-'
-'            CopyMemoryHost heDestHost, phe, hostent_size
-'            CopyMemory addrList, heDestHost.h_addr_list, 4
-'            CopyMemory rc, addrList, heDestHost.h_length
-'
-'        Else
-'            rc = INADDR_NONE
-'        End If
-'
-'    End If
-'
-'    Resolve = rc
-'End Function
-
 Public Function IP4ToIP2(ByVal str As String) As String
 
     Dim b1 As Byte
@@ -1329,40 +1216,4 @@ Public Function IP2ToIP4(ByVal str As String) As String
     
     IP2ToIP4 = Val("&H" & Left(modCommon.Padding(4, Hex(i1), "0"), 2)) & "." & Val("&H" & Right(modCommon.Padding(4, Hex(i1), "0"), 2)) & "." & Val("&H" & Left(modCommon.Padding(4, Hex(i2), "0"), 2)) & "." & Val("&H" & Right(modCommon.Padding(4, Hex(i2), "0"), 2))
 
-End Function
-
-Function AddressStringToLong(ByVal tmp As String) As Long
-    Dim i As Integer
-    Dim parts(1 To 4) As String
-    i = 0
-    While InStr(tmp, ".") > 0
-        i = i + 1
-        parts(i) = Mid(tmp, 1, InStr(tmp, ".") - 1)
-        tmp = Mid(tmp, InStr(tmp, ".") + 1)
-    Wend
-    i = i + 1
-    parts(i) = tmp
-    If i <> 4 Then
-        AddressStringToLong = 0
-        Exit Function
-    End If
-    AddressStringToLong = Val("&H" & Right("00" & Hex(parts(4)), 2) & _
-    Right("00" & Hex(parts(3)), 2) & _
-    Right("00" & Hex(parts(2)), 2) & _
-    Right("00" & Hex(parts(1)), 2))
-End Function
-
-Function AddressLongToString(ByVal tmp As Long) As String
-    Dim i As String
-    Dim parts(1 To 4) As Byte
-    i = Right("00000000" & Hex(tmp), 8)
-    parts(1) = Val("&H" & Left(i, 2))
-    i = Mid(i, 3)
-    parts(2) = Val("&H" & Left(i, 2))
-    i = Mid(i, 3)
-    parts(3) = Val("&H" & Left(i, 2))
-    i = Mid(i, 3)
-    parts(4) = Val("&H" & Left(i, 2))
-    i = Mid(i, 3)
-    AddressLongToString = parts(4) & "." & parts(3) & "." & parts(2) & "." & parts(1)
 End Function

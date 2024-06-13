@@ -85,7 +85,7 @@ Public Event Disconnected()
 Public Event DataArriving()
 Public Event SendComplete()
 Public Event Connection(ByRef Handle As Long)
-Public Event Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
+Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 
 
 Public Property Get Host() As String ' _
@@ -302,100 +302,69 @@ End Function
 Public Function WhosIs(ByVal sock As Long) As String ' _
 Accepts a socket handle as parameter and returns the remote party's IP address to the handle, considerably, whom "I" connected to of two parties.
 Attribute WhosIs.VB_Description = "Accepts a socket handle as parameter and returns the remote party's IP address to the handle, considerably, whom "
-On Error GoTo sockerror
-    WhosIs = modSockets.WhoseIs(sock)
-Exit Function
-sockerror:
-    Err.Clear
-    On Error GoTo 0
-    Err.Raise 8, "socket", "Error attempting to obtain host name."
-    
-'    Dim sck As sockaddr
-'    If getpeername(sock, sck, LenB(sck)) = 0 Then
-'        Dim col As VBA.Collection
-'        Set col = IPAddress(sck.sin_addr)
-'        If col.count > 0 Then
-'            WhosIs = col.Item(1)
-'        Else
-'            WhosIs = "#INVALID#"
-'        End If
-'    Else
-'        WhosIs = "#INVALID#"
-'    End If
+
+    Dim sck As sockaddr
+    If getpeername(sock, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPAddress(sck.sin_addr)
+        If col.count > 0 Then
+            WhosIs = col.Item(1)
+        Else
+            WhosIs = "#INVALID#"
+        End If
+    Else
+        WhosIs = "#INVALID#"
+    End If
 End Function
 Public Function WhoAmI(ByVal sock As Long) As String ' _
 Acccepts a socket handle as parameter and returns the local party's IP address to the handle, considerably, "I", or self, in a two party connection.
 Attribute WhoAmI.VB_Description = "Acccepts a socket handle as parameter and returns the local party's IP address to the handle, considerably, "
-On Error GoTo sockerror
-    WhoAmI = modSockets.WhoAmI(sock)
-Exit Function
-sockerror:
-    Err.Clear
-    On Error GoTo 0
-    Err.Raise 8, "socket", "Error attempting to obtain host name."
-    
-'    Dim sck As sockaddr
-'    If getsockname(sock, sck, LenB(sck)) = 0 Then
-'        Dim col As VBA.Collection
-'        Set col = IPAddress(sck.sin_addr)
-'        If col.count > 0 Then
-'            WhoAmI = col.Item(1)
-'        Else
-'            WhoAmI = "#INVALID#"
-'        End If
-'    Else
-'        WhoAmI = "#INVALID#"
-'    End If
+    Dim sck As sockaddr
+    If getsockname(sock, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPAddress(sck.sin_addr)
+        If col.count > 0 Then
+            WhoAmI = col.Item(1)
+        Else
+            WhoAmI = "#INVALID#"
+        End If
+    Else
+        WhoAmI = "#INVALID#"
+    End If
 End Function
 
 Public Function LocalHost() As String ' _
 Returns the local hsot name or computer name associated with the local hosts IP address in domain name system format, i.e. wording.
 Attribute LocalHost.VB_Description = "Returns the local hsot name or computer name associated with the local hosts IP address in domain name system format, i.e. wording."
 On Error GoTo sockerror
-    LocalHost = modSockets.LocalHost
+    Dim Buf As String
+    Dim rc As Long
+    Buf = Space$(255)
+    rc = modSockets.gethostname(Buf, Len(Buf))
+    rc = InStr(Buf, vbNullChar)
+    If rc > 0 Then
+        LocalHost = Left$(Buf, rc - 1)
+    Else
+        LocalHost = ""
+    End If
 Exit Function
 sockerror:
     Err.Clear
     On Error GoTo 0
-    Err.Raise 8, "socket", "Error attempting to resolve localhost."
-    
-'On Error GoTo sockerror
-'    Dim Buf As String
-'    Dim rc As Long
-'    Buf = Space$(255)
-'    rc = modSockets.gethostname(Buf, Len(Buf))
-'    rc = InStr(Buf, vbNullChar)
-'    If rc > 0 Then
-'        LocalHost = Left$(Buf, rc - 1)
-'    Else
-'        LocalHost = ""
-'    End If
-'Exit Function
-'sockerror:
-'    Err.Clear
-'    On Error GoTo 0
-'    Err.Raise 8, "Socket", "Error attempting to resolve localhost."
+    Err.Raise 8, "Socket", "Error attempting to resolve localhost."
 End Function
 
 Public Function LocalIP() As String ' _
 Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact.
 Attribute LocalIP.VB_Description = "Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact."
-On Error GoTo sockerror
-    LocalIP = modSockets.LocalIP(Me.Handle)
-Exit Function
-sockerror:
-    Err.Clear
-    On Error GoTo 0
-    Err.Raise 8, "socket", "Error attempting to obtain the local IP."
-    
-'    LocalIP = WhoAmI(Handle)
-'    If LocalIP = "#INVALID#" Then
-'        If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
-'            LocalIP = LocalHost
-'        Else
-'            LocalIP = ResolveIP(LocalHost)
-'        End If
-'    End If
+    LocalIP = WhoAmI(Handle)
+    If LocalIP = "#INVALID#" Then
+        If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
+            LocalIP = LocalHost
+        Else
+            LocalIP = ResolveIP(LocalHost)
+        End If
+    End If
 End Function
 
 Public Function RemoteIP() As String ' _
@@ -465,7 +434,7 @@ Attribute Accept.VB_Description = "Accepts a incoming connection, or mismatched 
             State(States.Opening) = True
             State(States.Closed) = False
             mSocket = nHandle
-            'RegisterSocket Me
+            RegisterSocket Me
             mSendData.Reset
             mReadData.Reset
             State(States.Opened) = True
@@ -1012,7 +981,6 @@ On Error GoTo sockerror
 
 Exit Function
 sockerror:
-Debug.Print Err.Number
     Err.Clear
     On Error GoTo 0
     Err.Raise 8, "Socket", "Error attempting to capture events."
@@ -1092,7 +1060,7 @@ End Function
 
 Private Function Whois(ByVal Handle As Long) As String
     Dim col As VBA.Collection
-    Set col = IPsByAddrHandle(Handle)
+    Set col = IPAddress(Handle)
     If col.count > 0 Then
         Whois = col.Item(1)
     Else
@@ -1199,15 +1167,10 @@ Private Sub DebugEvent(ByVal txt As String)
     End If
 End Sub
 Private Sub DataValidating(ByVal wParam As Long)
-'        SetValidatingMode
-'        RaiseEvent Connection(Handle)
-'        UnsetValidatingMode Handle, "Not validating remote connections."
-        
-    
     If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
         SetValidatingMode
         RaiseEvent Connection(Handle)
-        UnsetValidatingMode Handle, "The remote address did not match the ip address for the connection."
+        UnsetValidatingMode Handle, "he remote address did not match the ip address for the connection."
     Else
         If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
             SetValidatingMode

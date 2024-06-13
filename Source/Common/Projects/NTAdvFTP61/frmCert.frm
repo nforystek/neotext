@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmCert 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Certificate"
-   ClientHeight    =   3870
+   ClientHeight    =   3300
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   6750
@@ -11,165 +11,44 @@ Begin VB.Form frmCert
    LockControls    =   -1  'True
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3870
+   ScaleHeight     =   3300
    ScaleWidth      =   6750
    StartUpPosition =   2  'CenterScreen
    Begin VB.CheckBox Check1 
       Caption         =   "Remember my choice (until a restart)"
-      Height          =   210
+      Height          =   195
       Left            =   150
       TabIndex        =   12
-      Top             =   3480
+      Top             =   2880
       Visible         =   0   'False
       Width           =   3030
    End
    Begin VB.CommandButton Command2 
       Caption         =   "&Accept"
       Height          =   375
-      Left            =   3555
+      Left            =   3540
       TabIndex        =   11
-      Top             =   3420
+      Top             =   2820
       Visible         =   0   'False
       Width           =   1470
    End
    Begin VB.CommandButton Command1 
       Caption         =   "&OK"
       Height          =   375
-      Left            =   5175
+      Left            =   5160
       TabIndex        =   10
-      Top             =   3420
+      Top             =   2820
       Width           =   1470
    End
    Begin VB.PictureBox Picture1 
       BackColor       =   &H80000005&
-      Height          =   3240
+      Height          =   2625
       Left            =   105
-      ScaleHeight     =   3180
+      ScaleHeight     =   2565
       ScaleWidth      =   6465
       TabIndex        =   0
       Top             =   105
       Width           =   6525
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   7
-         Left            =   6165
-         Picture         =   "frmCert.frx":0442
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   23
-         ToolTipText     =   "TrustList"
-         Top             =   1935
-         Visible         =   0   'False
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   6
-         Left            =   5790
-         Picture         =   "frmCert.frx":0784
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   22
-         ToolTipText     =   "Microsoft Trust List Signing"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   5
-         Left            =   5130
-         Picture         =   "frmCert.frx":0AC6
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   21
-         ToolTipText     =   "Encrypting File System"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   4
-         Left            =   4410
-         Picture         =   "frmCert.frx":0E08
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   20
-         ToolTipText     =   "Time Stamping"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   3
-         Left            =   3720
-         Picture         =   "frmCert.frx":114A
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   19
-         ToolTipText     =   "Secure Email"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   2
-         Left            =   3030
-         Picture         =   "frmCert.frx":148C
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   18
-         ToolTipText     =   "Code Signing"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000005&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   1
-         Left            =   2310
-         Picture         =   "frmCert.frx":17CE
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   17
-         ToolTipText     =   "Client Authentication"
-         Top             =   1935
-         Width           =   225
-      End
-      Begin VB.PictureBox KeyUsage 
-         BackColor       =   &H80000014&
-         BorderStyle     =   0  'None
-         Height          =   225
-         Index           =   0
-         Left            =   1620
-         Picture         =   "frmCert.frx":1B10
-         ScaleHeight     =   337.5
-         ScaleMode       =   0  'User
-         ScaleWidth      =   187.5
-         TabIndex        =   16
-         ToolTipText     =   "Server Authentication"
-         Top             =   1935
-         Width           =   225
-      End
       Begin VB.TextBox Issuer 
          BorderStyle     =   0  'None
          Height          =   420
@@ -192,47 +71,20 @@ Begin VB.Form frmCert
          Top             =   840
          Width           =   4965
       End
-      Begin VB.Label Ciphers 
-         BackStyle       =   0  'Transparent
-         Height          =   270
-         Left            =   1590
-         TabIndex        =   24
-         Top             =   2280
-         Width           =   4440
-      End
-      Begin VB.Label Label7 
-         BackStyle       =   0  'Transparent
-         Caption         =   "Key Usage:"
-         BeginProperty Font 
-            Name            =   "MS Sans Serif"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Height          =   210
-         Left            =   315
-         TabIndex        =   15
-         Top             =   1920
-         Width           =   1095
-      End
       Begin VB.Line Line2 
          X1              =   195
          X2              =   6180
-         Y1              =   2625
-         Y2              =   2625
+         Y1              =   1950
+         Y2              =   1950
       End
       Begin VB.Label Serial 
          Alignment       =   1  'Right Justify
          BackStyle       =   0  'Transparent
-         Caption         =   "00 00 00 00"
          Height          =   240
-         Left            =   750
+         Left            =   855
          TabIndex        =   9
-         Top             =   345
-         Width           =   5355
+         Top             =   390
+         Width           =   5325
       End
       Begin VB.Label Label10 
          Alignment       =   1  'Right Justify
@@ -258,18 +110,18 @@ Begin VB.Form frmCert
          Alignment       =   2  'Center
          BackStyle       =   0  'Transparent
          Height          =   375
-         Left            =   3975
+         Left            =   3900
          TabIndex        =   7
-         Top             =   2745
+         Top             =   2145
          Width           =   2220
       End
       Begin VB.Label BeginDate 
          Alignment       =   2  'Center
          BackStyle       =   0  'Transparent
          Height          =   375
-         Left            =   1320
+         Left            =   1245
          TabIndex        =   6
-         Top             =   2745
+         Top             =   2145
          Width           =   2160
       End
       Begin VB.Label Label5 
@@ -285,9 +137,9 @@ Begin VB.Form frmCert
             Strikethrough   =   0   'False
          EndProperty
          Height          =   255
-         Left            =   3630
+         Left            =   3555
          TabIndex        =   5
-         Top             =   2730
+         Top             =   2130
          Width           =   285
       End
       Begin VB.Label Label4 
@@ -303,15 +155,15 @@ Begin VB.Form frmCert
             Strikethrough   =   0   'False
          EndProperty
          Height          =   255
-         Left            =   375
+         Left            =   300
          TabIndex        =   4
-         Top             =   2730
+         Top             =   2130
          Width           =   930
       End
       Begin VB.Image Image1 
          Height          =   360
          Left            =   225
-         Picture         =   "frmCert.frx":1E52
+         Picture         =   "frmCert.frx":0442
          Top             =   135
          Width           =   480
       End
@@ -387,6 +239,10 @@ Option Explicit
 
 Public Sub ViewCert(ByRef cert As Certificate)
     
+
+   ' Subject.Text = cert.Terms(CInt(CertificateFields.Subject))
+   ' Issuer.Text = cert.Terms(CInt(CertificateFields.Issuer))
+    
     Dim cnt As Long
 
     cnt = 1
@@ -395,44 +251,15 @@ Public Sub ViewCert(ByRef cert As Certificate)
         cnt = cnt + 1
     Loop
     If Len(Subject.Text) > 2 Then Subject.Text = Left(Subject.Text, Len(Subject.Text) - 2)
-
-
     cnt = 1
     Do While cert.Exists("ID_" & (CInt(CertificateFields.Issuer) + cnt))
-        If Left(cert.Namely(("ID_" & (CInt(CertificateFields.Issuer) + cnt))), 7) = "Subject" Then
-
-        Else
-            Issuer.Text = Issuer.Text & cert.Terms(CInt(CertificateFields.Issuer) + cnt) & ", "
-
-        End If
+        Issuer.Text = Issuer.Text & cert.Terms(CInt(CertificateFields.Issuer) + cnt) & ", "
         cnt = cnt + 1
     Loop
     If Len(Issuer.Text) > 2 Then Issuer.Text = Left(Issuer.Text, Len(Issuer.Text) - 2)
-    
-    Ciphers.Caption = cert.RSAKeySize & "bit"
-        
-    If cert.Exists("ID_" & (CInt(CertificateFields.SignatureAlgorithm) + 1)) Then
-        Ciphers.Caption = Ciphers.Caption & " Signature-Algorithm,"
-    ElseIf cert.Exists("ID_" & (CInt(CertificateFields.Algorithm) + 1)) Then
-        Ciphers.Caption = Ciphers.Caption & " Algorithm,"
-    End If
-
-    If cert.Terms(CInt(CertificateFields.PublicKeyBlock)) <> "" Or cert.Terms(CertificateFields.Signature) <> "" Then
-    
-        If cert.Terms(CInt(CertificateFields.PublicKeyBlock)) <> "" Then
-            Ciphers.Caption = Ciphers.Caption & " Public Key,"
-        End If
-    
-        If cert.Terms(CertificateFields.Signature) <> "" Then
-            Ciphers.Caption = Ciphers.Caption & " Signature,"
-        End If
-    End If
-    If Right(Ciphers.Caption, 1) = "," Then Ciphers.Caption = Left(Ciphers.Caption, Len(Ciphers.Caption) - 1)
-        
     BeginDate.Caption = cert.Terms(ValidityBeginDate)
     EndDate.Caption = cert.Terms(ValidityExpireDate)
     Serial.Caption = cert.Terms(SerialNumber)
-    
 
     Me.Show
 

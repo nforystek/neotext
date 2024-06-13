@@ -27,7 +27,7 @@ Public Event Disconnected()
 Public Event DataArriving()
 Public Event SendComplete()
 Public Event Connection(ByRef Handle As Long)
-Public Event Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
+Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 
 Private CLIENT_RANDOM As String
 Private SERVER_RANDOM As String
@@ -349,8 +349,8 @@ Private Function ISocket_WhosIs(ByVal sock As Long) As String
 End Function
 
 
-Private Sub SecureSession_Error(ByVal Number As Long, Description As String, ByVal source As String)
-    RaiseEvent Error(Number, source, Description)
+Private Sub SecureSession_Error(ByVal Number As Long, Description As String, ByVal Source As String)
+    RaiseEvent Error(Number, Source, Description)
 End Sub
 
 Private Sub wClient_Connected()
@@ -857,7 +857,7 @@ Private Sub wClient_DataArriving()
 Exit Sub
 errcatch:
     If Err Then
-        RaiseEvent Error(Err.Number, Err.source, Err.Description)
+        RaiseEvent Error(Err.Number, Err.Source, Err.Description)
         Err.Clear
 
     End If
@@ -868,8 +868,8 @@ Private Sub wClient_Disconnected()
     RaiseEvent Disconnected
 End Sub
 
-Private Sub wClient_Error(ByVal Number As Long, ByVal source As String, ByVal Description As String)
-    RaiseEvent Error(Number, source, Description)
+Private Sub wClient_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+    RaiseEvent Error(Number, Source, Description)
 End Sub
 
 Private Sub wClient_SendComplete()
@@ -900,7 +900,7 @@ Public Function Connect(Optional ByVal nHost As String = "", Optional ByVal nPor
 End Function
 
 Public Property Get Connected() As Boolean
-    If Not wClient Is Nothing Then Connected = wClient.Connected
+    Connected = wClient.Connected
 End Property
 
 Public Function Decline(Optional Handle As Long = 0&) As Boolean
@@ -908,7 +908,7 @@ Public Function Decline(Optional Handle As Long = 0&) As Boolean
 End Function
 
 Public Sub Disconnect()
-    If Not wClient Is Nothing Then wClient.Disconnect
+    wClient.Disconnect
 End Sub
 
 Public Property Get Handle() As Long
@@ -928,7 +928,7 @@ Public Function Listen(Optional ByVal nHost As String = "", Optional ByVal nPort
 End Function
 
 Public Property Get Listening() As Boolean
-    If Not wClient Is Nothing Then Listening = wClient.Listening
+    Listening = wClient.Listening
 End Property
 
 Public Function LocalHost() As String

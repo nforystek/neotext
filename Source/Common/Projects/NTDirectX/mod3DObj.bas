@@ -650,51 +650,28 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     Dim matPitch As D3DMATRIX
     Dim matScale As D3DMATRIX
     Dim matRot As D3DMATRIX
-    
+
+
     D3DXMatrixIdentity matPos
-    
-'    If Not Camera.Player Is Nothing Then
-'        If Not Camera.Planet Is Nothing Then
-'            If ApplyTo.Key = Camera.Player.Key Then
-'
-'                D3DXMatrixTranslation matPos, -Camera.Planet.Offset.X, -Camera.Planet.Offset.Y, -Camera.Planet.Offset.Z
-'                D3DXMatrixMultiply matMat, matPos, matMat
-'
-'                D3DXMatrixScaling matScale, -Camera.Planet.Scaled.X, -Camera.Planet.Scaled.Y, -Camera.Planet.Scaled.Z
-'                D3DXMatrixMultiply matScale, matScale, matMat
-'
-'                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Planet.Rotate.Z)
-'                D3DXMatrixMultiply matMat, matRoll, matMat
-'
-'                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Planet.Rotate.Y)
-'                D3DXMatrixMultiply matMat, matYaw, matMat
-'
-'                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Planet.Rotate.X)
-'                D3DXMatrixMultiply matMat, matPitch, matMat
-'
-'                D3DXMatrixTranslation matPos, -Camera.Planet.Origin.X, -Camera.Planet.Origin.Y, -Camera.Planet.Origin.Z
-'                D3DXMatrixMultiply matMat, matPos, matMat
-'            End If
-'        End If
-'    End If
-    
+
     D3DXMatrixTranslation matPos, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z
     D3DXMatrixMultiply matMat, matPos, matMat
-   
+
     D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(ApplyTo.Rotate.X)
     D3DXMatrixMultiply matMat, matPitch, matMat
-     
+
     D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(ApplyTo.Rotate.Y)
     D3DXMatrixMultiply matMat, matYaw, matMat
 
     D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(ApplyTo.Rotate.Z)
     D3DXMatrixMultiply matMat, matRoll, matMat
-    
+
     D3DXMatrixTranslation matPos, ApplyTo.Offset.X, ApplyTo.Offset.Y, ApplyTo.Offset.Z
     D3DXMatrixMultiply matMat, matPos, matMat
-    
+
     D3DXMatrixScaling matScale, ApplyTo.Scaled.X, ApplyTo.Scaled.Y, ApplyTo.Scaled.Z
     D3DXMatrixMultiply matScale, matScale, matMat
+
 
     
     If Not Parent Is Nothing Then
@@ -778,48 +755,24 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
 
     
     If ApplyTo.Moved Then ApplyTo.Moved = False
+    
 
     D3DXMatrixTranslation matPos, -ApplyTo.Offset.X, -ApplyTo.Offset.Y, -ApplyTo.Offset.Z
     D3DXMatrixMultiply matMat, matPos, matMat
-    
+
     D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-ApplyTo.Rotate.Z)
     D3DXMatrixMultiply matMat, matRoll, matMat
-    
+
     D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-ApplyTo.Rotate.Y)
     D3DXMatrixMultiply matMat, matYaw, matMat
-    
+
     D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-ApplyTo.Rotate.X)
     D3DXMatrixMultiply matMat, matPitch, matMat
-    
+
     D3DXMatrixTranslation matPos, -ApplyTo.Origin.X, -ApplyTo.Origin.Y, -ApplyTo.Origin.Z
     D3DXMatrixMultiply matMat, matPos, matMat
 
-'    If Not Camera.Player Is Nothing Then
-'        If Not Camera.Planet Is Nothing Then
-'            If ApplyTo.Key = Camera.Player.Key Then
-'
-'                D3DXMatrixTranslation matPos, Camera.Planet.Origin.X, Camera.Planet.Origin.Y, Camera.Planet.Origin.Z
-'                D3DXMatrixMultiply matMat, matPos, matMat
-'
-'                D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(Camera.Planet.Rotate.X)
-'                D3DXMatrixMultiply matMat, matPitch, matMat
-'
-'                D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(Camera.Planet.Rotate.Y)
-'                D3DXMatrixMultiply matMat, matYaw, matMat
-'
-'                D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(Camera.Planet.Rotate.Z)
-'                D3DXMatrixMultiply matMat, matRoll, matMat
-'
-'                D3DXMatrixTranslation matPos, Camera.Planet.Offset.X, Camera.Planet.Offset.Y, Camera.Planet.Offset.Z
-'                D3DXMatrixMultiply matMat, matPos, matMat
-'
-'            End If
-'
-'
-'        End If
-'
-'    End If
-    
+
 End Sub
 
 Public Function RebuildTriangleArray() As Long

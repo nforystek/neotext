@@ -1,5 +1,20 @@
-Attribute VB_Name = "modFileSys"
+#Const [True] = -1
+#Const [False] = 0
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Attribute VB_Name = "modFileSys"
 #Const modFileSys = -1
 Option Explicit
 Option Compare Binary
@@ -217,21 +232,21 @@ End Function
 
 Public Function GetWinDir() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetWindowsDirectory(winDir, 255)
+    Ret = GetWindowsDirectory(winDir, 255)
     winDir = Trim(Replace(winDir, Chr(0), ""))
-    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.path
+    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.Path
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     GetWinDir = winDir
 End Function
 
 Public Function GetWinTempDir() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetTempPath(255, winDir)
-    If (ret <> 16) And (ret <> 34) Then
+    Ret = GetTempPath(255, winDir)
+    If (Ret <> 16) And (Ret <> 34) Then
         winDir = GetWinDir()
         If LCase(Dir(winDir & "TEMP", vbDirectory)) = "" Then
             MkDir winDir + "TEMP"
@@ -246,14 +261,14 @@ End Function
 
 Public Function GetTemporaryFile() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
-    If ret = 0 Then
+    Ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
+    If Ret = 0 Then
         winDir = GetWinTempDir & "\" & Left(Left(App.Title, 3) & Hex(CLng(Mid(CStr(Rnd), 3))), 14) & ".tmp"
-        ret = FreeFile
-        Open winDir For Output As #ret
-        Close #ret
+        Ret = FreeFile
+        Open winDir For Output As #Ret
+        Close #Ret
     Else
         winDir = Trim(Replace(winDir, Chr(0), ""))
     End If

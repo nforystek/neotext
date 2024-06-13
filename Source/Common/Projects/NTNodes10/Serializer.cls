@@ -11,6 +11,7 @@ Attribute VB_GlobalNameSpace = True
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+
 Option Explicit
 'This object attempts to Serialize any object passed to the Serialize function into XML
 'and Deserialize it to an object again with the Deserialize function, optionally specifying a

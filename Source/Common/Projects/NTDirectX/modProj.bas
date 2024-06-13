@@ -239,7 +239,7 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
     D3DXMatrixMultiply matPlane, matPos, matPlane
 
     DDevice.SetTransform D3DTS_WORLD, matPlane
-    
+
     D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(0)
     D3DXMatrixMultiply matPlane, matPitch, matPlane
 
@@ -251,34 +251,84 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 
     DDevice.SetTransform D3DTS_WORLD, matPlane
 
-    
+
     If Not p.Follow Then
         D3DXMatrixTranslation matPos, X, Y, Z
         D3DXMatrixMultiply matPlane, matPos, matPlane
-        
+
         DDevice.SetTransform D3DTS_WORLD, matPlane
 
-        
+
     End If
 
     If Not p.Honing Then
-    
+
         D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
         D3DXMatrixMultiply matPlane, matPitch, matPlane
 
         D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
         D3DXMatrixMultiply matPlane, matYaw, matPlane
-        
+
         D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
         D3DXMatrixMultiply matPlane, matRoll, matPlane
 
         D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
         D3DXMatrixMultiply matPlane, matScale, matPlane
-    
+
         DDevice.SetTransform D3DTS_WORLD, matPlane
 
-    
+
     End If
+
+'    D3DXMatrixScaling matScale, 1, 1, 1
+'    D3DXMatrixMultiply matWorld, matScale, matWorld
+'
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'    D3DXMatrixTranslation matPos, 0, 0, 0
+'    D3DXMatrixMultiply matWorld, matPos, matWorld
+'
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'    D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(0)
+'    D3DXMatrixMultiply matWorld, matPitch, matWorld
+'
+'    D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(0)
+'    D3DXMatrixMultiply matWorld, matYaw, matWorld
+'
+'    D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(0)
+'    D3DXMatrixMultiply matWorld, matRoll, matWorld
+'
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'
+'    If Not p.Follow Then
+'        D3DXMatrixTranslation matPos, X, Y, Z
+'        D3DXMatrixMultiply matWorld, matPos, matWorld
+'
+'        DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'
+'    End If
+'
+'    If Not p.Honing Then
+'
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
+'        D3DXMatrixMultiply matWorld, matPitch, matWorld
+'
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
+'        D3DXMatrixMultiply matWorld, matYaw, matWorld
+'
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
+'        D3DXMatrixMultiply matWorld, matRoll, matWorld
+'
+'        D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
+'        D3DXMatrixMultiply matWorld, matScale, matWorld
+'
+'        DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'
+'    End If
     
         
 End Sub

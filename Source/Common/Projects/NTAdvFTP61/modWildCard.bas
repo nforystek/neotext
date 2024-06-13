@@ -1,5 +1,20 @@
-Attribute VB_Name = "modWildCard"
+#Const [True] = -1
+#Const [False] = 0
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Attribute VB_Name = "modWildCard"
 #Const modWildCard = -1
 Option Explicit
 Option Compare Text

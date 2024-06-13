@@ -106,11 +106,12 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             'BeginMirrors UserControl, Camera.Player
     
     
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0    ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
+            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1#, 0  ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
 
             On Error GoTo 0 'temporary
             
             SetupCamera1 UserControl, Camera
+
             
             DDevice.BeginScene
             
@@ -118,8 +119,9 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
                
             RenderMotions UserControl, Camera
 
+
             SetupCamera2 UserControl, Camera
-            
+    
             SetupCamera3 UserControl, Camera
             
             RenderPlanets UserControl, Camera
@@ -127,7 +129,6 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderMolecules UserControl, Camera
             
             RenderBrilliants UserControl, Camera
-
             
             InputScene UserControl
     
@@ -498,7 +499,7 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
          'DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
          'DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
 
-     '   DDevice.SetRenderState D3DRS_ZENABLE, 1
+        DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
         DDevice.SetRenderState D3DRS_DITHERENABLE, 0
         DDevice.SetRenderState D3DRS_EDGEANTIALIAS, 0
@@ -506,8 +507,8 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, 0
         DDevice.SetRenderState D3DRS_VERTEXBLEND, 0
 
-    '    DDevice.SetRenderState D3DRS_CLIPPING, 1
-       ' DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 1
+        DDevice.SetRenderState D3DRS_CLIPPING, 1
+        DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 1
 
 '        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
 '        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1

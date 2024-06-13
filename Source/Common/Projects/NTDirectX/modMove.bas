@@ -1,4 +1,5 @@
 Attribute VB_Name = "modMove"
+
 Option Explicit
 
 Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
