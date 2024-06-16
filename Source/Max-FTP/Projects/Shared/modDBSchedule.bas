@@ -1,9 +1,9 @@
-#Const [True] = -1
-#Const [False] = 0
-
-
-
 Attribute VB_Name = "modDBSchedule"
+
+
+
+
+
 #Const modDBSchedule = -1
 Option Explicit
 'TOP DOWN
@@ -151,4 +151,3 @@ Public Function CountOperation(ByVal ScheduleID As Long) As Long
     Set dbConn = Nothing
 End Function
 
-

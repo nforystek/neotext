@@ -54,7 +54,6 @@ Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
 ThreadingModel=1
-RemoveUnusedControlInfo=0
 DebugStartupOption=0
 
 [MS Transaction Server]

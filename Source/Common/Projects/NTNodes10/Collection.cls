@@ -188,18 +188,16 @@ Public Sub Clear() ' _
 Clears all items with-in the collection, and the Count property becomes zero.
 Attribute Clear.VB_Description = "Clears all items with-in the collection, and the Count property becomes zero."
     Dim ref As Item
-    If Not propList Is Nothing Then
-        Do Until propList.Count = 0
-            Set ref = propList(1)
-            propList.Remove 1
-            lptrList.Remove 1
-            If VBA.IsObject(ref.Value) Then
-                Set ref.Value = Nothing
-            End If
-            Set ref.Parent = Nothing
-            Set ref = Nothing
-        Loop
-    End If
+    Do Until propList.Count = 0
+        Set ref = propList(1)
+        propList.Remove 1
+        lptrList.Remove 1
+        If VBA.IsObject(ref.Value) Then
+            Set ref.Value = Nothing
+        End If
+        Set ref.Parent = Nothing
+        Set ref = Nothing
+    Loop
 End Sub
 
 Friend Sub AddItem(ByVal itm As Item)

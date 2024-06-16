@@ -1,948 +1,487 @@
 Attribute VB_Name = "modMove"
-
+#Const modMove = -1
 Option Explicit
+'TOP DOWN
+Option Compare Binary
 
-Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-
-    If Not Relative Then
-        Set ApplyTo.Origin = VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin)
-        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
-    Else
-        Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
-        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
-        Set ApplyTo.Relative.Origin = Nothing
-    End If
-
-
-End Sub
-
-
-Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-
-    If Not Relative Then
-        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
-        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-    Else
-        Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
-        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-        Set ApplyTo.Relative.Rotate = Nothing
-    End If
-
+Option Private Module
+'############################################################################################################
+'Derived Exports ############################################################################################
+'############################################################################################################
    
+'MaxLandLib.dll exports
+'extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
+'Accepts inputs n1 and n2 as retruned from PointInPoly(X,Y) then again for (Z,Y) and n2 as returned from tri_tri_intersect() to return the determination of whether or not the collision is correct and satisfy bitwise and math equalaterally collision precise to real coordination from the preliminary possible collision information the other functions return.
+'extern short tri_tri_intersect (unsigned short v0_0, unsigned short v0_1, unsigned short v0_2, unsigned short v1_0, unsigned short v1_1, unsigned short v1_2, unsigned short v2_0, unsigned short v2_1, unsigned short v2_2, unsigned short u0_0, unsigned short u0_1, unsigned short u0_2, unsigned short u1_0, unsigned short u1_1, unsigned short u1_2, unsigned short u2_0, unsigned short u2_1, unsigned short u2_2);
+'Accepts two triangle inputs in hyperbolic paraboloid collision form and returns with in the unsiged whole the percentage of each others distance to plane as one value.  **NOTE Assumes the parameter input as triangles are TRUE for collision with one another.
+'extern int Forystek (int visType, int lngFaceCount, unsigned short *sngCamera[], unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], unsigned short *sngScreenX[], unsigned short *sngScreenY[], unsigned short *sngScreenZ[], unsigned short *sngZBuffer[]);
+'Culling function with three expirimental ways to cull, defined by visType, 0 to 2, returns the difference of input triangles. lngFaceCount, sngCamera[3 x 3], sngFaceVis[6 x lngFaceCount], sngVertexX[3 x lngFaceCount]..Y..Z, sngScreenX[3 x lngFaceCount]..Y..Z, sngZBuffer[4 x lngFaceCount].  The camera is defined by position [0,0]=X, [0,1]=Y, [0,2]=Z, direction [1,0]=X, [1,1]=Y, [1,2]=Z, and upvector [2,0]=X, [2,1]=Y, [2,2]=Z.  sngFaceVis should be initialized to zero, and sngVertex arrays are 3D coordinate equivelent to sngScreen with a screenZ buffer, and Zbuffer for the verticies.
+'extern bool PointBehindPoly (unsigned short pX, unsigned short pY, unsigned short pZ, unsigned short nX, unsigned short nY, unsigned short nZ, unsigned short vX, unsigned short vY, unsigned short vZ) ;
+'Checks for the presence of a point behind a triangle, the first three inputs are the length of the triangles sides, the next three are the triangles normal, the last three are the point to test with the triangles center removed.
+'extern int PointInPoly (int pX, int pY, unsigned short *polyX[], unsigned short *polyY[], int polyN);
+'Tests for the presence of a 2D point pX,pY anywhere within a 2D shape defined with a list of points polyX,polyY that has polyN number of coordinates, returning the the unsigned percentage of maximum datatype numerical relation to percentage of total coordinates, or zero if the point does not occur within the shapes defined boundaries.
+'extern bool Collision (int visType, int lngFaceCount, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngFaceNum, int *lngCollidedBrush, int *lngCollidedFace);
+'Tests collision of a lngFaceNum against a number of visible faces, lngFaceCount, whose sngFaceVis has been defined with visType as culled with the Forystek function, and returns whether or not a collision occurs also populating the lngCollidedBrush and lngCollidedFace indicating the exact object number (brush) and face number (triangle) that has the collision impact.
 
-'    Static stacked As Integer
-'    stacked = stacked + 1
-'    Dim m As Molecule
-'    If TypeName(ApplyTo) = "Planet" Then
-'        For Each m In Molecules
-'            If ApplyTo.Ranges.R = -1 Then
-'                ApplyRotate VectorAddition(m.Rotate, Scalar), m, ApplyTo
-'            ElseIf ApplyTo.Ranges.R > 0 Then
-'                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyRotate  VectorAddition(m.Rotate, Scalar), m, ApplyTo
-'                End If
-'            End If
-'        Next
-'    ElseIf TypeName(ApplyTo) = "Molecule" Then
-'        For Each m In ApplyTo.Molecules
-'            ApplyRotate  VectorAddition(m.Rotate, Rotate), m, ApplyTo
-'        Next
-'    End If
-'    stacked = stacked - 1
+Public Declare Function Collision Lib "MaxLandLib" (ByVal visType As Long, ByVal lngFaceCount As Long, _
+                        ByRef sngFaceVis() As Single, ByRef sngVertexX() As Single, ByRef sngVertexY() As Single, ByRef sngVertexZ() As Single, _
+                        ByVal lngFaceNum As Long, ByRef lngCollidedBrush As Long, ByRef lngCollidedFace As Long) As Boolean
+                        
+Public Declare Function Culling Lib "MaxLandLib" Alias "Forystek" (ByVal visType As Long, ByVal lngFaceCount As Long, _
+                        ByRef sngCamera() As Single, ByRef sngFaceVis() As Single, ByRef sngVertexX() As Single, ByRef sngVertexY() As Single, ByRef sngVertexZ() As Single, _
+                        ByRef sngScreenX() As Single, ByRef sngScreenY() As Single, ByRef sngScreenZ() As Single, ByRef sngZBuffer() As Single) As Long
+                        
+'############################################################################################################
+'Variable Declare ###########################################################################################
+'############################################################################################################
+
+Public Const CULL0 = 0
+Public Const CULL1 = 1
+Public Const CULL2 = 2
+Public Const CULL3 = 4
+Public Const CULL4 = 3
+Public Const CULL5 = 0
+Public Const CULL6 = -4
+
+Public lCullCalls As Long
+Public lCulledFaces As Long
+Public lMovingObjs As Long
+Public lFacesShown As Long
+
+Public lngObjCount As Long
+Public lngFaceCount As Long
+
+Public lngTestCalls As Long
+
+Public sngFaceVis() As Single
+'sngFaceVis dimension (,n) where n=# is face number
+'sngFaceVis dimension (n,) where n=0 is x of face normal
+'sngFaceVis dimension (n,) where n=1 is y of face normal
+'sngFaceVis dimension (n,) where n=2 is z of face normal
+'sngFaceVis dimension (n,) where n=3 is vis Type, values
+'sngFaceVis dimension (n,) where n=4 is gBrush index
+'sngFaceVis dimension (n,) where n=4 is gFace index
+
+Public sngVertexX() As Single
+Public sngVertexY() As Single
+Public sngVertexZ() As Single
+'sngVertexX dimension (,n) where n=# is face number
+'sngVertexX dimension (n,) where n=0 is faces first vertex.X
+'sngVertexX dimension (n,) where n=1 is faces second vertex.X
+'sngVertexX dimension (n,) where n=2 is faces third vertex.X
+'sngVertexX dimension (n,) where n=3 is faces fourth vertex.X
+
+Public sngCamera() As Single
+'sngCamera dimension (0,n) is camera position, n=0=x, n=1=y, n=2=z
+'sngCamera dimension (1,n) is camera direction, n=0=x, n=1=y, n=2=z
+'sngCamera dimension (2,n) is camera up vector, n=0=x, n=1=y, n=2=z
+
+Public sngScreenX() As Single
+Public sngScreenY() As Single
+Public sngScreenZ() As Single
+Public sngZBuffer() As Single
+
+Public DebugFace() As MyVertex
+Public DebugSkin(0 To 4) As Direct3DTexture8
+Public DebugVBuf As Direct3DVertexBuffer8
+
+Public Type MyCulling
+    Position As D3DVECTOR
+    Direction As D3DVECTOR
+    UpVector As D3DVECTOR
+    visType As Long
+End Type
+
+Public CullingSetup As Integer
+Public CullingObject As MyCulling
+Public CullingCount As Long
+Public Cullings() As MyCulling
+
+Private andCamera() As Single
+
+Private andFaceVis() As Single
+Private andVertexX() As Single
+Private andVertexY() As Single
+Private andVertexZ() As Single
+
+Private andScreenX() As Single
+Private andScreenY() As Single
+Private andScreenZ() As Single
+
+Private andZBuffer() As Single
+
+Private notCamera() As Single
+
+Private notFaceVis() As Single
+Private notVertexX() As Single
+Private notVertexY() As Single
+Private notVertexZ() As Single
+
+Private notScreenX() As Single
+Private notScreenY() As Single
+Private notScreenZ() As Single
+
+Private notZBuffer() As Single
+
+
+Public Sub CreateMove()
+
+    ReDim sngCamera(0 To 2, 0 To 2) As Single
+
 End Sub
 
-Private Static Sub ApplyScaled(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
+Public Sub CleanupMove()
 
-    If Not Relative Then
-        Set ApplyTo.Scaled = VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled)
-        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
-    Else
-        Set ApplyTo.Scaled = VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled)
-        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
-        Set ApplyTo.Relative.Scaled = Nothing
+
+    If CullingCount > 0 Then
+        CullingCount = 0
+        Erase Cullings
     End If
-
-'    Static stacked As Integer
-'    stacked = stacked + 1
-'    Dim m As Molecule
-'    If TypeName(ApplyTo) = "Planet" Then
-'        For Each m In Molecules
-'            If ApplyTo.Ranges.R = -1 Then
-'                ApplyScaled VectorAddition(m.Scaled, Scalar), m, ApplyTo
-'            ElseIf ApplyTo.Ranges.R > 0 Then
-'                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyScaled  VectorAddition(m.Scaled, Scalar), m, ApplyTo
-'                End If
-'            End If
-'        Next
-'    ElseIf TypeName(ApplyTo) = "Molecule" Then
-'        For Each m In ApplyTo.Molecules
-'            ApplyScaled  VectorAddition(m.Scaled, Scalar), m, ApplyTo
-'        Next
-'    End If
-'    stacked = stacked - 1
+    
+    lngFaceCount = 0
+    lngObjCount = 0
+    
+    Erase sngFaceVis
+    
+    Erase sngVertexX
+    Erase sngVertexY
+    Erase sngVertexZ
+    
+    Erase sngCamera
+    
+    Erase sngScreenX
+    Erase sngScreenY
+    Erase sngScreenZ
+    Erase sngZBuffer
+    
 End Sub
 
-Private Static Sub ApplyOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
 
-    If Not Relative Then
-        Set ApplyTo.Offset = VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset)
-        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-    Else
-        Set ApplyTo.Offset = VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset)
-        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-        Set ApplyTo.Relative.Offset = Nothing
-    End If
-
-'    Static stacked As Integer
-'    stacked = stacked + 1
-'    Dim m As Molecule
-'    If TypeName(ApplyTo) = "Planet" Then
-'        For Each m In Molecules
-'            If ApplyTo.Ranges.R = -1 Then
-'                ApplyOrigin  VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-'            ElseIf ApplyTo.Ranges.R > 0 Then
-'                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-'                    ApplyOrigin VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-'                End If
-'            End If
-'        Next
-'    ElseIf TypeName(ApplyTo) = "Molecule" Then
-'        For Each m In ApplyTo.Molecules
-'            ApplyOrigin  VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-'        Next
-'    End If
-'    stacked = stacked - 1
-End Sub
-
-Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    LocPos Origin, False, ApplyTo, Parent 'location is changing the origin to absolute
-End Sub
-Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    LocPos Origin, True, ApplyTo, Parent 'position is changing the origin relative
-End Sub
-Public Sub CommitOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    CommitRoutine ApplyTo, Parent, False, False, True, False, True, False
-    CommitRoutine ApplyTo, Parent, False, False, True, False, False, True
-End Sub
-Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Origin.X <> 0 Or Origin.Y <> 0 Or Origin.Z <> 0 Then
-        Dim o As Orbit
-        Dim m As Molecule
-        Select Case TypeName(ApplyTo)
-            Case "Nothing"
-                'go retrieve all planets whos range and origin has (0,0,0) with in it
-                'and call change all molucules with in each of those planets as well
-                Dim p As Planet
-                For Each p In Planets
-                    If ApplyTo.Ranges.r = -1 Then
-                        LocPos Origin, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.r > 0 Then
-                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-                            LocPos Origin, Relative, p, ApplyTo
-                        End If
-                    End If
-                Next
-            Case "Planet", "Molecule"
-                'early commit multiple calls per frame
-                CommitOrigin ApplyTo, Parent
-                If Relative Then
-                    Set ApplyTo.Relative.Origin = Origin
-                Else
-                    Set ApplyTo.Absolute.Origin = Origin
-                End If
-                ApplyTo.Moved = True
-                'change all molecules with in the specified planets range
-'                If TypeName(ApplyTo) = "Planet" Then
-''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.R = -1 Then
-''                            LocPos Origin, Relative, m
-''                        ElseIf ApplyTo.Ranges.R > 0 Then
-''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-''                                LocPos Origin, Relative, m
-''                            End If
-''                        End If
-''                    Next
-''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-''                    For Each m In ApplyTo.Molecules
-''                        LocPos Origin, Relative, m
-''                    Next
-'                End If
-        End Select
-    End If
-End Sub
-Public Sub Rotation(ByRef Degrees As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    RotOri Degrees, False, ApplyTo, Parent 'location is changing the origin to absolute
-End Sub
-Public Sub Orientate(ByRef Degrees As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    RotOri Degrees, True, ApplyTo, Parent 'position is changing the origin relative
-End Sub
-Public Sub CommitRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    CommitRoutine ApplyTo, Parent, True, False, False, False, True, False
-    CommitRoutine ApplyTo, Parent, True, False, False, False, False, True
-End Sub
-Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Degrees.X <> 0 Or Degrees.Y <> 0 Or Degrees.Z <> 0 Then
-        Dim m As Molecule
-        Dim o As Point
-        Select Case TypeName(ApplyTo)
-            Case "Nothing"
-                'go retrieve all planets whos range and origin has (0,0,0) with in it
-                'and call change all molucules with in each of those planets as well
-                Dim p As Planet
-                For Each p In Planets
-                    If ApplyTo.Ranges.r = -1 Then
-                        RotOri Degrees, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.r > 0 Then
-                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-                            RotOri Degrees, Relative, p, ApplyTo
-                        End If
-                    End If
-                Next
-            Case "Planet", "Molecule"
-                'early commit multiple calls per frame
-                CommitRotate ApplyTo, Parent
-                If Relative Then
-                    Set ApplyTo.Relative.Rotate = Degrees
-                Else
-                    Set ApplyTo.Absolute.Rotate = Degrees
-                End If
-                ApplyTo.Moved = True
-                'change all molecules with in the specified planets range
-'                If TypeName(ApplyTo) = "Planet" Then
-''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.R = -1 Then
-''                            RotOri Degrees, Relative, m
-''                        ElseIf ApplyTo.Ranges.R > 0 Then
-''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-''                                RotOri Degrees, Relative, m
-''                            End If
-''                        End If
-''                    Next
-''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-''                    For Each m In ApplyTo.Molecules
-''                        RotOri Degrees, Relative, m
-''                    Next
-'                End If
-        End Select
-    End If
-End Sub
-
-Public Sub Scaling(ByRef Ratios As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    ScaExp Ratios, False, ApplyTo, Parent 'location is changing the origin to absolute
-End Sub
-Public Sub Explode(ByRef Ratios As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    ScaExp Ratios, True, ApplyTo, Parent 'position is changing the origin relative
-End Sub
-Public Sub CommitScaling(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    CommitRoutine ApplyTo, Parent, False, True, False, False, True, False
-    CommitRoutine ApplyTo, Parent, False, True, False, False, False, True
-End Sub
-Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Abs(Scalar.X) <> 1 Or Abs(Scalar.Y) <> 1 Or Abs(Scalar.Z) <> 1 Then
-        Dim m As Molecule
-        Dim o As Orbit
-        Select Case TypeName(ApplyTo)
-            Case "Nothing"
-                'go retrieve all planets whos range and origin has (0,0,0) with in it
-                'and call change all molucules with in each of those planets as well
-                Dim p As Planet
-                For Each p In Planets
-                    If ApplyTo.Ranges.r = -1 Then
-                        ScaExp Scalar, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.r > 0 Then
-                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-                            ScaExp Scalar, Relative, p, ApplyTo
-                        End If
-                    End If
-                Next
-            Case "Planet", "Molecule"
-                'early commit multiple calls per frame
-                CommitOffset ApplyTo, Parent
-                If Relative Then
-                    Set ApplyTo.Relative.Scaled = Scalar
-                Else
-                    Set ApplyTo.Absolute.Scaled = Scalar
-                End If
-                ApplyTo.Moved = True
-                'change all molecules with in the specified planets range
-'                If TypeName(ApplyTo) = "Planet" Then
-''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.R = -1 Then
-''                            ScaExp Scalar, Relative, m
-''                        ElseIf ApplyTo.Ranges.R > 0 Then
-''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-''                                ScaExp Scalar, Relative, m
-''                            End If
-''                        End If
-''                    Next
-''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-''                    For Each m In ApplyTo.Molecules
-''                        ScaExp Scalar, Relative, m
-''                    Next
-'                End If
-        End Select
-    End If
-End Sub
-Public Sub Displace(ByRef Offset As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    DisBal Offset, False, ApplyTo, Parent  'location is changing the origin to absolute
-End Sub
-Public Sub Balanced(ByRef Offset As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    DisBal Offset, True, ApplyTo, Parent 'position is changing the origin relative
-End Sub
-Public Sub CommitOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-    CommitRoutine ApplyTo, Parent, False, False, False, True, True, False
-    CommitRoutine ApplyTo, Parent, False, False, False, True, False, True
-End Sub
-Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-    If Offset.X <> 0 Or Offset.Y <> 0 Or Offset.Z <> 0 Then
-        Dim dist As Single
-        Dim m As Molecule
-        Dim o As Orbit
-        Select Case TypeName(ApplyTo)
-            Case "Nothing"
-                'go retrieve all planets whos range and origin has (0,0,0) with in it
-                'and call change all molucules with in each of those planets as well
-                Dim p As Planet
-                For Each p In Planets
-                    If ApplyTo.Ranges.r = -1 Then
-                        DisBal Offset, Relative, p, ApplyTo
-                    ElseIf ApplyTo.Ranges.r > 0 Then
-                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-                            DisBal Offset, Relative, p, ApplyTo
-                        End If
-                    End If
-                Next
-            Case "Planet", "Molecule"
-                'early commit multiple calls per frame
-                CommitOffset ApplyTo, Parent
-                If Relative Then
-                    Set ApplyTo.Relative.Offset = Offset
-                Else
-                    Set ApplyTo.Absolute.Offset = Offset
-                End If
-                ApplyTo.Moved = True
-                'change all molecules with in the specified planets range
-'                If TypeName(ApplyTo) = "Planet" Then
-''                    For Each m In Molecules
-''                        If ApplyTo.Ranges.R = -1 Then
-''                            DisBal Offset, Relative, m
-''                        ElseIf ApplyTo.Ranges.R > 0 Then
-''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-''                                DisBal Offset, Relative, m
-''                            End If
-''                        End If
-''                    Next
-''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-''                    For Each m In ApplyTo.Molecules
-''                        DisBal Offset, Relative, m
-''                    Next
-'                End If
-        End Select
-    End If
-End Sub
-
-Private Function RangedMolecules(ByRef ApplyTo As Molecule) As NTNodes10.Collection
-    Set RangedMolecules = New NTNodes10.Collection
-    Dim m As Molecule
-
-    Dim dist As Single
-    For Each m In Molecules
-        If ((m.Parent Is Nothing) And (Not TypeName(ApplyTo) = "Planet")) Or (TypeName(ApplyTo) = "Planet") Then
-            If ApplyTo.Ranges.r = -1 Then
-                RangedMolecules.Add m, m.Key
-            ElseIf ApplyTo.Ranges.r > 0 Then
-                dist = Distance(m.Origin.X, m.Origin.Y, m.Origin.Z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z)
-                If ApplyTo.Ranges.r <= dist Then
-                    RangedMolecules.Add m, m.Key
-                End If
-            End If
-        End If
+Public Sub ComputeNormals()
+    Dim cnt As Long
+    Dim vn As D3DVECTOR
+    
+    For cnt = 0 To lngFaceCount - 1
+        vn = TriangleNormal(MakeVector(sngVertexX(0, cnt), sngVertexY(0, cnt), sngVertexZ(0, cnt)), _
+                            MakeVector(sngVertexX(1, cnt), sngVertexY(1, cnt), sngVertexZ(1, cnt)), _
+                            MakeVector(sngVertexX(2, cnt), sngVertexY(2, cnt), sngVertexZ(2, cnt)))
+        sngFaceVis(0, cnt) = vn.X
+        sngFaceVis(1, cnt) = vn.Y
+        sngFaceVis(2, cnt) = vn.Z
     Next
-    For Each m In ApplyTo.Molecules
-        If Not RangedMolecules.Exists(m.Key) Then RangedMolecules.Add m, m.Key
-    Next
+End Sub
+
+Public Sub AddMotion(ByRef Obj As Molecule, ByRef Action As ActionTypes, ByRef Axis As ntobject3d.Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional ByVal Identity As String = "")
+    Dim act As Motion
+    If Identity = "" Then
+        Identity = Include.Unnamed(Obj.Motions)
+    End If
+    
+    If Obj.Motions.Exists(Identity) Then
+        Set act = Obj.Motions(Identity)
+    Else
+        Set act = New Motion
+        Obj.Motions.Add act, Identity
+    End If
+    With act
+        .Action = Action
+        Set .Axis = Axis
+        .Emphasis = Emphasis
+        .Initials = Emphasis
+        .Friction = Friction
+        .Reactive = Reactive
+        .Latency = Timer
+        .Recount = Recount
+    End With
+End Sub
+
+Public Function DeleteMotion(ByRef Obj As Molecule, ByVal Identity As String) As Boolean
+    Dim a As Long
+    If Obj.Motion.Exists(Identity) Then
+        Obj.Motions.Remove Identity
+    End If
 End Function
 
 
-Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal DoRotate As Boolean, ByVal DoScaled As Boolean, ByVal DoOrigin As Boolean, ByVal DoOffset As Boolean, ByVal DoAbsolute As Boolean, ByVal DoRelative As Boolean)
-    'partial to committing a 3d objects properties during calls that may not sum, for retaining other properties needing change first and entirety per frame
-    Static stacked As Boolean
-    If Not stacked Then
-        stacked = True
+Public Function CalculateMotion(ByRef Motion As Motion, ByRef Action As ActionTypes) As D3DVECTOR
+
+    If (Motion.Action And Action) = Action Then
         
-        'any absolute position comes first, pending is a difference from the actual
-        If ((DoOrigin And DoAbsolute) Or ((Not DoOrigin) And (Not DoAbsolute))) Then
-            If (Not ApplyTo.Absolute.Origin.Equals(Nothing)) Then ' And (Not ApplyTo.Moved) Then
-                If (Not ApplyTo.Origin.Equals(ApplyTo.Absolute.Origin)) Then
-                    ApplyOrigin ApplyTo, Parent, False
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-        If ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
-            If (Not ApplyTo.Absolute.Offset.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (Not ApplyTo.Offset.Equals(ApplyTo.Absolute.Offset)) Then
-                    ApplyOffset ApplyTo, Parent, False
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-        If ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
-            If (Not ApplyTo.Absolute.Rotate.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (Not ApplyTo.Rotate.Equals(ApplyTo.Absolute.Rotate)) Then
-                    ApplyRotate ApplyTo, Parent, False
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-        If ((DoScaled And DoAbsolute) Or ((Not DoScaled) And (Not DoAbsolute))) Then
-            If (Not ApplyTo.Absolute.Scaled.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (Not ApplyTo.Scaled.Equals(ApplyTo.Absolute.Scaled)) Then
-                    ApplyScaled ApplyTo, Parent, False
-                    ApplyTo.Moved = True
-                End If
-            End If
+        If Motion.Friction <> 0 Then
+            Motion.Emphasis = Motion.Emphasis - (Motion.Emphasis * Motion.Friction)
+            If Motion.Emphasis < 0 Then Motion.Emphasis = 0
         End If
 
-
-        'relative positioning comes secondly, pending is there is any value not empty
-        If ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
-            If (Not ApplyTo.Relative.Rotate.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.Z <> 0) Then
-                    ApplyRotate ApplyTo, Parent, True
-                    ApplyTo.Moved = True
-                End If
-            End If
+        If (Motion.Emphasis > 0.0001) Or (Motion.Emphasis < -0.0001) Then
+            CalculateMotion.X = Motion.Axis.X * Motion.Emphasis
+            CalculateMotion.Y = Motion.Axis.Y * Motion.Emphasis
+            CalculateMotion.Z = Motion.Axis.Z * Motion.Emphasis
+        Else
+            Motion.Emphasis = 0
         End If
-        If ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
-            If (Not ApplyTo.Relative.Origin.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.Z <> 0) Then
-                    ApplyOrigin ApplyTo, Parent, True
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-        If ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
-            If (Not ApplyTo.Relative.Offset.Equals(Nothing)) Then ' And (Not ApplyTo.Moved) Then
-                If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.Z <> 0) Then
-                    ApplyOffset ApplyTo, Parent, True
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-        If ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
-            If (Not ApplyTo.Relative.Scaled.Equals(Nothing)) Then 'And (Not ApplyTo.Moved) Then
-                If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.Z) <> 1) Then
-                    ApplyScaled ApplyTo, Parent, True
-                    ApplyTo.Moved = True
-                End If
-            End If
-        End If
-                
-        stacked = False
+    
     End If
-End Sub
-Private Sub AllCommitRoutine(ByRef ApplyTo As Molecule, Optional ByRef Parent As Molecule = Nothing)
-
-    CommitRoutine ApplyTo, Parent, True, False, False, False, True, False
-    CommitRoutine ApplyTo, Parent, False, True, False, False, True, False
-    CommitRoutine ApplyTo, Parent, False, False, True, False, True, False
-    CommitRoutine ApplyTo, Parent, False, False, False, True, True, False
-
-    CommitRoutine ApplyTo, Parent, True, False, False, False, False, True
-    CommitRoutine ApplyTo, Parent, False, True, False, False, False, True
-    CommitRoutine ApplyTo, Parent, False, False, True, False, False, True
-    CommitRoutine ApplyTo, Parent, False, False, False, True, False, True
-
-    Set ApplyTo.Relative = Nothing
-End Sub
-
-Public Sub RenderMotions(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
-    'called once per frame committing changes the last frame has waiting in object properties in entirety
-    Dim m As Molecule
-    Dim p As Planet
     
-    For Each m In Molecules
-        If m.Parent Is Nothing Then
-            AllCommitRoutine m, Nothing
+End Function
+
+'Public Sub ClearActivities()
+'
+'    If Molecules.Count > 0 Then
+'        Dim o As Long
+'        For o = 1 To Molecules.Count
+'            Do Until Molecules(o).Motions.Count = 0
+'                Molecules(o).Motions.Remove 1
+'            Loop
+'        Next
+'    End If
+'End Sub
+
+Public Function AddMeshCollision(ByRef Obj As Molecule, ByVal FaceCount As Long, ByRef Verticies() As D3DVERTEX, ByRef Indicies() As Integer, Optional ByVal visType As Long = 0) As Long
+On Error GoTo ObjectError
+
+'#####################################################################################
+'############# create face data for a mesh to external compatability #################
+'#####################################################################################
+
+    Dim cnt As Long
+    Dim Face As Long
+    Dim Index As Long
+    Dim V() As D3DVERTEX
+
+    ReDim V(0 To 2) As D3DVERTEX
+    Dim vn As D3DVECTOR
+    
+    Obj.CollideIndex = lngFaceCount
+    Obj.CollideFaces = FaceCount
+    AddMeshCollision = lngFaceCount
+
+    Dim matObj As D3DMATRIX
+    D3DXMatrixIdentity matObj
+    OrientateMolecule matObj, Obj, False
+
+    Index = 0
+    For Face = 0 To FaceCount - 1
+
+        For cnt = 0 To 2
+
+            V(cnt).X = Verticies(Indicies(Index + cnt)).X
+            V(cnt).Y = Verticies(Indicies(Index + cnt)).Y
+            V(cnt).Z = Verticies(Indicies(Index + cnt)).Z
+
+            D3DXVec3TransformCoord vn, ConvertVertexToVector(V(cnt)), matObj
+            V(cnt).X = vn.X
+            V(cnt).Y = vn.Y
+            V(cnt).Z = vn.Z
+        Next
+
+        ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexZ(0 To 2, 0 To lngFaceCount) As Single
+
+        ReDim Preserve sngScreenX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenZ(0 To 2, 0 To lngFaceCount) As Single
+
+        ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
+        
+        vn = TriangleNormal(ConvertVertexToVector(V(0)), ConvertVertexToVector(V(1)), ConvertVertexToVector(V(2)))
+        
+        For cnt = 0 To 2
+
+            sngVertexX(cnt, lngFaceCount) = V(cnt).X
+            sngVertexY(cnt, lngFaceCount) = V(cnt).Y
+            sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
+
+        Next
+
+        sngFaceVis(0, lngFaceCount) = vn.X
+        sngFaceVis(1, lngFaceCount) = vn.Y
+        sngFaceVis(2, lngFaceCount) = vn.Z
+        sngFaceVis(3, lngFaceCount) = visType
+        sngFaceVis(4, lngFaceCount) = lngObjCount
+
+        sngFaceVis(5, lngFaceCount) = CLng(Replace(CStr(Face / 2), ".5", ""))
+        
+        lngFaceCount = lngFaceCount + 1
+
+        Index = Index + 3
+        
+    Next
+
+    Obj.CollideObject = lngObjCount
+
+    lngObjCount = lngObjCount + 1
+
+    Exit Function
+ObjectError:
+    If Err.Number = 6 Or Err.Number = 11 Then Resume
+    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+End Function
+
+Public Function AddPlaneCollision(ByRef Obj As Plane, ByVal FaceCount As Long, ByRef Verticies() As MyVertex, Optional ByVal visType As Long = 0) As Long
+On Error GoTo ObjectError
+
+'#####################################################################################
+'############# create face data for a mesh to external compatability #################
+'#####################################################################################
+
+    Dim cnt As Long
+    Dim Face As Long
+    Dim Index As Long
+    Dim V() As D3DVERTEX
+
+    ReDim V(0 To 2) As D3DVERTEX
+    Dim vn As D3DVECTOR
+
+    Obj.CollideIndex = lngFaceCount
+    Obj.CollideFaces = FaceCount
+    AddPlaneCollision = lngFaceCount
+    Dim matObj As D3DMATRIX
+    OrientateMolecule matObj, Obj.Molecule, True
+    
+    Index = 0
+    For Face = 0 To FaceCount - 1
+
+        For cnt = 0 To 2
+
+            V(cnt).X = Verticies(Index + cnt).X
+            V(cnt).Y = Verticies(Index + cnt).Y
+            V(cnt).Z = Verticies(Index + cnt).Z
+
+            D3DXVec3TransformCoord vn, ConvertVertexToVector(V(cnt)), matObj
+            V(cnt).X = vn.X
+            V(cnt).Y = vn.Y
+            V(cnt).Z = vn.Z
+        Next
+
+        ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexZ(0 To 2, 0 To lngFaceCount) As Single
+
+        ReDim Preserve sngScreenX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenZ(0 To 2, 0 To lngFaceCount) As Single
+
+        ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
+        
+        vn = TriangleNormal(ConvertVertexToVector(V(0)), ConvertVertexToVector(V(1)), ConvertVertexToVector(V(2)))
+        
+        For cnt = 0 To 2
+
+            sngVertexX(cnt, lngFaceCount) = V(cnt).X
+            sngVertexY(cnt, lngFaceCount) = V(cnt).Y
+            sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
+
+        Next
+
+        sngFaceVis(0, lngFaceCount) = vn.X
+        sngFaceVis(1, lngFaceCount) = vn.Y
+        sngFaceVis(2, lngFaceCount) = vn.Z
+        sngFaceVis(3, lngFaceCount) = visType
+        sngFaceVis(4, lngFaceCount) = lngObjCount
+
+        sngFaceVis(5, lngFaceCount) = CLng(Replace(CStr(Face / 2), ".5", ""))
+        
+        lngFaceCount = lngFaceCount + 1
+
+        Index = Index + 3
+        
+    Next
+
+    Obj.CollideObject = lngObjCount
+
+    lngObjCount = lngObjCount + 1
+    
+    Exit Function
+ObjectError:
+    If Err.Number = 6 Or Err.Number = 11 Then Resume
+    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+End Function
+
+
+Public Function DelCollision(ByRef Obj As Object, ByVal FaceCount As Long)
+On Error GoTo ObjectError
+
+    If Obj.CollideIndex > -1 Then
+    
+        Dim cnt As Long
+        Dim Face As Long
+        Dim Index As Long
+        
+        Index = FaceCount
+
+        If lngFaceCount - Index > 0 Then
+    
+            For Face = Obj.CollideIndex To lngFaceCount - Index - 1
+                sngFaceVis(0, Face) = sngFaceVis(0, Index + Face - 1)
+                sngFaceVis(1, Face) = sngFaceVis(1, Index + Face - 1)
+                sngFaceVis(2, Face) = sngFaceVis(2, Index + Face - 1)
+                sngFaceVis(3, Face) = sngFaceVis(3, Index + Face - 1)
+                sngFaceVis(4, Face) = sngFaceVis(4, Index + Face - 1)
+                sngFaceVis(5, Face) = sngFaceVis(5, Index + Face - 1)
+                sngVertexX(0, Face) = sngVertexX(0, Index + Face - 1)
+                sngVertexX(1, Face) = sngVertexX(1, Index + Face - 1)
+                sngVertexX(2, Face) = sngVertexX(2, Index + Face - 1)
+                sngVertexY(0, Face) = sngVertexY(0, Index + Face - 1)
+                sngVertexY(1, Face) = sngVertexY(1, Index + Face - 1)
+                sngVertexY(2, Face) = sngVertexY(2, Index + Face - 1)
+                sngVertexZ(0, Face) = sngVertexZ(0, Index + Face - 1)
+                sngVertexZ(1, Face) = sngVertexZ(1, Index + Face - 1)
+                sngVertexZ(2, Face) = sngVertexZ(2, Index + Face - 1)
+                
+                sngScreenX(0, Face) = sngScreenX(0, Index + Face - 1)
+                sngScreenX(1, Face) = sngScreenX(1, Index + Face - 1)
+                sngScreenX(2, Face) = sngScreenX(2, Index + Face - 1)
+                sngScreenY(0, Face) = sngScreenY(0, Index + Face - 1)
+                sngScreenY(1, Face) = sngScreenY(1, Index + Face - 1)
+                sngScreenY(2, Face) = sngScreenY(2, Index + Face - 1)
+                sngScreenZ(0, Face) = sngScreenZ(0, Index + Face - 1)
+                sngScreenZ(1, Face) = sngScreenZ(1, Index + Face - 1)
+                sngScreenZ(2, Face) = sngScreenZ(2, Index + Face - 1)
+                
+                sngZBuffer(0, Face) = sngZBuffer(0, Index + Face - 1)
+                sngZBuffer(1, Face) = sngZBuffer(1, Index + Face - 1)
+                sngZBuffer(2, Face) = sngZBuffer(2, Index + Face - 1)
+                sngZBuffer(3, Face) = sngZBuffer(3, Index + Face - 1)
+                
+            Next
+            
+            For cnt = 1 To Molecules.Count
+                If Molecules(cnt).CollideIndex > Obj.CollideIndex Then
+                    Molecules(cnt).CollideIndex = Molecules(cnt).CollideIndex - Index
+                End If
+            Next
+            For cnt = 1 To Planes.Count
+                If Planes(cnt).CollideIndex > Obj.CollideIndex Then
+                    Planes(cnt).CollideIndex = Planes(cnt).CollideIndex - Index
+                End If
+            Next
+            
         End If
-    Next
+        
+        Obj.CollideIndex = -1
+        lngObjCount = lngObjCount - 1
+        lngFaceCount = lngFaceCount - Index
+        
+        ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngVertexZ(0 To 2, 0 To lngFaceCount) As Single
     
+        ReDim Preserve sngScreenX(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenY(0 To 2, 0 To lngFaceCount) As Single
+        ReDim Preserve sngScreenZ(0 To 2, 0 To lngFaceCount) As Single
     
-    For Each p In Planets
-        AllCommitRoutine p, Nothing
-    Next
-
+        ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
+    End If
     
-End Sub
+    Exit Function
+ObjectError:
+    If Err.Number = 6 Or Err.Number = 11 Then Resume
+    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+End Function
 
 
-'Option Explicit
-'
-'Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-'
-'    If Not Relative Then
-'        Set ApplyTo.Origin = VectorDeduction(ApplyTo.Absolute.Origin, ApplyTo.Origin)
-'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
-'    Else
-'        Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
-'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
-'        Set ApplyTo.Relative.Origin = Nothing
-'    End If
-'
-''    Static stacked As Integer
-''    stacked = stacked + 1
-''    Dim m As Molecule
-''    If TypeName(ApplyTo) = "Planet" Then
-''        For Each m In Molecules
-''            If ApplyTo.Ranges.R = -1 Then
-''                ApplyOrigin m, ApplyTo, Relative
-''            ElseIf ApplyTo.Ranges.R > 0 Then
-''                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-''                    ApplyOrigin m, ApplyTo, Relative
-''                End If
-''            End If
-''        Next
-''    ElseIf TypeName(ApplyTo) = "Molecule" Then
-''        For Each m In ApplyTo.Molecules
-''            ApplyOrigin m, ApplyTo, Relative
-''        Next
-''    End If
-''    stacked = stacked - 1
-'End Sub
-'
-'
-'Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-'
-'    If Not Relative Then
-'        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
-'        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-'    Else
-'        Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
-'        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-'        Set ApplyTo.Relative.Rotate = Nothing
-'    End If
-'
-'
-'End Sub
-'
-'Private Static Sub ApplyScaled(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-'
-'    If Not Relative Then
-'        Set ApplyTo.Scaled = VectorDeduction(ApplyTo.Absolute.Scaled, ApplyTo.Scaled)
-'        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
-'    Else
-'        Set ApplyTo.Scaled = VectorAddition(ApplyTo.Relative.Scaled, ApplyTo.Scaled)
-'        Set ApplyTo.Absolute.Scaled = ApplyTo.Scaled
-'        Set ApplyTo.Relative.Scaled = Nothing
-'    End If
-'
-''    Static stacked As Integer
-''    stacked = stacked + 1
-''    Dim m As Molecule
-''    If TypeName(ApplyTo) = "Planet" Then
-''        For Each m In Molecules
-''            If ApplyTo.Ranges.R = -1 Then
-''                ApplyScaled VectorAddition(m.Scaled, Scalar), m, ApplyTo
-''            ElseIf ApplyTo.Ranges.R > 0 Then
-''                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-''                    ApplyScaled  VectorAddition(m.Scaled, Scalar), m, ApplyTo
-''                End If
-''            End If
-''        Next
-''    ElseIf TypeName(ApplyTo) = "Molecule" Then
-''        For Each m In ApplyTo.Molecules
-''            ApplyScaled  VectorAddition(m.Scaled, Scalar), m, ApplyTo
-''        Next
-''    End If
-''    stacked = stacked - 1
-'End Sub
-'
-'Private Static Sub ApplyOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal Relative As Boolean)
-'
-'    If Not Relative Then
-'        Set ApplyTo.Offset = VectorDeduction(ApplyTo.Absolute.Offset, ApplyTo.Offset)
-'        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-'    Else
-'        Set ApplyTo.Offset = VectorAddition(ApplyTo.Relative.Offset, ApplyTo.Offset)
-'        Set ApplyTo.Absolute.Offset = ApplyTo.Offset
-'        Set ApplyTo.Relative.Offset = Nothing
-'    End If
-'
-''    Static stacked As Integer
-''    stacked = stacked + 1
-''    Dim m As Molecule
-''    If TypeName(ApplyTo) = "Planet" Then
-''        For Each m In Molecules
-''            If ApplyTo.Ranges.R = -1 Then
-''                ApplyOrigin  VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-''            ElseIf ApplyTo.Ranges.R > 0 Then
-''                If ApplyTo.Ranges.R - Distance(m.Origin.X, m.Origin.Y, m.Origin.z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) > 0 Then
-''                    ApplyOrigin VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-''                End If
-''            End If
-''        Next
-''    ElseIf TypeName(ApplyTo) = "Molecule" Then
-''        For Each m In ApplyTo.Molecules
-''            ApplyOrigin  VectorAddition(ApplyTo.Origin, Offset), m, ApplyTo
-''        Next
-''    End If
-''    stacked = stacked - 1
-'End Sub
-'
-'Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    LocPos Origin, False, ApplyTo, Parent 'location is changing the origin to absolute
-'End Sub
-'Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    LocPos Origin, True, ApplyTo, Parent 'position is changing the origin relative
-'End Sub
-'Public Sub CommitOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-'    CommitRoutine ApplyTo, Parent, False, False, True, False, True, False
-'    CommitRoutine ApplyTo, Parent, False, False, True, False, False, True
-'End Sub
-'Private Sub LocPos(ByRef Origin As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-'    If Origin.X <> 0 Or Origin.Y <> 0 Or Origin.Z <> 0 Then
-'        Dim o As Orbit
-'        Dim m As Molecule
-'        Select Case TypeName(ApplyTo)
-'            Case "Nothing"
-'                'go retrieve all planets whos range and origin has (0,0,0) with in it
-'                'and call change all molucules with in each of those planets as well
-'                Dim p As Planet
-'                For Each p In Planets
-'                    If ApplyTo.Ranges.r = -1 Then
-'                        LocPos Origin, Relative, p, ApplyTo
-'                    ElseIf ApplyTo.Ranges.r > 0 Then
-'                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-'                            LocPos Origin, Relative, p, ApplyTo
-'                        End If
-'                    End If
-'                Next
-'            Case "Planet", "Molecule"
-'                'early commit multiple calls per frame
-'                CommitOrigin ApplyTo, Parent
-'                If Relative Then
-'                    Set ApplyTo.Relative.Origin = Origin
-'                Else
-'                    Set ApplyTo.Absolute.Origin = Origin
-'                End If
-'                'change all molecules with in the specified planets range
-''                If TypeName(ApplyTo) = "Planet" Then
-'''                    For Each m In Molecules
-'''                        If ApplyTo.Ranges.R = -1 Then
-'''                            LocPos Origin, Relative, m
-'''                        ElseIf ApplyTo.Ranges.R > 0 Then
-'''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-'''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-'''                                LocPos Origin, Relative, m
-'''                            End If
-'''                        End If
-'''                    Next
-'''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-'''                    For Each m In ApplyTo.Molecules
-'''                        LocPos Origin, Relative, m
-'''                    Next
-''                End If
-'        End Select
-'    End If
-'End Sub
-'Public Sub Rotation(ByRef Degrees As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    RotOri Degrees, False, ApplyTo, Parent 'location is changing the origin to absolute
-'End Sub
-'Public Sub Orientate(ByRef Degrees As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    RotOri Degrees, True, ApplyTo, Parent 'position is changing the origin relative
-'End Sub
-'Public Sub CommitRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-'    CommitRoutine ApplyTo, Parent, True, False, False, False, True, False
-'    CommitRoutine ApplyTo, Parent, True, False, False, False, False, True
-'End Sub
-'Private Sub RotOri(ByRef Degrees As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-'    If Degrees.X <> 0 Or Degrees.Y <> 0 Or Degrees.Z <> 0 Then
-'        Dim m As Molecule
-'        Dim o As Point
-'        Select Case TypeName(ApplyTo)
-'            Case "Nothing"
-'                'go retrieve all planets whos range and origin has (0,0,0) with in it
-'                'and call change all molucules with in each of those planets as well
-'                Dim p As Planet
-'                For Each p In Planets
-'                    If ApplyTo.Ranges.r = -1 Then
-'                        RotOri Degrees, Relative, p, ApplyTo
-'                    ElseIf ApplyTo.Ranges.r > 0 Then
-'                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-'                            RotOri Degrees, Relative, p, ApplyTo
-'                        End If
-'                    End If
-'                Next
-'            Case "Planet", "Molecule"
-'                'early commit multiple calls per frame
-'                CommitRotate ApplyTo, Parent
-'                If Relative Then
-'                    Set ApplyTo.Relative.Rotate = Degrees
-'                Else
-'                    Set ApplyTo.Absolute.Rotate = Degrees
-'                End If
-'                'change all molecules with in the specified planets range
-''                If TypeName(ApplyTo) = "Planet" Then
-'''                    For Each m In Molecules
-'''                        If ApplyTo.Ranges.R = -1 Then
-'''                            RotOri Degrees, Relative, m
-'''                        ElseIf ApplyTo.Ranges.R > 0 Then
-'''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-'''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-'''                                RotOri Degrees, Relative, m
-'''                            End If
-'''                        End If
-'''                    Next
-'''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-'''                    For Each m In ApplyTo.Molecules
-'''                        RotOri Degrees, Relative, m
-'''                    Next
-''                End If
-'        End Select
-'    End If
-'End Sub
-'
-'Public Sub Scaling(ByRef Ratios As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    ScaExp Ratios, False, ApplyTo, Parent 'location is changing the origin to absolute
-'End Sub
-'Public Sub Explode(ByRef Ratios As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    ScaExp Ratios, True, ApplyTo, Parent 'position is changing the origin relative
-'End Sub
-'Public Sub CommitScaling(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-'    CommitRoutine ApplyTo, Parent, False, True, False, False, True, False
-'    CommitRoutine ApplyTo, Parent, False, True, False, False, False, True
-'End Sub
-'Private Sub ScaExp(ByRef Scalar As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-'    If Abs(Scalar.X) <> 1 Or Abs(Scalar.Y) <> 1 Or Abs(Scalar.Z) <> 1 Then
-'        Dim m As Molecule
-'        Dim o As Orbit
-'        Select Case TypeName(ApplyTo)
-'            Case "Nothing"
-'                'go retrieve all planets whos range and origin has (0,0,0) with in it
-'                'and call change all molucules with in each of those planets as well
-'                Dim p As Planet
-'                For Each p In Planets
-'                    If ApplyTo.Ranges.r = -1 Then
-'                        ScaExp Scalar, Relative, p, ApplyTo
-'                    ElseIf ApplyTo.Ranges.r > 0 Then
-'                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-'                            ScaExp Scalar, Relative, p, ApplyTo
-'                        End If
-'                    End If
-'                Next
-'            Case "Planet", "Molecule"
-'                'early commit multiple calls per frame
-'                CommitOffset ApplyTo, Parent
-'                If Relative Then
-'                    Set ApplyTo.Relative.Scaled = Scalar
-'                Else
-'                    Set ApplyTo.Absolute.Scaled = Scalar
-'                End If
-'                'change all molecules with in the specified planets range
-''                If TypeName(ApplyTo) = "Planet" Then
-'''                    For Each m In Molecules
-'''                        If ApplyTo.Ranges.R = -1 Then
-'''                            ScaExp Scalar, Relative, m
-'''                        ElseIf ApplyTo.Ranges.R > 0 Then
-'''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-'''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-'''                                ScaExp Scalar, Relative, m
-'''                            End If
-'''                        End If
-'''                    Next
-'''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-'''                    For Each m In ApplyTo.Molecules
-'''                        ScaExp Scalar, Relative, m
-'''                    Next
-''                End If
-'        End Select
-'    End If
-'End Sub
-'Public Sub Displace(ByRef Offset As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    DisBal Offset, False, ApplyTo, Parent  'location is changing the origin to absolute
-'End Sub
-'Public Sub Balanced(ByRef Offset As Point, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    DisBal Offset, True, ApplyTo, Parent 'position is changing the origin relative
-'End Sub
-'Public Sub CommitOffset(ByRef ApplyTo As Molecule, ByRef Parent As Molecule)
-'    CommitRoutine ApplyTo, Parent, False, False, False, True, True, False
-'    CommitRoutine ApplyTo, Parent, False, False, False, True, False, True
-'End Sub
-'Private Sub DisBal(ByRef Offset As Point, ByVal Relative As Boolean, Optional ByRef ApplyTo As Molecule = Nothing, Optional ByRef Parent As Molecule = Nothing)
-'    'modifies the locale data of an objects properties, quickly in uncommitted change of multiple calls for speed consideration per frame
-'    If Offset.X <> 0 Or Offset.Y <> 0 Or Offset.Z <> 0 Then
-'        Dim dist As Single
-'        Dim m As Molecule
-'        Dim o As Orbit
-'        Select Case TypeName(ApplyTo)
-'            Case "Nothing"
-'                'go retrieve all planets whos range and origin has (0,0,0) with in it
-'                'and call change all molucules with in each of those planets as well
-'                Dim p As Planet
-'                For Each p In Planets
-'                    If ApplyTo.Ranges.r = -1 Then
-'                        DisBal Offset, Relative, p, ApplyTo
-'                    ElseIf ApplyTo.Ranges.r > 0 Then
-'                        If ApplyTo.Ranges.r <= Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, 0, 0, 0) > 0 Then
-'                            DisBal Offset, Relative, p, ApplyTo
-'                        End If
-'                    End If
-'                Next
-'            Case "Planet", "Molecule"
-'                'early commit multiple calls per frame
-'                CommitOffset ApplyTo, Parent
-'                If Relative Then
-'                    Set ApplyTo.Relative.Offset = Offset
-'                Else
-'                    Set ApplyTo.Absolute.Offset = Offset
-'                End If
-'                'change all molecules with in the specified planets range
-''                If TypeName(ApplyTo) = "Planet" Then
-'''                    For Each m In Molecules
-'''                        If ApplyTo.Ranges.R = -1 Then
-'''                            DisBal Offset, Relative, m
-'''                        ElseIf ApplyTo.Ranges.R > 0 Then
-'''                            If ApplyTo.Ranges.R <= Distance(m.Origin.X, m.Origin.Y, m.Origin.z, _
-'''                                ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.z) Then
-'''                                DisBal Offset, Relative, m
-'''                            End If
-'''                        End If
-'''                    Next
-'''                ElseIf TypeName(ApplyTo) = "Molecule" Then
-'''                    For Each m In ApplyTo.Molecules
-'''                        DisBal Offset, Relative, m
-'''                    Next
-''                End If
-'        End Select
-'    End If
-'End Sub
-'
-'Private Function RangedMolecules(ByRef ApplyTo As Molecule) As NTNodes10.Collection
-'    Set RangedMolecules = New NTNodes10.Collection
-'    Dim m As Molecule
-'
-'    Dim dist As Single
-'    For Each m In Molecules
-'        If ((m.Parent Is Nothing) And (Not TypeName(ApplyTo) = "Planet")) Or (TypeName(ApplyTo) = "Planet") Then
-'            If ApplyTo.Ranges.r = -1 Then
-'                RangedMolecules.Add m, m.Key
-'            ElseIf ApplyTo.Ranges.r > 0 Then
-'                dist = Distance(m.Origin.X, m.Origin.Y, m.Origin.Z, ApplyTo.Origin.X, ApplyTo.Origin.Y, ApplyTo.Origin.Z)
-'                If ApplyTo.Ranges.r <= dist Then
-'                    RangedMolecules.Add m, m.Key
-'                End If
-'            End If
-'        End If
-'    Next
-'    For Each m In ApplyTo.Molecules
-'        If Not RangedMolecules.Exists(m.Key) Then RangedMolecules.Add m, m.Key
-'    Next
-'End Function
-'
-'Public Sub CommitRoutine(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByVal DoRotate As Boolean, ByVal DoScaled As Boolean, ByVal DoOrigin As Boolean, ByVal DoOffset As Boolean, ByVal DoAbsolute As Boolean, ByVal DoRelative As Boolean)
-'    'partial to committing a 3d objects properties during calls that may not sum, for retaining other properties needing change first and entirety per frame
-'    Static stacked As Boolean
-'    If Not stacked Then
-'        stacked = True
-'
-'        'any absolute position comes first, pending is a difference from the actual
-'        If Not ApplyTo.Absolute.Origin.Equals(Nothing) Then
-'            If (Not ApplyTo.Origin.Equals(ApplyTo.Absolute.Origin)) And ((DoOrigin And DoAbsolute) Or ((Not DoOrigin) And (Not DoAbsolute))) Then
-'                ApplyOrigin ApplyTo, Parent, False
-'            End If
-'        End If
-'        If Not ApplyTo.Absolute.Offset.Equals(Nothing) Then
-'            If (Not ApplyTo.Offset.Equals(ApplyTo.Absolute.Offset)) And ((DoOffset And DoAbsolute) Or ((Not DoOffset) And (Not DoAbsolute))) Then
-'                ApplyOffset ApplyTo, Parent, False
-'            End If
-'        End If
-'        If Not ApplyTo.Absolute.Rotate.Equals(Nothing) Then
-'            If (Not ApplyTo.Rotate.Equals(ApplyTo.Absolute.Rotate)) And ((DoRotate And DoAbsolute) Or ((Not DoRotate) And (Not DoAbsolute))) Then
-'                ApplyRotate ApplyTo, Parent, False
-'            End If
-'        End If
-'        If Not ApplyTo.Absolute.Scaled.Equals(Nothing) Then
-'            If (Not ApplyTo.Scaled.Equals(ApplyTo.Absolute.Scaled)) And ((DoScaled And DoAbsolute) Or ((Not DoScaled) And (Not DoAbsolute))) Then
-'                ApplyScaled ApplyTo, Parent, False
-'            End If
-'        End If
-'
-'
-'        'relative positioning comes secondly, pending is there is any value not empty
-'        If Not ApplyTo.Relative.Rotate.Equals(Nothing) Then
-'            If (ApplyTo.Relative.Rotate.X <> 0 Or ApplyTo.Relative.Rotate.Y <> 0 Or ApplyTo.Relative.Rotate.Z <> 0) And ((DoRotate And DoRelative) Or ((Not DoRotate) And (Not DoRelative))) Then
-'                ApplyRotate ApplyTo, Parent, True
-'            End If
-'        End If
-'        If Not ApplyTo.Relative.Origin.Equals(Nothing) Then
-'            If (ApplyTo.Relative.Origin.X <> 0 Or ApplyTo.Relative.Origin.Y <> 0 Or ApplyTo.Relative.Origin.Z <> 0) And ((DoOrigin And DoRelative) Or ((Not DoOrigin) And (Not DoRelative))) Then
-'                ApplyOrigin ApplyTo, Parent, True
-'            End If
-'        End If
-'        If Not ApplyTo.Relative.Offset.Equals(Nothing) Then
-'            If (ApplyTo.Relative.Offset.X <> 0 Or ApplyTo.Relative.Offset.Y <> 0 Or ApplyTo.Relative.Offset.Z <> 0) And ((DoOffset And DoRelative) Or ((Not DoOffset) And (Not DoRelative))) Then
-'                ApplyOffset ApplyTo, Parent, True
-'            End If
-'        End If
-'        If Not ApplyTo.Relative.Scaled.Equals(Nothing) Then
-'            If (Abs(ApplyTo.Relative.Scaled.X) <> 1 Or Abs(ApplyTo.Relative.Scaled.Y) <> 1 Or Abs(ApplyTo.Relative.Scaled.Z) <> 1) And ((DoScaled And DoRelative) Or ((Not DoScaled) And (Not DoRelative))) Then
-'                ApplyScaled ApplyTo, Parent, True
-'            End If
-'        End If
-'
-'        stacked = False
-'    End If
-'End Sub
-'Private Sub AllCommitRoutine(ByRef ApplyTo As Molecule, Optional ByRef Parent As Molecule = Nothing)
-'
-'    CommitRoutine ApplyTo, Parent, True, False, False, False, True, False
-'    CommitRoutine ApplyTo, Parent, False, True, False, False, True, False
-'    CommitRoutine ApplyTo, Parent, False, False, True, False, True, False
-'    CommitRoutine ApplyTo, Parent, False, False, False, True, True, False
-'
-'    CommitRoutine ApplyTo, Parent, True, False, False, False, False, True
-'    CommitRoutine ApplyTo, Parent, False, True, False, False, False, True
-'    CommitRoutine ApplyTo, Parent, False, False, True, False, False, True
-'    CommitRoutine ApplyTo, Parent, False, False, False, True, False, True
-'
-'    Set ApplyTo.Relative = Nothing
-'End Sub
-'
-'Public Sub RenderMotions(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
-'    'called once per frame committing changes the last frame has waiting in object properties in entirety
-'    Dim m As Molecule
-'    Dim p As Planet
-'
-'    For Each m In Molecules
-'        If m.Parent Is Nothing Then
-'            AllCommitRoutine m, Nothing
-'        End If
-'    Next
-'
-'
-'    For Each p In Planets
-'        AllCommitRoutine p, Nothing
-'    Next
-'
-'
-'
-'
-'
-'
-'End Sub
-'
-'
 '

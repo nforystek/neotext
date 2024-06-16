@@ -1,6 +1,6 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modClipBoard"
+
+
 
 
 
@@ -119,12 +119,12 @@ Public Function PasteFromDragDrop(ByRef dForm As Form, ByVal dIndex As Integer, 
     
     On Error GoTo catch
     
-    If Data.Files.Count > 0 Then
+    If Data.Files.count > 0 Then
         
         Dim cnt As Long
         Dim FileNames As String
         
-        For cnt = 1 To Data.Files.Count
+        For cnt = 1 To Data.Files.count
 
             If Data.GetFormat(vbCFFiles) Then
                 FileNames = FileNames & CStr(Data.Files(cnt)) & vbCrLf

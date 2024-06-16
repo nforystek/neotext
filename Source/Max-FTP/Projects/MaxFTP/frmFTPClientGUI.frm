@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1180.0#0"; "NTControls22.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1384.0#0"; "NTControls22.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "richtx32.ocx"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
@@ -475,6 +475,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -956,6 +957,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -1300,6 +1302,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Option Compare Binary
@@ -1539,7 +1542,7 @@ Public Function SetFTPCommand(ByVal Index As Integer, ByVal newVal As String)
     FTPCommand(Index) = newVal
 End Function
 
-Private Sub dContainer_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub dContainer_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -1557,7 +1560,7 @@ Private Sub Form_Activate()
 
 End Sub
 
-Private Sub Form_DragOver(Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub Form_DragOver(Source As Control, x As Single, Y As Single, State As Integer)
 
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
@@ -1860,7 +1863,7 @@ Private Sub Form_Unload(Cancel As Integer)
     
 End Sub
 
-Private Sub hSizer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub hSizer_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
     Me.ReCenterSizers = True
     If Button = 1 And Not hBarIsSizing Then
         hBarIsSizing = True
@@ -2030,7 +2033,7 @@ Public Sub SetClientGUIState(ByVal Index As Integer, ByVal cState As Integer)
     
 End Sub
 
-Private Sub ListView1_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub ListView1_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
     If Button = 2 Then
         RefreshThreadMenu
     End If
@@ -2435,7 +2438,7 @@ Private Sub pAddressBar_Resize(Index As Integer)
     On Error GoTo 0
 End Sub
 
-Private Sub pDummyView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub pDummyView_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
@@ -2445,12 +2448,12 @@ Private Sub pDummyView_KeyDown(Index As Integer, KeyCode As Integer, Shift As In
 
 End Sub
 
-Private Sub pProgress_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub pProgress_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
 
-Private Sub pStatus_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub pStatus_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
@@ -2490,7 +2493,7 @@ Private Sub pView_DblClick(Index As Integer)
     FTPOpen Index
 End Sub
 
-Private Sub pView_DragDrop(Index As Integer, Source As Control, X As Single, Y As Single)
+Private Sub pView_DragDrop(Index As Integer, Source As Control, x As Single, Y As Single)
 
     If Not (Index = Source.Index And Source.Parent.hwnd = Me.hwnd) Then
         If dbSettings.GetClientSetting("DragOption") = 0 Then
@@ -2524,7 +2527,7 @@ Private Sub pView_DragDrop(Index As Integer, Source As Control, X As Single, Y A
 
 End Sub
 
-Private Sub pView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub pView_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     If Index = Source.Index And Source.Parent.hwnd = Me.hwnd Then
         If dbSettings.GetClientSetting("DragOption") > 1 Then
             pView(Index).DragIcon = frmMain.imgDragDrop.ListImages("cut").Picture
@@ -2548,7 +2551,7 @@ Private Sub pView_KeyDown(Index As Integer, KeyCode As Integer, Shift As Integer
     End If
 End Sub
 
-Private Sub pView_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub pView_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
     
     If Button = 2 Then
         
@@ -2609,7 +2612,7 @@ Private Sub SetStatusTotals(ByVal Index As Integer)
     End If
 End Sub
 
-Private Sub pView_OLEDragDrop(Index As Integer, Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub pView_OLEDragDrop(Index As Integer, Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, Y As Single)
     
     PasteFromDragDrop Me, Index, Data
     
@@ -2630,7 +2633,7 @@ Private Sub pViewDrives_Change(Index As Integer)
     Set myClient = Nothing
 End Sub
 
-Private Sub pViewDrives_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub pViewDrives_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
         Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2642,7 +2645,7 @@ Private Sub setLocation_Change(Index As Integer)
    SetConnectGUIState Index, LastState(Index)
 End Sub
 
-Private Sub setLocation_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub setLocation_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2693,7 +2696,7 @@ Private Sub UserControls_ButtonClick(Index As Integer, ByVal Button As MSComctlL
     End Select
 End Sub
 
-Private Sub UserControls_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub UserControls_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2727,11 +2730,11 @@ Private Sub UserGo_ButtonClick(Index As Integer, ByVal Button As MSComctlLib.But
     End Select
 End Sub
 
-Private Sub userGUI_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
+Private Sub userGUI_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
-Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
     Me.ReCenterSizers = True
     If Button = 1 And Not vBarIsSizing Then
         vBarIsSizing = True
@@ -2740,7 +2743,7 @@ Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y
     Else
         If Button = 1 And vBarIsSizing Then
 
-            vSizer.Left = vSizer.Left + X
+            vSizer.Left = vSizer.Left + x
             vBarIsSizing = True
             Form_Resize
         Else
@@ -2820,7 +2823,7 @@ Public Sub ClearFileView(ByVal Index As Integer)
 
 End Sub
 Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
-    On Error GoTo catcH
+    On Error GoTo catch
     
     Dim lstItem
 
@@ -2856,7 +2859,7 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
                             
                     End Select
                     If Err Then Err.Clear
-                    On Error GoTo catcH
+                    On Error GoTo catch
                 End If
 
                 If (((attr And vbSystem) = vbSystem) And dbSettings.GetPublicSetting("ServiceSystem")) Or (Not ((attr And vbSystem) = vbSystem)) Then
@@ -2897,7 +2900,7 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
     End If
 
     Exit Sub
-catcH:
+catch:
    ' Debug.Print Err.Description
     
     Err.Clear
@@ -3012,7 +3015,7 @@ Public Sub FTPOpenSite(ByVal frmSiteInfo As frmFavoriteSite)
 End Sub
 
 Public Sub FTPConnect(ByVal Index As Integer, Optional ByVal SiteInfo As Control, Optional ByVal AutoLogin As Boolean = False)
-On Error GoTo catcH
+On Error GoTo catch
         
     Dim myClient As NTAdvFTP61.Client
     Set myClient = SetMyClient(Index)
@@ -3225,7 +3228,7 @@ On Error GoTo catcH
 
     Set myClient = Nothing
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         'If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If Err.Description <> "" Then
@@ -3475,7 +3478,7 @@ Private Sub ClientError(ByVal Index As Integer, ByVal Number As Long, ByVal Sour
 End Sub
 
 Public Sub FTPRefresh(ByVal Index As Integer)
-On Error GoTo catcH
+On Error GoTo catch
 
     If InRecursiveAction(Index) = False Then
         FTPUnloading(Index) = True
@@ -3507,7 +3510,7 @@ On Error GoTo catcH
     Set myClient = Nothing
 
 Exit Sub
-catcH:
+catch:
 
     If FTPCommand(Index) <> "Stop" Then
         'If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
@@ -3524,12 +3527,12 @@ catcH:
 End Sub
 
 Public Sub ClientListProgress(ByVal Index As Integer, ByVal ReceivedBytes As Double)
-On Error GoTo catcH
+On Error GoTo catch
     
         SetStatus Index, "Listing Folder " & ReceivedBytes & " Bytes"
 
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         'If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
     End If
@@ -3540,7 +3543,7 @@ catcH:
 End Sub
 
 Public Sub ClientListComplete(ByVal Index As Integer)
-On Error GoTo catcH
+On Error GoTo catch
  Debug.Print "ClientListComplete"
     Dim fullText As String
     Dim ListItems() As String
@@ -3574,7 +3577,7 @@ On Error GoTo catcH
     Set nUrl = Nothing
 
 Exit Sub
-catcH:
+catch:
 
     If FTPCommand(Index) <> "Stop" Then
        ' If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
@@ -3592,7 +3595,7 @@ End Sub
 
 
 Public Sub RecursiveClientListComplete(ByVal Index As Integer)
-On Error GoTo catcH
+On Error GoTo catch
  Debug.Print "RecursiveClientListComplete"
     Dim fullText As String
     
@@ -3618,7 +3621,7 @@ On Error GoTo catcH
     Set myClient = Nothing
 
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
        ' If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If Err.Description <> "" Then
@@ -3712,7 +3715,7 @@ Public Sub ClientFileProgress(ByVal Index As Integer, ByVal ProgressType As NTAd
 End Sub
 
 Public Sub RecursiveClientFileComplete(ByVal Index As Integer)
-On Error GoTo catcH:
+On Error GoTo catch:
 
     copyToClientForm(Index).SetStatus copyToClientIndex(Index), "Receive Complete " & RecursiveFileName(Index)
     SetStatus Index, "Send Complete " & RecursiveFileName(Index)
@@ -3730,7 +3733,7 @@ On Error GoTo catcH:
     End If
 
 Exit Sub
-catcH:
+catch:
 
     If FTPCommand(Index) <> "Stop" Then
         If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
@@ -3767,7 +3770,7 @@ Public Sub ClientAddToLog(ByVal Index As Integer, ByVal MessageType As LogMsgTyp
 End Sub
 
 Public Sub FTPChangeFolder(ByVal Index As Integer, ByVal RelativeFolder As String)
-On Error GoTo catcH
+On Error GoTo catch
 
     FTPUnloading(Index) = False
     FTPCommand(Index) = "ChangeFolder"
@@ -3787,7 +3790,7 @@ On Error GoTo catcH
 
     Set myClient = Nothing
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If myClient.GetLastError <> "" Then
@@ -3802,7 +3805,7 @@ catcH:
 End Sub
 
 Public Sub FTPRename(ByVal Index As Integer, ByVal OldName As String, ByVal NewName As String)
-On Error GoTo catcH
+On Error GoTo catch
 
     FTPUnloading(Index) = False
     FTPCommand(Index) = "Rename"
@@ -3828,7 +3831,7 @@ On Error GoTo catcH
 
     Set myClient = Nothing
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If myClient.GetLastError <> "" Then
@@ -3856,7 +3859,7 @@ Private Function GetNewFolderName(ByVal Index As Integer) As String
 End Function
 
 Public Sub FTPNewFolder(ByVal Index As Integer, ByVal FolderName As String)
-On Error GoTo catcH
+On Error GoTo catch
 
     FTPUnloading(Index) = False
     FTPCommand(Index) = "NewFolder"
@@ -3901,7 +3904,7 @@ On Error GoTo catcH
     Set myClient = Nothing
     
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If myClient.GetLastError <> "" Then
@@ -3916,7 +3919,7 @@ catcH:
 End Sub
 
 Public Sub FTPDelete(ByVal Index As Integer)
-On Error GoTo catcH
+On Error GoTo catch
 
     FTPUnloading(Index) = False
     FTPCommand(Index) = "Delete"
@@ -3973,7 +3976,7 @@ On Error GoTo catcH
     End If
 
 Exit Sub
-catcH:
+catch:
     If FTPCommand(Index) <> "Stop" Then
         If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If myClient.GetLastError <> "" Then
@@ -4096,7 +4099,7 @@ If FTPUnloading(Index) Then Exit Sub
             Set myClient = Nothing
 
 Exit Sub
-catcH:
+catch:
 
         If FTPCommand(Index) <> "Stop" Then
             If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
@@ -4173,7 +4176,7 @@ Public Function RecursiveGetCopyCollection(ByVal Index As Integer, ByRef myClien
 
 End Function
 Private Sub RecursiveAction(ByVal Index As Integer, ByRef myClient As NTAdvFTP61.Client, ByVal Action As String, ByVal aItem As String, Optional ByRef oOverwrite As OverwriteTypes, Optional ByRef copyToClient As NTAdvFTP61.Client, Optional ByVal copyToList As NTNodes10.Collection)
-On Error GoTo catcH
+On Error GoTo catch
 
     Dim newToList As NTNodes10.Collection
     Dim newList As NTNodes10.Collection
@@ -4197,7 +4200,7 @@ On Error GoTo catcH
     ItemSize = RemoveNextArg(aItem, "|")
     ItemDate = RemoveNextArg(aItem, "|")
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
     If IsFolder Then
         Dim cnt As Integer
@@ -4219,7 +4222,7 @@ If FTPUnloading(Index) Then GoTo catcH
 
         End Select
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
 
         Set newList = RecursiveGetCopyCollection(Index, myClient)
@@ -4255,7 +4258,7 @@ If FTPUnloading(Index) Then GoTo catcH
             cnt = cnt + 1
         Loop
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
         myClient.ChangeFolderRelative ".."
         MaxEvents.AddEvent dbSettings, MyDescription, myClient.URL, "Parent Folder", myClient
@@ -4267,7 +4270,7 @@ If FTPUnloading(Index) Then GoTo catcH
 
     End If
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
     If IsFolder Then
         Select Case LCase(Trim(Action))
@@ -4310,7 +4313,7 @@ If FTPUnloading(Index) Then GoTo catcH
                                 If oOverwrite = or_Cancel Then
                                     FTPUnloading(Index) = True
                                     FTPCommand(Index) = "Stop"
-                                    GoTo catcH
+                                    GoTo catch
                                 End If
                                 GoTo passit
                             End If
@@ -4328,7 +4331,7 @@ passit:
 
                 End If
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
                 If (oOverwrite = or_Yes Or oOverwrite = or_YesToAll Or oOverwrite = or_Resume Or oOverwrite = or_AutoAll) Or (ItmIndex = -1) Then
                     SetStatus Index, IIf(oOverwrite = or_Resume, "Prepairing resume of " & ItemName & "...", "Starting transfer of " & ItemName & "...")
@@ -4343,7 +4346,7 @@ If FTPUnloading(Index) Then GoTo catcH
 
                     RecursiveFileName(Index) = ItemName
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
                     If (CDbl(ItemSize) > modBitValue.LongBound) Or (CDbl(IIf(IsNumeric(DestItemSize), DestItemSize, "0")) > _
                          modBitValue.LongBound) Or dbSettings.GetProfileSetting("LargeFileMode") Then
@@ -4507,7 +4510,7 @@ If FTPUnloading(Index) Then GoTo catcH
 
                     Set fa = Nothing
 
-If FTPUnloading(Index) Then GoTo catcH
+If FTPUnloading(Index) Then GoTo catch
 
                 End If
 
@@ -4538,7 +4541,7 @@ If FTPUnloading(Index) Then GoTo catcH
 
     End If
 
-catcH:
+catch:
  '   newToList.Clear
     Set newToList = Nothing
  '   newList.Clear
@@ -4737,16 +4740,16 @@ End Sub
 
 Private Function ThreadStateCount(ByVal tState As Integer) As Integer
     Dim cnt As Integer
-    Dim retVal As Integer
-    retVal = 0
+    Dim retval As Integer
+    retval = 0
     For cnt = 1 To ListView1.ListItems.count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = tState Then
-                retVal = retVal + 1
+                retval = retval + 1
             End If
         End If
     Next
-    ThreadStateCount = retVal
+    ThreadStateCount = retval
 End Function
 Private Function MessageFormal(ByVal Text As String) As String
     Dim cnt As Long
@@ -5205,31 +5208,31 @@ End Sub
 
 Public Function GetContainerIndex(ByVal ConNum As Integer, GUIIndex As Integer) As Integer
 
-    Dim retVal As Integer
+    Dim retval As Integer
     Select Case ConNum
         Case 0
         Select Case GUIIndex
             Case 0
-                retVal = 0
+                retval = 0
             Case 1
-                retVal = 3
+                retval = 3
         End Select
         Case 1
         Select Case GUIIndex
             Case 0
-                retVal = 1
+                retval = 1
             Case 1
-                retVal = 4
+                retval = 4
         End Select
         Case 2
         Select Case GUIIndex
             Case 0
-                retVal = 2
+                retval = 2
             Case 1
-                retVal = 5
+                retval = 5
         End Select
     End Select
-    GetContainerIndex = retVal
+    GetContainerIndex = retval
     
 End Function
 

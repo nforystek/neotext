@@ -22,19 +22,19 @@ Public Enum RateTypes
 End Enum
 
 Public Enum ListSystems
-    None = 0
+    none = 0
     Wins = -1
     Unix = -2
 End Enum
 
 Public Enum ErrorReturns
     Wait = -1
-    None = 0
+    none = 0
     Last = 1
 End Enum
 
 Public Enum TransferModes
-    None = -1
+    none = -1
     Binary = 0
     ASCII = 1
 End Enum
@@ -58,7 +58,7 @@ Public Enum ProgressTypes
 End Enum
 
 Public Enum AllocateSides
-    None = 0
+    none = 0
     Client = 1
     Remote = 2
 End Enum
@@ -79,7 +79,7 @@ Public Enum ConnectedStates
 End Enum
 
 Private Enum GatherTypes
-    None = 0
+    none = 0
     Banner = 1
     MOTD = 2
     Help = 3
@@ -658,7 +658,7 @@ Private Sub ResetDefaultValues()
     ftpGettingInfo = False
     ftpLogData = ""
     ftpConnected = NotState
-    ftpEventError = ErrorReturns.None
+    ftpEventError = ErrorReturns.none
     ftpEventReason = GetLastError
     ftpMessageOfTheDay = ""
     ftpBannerMessage = ""
@@ -1834,7 +1834,7 @@ End Function
 
 Friend Function SendFTPCommand(ByVal ftpCommand As String) As String
     If (Not ConnectedState(CommandRequest)) And (Not (ftpEventError = ErrorReturns.Wait)) And (ftpNextCommand = "") Then
-        ftpEventError = ErrorReturns.None
+        ftpEventError = ErrorReturns.none
         ftpNextCommand = ftpNextCommand & ftpCommand & vbCrLf
         DoOutCommands
     Else
@@ -1860,7 +1860,7 @@ Attribute ParseListing.VB_Description = "Attempts to determine listing systems f
     Dim oneLine As String
     Dim delim As String
     Dim lSys As Integer
-    lSys = ListSystems.None
+    lSys = ListSystems.none
     delim = vbLf
     ListData = Replace(Replace(ListData, vbCrLf, vbLf), vbCr, vbNullString)
     If IsMissing(ListItems) Then
@@ -1933,7 +1933,7 @@ Attribute ParseListing.VB_Description = "Attempts to determine listing systems f
                             End If
                             cnt = cnt + 1
                         End If
-                    Case ListSystems.None
+                    Case ListSystems.none
                         oneLine = GetMSDosListParams(oneLine)
                         If Trim(Replace(oneLine, " ", "")) <> "" Then
                             If has Then
@@ -2173,8 +2173,8 @@ Private Sub mData_Connection(ByRef Handle As Long)
             mData.Accept Handle
         End If
 
-    Else    'must be a data arrival mismatch in ip security
-        mData.Decline Handle
+    'Else    'must be a data arrival mismatch in ip security
+   '     mData.Decline Handle
     End If
 End Sub
 
@@ -2245,7 +2245,7 @@ On Error GoTo failerror
         lSize = -1
         Do
                 
-            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
     
                 mData.Disconnect
                 TerminateTransfer
@@ -2320,7 +2320,7 @@ On Error GoTo failerror
         lSize = -1
         Do
             If ftpLargeFileMode Then
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2334,7 +2334,7 @@ On Error GoTo failerror
                     End If
                 End If
             Else
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2423,7 +2423,7 @@ End Sub
 
 Private Sub mTCP_Connection(Handle As Long)
     'not listening so must be a data arrival security mismatch, decline all
-    mTCP.Decline Handle
+   ' mTCP.Decline Handle
 End Sub
 
 Private Sub mTCP_DataArriving()
@@ -2480,18 +2480,18 @@ Private Sub mTCP_DataArriving()
 
                     End If
                     
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(DataStreaming) = True
                     
                 Case "221"
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
                     mTCP.Disconnect
                     
                 Case "225", "226"
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
                     
@@ -2499,8 +2499,8 @@ Private Sub mTCP_DataArriving()
                     ftpEventReason = oneMsg
                     ftpStatInfo = ftpStatInfo & oneMsg & "\n"
                     If Mid(oneMsg, 4, 1) <> "-" Then
-                        ftpGatherType = GatherTypes.None
-                        ftpEventError = ErrorReturns.None
+                        ftpGatherType = GatherTypes.none
+                        ftpEventError = ErrorReturns.none
                         ConnectedState(CommandRequest) = False
                     Else
                         ftpGatherType = GatherTypes.Stat
@@ -2509,14 +2509,14 @@ Private Sub mTCP_DataArriving()
                     ftpEventReason = oneMsg
                     ftpHelpInformation = ftpHelpInformation & oneMsg & "\n"
                     If Mid(oneMsg, 4, 1) <> "-" Then
-                        ftpGatherType = GatherTypes.None
-                        ftpEventError = ErrorReturns.None
+                        ftpGatherType = GatherTypes.none
+                        ftpEventError = ErrorReturns.none
                         ConnectedState(CommandRequest) = False
                     Else
                         ftpGatherType = GatherTypes.Help
                     End If
                 Case "215"
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ftpSystemInfo = Trim(Mid(oneMsg, 4))
                     ConnectedState(CommandRequest) = False
@@ -2524,8 +2524,8 @@ Private Sub mTCP_DataArriving()
                     ftpEventReason = oneMsg
                     ftpBannerMessage = ftpBannerMessage & oneMsg & "\n"
                     If Mid(oneMsg, 4, 1) <> "-" Then
-                        ftpGatherType = GatherTypes.None
-                        ftpEventError = ErrorReturns.None
+                        ftpGatherType = GatherTypes.none
+                        ftpEventError = ErrorReturns.none
                         ConnectedState(CommandRequest) = False
                     Else
                         ftpGatherType = GatherTypes.Banner
@@ -2535,8 +2535,8 @@ Private Sub mTCP_DataArriving()
                     ftpEventReason = oneMsg
                     ftpMessageOfTheDay = ftpMessageOfTheDay & oneMsg & "\n"
                     If Mid(oneMsg, 4, 1) <> "-" Then
-                        ftpGatherType = GatherTypes.None
-                        ftpEventError = ErrorReturns.None
+                        ftpGatherType = GatherTypes.none
+                        ftpEventError = ErrorReturns.none
                         ConnectedState(CommandRequest) = False
                     Else
                         ftpGatherType = GatherTypes.MOTD
@@ -2544,23 +2544,23 @@ Private Sub mTCP_DataArriving()
                 Case "257"
                     ftpFolder = oneMsg
                     ftpFolder = RemoveQuotedArg(ftpFolder, """", """")
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
                     
                 Case "250"
                     
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     If Mid(oneMsg, 4, 1) <> "-" Then
                         ConnectedState(CommandRequest) = False
                     End If
                 Case "212", "213", "331", "350"
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
                 Case "200"
-                    ftpEventError = ErrorReturns.None
+                    ftpEventError = ErrorReturns.none
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
 
@@ -2580,7 +2580,7 @@ Private Sub mTCP_DataArriving()
             If ftpEventError = ErrorReturns.Last Then
                 AddToLog MessageTypes.Incorrect, oneMsg
                 SetLastError EventError, 8, oneMsg
-                ftpEventError = ErrorReturns.None
+                ftpEventError = ErrorReturns.none
                 'RaiseEvent Error(8, "NTAdvFTP", oneMsg)
                 
             Else
@@ -2635,7 +2635,7 @@ Private Sub DoOutCommands()
                 ftpCommand = RemoveNextArg(ftpNextCommand, vbCrLf)
                 Select Case NextArg(ftpCommand, " ")
                     Case "ACCT"
-                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
+                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.none) Then
                             ConnectedState(LoggingInto) = True
                             If ((ftpUsername <> "") And (ftpPassword = "")) Then
                                 ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand
@@ -2655,7 +2655,7 @@ Private Sub DoOutCommands()
                             ftpNextCommand = "ACCT " & ftpAccount & vbCrLf & ftpNextCommand
                         End If
                     Case "PASS"
-                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
+                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.none) Then
                             ConnectedState(LoggingInto) = False
                             Select Case ftpTransferMode
                                 Case TransferModes.ASCII
@@ -2674,7 +2674,7 @@ Private Sub DoOutCommands()
                             End If
                         End If
                     Case "TYPE"
-                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
+                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.none) Then
                             If (ftpNextCommand = "") Then
                                 If (ftpSystemInfo = "") Then
                                     ftpNextCommand = "SYST" & vbCrLf & ftpNextCommand
@@ -2688,7 +2688,7 @@ Private Sub DoOutCommands()
                             End If
                         End If
                     Case "SYST"
-                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
+                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.none) Then
                             If (ftpFolder <> "") Then
                                 ftpNextCommand = "CWD " & ftpFolder & vbCrLf & ftpNextCommand
                             Else
@@ -2696,7 +2696,7 @@ Private Sub DoOutCommands()
                             End If
                         End If
                     Case "CWD", "PWD"
-                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
+                        If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.none) Then
                             ConnectedState(FullyRemoting) = True
                         End If
                     Case "PASV"
@@ -2707,7 +2707,7 @@ Private Sub DoOutCommands()
                     Case "STOR", "RETR", "LIST", "REST", "APPE"
     
 
-                        If (ftpConnectionMode = "PASV") And (ftpEventError = ErrorReturns.None) Then
+                        If (ftpConnectionMode = "PASV") And (ftpEventError = ErrorReturns.none) Then
 
                             If mData.Connected Then mData.Disconnect
 
@@ -2724,7 +2724,7 @@ Private Sub DoOutCommands()
 
                         
                 End Select
-                If (ftpCommand <> "") And (ftpEventError = ErrorReturns.None) Then
+                If (ftpCommand <> "") And (ftpEventError = ErrorReturns.none) Then
                     
                     Do While (ftpEventError = ErrorReturns.Wait) And mTCP.Connected And (Not ftpCancelThread) And ConnectedState And Transfering
                         'DoEvents
@@ -2747,7 +2747,7 @@ Private Sub DoOutCommands()
                 
 
             End If
-        Loop While (ftpCommand <> "") And (ftpEventError = ErrorReturns.None)
+        Loop While (ftpCommand <> "") And (ftpEventError = ErrorReturns.none)
 
     End If
 

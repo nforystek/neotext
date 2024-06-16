@@ -16,31 +16,28 @@ Option Explicit
 Private pForm As MotionTypes
 
 Private pKey As String
-
-Private pSerialize As Boolean
-Public Property Get Serialize() As Boolean
-Attribute Serialize.VB_MemberFlags = "40"
-    Serialize = pSerialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    pSerialize = RHS
-End Property
-
-
 Public Property Get Key() As String
-Attribute Key.VB_UserMemId = 0
-Attribute Key.VB_MemberFlags = "600"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-    If RHS <> "" Then
-        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
-        If All.Exists(RHS) Then
-            All.Remove RHS
-            All.Add Me, RHS
+'    If Motions.Exists(pKey) And pKey <> "" Then Motions.Remove pKey
+'    pKey = RHS
+'    If RHS <> "" And (Not Motions.Exists(RHS)) Then Motions.Add Me, RHS
+    
+'    If RHS = "" And Motions.Exists(pKey) Then
+'        Motions.Remove pKey
+'        pKey = ""
+'    Else
+        If pKey <> "" And (Not Motions.Exists(RHS)) Then
+           ' If All.Exists(pKey) Then All.Remove pKey
+            If Motions.Exists(pKey) Then Motions.Remove pKey
+           ' All.Add Me, RHS
+            Motions.Add Me, RHS
+            pKey = RHS
+        ElseIf pKey = "" Then
+            pKey = RHS
         End If
-        pKey = RHS
-    End If
+'    End If
 End Property
 
 Public Property Get Form() As Long
@@ -50,12 +47,9 @@ Public Property Let Form(ByRef RHS As Long)
     pForm = RHS
 End Property
 
-
-Private Sub Class_Initialize()
-    Stats_Motion_Count = Stats_Motion_Count + 1
-    pKey = "K" & ObjPtr(Me)
-End Sub
-
 Private Sub Class_Terminate()
-    Stats_Motion_Count = Stats_Motion_Count - 1
+    If pKey <> "" Then
+        If Motions.Exists(pKey) Then Motions.Remove pKey
+      '  If All.Exists(pKey) Then All.Remove pKey
+    End If
 End Sub

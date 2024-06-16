@@ -1,6 +1,6 @@
 Attribute VB_Name = "modAutoType"
-#Const [True] = -1
-#Const [False] = 0
+
+
 
 
 
@@ -103,7 +103,7 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
     
     If (HostServer <> "" And HostServer <> "ftp://" And HostServer <> "ftps://") Then
        
-        Dim enc As New NTCipher10.ncode
+        Dim enc As New NTCipher10.nCode
         
         Dim dbConn As New clsDBConnection
         Dim rs As New ADODB.Recordset
@@ -159,7 +159,7 @@ Public Sub SaveCache(ByVal sInfo As NTControls22.SiteInformation)
     
     If (HostServer <> "" And HostServer <> "ftp://" And HostServer <> "ftps://") Then
     
-        Dim enc As New NTCipher10.ncode
+        Dim enc As New NTCipher10.nCode
         Dim dbID As Long
         Dim dbConn As New clsDBConnection
         Dim rs As New ADODB.Recordset

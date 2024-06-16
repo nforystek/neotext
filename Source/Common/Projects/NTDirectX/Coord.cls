@@ -16,11 +16,6 @@ Option Explicit
 Private pX As Single
 Private pY As Single
 
-Public Property Get Serialize() As Boolean
-Attribute Serialize.VB_MemberFlags = "40"
-    Serialize = True
-End Property
-
 Public Property Get X() As Single
     X = pX
 End Property
@@ -36,34 +31,35 @@ Public Property Let Y(ByVal RHS As Single)
 End Property
 
 Public Function Equals(ByRef Point As Point) As Boolean
-    If Point Is Nothing Then
-        Equals = (pX = 0 And pY = 0)
-    Else
-        Equals = (Point.X = pX And Point.Y = pY)
-    End If
+    Equals = (Point.X = X And Point.Y = Y)
 End Function
 
-Public Property Get ToString() As String
-Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "440"
-    ToString = "[" & Round(pX, 6) & ", " & Round(pY, 6) & "]"
+Public Property Get Serialize() As String
+Attribute Serialize.VB_UserMemId = 0
+Attribute Serialize.VB_MemberFlags = "240"
+    Serialize = "[" & Round(X, 6) & ", " & Round(Y, 6) & "]"
 End Property
-Public Property Let ToString(ByVal RHS As String)
-Attribute ToString.VB_UserMemId = 0
-Attribute ToString.VB_MemberFlags = "240"
+Public Property Let Serialize(ByVal RHS As String)
     RHS = Trim(RHS)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2)
-        pX = ParseNumerical(RHS)
-        pY = ParseNumerical(RHS)
+        If InStr(RHS, ",") > 0 Then
+            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
+                X = CSng(Left(RHS, InStr(RHS, ",") - 1))
+            Else
+                X = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+            End If
+            RHS = Mid(RHS, InStr(RHS, ",") + 1)
+        End If
+        If InStr(RHS, ",") > 0 Then
+            If IsNumeric(Left(RHS, InStr(RHS, ",") - 1)) Then
+                Y = CSng(Left(RHS, InStr(RHS, ",") - 1))
+            Else
+                Y = CSng(frmMain.Evaluate(Left(RHS, InStr(RHS, ",") - 1)))
+            End If
+            RHS = Mid(RHS, InStr(RHS, ",") + 1)
+        End If
     End If
 End Property
 
 
-Private Sub Class_Initialize()
-    Stats_Coord_Count = Stats_Coord_Count + 1
-End Sub
-
-Friend Sub Class_Terminate()
-    Stats_Coord_Count = Stats_Coord_Count - 1
-End Sub

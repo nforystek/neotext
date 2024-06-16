@@ -13,9 +13,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'along with frmTemp, this is a helper object for gathering object
-'information via the ScriptControl contained on frmTemp to seralize
-
 Public Holder As Object
 
 Public Function ObjPtr(ByRef Obj) As Long

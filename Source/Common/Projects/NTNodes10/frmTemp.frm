@@ -16,11 +16,12 @@ Begin VB.Form frmTemp
    StartUpPosition =   3  'Windows Default
    Visible         =   0   'False
    Begin MSScriptControlCtl.ScriptControl ScriptControl1 
-      Left            =   780
+      Left            =   765
       Top             =   90
       _ExtentX        =   1005
       _ExtentY        =   1005
       AllowUI         =   0   'False
+      UseSafeSubset   =   -1  'True
    End
 End
 Attribute VB_Name = "frmTemp"
@@ -28,5 +29,5 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'a helper form used with serialization, which needs the ScriptControl
-'to gather information about objects in a evaluation manor to serialize
+Option Explicit
+

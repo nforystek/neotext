@@ -6,15 +6,11 @@ Option Explicit
 
 Option Compare Binary
 
-Public Enum EventTypes
-    Ranged = 1 'calls oninrange events
-    Contact = 2 'calls oncollide events
-End Enum
 
 Public Enum CollisionTypes
     None = 0 'nothing, also hidden objs
     Ranged = 1 'calls oninrange events
-    Contact = 2 'calls oncollide events
+    Through = 2 'calls oncollide events
     Freely = 4 'able climb and stayup
     Gravity = 8 'rock gravity with all
     Curbing = 16 'upon move, predicts
@@ -22,8 +18,7 @@ Public Enum CollisionTypes
     Coupling = 32 'when push comes to
     'shove, couples with other pushes
     Liquid = Freely Or Gravity
-    'able climb but also when you'res
-    'sitting has lo gravity effect
+    'able climb but also when sitting has lo gravity effect
 End Enum
 
 Public Enum CoordinateTypes
@@ -38,12 +33,12 @@ Public Enum BrilliantTypes
     Spot = 2
 End Enum
 
-'Public Enum BillboardTypes
-'    NotLoaded = 0
-'    CacheOnly = 1
-'    HudPanel = 2
-'    Beacon = 4
-'End Enum
+Public Enum BillboardTypes
+    NotLoaded = 0
+    CacheOnly = 1
+    HudPanel = 2
+    Beacon = 4
+End Enum
 
 Public Enum ControllerModes
     Visual = 0 'no mouse conduct
@@ -54,8 +49,10 @@ End Enum
 Public Enum PlanetTypes
     Shade = 0 'the space color and fog color, any plane may
     World = 1 'cubic 3d 720 degree panoramic globe atmosphere rendering form
-    Plateau = 2 'covers any plane style texture rendering
-    Screen = 4 'flat face 2d rendering on the screen as a plane
+    Plateau = 2 'a single axis value stretch all ways single textured
+    Inland = 3 'inland is a plateau with a hole cut out the center
+    Island = 4 'opposite inland, the cut is on the plane, and may row/col of h/w
+    Screen = 8 'flat face 2d rendering on the screen as a plane
 End Enum
 
 Public Enum MotionTypes
@@ -73,7 +70,7 @@ End Type
 Public Type MyScreen
     X As Single
     Y As Single
-    Z As Single
+    z As Single
     rhw As Single
     clr As Long
     tu As Single
@@ -83,7 +80,7 @@ End Type
 Public Type MyVertex
     X As Single
     Y As Single
-    Z As Single
+    z As Single
     NX As Single
     NY As Single
     Nz As Single
@@ -124,8 +121,10 @@ Public MinCameraZoom As Single
 Public GravityVector As New Point
 Public LiquidVector As New Point
 
+
 Public Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 Public Const VK_F1 = &H70
+
 
 Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
@@ -142,55 +141,10 @@ Public Declare Function SetParent Lib "user32" (ByVal HwndChild As Long, ByVal h
 Public Declare Function SetWindowWord Lib "user32" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal wNewWord As Long) As Long
 Public Const SWW_HPARENT = -8
 
-Public Stats_Billboard_Count As Long
-Public Stats_Billboards_Count As Long
-Public Stats_Bindings_Count As Long
-Public Stats_Brilliant_Count As Long
-Public Stats_Brilliants_Count As Long
-Public Stats_Camera_Count As Long
-Public Stats_Color_Count As Long
-Public Stats_Coord_Count As Long
-Public Stats_Include_Count As Long
-Public Stats_Matter_Count As Long
-Public Stats_Molecule_Count As Long
-Public Stats_Molecules_Count As Long
-Public Stats_Motion_Count As Long
-Public Stats_Motions_Count As Long
-Public Stats_Orbit_Count As Long
-Public Stats_Orbits_Count As Long
-Public Stats_Planet_Count As Long
-Public Stats_Planets_Count As Long
-Public Stats_Point_Count As Long
-Public Stats_Points_Count As Long
-Public Stats_Range_Count As Long
-Public Stats_Ranges_Count As Long
-Public Stats_Volume_Count As Long
-Public Stats_OnEvent_Count As Long
-Public Stats_OnEvents_Count As Long
-
-Public Function GetStats() As String
-    GetStats = "Frames per second: " & FPSRate & ", Elapse per frame: " & FPSElapse & vbCrLf & _
-        "Object Counts: " & vbCrLf & "    Bindings: " & Stats_Bindings_Count & ", " & _
-        "Brilliant: " & Stats_Brilliant_Count & ":" & Brilliants.Count & ", " & "Brilliants: " & Stats_Brilliants_Count & ", " & _
-        "Camera: " & Stats_Camera_Count & ", " & "Color: " & Stats_Color_Count & ", " & _
-        "Coord: " & Stats_Coord_Count & vbCrLf & "    Include: " & Stats_Include_Count & ", " & _
-        "Matter: " & Stats_Matter_Count & ", " & "Molecule: " & Stats_Molecule_Count & ":" & Molecules.Count & ", " & _
-        "Molecules: " & Stats_Molecules_Count & ", " & "Motion: " & Stats_Motion_Count & ", " & _
-        "Motions: " & Stats_Motions_Count & vbCrLf & "    Orbit: " & Stats_Orbit_Count & ", " & _
-        "Orbits: " & Stats_Orbits_Count & ", " & "Planet: " & Stats_Planet_Count & ":" & Planets.Count & ", " & _
-        "Planets: " & Stats_Planets_Count & ", " & "Point: " & Stats_Point_Count & ", " & _
-        "Points: " & Stats_Points_Count & vbCrLf & "    Range: " & Stats_Range_Count & ", " & _
-        "Ranges: " & Stats_Ranges_Count & ", " & "Volume: " & Stats_Volume_Count & ", " & _
-        "OnEvent: " & Stats_OnEvent_Count & ", " & "OnEvents: " & Stats_OnEvents_Count & vbCrLf & _
-        "Array Counts: " & vbCrLf & _
-        "    TriangleCount: " & TriangleCount & ", ObjectCount: " & ObjectCount & vbCrLf & _
-        "    LightCount: " & LightCount & ", FileCount: " & FileCount
-End Function
-
-Public Function ConvertVertexToVector(ByRef v As D3DVERTEX) As D3DVECTOR
-    ConvertVertexToVector.X = v.X
-    ConvertVertexToVector.Y = v.Y
-    ConvertVertexToVector.Z = v.Z
+Public Function ConvertVertexToVector(ByRef V As D3DVERTEX) As D3DVECTOR
+    ConvertVertexToVector.X = V.X
+    ConvertVertexToVector.Y = V.Y
+    ConvertVertexToVector.z = V.z
 End Function
 
 Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Long
@@ -199,22 +153,22 @@ Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Lon
     Dim ref2 As Single
     Dim ref3 As Single
     Dim Ret As Single
-    Dim F As Long
-    F = LBound(l)
+    Dim f As Long
+    f = LBound(l)
     PointInPoly3d = -1
     
-    If UBound(l) + IIf(F = 0, 1, 0) > 2 Then
-        ref1 = (p.X - l(F).X) * (l(F + 1).Y - l(F).Y) - (p.Y - l(F).Y) * (l(F + 1).X - l(F).X)
-        ref2 = (p.Y - l(F).Y) * (l(F + 1).Z - l(F).Z) - (p.Z - l(F).Z) * (l(F + 1).Y - l(F).Y)
-        ref3 = (p.Z - l(F).Z) * (l(F + 1).X - l(F).X) - (p.X - l(F).X) * (l(F + 1).Z - l(F).Z)
+    If UBound(l) + IIf(f = 0, 1, 0) > 2 Then
+        ref1 = (p.X - l(f).X) * (l(f + 1).Y - l(f).Y) - (p.Y - l(f).Y) * (l(f + 1).X - l(f).X)
+        ref2 = (p.Y - l(f).Y) * (l(f + 1).z - l(f).z) - (p.z - l(f).z) * (l(f + 1).Y - l(f).Y)
+        ref3 = (p.z - l(f).z) * (l(f + 1).X - l(f).X) - (p.X - l(f).X) * (l(f + 1).z - l(f).z)
    
         Ret = ref1 + ref2 + ref3
         
         Dim i As Long
-        For i = F + 1 To UBound(l)
-            ref1 = ((p.X - l(F).X) * (l(i).Y - l(F).Y) - (p.Y - l(F).Y) * (l(i).X - l(F).X))
-            ref2 = ((p.Y - l(F).Y) * (l(i).Z - l(F).Z) - (p.Z - l(F).Z) * (l(i).Y - l(F).Y))
-            ref3 = ((p.Z - l(F).Z) * (l(i).X - l(F).X) - (p.X - l(F).X) * (l(i).Z - l(F).Z))
+        For i = f + 1 To UBound(l)
+            ref1 = ((p.X - l(f).X) * (l(i).Y - l(f).Y) - (p.Y - l(f).Y) * (l(i).X - l(f).X))
+            ref2 = ((p.Y - l(f).Y) * (l(i).z - l(f).z) - (p.z - l(f).z) * (l(i).Y - l(f).Y))
+            ref3 = ((p.z - l(f).z) * (l(i).X - l(f).X) - (p.X - l(f).X) * (l(i).z - l(f).z))
 
             If ((Ret >= 0) Xor ((ref1 + ref2 + ref3) >= 0)) Then
                 PointInPoly3d = i
@@ -227,6 +181,8 @@ Public Function PointInPoly3d(ByRef p As MyVertex, ByRef l() As MyVertex) As Lon
 
     End If
 End Function
+
+
 
 'Public Sub CreateMesh(ByVal FileName As String, mesh As D3DXMesh, Buffer As D3DXBuffer, MeshMaterials() As D3DMATERIAL8, MeshTextures() As IUnknown, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long, Optional ByRef SurfaceArea As Single, Optional ByRef Volume As Single)
 '    Dim TextureName As String
@@ -254,7 +210,7 @@ End Function
 '                Set MeshTextures(q) = GetBillboardByFile(GetFilePath(FileName) & "\" & TextureName)
 '                If MeshTextures(q) Is Nothing Then
 '                    If ImageDimensions(GetFilePath(FileName) & "\" & TextureName, d) Then
-'                        Set MeshTextures(q) = D3DX.CreateTextureFromFileEx(DDevice, GetFilePath(FileName) & "\" & TextureName, d.Width, d.Height, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, Transparent, ByVal 0, ByVal 0)
+'                        Set MeshTextures(q) = D3DX.CreateTextureFromFileEx(DDevice, GetFilePath(FileName) & "\" & TextureName, d.Width, d.Height, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE, Transparent, ByVal 0, ByVal 0)
 '                    Else
 '                        Debug.Print "IMAGE ERROR: ImageDimensions - " & GetFilePath(FileName) & "\" & TextureName
 '                    End If
@@ -349,6 +305,7 @@ End Function
 '
 'End Sub
 
+
 Public Function TriangleAreaByLen(ByVal l1 As Single, ByVal l2 As Single, ByVal l3 As Single) As Single
     TriangleAreaByLen = (((((((l1 + l2) - l3) + ((l2 + l3) - l1) + ((l3 + l1) - l2)) * (l1 * l2 * l3)) / (l1 + l2 + l3)) ^ (1 / 2)))
 End Function
@@ -356,6 +313,7 @@ Public Function TriangleVolByLen(ByVal l1 As Single, ByVal l2 As Single, ByVal l
     TriangleVolByLen = TriangleAreaByLen(l1, l2, l3)
     TriangleVolByLen = ((((TriangleVolByLen ^ (1 / 3)) ^ 2) ^ 3) / 12)
 End Function
+
 
 'Public Function ScreenXYTo3DZ0(ByVal MouseX As Single, ByVal MouseY As Single) As D3DVECTOR
 '    Dim Alpha As Single
@@ -474,11 +432,11 @@ End Function
 '
 'End Function
 
-Function FloatToDWord(F As Single) As Long
+Function FloatToDWord(f As Single) As Long
     Dim buf As D3DXBuffer
     Dim l As Long
     Set buf = D3DX.CreateBuffer(4)
-    D3DX.BufferSetData buf, 0, 4, 1, F
+    D3DX.BufferSetData buf, 0, 4, 1, f
     D3DX.BufferGetData buf, 0, 4, 1, l
     FloatToDWord = l
 End Function
@@ -506,25 +464,28 @@ Public Function Clamp(ByVal Value As Single, ByVal max As Single, ByVal min As S
     End If
 End Function
 
-Public Function LengthSqr(ByRef v As D3DVECTOR) As Single
-    LengthSqr = Sqr(Distance(0, 0, 0, v.X, v.Y, v.Z))
+Public Function LengthSqr(ByRef V As D3DVECTOR) As Single
+    LengthSqr = Sqr(Distance(0, 0, 0, V.X, V.Y, V.z))
 End Function
 
-Public Function CreateVertex(X As Single, Y As Single, Z As Single, NX As Single, NY As Single, Nz As Single, tu As Single, tv As Single) As MyVertex
+Public Function CreateVertex(X As Single, Y As Single, z As Single, NX As Single, NY As Single, Nz As Single, tu As Single, tv As Single) As MyVertex
     
     With CreateVertex
-        .X = X: .Y = Y: .Z = Z
+        .X = X: .Y = Y: .z = z
         .NX = NX: .NY = NY: .Nz = Nz
         .tu = tu: .tv = tv
     End With
     
 End Function
 
+
 'Public Function PointToPlane(ByRef p1 As D3DVECTOR, ByRef p2 As D3DVECTOR) As Single
 '    Dim p3 As D3DVECTOR
 '    p3 = VectorSubtract(p1, p2)
 '    PointToPlane = Sqr(VectorDotProduct(p3, p3))
 'End Function
+
+
 
 'Public Function InterceptPoint(ByRef l1p1 As D3DVECTOR, ByRef l1p2 As D3DVECTOR, ByRef l2p1 As D3DVECTOR, ByRef l2p2 As D3DVECTOR, ByRef r1 As D3DVECTOR, ByRef r2 As D3DVECTOR) As Boolean
 '    ' // Algorithm is ported from the C algorithm of (but third port by Nick to vb)
@@ -563,6 +524,8 @@ End Function
 '        End If
 '    End If
 'End Function
+'
+
 
 Public Function GetNow() As String
 
@@ -576,6 +539,12 @@ Public Function GetTimer() As String
     
 End Function
 
+Public Sub Swap(ByRef val1 As Single, ByRef val2 As Single)
+    Dim tmp As Single
+    tmp = val1
+    val1 = val2
+    val2 = tmp
+End Sub
 
 'Public Sub CreateGridPlate(ByRef Data() As MyVertex, ByRef Verticies As Direct3DVertexBuffer8, Optional ByVal Col As Long = 1, Optional ByVal row As Long = 1, Optional ByRef Count As Long = -1, Optional ByVal PlateWidth As Single = 1, Optional ByVal PlateHeight As Single = 1, Optional ByVal tv As Single, Optional ByVal tu As Single)
 '    'creates a number of square plates n, is of either row*col or count which ever is greater, count can be existing already and elements are added modifying it
@@ -637,7 +606,7 @@ End Function
 '    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
 '    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
-'    Set vn = PlaneNormal(MakePoint(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+'    Set vn = TriangleNormal(MakePoint(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 '                            MakePoint(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 '                            MakePoint(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 '    Data(Index + 0).NX = vn.X: Data(Index + 0).NY = vn.Y: Data(Index + 0).Nz = vn.Z
@@ -650,7 +619,7 @@ End Function
 '    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 '    Data(Index + 5) = CreateVertex(P4.X, P4.Y, P4.Z, 0, 0, 0, 0, 0)
-'    vn = PlaneNormal(MakePoint(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+'    vn = TriangleNormal(MakePoint(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 '                            MakePoint(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 '                            MakePoint(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 '    Data(Index + 3).NX = vn.X: Data(Index + 3).NY = vn.Y: Data(Index + 3).Nz = vn.Z
@@ -662,14 +631,14 @@ End Function
 '
 'End Function
 
-'Public Function CreateCircle(ByRef Data() As MyVertex, ByVal OuterEdge As Single, ByVal Segments As Single, Optional ByVal InnerEdge As Single = 0, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Double
+'Public Function CreateCircle(ByRef Data() As MyVertex, ByVal OuterRadii As Single, ByVal Segments As Single, Optional ByVal InnerRadii As Single = 0, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1) As Double
 ''creates a tiangle list for a circle of segment amount of straight edges arranged to a circle
-''of segment amount of triangles, when InnerEdge is supplied in segment*2 amount of trianlges
+''of segment amount of triangles, when innerradii is supplied in segment*2 amount of trianlges
 '
 '    Dim vn As D3DVECTOR
 '    Dim start As Integer
 '    start = UBound(Data) + 1
-'    ReDim Preserve Data(0 To start + ((IIf(InnerEdge > 0, 6, 3) * Segments) - 1) + (IIf(InnerEdge > 0, 6, 3) * 2)) As MyVertex
+'    ReDim Preserve Data(0 To start + ((IIf(InnerRadii > 0, 6, 3) * Segments) - 1) + (IIf(InnerRadii > 0, 6, 3) * 2)) As MyVertex
 '
 '    Dim i As Long
 '    Dim g As Single
@@ -692,19 +661,19 @@ End Function
 '    Dim dist3 As Single
 '    Dim dist4 As Single
 '
-'    For i = -IIf(InnerEdge > 0, 6, 3) To UBound(Data) - start Step IIf(InnerEdge > 0, 6, 3)
+'    For i = -IIf(InnerRadii > 0, 6, 3) To UBound(Data) - start Step IIf(InnerRadii > 0, 6, 3)
 '
-'        g = (((360 / Segments) * (((i + 1) / IIf(InnerEdge > 0, 6, 3)) - 1)) * RADIAN)
+'        g = (((360 / Segments) * (((i + 1) / IIf(InnerRadii > 0, 6, 3)) - 1)) * RADIAN)
 '
-'        intX2 = (OuterEdge * Sin(g))
-'        intY2 = (-OuterEdge * Cos(g))
+'        intX2 = (OuterRadii * Sin(g))
+'        intY2 = (-OuterRadii * Cos(g))
 '
-'        intX3 = (InnerEdge * Sin(g))
-'        intY3 = (-InnerEdge * Cos(g))
+'        intX3 = (InnerRadii * Sin(g))
+'        intY3 = (-InnerRadii * Cos(g))
 '
 '        If i >= 0 Then  'skip ahead
 '
-'            If (InnerEdge > 0) Then
+'            If (InnerRadii > 0) Then
 '                If (i Mod 12) = 0 Then
 '
 '                    dist1 = Distance(intX2, 0, intY2, intX1, 0, intY1) * (ScaleX / 100) * -Sin(g)
@@ -718,7 +687,7 @@ End Function
 '                Data(start + i + 0) = CreateVertex(intX2, 0, intY2, 0, 0, 0, 0, dist2)
 '                Data(start + i + 1) = CreateVertex(intX1, 0, intY1, 0, 0, 0, dist1, dist4)
 '                Data(start + i + 2) = CreateVertex(intX4, 0, intY4, 0, 0, 0, dist3, 0)
-'                vn = PlaneNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
+'                vn = TriangleNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
 '                                    MakeVector(Data(start + i + 1).X, Data(start + i + 1).Y, Data(start + i + 1).Z), _
 '                                    MakeVector(Data(start + i + 2).X, Data(start + i + 2).Y, Data(start + i + 2).Z))
 '                Data(start + i + 0).NX = vn.X: Data(start + i + 0).NY = vn.Y: Data(start + i + 0).Nz = vn.Z
@@ -733,7 +702,7 @@ End Function
 '                Data(start + i + 3) = CreateVertex(intX2, 0, intY2, 0, 0, 0, 0, dist2)
 '                Data(start + i + 4) = CreateVertex(intX4, 0, intY4, 0, 0, 0, dist3, 0)
 '                Data(start + i + 5) = CreateVertex(intX3, 0, intY3, 0, 0, 0, 0, 0)
-'                vn = PlaneNormal(MakeVector(Data(start + i + 3).X, Data(start + i + 3).Y, Data(start + i + 3).Z), _
+'                vn = TriangleNormal(MakeVector(Data(start + i + 3).X, Data(start + i + 3).Y, Data(start + i + 3).Z), _
 '                                    MakeVector(Data(start + i + 4).X, Data(start + i + 4).Y, Data(start + i + 4).Z), _
 '                                    MakeVector(Data(start + i + 5).X, Data(start + i + 5).Y, Data(start + i + 5).Z))
 '                Data(start + i + 3).NX = vn.X: Data(start + i + 3).NY = vn.Y: Data(start + i + 3).Nz = vn.Z
@@ -753,7 +722,7 @@ End Function
 '                Data(start + i + 0) = CreateVertex(intX2, 0, intY2, 0, 0, 0, ((ScaleX / dist1) * (dist1 / 100)), 0)
 '                Data(start + i + 1) = CreateVertex(intX1, 0, intY1, 0, 0, 0, 0, ((ScaleY / dist2) * (dist2 / 100)))
 '                Data(start + i + 2) = CreateVertex(intX4, 0, intY4, 0, 0, 0, 0, 0)
-'                vn = PlaneNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
+'                vn = TriangleNormal(MakeVector(Data(start + i + 0).X, Data(start + i + 0).Y, Data(start + i + 0).Z), _
 '                                    MakeVector(Data(start + i + 1).X, Data(start + i + 1).Y, Data(start + i + 1).Z), _
 '                                    MakeVector(Data(start + i + 2).X, Data(start + i + 2).Y, Data(start + i + 2).Z))
 '                Data(start + i + 0).NX = vn.X: Data(start + i + 0).NY = vn.Y: Data(start + i + 0).Nz = vn.Z
@@ -792,7 +761,7 @@ End Function
 ''    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
 ''    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 ''
-''    vn = PlaneNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+''    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 ''                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 ''                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 ''
@@ -816,7 +785,7 @@ End Function
 ''    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 ''    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, 0, 0)
 ''
-''    vn = PlaneNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+''    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 ''                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 ''                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 ''
@@ -838,5 +807,6 @@ End Function
 ''
 ''
 ''
+'
 
 

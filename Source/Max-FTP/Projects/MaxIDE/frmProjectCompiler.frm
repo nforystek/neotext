@@ -22,6 +22,7 @@ Begin VB.Form frmProjectCompiler
       Top             =   150
       _ExtentX        =   1005
       _ExtentY        =   1005
+      AllowUI         =   -1  'True
       UseSafeSubset   =   -1  'True
    End
 End
@@ -451,10 +452,10 @@ Public Function ObjectClassExists(ByVal Class As String) As Boolean
     Next
 End Function
 
-Public Function ObjectExists(ByVal Name As String) As Boolean
+Public Function ObjectExists(ByVal name As String) As Boolean
     Dim str As Object
     On Error Resume Next
-    Set str = Objects(Name)
+    Set str = Objects(name)
     If Err Then
         Err.Clear
         ObjectExists = False
@@ -464,10 +465,10 @@ Public Function ObjectExists(ByVal Name As String) As Boolean
     On Error GoTo 0
 End Function
 
-Public Function ModuleExists(ByVal Name As String) As Boolean
+Public Function ModuleExists(ByVal name As String) As Boolean
     Dim str As String
     On Error Resume Next
-    str = ScriptControl1.Modules.Item(Name)
+    str = ScriptControl1.Modules.Item(name)
     If Err Then
         Err.Clear
         ModuleExists = False
@@ -477,10 +478,10 @@ Public Function ModuleExists(ByVal Name As String) As Boolean
     On Error GoTo 0
 End Function
 
-Private Function TestActiveXObject(ByVal Name As String) As Boolean
+Private Function TestActiveXObject(ByVal name As String) As Boolean
     On Error GoTo catch
     Dim tmp As Object
-    Set tmp = CreateObject(Name)
+    Set tmp = CreateObject(name)
     Set tmp = Nothing
     TestActiveXObject = True
     Exit Function
@@ -863,6 +864,37 @@ Public Function GenerateProject(ByRef cProject As clsProject, Optional ByVal Add
     End If
                 
     GenerateProject = ret
+End Function
+
+Private Function IronFaultEventCheck()
+    'assuming userdefined data in making a pregenerated middle tier of routing event like driven function calls to the users custom
+    'build requirements, we have worst case scenario in need of least possible interruption on behalf the internal workings of the IDE
+    'for said forwarded events, thus assuming escape sequences are all met with no smoking embdeding of those to other envrionments
+    'then the length is the other projected possible instance of sufforing IDE fault not the users script issue, nor their able debug
+    'we would then assume, line too long and such type of out of memory events of those that allow streaming data such as a socket
+    'need to be predisposed of the error (as data is not executable this is possible) before any other even triggered in assortment
+    'of allowance to the memory throughput while the escape sequences may had to be placed on user data will also increase the size
+    
+    'overview of process:
+    ' eval completion with out native vb error, nor script error, where as when occurs, the event stream is then broken down into
+    ' parts that do not hinder the throughput least a single character is causing the error which is a scenario that shouldn't meet
+    ' and if were, a passing it, likely is by time eased of maxed out cruch so that a single character can become through put
+    ' at anytime the event has to cut the call into more then was was tested for, a single, to consecutive call of, there of the
+    ' size from then on also is parted at same memory cut back, until another whole test is committed, remaining data keeps cutting
+    ' equal to the last passed size of, to acheive this, a native vb and script "pad" wrapper, as well as object initited script
+    ' "set" wrapper is duely escapeable to the parameters passed, that will be used by two script controls, in effect of one eval
+    ' that in turn causes the call of two script controls uses of eval, to tandem the "set" and "pad" wrappers by way of internal
+    ' generating with the native vb component.  This makes any executed script error, with in the script control contained, but
+    ' generated of in native vb component, raises to the script control calling the eval, and the native vb errors to the eval level.
+    ' in which, a attempted test on a single even call with a single data parameter, will be evaluation "line to long" a non-runtime
+    ' error with in the scripting function to be eratic capture of the native vb highest call heirarchy, as any error is reduce mem
+    ' then making shift into two calls, a 4th portion of the memory,a nd the remainder, logically, half on first receit of even raise
+    ' and 1/3rd from then on in any subsequent error on the same event casting break up, or it passes with out error, and is called
+    ' for the actual users code of scriptinog, this eliminates the possibility the IDE faults with no ability the users defined error
+    ' which is allotted to the development of their own accord, and it essentially is the improbable, runtime compilation of script
+    ' so with in reason to escaping the users data sequence with quotations, multiple embeded escape build up has to be created at
+    ' the correct native vb or script in eval, andor "pad" and "set" style of casting script to the scriptcontrol such that they
+    ' functionally happen at their embedeed experience and with out condone of the users escape sequence, not adding to sum of size
 End Function
 
 Public Sub RaiseCallBack(ByVal ObjectName As String, ByVal CallBackName As String, Optional ByVal Params As String = "")

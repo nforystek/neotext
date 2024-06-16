@@ -1,6 +1,6 @@
 Attribute VB_Name = "modChildren"
-#Const [True] = -1
-#Const [False] = 0
+
+
 
 
 
@@ -17,11 +17,11 @@ Public Const WM_WINDOWPOSCHANGED = &H47
 Type WINDOWPOS
         hwnd As Long
         hWndInsertAfter As Long
-        X As Long
+        x As Long
         Y As Long
         cx As Long
         cy As Long
-        Flags As Long
+        flags As Long
 End Type
 
 Private Const WM_ACTIVATE = &H6
@@ -286,7 +286,7 @@ Private Function WindowProc(ByVal hw As Long, ByVal uMsg As Long, ByVal wParam A
                 End If
         End Select
 
-        Select Case WinPos.Flags
+        Select Case WinPos.flags
             Case 33072
                 TempUC.ParentWindowState = vbMinimized
             Case 33060

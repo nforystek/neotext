@@ -16,13 +16,12 @@ Begin VB.Form frmService
    ShowInTaskbar   =   0   'False
    Visible         =   0   'False
    Begin NTService.NTService NTService1 
-      Left            =   396
-      Top             =   84
+      Left            =   360
+      Top             =   180
       _Version        =   65536
       _ExtentX        =   741
       _ExtentY        =   741
       _StockProps     =   0
-      ControlsAccepted=   8
       ServiceName     =   "Simple"
       StartMode       =   3
    End

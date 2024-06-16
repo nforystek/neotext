@@ -1,6 +1,3 @@
-pause
-pause
-
 Swap A, B, D, F, H
 Swap D, B, A
 pause

@@ -34,26 +34,14 @@ Public Type HSLCol 'Datatype used to pass HSL Color values
 End Type
 Public Function rgbRed(RGBCol As Long) As Integer
 'Return the Red component from an RGB Color
-   ' Dim color As String
-   ' color = Right("000000" & Hex(RGBCol), 6)
-   ' rgbRed = CInt(CByte("&h" & Mid(color, 5, 2)))
-    
  rgbRed = RGBCol And &HFF
 End Function
 Public Function rgbGreen(RGBCol As Long) As Integer
 'Return the Green component from an RGB Color
-  '  Dim color As String
- '   color = Right("000000" & Hex(RGBCol), 6)
-  '   rgbGreen = CInt(CByte("&h" & Mid(color, 3, 2)))
-    
  rgbGreen = ((RGBCol And &H100FF00) / &H100)
 End Function
 Public Function rgbBlue(RGBCol As Long) As Integer
 'Return the Blue component from an RGB Color
-  '  Dim color As String
-  '  color = Right("000000" & Hex(RGBCol), 6)
-  '  rgbBlue = CInt(CByte("&h" & Mid(color, 1, 2)))
-    
  rgbBlue = (RGBCol And &HFF0000) / &H10000
 End Function
 Private Function iMax(A As Integer, b As Integer) As Integer
@@ -283,8 +271,8 @@ If H > HSLMAX Then H = H - HSLMAX
 HSL.Hue = H
 CycleColor = HSLtoRGB(HSL)
 End Function
-Public Function Blend(ByVal RGB1 As Long, ByVal RGB2 As Long, _
-ByVal Percent As Single) As Long
+Public Function Blend(RGB1 As Long, RGB2 As Long, _
+Percent As Single) As Long
 'This one doesn't really use the HSL routines, just the
 'RGB Component routines. I threw it in as a bonus ;)
 'Takes two colors and blends them according to a
@@ -292,10 +280,9 @@ ByVal Percent As Single) As Long
 'For example, .3 will return a color 30% of the way
 'between the first color and the second.
 '.5, or 50%, will be an even blend (halfway)
-
-Dim r As Single, r1 As Long, r2 As Long, _
-g As Single, g1 As Long, g2 As Long, _
-b As Single, b1 As Long, b2 As Long
+Dim r As Integer, r1 As Integer, r2 As Integer, _
+g As Integer, g1 As Integer, g2 As Integer, _
+b As Integer, b1 As Integer, b2 As Integer
 If Percent >= 1 Then
 Blend = RGB2
 Exit Function
@@ -303,47 +290,16 @@ ElseIf Percent <= 0 Then
 Blend = RGB1
 Exit Function
 End If
-ConvertColor RGB1, r1, g1, b1
-ConvertColor RGB2, r2, g2, b2
-
-'r1 = rgbRed(RGB1)
-'r2 = rgbRed(RGB2)
-'g1 = rgbGreen(RGB1)
-'g2 = rgbGreen(RGB2)
-'b1 = rgbBlue(RGB1)
-'b2 = rgbBlue(RGB2)
-If Percent < 0.1 Then Percent = Round(Percent, 1)
-If Percent > 0.9 Then Percent = Round(Percent, 1)
-
-r = ((CSng(r1) * Percent) + (CSng(r2) * (1 - Percent)))
-g = ((CSng(g1) * Percent) + (CSng(g2) * (1 - Percent)))
-b = ((CSng(b1) * Percent) + (CSng(b2) * (1 - Percent)))
-
+r1 = rgbRed(RGB1)
+r2 = rgbRed(RGB2)
+g1 = rgbGreen(RGB1)
+g2 = rgbGreen(RGB2)
+b1 = rgbBlue(RGB1)
+b2 = rgbBlue(RGB2)
+r = ((r2 * Percent) + (r1 * (1 - Percent)))
+g = ((g2 * Percent) + (g1 * (1 - Percent)))
+b = ((b2 * Percent) + (b1 * (1 - Percent)))
 Blend = RGB(r, g, b)
-
-'Dim r As Integer, r1 As Integer, r2 As Integer, _
-'g As Integer, g1 As Integer, g2 As Integer, _
-'b As Integer, b1 As Integer, b2 As Integer
-'If Percent >= 1 Then
-'Blend = RGB2
-'Exit Function
-'ElseIf Percent <= 0 Then
-'Blend = RGB1
-'Exit Function
-'End If
-'r1 = rgbRed(RGB1)
-'r2 = rgbRed(RGB2)
-'g1 = rgbGreen(RGB1)
-'g2 = rgbGreen(RGB2)
-'b1 = rgbBlue(RGB1)
-'b2 = rgbBlue(RGB2)
-'
-'
-'r = ((r1 * Percent) + (r2 * (1 - Percent)))
-'g = ((g1 * Percent) + (g2 * (1 - Percent)))
-'b = ((b1 * Percent) + (b2 * (1 - Percent)))
-'
-'Blend = RGB(r, g, b)
 End Function
 
 

@@ -1,9 +1,9 @@
-#Const [True] = -1
-#Const [False] = 0
-
-
-
 Attribute VB_Name = "modFileAssoc"
+
+
+
+
+
 #Const modFileAssoc = -1
 Option Explicit
 'TOP DOWN
@@ -53,7 +53,7 @@ End Type
 
 Private Declare Function SHGetFileInfo Lib "shell32" Alias "SHGetFileInfoA" (ByVal pszPath As String, ByVal dwFileAttributes As Long, psfi As SHFILEINFO, ByVal cbSizeFileInfo As Long, ByVal uFlags As Long) As Long
 
-Private Declare Function ImageList_Draw Lib "comctl32" (ByVal himl As Long, ByVal i As Long, ByVal hDCDest As Long, ByVal X As Long, ByVal Y As Long, ByVal flags As Long) As Long
+Private Declare Function ImageList_Draw Lib "comctl32" (ByVal himl As Long, ByVal i As Long, ByVal hDCDest As Long, ByVal x As Long, ByVal Y As Long, ByVal flags As Long) As Long
 
 Private Type SHITEMID
     cb As Long
@@ -85,7 +85,7 @@ Private Const CSIDL_NETWORK = &H12
 Private Const CSIDL_NETHOOD = &H13
 Private Const CSIDL_FONTS = &H14
 Private Const CSIDL_TEMPLATES = &H15
-Private Declare Sub CoTaskMemFree Lib "ole32" (ByVal pv As Long)
+Private Declare Sub CoTaskMemFree Lib "ole32" (ByVal pV As Long)
 Private Declare Function SHBrowseForFolder Lib "shell32" Alias "SHBrowseForFolderA" _
                               (lpBrowseInfo As BROWSEINFO) As Long
 
@@ -184,10 +184,10 @@ End Function
 Public Function OpenAssociatedFile(ByVal FileName As String, ByVal Silent As Boolean) As Boolean
     On Error GoTo catch
     
-    Dim retVal As Long
+    Dim retval As Long
     
     If IsFileExecutable(FileName) Then
-        retVal = RunProcess(FileName, "", vbNormalFocus, False)
+        retval = RunProcess(FileName, "", vbNormalFocus, False)
     Else
         
         Dim FileExt As String
@@ -196,26 +196,26 @@ Public Function OpenAssociatedFile(ByVal FileName As String, ByVal Silent As Boo
 
         Dim dbFileAssoc As New clsFileAssoc
         If dbFileAssoc.GetWindowsApp(FileExt) Then
-            retVal = RunFile(FileName)
-            If retVal <= 32 Then retVal = 0
+            retval = RunFile(FileName)
+            If retval <= 32 Then retval = 0
         Else
             Dim AppExec As String
             AppExec = MapFolderVariables(Trim(dbFileAssoc.GetApplicationExe(FileExt)))
             If AppExec = "" Or AppExec = "(windows default)" Or AppExec = "(none)" Then
-                retVal = RunFile(FileName)
-                If retVal <= 32 Then retVal = 0
+                retval = RunFile(FileName)
+                If retval <= 32 Then retval = 0
             Else
                 If InStr(FileName, " ") > 0 Then FileName = Chr(34) & FileName & Chr(34)
-                retVal = RunProcess(AppExec, FileName, vbNormalFocus, False)
+                retval = RunProcess(AppExec, FileName, vbNormalFocus, False)
             End If
         End If
         Set dbFileAssoc = Nothing
 
     End If
-    If retVal = 0 And Not Silent Then
+    If retval = 0 And Not Silent Then
         MsgBox "Unable to open file " & FileName & " or it's associated application.", vbInformation, AppName
     End If
-    OpenAssociatedFile = (retVal = 0)
+    OpenAssociatedFile = (retval = 0)
     Exit Function
 catch:
     MsgBox "Unable to open file " & FileName & " or it's associated application.", vbInformation, AppName
@@ -272,7 +272,7 @@ Private Function GetIcon(ByVal FileName As String) As Long
     
 End Function
 
-Public Sub GetAssociation(ByVal fType As String, ByVal fName As String, ByRef pic As Control)
+Public Sub GetAssociation(ByVal fType As String, ByVal fname As String, ByRef pic As Control)
 
     Dim hImgSmall As Long
     Dim fKey As String
@@ -281,9 +281,9 @@ Public Sub GetAssociation(ByVal fType As String, ByVal fName As String, ByRef pi
     
     If Trim(fType) <> "" Then
         If InStr(LCase(fType), ".exe") > 0 Or InStr(LCase(fType), ".ico") > 0 Then
-            If PathExists(fName) Then
-                hImgSmall = GetIcon(fName)
-                fKey = fName
+            If PathExists(fname) Then
+                hImgSmall = GetIcon(fname)
+                fKey = fname
             Else
                 hImgSmall = GetIcon(fType)
                 fKey = fType
@@ -295,9 +295,9 @@ Public Sub GetAssociation(ByVal fType As String, ByVal fName As String, ByRef pi
     End If
     
     If hImgSmall = 0 Then
-        fName = GetWinSysDir & "shell32.dll"
-        hImgSmall = GetIcon(fName)
-        fKey = fName
+        fname = GetWinSysDir & "shell32.dll"
+        hImgSmall = GetIcon(fname)
+        fKey = fname
     End If
 
     Set pic.Picture = LoadPicture("")
@@ -309,4 +309,3 @@ Public Sub GetAssociation(ByVal fType As String, ByVal fName As String, ByRef pi
         
     pic.Tag = Trim(LCase(fKey))
 End Sub
-

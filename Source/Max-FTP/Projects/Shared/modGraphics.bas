@@ -1,6 +1,6 @@
-#Const [True] = -1
-#Const [False] = 0
 Attribute VB_Name = "modGraphics"
+
+
 
 
 
@@ -21,188 +21,188 @@ Private Function RetrunUseFolder(ByVal Folder1 As String, ByVal Folder2 As Strin
     RetrunUseFolder = IIf(Not PathExists(Folder1 + FileName), Folder2 + FileName, Folder1 + FileName)
 End Function
 Private Function SkinVarToResource(ByVal SkinVar As String) As Long
-    Dim retVal As Long
+    Dim retval As Long
     
     Select Case LCase(SkinVar)
     
         Case "backout"
-            retVal = 101
+            retval = 101
         Case "back"
-            retVal = 102
+            retval = 102
         Case "browseout"
-            retVal = 103
+            retval = 103
         Case "browse"
-            retVal = 104
+            retval = 104
         Case "closeout"
-            retVal = 105
+            retval = 105
         Case "close"
-            retVal = 106
+            retval = 106
         Case "copyout"
-            retVal = 107
+            retval = 107
         Case "copy"
-            retVal = 108
+            retval = 108
         Case "cutout"
-            retVal = 109
+            retval = 109
         Case "cut"
-            retVal = 110
+            retval = 110
         Case "deleteout"
-            retVal = 111
+            retval = 111
         Case "delete"
-            retVal = 112
+            retval = 112
         Case "forwardout"
-            retVal = 113
+            retval = 113
         Case "forward"
-            retVal = 114
+            retval = 114
         Case "goout"
-            retVal = 115
+            retval = 115
         Case "go"
-            retVal = 116
+            retval = 116
         Case "leftout"
-            retVal = 117
+            retval = 117
         Case "left"
-            retVal = 118
+            retval = 118
         Case "newfolderout"
-            retVal = 119
+            retval = 119
         Case "newfolder"
-            retVal = 120
+            retval = 120
         Case "pasteout"
-            retVal = 121
+            retval = 121
         Case "paste"
-            retVal = 122
+            retval = 122
         Case "refreshout"
-            retVal = 123
+            retval = 123
         Case "refresh"
-            retVal = 124
+            retval = 124
         Case "rightout"
-            retVal = 125
+            retval = 125
         Case "right"
-            retVal = 126
+            retval = 126
         Case "stopout"
-            retVal = 127
+            retval = 127
         Case "stop"
-            retVal = 128
+            retval = 128
         Case "uplevelout"
-            retVal = 129
+            retval = 129
         Case "uplevel"
-            retVal = 130
+            retval = 130
             
             
 
         Case "schedule_addout"
-                    retVal = 131
+                    retval = 131
         Case "schedule_add"
-                    retVal = 132
+                    retval = 132
         Case "schedule_deleteout"
-                    retVal = 133
+                    retval = 133
         Case "schedule_delete"
-                    retVal = 134
+                    retval = 134
         Case "schedule_downout"
-                    retVal = 135
+                    retval = 135
         Case "schedule_down"
-                    retVal = 136
+                    retval = 136
         Case "schedule_editout"
-                    retVal = 137
+                    retval = 137
         Case "schedule_edit"
-                    retVal = 138
+                    retval = 138
         Case "schedule_eventsout"
-                    retVal = 139
+                    retval = 139
         Case "schedule_events"
-                    retVal = 140
+                    retval = 140
         Case "schedule_loadout"
-                    retVal = 141
+                    retval = 141
         Case "schedule_load"
-                    retVal = 142
+                    retval = 142
         Case "schedule_runselectedout", "schedule_runallout", "schedule_runout"
-                    retVal = 143
+                    retval = 143
         Case "schedule_runselected", "schedule_runall", "schedule_run"
-                    retVal = 144
+                    retval = 144
 
         Case "schedule_saveout"
-                    retVal = 145
+                    retval = 145
         Case "schedule_save"
-                    retVal = 146
+                    retval = 146
         Case "schedule_servicestartout"
-                    retVal = 147
+                    retval = 147
         Case "schedule_servicestart"
-                    retVal = 148
+                    retval = 148
         Case "schedule_servicestopout"
-                    retVal = 149
+                    retval = 149
         Case "schedule_servicestop"
-                    retVal = 150
+                    retval = 150
         Case "schedule_stopout"
-                    retVal = 151
+                    retval = 151
         Case "schedule_stop"
-                    retVal = 152
+                    retval = 152
         Case "schedule_upout"
-                    retVal = 153
+                    retval = 153
         Case "schedule_up"
-                    retVal = 154
+                    retval = 154
                     
         Case "favorites_graphic"
-            retVal = 155
+            retval = 155
                     
 Case "script_addfileout"
-                    retVal = 101
+                    retval = 101
 Case "script_addfile"
-                    retVal = 102
+                    retval = 102
 Case "script_copyout"
-                    retVal = 103
+                    retval = 103
 Case "script_copy"
-                    retVal = 104
+                    retval = 104
 Case "script_cutout"
-                    retVal = 105
+                    retval = 105
 Case "script_cut"
-                    retVal = 106
+                    retval = 106
 Case "script_findout"
-                    retVal = 107
+                    retval = 107
 Case "script_find"
-                    retVal = 108
+                    retval = 108
 Case "script_newprojectout"
-                    retVal = 109
+                    retval = 109
 Case "script_newproject"
-                    retVal = 110
+                    retval = 110
 Case "script_openprojectout"
-                    retVal = 111
+                    retval = 111
 Case "script_openproject"
-                    retVal = 112
+                    retval = 112
 Case "script_pasteout"
-                    retVal = 113
+                    retval = 113
 Case "script_paste"
-                    retVal = 114
+                    retval = 114
 Case "script_redoout"
-                    retVal = 115
+                    retval = 115
 Case "script_redo"
-                    retVal = 116
+                    retval = 116
 Case "script_removefileout"
-                    retVal = 117
+                    retval = 117
 Case "script_removefile"
-                    retVal = 118
+                    retval = 118
 Case "script_runout"
-                    retVal = 119
+                    retval = 119
 Case "script_run"
-                    retVal = 120
+                    retval = 120
 Case "script_saveprojectout"
-                    retVal = 121
+                    retval = 121
 Case "script_saveproject"
-                    retVal = 122
+                    retval = 122
 Case "script_stopout"
-                    retVal = 123
+                    retval = 123
 Case "script_stop"
-                    retVal = 124
+                    retval = 124
 Case "script_undoout"
-                    retVal = 125
+                    retval = 125
 Case "script_undo"
-                    retVal = 126
+                    retval = 126
 
 
     End Select
 
-    SkinVarToResource = retVal
+    SkinVarToResource = retval
     
 End Function
 Private Function GetDefaultSkinValue(ByVal SkinVar As String) As Variant
 
-    Dim retVal As Variant
+    Dim retval As Variant
     Dim skinDir As String
     Dim noneDir As String
     skinDir = AppPath & GraphicsFolder & dbSettings.GetProfileSetting("GraphicsFolder") & "\"
@@ -211,257 +211,257 @@ Private Function GetDefaultSkinValue(ByVal SkinVar As String) As Variant
     Select Case LCase(SkinVar)
     
         Case "uplevel"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\uplevel_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\uplevel_over.bmp")
         Case "back"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\back_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\back_over.bmp")
         Case "forward"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\forward_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\forward_over.bmp")
         Case "stop"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\stop_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\stop_over.bmp")
         Case "refresh"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\refresh_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\refresh_over.bmp")
         Case "newfolder"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\newfolder_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\newfolder_over.bmp")
         Case "delete"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\delete_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\delete_over.bmp")
         Case "cut"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\cut_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\cut_over.bmp")
         Case "copy"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\copy_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\copy_over.bmp")
         Case "paste"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\paste_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\paste_over.bmp")
         Case "go"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\go_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\go_over.bmp")
         Case "close"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\close_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\close_over.bmp")
         Case "browse"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\browse_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\browse_over.bmp")
     
         Case "uplevelout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\upLevel_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\upLevel_out.bmp")
         Case "backout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\back_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\back_out.bmp")
         Case "forwardout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\forward_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\forward_out.bmp")
         Case "stopout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\stop_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\stop_out.bmp")
         Case "refreshout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\refresh_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\refresh_out.bmp")
         Case "newfolderout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\newfolder_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\newfolder_out.bmp")
         Case "deleteout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\delete_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\delete_out.bmp")
         Case "cutout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\cut_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\cut_out.bmp")
         Case "copyout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\copy_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\copy_out.bmp")
         Case "pasteout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\paste_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\paste_out.bmp")
         Case "goout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\go_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\go_out.bmp")
         Case "closeout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\close_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\close_out.bmp")
         Case "browseout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "client\browse_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "client\browse_out.bmp")
     
         Case "schedule_open"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\open_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\open_over.bmp")
         Case "schedule_save"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\save_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\save_over.bmp")
         Case "schedule_add"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\add_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\add_over.bmp")
         Case "schedule_edit"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\edit_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\edit_over.bmp")
         Case "schedule_delete"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\delete_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\delete_over.bmp")
         Case "schedule_up"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\up_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\up_over.bmp")
         Case "schedule_down"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\down_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\down_over.bmp")
         Case "schedule_run"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\run_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\run_over.bmp")
         Case "schedule_stop"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\stop_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\stop_over.bmp")
         Case "schedule_events"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\events_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\events_over.bmp")
         Case "schedule_servicestart"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\servicestart_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\servicestart_over.bmp")
         Case "schedule_servicestop"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\servicestop_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\servicestop_over.bmp")
             
         Case "schedule_openout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\open_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\open_out.bmp")
         Case "schedule_saveout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\save_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\save_out.bmp")
         Case "schedule_addout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\add_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\add_out.bmp")
         Case "schedule_editout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\edit_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\edit_out.bmp")
         Case "schedule_deleteout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\delete_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\delete_out.bmp")
         Case "schedule_upout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\up_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\up_out.bmp")
         Case "schedule_downout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\down_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\down_out.bmp")
         Case "schedule_runout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\run_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\run_out.bmp")
         Case "schedule_stopout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\stop_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\stop_out.bmp")
         Case "schedule_eventsout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\events_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\events_out.bmp")
     
         Case "schedule_servicestartout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\servicestart_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\servicestart_out.bmp")
         Case "schedule_servicestopout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "schedule\servicestop_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "schedule\servicestop_out.bmp")
     
         Case "script_newproject"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\new_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\new_over.bmp")
         Case "script_openproject"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\open_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\open_over.bmp")
         Case "script_saveproject"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\save_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\save_over.bmp")
         Case "script_addfile"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\add_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\add_over.bmp")
         Case "script_removefile"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\remove_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\remove_over.bmp")
         Case "script_undo"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\undo_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\undo_over.bmp")
         Case "script_redo"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\redo_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\redo_over.bmp")
         Case "script_cut"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\cut_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\cut_over.bmp")
         Case "script_copy"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\copy_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\copy_over.bmp")
         Case "script_paste"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\paste_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\paste_over.bmp")
         Case "script_find"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\find_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\find_over.bmp")
         Case "script_stop"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\stop_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\stop_over.bmp")
         Case "script_run"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\run_over.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\run_over.bmp")
     
         Case "script_newprojectout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\new_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\new_out.bmp")
         Case "script_openprojectout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\open_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\open_out.bmp")
         Case "script_saveprojectout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\save_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\save_out.bmp")
         Case "script_addfileout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\add_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\add_out.bmp")
         Case "script_removefileout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\remove_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\remove_out.bmp")
         Case "script_undoout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\undo_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\undo_out.bmp")
         Case "script_redoout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\redo_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\redo_out.bmp")
         Case "script_cutout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\cut_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\cut_out.bmp")
         Case "script_copyout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\copy_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\copy_out.bmp")
         Case "script_pasteout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\paste_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\paste_out.bmp")
         Case "script_findout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\find_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\find_out.bmp")
         Case "script_stopout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\stop_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\stop_out.bmp")
         Case "script_runout"
-            retVal = RetrunUseFolder(skinDir, noneDir, "script\run_out.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "script\run_out.bmp")
     
         Case "script_toolover_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
         Case "script_toolout_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
     
         Case "favorites_graphic"
-            retVal = RetrunUseFolder(skinDir, noneDir, "fav.bmp")
+            retval = RetrunUseFolder(skinDir, noneDir, "fav.bmp")
         Case "list_background_graphic"
-            retVal = ""
+            retval = ""
         Case "list_background_resize"
-            retVal = "auto"
+            retval = "auto"
             
         Case "toolover_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
         Case "toolout_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
             
         Case "schedule_toolover_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
         Case "schedule_toolout_transparentcolor"
-            retVal = "FF00FF"
+            retval = "FF00FF"
             
         Case "logview_backcolor"
-            retVal = SystemColorConstants.vbWindowBackground
+            retval = SystemColorConstants.vbWindowBackground
                         
         Case "logview_textcolor"
-            retVal = "7F7F7F"
+            retval = "7F7F7F"
         Case "logview_incommingcolor"
-            retVal = "00FF00"
+            retval = "00FF00"
         Case "logview_outgoingcolor"
-            retVal = "0000FF"
+            retval = "0000FF"
         Case "logview_errorcolor"
-            retVal = "FF0000"
+            retval = "FF0000"
         Case "logview_highlightcolor"
-            retVal = "000000"
+            retval = "000000"
     
         Case "list_transparentcolor"
-            retVal = "FFFFFF"
+            retval = "FFFFFF"
 
         Case "list_backcolor"
-            retVal = SystemColorConstants.vbWindowBackground
+            retval = SystemColorConstants.vbWindowBackground
         Case "list_textcolor"
-            retVal = SystemColorConstants.vbWindowText
+            retval = SystemColorConstants.vbWindowText
             
         Case "address_backcolor"
-            retVal = SystemColorConstants.vbWindowBackground
+            retval = SystemColorConstants.vbWindowBackground
         Case "address_textcolor"
-            retVal = SystemColorConstants.vbWindowText
+            retval = SystemColorConstants.vbWindowText
     
         Case "drivelist_backcolor"
-            retVal = SystemColorConstants.vbWindowBackground
+            retval = SystemColorConstants.vbWindowBackground
         Case "drivelist_textcolor"
-            retVal = SystemColorConstants.vbWindowText
+            retval = SystemColorConstants.vbWindowText
     
         Case "transferlist_backcolor"
-            retVal = SystemColorConstants.vbWindowBackground
+            retval = SystemColorConstants.vbWindowBackground
         Case "transferlist_textcolor"
-            retVal = SystemColorConstants.vbWindowText
+            retval = SystemColorConstants.vbWindowText
         Case "icecue_shadow"
-            retVal = SystemColorConstants.vb3DShadow
+            retval = SystemColorConstants.vb3DShadow
         Case "icecue_hilite"
-            retVal = SystemColorConstants.vb3DHighlight
+            retval = SystemColorConstants.vb3DHighlight
         Case "sizers_normal"
-            retVal = &H8000000F
+            retval = &H8000000F
         Case "sizers_moving"
-            retVal = &H808080
+            retval = &H808080
         
         Case "script_commentcolor"
-            retVal = "008000"
+            retval = "008000"
         Case "script_errorcolor"
-            retVal = "FF0000"
+            retval = "FF0000"
         Case "script_operatorcolor"
-            retVal = "404040"
+            retval = "404040"
         Case "script_statementcolor"
-            retVal = "000080"
+            retval = "000080"
         Case "script_textcolor"
-            retVal = "000000"
+            retval = "000000"
         Case "script_userdefinedcolor"
-            retVal = "000000"
+            retval = "000000"
         Case "script_valuecolor"
-            retVal = "808080"
+            retval = "808080"
 
         Case "toolbarbutton_spacer"
-            retVal = "default"
+            retval = "default"
         Case "toolbarbutton_width"
-            retVal = 24
+            retval = 24
         Case "toolbarbutton_height"
-            retVal = 24
+            retval = 24
         
 
     End Select
     
-    GetDefaultSkinValue = retVal
+    GetDefaultSkinValue = retval
 
 End Function
 
@@ -609,15 +609,15 @@ Public Function GetColor(ByVal HTMLVal As Variant, Optional ByRef Red As Integer
             Dim r As Integer
             Dim g As Integer
             Dim b As Integer
-            r = val("&H" & Left(HTMLVal, 2))
-            g = val("&H" & Mid(HTMLVal, 3, 2))
-            b = val("&H" & Right(HTMLVal, 2))
+            r = Val("&H" & Left(HTMLVal, 2))
+            g = Val("&H" & Mid(HTMLVal, 3, 2))
+            b = Val("&H" & Right(HTMLVal, 2))
             GetColor = RGB(r, g, b)
         End If
     Else
-        Red = val("&H" & Left(HTMLVal, 2))
-        Green = val("&H" & Mid(HTMLVal, 3, 2))
-        Blue = val("&H" & Right(HTMLVal, 2))
+        Red = Val("&H" & Left(HTMLVal, 2))
+        Green = Val("&H" & Mid(HTMLVal, 3, 2))
+        Blue = Val("&H" & Right(HTMLVal, 2))
         GetColor = RGB(Red, Green, Blue)
     End If
         

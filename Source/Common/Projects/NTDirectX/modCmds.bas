@@ -564,6 +564,8 @@ Public Function GetBindingText(ByVal BindIndex As Integer) As String
             GetBindingText = "MYCOMPUTER"
         Case DIK_N
             GetBindingText = "N"
+        Case DIK_NEXT
+            GetBindingText = "NEXT"
         Case DIK_NEXTTRACK
             GetBindingText = "NEXTTRACK"
         Case DIK_NOCONVERT
@@ -622,8 +624,6 @@ Public Function GetBindingText(ByVal BindIndex As Integer) As String
             GetBindingText = "PGUP"
         Case DIK_PLAYPAUSE
             GetBindingText = "PLAYPAUSE"
-        Case DIK_NEXT
-            GetBindingText = "NEXT"
         Case DIK_POWER
             GetBindingText = "POWER"
         Case DIK_PREVTRACK
@@ -727,14 +727,14 @@ Public Sub FadeMessage(ByVal txt As String)
     AddMessage txt
 End Sub
 
-Public Function Row(ByVal num As Long) As Long
-    Row = ((TextHeight \ VB.Screen.TwipsPerPixelY) * num) + (2 * num)
+Public Function row(ByVal num As Long) As Long
+    row = ((TextHeight \ VB.Screen.TwipsPerPixelY) * num) + (2 * num)
 End Function
 
-Public Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal Z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
+Public Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
     MakeScreen.X = X
     MakeScreen.Y = Y
-    MakeScreen.Z = Z
+    MakeScreen.z = z
     MakeScreen.rhw = 1
     MakeScreen.clr = D3DColorARGB(255, 255, 255, 255)
     MakeScreen.tu = tu
@@ -808,12 +808,7 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
         ElseIf DIKEYBOARDSTATE.Key(DIK_F1) Then
             If (Not TogglePress1 = DIK_F1) Then
                 TogglePress1 = DIK_F1
-                ShowSetup = True
-            End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_F2) Then
-            If (Not TogglePress1 = DIK_F2) Then
-                TogglePress1 = DIK_F2
-                ShowStats = Not ShowStats
+                ShowSetup UserControl
             End If
             
         ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT) Then
@@ -949,8 +944,7 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
     Exit Sub
 pausing:
     Err.Clear
-    'DoPauseGame UserControl
-    UserControl.PauseRendering
+    DoPauseGame UserControl
 End Sub
 
 Public Property Get ConsoleVisible() As Boolean
@@ -1000,16 +994,16 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
 
     DDevice.SetVertexShader FVF_SCREEN
     DDevice.SetRenderState D3DRS_ZENABLE, False
+    DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_LIGHTING, False
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
 
-'    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-'    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
-'    DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
-    
-'    If Billboards.Count > 0 Then
+    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, False
+    DDevice.SetRenderState D3DRS_ALPHATESTENABLE, False
+    '    If Billboards.Count > 0 Then
 '
 '        Dim e As Billboard
 '
@@ -1053,8 +1047,6 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
         
         DDevice.SetTexture 0, Backdrop
         DDevice.SetTexture 1, Nothing
-        
-        'DDevice.SetTransform D3DTS_WORLD, matWorld
         DDevice.DrawPrimitiveUP D3DPT_TRIANGLESTRIP, 2, Vertex(0), LenB(Vertex(0))
     
         If Len(CommandLine) > 0 Then
@@ -1083,7 +1075,6 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
         TextColor = lastColor
 
     Else
-        If ShowStats Then DrawText GetStats, 10, 10
 
         If DrawCount > 0 Then
             For cnt = 1 To DrawCount
@@ -1103,12 +1094,7 @@ Public Sub RenderCmds(ByRef UserControl As Macroscopic)
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetRenderState D3DRS_LIGHTING, 1
- 
-    DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
-    DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-    DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
-    DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-    DDevice.SetVertexShader FVF_RENDER
+        
     DDevice.SetPixelShader PixelShaderDefault
 
 End Sub
@@ -1119,7 +1105,6 @@ Public Function AddMessage(ByVal Message As String)
         ConsoleMsgs.Remove 1
     End If
     ConsoleMsgs.Add Message
-    Debug.Print Message
     
 End Function
 Public Sub ConsoleInput(ByRef UserControl As Macroscopic, ByRef kState As DIKEYBOARDSTATE)
@@ -1483,7 +1468,12 @@ Public Sub Process(ByVal inArg As String, Optional ByRef UserControl As Macrosco
     Select Case Trim(LCase(inCmd))
 
         Case "reset"
-            ResetGame = True
+            UserControl.PauseRendering
+            If PathExists(ScriptRoot & "\Serial.xml", True) Then
+                Kill ScriptRoot & "\Serial.xml"
+            End If
+            UserControl.ResumeRendering
+            ConsoleToggle
                         
         Case "exit", "quit", "close"
             StopGame = True
@@ -1504,7 +1494,7 @@ Public Sub Process(ByVal inArg As String, Optional ByRef UserControl As Macrosco
         Case "print"
             inX = RemoveNextArg(inArg, " ")
             inY = RemoveNextArg(inArg, " ")
-            PrintText inArg, (((frmMain.ScaleWidth / VB.Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, Row(inY)
+            PrintText inArg, (((frmMain.ScaleWidth / VB.Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, row(inY)
         Case "help", "cmdlist", "?", "--?"
             Select Case LCase(inArg)
                 Case Else

@@ -11,12 +11,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-
 Option Explicit
 'TOP DOWN
 Option Compare Binary
-
-'A class built for fast altering of concurrent byte arrays in memroy.
 
 Public Enum MemoryScopes
     heap = 0
@@ -36,7 +33,6 @@ End Property
 
 Public Property Get Scope() As MemoryScopes ' _
 Retrieves the type of memory functionally this stream is utilizing, Heap, Locking and/or Local or Global defined by the Reset method.
-Attribute Scope.VB_Description = "Retrieves the type of memory functionally this stream is utilizing, Heap, Locking and/or Local or Global defined by the Reset method."
     Scope = pScope
 End Property
 
@@ -110,7 +106,6 @@ End Sub
 
 Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) ' _
 Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, or same as a portion of the Origin strean, optionally defined by the Offset and Width.
-Attribute Clone.VB_Description = "Duplicates the Origin Stream object truning the calling instances stream data to be exactly the same, or same as a portion of the Origin strean, optionally defined by the Offset and Width."
     Dim lSize As Long
     Reset Origin.Scope
     lSize = Origin.Length
@@ -123,14 +118,12 @@ End Sub
 
 Public Sub Post(ByRef Data As Byte) ' _
 Appends Data bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data. Psudonym to Concat()
-Attribute Post.VB_Description = "Appends Data bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data. Psudonym to Concat()"
     Length = Length + 1
     Plot Length - 1, Data
 End Sub
 
 Public Sub Concat(ByRef Data() As Byte) ' _
 Appends Data bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data. Psudonym to Post()
-Attribute Concat.VB_Description = "Appends Data bytes onto the stream at the end of the stream increasing it's size by the amount of bytes in supplied by Data. Psudonym to Post()"
     Dim nSize As Long
     nSize = UBound(Data) + -CInt(Not CBool(-LBound(Data)))
     If (nSize > 0) Then
@@ -144,8 +137,8 @@ Attribute Concat.VB_Description = "Appends Data bytes onto the stream at the end
 End Sub
 
 Public Property Get Length() As Long ' _
-Gets the amount of bytes with in this instance of the stream object., Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes.
-Attribute Length.VB_Description = "Gets the amount of bytes with in this instance of the stream object., Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes."
+Gets the amount of bytes with in this instance of the stream object.
+Attribute Length.VB_Description = "Gets or sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes."
     If Pointer <> 0 Then
         If ((pScope And MemoryScopes.Local) = MemoryScopes.Local) Then
             Length = LocalSize(Pointer)
@@ -159,7 +152,8 @@ Attribute Length.VB_Description = "Gets the amount of bytes with in this instanc
     End If
 End Property
 
-Public Property Let Length(ByVal RHS As Long)
+Public Property Let Length(ByVal RHS As Long) ' _
+Sets the amount of bytes with in this instance of the stream object, least the current value set truncated on the right, or expands on the right with garbage bytes.
     If (RHS > 0) Then
         MemoryModify RHS
     ElseIf (RHS = 0) Then
@@ -171,7 +165,6 @@ End Property
 
 Public Sub PlaceAt(ByRef Data() As Byte, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) ' _
 Places contents of memory byte array Data into the stream excluding Offset number of bytes, and only up to Width but not over the total allotted.
-Attribute PlaceAt.VB_Description = "Places contents of memory byte array Data into the stream excluding Offset number of bytes, and only up to Width but not over the total allotted."
     Dim lSize As Long
     lSize = Length
     If Width = -1 Then Width = UBound(Data) + -CInt(Not CBool(-LBound(Data)))
@@ -190,20 +183,19 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
     Dim lSize As Long
     lSize = Length
     If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    Dim Ret() As Byte
+    Dim ret() As Byte
     If (Width > 0) And (Pointer <> 0) Then
-        ReDim Ret(0 To Width - 1) As Byte
-        RtlMoveMemory ByVal VarPtr(Ret(LBound(Ret))), ByVal Pointer + Offset, Width
+        ReDim ret(0 To Width - 1) As Byte
+        RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + Offset, Width
     Else
-        ReDim Ret(-1 To -1) As Byte
+        ReDim ret(-1 To -1) As Byte
     End If
-    Partial = Ret
-    Erase Ret
+    Partial = ret
+    Erase ret
 End Function
 
 Public Sub Prepend(ByRef Data() As Byte) ' _
 Places Data bytes at the beginning of the stream adding on to the streams total size by the amount of bytes in Data.
-Attribute Prepend.VB_Description = "Places Data bytes at the beginning of the stream adding on to the streams total size by the amount of bytes in Data."
 
     If (Length = 0) Or (Pointer = 0) Then
         Concat Data
@@ -218,7 +210,6 @@ End Sub
 
 Public Sub Pull(ByVal Offset As Long) ' _
 Shifts the entire container of the stream by Offset to the left, truncating the contents on the right, and leaving Offset number of garbage bytes on the left.
-Attribute Pull.VB_Description = "Shifts the entire container of the stream by Offset to the left, truncating the contents on the right, and leaving Offset number of garbage bytes on the left."
 
     Dim lSize As Long
     lSize = Length
@@ -237,7 +228,6 @@ End Sub
 
 Public Sub Push(ByVal Offset As Long) ' _
 Shifts the entire container of the stream by Offset to the right, truncating the contents on the left, and leaving Offset number of garbage bytes on the right.
-Attribute Push.VB_Description = "Shifts the entire container of the stream by Offset to the right, truncating the contents on the left, and leaving Offset number of garbage bytes on the right."
     Dim lSize As Long
     lSize = Length
     If (Offset < lSize) Then
@@ -255,13 +245,11 @@ End Sub
 
 Public Sub Reset(Optional ByRef ScopeAs As MemoryScopes) ' _
 Resets the stream object discarding the stored data.  Optionally setting Scopes, otherwise it keeps the current scope, for any further use.
-Attribute Reset.VB_Description = "Resets the stream object discarding the stored data.  Optionally setting Scopes, otherwise it keeps the current scope, for any further use."
     MemoryModify
 End Sub
 
 Public Function Pass(ByVal Data As Byte, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) As Long ' _
 Preforms a pass for Data returning the count of it in the stream, optionally confined to Offset and Width.
-Attribute Pass.VB_Description = "Preforms a pass for Data returning the count of it in the stream, optionally confined to Offset and Width."
     Dim lPos As Long
     Dim bPart() As Byte
     bPart = Partial(Offset, Width)
@@ -272,7 +260,6 @@ End Function
 
 Public Function Poll(ByVal Data As Byte, ByVal Ballot As Long, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) As Long ' _
 Preforms a poll for Data returning the offset up to the numerical Ballot's occurance of it, optionally confined to Offset and Width.
-Attribute Poll.VB_Description = "Preforms a poll for Data returning the offset up to the numerical Ballot's occurance of it, optionally confined to Offset and Width."
     If Ballot > 0 And Width <> 0 And Length > 0 Then
         Dim lPos As Long
         Dim bPart() As Byte
@@ -300,17 +287,16 @@ End Function
 
 Public Sub Pinch(ByVal Offset As Long, ByVal Width As Long) ' _
 Removes a portion of the stream defined by Offset and Width.
-Attribute Pinch.VB_Description = "Removes a portion of the stream defined by Offset and Width."
     Dim lSize As Long
     lSize = Length
     If Offset < lSize And Offset > 0 And Offset + Width < lSize And Width > 0 Then
-        Dim n As New Stream
+        Dim N As New Stream
         
-        n.Concat Partial(0, Offset)
-        n.Concat Partial(Offset + Width, lSize - (Offset + Width))
-        Clone n
+        N.Concat Partial(0, Offset)
+        N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+        Clone N
         
-        Set n = Nothing
+        Set N = Nothing
         
     ElseIf Offset = 0 And Width = lSize Then
         Reset
@@ -326,20 +312,20 @@ End Sub
 
 Public Sub Pyramid(ByRef SubStream As Stream, ByVal Offset As Long, ByVal Width As Long) ' _
 Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
-Attribute Pyramid.VB_Description = "Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream."
     Dim lSize As Long
     lSize = Length
     If Offset >= 0 And Offset + Width <= lSize Then
         Dim lSize2 As Long
         lSize2 = SubStream.Length
         If lSize2 > 0 Then
-            Dim n As New Stream
-            If Offset > 0 Then n.Concat Partial(0, Offset)
-            n.Concat SubStream.Partial
-            If lSize - (Offset + Width) > 0 Then n.Concat Partial(Offset + Width, lSize - (Offset + Width))
-           ' If (Offset + Width) > 0 And (Offset + Width) < lSize Then n.Concat Partial(Offset + Width)  ', lSize - (Offset + Width))
-            Clone n
-            Set n = Nothing
+            Dim N As New Stream
+            
+            If Offset > 0 Then N.Concat Partial(0, Offset)
+            N.Concat SubStream.Partial
+            If lSize - (Offset + Width) > 0 Then N.Concat Partial(Offset + Width, lSize - (Offset + Width))
+            Clone N
+            
+            Set N = Nothing
         Else
             Err.Raise 8, App.Title, "Invalid parameter, array, or object length requirements."
         End If
@@ -350,7 +336,6 @@ End Sub
 
 Public Function Peek(Optional ByVal Offset As Long = 0) As Byte ' _
 Gets the first byte in the data stream, optionally excluding Offset number of bytes retruning the immediate byte after Offset.
-Attribute Peek.VB_Description = "Gets the first byte in the data stream, optionally excluding Offset number of bytes retruning the immediate byte after Offset."
     If Offset >= 0 And Offset < Length Then
         RtlMoveMemory ByVal VarPtr(Peek), ByVal Pointer + Offset, 1
     Else
@@ -358,9 +343,8 @@ Attribute Peek.VB_Description = "Gets the first byte in the data stream, optiona
     End If
 End Function
 
-Public Sub Plot(ByVal Offset As Long, ByVal Data As Byte) ' _
+Public Sub Plot(ByVal Offset As Long, ByVal Data As Byte)   ' _
 Sets a byte in the data stream immediatly after Offset.
-Attribute Plot.VB_Description = "Sets a byte in the data stream immediatly after Offset."
 
     If Offset >= 0 And Offset < Length Then
         RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(Data), 1

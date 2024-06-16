@@ -1,5 +1,9 @@
 Attribute VB_Name = "modMain"
 
+
+
+
+
 #Const modMain = -1
 Option Explicit
 'TOP DOWN
@@ -25,11 +29,11 @@ Public Declare Function TerminateProcess Lib "kernel32" (ByVal hProcess As Long,
 Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Dest As Any, ByRef Source As Any, ByVal Length As Long)
 
 
-Public Sub MaxDBError(ByVal number As Long, ByVal Description As String, ByRef Retry As Boolean)
+Public Sub MaxDBError(ByVal Number As Long, ByVal Description As String, ByRef Retry As Boolean)
     'Handles any and all database errors that technically should not occur and
     'immediately halts progress of the application until an ultimatim is met;
     'either it continues to retry by user request and time outs, or shutdown.
-    If (number = -2147467259) Or (number = 3709) Then
+    If (Number = -2147467259) Or (Number = 3709) Then
         
         ShutDownMaxFTP True
         
@@ -40,7 +44,7 @@ Public Sub MaxDBError(ByVal number As Long, ByVal Description As String, ByRef R
     
     Else
     
-        frmDBError.ShowError number & " " & Description
+        frmDBError.ShowError Number & " " & Description
                 
         Do Until frmDBError.Visible = False
             modCommon.DoTasks
@@ -56,12 +60,6 @@ End Sub
 
 
 Public Sub Main()
-
-'    Dim Ret As String
-'
-'    FindMicrosoftNetworkNameByMachine "desktop", Ret
-'Debug.Print Ret
-'End
     EnableMachinePrivileges
     
 '%LICENSE%

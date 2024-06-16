@@ -11,14 +11,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-
 Option Explicit
 
 Option Compare Binary
-
-'This class is an implementation of Stream that makes use of collection
-'style methods for strings in text delimited by line feed/carriage return.
-'It also is designed to make quick and easy mirroring of change to a file.
 
 Implements Stream
 
@@ -378,16 +373,16 @@ Attribute Insert.VB_Description = "Adds lines to the strand collection at the li
     End If
 End Function
 
-Public Property Get Offset(Optional ByVal number As Long = -1&) As Long ' _
+Public Property Get Offset(Optional ByVal Number As Long = -1&) As Long ' _
 Gets the number of bytes existing before the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    Offset = Breaks(number - 1)
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    Offset = Breaks(Number - 1)
                 End If
             Else
                 Offset = Stream.Length
@@ -400,18 +395,18 @@ Gets the number of bytes existing before the line expressed by the Number argume
     End If
 End Property
 
-Public Property Get SizeOf(Optional ByVal number As Long = -1&) As Long ' _
+Public Property Get SizeOf(Optional ByVal Number As Long = -1&) As Long ' _
 Gets the number of bytes in the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    SizeOf = Breaks(number) - Breaks(number - 1)
-                ElseIf (number = 1) Then
-                    SizeOf = Breaks(number)
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    SizeOf = Breaks(Number) - Breaks(Number - 1)
+                ElseIf (Number = 1) Then
+                    SizeOf = Breaks(Number)
                 End If
             End If
        ' Else
@@ -422,19 +417,19 @@ Gets the number of bytes in the line expressed by the Number argument, if omitte
     End If
 End Property
 
-Public Property Get Item(Optional ByVal number As Long = -1&) As Byte() ' _
+Public Property Get Item(Optional ByVal Number As Long = -1&) As Byte() ' _
 Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number.
 Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number."
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    Item = Stream.Partial(Breaks(number - 1), Breaks(number) - Breaks(number - 1))
-                ElseIf (number = 1) Then
-                    Item = Stream.Partial(0, Breaks(number))
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    Item = Stream.Partial(Breaks(Number - 1), Breaks(Number) - Breaks(Number - 1))
+                ElseIf (Number = 1) Then
+                    Item = Stream.Partial(0, Breaks(Number))
                 End If
             Else
                 ReDim Item(-1 To -1) As Byte
@@ -448,19 +443,19 @@ Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed b
     End If
 End Property
 
-Public Property Let Item(Optional ByVal number As Long = -1&, ByRef lines() As Byte)
+Public Property Let Item(Optional ByVal Number As Long = -1&, ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) And number >= -1 Then
-            If (number = 0) Then number = 1
-            If (number > Count) Then number = Count
+        If (Count > 0) And Number >= -1 Then
+            If (Number = 0) Then Number = 1
+            If (Number > Count) Then Number = Count
         End If
-        If number = -1 Then number = Current
+        If Number = -1 Then Number = Current
         If (Count > 0) Then
             Dim Temp As Long
             Temp = Breaks(0)
-            Breaks(0) = number
+            Breaks(0) = Number
             Delete
-            Breaks(0) = number
+            Breaks(0) = Number
             Insert lines
             Breaks(0) = Temp
         End If
@@ -836,13 +831,13 @@ Topples a SubStream, which were initially an exact Partial reflection of this ba
     If Behave <> Nothings_Initialized Then
         Dim lSize As Long
         lSize = Length
-'        Dim lSize2 As Long
-'        lSize2 = SubStream.Length
+        Dim lSize2 As Long
+        lSize2 = SubStream.Length
         
         Stream.Pyramid SubStream, Offset, Width
         
         lSize = Length
-        WriteToStream Partial(Offset), Offset, lSize - Offset
+        If lSize > Offset Then WriteToStream Partial(Offset, lSize - Offset), Offset, lSize - Offset
         EndOfStream lSize
         RebreakStream
 
@@ -880,35 +875,23 @@ End Sub
 'that are based on the provided information and return to from the object relate
 '###############################################################################
 Public Sub RebreakStream()
-    ReDim Preserve Breaks(0 To 0) As Long
-    Dim Ret As Long
-    Ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
-    Do While Ret < Length
+    Dim cnt As Long
+    Dim cnt2 As Long
+    Dim Data() As Byte
+    Data = Partial()
+    cnt2 = 1
+    For cnt = LBound(Data) To UBound(Data)
+        If Data(cnt) = Asc(vbLf) Then
+            If cnt2 > UBound(Breaks) Then ReDim Preserve Breaks(0 To cnt2) As Long
+            Breaks(cnt2) = cnt + -CInt(Not CBool(-LBound(Data)))
+            cnt2 = cnt2 + 1
+        End If
+    Next
+    If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
+    If Breaks(UBound(Breaks)) < Length Then
         ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-        Breaks(UBound(Breaks)) = Ret + 1
-        Ret = Poll(Asc(vbLf), UBound(Breaks) + 1)
-    Loop
-    ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-    Breaks(UBound(Breaks)) = Ret + 1
-    
-        
-'    Dim cnt As Long
-'    Dim cnt2 As Long
-'    Dim Data() As Byte
-'    Data = Partial()
-'    cnt2 = 1
-'    For cnt = LBound(Data) To UBound(Data)
-'        If Data(cnt) = Asc(vbLf) Then
-'            If cnt2 > UBound(Breaks) Then ReDim Preserve Breaks(0 To cnt2) As Long
-'            Breaks(cnt2) = cnt + -CInt(Not CBool(-LBound(Data)))
-'            cnt2 = cnt2 + 1
-'        End If
-'    Next
-'    If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
-'    If Breaks(UBound(Breaks)) < Length Then
-'        ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-'        Breaks(UBound(Breaks)) = Length  '+ -CInt(Not CBool(-LBound(Data)))
-'    End If
+        Breaks(UBound(Breaks)) = Length '+ -CInt(Not CBool(-LBound(Data)))
+    End If
 End Sub
 
 Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
@@ -919,13 +902,13 @@ Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
             Stream.Length = (nSize + lSize)
 '            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
 '                Case Behaviors.ScopeGlobal
-'                    If GlobalUnlock(Stream.Address) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
-'                    'Stream.Address = GlobalReAlloc(Stream.Address, (nSize + lSize), modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
-'                    If Pointer <> GlobalLock(Stream.Address) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+'                    'If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
+'                    Stream.Address = GlobalReAlloc(Stream.Address, (nSize + lSize), modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
+'                    'If Pointer <> GlobalLock(Pointer) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
 '                Case Behaviors.ScopeLocale
-'                    If LocalUnlock(Stream.Address) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
-'                    'Stream.Address = LocalReAlloc(Stream.Address, (nSize + lSize), LMEM_MOVEABLE Or lPtr)
-'                    If Pointer <> LocalLock(Stream.Address) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+'                    'If LocalUnlock(Pointer) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
+'                    Stream.Address = LocalReAlloc(Stream.Address, (nSize + lSize), LMEM_MOVEABLE Or lPtr)
+'                    'If Pointer <> LocalLock(Pointer) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
 '                Case Else
 '                    Stream.Address = HeapReAlloc(GetProcessHeap, 0, Stream.Address, (nSize + lSize))
 '            End Select

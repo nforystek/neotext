@@ -1,9 +1,9 @@
-#Const [True] = -1
-#Const [False] = 0
-
-
-
 Attribute VB_Name = "modWildCard"
+
+
+
+
+
 #Const modWildCard = -1
 Option Explicit
 'TOP DOWN
@@ -38,4 +38,4 @@ Public Sub SelectWildCard(ByVal pView As Control, ByVal Items As String, ByVal W
                 End If
             Next
     End Select
-End Sub
+End Sub

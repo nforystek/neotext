@@ -11,7 +11,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-
 Option Explicit
 
 Implements Orbit
@@ -35,42 +34,34 @@ Public Ambience As Color
 Attribute Ambience.VB_VarHelpID = -1
 Public Specular As Color
 Attribute Specular.VB_VarHelpID = -1
-Public Attenuation As Point
 
-Private pKey As String
+Public Attenuation As Point
 
 Private pSerialize As Boolean
 
-
-Public Property Get Serialize() As Boolean
-Attribute Serialize.VB_MemberFlags = "40"
-    Serialize = pSerialize
-End Property
-Public Property Let Serialize(ByVal RHS As Boolean)
-    pSerialize = RHS
-End Property
-
+Private pKey As String
 Public Property Get Key() As String
-Attribute Key.VB_UserMemId = 0
-Attribute Key.VB_MemberFlags = "600"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
-    If RHS <> "" Then
-        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
-        If All.Exists(RHS) Then
-            All.Remove RHS
-            All.Add Me, RHS
+'    If Brilliants.Exists(pKey) And pKey <> "" Then Brilliants.Remove pKey
+'    pKey = RHS
+'    If RHS <> "" And (Not Brilliants.Exists(RHS)) Then Brilliants.Add Me, RHS
+    
+'    If RHS = "" And Brilliants.Exists(pKey) Then
+'        Brilliants.Remove pKey
+'        pKey = ""
+'    Else
+        If pKey <> "" And (Not Brilliants.Exists(RHS)) Then
+            'If All.Exists(pKey) Then All.Remove pKey
+            If Brilliants.Exists(pKey) Then Brilliants.Remove pKey
+          '  All.Add Me, RHS
+            Brilliants.Add Me, RHS
+            pKey = RHS
+        ElseIf pKey = "" Then
+            pKey = RHS
         End If
-        pKey = RHS
-    End If
-End Property
-
-Public Property Get Motions() As Motions
-    Set Motions = Orbit.Motions
-End Property
-Public Property Set Motions(ByRef RHS As Motions)
-    Set Orbit.Motions = RHS
+'    End If
 End Property
 
 Public Property Get Parent() As Orbit
@@ -94,12 +85,6 @@ Public Property Set Absolute(ByRef RHS As Orbit)
     Set Orbit.Absolute = RHS
 End Property
 
-Public Property Get Moved() As Boolean
-    Moved = Orbit.Moved
-End Property
-Public Property Let Moved(ByVal RHS As Boolean)
-    Orbit.Moved = RHS
-End Property
 
 Public Property Get Origin() As Point
     Set Origin = Orbit.Origin
@@ -141,6 +126,13 @@ Public Property Get Visible() As Boolean
 End Property
 Public Property Let Visible(ByVal RHS As Boolean)
     Orbit.Visible = RHS
+End Property
+
+Public Property Get Serialize() As Boolean
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
 End Property
 
 Public Property Get LightIndex() As Long
@@ -191,40 +183,36 @@ End Property
 
 Friend Sub UpdateValues()
     Lights(LightIndex).Diffuse.A = Diffuse.Alpha
-    Lights(LightIndex).Diffuse.r = Diffuse.red
-    Lights(LightIndex).Diffuse.g = Diffuse.green
-    Lights(LightIndex).Diffuse.b = Diffuse.blue
+    Lights(LightIndex).Diffuse.r = Diffuse.Red
+    Lights(LightIndex).Diffuse.g = Diffuse.Green
+    Lights(LightIndex).Diffuse.b = Diffuse.Blue
  
     Lights(LightIndex).Ambient.A = Ambience.Alpha
-    Lights(LightIndex).Ambient.r = Ambience.red
-    Lights(LightIndex).Ambient.g = Ambience.green
-    Lights(LightIndex).Ambient.b = Ambience.blue
+    Lights(LightIndex).Ambient.r = Ambience.Red
+    Lights(LightIndex).Ambient.g = Ambience.Green
+    Lights(LightIndex).Ambient.b = Ambience.Blue
  
     Lights(LightIndex).Specular.A = Specular.Alpha
-    Lights(LightIndex).Specular.r = Specular.red
-    Lights(LightIndex).Specular.g = Specular.green
-    Lights(LightIndex).Specular.b = Specular.blue
+    Lights(LightIndex).Specular.r = Specular.Red
+    Lights(LightIndex).Specular.g = Specular.Green
+    Lights(LightIndex).Specular.b = Specular.Blue
  
     Lights(LightIndex).Attenuation0 = Attenuation.X
     Lights(LightIndex).Attenuation1 = Attenuation.Y
-    Lights(LightIndex).Attenuation2 = Attenuation.Z
+    Lights(LightIndex).Attenuation2 = Attenuation.z
 
     Lights(LightIndex).Position.X = Origin.X
     Lights(LightIndex).Position.Y = Origin.Y
-    Lights(LightIndex).Position.Z = Origin.Z
+    Lights(LightIndex).Position.z = Origin.z
     
     Lights(LightIndex).Direction.X = Rotate.X
     Lights(LightIndex).Direction.Y = Rotate.Y
-    Lights(LightIndex).Direction.Z = Rotate.Z
+    Lights(LightIndex).Direction.z = Rotate.z
     
 End Sub
 
 Private Sub Class_Initialize()
-    Stats_Brilliant_Count = Stats_Brilliant_Count + 1
     vbaObjSetAddref Orbit, ObjPtr(New Orbit)
-    'Set Orbit = New Orbit
-    
-    Key = "K" & ObjPtr(Me)
     
     LightCount = LightCount + 1
     ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
@@ -233,133 +221,105 @@ Private Sub Class_Initialize()
     Set Ambience = New Color
     Set Specular = New Color
     Set Attenuation = New Point
-
 End Sub
 
 Private Sub Class_Terminate()
-    Stats_Brilliant_Count = Stats_Brilliant_Count - 1
-
-'    If LightCount > 0 Then
-'        If LightIndex < LightCount Then
-'            Dim cnt As Long
-'            For cnt = LightIndex + 1 To LightCount
-'                Lights(cnt - 1) = Lights(cnt)
-'            Next
-'        End If
-'        LightCount = LightCount - 1
-'        If LightCount > 0 Then
-'            ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
-'            Dim brill As Object
-'            For Each brill In Brilliants
-'                If brill.LightIndex > LightIndex Then brill.LightIndex = brill.LightIndex - 1
-'            Next
-'        End If
-'    End If
-'    If StopGame And LightCount = 0 Then Erase Lights
-    
+    If pKey <> "" Then
+        If Brilliants.Exists(pKey) Then Brilliants.Remove pKey
+    End If
     Set Diffuse = Nothing
     Set Ambience = Nothing
     Set Specular = Nothing
     Set Attenuation = Nothing
-    
-    'Set Orbit = Nothing
-    vbaObjSet Orbit, ObjPtr(Nothing)
+    If LightCount > 0 Then
+        If LightIndex < LightCount Then
+            Dim cnt As Long
+            For cnt = LightIndex + 1 To LightCount
+                Lights(cnt - 1) = Lights(cnt)
+            Next
+        End If
+        LightCount = LightCount - 1
+        If LightCount > 0 Then
+            ReDim Preserve Lights(1 To LightCount) As D3DLIGHT8
+            Dim brill As Object
+            For Each brill In Brilliants
+                If brill.LightIndex > LightIndex Then brill.LightIndex = brill.LightIndex - 1
+            Next
+        End If
+    End If
+    If StopGame And LightCount = 0 Then Erase Lights
 End Sub
 
-Private Property Set Orbit_Motions(RHS As Motions)
-    Set Orbit.Motions = RHS
-End Property
-
-Private Property Get Orbit_Motions() As Motions
-    Set Orbit_Motions = Orbit.Motions
-End Property
-
-Private Property Let Orbit_Moved(ByVal RHS As Boolean)
-    Orbit.Moved = RHS
-End Property
-
-Private Property Get Orbit_Moved() As Boolean
-    Orbit_Moved = Orbit.Moved
-End Property
-
 Private Property Set Orbit_Relative(RHS As Orbit)
-    Set Orbit.Relative = RHS
+    Set Me.Relative = RHS
 End Property
 
 Private Property Get Orbit_Relative() As Orbit
-    Set Orbit_Relative = Orbit.Relative
+    Set Orbit_Relative = Me.Relative
 End Property
 
 Private Property Set Orbit_Absolute(RHS As Orbit)
-    Set Orbit.Absolute = RHS
+    Set Me.Absolute = RHS
 End Property
 
 Private Property Get Orbit_Absolute() As Orbit
-    Set Orbit_Absolute = Orbit.Absolute
+    Set Orbit_Absolute = Me.Absolute
 End Property
 
 Private Property Get Orbit_Offset() As Point
-    Set Orbit_Offset = Orbit.Offset
+    Set Orbit_Offset = Offset
 End Property
 
 Private Property Set Orbit_Offset(ByRef RHS As Point)
-    Set Orbit.Offset = RHS
+    Set Offset = RHS
 End Property
 
 Private Property Get Orbit_Origin() As Point
-    Set Orbit_Origin = Orbit.Origin
+    Set Orbit_Origin = Origin
 End Property
 
 Private Property Set Orbit_Origin(ByRef RHS As Point)
-    Set Orbit.Origin = RHS
+    Set Origin = RHS
 End Property
 
 Private Property Get Orbit_Ranges() As Range
-    Set Orbit_Ranges = Orbit.Ranges
+    Set Orbit_Ranges = Ranges
 End Property
 
 Private Property Set Orbit_Ranges(ByRef RHS As Range)
-    Set Orbit.Ranges = RHS
+    Set Ranges = RHS
 End Property
 
 Private Property Get Orbit_Rotate() As Point
-    Set Orbit_Rotate = Orbit.Rotate
+    Set Orbit_Rotate = Rotate
 End Property
 
 Private Property Set Orbit_Rotate(ByRef RHS As Point)
-    Set Orbit.Rotate = RHS
+    Set Rotate = RHS
 End Property
 
 Private Property Get Orbit_Scaled() As Point
-    Set Orbit_Scaled = Orbit.Scaled
+    Set Orbit_Scaled = Scaled
 End Property
 
 Private Property Set Orbit_Scaled(ByRef RHS As Point)
-    Set Orbit.Scaled = RHS
+    Set Scaled = RHS
 End Property
 
-Private Property Let Orbit_Serialize(ByVal RHS As Boolean)
-    Orbit.Serialize = RHS
+Private Property Get Orbit_Serialize() As String
+    Orbit_Serialize = Serialize
 End Property
 
-Private Property Get Orbit_Serialize() As Boolean
-    Orbit_Serialize = Orbit.Serialize
+Private Property Let Orbit_Serialize(ByVal RHS As String)
+    Serialize = RHS
 End Property
 
-
-Private Property Get Orbit_ToString() As String
-    Orbit_ToString = Orbit.ToString
-End Property
-
-Private Property Let Orbit_ToString(ByVal RHS As String)
-    Orbit.ToString = RHS
-End Property
 
 Private Property Get Orbit_Visible() As Boolean
-    Orbit_Visible = Orbit.Visible
+    Orbit_Visible = Visible
 End Property
 
 Private Property Let Orbit_Visible(ByVal RHS As Boolean)
-    Orbit.Visible = RHS
+    Visible = RHS
 End Property
 

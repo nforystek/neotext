@@ -126,7 +126,7 @@ Option Explicit
 Option Compare Binary
 
 Private Type Particle
-    X As Single
+    x As Single
     Y As Single
     Xv As Single
     Yv As Single
@@ -136,7 +136,7 @@ Private Type Particle
 End Type
 
 Private Type FireWork
-    X As Single
+    x As Single
     Y As Single
     Height As Integer
     Color As Long
@@ -155,7 +155,7 @@ End Type
 
 Private Declare Function AlphaBlend Lib "msimg32" (ByVal hDC As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal hDC As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal lInt As Long, ByVal BLENDFUNCT As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
-Private Declare Function SetPixelV Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function SetPixelV Lib "gdi32" (ByVal hDC As Long, ByVal x As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 
 Dim BF As BLENDFUNCTION
 Dim lBF As Long
@@ -180,7 +180,7 @@ Private Sub Form_Load()
     
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
     Timer3.enabled = True
     
     Timer1.enabled = False
@@ -216,7 +216,7 @@ Private Sub StartFireWork()
 MAKEFIREWORK:
     
     With FW(i)
-        .X = Int(Rnd * Me.ScaleWidth)
+        .x = Int(Rnd * Me.ScaleWidth)
         .Y = Me.ScaleHeight
         .Height = Rnd * Me.ScaleHeight ' - ((Me.ScaleHeight / 2) + Int((Me.ScaleHeight / 2) * Rnd))
         .Color = Int(Rnd * vbWhite)
@@ -236,18 +236,18 @@ Private Sub DrawFireWork(tFW As FireWork)
             For i = 0 To UBound(.P)
                 If .P(i).Life > 0 Then
                     .P(i).Life = .P(i).Life - 1
-                    .P(i).X = .P(i).X + .P(i).Xv
+                    .P(i).x = .P(i).x + .P(i).Xv
                     .P(i).Y = .P(i).Y + .P(i).Yv
                     .P(i).Xv = .P(i).Xv / 1.05
                     .P(i).Yv = .P(i).Yv / 1.05 + 0.05
-                    PSet (.P(i).X, .P(i).Y), .P(i).Color
+                    PSet (.P(i).x, .P(i).Y), .P(i).Color
                 ElseIf .P(i).Life > -40 Then
                     .P(i).Life = .P(i).Life - 1
-                    .P(i).X = .P(i).X + .P(i).Xv + (0.5 - Rnd)
+                    .P(i).x = .P(i).x + .P(i).Xv + (0.5 - Rnd)
                     .P(i).Y = .P(i).Y + .P(i).Yv + 0.1
                     .P(i).Xv = .P(i).Xv / 1.05
                     .P(i).Yv = .P(i).Yv
-                    SetPixelV Me.hDC, .P(i).X, .P(i).Y, .P(i).Color
+                    SetPixelV Me.hDC, .P(i).x, .P(i).Y, .P(i).Color
                 Else
                     .P(i).Dead = True
                     DeadCount = DeadCount + 1
@@ -269,7 +269,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         ReDim .P(Int(Rnd * 100) + 100)
                         
                         For i = 0 To UBound(.P)
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = Int(Rnd * 20) + 20
                             
@@ -288,7 +288,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         ReDim .P(52)
                         
                         For i = 0 To 35
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = 50
                             
@@ -298,7 +298,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         Next i
                         
                         For i = 36 To 50
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = 50
                             
@@ -308,7 +308,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         Next i
                         
                         With .P(51)
-                            .X = tFW.X
+                            .x = tFW.x
                             .Y = tFW.Y
                             .Life = 50
                             .Xv = 2 * Cos(-55 / 57.3)
@@ -317,7 +317,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         End With
                         
                         With .P(52)
-                            .X = tFW.X
+                            .x = tFW.x
                             .Y = tFW.Y
                             .Life = 50
                             .Xv = 2 * Cos(-125 / 57.3)
@@ -332,7 +332,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         RndDeg = Int(360 * Rnd)
                         
                         For i = 0 To UBound(.P)
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = 50
                             
@@ -348,7 +348,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         RndDeg = (360 * Rnd)
                         
                         For i = 0 To UBound(.P)
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = 50
                             
@@ -364,7 +364,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         ReDim .P(Int(Rnd * 100) + 100)
                         
                         For i = 0 To UBound(.P)
-                            .P(i).X = .X
+                            .P(i).x = .x
                             .P(i).Y = .Y
                             .P(i).Life = Int(Rnd * 20) + 20
                             
@@ -379,7 +379,7 @@ Private Sub DrawFireWork(tFW As FireWork)
                         .Exploded = True
                 End Select
             Else
-                SetPixelV Me.hDC, .X, .Y, vbWhite
+                SetPixelV Me.hDC, .x, .Y, vbWhite
             End If
         End If
     End With

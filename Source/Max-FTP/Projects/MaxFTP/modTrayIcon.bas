@@ -1,9 +1,9 @@
-#Const [True] = -1
-#Const [False] = 0
-
-
-
 Attribute VB_Name = "modTrayIcon"
+
+
+
+
+
 #Const modTrayIcon = -1
 Option Explicit
 'TOP DOWN
@@ -48,7 +48,7 @@ Private Declare Function DrawIconEx Lib "user32" _
     
 Private Type POINTAPI
       x As Long
-      y As Long
+      Y As Long
 End Type
 
 Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
@@ -112,7 +112,7 @@ Public Function PerformInTray()
 
     Dim cnt As Integer
     
-    For cnt = 0 To Forms.Count - 1
+    For cnt = 0 To Forms.count - 1
 
         If IsHiddenForm(Forms(cnt)) Then
 
@@ -133,7 +133,7 @@ Public Function PerformOutTray() As Boolean
     
     Dim cnt As Integer
 
-    For cnt = 0 To Forms.Count - 1
+    For cnt = 0 To Forms.count - 1
 
         If IsHiddenForm(Forms(cnt)) Then
 
@@ -200,4 +200,3 @@ trayerror:
     Err.Clear
 End Sub
 
-

@@ -13,145 +13,262 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public Property Get ShowStats() As Boolean
-    ShowStats = modMain.ShowStats
-End Property
-Public Property Let ShowStats(ByVal RHS As Boolean)
-    modMain.ShowStats = RHS
-End Property
 
 Public Sub Location(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
-    modMove.Location Origin, ApplyTo   'location is changing the origin to absolute
+    mod3DObj.Location Origin, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Position(ByRef Origin As Point, Optional ByRef ApplyTo As Object)
-    modMove.Position Origin, ApplyTo  'position is changing the origin relative
+    mod3DObj.Position Origin, ApplyTo  'position is changing the origin relative
 End Sub
+
 
 Public Sub Rotation(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
-    modMove.Rotation Radians, ApplyTo  'location is changing the origin to absolute
+    mod3DObj.Rotation Radians, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Orientate(ByRef Radians As Point, Optional ByRef ApplyTo As Object)
-    modMove.Orientate Radians, ApplyTo  'position is changing the origin relative
+    mod3DObj.Orientate Radians, ApplyTo  'position is changing the origin relative
 End Sub
+
 
 Public Sub Scaling(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
-    modMove.Scaling Ratios, ApplyTo  'location is changing the origin to absolute
+    mod3DObj.Scaling Ratios, ApplyTo  'location is changing the origin to absolute
 End Sub
 Public Sub Explode(ByRef Ratios As Point, Optional ByRef ApplyTo As Object)
-    modMove.Explode Ratios, ApplyTo  'position is changing the origin relative
+    mod3DObj.Explode Ratios, ApplyTo  'position is changing the origin relative
 End Sub
 
-Public Property Set Serialize(ByRef RHS)
-
-    Dim Code As String
-    Dim line As String
-    Dim o As Object
+Public Property Set Serialize(Optional ByRef Indent As String = "", ByRef RHS)
     Select Case LCase(TypeName(RHS))
-        Case "bindings", "camera"
-            If All.Exists(LCase(TypeName(RHS))) Then
-                Code = RemoveQuotedArg(All(LCase(TypeName(RHS))), "<" & TypeName(RHS) & ">", "</" & TypeName(RHS) & ">")
-                All.Remove LCase(TypeName(RHS))
-                Do Until Code = ""
-                    line = URLDecode(RemoveNextArg(Code, vbCrLf))
-                    frmMain.ExecuteStatement line
-                Loop
+        Case "molecules"
+            Dim mol As Molecules
+            Set mol = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            All.Remove LCase(TypeName(RHS))
+            If mol.Count > 0 Then
+                Dim m As Molecule
+                For Each m In mol
+                    If Molecules.Exists(m.Key) Then
+                        Molecules.Remove m.Key
+                        Molecules.Add m, m.Key
+                    Else
+                        Molecules.Add m, m.Key
+                    End If
+                Next
             End If
-
-        Case "molecules", "brilliants", "planets" ', "billboards"
-            If All.Exists(LCase(TypeName(RHS))) Then
-                Code = All(LCase(TypeName(RHS)))
-                All.Remove LCase(TypeName(RHS))
-                Set o = NTNodes10.Deserialize(Code, AppPath & App.EXEName & ".ocx")
-                If o.Count > 0 Then
-                    Dim m As Object
-                    For Each m In o
-                        m.Serialize = True
-                        If All.Exists(m.Key) Then All.Remove m.Key
-                        If RHS.Exists(m.Key) Then RHS.Remove m.Key
-                        ParseSetupObject m, LCase(TypeName(RHS)), m.Key
-                    Next
-                    Set m = Nothing
-                    o.Clear
-                End If
-                Set o = Nothing
+            Set mol = Nothing
+        Case "brilliants"
+            Dim bril As Brilliants
+            Set bril = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            All.Remove LCase(TypeName(RHS))
+            If bril.Count > 0 Then
+                Dim br As Brilliant
+                For Each br In bril
+                    If Brilliants.Exists(br.Key) Then
+                        Brilliants.Remove br.Key
+                        Brilliants.Add br, br.Key
+                    Else
+                        Brilliants.Add br, br.Key
+                    End If
+                Next
             End If
+            Set bril = Nothing
+        Case "planets"
+            Dim pla As Planets
+            Set pla = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            All.Remove LCase(TypeName(RHS))
+            If pla.Count > 0 Then
+                Dim p As Planet
+                For Each p In pla
+                    If Planets.Exists(p.Key) Then
+                        Planets.Remove p.Key
+                        Planets.Add p, p.Key
+                    Else
+                        Planets.Add p, p.Key
+                    End If
+                Next
+            End If
+            Set pla = Nothing
+        Case "billboards"
+            Dim bill As Billboards
+            Set bill = ntnodes10.Deserialize(All(LCase(TypeName(RHS))), AppPath & App.EXEName & ".ocx")
+            All.Remove LCase(TypeName(RHS))
+            If bill.Count > 0 Then
+                Dim bi As Billboard
+                For Each bi In bill
+                    If Billboards.Exists(bi.Key) Then
+                        Billboards.Remove bi.Key
+                        Billboards.Add bi, bi.Key
+                    Else
+                        Billboards.Add bi, bi.Key
+                    End If
+                Next
+            End If
+            Set bill = Nothing
     End Select
 End Property
+Public Property Get Serialize(Optional ByRef Indent As String = "")
+    
+    Serialize = Indent & "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
 
-Public Property Get Serialize()
-Attribute Serialize.VB_MemberFlags = "40"
+    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
+    Serialize = Serialize & Indent & Replace(Replace(ntnodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
 
-    Serialize = "<DateTime>" & Include.URLEncode(FileDateTime(ScriptRoot & "\Index.vbx")) & "</DateTime>" & vbCrLf
-    'Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Billboards, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Planets, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Brilliants, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-    Serialize = Serialize & Replace(Replace(NTNodes10.Serialize(Molecules, AppPath & App.EXEName & ".ocx"), "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf, ""), "</Serial>" & vbCrLf, "")
-
+    If modParse.Camera.Serialize <> False Then
+        Serialize = Serialize & Indent & "<Camera>" & Include.URLEncode(modParse.Camera.Serialize) & "</Camera>" & vbCrLf
+    End If
+    
+    
 End Property
 
-Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
+Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As Point
     Set Point = New Point
     Point.X = X
     Point.Y = Y
-    Point.Z = Z
+    Point.z = z
+End Function
+
+Public Property Get Count() As Long
+'    Select Case LastCreateCall
+'        Case "Brilliant"
+'            Count = Brilliants.Count
+'        Case "Billboard"
+'            Count = Billboards.Count
+'        Case "Planet"
+'            Count = Planets.Count
+'        Case "Motion"
+'            Count = Motions.Count
+'        Case "Molecule"
+'            Count = Molecules.Count
+'        Case Else
+            Count = All.Count
+'    End Select
+End Property
+
+Public Property Get Item(ByVal Index As Variant) As Object
+'    Select Case LastCreateCall
+'        Case "Brilliant"
+'            Set Item = Brilliants(Index)
+'        Case "Billboard"
+'            Set Item = Billboards(Index)
+'        Case "Planet"
+'            Set Item = Planets(Index)
+'        Case "Motion"
+'            Set Item = Motions(Index)
+'        Case "Molecule"
+'            Set Item = Molecules(Index)
+'        Case Else
+            Set Item = All(Index)
+'    End Select
+End Property
+
+Public Function Add(ByRef NewObj, Optional ByVal Name As Variant = "") As String
+    If Name = "" Then Name = Unnamed(All)
+'    Select Case LastCreateCall
+'        Case "Brilliant"
+'            Brilliants.Add NewObj, Name
+'        Case "Billboard"
+'            Billboards.Add NewObj, Name
+'        Case "Planet"
+'            Planets.Add NewObj, Name
+'        Case "Motion"
+'            Motions.Add NewObj, Name
+'        Case "Molecule"
+'            Molecules.Add NewObj, Name
+'        Case Else
+            All.Add NewObj, Name
+'    End Select
+    Add = Name
+End Function
+
+Public Sub Remove(ByVal Name As Variant)
+'    Select Case LastCreateCall
+'        Case "Brilliant"
+'            Brilliants.Remove Name
+'        Case "Billboard"
+'            Billboards.Remove Name
+'        Case "Planet"
+'            Planets.Remove Name
+'        Case "Motion"
+'            Motions.Remove Name
+'        Case "Molecule"
+'            Molecules.Remove Name
+'        Case Else
+            All.Remove Name
+'    End Select
+End Sub
+Public Function Exists(ByVal Name As Variant) As Boolean
+'    Select Case LastCreateCall
+'        Case "Brilliant"
+'            Exists = Brilliants.Exists(Name)
+'        Case "Billboard"
+'            Exists = Billboards.Exists(Name)
+'        Case "Planet"
+'            Exists = Planets.Exists(Name)
+'        Case "Motion"
+'            Exists = Motions.Exists(Name)
+'        Case "Molecule"
+'            Exists = Molecules.Exists(Name)
+'        Case Else
+            Exists = All.Exists(Name)
+'    End Select
 End Function
 
 Public Function URLDecode(ByVal encodedString As String) As String
-URLDecode = encodedString
-'    Dim ReturnString As String
-'    Dim currentChar As String
-'
-'    Dim i As Long
-'    i = 1
-'
-'    Do Until i > Len(encodedString)
-'        currentChar = Mid(encodedString, i, 1)
-'
-'        If currentChar = "+" Then
-'            ReturnString = ReturnString + " "
-'            i = i + 1
-'        ElseIf currentChar = "%" Then
-'            currentChar = Mid(encodedString, i + 1, 2)
-'            ReturnString = ReturnString + Chr(Val("&H" & currentChar))
-'            i = i + 3
-'        Else
-'            ReturnString = ReturnString + currentChar
-'            i = i + 1
-'        End If
-'    Loop
-'
-'    URLDecode = ReturnString
+
+    Dim ReturnString As String
+    Dim currentChar As String
+    
+    Dim i As Long
+    i = 1
+
+    Do Until i > Len(encodedString)
+        currentChar = Mid(encodedString, i, 1)
+
+        If currentChar = "+" Then
+            ReturnString = ReturnString + " "
+            i = i + 1
+        ElseIf currentChar = "%" Then
+            currentChar = Mid(encodedString, i + 1, 2)
+            ReturnString = ReturnString + Chr(Val("&H" & currentChar))
+            i = i + 3
+        Else
+            ReturnString = ReturnString + currentChar
+            i = i + 1
+        End If
+    Loop
+    
+    URLDecode = ReturnString
 
 End Function
 
 Public Function URLEncode(ByVal encodeString As String) As String
-URLEncode = encodeString
-'    Dim ReturnString As String
-'    Dim currentChar As String
-'
-'    Dim i As Long
-'
-'    For i = 1 To Len(encodeString)
-'        currentChar = Mid(encodeString, i, 1)
-'
-'        If Asc(currentChar) < 91 And Asc(currentChar) > 64 Then
-'            ReturnString = ReturnString + currentChar
-'        ElseIf Asc(currentChar) < 123 And Asc(currentChar) > 96 Then
-'            ReturnString = ReturnString + currentChar
-'        ElseIf Asc(currentChar) < 58 And Asc(currentChar) > 47 Then
-'            ReturnString = ReturnString + currentChar
-'        ElseIf Asc(currentChar) = 32 Then
-'            ReturnString = ReturnString + "+"
-'        Else
-'            If Len(Hex(Asc(currentChar))) = 1 Then
-'                ReturnString = ReturnString + "%0" + Hex(Asc(currentChar))
-'            Else
-'                ReturnString = ReturnString + "%" + Hex(Asc(currentChar))
-'            End If
-'        End If
-'    Next
-'
-'    URLEncode = ReturnString
+    Dim ReturnString As String
+    Dim currentChar As String
+    
+    Dim i As Long
+
+    For i = 1 To Len(encodeString)
+        currentChar = Mid(encodeString, i, 1)
+
+        If Asc(currentChar) < 91 And Asc(currentChar) > 64 Then
+            ReturnString = ReturnString + currentChar
+        ElseIf Asc(currentChar) < 123 And Asc(currentChar) > 96 Then
+            ReturnString = ReturnString + currentChar
+        ElseIf Asc(currentChar) < 58 And Asc(currentChar) > 47 Then
+            ReturnString = ReturnString + currentChar
+        ElseIf Asc(currentChar) = 32 Then
+            ReturnString = ReturnString + "+"
+        Else
+            If Len(Hex(Asc(currentChar))) = 1 Then
+                ReturnString = ReturnString + "%0" + Hex(Asc(currentChar))
+            Else
+                ReturnString = ReturnString + "%" + Hex(Asc(currentChar))
+            End If
+        End If
+    Next
+
+    URLEncode = ReturnString
 
 End Function
 
@@ -191,24 +308,47 @@ Public Function SafeKey(ByVal mKey As Variant) As Variant
         SafeKey = LCase(Ret)
     End If
 End Function
-
+Public Function Unnamed(ByRef Collection As Object) As String
+'    If Collection Is Nothing Then
+'        Select Case LastCreateCall
+'            Case "Brilliant"
+'                Set Collection = Brilliants
+'            Case "Billboard"
+'                Set Collection = Billboards
+'            Case "Planet"
+'                Set Collection = Planets
+'            Case "Motion"
+'                Set Collection = Motions
+'            Case "Molecule"
+'                Set Collection = Molecules
+'        End Select
+'    End If
+    
+    'If Collection Is Nothing Then Set Collection = All
+    Dim cnt As Long
+    cnt = 1
+    Do Until Not Collection.Exists("Unnamed" & Trim(CStr(cnt)))
+        cnt = cnt + 1
+    Loop
+    Unnamed = "Unnamed" & Trim(CStr(cnt))
+End Function
 '###############################################################
 '### Code base of Sub/Function's added to ScriptControl are  ###
 '### also exposed in modScript private to modFactory.Execute ###
 '###############################################################
     
-'Public Property Get NotLoaded() As BillboardTypes
-'    NotLoaded = BillboardTypes.NotLoaded
-'End Property
-'Public Property Get CacheOnly() As BillboardTypes
-'    CacheOnly = BillboardTypes.CacheOnly
-'End Property
-'Public Property Get HudPanel() As BillboardTypes
-'    HudPanel = BillboardTypes.HudPanel
-'End Property
-'Public Property Get Beacon() As BillboardTypes
-'    Beacon = BillboardTypes.Beacon
-'End Property
+Public Property Get NotLoaded() As BillboardTypes
+    NotLoaded = BillboardTypes.NotLoaded
+End Property
+Public Property Get CacheOnly() As BillboardTypes
+    CacheOnly = BillboardTypes.CacheOnly
+End Property
+Public Property Get HudPanel() As BillboardTypes
+    HudPanel = BillboardTypes.HudPanel
+End Property
+Public Property Get Beacon() As BillboardTypes
+    Beacon = BillboardTypes.Beacon
+End Property
 
 Public Property Get Directed() As BrilliantTypes
     Directed = BrilliantTypes.Directed
@@ -245,7 +385,9 @@ End Property
 Public Property Get Screen() As PlanetTypes
     Screen = PlanetTypes.Screen
 End Property
-
+Public Property Get Island() As PlanetTypes
+    Island = PlanetTypes.Island
+End Property
 
 Public Property Get None() As CollisionTypes
     None = CollisionTypes.None
@@ -253,11 +395,9 @@ End Property
 Public Property Get Ranged() As CollisionTypes
     Ranged = CollisionTypes.Ranged
 End Property
-Public Property Get Contact() As CollisionTypes
-    Contact = CollisionTypes.Contact
+Public Property Get Through() As CollisionTypes
+    Through = CollisionTypes.Through
 End Property
-
-
 Public Property Get Freely() As CollisionTypes
     Freely = CollisionTypes.Freely
 End Property
@@ -273,6 +413,7 @@ End Property
 Public Property Get Coupling() As CollisionTypes
     Coupling = CollisionTypes.Coupling
 End Property
+
 
 Public Property Get Visual() As ControllerModes
     Visual = ControllerModes.Visual
@@ -294,44 +435,16 @@ Public Property Get Absolute() As CoordinateTypes
     Absolute = CoordinateTypes.Absolute
 End Property
 
-'#####################################################
-'########## Collections ##############################
-'#####################################################
-'Public Property Get All() As NTNodes10.Collection
-'    Set All = modParse.All
-'End Property
-'
-'Public Property Get Camera() As Camera
-'    Set Camera = modParse.Camera
-'End Property
-'
-'Public Property Get Motions() As Motions
-'    Set Motions = modParse.Motions
-'End Property
-'
-'Public Property Get Brilliants() As Brilliants
-'    Set Brilliants = modParse.Brilliants
-'End Property
-'
-'Public Property Get Molecules() As Molecules
-'    Set Molecules = modParse.Molecules
-'End Property
-'
-'Public Property Get Billboards() As Billboards
-'    Set Billboards = modParse.Billboards
-'End Property
-'
-'Public Property Get Bindings() As Bindings
-'    Set Bindings = modParse.Bindings
-'End Property
-'
-'Public Property Get Planets() As Planets
-'    Set Planets = modParse.Planets
-'End Property
-
-'###################################################
-'########## Functions ##############################
-'###################################################
+Public Property Get Camera() As Camera
+    Set Camera = modParse.Camera
+End Property
+Public Property Set Camera(ByRef RHS As Molecule)
+    If TypeName(RHS) = "Planet" Then
+        Set modParse.Camera.Planet = RHS
+    Else
+        Set modParse.Camera.Player = RHS
+    End If
+End Property
 
 Public Function CreateObjectPrivate(ByVal Class As String)
     Set CreateObjectPrivate = modFactory.CreateObjectPrivate(Class)
@@ -350,12 +463,4 @@ End Sub
 
 Public Sub Echo(ByVal Text As String)
     Process "echo " & frmMain.Evaluate(Text)
-End Sub
-
-Private Sub Class_Initialize()
-    Stats_Include_Count = Stats_Include_Count + 1
-End Sub
-
-Private Sub Class_Terminate()
-    Stats_Include_Count = Stats_Include_Count - 1
 End Sub

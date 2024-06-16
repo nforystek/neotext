@@ -144,23 +144,23 @@ Public Sub CreateText()
     Set DefaultRenderTarget = DDevice.GetRenderTarget
     Set DefaultStencilDepth = DDevice.GetDepthStencilSurface
 
-'    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+    
+
+ '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
 '
-'
-' '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
-''
-''    DDevice.GetFrontBuffer ReflectFrontBuffer
-'
-'
-'
-'
-' '   DDevice.SetClipPlane
-'
-'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-'
-'    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-'
-' '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+'    DDevice.GetFrontBuffer ReflectFrontBuffer
+                                
+    
+    
+    
+ '   DDevice.SetClipPlane
+    
+    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+    
+    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+    
+ '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
 
 End Sub
 
@@ -187,8 +187,8 @@ Public Function DrawText(Text As String, X As Single, Y As Single)
     TextRect.Bottom = Y + (frmMain.TextHeight(Text) / VB.Screen.TwipsPerPixelY)
     TextRect.Right = X + (frmMain.TextWidth(Text) / VB.Screen.TwipsPerPixelX)
 
- '   DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
-'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
+    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
     DDevice.SetPixelShader PixelShaderDefault
     DDevice.SetVertexShader FVF_RENDER
 
@@ -427,7 +427,7 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
 'True if the function was successful.
 
   'declare vars
-  Dim Handle As Integer, isValidImage As Boolean
+  Dim handle As Integer, isValidImage As Boolean
   Dim byteArr(255) As Byte, i As Integer
 
   'init vars
@@ -436,11 +436,11 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
   imgdim.Width = 0
   
   'open file and get 256 byte chunk
-  Handle = FreeFile
+  handle = FreeFile
   On Error GoTo endFunction
-  Open FileName For Binary Access Read As #Handle
-  Get Handle, , byteArr
-  Close #Handle
+  Open FileName For Binary Access Read As #handle
+  Get handle, , byteArr
+  Close #handle
 
   'check for jpg header (SOI): &HFF and &HD8
   ' contained in first 2 bytes
@@ -540,7 +540,7 @@ Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8
 
     If BitmapDimensions(FileName, Dimensions, t) Then
         Set LoadTexture = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
-            D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DWRAPCOORD_2, D3DX_FILTER_LINEAR, modDecs.Transparent, ByVal 0, ByVal 0)
+            D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, modDecs.Transparent, ByVal 0, ByVal 0)
     End If
 
 End Function
@@ -576,7 +576,7 @@ End Function
 
 Public Function GetIndexFile(ByVal ID As Long) As String
     If FileCount > 0 And ID < FileCount Then
-        GetIndexFile = LCase(Trim(Files(ID).Path))
+        GetIndexFile = LCase(Trim(Files(ID).path))
     End If
 End Function
 
@@ -586,22 +586,22 @@ Public Function GetFileIndex(Optional ByVal ID As String) As Long
     Dim idx As Long
     If FileCount > 0 Then
         For cnt = 1 To FileCount
-            If LCase(Trim(Files(cnt).Path)) = LCase(Trim(ID)) Then
+            If LCase(Trim(Files(cnt).path)) = LCase(Trim(ID)) Then
                 GetFileIndex = cnt
                 Exit Function
-            ElseIf Files(cnt).Path = "" And idx = 0 Then
+            ElseIf Files(cnt).path = "" And idx = 0 Then
                 idx = cnt
             End If
         Next
         If idx > 0 Then
             GetFileIndex = idx
-            Files(idx).Path = ID
+            Files(idx).path = ID
             Exit Function
         End If
     End If
     FileCount = FileCount + 1
     ReDim Preserve Files(1 To FileCount) As MyFile
-    Files(FileCount).Path = ID
+    Files(FileCount).path = ID
     GetFileIndex = FileCount
 End Function
 

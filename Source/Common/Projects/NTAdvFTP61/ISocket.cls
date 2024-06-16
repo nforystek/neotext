@@ -1167,18 +1167,23 @@ Private Sub DebugEvent(ByVal txt As String)
     End If
 End Sub
 Private Sub DataValidating(ByVal wParam As Long)
-    If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
-        SetValidatingMode
-        RaiseEvent Connection(Handle)
-        UnsetValidatingMode Handle, "he remote address did not match the ip address for the connection."
-    Else
-        If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
-            SetValidatingMode
-            RaiseEvent Connection(Handle)
-            UnsetValidatingMode Handle, "Either remote or local socket handle did not match ip address for the connection."
-
-        End If
-    End If
+'        SetValidatingMode
+'        RaiseEvent Connection(Handle)
+'        UnsetValidatingMode Handle, "Not validating remote connections."
+        
+    
+'    If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
+'        SetValidatingMode
+'        RaiseEvent Connection(Handle)
+'        UnsetValidatingMode Handle, "The remote address did not match the ip address for the connection."
+'    Else
+'        If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
+'            SetValidatingMode
+'            RaiseEvent Connection(Handle)
+'            UnsetValidatingMode Handle, "Either remote or local socket handle did not match ip address for the connection."
+'
+'        End If
+'    End If
 End Sub
 
 
