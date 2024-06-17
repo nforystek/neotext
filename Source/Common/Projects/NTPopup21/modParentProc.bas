@@ -42,6 +42,9 @@ Private Const WM_EXITSIZEMOVE = &H232
 
 Private Const GWL_WNDPROC = (-4)
 
+Private Declare Function ShowWindow Lib "user32" (ByVal hwnd As Long, ByVal nCmdShow As Long) As Long
+Private Const SW_HIDE = 0
+
 Private Declare Function GetForegroundWindow Lib "user32" () As Long
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)
 Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lngParam As Long) As Long
@@ -169,5 +172,7 @@ Public Function WindowProc(ByVal hw As Long, ByVal uMsg As Long, ByVal wParam As
     Exit Function
 walkoff:
     Err.Clear
+    ShowWindow hw, SW_HIDE
+    DestroyWindow hw
     WindowProc = 1
 End Function

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1384.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1385.0#0"; "NTControls22.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "richtx32.ocx"
 Begin VB.Form frmFTPClientGUI 
@@ -475,7 +475,6 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -957,7 +956,6 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -1542,7 +1540,7 @@ Public Function SetFTPCommand(ByVal Index As Integer, ByVal newVal As String)
     FTPCommand(Index) = newVal
 End Function
 
-Private Sub dContainer_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub dContainer_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -1550,7 +1548,7 @@ Private Sub dContainer_Resize(Index As Integer)
 
     On Error Resume Next
     dContainerResize Me, Index
-    If Err.Number <> 0 Then Err.Clear
+    If Err.number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
@@ -1560,7 +1558,7 @@ Private Sub Form_Activate()
 
 End Sub
 
-Private Sub Form_DragOver(Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub Form_DragOver(Source As Control, X As Single, Y As Single, State As Integer)
 
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
@@ -1809,7 +1807,7 @@ Private Sub Form_Resize()
         FormResize Me
     End If
 
-    If Err.Number <> 0 Then Err.Clear
+    If Err.number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
@@ -1863,7 +1861,7 @@ Private Sub Form_Unload(Cancel As Integer)
     
 End Sub
 
-Private Sub hSizer_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub hSizer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Me.ReCenterSizers = True
     If Button = 1 And Not hBarIsSizing Then
         hBarIsSizing = True
@@ -2033,7 +2031,7 @@ Public Sub SetClientGUIState(ByVal Index As Integer, ByVal cState As Integer)
     
 End Sub
 
-Private Sub ListView1_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub ListView1_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 2 Then
         RefreshThreadMenu
     End If
@@ -2373,9 +2371,9 @@ Private Sub myClient0_DataProgress(ByVal ProgressType As NTAdvFTP61.ProgressType
     
 End Sub
 
-Public Sub myClient0_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Public Sub myClient0_Error(ByVal number As Long, ByVal Source As String, ByVal Description As String)
     SetCaption
-    ClientError 0, Number, Source, Description
+    ClientError 0, number, Source, Description
 End Sub
 
 
@@ -2410,10 +2408,10 @@ Private Sub myClient1_DataProgress(ByVal ProgressType As NTAdvFTP61.ProgressType
     
 End Sub
 
-Public Sub myClient1_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Public Sub myClient1_Error(ByVal number As Long, ByVal Source As String, ByVal Description As String)
     SetCaption
     
-    ClientError 1, Number, Source, Description
+    ClientError 1, number, Source, Description
 
 End Sub
 
@@ -2434,11 +2432,11 @@ Private Sub pAddressBar_Resize(Index As Integer)
     setLocation(Index).Left = 15
     setLocation(Index).Width = pAddressBar(Index).Width - setLocation(Index).Left - UserGo(Index).Width
     UserGo(Index).Left = pAddressBar(Index).Width - UserGo(Index).Width
-    If Err.Number <> 0 Then Err.Clear
+    If Err.number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
-Private Sub pDummyView_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub pDummyView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
@@ -2448,12 +2446,12 @@ Private Sub pDummyView_KeyDown(Index As Integer, KeyCode As Integer, Shift As In
 
 End Sub
 
-Private Sub pProgress_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub pProgress_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
 
-Private Sub pStatus_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub pStatus_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
 End Sub
@@ -2493,7 +2491,7 @@ Private Sub pView_DblClick(Index As Integer)
     FTPOpen Index
 End Sub
 
-Private Sub pView_DragDrop(Index As Integer, Source As Control, x As Single, Y As Single)
+Private Sub pView_DragDrop(Index As Integer, Source As Control, X As Single, Y As Single)
 
     If Not (Index = Source.Index And Source.Parent.hwnd = Me.hwnd) Then
         If dbSettings.GetClientSetting("DragOption") = 0 Then
@@ -2527,7 +2525,7 @@ Private Sub pView_DragDrop(Index As Integer, Source As Control, x As Single, Y A
 
 End Sub
 
-Private Sub pView_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub pView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     If Index = Source.Index And Source.Parent.hwnd = Me.hwnd Then
         If dbSettings.GetClientSetting("DragOption") > 1 Then
             pView(Index).DragIcon = frmMain.imgDragDrop.ListImages("cut").Picture
@@ -2551,7 +2549,7 @@ Private Sub pView_KeyDown(Index As Integer, KeyCode As Integer, Shift As Integer
     End If
 End Sub
 
-Private Sub pView_MouseUp(Index As Integer, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub pView_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
     
     If Button = 2 Then
         
@@ -2612,7 +2610,7 @@ Private Sub SetStatusTotals(ByVal Index As Integer)
     End If
 End Sub
 
-Private Sub pView_OLEDragDrop(Index As Integer, Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub pView_OLEDragDrop(Index As Integer, Data As MSComctlLib.DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
     
     PasteFromDragDrop Me, Index, Data
     
@@ -2633,7 +2631,7 @@ Private Sub pViewDrives_Change(Index As Integer)
     Set myClient = Nothing
 End Sub
 
-Private Sub pViewDrives_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub pViewDrives_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
         Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2645,7 +2643,7 @@ Private Sub setLocation_Change(Index As Integer)
    SetConnectGUIState Index, LastState(Index)
 End Sub
 
-Private Sub setLocation_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub setLocation_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2696,7 +2694,7 @@ Private Sub UserControls_ButtonClick(Index As Integer, ByVal Button As MSComctlL
     End Select
 End Sub
 
-Private Sub UserControls_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub UserControls_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
@@ -2730,11 +2728,11 @@ Private Sub UserGo_ButtonClick(Index As Integer, ByVal Button As MSComctlLib.But
     End Select
 End Sub
 
-Private Sub userGUI_DragOver(Index As Integer, Source As Control, x As Single, Y As Single, State As Integer)
+Private Sub userGUI_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 End Sub
 
-Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Me.ReCenterSizers = True
     If Button = 1 And Not vBarIsSizing Then
         vBarIsSizing = True
@@ -2743,7 +2741,7 @@ Private Sub vSizer_MouseMove(Button As Integer, Shift As Integer, x As Single, Y
     Else
         If Button = 1 And vBarIsSizing Then
 
-            vSizer.Left = vSizer.Left + x
+            vSizer.Left = vSizer.Left + X
             vBarIsSizing = True
             Form_Resize
         Else
@@ -3185,7 +3183,7 @@ On Error GoTo catch
                         myClient.ConnectionMode = IIf(passInfo.Pasv, "PASV", "PORT")
                         myClient.DataPortRange = passInfo.PortRange
                         myClient.NetAdapter = passInfo.Adapter + 1
-                        myClient.ImplicitSSL = passInfo.SSL
+                       ' myClient.ImplicitSSL = passInfo.SSL
                     End If
                 End If
 
@@ -3432,7 +3430,7 @@ Public Sub FTPAbort(ByVal Index As Integer)
 
 End Sub
 
-Private Sub ClientError(ByVal Index As Integer, ByVal Number As Long, ByVal Source As String, ByVal Description As String)
+Private Sub ClientError(ByVal Index As Integer, ByVal number As Long, ByVal Source As String, ByVal Description As String)
 
     Dim myClient As NTAdvFTP61.Client
     Set myClient = SetMyClient(Index)
@@ -4546,12 +4544,12 @@ catch:
     Set newToList = Nothing
  '   newList.Clear
     Set newList = Nothing
-    If Err.Number <> 0 Then
+    If Err.number <> 0 Then
         If oOverwrite = or_AutoAll Then
             Err.Clear
             InRecursiveAction(Index) = False
         Else
-            Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+            Err.Raise Err.number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
         End If
     End If
 End Sub
@@ -5387,7 +5385,7 @@ Public Sub FormResize(ByRef myForm)
             PaintClientGUI Me, 0
         End If
 
-        If Err.Number <> 0 Then Err.Clear
+        If Err.number <> 0 Then Err.Clear
         On Error GoTo 0
         
     End With

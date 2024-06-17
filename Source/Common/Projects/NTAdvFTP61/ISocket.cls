@@ -411,6 +411,7 @@ On Error GoTo sockerror
         State(States.Closing) = False
         AutoRatedEvent AutoRated.HaltRates
     End If
+    
 
 Exit Sub
 sockerror:

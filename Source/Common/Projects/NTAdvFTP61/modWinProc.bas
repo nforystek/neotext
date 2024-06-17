@@ -169,6 +169,7 @@ On Local Error GoTo noproc
 Exit Function
 noproc:
     Err.Clear
+   ' WSAAsyncSelect lParam, hwnd, WM_WINSOCK, 0
 exitfunc:
     RtlMoveMemory WinsockEvents, ByVal VarPtr(ret), 4&
 End Function
