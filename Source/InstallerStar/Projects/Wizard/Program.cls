@@ -25,8 +25,9 @@ Public Default As String
 Public Contact As String
 Public WebSite As String
 Public Author As String
-Public Restore As Boolean
-Public Legacy As Boolean
+Public Restore As Boolean 'whether or not the installer should make a restore point before installing, this wont work on some OS versions earlier
+Public Legacy As Boolean 'determines the installation folder for some files, when legacy is set it goes to the program files directory, otherwise, user and appdata folders
+Public System As Boolean 'whether or not the non activex system dll's will be applied during installing, as they still will be packed, use exclude to keep them out completely,
 Public AllShortCuts As Boolean
 
 Public Display As String
@@ -1070,29 +1071,31 @@ Private Function InstallSystem32(ByVal ItemData As String, ByRef InfoText As Str
             End If
 
             skipInstead = True
-            If IncrementLibrary(DestFile, ItemVers) Or newerDate Then
-                If Not PathExists(DestFile, True) Then
-                    InfoText = "Installed system file: " & DestFile
-                    If CurDir <> GetFilePath(DestFile) Then ChDir GetFilePath(DestFile)
-                    Call CabFile.Extract(ItemName, GetFilePath(DestFile), GetFileName(ItemName))
-                    pRollback.Add "sf+- " & RemoveArg(pSystem32(colIndex), " ")
-                    skipInstead = False
-                ElseIf (ItemSize <> FileLen(DestFile) Or ItemDate <> GetFileDate(DestFile)) Or newerDate Then
-                    If CheckVersionGreater(ItemVers, DestFile) Or newerDate Then
-                        InfoText = "Overwrote file: " & DestFile
-                        If CurDir <> GetCommonFilesFolder & "\" & Me.Author Then ChDir GetCommonFilesFolder & "\" & Me.Author
-                        Call CabFile.Extract(ItemName, GetCommonFilesFolder & "\" & Me.Author, GetFileName(ItemName))
-                        RebootFlag = RebootFlag Or UpdateLibrary(ItemName, False)
-                        pRollback.Add "sf+= " & RemoveArg(pSystem32(colIndex), " ")
+            If Program.System Then
+                If IncrementLibrary(DestFile, ItemVers) Or newerDate Then
+                    If Not PathExists(DestFile, True) Then
+                        InfoText = "Installed system file: " & DestFile
+                        If CurDir <> GetFilePath(DestFile) Then ChDir GetFilePath(DestFile)
+                        Call CabFile.Extract(ItemName, GetFilePath(DestFile), GetFileName(ItemName))
+                        pRollback.Add "sf+- " & RemoveArg(pSystem32(colIndex), " ")
                         skipInstead = False
+                    ElseIf (ItemSize <> FileLen(DestFile) Or ItemDate <> GetFileDate(DestFile)) Or newerDate Then
+                        If CheckVersionGreater(ItemVers, DestFile) Or newerDate Then
+                            InfoText = "Overwrote file: " & DestFile
+                            If CurDir <> GetCommonFilesFolder & "\" & Me.Author Then ChDir GetCommonFilesFolder & "\" & Me.Author
+                            Call CabFile.Extract(ItemName, GetCommonFilesFolder & "\" & Me.Author, GetFileName(ItemName))
+                            RebootFlag = RebootFlag Or UpdateLibrary(ItemName, False)
+                            pRollback.Add "sf+= " & RemoveArg(pSystem32(colIndex), " ")
+                            skipInstead = False
+                        End If
                     End If
                 End If
+                If skipInstead Then
+                    InfoText = "Skip existing system file: " & DestFile
+                    pRollback.Add "sf-= " & RemoveArg(pSystem32(colIndex), " ")
+                End If
+                CurrentItem = CurrentItem + 1
             End If
-            If skipInstead Then
-                InfoText = "Skip existing system file: " & DestFile
-                pRollback.Add "sf-= " & RemoveArg(pSystem32(colIndex), " ")
-            End If
-            CurrentItem = CurrentItem + 1
         Case "!" 'normal
             If PathExists(DestFile, True) Then
                 newerDate = (DateDiff("n", ItemDate, GetFileDate(DestFile)) < 0)
@@ -1185,30 +1188,31 @@ Private Function RollbackEntry(ByVal ItemData As String, ByRef InfoText As Strin
             CurrentItem = CurrentItem - 1
             
         Case "sf" 'systemfiles
-            DestFile = System32Location(ItemName)
-            If DecrementLibrary(DestFile, RemoveToo) Then
-                If RemoveToo Then
-                    If PathExists(DestFile, True) Then
-                        InfoText = "Removed system file: " & ItemName
-                        Kill DestFile
+            If Program.System Then
+                DestFile = System32Location(ItemName)
+                If DecrementLibrary(DestFile, RemoveToo) Then
+                    If RemoveToo Then
+                        If PathExists(DestFile, True) Then
+                            InfoText = "Removed system file: " & ItemName
+                            Kill DestFile
+                        Else
+                            InfoText = "File non existant: " & ItemName
+                        End If
+                    ElseIf MakeRestoreLibrary(ItemName, DestFile, False) Then
+                        InfoText = "Restored system file: " & ItemName
+                    ElseIf PathExists(DestFile, True) Then
+                        InfoText = "Keeping library file: " & ItemName
                     Else
                         InfoText = "File non existant: " & ItemName
                     End If
-                ElseIf MakeRestoreLibrary(ItemName, DestFile, False) Then
-                    InfoText = "Restored system file: " & ItemName
                 ElseIf PathExists(DestFile, True) Then
-                    InfoText = "Keeping library file: " & ItemName
+                    InfoText = "Keeping system file: " & ItemName
                 Else
                     InfoText = "File non existant: " & ItemName
                 End If
-            ElseIf PathExists(DestFile, True) Then
-                InfoText = "Keeping system file: " & ItemName
-            Else
-                InfoText = "File non existant: " & ItemName
+                
+                CurrentItem = CurrentItem - 1
             End If
-            
-            CurrentItem = CurrentItem - 1
-            
         Case "pf" 'programfiles
             DestFile = InstallLocation & "\" & Program.AppValue & "\" & ItemName
             
@@ -1571,28 +1575,30 @@ Private Function UninstallSystem32(ByVal ItemData As String, ByRef InfoText As S
             End If
             CurrentItem = CurrentItem + 1
         Case "?", "!" 'normal 'system
-            If DecrementLibrary(DestFile, RemoveToo) Then
-                If RemoveToo Then
-                    If PathExists(DestFile, True) Then
-                        InfoText = "Removed shared file: " & ItemName
-                        Kill DestFile
+            If (ItemType = "?" And Program.System) Or ItemType = "!" Then
+                If DecrementLibrary(DestFile, RemoveToo) Then
+                    If RemoveToo Then
+                        If PathExists(DestFile, True) Then
+                            InfoText = "Removed shared file: " & ItemName
+                            Kill DestFile
+                        Else
+                            InfoText = "File non existant: " & ItemName
+                        End If
+                    ElseIf MakeRestoreLibrary(ItemName, DestFile, False) Then
+                        InfoText = "Restored shared file: " & ItemName
+                    ElseIf PathExists(DestFile, True) Then
+                        InfoText = "Keeping library file: " & ItemName
                     Else
                         InfoText = "File non existant: " & ItemName
                     End If
-                ElseIf MakeRestoreLibrary(ItemName, DestFile, False) Then
-                    InfoText = "Restored shared file: " & ItemName
                 ElseIf PathExists(DestFile, True) Then
-                    InfoText = "Keeping library file: " & ItemName
+                    InfoText = "Keeping shared file: " & ItemName
                 Else
                     InfoText = "File non existant: " & ItemName
                 End If
-            ElseIf PathExists(DestFile, True) Then
-                InfoText = "Keeping shared file: " & ItemName
-            Else
-                InfoText = "File non existant: " & ItemName
+    
+                CurrentItem = CurrentItem + 1
             End If
-
-            CurrentItem = CurrentItem + 1
         Case "&" 'left over backup as last uninstaller
         
             MakeRestoreLibrary ItemName, DestFile, True

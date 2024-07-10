@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{6459C47B-7678-440A-8976-7FEB2C548409}#47.0#0"; "NTDirectX.ocx"
+Object = "*\A..\..\NTDirectX.vbp"
 Begin VB.Form Form1 
    Caption         =   "DirectX Test"
    ClientHeight    =   7230
@@ -12,13 +12,13 @@ Begin VB.Form Form1
    ScaleWidth      =   11130
    StartUpPosition =   2  'CenterScreen
    Begin NTDirectX.Macroscopic Macroscopic1 
-      Height          =   2550
-      Left            =   4245
+      Height          =   4665
+      Left            =   2460
       TabIndex        =   0
-      Top             =   1200
-      Width           =   6900
-      _ExtentX        =   12171
-      _ExtentY        =   4498
+      Top             =   1365
+      Width           =   4920
+      _ExtentX        =   8678
+      _ExtentY        =   8229
    End
 End
 Attribute VB_Name = "Form1"

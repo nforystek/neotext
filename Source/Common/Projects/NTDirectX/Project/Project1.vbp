@@ -1,5 +1,5 @@
 Type=Exe
-Object={6459C47B-7678-440A-8976-7FEB2C548409}#47.0#0; NTDirectX.ocx
+Object=*\A..\..\NTDirectX.vbp
 Form=Form1.frm
 IconForm="Form1"
 Startup="Form1"

@@ -58,13 +58,17 @@ Option Explicit
 Public Function LoadFolder(ByVal PathName As String) As Boolean
     On Error GoTo failload
 
-    frmMain.Serialize ParseScript(PathName & "\Index.vbx")
-    
+    'If frmMain.SerialStack = False Then
+    '    frmMain.SerialStack = True
+     '   frmMain.Serialize ParseScript(PathName & "\Index.vbx")
+    '    frmMain.SerialStack = False
+    'End If
+
     'Debug.Print Planets.Count; Molecules.Count; All.Count
-    
+
     Exit Function
 failload:
-    MsgBox "Unable to """ & PathName & "\Index.vbx""" & vbCrLf & Err.Description, vbCritical
+    MsgBox "Unable to """ & PathName & "\Index.vbx""" & vbCrLf & Err.description, vbCritical
     Err.Clear
 End Function
 Friend Property Get Parent() As Object
@@ -109,24 +113,6 @@ Private Sub Timer1_Timer()
     
 End Sub
 
-Friend Sub PauseRendering()
-    If (Not PauseGame) Then
-        
-        frmMain.Visible = False
-        Image2.Visible = True
-        Shape1.Visible = True
-        
-        PauseGame = True
-        TermGameData Me
-        TermDirectX Me
-    
-        If TrapMouse Or FullScreen Then
-            VB.Screen.MousePointer = 0
-        End If
-    
-    End If
-        
-End Sub
 
 Friend Sub ResumeRendering()
     On Error GoTo fault
@@ -148,6 +134,8 @@ Friend Sub ResumeRendering()
         If (TrapMouse Or FullScreen) And (Bindings.Controller = Trapping Or Bindings.Controller = Hidden) Then
             VB.Screen.MousePointer = 99
         End If
+        
+        Timer1.Enabled = True
                 
     End If
 
@@ -156,6 +144,26 @@ Exit Sub
 fault:
     TermDirectX Me
     Err.Clear
+End Sub
+
+
+Friend Sub PauseRendering()
+    If (Not PauseGame) Then
+        
+        frmMain.Visible = False
+        Image2.Visible = True
+        Shape1.Visible = True
+        
+        PauseGame = True
+        TermGameData Me
+        TermDirectX Me
+    
+        If TrapMouse Or FullScreen Then
+            VB.Screen.MousePointer = 0
+        End If
+        
+        Timer1.Enabled = False
+    End If
 End Sub
 
 Private Sub UserControl_Initialize()
@@ -178,7 +186,6 @@ Private Sub UserControl_Initialize()
                 
         PauseGame = True
         ResumeRendering
-        Timer1.Enabled = True
         
     End If
 
@@ -189,7 +196,7 @@ End Property
 
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
     On Error Resume Next
-    If KeyCode = 112 Then ShowSetup Me
+    If KeyCode = 112 Then ShowSetup = True
 End Sub
 
 Private Sub UserControl_Resize()

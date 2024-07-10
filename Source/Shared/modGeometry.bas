@@ -2105,7 +2105,7 @@ End Function
 '
 '        If Abs(stack) = 1 Then 'undo
 '
-'           ' .z = AngleConvertWinToDX3D(.z)
+'           ' .z = AngleConvertWinToDX3DZ(.z)
 '
 '            Point.X = (Point.X - 1)
 '            Point.Y = (Point.Y - 1)

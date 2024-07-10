@@ -120,10 +120,9 @@ planet <Moon> {
 camera {
 	.serialize=true
 }
-Set Camera.Player = Molecules("Player")
 Set Camera.Planet = Planets("Earth")
 
-
+Set Camera.Player = Molecules("Player")
 
 frame {
             Orientate Point(0.001, 0, 0), Planets("Earth")

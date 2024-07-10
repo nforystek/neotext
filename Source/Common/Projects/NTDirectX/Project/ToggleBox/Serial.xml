@@ -1,14 +1,14 @@
 <Serial>
-<DateTime>3%2F13%2F2024+1%3A48%3A57+PM</DateTime>
+<DateTime>3/13/2024 8:48:49 PM</DateTime>
   <Planets></Planets>
   <Brilliants></Brilliants>
   <Molecules></Molecules>
   <Camera>
-Set+Camera%2EPlanet+%3D+Planets%28%22Earth%22%29
-Set+Camera%2EPlayer+%3D+Molecules%28%22Player%22%29
-Camera%2EPlayer%2EOrigin%2EToString+%3D+%22%5B0%2C+2%2C+0%5D%22
-Camera%2EPlayer%2ERotate%2EToString+%3D+%22%5B0%2E427998%2C+%2D0%2E635995%2C+0%5D%22
-Camera%2EColor+%3D+%5B+0+%2C+0%2C+0%2C+1%5D
-Camera%2ESerialize+%3D+True
+Set Camera.Planet = Planets("Earth")
+Set Camera.Player = Molecules("Player")
+Camera.Player.Origin.ToString = "[-1.33202, 2.836316, -1.229579]"
+Camera.Player.Rotate.ToString = "[0.924384, 1.176416, 6.007983]"
+Camera.Color = [ 0 , 0, 0, 1]
+Camera.Serialize = True
 </Camera>
 </Serial>

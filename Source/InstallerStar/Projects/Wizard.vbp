@@ -43,7 +43,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Install Star Wizard Application"
 VersionLegalTrademarks="Nicholas Randall Forystek"
 VersionProductName="Install Star"
-CondComp="Wizard = -1 : VBIDE = -1 : modMain = -1 : modCommon = -1 : modFolders = -1 : modSystem = -1 : modFileInfo = -1 : modProcess = -1 : modGenerate = -1 : modWildCard = -1 : modForms = -1 : modCabFile = -1 : modWin32Ver = -1"
+CondComp="Wizard=-1:VBIDE=-1:modMain=-1:modCommon=-1:modFolders=-1:modSystem=-1:modFileInfo=-1:modProcess=-1:modGenerate=-1:modWildCard=-1:modForms=-1:modCabFile=-1:modWin32Ver=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

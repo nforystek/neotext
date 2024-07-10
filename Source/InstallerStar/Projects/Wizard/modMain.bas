@@ -45,7 +45,7 @@ Public Sub UninstallFirst()
         Select Case SimSilence
             Case InstallMode.Normal, InstallMode.SheekG
                 If MsgBox("Warning: a conflicting prior version needs to be uninstalled before" & vbCrLf & _
-                        "installation.  Do you wish to still proceed with uninstalltion first?", vbQuestion + vbYesNo) = vbNo Then
+                        "installation.  Do you wish to still proceed without uninstall first?", vbQuestion + vbYesNo) = vbNo Then
                     Program.CloseAll
                     End
                 End If
@@ -125,12 +125,16 @@ Public Sub Main()
     
     Dim ddfText As String
     Dim iniText As String
+    
     Select Case UCase(NextArg(SimCommand, " "))
         Case "/S", "/Q0", "/QN0", "/QT", "/QNT", "/QUIET", "/SILENT"
             SimSilence = ZeroUI
             RemoveNextArg SimCommand, " "
         Case "/Q", "/Q1", "/QN1", "/SPLASH", "/SHEEK"
             SimSilence = SheekG
+            RemoveNextArg SimCommand, " "
+        Case "/FULL", "/SYS"
+            Program.System = True
             RemoveNextArg SimCommand, " "
         Case Else
             SimSilence = Normal
@@ -431,6 +435,7 @@ Private Sub SaveManifest(ByVal FilePath As String, ByVal iniText As String)
                 "Contact= " & Program.Contact & vbCrLf & _
                 "Restore= " & Program.Restore & vbCrLf & _
                 "Legacy= " & Program.Legacy & vbCrLf & _
+                "System= " & Program.System & vbCrLf & _
                 vbCrLf & "[ExecuteWaits]" & vbCrLf & _
                 "Backup=" & Program.Executes.backup & vbCrLf & _
                 "Remove=" & Program.Executes.Remove & vbCrLf & _
@@ -498,6 +503,8 @@ Private Sub LoadManifest(ByVal FilePath As String)
                                 End If
                             Case "legacy"
                                 Program.Legacy = CBool(inLine)
+                            Case "system"
+                                Program.System = CBool(inLine) Or (InStr(UCase(Command), "/FULL") > 0) Or (InStr(UCase(Command), "/SYS") > 0)
                         End Select
                     Case ProgramFiles
                         Select Case LCase(RemoveNextArg(inLine, "="))

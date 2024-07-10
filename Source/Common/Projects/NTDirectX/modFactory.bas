@@ -118,6 +118,7 @@ Private Function IdeCreateInstance(ByVal Class As String) As IUnknown
         Err.Raise 8, , "Specified class '" + Class + "' is not defined."
         Exit Function
     End If
+     EbExecuteLine StrPtr("modFactory.OneCellQueue Nothing"), 0, 0, 0 'reset not to keep hanging references
 End Function
 
 Private Function OneCellQueue(ByVal refIn As IUnknown) As IUnknown
@@ -260,8 +261,8 @@ End Sub
 
 Private Function InIDE() As Boolean
     On Error GoTo InTheIDE
-  '  Debug.Print 1 / 0
-  '  Exit Function
+    Debug.Print 1 / 0
+    Exit Function
 InTheIDE:
     InIDE = True
 End Function

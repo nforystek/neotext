@@ -22,26 +22,29 @@ Option Compare Binary
 Private binds(0 To 255) As String
 Public Controller As Long 'ControllerModes
 Private pSerialize As Boolean
-Public Property Get ToString(Optional ByVal Indent As String = "") As String
-
-    Dim i As Long
-    For i = 0 To 255
-        If binds(i) <> "" Then
-            ToString = ToString & Indent & "    <" & GetBindingText(i) & ">" & Include.URLEncode(binds(i)) & "</" & GetBindingText(i) & ">" & vbCrLf
-        End If
-    Next
-    ToString = ToString & Indent & "    <Controller>" & Controller & "</Controller>" & vbCrLf
-    If ToString <> "" Then
-        ToString = Indent & "<Bindings>" & vbCrLf & ToString & Indent & "</Bindings>" & vbCrLf
-    End If
-
-End Property
 Public Property Get Serialize() As Boolean
+Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
+
+Public Function ToString() As String
+Attribute ToString.VB_MemberFlags = "40"
+
+    Dim i As Long
+    For i = 0 To 255
+        If binds(i) <> "" Then
+            ToString = ToString & Include.URLEncode("Bindings.Item(""" & GetBindingText(i) & """) = Include.URLDecode(""" & Include.URLEncode(binds(i)) & """)") & vbCrLf
+        End If
+    Next
+    ToString = ToString & Include.URLEncode("Bindings.Controller=" & Controller) & vbCrLf
+    
+    ToString = "  <Bindings>" & vbCrLf & ToString & vbCrLf & "</Bindings>" & vbCrLf
+    
+End Function
+
 
 Public Property Get Count() As Long
     Count = 256
@@ -74,3 +77,11 @@ Public Property Let Item(ByVal Index As Variant, ByVal RHS As Variant)
         End If
     End If
 End Property
+
+Private Sub Class_Initialize()
+    Stats_Bindings_Count = Stats_Bindings_Count + 1
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Bindings_Count = Stats_Bindings_Count - 1
+End Sub

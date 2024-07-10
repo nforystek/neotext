@@ -401,11 +401,11 @@ Public Function PictureFromByteStream(b() As Byte) As Object
     Exit Function
     
 Err_Init:
-    If Err.Number = 9 Then
+    If Err.number = 9 Then
         'Uninitialized array
         MsgBox "You must pass a non-empty byte array to this function!"
     Else
-        MsgBox Err.Number & " - " & Err.Description
+        MsgBox Err.number & " - " & Err.Description
     End If
 End Function
 
@@ -477,6 +477,8 @@ Public Sub StatusText(ByVal txtInfo As String)
         If Label1.Caption <> newtext Then Label1.Caption = newtext
     End If
 End Sub
+
+
 Private Sub Timer1_Timer()
     If latency < 20 And Not latency = -1 Then
         latency = latency + 1

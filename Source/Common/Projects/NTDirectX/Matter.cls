@@ -18,10 +18,6 @@ Public Point2 As Point
 Public Point3 As Point
 Public Normal As Point
 
-Public Index1 As Long
-Public Index2 As Long
-Public Index3 As Long
-
 Public U1 As Single
 Public V1 As Single
 
@@ -40,3 +36,52 @@ Public TriangleIndex As Long
 Public ObjectIndex As Long
 Public FaceIndex As Long
 Public Serialize As Boolean
+
+Friend Function Clone() As Matter
+    Set Clone = New Matter
+    
+    Set Clone.Point1 = New Point
+    Clone.Point1 = Point1
+    
+    Set Clone.Point2 = New Point
+    Clone.Point2 = Point2
+    
+    Set Clone.Point3 = New Point
+    Clone.Point3 = Point3
+    
+    Set Clone.Normal = New Point
+    Clone.Normal = Normal
+    
+    Clone.U1 = U1
+    Clone.V1 = V1
+    Clone.U2 = U2
+    Clone.V2 = V2
+    Clone.U3 = U3
+    Clone.V3 = V3
+    Clone.Transparent = Transparent
+    Clone.Translucent = Translucent
+    Clone.TextureIndex = TextureIndex
+    Clone.NormalIndex = NormalIndex
+    Clone.TriangleIndex = TriangleIndex
+    Clone.ObjectIndex = ObjectIndex
+    Clone.FaceIndex = FaceIndex
+    Clone.Serialize = Serialize
+    
+End Function
+
+Private Sub Class_Initialize()
+    Stats_Matter_Count = Stats_Matter_Count + 1
+    TriangleIndex = -1
+End Sub
+
+Private Sub Class_Terminate()
+    Stats_Matter_Count = Stats_Matter_Count - 1
+'    If TriangleIndex > -1 Then
+'        RemoveTriangleArray TriangleIndex
+'        TriangleIndex = -1
+'    End If
+    Set Point1 = Nothing
+    Set Point2 = Nothing
+    Set Point3 = Nothing
+    Set Normal = Nothing
+End Sub
