@@ -68,6 +68,15 @@ Attribute ToString.VB_MemberFlags = "240"
     End If
 End Property
 
+Public Property Get Clone() As Point
+    Set Clone = New Point
+    With Clone
+        .X = X
+        .Y = Y
+        .Z = Z
+    End With
+End Property
+
 Private Sub Class_Initialize()
     Stats_Point_Count = Stats_Point_Count + 1
     'Set Coord = New Coord

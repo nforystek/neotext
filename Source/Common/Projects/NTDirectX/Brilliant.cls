@@ -189,6 +189,39 @@ Public Property Let Form(ByVal RHS As Long)
     DDevice.SetLight LightIndex - 1, Lights(LightIndex)
 End Property
 
+Private Property Get Clone() As Orbit
+    Set Clone = Orbit.Clone
+    Set Clone = New Orbit
+    With Clone
+        .SunLight = SunLight
+        .LightBlink = LightBlink
+        .LightTimer = LightTimer
+        .LightIsOn = LightIsOn
+        .DiffuseRoll = DiffuseRoll
+        .DiffuseTimer = DiffuseTimer
+        .DIffuseMax = DIffuseMax
+        .DiffuseNow = DiffuseNow
+        
+        .LightIndex = LightIndex
+        .Key = Key
+        .Serialize = Serialize
+    
+        If Not Diffuse Is Nothing Then
+            Set .Diffuse = Diffuse.Clone
+        End If
+        If Not Ambience Is Nothing Then
+            Set .Ambience = Ambience.Clone
+        End If
+        If Not Specular Is Nothing Then
+            Set .Specular = Specular.Clone
+        End If
+        If Not Attenuation Is Nothing Then
+            Set .Attenuation = Attenuation.Clone
+        End If
+
+    End With
+End Property
+
 Friend Sub UpdateValues()
     Lights(LightIndex).Diffuse.A = Diffuse.Alpha
     Lights(LightIndex).Diffuse.r = Diffuse.red
@@ -265,6 +298,10 @@ Private Sub Class_Terminate()
     'Set Orbit = Nothing
     vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
+
+Private Property Get Orbit_Clone() As Orbit
+    Set Orbit_Clone = Orbit.Clone
+End Property
 
 Private Property Set Orbit_Motions(RHS As Motions)
     Set Orbit.Motions = RHS

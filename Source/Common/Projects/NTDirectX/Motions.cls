@@ -24,6 +24,15 @@ Public Property Get Serialize() As Boolean
     Serialize = pSerialize
 End Property
 
+Public Property Get Clone() As NTNodes10.Collection
+    Set Clone = New Motions
+    Set Clone.Clone = this.Clone
+    Clone.Serialize = pSerialize
+End Property
+Friend Property Set Clone(ByRef col As NTNodes10.Collection)
+    Set this = col
+End Property
+
 Public Function NewEnum() As IUnknown ' _
 Foreach iteration enumerator.
 Attribute NewEnum.VB_Description = "Foreach iteration enumerator."

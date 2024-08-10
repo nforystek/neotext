@@ -26,6 +26,14 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
+Public Property Get Clone() As Motion
+    Set Clone = New Motion
+    With Clone
+        .Key = pKey
+        .Form = pForm
+        .Serialize = pSerialize
+    End With
+End Property
 
 Public Property Get Key() As String
 Attribute Key.VB_UserMemId = 0

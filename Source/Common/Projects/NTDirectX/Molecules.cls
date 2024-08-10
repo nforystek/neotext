@@ -48,7 +48,7 @@ Public Sub Add(ByRef Anything As Molecule, Optional Key, Optional Before, Option
 Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation.
 Attribute Add.VB_Description = "Add a item to the collection, accepts anything.  Optional Key value to identify by, must not be numerical only.  Before or After are to specify a index or key in the collection at which the new item will be in added at in relation."
     this.Add Anything, Key, Before, After
-    'If Not Anything Is Nothing Then Set Anything.Parent = pParent
+    If Not Anything Is Nothing Then Set Anything.Parent = pParent
 End Sub
 
 Public Sub Remove(Optional KeyOrIndex) ' _
@@ -126,6 +126,7 @@ End Sub
 Private Sub Collection_Clear()
     this.Clear
 End Sub
+
 
 Private Function Collection_Clone() As NTNodes10.Collection
     Set Collection_Clone = this.Clone

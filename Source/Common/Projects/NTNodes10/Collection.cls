@@ -245,6 +245,7 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
+    Clear
     Set propList = Nothing
     Set lptrList = Nothing
 End Sub

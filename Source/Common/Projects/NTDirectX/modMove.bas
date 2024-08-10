@@ -11,6 +11,19 @@ Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByV
         Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
         Set ApplyTo.Absolute.Origin = ApplyTo.Origin
         Set ApplyTo.Relative.Origin = Nothing
+        
+      
+'        If ApplyTo.Parent Is Nothing Then
+'            Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
+'        Else
+'            Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Parent.Rotate), ApplyTo.Rotate), ApplyTo.Origin)
+'        End If
+'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+'        Set ApplyTo.Relative.Origin = Nothing
+        
+'        Set ApplyTo.Origin = VectorAddition(ApplyTo.Absolute.Origin, ApplyTo.Origin)
+'        Set ApplyTo.Absolute.Origin = ApplyTo.Origin
+'        Set ApplyTo.Relative.Origin = Nothing
     End If
 
 

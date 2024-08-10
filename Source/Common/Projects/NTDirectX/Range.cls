@@ -42,15 +42,15 @@ Public Property Let Z(ByVal RHS As Single)
     Point.Z = RHS
 End Property
 
-Public Property Get R() As Single
-    R = pR
+Public Property Get r() As Single
+    r = pR
 End Property
-Public Property Let R(ByVal RHS As Single)
+Public Property Let r(ByVal RHS As Single)
     pR = RHS
 End Property
 
 Public Function Equals(ByRef Range As Range) As Boolean
-    Equals = (Point.Equals(Range) And Range.R = R)
+    Equals = (Point.Equals(Range) And Range.r = r)
 End Function
 
 Public Property Get ToString() As String
@@ -71,6 +71,17 @@ Attribute ToString.VB_MemberFlags = "240"
     End If
 End Property
 
+
+Public Property Get Clone() As Range
+    Set Clone = New Range
+    With Clone
+        .X = X
+        .Y = Y
+        .Z = Z
+        .r = r
+    End With
+End Property
+
 Private Sub Class_Initialize()
     Stats_Range_Count = Stats_Range_Count + 1
     vbaObjSetAddref Point, ObjPtr(New Point)
@@ -82,6 +93,10 @@ Private Sub Class_Terminate()
    ' Set Point = Nothing
     vbaObjSet Point, ObjPtr(Nothing)
 End Sub
+
+Private Property Get Point_Clone() As Point
+    Set Point_Clone = Point.Clone
+End Property
 
 Private Function Point_Equals(Point As Point) As Boolean
     Point_Equals = Point.Equals(Point)

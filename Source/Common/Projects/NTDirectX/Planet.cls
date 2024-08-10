@@ -142,6 +142,9 @@ Friend Function RelativeColorFactor(ByVal Distance As Single) As Single
     RelativeColorFactor = Round(RelativeColorFactor, 6)
 End Function
 
+Public Property Get Clone() As Orbit
+    Set Clone = Molecule.Clone_
+End Property
 Public Property Get Color() As Color
     If pColor Is Nothing Then Set pColor = New Color
     Set Color = pColor

@@ -674,11 +674,11 @@ Public Function VectorAxisAngles(ByRef Point As Point) As Point
             .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.Z, tmp.X, tmp.Y)))
             Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), -.Y)
             .Z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.Z)))
+            Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), -.Z)
             Set tmp = Nothing
         End If
     End With
 End Function
-
 
 '####################################################################################################
 '####################################################################################################
@@ -698,15 +698,15 @@ End Function
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
 '    Dim tmp As Point
 '    Set tmp = Point
-'    If Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
+'    If Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
+'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
+'    ElseIf Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
 '        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
 '        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
 '    ElseIf Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
 '        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
 '        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
-'    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
-'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
 '    End If
 '    Set VectorRotateAxis = tmp
 '    Set tmp = Nothing
@@ -735,11 +735,13 @@ End Function
 '####################################################################################################
 
 Public Function VectorRotateX(ByRef Point As Point, ByVal Angle As Single) As Point
+'    Set VectorRotateX = New Point
+    Set VectorRotateX = MakePoint(Point.X, Point.Y, Point.Z)
+    If Round(Angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
     CosPhi = Cos(-Angle)
     SinPhi = Sin(-Angle)
-    Set VectorRotateX = New Point
     With VectorRotateX
         .Z = Point.Z * CosPhi - Point.Y * SinPhi
         .Y = Point.Z * SinPhi + Point.Y * CosPhi
@@ -748,11 +750,13 @@ Public Function VectorRotateX(ByRef Point As Point, ByVal Angle As Single) As Po
 End Function
 
 Public Function VectorRotateY(ByRef Point As Point, ByVal Angle As Single) As Point
+'    Set VectorRotateY = New Point
+    Set VectorRotateY = MakePoint(Point.X, Point.Y, Point.Z)
+    If Round(Angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
     CosPhi = Cos(-Angle)
     SinPhi = Sin(-Angle)
-    Set VectorRotateY = New Point
     With VectorRotateY
         .X = Point.X * CosPhi - Point.Z * SinPhi
         .Z = Point.X * SinPhi + Point.Z * CosPhi
@@ -761,11 +765,13 @@ Public Function VectorRotateY(ByRef Point As Point, ByVal Angle As Single) As Po
 End Function
 
 Public Function VectorRotateZ(ByRef Point As Point, ByVal Angle As Single) As Point
+'    Set VectorRotateZ = New Point
+    Set VectorRotateZ = MakePoint(Point.X, Point.Y, Point.Z)
+    If Round(Angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
     CosPhi = Cos(Angle)
     SinPhi = Sin(Angle)
-    Set VectorRotateZ = New Point
     With VectorRotateZ
         .X = Point.X * CosPhi - Point.Y * SinPhi
         .Y = Point.X * SinPhi + Point.Y * CosPhi
@@ -949,7 +955,6 @@ Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
         .Y = (p3.Y * DEGREE + P4.Y * DEGREE) * RADIAN
         .Z = (p3.Z * DEGREE + P4.Z * DEGREE) * RADIAN
         
-        
         Set AngleAxisAddition = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
     End With
     
@@ -963,7 +968,7 @@ Public Function AngleConvertWinToDX3DY(ByVal Angle As Single) As Single
 End Function
 
 Public Function AngleConvertWinToDX3DZ(ByVal Angle As Single) As Single
-    AngleConvertWinToDX3DZ = AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
+    AngleConvertWinToDX3DZ = -AngleRestrict(Angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
 End Function
 
 Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
@@ -1437,6 +1442,20 @@ Public Function VectorNormalize(ByRef p1 As Point) As Point
 '        If Abs(.Z) < epsilon Then .Z = 0
 '    End With
 End Function
+Public Function VectorSign(ByVal p1 As Point) As Point
+    Set VectorSign = New Point
+    With VectorSign
+        If Abs(p1.X) >= Abs(p1.Y) And Abs(p1.X) >= Abs(p1.Z) Then
+            .X = IIf(p1.X > 0, 1, IIf(p1.X < 0, -1, 0))
+        End If
+        If Abs(p1.Y) >= Abs(p1.Z) And Abs(p1.Y) >= Abs(p1.X) Then
+            .Y = IIf(p1.Y > 0, 1, IIf(p1.Y < 0, -1, 0))
+        End If
+        If Abs(p1.Z) >= Abs(p1.X) And Abs(p1.Z) >= Abs(p1.Y) Then
+            .Z = IIf(p1.Z > 0, 1, IIf(p1.Z < 0, -1, 0))
+        End If
+    End With
+End Function
 Public Function VectorMagnitude(ByVal p1 As Point) As Single
     VectorMagnitude = (p1.X * p1.X + p1.Y * p1.Y + p1.Z * p1.Z)
 End Function
@@ -1511,7 +1530,9 @@ Public Function VectorIsNormal(ByRef p1 As Point) As Boolean
         '9 lines, 27 groups, 81 values, full circle, the first value (-negative, plus (second minus third))
     VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.Z <> 0) And (tmp >= -1 And tmp <= 1))
 End Function
-
+Public Function VectorIsSignOf(ByRef p1 As Point) As Boolean
+    VectorIsSignOf = (Abs(p1.X) = 0 Or Abs(p1.X) = 1) And (Abs(p1.Y) = 0 Or Abs(p1.Y) = 1) And (Abs(p1.Z) = 0 Or Abs(p1.Z) = 1) 'sign of a vector
+End Function
 Public Function AbsoluteFactor(ByVal n As Single) As Single
     'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
     AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)

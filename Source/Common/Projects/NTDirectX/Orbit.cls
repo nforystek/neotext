@@ -41,25 +41,44 @@ End Property
 Public Property Set Motions(ByRef RHS As Motions)
     Set pMotions = RHS
 End Property
-'Public Property Get Clone() As Orbit
-'    Set Clone = New Orbit
-'    With Clone
-'        .Origin = pOrigin
-'        .Offset = pOffset
-'        .Rotate = pRotate
-'        .Scaled = pScaled
-'        .Ranges = pRanges
-'        .Visible = visble
-'        .Parent = pParent
-'        If Not .Relative Is Nothing Then
-'
+Public Property Get Clone() As Orbit
+    Set Clone = New Orbit
+    With Clone
+        If Not Origin Is Nothing Then
+            Set .Origin = Origin.Clone
+        End If
+        If Not Offset Is Nothing Then
+            Set .Offset = Offset.Clone
+        End If
+        If Not Rotate Is Nothing Then
+            Set .Rotate = Rotate.Clone
+        End If
+        If Not Scaled Is Nothing Then
+            Set .Scaled = Scaled.Clone
+        End If
+        If Not Ranges Is Nothing Then
+            Set .Ranges = Ranges.Clone
+        End If
+        If Not Motions Is Nothing Then
+            Set .Motions = Motions.Clone
+        End If
+'        If Not Relative Is Nothing Then
+'            Set .Relative = Relative.Clone
 '        End If
-'        If Not .Absolute Is Nothing Then
-'
+'        If Not Absolute Is Nothing Then
+'            Set .Absolute = Absolute.Clone
 '        End If
-'        .Serialize = pSerialize
-'    End With
-'End Property
+        
+        .Moved = pMoved
+        .Serialize = Serialize
+        .Visible = Visible
+        
+        If Not Parent Is Nothing Then
+            Set .Parent = Parent 'not using clone
+        End If
+        
+    End With
+End Property
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = pSerialize
@@ -150,7 +169,6 @@ End Property
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
 Attribute ToString.VB_MemberFlags = "640"
-    
     ToString = "[" & Origin & Offset & Rotate & Scaled & Ranges & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)

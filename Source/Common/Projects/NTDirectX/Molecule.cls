@@ -135,6 +135,9 @@ Public Property Get Molecules() As Molecules
 End Property
 Public Property Set Molecules(ByRef RHS As Molecules)
     Set pMolecules = RHS
+'    If Not RHS Is Nothing Then
+'        Set RHS.Parent = Me
+'    End If
 End Property
 
 Public Property Get Origin() As Point
@@ -204,12 +207,13 @@ Friend Sub Class_Terminate()
     
     If Not pMolecules Is Nothing Then
         pMolecules.Clear
+        Set pMolecules = Nothing
     End If
-    Set pMolecules = Nothing
+    
     If Not pVolume Is Nothing Then
         pVolume.Clear
+        Set pVolume = Nothing
     End If
-    Set pVolume = Nothing
     
     Set Orbit.Offset = Nothing
     Set Orbit.Origin = Nothing
@@ -224,6 +228,13 @@ Friend Sub Class_Terminate()
     'Set Orbit = Nothing
     'vbaObjSet Orbit, ObjPtr(Nothing)
 End Sub
+Friend Property Get Clone_() As Orbit
+    Set Clone_ = Orbit_Clone
+End Property
+
+Private Property Get Orbit_Clone() As Orbit
+    Set Orbit_Clone = Orbit.Clone
+End Property
 
 Private Property Set Orbit_Motions(RHS As Motions)
     Set Orbit.Motions = RHS

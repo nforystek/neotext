@@ -87,6 +87,16 @@ Public Property Let blue(ByVal RHS As Single)
     RaiseEvent Changed
 End Property
 
+Public Property Get Clone() As Color
+    Set Clone = New Color
+    With Clone
+        .Alpha = pAlpha
+        .red = red
+        .green = green
+        .blue = blue
+    
+    End With
+End Property
 
 Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)

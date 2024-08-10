@@ -37,7 +37,7 @@ Public ObjectIndex As Long
 Public FaceIndex As Long
 Public Serialize As Boolean
 
-Friend Function Clone() As Matter
+Friend Property Get Clone() As Matter
     Set Clone = New Matter
     
     Set Clone.Point1 = New Point
@@ -67,7 +67,7 @@ Friend Function Clone() As Matter
     Clone.FaceIndex = FaceIndex
     Clone.Serialize = Serialize
     
-End Function
+End Property
 
 Private Sub Class_Initialize()
     Stats_Matter_Count = Stats_Matter_Count + 1

@@ -223,62 +223,62 @@ End Sub
 'End If
 'End Function
 '
-'Public Function Sine(p_dblVal As Single) As Single
-'
-'    ' Comments :
-'    ' Parameters: p_dblVal -
-'    ' Returns: Double -
-'    ' Modified :
-'    '
-'    ' -------------------------
-'    'Degree Input Radian Output
-'    On Error GoTo PROC_ERR
-'    Dim dblPi As Single
-'    Dim dblRadian As Single
-'    ' xx Calculate the value of Pi.
-'    dblPi = 4 * Atn(1)
-'    ' xx To convert degrees to radians,
-'    'multiply degrees by Pi / 180.
-'    dblRadian = dblPi / 180
-'    p_dblVal = Val(p_dblVal * dblRadian)
-'    Sine = Sin(p_dblVal)
-'PROC_EXIT:
-'    Exit Function
-'PROC_ERR:
-'    Sine = 0
-'    MsgBox Err.description, vbExclamation
-'    Resume PROC_EXIT
-'End Function
-'
-'
-'Public Function Cosine(p_dblVal As Single) As Single
-'
-'    ' Comments :
-'    ' Parameters: p_dblVal -
-'    ' Returns: Double -
-'    ' Modified :
-'    '
-'    ' -------------------------
-'    'Degree Input Radian Output
-'    On Error GoTo PROC_ERR
-'    Dim dblPi As Single
-'    Dim dblRadian As Single
-'    ' xx Calculate the value of Pi.
-'    dblPi = 4 * Atn(1)
-'    ' xx To convert degrees to radians,
-'    'multiply degrees by Pi / 180.
-'    dblRadian = dblPi / 180
-'    p_dblVal = Val(p_dblVal * dblRadian)
-'    Cosine = Cos(p_dblVal)
-'PROC_EXIT:
-'    Exit Function
-'PROC_ERR:
-'    Cosine = 0
-'    MsgBox Err.description, vbExclamation
-'    Resume PROC_EXIT
-'End Function
-'
-'
+Public Function Sine(p_dblVal As Single) As Single
+
+    ' Comments :
+    ' Parameters: p_dblVal -
+    ' Returns: Double -
+    ' Modified :
+    '
+    ' -------------------------
+    'Degree Input Radian Output
+    On Error GoTo PROC_ERR
+    Dim dblPi As Single
+    Dim dblRadian As Single
+    ' xx Calculate the value of Pi.
+    dblPi = 4 * Atn(1)
+    ' xx To convert degrees to radians,
+    'multiply degrees by Pi / 180.
+    dblRadian = dblPi / 180
+    p_dblVal = Val(p_dblVal * dblRadian)
+    Sine = Sin(p_dblVal)
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Sine = 0
+    MsgBox Err.description, vbExclamation
+    Resume PROC_EXIT
+End Function
+
+
+Public Function Cosine(p_dblVal As Single) As Single
+
+    ' Comments :
+    ' Parameters: p_dblVal -
+    ' Returns: Double -
+    ' Modified :
+    '
+    ' -------------------------
+    'Degree Input Radian Output
+    On Error GoTo PROC_ERR
+    Dim dblPi As Single
+    Dim dblRadian As Single
+    ' xx Calculate the value of Pi.
+    dblPi = 4 * Atn(1)
+    ' xx To convert degrees to radians,
+    'multiply degrees by Pi / 180.
+    dblRadian = dblPi / 180
+    p_dblVal = Val(p_dblVal * dblRadian)
+    Cosine = Cos(p_dblVal)
+PROC_EXIT:
+    Exit Function
+PROC_ERR:
+    Cosine = 0
+    MsgBox Err.description, vbExclamation
+    Resume PROC_EXIT
+End Function
+
+
 'Public Function Tangent(p_dblVal As Single) As Single
 '
 '    ' Comments :
@@ -430,6 +430,7 @@ End Function
 
 Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
     Dim p As Planet
+    Dim p2 As Planet
     Dim m As Molecule
     
     'called once per frame drawing the objects, with out any of the current frame object
@@ -477,15 +478,97 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     DDevice.SetMaterial GenericMaterial
     DDevice.SetTexture 1, Nothing
 
-          
-          
-    RenderOrbits Molecules, True
+    Dim dist As Single
+    Dim dist2 As Single
+    
+    Dim matRoll As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matYaw As D3DMATRIX
+    Dim matPos As D3DMATRIX
+
+    Dim matMat As D3DMATRIX
+    
+    Dim cnt As Long
+'
+'    If All.Count > 0 Then
+'        cnt = 1
+'        Do
+'
+'            Debug.Print All(cnt).Key;
+'            cnt = cnt + 1
+'        Loop While cnt <= All.Count
+'        Debug.Print
+'    End If
 
     
-    For Each p In Planets
-        RenderOrbits p.Molecules, False
-    Next
+'    RenderOrbits Molecules, True
+''    For Each m In Molecules
+''        If m.Parent Is Nothing Then
+''            AllCommitRoutine m, Nothing
+''        End If
+''    Next
+''
+''    RenderOrbits Planets, False
+'
+'    For Each p In Planets
+'        RenderOrbits p.Molecules, False
+'    Next
+    
+    
+'    If Not Camera.Player Is Nothing Then
+'
+'        D3DXMatrixIdentity matMat
+'
+'        D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.Z
+'        D3DXMatrixMultiply matMat, matPos, matMat
+'
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(AngleRestrict(-Camera.Player.Absolute.Rotate.Z))
+'        D3DXMatrixMultiply matMat, matPitch, matMat
+'
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(AngleRestrict(-Camera.Player.Absolute.Rotate.X))
+'        D3DXMatrixMultiply matMat, matYaw, matMat
+'
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(AngleRestrict(-Camera.Player.Absolute.Rotate.Y))
+'        D3DXMatrixMultiply matMat, matRoll, matMat
+'
+'   End If
 
+    RenderOrbits Molecules, True
+
+
+    If Planets.Count > 0 Then
+        cnt = 0
+        Do
+
+            cnt = cnt + 1
+
+            Set p = Planets(cnt)
+
+            If Not Camera.Player Is Nothing Then
+                If dist = 0 Then
+                    dist = DistanceEx(Planets(cnt).Absolute.Origin, Camera.Player.Absolute.Origin)
+                End If
+                If cnt < Planets.Count Then
+
+                    dist2 = DistanceEx(Planets(cnt + 1).Absolute.Origin, Camera.Player.Absolute.Origin)
+                    If dist2 > dist Then
+                        Set p = Planets(cnt + 1)
+                        Planets.Remove cnt + 1
+                        Planets.Add p, p.Key, cnt
+                    Else
+                        dist = dist2
+                    End If
+                End If
+            End If
+
+            RenderOrbits p.Molecules, False
+
+
+            Set p = Nothing
+
+        Loop Until cnt >= Planets.Count
+    End If
+    'Debug.Print
    
 End Sub
 
@@ -494,22 +577,83 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
     Dim matMat As D3DMATRIX
     D3DXMatrixIdentity matMat
     
+'    If Not col Is Nothing Then
+'
+'        Dim m As Molecule
+'        For Each m In col
+'
+'            If NoParentOnly Then
+'                If m.Parent Is Nothing Then
+'                    RenderMolecule m, Nothing, matMat
+'                End If
+'            Else
+'                RenderMolecule m, Nothing, matMat
+'            End If
+'
+'        Next
+'    End If
+
+
     If Not col Is Nothing Then
-    
+
         Dim m As Molecule
-        For Each m In col
-    
-            If NoParentOnly Then
-                If m.Parent Is Nothing Then
+        Dim m2 As Molecule
+
+        Dim cnt As Long
+        Dim cnt2 As Long
+
+        Dim dist As Single
+        Static dist2 As Single
+        Dim parenttrap As Boolean
+
+        If col.Count > 0 Then
+            cnt = 0
+            Do
+
+                cnt = cnt + 1
+
+                Set m = col(cnt)
+
+                If Not Camera.Player Is Nothing Then
+                    If dist = 0 Then
+                        If col(cnt).Parent Is Nothing Then
+                            dist = DistanceEx(col(cnt).Absolute.Origin, Camera.Player.Absolute.Origin)
+                        Else
+                            dist = DistanceEx(VectorAddition(col(cnt).Absolute.Origin, col(cnt).Parent.Absolute.Origin), Camera.Player.Absolute.Origin)
+                        End If
+                    End If
+                    If cnt < col.Count Then
+
+                        If col(cnt + 1).Parent Is Nothing Then
+                            dist2 = DistanceEx(col(cnt + 1).Absolute.Origin, Camera.Player.Absolute.Origin)
+                        Else
+                            dist2 = DistanceEx(VectorAddition(col(cnt + 1).Absolute.Origin, col(cnt + 1).Parent.Absolute.Origin), Camera.Player.Absolute.Origin)
+                        End If
+                        If (dist2 > dist) Then
+                            Set m = col(cnt + 1)
+                            col.Remove cnt + 1
+                            col.Add m, m.Key, cnt
+                            Set m = col(cnt)
+                        Else
+                            dist = dist2
+                        End If
+                    End If
+                End If
+
+                If NoParentOnly Then
+                    If m.Parent Is Nothing Then
+                        RenderMolecule m, Nothing, matMat
+                    End If
+                Else
                     RenderMolecule m, Nothing, matMat
                 End If
-                
-            Else
-            
-                RenderMolecule m, Nothing, matMat
-            End If
-        
-        Next
+
+                Set m = Nothing
+
+            Loop Until cnt >= col.Count
+        End If
+
+
     End If
 
 End Sub
@@ -551,7 +695,7 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
 
     D3DXMatrixScaling matScale, ApplyTo.Scaled.X, ApplyTo.Scaled.Y, ApplyTo.Scaled.Z
     D3DXMatrixMultiply matScale, matScale, matMat
-
+    
     
     If Not Parent Is Nothing Then
         ApplyTo.Moved = ApplyTo.Moved Or Parent.Moved
@@ -604,8 +748,8 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
                 VertexZAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).Z
                 VertexZAxis(2, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 2).Z
 
-            End If
 
+            End If
             
             If ApplyTo.Visible And (Not (TypeName(ApplyTo) = "Planet")) Then
                 If Not (v.Translucent Or v.Transparent) Then
@@ -624,7 +768,9 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
             End If
         Next
     End If
-
+    
+   ' Debug.Print ApplyTo.Key;
+    
     Dim m As Molecule
     If Not ApplyTo.Molecules Is Nothing Then
         For Each m In ApplyTo.Molecules
@@ -1028,7 +1174,7 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
         Dim intY3 As Single
         Dim intY4 As Single
         Dim dist1 As Single
-        Dim Dist2 As Single
+        Dim dist2 As Single
         Dim dist3 As Single
         Dim dist4 As Single
 
@@ -1059,12 +1205,12 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
 
                         If DiagnalTexture = 1 Then
                             dist1 = Distance(intX2, 0, intY2, intX1, 0, intY1) * (ScaleX / 100) '* IIf(i Mod 4 = 0, 1, -Sin(g)) 'base of trapazoid
-                            Dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'angled side of trapazoid
+                            dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'angled side of trapazoid
                             dist3 = Distance(intX3, 0, intY3, intX4, 0, intY4) * (ScaleX / 100) '* IIf(i Mod 4 = 0, 1, -Sin(g)) 'smaller top edge of trapazoid
                             dist4 = Distance(intX3, 0, intY3, intX1, 0, intY1) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'diagnal inside the trapazoid
                         Else
                             dist1 = Distance(intX2, 0, intY2, intX1, 0, intY1) * (ScaleX / 100) * IIf(i Mod 4 = 0, 1, -Sin(g))
-                            Dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) * IIf(i Mod 4 = 0, 1, -Cos(g))
+                            dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) * IIf(i Mod 4 = 0, 1, -Cos(g))
                             dist3 = Distance(intX3, 0, intY3, intX4, 0, intY4) * (ScaleX / 100) * IIf(i Mod 4 = 0, 1, -Sin(g))
                             dist4 = Distance(intX3, 0, intY3, intX1, 0, intY1) * (ScaleY / 100) * IIf(i Mod 4 = 0, 1, -Cos(g))
                         End If
@@ -1090,11 +1236,11 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             .U1 = dist3
                             .V1 = 0
                             .U2 = 0
-                            .V2 = Dist2
+                            .V2 = dist2
                             .U3 = dist1
-                            .V3 = Dist2
+                            .V3 = dist2
                         Else
-                            .V1 = Dist2
+                            .V1 = dist2
                             .U2 = dist1
                             .V2 = dist4
                             .U3 = dist3
@@ -1213,11 +1359,11 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             .U1 = dist3
                             .V1 = 0
                             .U2 = 0
-                            .V2 = Dist2
+                            .V2 = dist2
                             .U3 = 0
                             .V3 = 0
                         Else
-                            .V1 = Dist2
+                            .V1 = dist2
                             .U2 = dist3
                         End If
                         
@@ -1338,7 +1484,7 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                         
                         If DiagnalTexture = 0 Then
                             dist1 = DistanceEx(.Point1, .Point2)
-                            Dist2 = DistanceEx(.Point2, .Point3)
+                            dist2 = DistanceEx(.Point2, .Point3)
                             dist3 = DistanceEx(.Point3, .Point1)
     
                             .U1 = ((1 / Segments) * 2) * ScaleX
@@ -1427,9 +1573,9 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             Dim v As Volume
     
                             dist1 = DistanceEx(.Point2, .Point1)
-                            Dist2 = DistanceEx(.Point2, .Point3)
+                            dist2 = DistanceEx(.Point2, .Point3)
     
-                            X = (ScaleX * (Dist2 / OuterEdge))
+                            X = (ScaleX * (dist2 / OuterEdge))
                             Y = (ScaleY * (dist1 / OuterEdge))
     
                             .U1 = X
@@ -1457,16 +1603,16 @@ Public Function CreateVolumeLanding(ByRef TextureFileName As String, ByVal Outer
                             
                             If (((intY2 >= 0) And (intX2 > 0)) Or ((intY2 < 0) And (intX2 <= 0))) Then
                                 dist1 = DistanceEx(MakePoint(0, 0, intY2), MakePoint(0, 0, intY1))
-                                Dist2 = DistanceEx(.Point2, MakePoint(0, 0, intY1))
+                                dist2 = DistanceEx(.Point2, MakePoint(0, 0, intY1))
                                 Set v = CreateVolumeFace(TextureFileName, .Point1, .Point2, _
                                     MakePoint(0, 0, intY1), MakePoint(0, 0, intY2), _
-                                    (ScaleX * (dist1 / OuterEdge)), (ScaleY * (Dist2 / OuterEdge)))
+                                    (ScaleX * (dist1 / OuterEdge)), (ScaleY * (dist2 / OuterEdge)))
                             Else
                                 dist1 = DistanceEx(MakePoint(0, 0, intY2), MakePoint(0, 0, intY1))
-                                Dist2 = DistanceEx(.Point2, MakePoint(0, 0, intY1))
+                                dist2 = DistanceEx(.Point2, MakePoint(0, 0, intY1))
                                 Set v = CreateVolumeFace(TextureFileName, .Point3, .Point2, _
                                     MakePoint(0, 0, intY2), MakePoint(0, 0, intY1), _
-                                    (ScaleX * (dist1 / OuterEdge)), (ScaleY * (Dist2 / OuterEdge)))
+                                    (ScaleX * (dist1 / OuterEdge)), (ScaleY * (dist2 / OuterEdge)))
                             End If
                                     
                             If Not v Is Nothing Then
@@ -1549,7 +1695,7 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
         Dim intY3 As Single
         Dim intY4 As Single
         Dim dist1 As Single
-        Dim Dist2 As Single
+        Dim dist2 As Single
         Dim dist3 As Single
         Dim dist4 As Single
         Dim dist5 As Single
@@ -1580,7 +1726,7 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                     If (i Mod 12) = 0 Then
 
                         dist1 = Distance(intX2, 0, intY2, intX1, 0, intY1) * (ScaleX / 100) '* IIf(i Mod 4 = 0, 1, -Sin(g)) 'base of trapazoid
-                        Dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'angled side of trapazoid
+                        dist2 = Distance(intX1, 0, intY1, intX4, 0, intY4) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'angled side of trapazoid
                         dist3 = Distance(intX3, 0, intY3, intX4, 0, intY4) * (ScaleX / 100) '* IIf(i Mod 4 = 0, 1, -Sin(g)) 'smaller top edge of trapazoid
                         dist4 = Distance(intX3, 0, intY3, intX1, 0, intY1) * (ScaleY / 100) '* IIf(i Mod 4 = 0, 1, -Cos(g)) 'diagnal inside the trapazoid
 
@@ -1599,9 +1745,9 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         .U1 = dist3
                         .V1 = 0
                         .U2 = 0
-                        .V2 = Dist2
+                        .V2 = dist2
                         .U3 = dist1
-                        .V3 = Dist2
+                        .V3 = dist2
                         
                         
 '                        .U1 = dist1
@@ -1727,7 +1873,7 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
                         .U1 = dist3
                         .V1 = 0
                         .U2 = 0
-                        .V2 = Dist2
+                        .V2 = dist2
                         .U3 = 0
                         .V3 = 0
                         
@@ -1862,7 +2008,7 @@ Public Function CreateVolumeLanding2(ByRef TextureFileName As String, ByVal Oute
 
 
                         dist1 = DistanceEx(.Point1, .Point2)
-                        Dist2 = DistanceEx(.Point2, .Point3)
+                        dist2 = DistanceEx(.Point2, .Point3)
                         dist3 = DistanceEx(.Point3, .Point1)
 
                         .U1 = ((1 / Segments) * 2) * ScaleX
