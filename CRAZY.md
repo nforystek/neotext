@@ -4,3 +4,6 @@ Let me try to BE COOL HUNNYA BUN BE COOL...
 
 #Const False=0
 #Const True=-1
+
+
+In fact let me find out they are trying to stop compile time signing, by signing the compiler, before everyone left VB6. Then it's on like "Donkey Kong!"  Come and big it!  Biggot, is that how you say it?
