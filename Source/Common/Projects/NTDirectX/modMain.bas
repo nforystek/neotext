@@ -26,11 +26,11 @@ Public FPSElapse As Single
 Public FPSLatency As Single
 
 Public BackColor As Long
-
-Public matWorld As D3DMATRIX
-Public matView As D3DMATRIX
-Public matProj As D3DMATRIX
     
+Public matView As D3DMATRIX
+Public matWorld As D3DMATRIX
+'Public matProj As D3DMATRIX
+
 Public dx As DirectX8
 Public D3D As Direct3D8
 Public D3DX As D3DX8
@@ -106,30 +106,21 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             'BeginMirrors UserControl, Camera.Player
     
     
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0    ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
+            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET + D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0     ' D3DCLEAR_ZBUFFER, Camera.Color.ARGB, 1, 0
 
             On Error GoTo 0 'temporary
 
-            
             DDevice.BeginScene
-            
-            
             
             SetupCamera1 UserControl, Camera
   
-  
-  
             RenderEvents UserControl, Camera
             RenderMotions UserControl, Camera
-
+            
 
             SetupCamera2 UserControl, Camera
             
             RenderPlanets UserControl, Camera
-
-
-
-  
             RenderMolecules UserControl, Camera
             RenderBrilliants UserControl, Camera
 
@@ -214,14 +205,29 @@ nofocus:
 '    Err.Clear
     
 End Sub
+Private Sub ResetMatrix(ByRef mat As D3DMATRIX)
+    With mat
+        .m11 = 0: .m12 = 0: .m13 = 0: .m14 = 0
+        .m21 = 0: .m22 = 0: .m23 = 0: .m24 = 0
+        .m31 = 0: .m32 = 0: .m33 = 0: .m34 = 0
+        .m41 = 0: .m42 = 0: .m43 = 0: .m44 = 0
+    End With
+End Sub
 
 Public Sub SetupCamera1(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
 
+   ' Dim matWorld As D3DMATRIX
+   
+   'ResetMatrix matWorld
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
+
+    'ResetMatrix matView
     D3DXMatrixIdentity matView
     DDevice.SetTransform D3DTS_VIEW, matView
+
+    
 
 End Sub
 
@@ -233,7 +239,7 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     Dim matRoll As D3DMATRIX
     Dim matPos As D3DMATRIX
 
-    D3DXMatrixIdentity matView
+
     D3DXMatrixIdentity matYaw
     D3DXMatrixIdentity matPitch
     D3DXMatrixIdentity matRoll
@@ -293,74 +299,85 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     End If
 
 
-    'DDevice.SetTransform D3DTS_WORLD, matWorld
+    DDevice.SetTransform D3DTS_WORLD, matWorld
     
 End Sub
 
 
 Public Sub SetupCamera3(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
     
-    ResetProjection UserControl, Camera
+  '  ResetProjection UserControl, Camera
     
-'    Dim matYaw As D3DMATRIX
-'    Dim matPitch As D3DMATRIX
-'    Dim matRoll As D3DMATRIX
-'    Dim matPos As D3DMATRIX
-'
-'
-'    D3DXMatrixIdentity matView
-'    D3DXMatrixIdentity matYaw
-'    D3DXMatrixIdentity matPitch
-'    D3DXMatrixIdentity matRoll
-'    D3DXMatrixIdentity matPos
-'
-'
-'    If (Not Camera.Player Is Nothing) Then
-'
-'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
-'        D3DXMatrixMultiply matView, matPitch, matView
-'
-'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Player.Absolute.Rotate.Y)
-'        D3DXMatrixMultiply matView, matYaw, matView
-'
-'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Player.Absolute.Rotate.Z)
-'        D3DXMatrixMultiply matView, matRoll, matView
-'
-'        DDevice.SetTransform D3DTS_VIEW, matView
-'
-'        D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.Z
-'        D3DXMatrixMultiply matView, matPos, matView
-'
-'        DDevice.SetTransform D3DTS_VIEW, matView
-'
-'    Else
-'
-'        D3DXMatrixRotationX matPitch, 0
-'        D3DXMatrixMultiply matView, matPitch, matView
-'
-'        D3DXMatrixRotationY matYaw, 0
-'        D3DXMatrixMultiply matView, matYaw, matView
-'
-'        D3DXMatrixRotationZ matRoll, 0
-'        D3DXMatrixMultiply matView, matRoll, matView
-'
-'        DDevice.SetTransform D3DTS_VIEW, matView
-'
-'        D3DXMatrixTranslation matPos, 0, 0, 0
-'        D3DXMatrixMultiply matView, matPos, matView
-'
-'        DDevice.SetTransform D3DTS_VIEW, matView
-'    End If
+    Dim matYaw As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matRoll As D3DMATRIX
+    Dim matPos As D3DMATRIX
 
- '   DDevice.SetTransform D3DTS_WORLD, matWorld
+
+   ' D3DXMatrixIdentity matView
+    D3DXMatrixIdentity matYaw
+    D3DXMatrixIdentity matPitch
+    D3DXMatrixIdentity matRoll
+    D3DXMatrixIdentity matPos
+
+
+    If (Not Camera.Player Is Nothing) Then
+
+        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
+        D3DXMatrixMultiply matView, matPitch, matView
+
+        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Player.Absolute.Rotate.Y)
+        D3DXMatrixMultiply matView, matYaw, matView
+
+        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Player.Absolute.Rotate.Z)
+        D3DXMatrixMultiply matView, matRoll, matView
+
+        DDevice.SetTransform D3DTS_VIEW, matView
+
+        D3DXMatrixTranslation matPos, -Camera.Player.Absolute.Origin.X, -Camera.Player.Absolute.Origin.Y, -Camera.Player.Absolute.Origin.Z
+        D3DXMatrixMultiply matView, matPos, matView
+
+        DDevice.SetTransform D3DTS_VIEW, matView
+
+    Else
+
+        D3DXMatrixRotationX matPitch, 0
+        D3DXMatrixMultiply matView, matPitch, matView
+
+        D3DXMatrixRotationY matYaw, 0
+        D3DXMatrixMultiply matView, matYaw, matView
+
+        D3DXMatrixRotationZ matRoll, 0
+        D3DXMatrixMultiply matView, matRoll, matView
+
+        DDevice.SetTransform D3DTS_VIEW, matView
+
+        D3DXMatrixTranslation matPos, 0, 0, 0
+        D3DXMatrixMultiply matView, matPos, matView
+
+        DDevice.SetTransform D3DTS_VIEW, matView
+    End If
+
+    DDevice.SetTransform D3DTS_WORLD, matWorld
         
 End Sub
 
-Public Sub ResetProjection(ByRef UserControl As Macroscopic, ByRef Camera As Camera)
+Public Sub ResetProjection(ByRef UserControl As Macroscopic, ByRef Camera As Camera, Optional ByVal ForSky As Boolean = False)
 
-    D3DXMatrixPerspectiveFovLH matProj, FOVY, ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
-        ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2), Near, Far
-        
+    Dim matProj As D3DMATRIX
+    D3DXMatrixIdentity matProj
+
+    Dim aspect As Single
+    aspect = ((((CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))) + _
+            ((CSng(UserControl.Height) / VB.Screen.TwipsPerPixelY) / (CSng(UserControl.Width) / VB.Screen.TwipsPerPixelX))) / modGeometry.PI) * 2)
+
+    If ForSky Then
+        D3DXMatrixPerspectiveFovLH matProj, SKYFOVY, aspect, 1, Far
+
+    Else
+        D3DXMatrixPerspectiveFovLH matProj, FOVY, aspect, Near, Far
+    End If
+    
     DDevice.SetTransform D3DTS_PROJECTION, matProj
     
 End Sub
@@ -506,11 +523,11 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
 
          DDevice.GetViewport DViewPort
          
-         'DViewPort.X = (((Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-         'DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
+         DViewPort.X = (((VB.Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+         DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
 
-         'DViewPort.Y = (((Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
-         'DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
+         DViewPort.Y = (((VB.Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+         DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
 
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
@@ -521,45 +538,44 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_VERTEXBLEND, 0
 
         DDevice.SetRenderState D3DRS_CLIPPING, 1
-        DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 1
+        DDevice.SetRenderState D3DRS_CLIPPLANEENABLE, 0
 
-'        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-'        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
 
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
 
-'        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-'        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
 
         DDevice.SetRenderState D3DRS_ALPHAREF, Transparent
         DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL
         DDevice.SetRenderState D3DRS_ZFUNC, D3DCMP_LESSEQUAL
  
-'        DDevice.SetRenderState D3DRS_SHADEMODE, D3DSHADE_GOURAUD
+        DDevice.SetRenderState D3DRS_SHADEMODE, D3DSHADE_GOURAUD
 
-'        DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE
-'        DDevice.SetTextureStageState 0, D3DTSS_COLOROP, D3DTOP_MODULATE
-'        DDevice.SetTextureStageState 0, D3DTSS_COLORARG1, D3DTA_TEXTURE
-'        DDevice.SetTextureStageState 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE
- 
+        DDevice.SetTextureStageState 0, D3DTSS_COLOROP, D3DTOP_MODULATE
+        DDevice.SetTextureStageState 0, D3DTSS_COLORARG1, D3DTA_TEXTURE
+        DDevice.SetTextureStageState 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE
  
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-
+        DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG2, D3DTA_TEXTURE
+        
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 0, D3DTSS_MAXANISOTROPY, 16
         DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
 
-'        DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_DISABLE
-'        DDevice.SetTextureStageState 1, D3DTSS_COLOROP, D3DTOP_MODULATE
-'        DDevice.SetTextureStageState 1, D3DTSS_COLORARG1, D3DTA_TEXTURE
-'        DDevice.SetTextureStageState 1, D3DTSS_COLORARG2, D3DTA_DIFFUSE
+        DDevice.SetTextureStageState 1, D3DTSS_COLOROP, D3DTOP_MODULATE
+        DDevice.SetTextureStageState 1, D3DTSS_COLORARG1, D3DTA_TEXTURE
+        DDevice.SetTextureStageState 1, D3DTSS_COLORARG2, D3DTA_DIFFUSE
 
-        DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
+        DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2
         DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
+        DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG2, D3DTA_TEXTURE
 
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
         DDevice.SetTextureStageState 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
@@ -588,19 +604,22 @@ Private Sub InitialDevice(ByRef UserControl As Macroscopic, ByVal hwnd As Long)
         Dim shLength As Long
         Dim shCode As D3DXBuffer
 
-
+                                            
         Set shCode = D3DX.AssembleShader("ps.1.0" & vbCrLf & _
                                             "tex t0" & vbCrLf & _
                                             "mul r0, t0,v0" & vbCrLf, 0, Nothing)
+
         shLength = shCode.GetBufferSize() / 4
         ReDim shArray(shLength - 1) As Long
         D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
         PixelShaderDefault = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
         
+                                            
         Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
                                             "tex t0" & vbCrLf & _
                                             "mov r0,t0" & vbCrLf, 0, Nothing)
+                                            
         shLength = shCode.GetBufferSize() / 4
         ReDim shArray(shLength - 1) As Long
         D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)

@@ -446,9 +446,9 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     
 '    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
 '    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CW
+
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
-    DDevice.SetRenderState D3DRS_ZENABLE, 1
+    DDevice.SetRenderState D3DRS_ZENABLE, 0
 '    DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 0
 '    DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 0
 
@@ -486,7 +486,6 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
     Dim matYaw As D3DMATRIX
     Dim matPos As D3DMATRIX
 
-    Dim matMat As D3DMATRIX
     
     Dim cnt As Long
 '
@@ -533,6 +532,11 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '
 '   End If
 
+    Dim matMat As D3DMATRIX
+    D3DXMatrixIdentity matMat
+
+
+    
     RenderOrbits Molecules, True
 
 
@@ -561,7 +565,9 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
                 End If
             End If
 
-            RenderOrbits p.Molecules, False
+            RenderMolecule p, Nothing, matMat
+    
+           ' RenderOrbits p.Molecules, False
 
 
             Set p = Nothing
@@ -572,8 +578,8 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
    
 End Sub
 
-Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
-
+Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean, Optional ByVal NoChildren As Boolean)
+    
     Dim matMat As D3DMATRIX
     D3DXMatrixIdentity matMat
     
@@ -642,10 +648,10 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
 
                 If NoParentOnly Then
                     If m.Parent Is Nothing Then
-                        RenderMolecule m, Nothing, matMat
+                        RenderMolecule m, Nothing, matMat, NoChildren
                     End If
                 Else
-                    RenderMolecule m, Nothing, matMat
+                    RenderMolecule m, Nothing, matMat, NoChildren
                 End If
 
                 Set m = Nothing
@@ -658,7 +664,7 @@ Private Sub RenderOrbits(ByRef col As Object, ByVal NoParentOnly As Boolean)
 
 End Sub
 
-Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX)
+Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByRef matMat As D3DMATRIX, Optional ByVal NoChildren As Boolean = False)
     
     Dim vout1 As D3DVECTOR
     Dim vout2 As D3DVECTOR
@@ -707,6 +713,8 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     If Not ApplyTo.Volume Is Nothing Then
         For Each v In ApplyTo.Volume
     
+            
+            
             If ApplyTo.Moved Then
             
                 D3DXVec3TransformCoord vout1, ToVector(v.Point1), matScale
@@ -724,17 +732,19 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
                 VertexDirectX((v.TriangleIndex * 3) + 2).Y = vout3.Y
                 VertexDirectX((v.TriangleIndex * 3) + 2).Z = vout3.Z
                 
-                VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
-                VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
-                VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.Z
-                
-                VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
-                VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
-                VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.Z
-                
-                VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
-                VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
-                VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.Z
+'                Set v.Normal = TriangleNormal(v.Point1, v.Point2, v.Point3)
+'
+'                VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
+'                VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
+'                VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.Z
+'
+'                VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
+'                VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
+'                VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.Z
+'
+'                VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
+'                VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
+'                VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.Z
         
                 VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).X
                 VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).X
@@ -750,8 +760,8 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
 
 
             End If
-            
             If ApplyTo.Visible And (Not (TypeName(ApplyTo) = "Planet")) Then
+
                 If Not (v.Translucent Or v.Transparent) Then
                     DDevice.SetMaterial GenericMaterial
                     If v.TextureIndex > 0 Then DDevice.SetTexture 0, Files(v.TextureIndex).Data
@@ -770,14 +780,14 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
     End If
     
    ' Debug.Print ApplyTo.Key;
-    
-    Dim m As Molecule
-    If Not ApplyTo.Molecules Is Nothing Then
-        For Each m In ApplyTo.Molecules
-             RenderMolecule m, ApplyTo, matMat
-        Next
+    If Not NoChildren Then
+        Dim m As Molecule
+        If Not ApplyTo.Molecules Is Nothing Then
+            For Each m In ApplyTo.Molecules
+                 RenderMolecule m, ApplyTo, matMat
+            Next
+        End If
     End If
-
 
     
     If ApplyTo.Moved Then ApplyTo.Moved = False

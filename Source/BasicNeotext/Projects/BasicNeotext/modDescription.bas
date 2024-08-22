@@ -37,7 +37,7 @@ End Function
 Public Function GetCodeModule2(ByRef vbcomp As VBComponent) As CodeModule
     On Error Resume Next
     Set GetCodeModule2 = vbcomp.CodeModule
-    If Err.Number <> 0 Then Err.Clear
+    If Err.number <> 0 Then Err.Clear
 End Function
 Public Function GetCodeModuleByCaption(ByRef VBInstance As VBE, ByVal Caption As String) As CodeModule
     Dim vbproj As VBProject
@@ -82,7 +82,7 @@ Public Sub DescriptionsStartup(ByRef VBInstance As VBIDE.VBE)
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-            If IsWindowVisible(Hooks(cnt).hWnd) Then
+            If IsWindowVisible(Hooks(cnt).hwnd) Then
                 If CLng(GetSetting("BasicNeotext", "Options", "ProcedureDesc", 0)) = 1 Then
                     BuildComments VBInstance, InsertCommentDesc, Hooks(cnt)
                 Else
@@ -125,7 +125,7 @@ Public Sub InsertDescriptions(ByRef VBInstance As VBIDE.VBE)
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-            If IsWindowVisible(Hooks(cnt).hWnd) Then
+            If IsWindowVisible(Hooks(cnt).hwnd) Then
                 BuildComments VBInstance, InsertCommentDesc, Hooks(cnt)
             End If
         Next
@@ -136,7 +136,7 @@ Public Sub DeleteDescriptions(ByRef VBInstance As VBIDE.VBE)
     If Hooks.count > 0 Then
         Dim cnt As Long
         For cnt = 1 To Hooks.count
-            If IsWindowVisible(Hooks(cnt).hWnd) Then
+            If IsWindowVisible(Hooks(cnt).hwnd) Then
                 BuildComments VBInstance, DeleteCommentDesc, Hooks(cnt)
             End If
         Next
@@ -170,7 +170,7 @@ Private Static Function GetMemberDescription(ByRef Members As Members, ByVal Pro
 
 
     GetMemberDescription = Members(ProcName).Description
-    If Err.Number = 0 Then
+    If Err.number = 0 Then
         LineNum = Members(ProcName).CodeLocation
     Else
         Err.Clear
@@ -199,7 +199,7 @@ Private Static Sub SetMemberDescription(ByRef Members As Members, ByVal ProcName
     On Local Error Resume Next
 
     Members(ProcName).Description = ProcDescription
-    If Err.Number <> 0 Then Err.Clear
+    If Err.number <> 0 Then Err.Clear
 
     On Error GoTo -1
     On Local Error GoTo -1
@@ -220,14 +220,14 @@ End Sub
 
 Public Function GetTemporaryFile() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetTempFileName(GetTemporaryFolder, App.Title, 0, winDir)
-    If ret = 0 Then
+    Ret = GetTempFileName(GetTemporaryFolder, App.Title, 0, winDir)
+    If Ret = 0 Then
         winDir = GetTemporaryFolder & "\" & Left(Left(App.Title, 3) & Hex(CLng(Mid(CStr(Rnd), 3))), 14) & ".tmp"
-        ret = FreeFile
-        Open winDir For Output As #ret
-        Close #ret
+        Ret = FreeFile
+        Open winDir For Output As #Ret
+        Close #Ret
     Else
         winDir = Trim(Replace(winDir, Chr(0), ""))
     End If
@@ -312,9 +312,9 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
    
     With frm
         
-        If IsWindowVisible(frm.hWnd) Then
+        If IsWindowVisible(frm.hwnd) Then
             If .CodeModule Is Nothing Then
-                Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hWnd))
+                Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hwnd))
             End If
             
             If .CodeModule Is Nothing Then Exit Function
@@ -376,7 +376,7 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
             If SavedFile <> "" Then
                 If .CodeModule.CountOfLines > 0 Then
                     Dim cap As String
-                    cap = GetCaption(frm.hWnd)
+                    cap = GetCaption(frm.hwnd)
                     
                     UnsavedCode = .CodeModule.Lines(1, .CodeModule.CountOfLines)
                     
@@ -385,7 +385,7 @@ Public Function BuildComments(ByRef VBInstance As VBIDE.VBE, ByVal BuildFunc As 
                     
                     .CodeModule.Parent.SaveAs TempFile
                     
-                    Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hWnd))
+                    Set .CodeModule = GetCodeModuleByCaption(VBInstance, GetCaption(frm.hwnd))
    
                     out = ""
                     back = ReadFile(TempFile)
@@ -667,7 +667,7 @@ Private Sub BuildCondComp(ByRef vbp As VBPInfo)
     
     Dim Var As String
     Dim val As String
-    Dim ret As String
+    Dim Ret As String
     Dim tmp As String
 
     vbp.CondComp = Replace(vbp.CondComp, ":" & vbp.Name & "=-1", "")
@@ -906,7 +906,7 @@ End Function
 
 
 Private Function GetDeclareLine(ByVal head As String, ByVal rawform As Boolean) As String
-    'gets only the declare line portion of a valid header
+    'gets only the declare line of a valid header
 
     If rawform Then
         'return it's size
@@ -916,9 +916,15 @@ Private Function GetDeclareLine(ByVal head As String, ByVal rawform As Boolean) 
     Else
         GetDeclareLine = GetFullLine(head)
     End If
-
+    
     If InStr(GetDeclareLine, "' _") > 0 Then
         GetDeclareLine = RTrimStrip(NextArg(GetDeclareLine, "' _"), " ")
+    ElseIf InStr(GetDeclareLine, "_") > 0 Then
+        head = GetDeclareLine
+        GetDeclareLine = ""
+        Do
+            GetDeclareLine = GetDeclareLine & NextArg(head, vbCrLf)
+        Loop While Right(Trim(GetDeclareLine), 1) = "_" And head <> ""
     Else
         GetDeclareLine = NextArg(GetDeclareLine, vbCrLf)
     End If

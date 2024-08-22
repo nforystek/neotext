@@ -36,7 +36,7 @@ Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVa
 
 Public Declare Function GetCurrentProcessId Lib "kernel32" () As Long
 Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
-Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal Path As String, ByVal cbBytes As Long) As Long
+Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal path As String, ByVal cbBytes As Long) As Long
 Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameA" (ByVal hModule As Long, ByVal lpFileName As String, ByVal nSize As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetCurrentProcess Lib "kernel32" () As Long
@@ -636,7 +636,7 @@ Public Sub DoTasks()
 End Sub
 
 Private Function WinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
-    Dim pId As Long
+    Dim pid As Long
     Static wMsg As Msg
     If (lParam <= 0) And (lParam >= -3) Then
         If PeekMessage(wMsg, hwnd, 0, 0, PM_REMOVE + PM_NOYIELD) Then
@@ -660,8 +660,8 @@ Private Function WinEvents(ByVal hwnd As Long, ByVal lParam As Long) As Boolean
         End If
     Else
         Dim nMsg As Msg
-        GetWindowThreadProcessId hwnd, pId
-        If (pId = lParam) And IsWindow(hwnd) Then
+        GetWindowThreadProcessId hwnd, pid
+        If (pid = lParam) And IsWindow(hwnd) Then
             If PeekMessage(nMsg, 0, 0, 0, PM_REMOVE + PM_NOYIELD) Then
                 Do
                     TranslateMessage nMsg
@@ -708,7 +708,7 @@ Public Function AppPath(Optional ByVal RootEXEOf As Boolean = False) As String
         lpTemp = GetFilePath(Trim(Left(lpTemp, nLen)))
         If Right(lpTemp, 1) <> "\" Then lpTemp = lpTemp & "\"
     Else
-        lpTemp = IIf((Right(App.Path, 1) = "\"), App.Path, App.Path & "\")
+        lpTemp = IIf((Right(App.path, 1) = "\"), App.path, App.path & "\")
     End If
 #If VBIDE Then
     If LCase(Right(lpTemp, 10)) = "\projects\" Then
@@ -1188,7 +1188,7 @@ fixthis:
     End If
 End Function
 
-Public Function ReadFile(ByVal Path As String) As String
+Public Function ReadFile(ByVal path As String) As String
     Dim num As Long
     Dim Text As String
     Dim timeout As Single
@@ -1196,8 +1196,8 @@ Public Function ReadFile(ByVal Path As String) As String
     num = FreeFile
     On Error Resume Next
     On Local Error Resume Next
-    If PathExists(Path, True) Then
-        Open Path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
+    If PathExists(path, True) Then
+        Open path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
         Close #num
         Select Case Err.number
             Case 54, 70, 75
@@ -1205,9 +1205,9 @@ Public Function ReadFile(ByVal Path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open Path For Binary Access Read Lock Write As num Len = 1
+                Open path For Binary Access Read Lock Write As num Len = 1
                 If timeout <> 0 Then
-                    Open Path For Binary Shared As #num Len = 1
+                    Open path For Binary Shared As #num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1216,9 +1216,9 @@ Public Function ReadFile(ByVal Path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open Path For Binary Access Read As num Len = 1
+                Open path For Binary Access Read As num Len = 1
                 If timeout <> 0 Then
-                    Open Path For Binary Shared As num Len = 1
+                    Open path For Binary Shared As num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1248,10 +1248,10 @@ failit:
     Err.Raise 75, "ReadFile"
 End Function
 
-Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
+Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
 
-    If PathExists(Path, True) Then
-        If (GetAttr(Path) And vbReadOnly) <> 0 Then Exit Function
+    If PathExists(path, True) Then
+        If (GetAttr(path) And vbReadOnly) <> 0 Then Exit Function
     End If
     
     Dim timeout As Single
@@ -1261,7 +1261,7 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
     On Local Error Resume Next
     
     num = FreeFile
-    Open Path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
+    Open path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
     Close #num
     
     Select Case Err.number
@@ -1271,9 +1271,9 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open Path For Binary Access Write Lock Read As #num Len = 1
+            Open path For Binary Access Write Lock Read As #num Len = 1
             If timeout <> 0 Then
-                Open Path For Binary Shared As #num Len = 1
+                Open path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num
@@ -1282,9 +1282,9 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open Path For Binary Access Write As #num Len = 1
+            Open path For Binary Access Write As #num Len = 1
             If timeout <> 0 Then
-                Open Path For Binary Shared As #num Len = 1
+                Open path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num
