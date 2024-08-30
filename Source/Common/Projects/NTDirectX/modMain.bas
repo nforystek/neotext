@@ -249,7 +249,28 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     If (Not Camera.Player Is Nothing) Then
  
         If Not Camera.Planet Is Nothing Then
+            
 
+                        
+            D3DXMatrixTranslation matPos, (-Camera.Planet.Absolute.Origin.X), (-Camera.Planet.Absolute.Origin.Y), (-Camera.Planet.Absolute.Origin.Z)
+            D3DXMatrixMultiply matView, matPos, matView
+
+            DDevice.SetTransform D3DTS_VIEW, matView
+
+
+            D3DXMatrixRotationX matPitch, 0 'AngleConvertWinToDX3DX(-Camera.Planet.Absolute.Rotate.X)
+            D3DXMatrixMultiply matView, matPitch, matView
+
+            D3DXMatrixRotationY matYaw, 0 ' AngleConvertWinToDX3DY(-Camera.Planet.Absolute.Rotate.Y)
+            D3DXMatrixMultiply matView, matYaw, matView
+
+            D3DXMatrixRotationZ matRoll, 0 'AngleConvertWinToDX3DZ(-Camera.Planet.Absolute.Rotate.Z)
+            D3DXMatrixMultiply matView, matRoll, matView
+
+            DDevice.SetTransform D3DTS_VIEW, matView
+
+
+            
             D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
@@ -261,23 +282,17 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
             DDevice.SetTransform D3DTS_VIEW, matView
             
-            D3DXMatrixTranslation matPos, (-Camera.Player.Absolute.Origin.X - Camera.Planet.Absolute.Origin.X), (-Camera.Player.Absolute.Origin.Y - Camera.Planet.Absolute.Origin.Y), (-Camera.Player.Absolute.Origin.Z - Camera.Planet.Absolute.Origin.Z)
+            D3DXMatrixTranslation matPos, (-Camera.Player.Absolute.Origin.X), (-Camera.Player.Absolute.Origin.Y), (-Camera.Player.Absolute.Origin.Z)
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
+            Debug.Print Camera.Planet.Absolute.Rotate
 
-            D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Planet.Absolute.Rotate.X)
-            D3DXMatrixMultiply matView, matPitch, matView
 
-            D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-Camera.Planet.Absolute.Rotate.Y)
-            D3DXMatrixMultiply matView, matYaw, matView
 
-            D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-Camera.Planet.Absolute.Rotate.Z)
-            D3DXMatrixMultiply matView, matRoll, matView
-
-            DDevice.SetTransform D3DTS_VIEW, matView
         Else
-               
+
+            
             D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-Camera.Player.Absolute.Rotate.X)
             D3DXMatrixMultiply matView, matPitch, matView
 
@@ -289,11 +304,16 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
+
+
             D3DXMatrixTranslation matPos, (-Camera.Player.Absolute.Origin.X), (-Camera.Player.Absolute.Origin.Y), (-Camera.Player.Absolute.Origin.Z)
             D3DXMatrixMultiply matView, matPos, matView
 
             DDevice.SetTransform D3DTS_VIEW, matView
 
+
+               
+               
         End If
 
     End If

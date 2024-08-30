@@ -742,36 +742,24 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         If onkey = p.Key Then
                             If dist > p.OuterEdge + p.Field Then
                                 Set Camera.Planet = Nothing
+                                
                                 'Debug.Print "Not"
+                                
                 
                             End If
                         Else
                             If dist <= p.OuterEdge + p.Field And onkey = "" Then
-
+                                
                                 Set Camera.Planet = p
-         
-                               ' Set PlanetOrbit = p.Clone
 
-                                
-                                
-'                                Set Camera.Player.Origin = VectorDeduction(VectorDeduction(Camera.Planet.Origin, Camera.Player.Origin), p.Origin)
-'                                Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-'                                Set Camera.Player.Absolute.Origin = Nothing
-                                
-'
-'                                Set Camera.Player.Origin = VectorRotateAxis(Camera.Player.Origin, AngleAxisInvert(p.Rotate))
-'                                Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-'                                Set Camera.Player.Relative.Origin = Nothing
-'
-'                                Set Camera.Player.Rotate = AngleAxisInvert(AngleAxisAddition(Camera.Player.Rotate, p.Rotate))
-'                                Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
-'                                Set Camera.Player.Relative.Rotate = Nothing
-'
-'
-'                                Set Camera.Planet.Rotate = MakePoint(0, 0, 0)
-'                                Set Camera.Planet.Absolute.Rotate = Camera.Planet.Rotate
-'                                Set Camera.Planet.Relative.Rotate = Nothing
-                                
+                                Set Camera.Player.Origin = VectorRotateAxis(VectorRotateAxis(Camera.Player.Origin, AngleAxisInvert(p.Rotate)), AngleAxisInvert(Camera.Player.Rotate))
+                                Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+                                Set Camera.Player.Relative.Origin = Nothing
+
+                                Set Camera.Player.Rotate = AngleAxisInvert(AngleAxisAddition(Camera.Player.Rotate, AngleAxisAddition(p.Rotate, AngleAxisDifference(AngleAxisInvert(p.Rotate), Camera.Player.Rotate))))
+                                Set Camera.Player.Absolute.Rotate = Camera.Player.Rotate
+                                Set Camera.Player.Relative.Rotate = Nothing
+
 
                             End If
                         End If
@@ -918,76 +906,31 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
             'finally render the planet we are on
 
             dist = Distance(p.Origin.X, p.Origin.Y, p.Origin.Z, Camera.Player.Origin.X, Camera.Player.Origin.Y, Camera.Player.Origin.Z)
-          '  Dim snap As Single
-          '  snap = GetWorldRelativeFactor(p, Camera)
-
-            '##########################
-            'First we want to generate a planet rotation between all possible rotations it may while on or aorund it.
-            'This is, the planets defined initial roation while on it, and at the ranges edge, fully facing the user.
-            'That spread defines by percentage to the spead the user exists in, the final value. The userhad one too.
-            'The user spread, is from at ranges end centered to the origin locked in, and the closer the user gets,
-            'at a certian angle to the olane end no longer visible, the
 
 
-          '  Set tmp = AngleAxisInbetween(VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin)), MakePoint(0, 0, 0), dist)
-          '  Set per = AngleAxisDifference(p.Rotate, tmp)
-            
-
-         '  Set p.Rotate = tmp
-          '  Set p.Absolute.Rotate = p.Rotate
-           ' Set p.Relative.Rotate = Nothing
-            'p.Moved = True
+'############################################################
+'############################################################
+'###### aim planet to be facing the player ##################
+'############################################################
 
 
-
-
-           ' Set Camera.Player.Origin = VectorRotateAxis(VectorDeduction(Camera.Player.Origin, p.Origin), per)
-          '  Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-           ' Set Camera.Player.Origin.Relative.Origin = Nothing
-            
-
-            
-'            Debug.Print Planets("Earth").Rotate
-'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'            Set p.Absolute.Rotate = p.Rotate
-'            Set p.Relative.Rotate = Nothing
-'            p.Moved = True
-            
-
+            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+            Set p.Absolute.Rotate = p.Rotate
+            Set p.Relative.Rotate = Nothing
+            p.Moved = True
+                                      
             SubRenderPlateau UserControl, Camera, p
 
-
-    
-            'Rotation VectorAxisAngles(VectorDeduction(Camera.Player.Origin, tmp)), p
-
-
-'############################################################
-'############################################################
-'###### progressive move to center with grace float #########
-'############################################################
-
-'                Set pop = PointNearOnPlane(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point1, Camera.Player.Origin)
-'                Set per = VectorAddition(VectorDeduction(Camera.Player.Origin, pop), Camera.Player.Origin)
-
-
-            '    Set Camera.Player.Origin = per
 
 '############################################################
 '############################################################
 '###### make it restrictive to only up and down #############
 '############################################################
-
-
             
+            Set pop = PlaneNormal(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point1)
+            Set Camera.Player.Origin = VectorMultiply(Camera.Player.Origin, pop)
+            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
 
-'            Set pop = PlaneNormal(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point1)
-'            Set Camera.Player.Origin = VectorMultiply(Camera.Player.Origin, pop)
-'            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-
-      '          Set Camera.Player.Relative.Origin = Nothing
-
-            'Orientate MakePoint(0, 0, 0.001), p
-            
 
         End If
         Set p = Nothing

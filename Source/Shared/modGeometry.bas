@@ -439,7 +439,7 @@ Public Function TrianglePerimeter(ByRef p1 As Point, ByRef p2 As Point, ByRef p3
     TrianglePerimeter = (DistanceEx(p1, p2) + DistanceEx(p2, p3) + DistanceEx(p3, p1))
 End Function
 
-Function TriangleArea(ByVal a As Single, ByVal b As Single, ByVal c As Single) As Single
+Function TriangleArea(ByVal A As Single, ByVal b As Single, ByVal c As Single) As Single
     'heron's formula for scalene triangles produces the same results
     'as this when using right triangles or when two sides are equal
     'this is using (1/2)*base*height but converting the triangle
@@ -453,10 +453,10 @@ Function TriangleArea(ByVal a As Single, ByVal b As Single, ByVal c As Single) A
 
     'make c the largest side, doing so
     'sort us the base in any situation
-    If a > c Then
+    If A > c Then
         'swap
-        d = a
-        a = c
+        d = A
+        A = c
         c = d
     End If
     If b > c Then
@@ -466,21 +466,21 @@ Function TriangleArea(ByVal a As Single, ByVal b As Single, ByVal c As Single) A
         c = d
     End If
 
-    If a + b < c Then Exit Function 'invalid triangle
+    If A + b < c Then Exit Function 'invalid triangle
 
     'the point of not largest sides, always fair
     'in a percentage to the base, we have to 1/2
-    d = (c * (a / (a + b)))
-    e = (c * (b / (a + b)))
+    d = (c * (A / (A + b)))
+    e = (c * (b / (A + b)))
 
     'between two new triangles formed at point
     'percentage to base, find the largest side
     'of the right angles they created set to d/e
-    If a > d Then
+    If A > d Then
         'swap
         f = d
-        d = a
-        a = f
+        d = A
+        A = f
     End If
     If b > e Then
         'swap
@@ -492,7 +492,7 @@ Function TriangleArea(ByVal a As Single, ByVal b As Single, ByVal c As Single) A
     'now apply 1/2 base * height for both new
     'traingles, only we are using portions of c
     'and reverse pythagrian to get the heights
-    f = (a * (((d ^ 2) - (a ^ 2)) ^ (1 / 2)))
+    f = (A * (((d ^ 2) - (A ^ 2)) ^ (1 / 2)))
     g = (b * (((e ^ 2) - (b ^ 2)) ^ (1 / 2)))
 
     'multiply together like each one is a single
@@ -825,35 +825,35 @@ End Function
 '####################################################################################################
 '####################################################################################################
 
-'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-'    Dim tmp As Point
-'    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-'    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-'        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-'    End If
-'    Set VectorRotateAxis = tmp
-'    Set tmp = Nothing
-'End Function
-
 Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
     Dim tmp As Point
-    Set tmp = Point
-    If Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
+    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
+    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
+        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
+        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
         Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
-    ElseIf Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
-    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
-        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
     End If
     Set VectorRotateAxis = tmp
     Set tmp = Nothing
 End Function
+
+'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As Point
+'    Set tmp = Point
+'    If Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
+'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
+'    ElseIf Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
+'    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
+'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateAxis(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
+'    End If
+'    Set VectorRotateAxis = tmp
+'    Set tmp = Nothing
+'End Function
 
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
 '
@@ -1098,9 +1098,9 @@ Public Function VectorCotangent(ByRef p As Point) As Single
     End If
 End Function
 
-Public Function AngleInvertRotation(ByVal a As Single) As Single
+Public Function AngleInvertRotation(ByVal A As Single) As Single
 
-    AngleInvertRotation = (-(PI * 2) - a + (PI * 4)) ' - PI
+    AngleInvertRotation = (-(PI * 2) - A + (PI * 4)) ' - PI
 
 End Function
 Public Function AngleAddition(ByVal a1 As Single, ByVal a2 As Single) As Single
@@ -1858,8 +1858,8 @@ Public Function AbsoluteInvert(ByVal Value As Long, Optional ByVal Whole As Long
     AbsoluteInvert = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
-Public Function Lerp(ByVal a As Single, ByVal b As Single, ByVal t As Single) As Single
-    Lerp = a + (b - a) * t
+Public Function Lerp(ByVal A As Single, ByVal b As Single, ByVal t As Single) As Single
+    Lerp = A + (b - A) * t
 End Function
 
 Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
