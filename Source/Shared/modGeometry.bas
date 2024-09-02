@@ -72,17 +72,29 @@ Public Function Atan2(Y, X)
     End If
 End Function
  
-Public Function MakeVector(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As D3DVECTOR
+Public Function ZeroRotation() As Point
+    Set ZeroRotation = New Point
+    With ZeroRotation
+'        .X = -(PI / 2)
+'        .Y = (PI / 4)
+'        .Z = PI
+        .X = PI * 2
+        .Y = PI * 2
+        .z = PI * 2
+    End With
+    AngleAxisRestrict ZeroRotation
+End Function
+Public Function MakeVector(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As D3DVECTOR
     MakeVector.X = X
     MakeVector.Y = Y
-    MakeVector.Z = Z
+    MakeVector.z = z
 End Function
 
-Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
+Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal z As Single) As Point
     Set MakePoint = New Point
     MakePoint.X = X
     MakePoint.Y = Y
-    MakePoint.Z = Z
+    MakePoint.z = z
 End Function
 
 Public Function MakeCoord(ByVal X As Single, ByVal Y As Single) As Coord
@@ -100,14 +112,14 @@ End Function
 Public Function ToVector(ByRef Point As Point) As D3DVECTOR
     ToVector.X = Point.X
     ToVector.Y = Point.Y
-    ToVector.Z = Point.Z
+    ToVector.z = Point.z
 End Function
 
 Public Function ToPoint(ByRef Vector As D3DVECTOR) As Point
     Set ToPoint = New Point
     ToPoint.X = Vector.X
     ToPoint.Y = Vector.Y
-    ToPoint.Z = Vector.Z
+    ToPoint.z = Vector.z
 End Function
 
 Public Function ToPlane(ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Range
@@ -121,20 +133,20 @@ Public Function ToPlane(ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point)
         .r = VectorDotProduct(pNormal, V1) * -1
         .X = pNormal.X
         .Y = pNormal.Y
-        .Z = pNormal.Z
+        .z = pNormal.z
     End With
 End Function
 
 Public Function ToVec4(ByRef Plane As Range) As D3DVECTOR4
     ToVec4.X = Plane.X
     ToVec4.Y = Plane.Y
-    ToVec4.Z = Plane.Z
+    ToVec4.z = Plane.z
     ToVec4.r = Plane.r
 End Function
 
 Public Function DistanceToPlane(ByRef p As Point, ByRef r As Range) As Single
-    If Sqr(r.X * r.X + r.Y * r.Y + r.Z * r.Z) <> 0 Then
-        DistanceToPlane = (r.X * p.X + r.Y * p.Y + r.Z * p.Z + r.r) / Sqr(r.X * r.X + r.Y * r.Y + r.Z * r.Z)
+    If Sqr(r.X * r.X + r.Y * r.Y + r.z * r.z) <> 0 Then
+        DistanceToPlane = (r.X * p.X + r.Y * p.Y + r.z * p.z + r.r) / Sqr(r.X * r.X + r.Y * r.Y + r.z * r.z)
     End If
 End Function
 
@@ -144,7 +156,7 @@ Public Function Distance(ByVal p1x As Single, ByVal p1y As Single, ByVal p1z As 
 End Function
 
 Public Function DistanceEx(ByRef p1 As Point, ByRef p2 As Point) As Single
-    DistanceEx = (((p1.X - p2.X) ^ 2) + ((p1.Y - p2.Y) ^ 2) + ((p1.Z - p2.Z) ^ 2))
+    DistanceEx = (((p1.X - p2.X) ^ 2) + ((p1.Y - p2.Y) ^ 2) + ((p1.z - p2.z) ^ 2))
     If DistanceEx <> 0 Then DistanceEx = DistanceEx ^ (1 / 2)
 End Function
 
@@ -171,20 +183,20 @@ Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal n As Sin
 '#
                 .X = p2.X - p1.X
                 .Y = p2.Y - p1.Y
-                .Z = p2.Z - p1.Z
+                .z = p2.z - p1.z
                 .X = (p1.X + (n * (.X / d)))
                 .Y = (p1.Y + (n * (.Y / d)))
-                .Z = (p1.Z + (n * (.Z / d)))
+                .z = (p1.z + (n * (.z / d)))
 '#
                 
             ElseIf (n = 0) Then
                 .X = p1.X
                 .Y = p1.Y
-                .Z = p1.Z
+                .z = p1.z
             ElseIf (d = 0) Then
                 .X = p2.X
                 .Y = p2.Y
-                .Z = p2.Z + IIf(p2.Z > p1.Z, n, -n)
+                .z = p2.z + IIf(p2.z > p1.z, n, -n)
             End If
         End If
     End With
@@ -193,7 +205,7 @@ End Function
 Public Function PointOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
     Dim r As Range
     Set r = ToPlane(v0, V1, V2)
-    PointOnPlane = ((r.X * (p.X - v0.X)) + (r.Y * (p.Y - v0.Y)) + (r.Z * (p.Z - v0.Z)) = 0)
+    PointOnPlane = ((r.X * (p.X - v0.X)) + (r.Y * (p.Y - v0.Y)) + (r.z * (p.z - v0.z)) = 0)
 End Function
 
 Public Function PointSideOfPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
@@ -211,15 +223,16 @@ Public Function PointNearOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 
         d = DistanceToPlane(p, r)
         .X = p.X - (d * n.X)
         .Y = p.Y - (d * n.Y)
-        .Z = p.Z - (d * n.Z)
+        .z = p.z - (d * n.z)
     End With
 End Function
+
 Public Function LinePointByPercent(ByRef p1 As Point, ByRef p2 As Point, ByVal Factor As Single) As Point
     Set LinePointByPercent = New Point
     With LinePointByPercent
         .X = Least(p1.X, p2.X) + ((Large(p1.X, p2.X) - Least(p1.X, p2.X)) * Factor)
         .Y = Least(p1.Y, p2.Y) + ((Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y)) * Factor)
-        .Z = Least(p1.Z, p2.Z) + ((Large(p1.Z, p2.Z) - Least(p1.Z, p2.Z)) * Factor)
+        .z = Least(p1.z, p2.z) + ((Large(p1.z, p2.z) - Least(p1.z, p2.z)) * Factor)
     End With
 End Function
 Public Function LineOpposite(ByVal Length1 As Single, ByVal Length2 As Single, ByVal Length3 As Single) As Single
@@ -245,18 +258,18 @@ Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir A
     
     q.X = PStart.X          'Q is a point and therefore it's W value is 1
     q.Y = PStart.Y
-    q.Z = PStart.Z
+    q.z = PStart.z
     q.r = 1
     
     v.X = vDir.X            'V is a vector and therefore it's W value is zero
     v.Y = vDir.Y
-    v.Z = vDir.Z
+    v.z = vDir.z
     v.r = 0
     
-  '  ((Plane.X * V.X) + (Plane.Y * V.Y) + (Plane.z * V.z) + (Plane.R * V.R))
+    '((Plane.X * V.X) + (Plane.Y * V.Y) + (Plane.z * V.z) + (Plane.R * V.R))
     
-    planeVdot = ((Plane.X * v.X) + (Plane.Y * v.Y) + (Plane.Z * v.Z) + (Plane.r * v.r)) 'D3DXVec4Dot(Plane, V)
-    planeQdot = ((Plane.X * q.X) + (Plane.Y * q.Y) + (Plane.Z * q.Z) + (Plane.r * q.r)) 'D3DXVec4Dot(Plane, Q)
+    planeVdot = ((Plane.X * v.X) + (Plane.Y * v.Y) + (Plane.z * v.z) + (Plane.r * v.r)) 'D3DXVec4Dot(Plane, V)
+    planeQdot = ((Plane.X * q.X) + (Plane.Y * q.Y) + (Plane.z * q.z) + (Plane.r * q.r)) 'D3DXVec4Dot(Plane, Q)
             
     'If the dotproduct of plane and V = 0 then there is no intersection
     If planeVdot <> 0 Then
@@ -267,7 +280,7 @@ Public Function LineIntersectPlane(ByRef Plane As Range, PStart As Point, vDir A
         'This is where the line intersects the plane
         VIntersectOut.X = Round(q.X + (t * v.X), 5)
         VIntersectOut.Y = Round(q.Y + (t * v.Y), 5)
-        VIntersectOut.Z = Round(q.Z + (t * v.Z), 5)
+        VIntersectOut.z = Round(q.z + (t * v.z), 5)
 
         LineIntersectPlane = True
     Else
@@ -301,7 +314,7 @@ Public Function LineIntersectLine2D(ByVal l1p1x As Single, ByVal l1p1y As Single
             Set LineIntersectLine2D = New Point
             LineIntersectLine2D.X = Lerp(l1p1x, l1p2x, t)
             LineIntersectLine2D.Y = Lerp(l1p1y, l1p2y, t)
-            LineIntersectLine2D.Z = t
+            LineIntersectLine2D.z = t
         End If
     End If
 
@@ -361,11 +374,11 @@ End Function
 Public Function PointNormalize(ByRef v As Point) As Point
     Set PointNormalize = New Point
     With PointNormalize
-        .Z = (v.X ^ 2 + v.Y ^ 2 + v.Z ^ 2) ^ (1 / 2)
-        If (.Z = 0) Then .Z = 1
-        .X = (v.X / .Z)
-        .Y = (v.Y / .Z)
-        .Z = (v.Z / .Z)
+        .z = (v.X ^ 2 + v.Y ^ 2 + v.z ^ 2) ^ (1 / 2)
+        If (.z = 0) Then .z = 1
+        .X = (v.X / .z)
+        .Y = (v.Y / .z)
+        .z = (v.z / .z)
     End With
 End Function
 Public Function Sign(ByVal n As Single) As Single
@@ -397,7 +410,7 @@ Public Function SquareCenter(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As P
         'center by adding onto the lowest value of axis with the the middle of the absolute difference of each of axis
         .X = (Least(v0.X, V1.X, V2.X, V3.X) + ((Large(v0.X, V1.X, V2.X, V3.X) - Least(v0.X, V1.X, V2.X, V3.X)) / 2))
         .Y = (Least(v0.Y, V1.Y, V2.Y, V3.Y) + ((Large(v0.Y, V1.Y, V2.Y, V3.Y) - Least(v0.Y, V1.Y, V2.Y, V3.Y)) / 2))
-        .Z = (Least(v0.Z, V1.Z, V2.Z, V3.Z) + ((Large(v0.Z, V1.Z, V2.Z, V3.Z) - Least(v0.Z, V1.Z, V2.Z, V3.Z)) / 2))
+        .z = (Least(v0.z, V1.z, V2.z, V3.z) + ((Large(v0.z, V1.z, V2.z, V3.z) - Least(v0.z, V1.z, V2.z, V3.z)) / 2))
     End With
 End Function
 
@@ -439,7 +452,7 @@ Public Function TrianglePerimeter(ByRef p1 As Point, ByRef p2 As Point, ByRef p3
     TrianglePerimeter = (DistanceEx(p1, p2) + DistanceEx(p2, p3) + DistanceEx(p3, p1))
 End Function
 
-Function TriangleArea(ByVal A As Single, ByVal b As Single, ByVal c As Single) As Single
+Function TriangleArea(ByVal a As Single, ByVal b As Single, ByVal c As Single) As Single
     'heron's formula for scalene triangles produces the same results
     'as this when using right triangles or when two sides are equal
     'this is using (1/2)*base*height but converting the triangle
@@ -448,15 +461,15 @@ Function TriangleArea(ByVal A As Single, ByVal b As Single, ByVal c As Single) A
     
     Dim d As Single
     Dim e As Single
-    Dim f As Single
+    Dim F As Single
     Dim g As Single
 
     'make c the largest side, doing so
     'sort us the base in any situation
-    If A > c Then
+    If a > c Then
         'swap
-        d = A
-        A = c
+        d = a
+        a = c
         c = d
     End If
     If b > c Then
@@ -466,21 +479,21 @@ Function TriangleArea(ByVal A As Single, ByVal b As Single, ByVal c As Single) A
         c = d
     End If
 
-    If A + b < c Then Exit Function 'invalid triangle
+    If a + b < c Then Exit Function 'invalid triangle
 
     'the point of not largest sides, always fair
     'in a percentage to the base, we have to 1/2
-    d = (c * (A / (A + b)))
-    e = (c * (b / (A + b)))
+    d = (c * (a / (a + b)))
+    e = (c * (b / (a + b)))
 
     'between two new triangles formed at point
     'percentage to base, find the largest side
     'of the right angles they created set to d/e
-    If A > d Then
+    If a > d Then
         'swap
-        f = d
-        d = A
-        A = f
+        F = d
+        d = a
+        a = F
     End If
     If b > e Then
         'swap
@@ -492,12 +505,12 @@ Function TriangleArea(ByVal A As Single, ByVal b As Single, ByVal c As Single) A
     'now apply 1/2 base * height for both new
     'traingles, only we are using portions of c
     'and reverse pythagrian to get the heights
-    f = (A * (((d ^ 2) - (A ^ 2)) ^ (1 / 2)))
+    F = (a * (((d ^ 2) - (a ^ 2)) ^ (1 / 2)))
     g = (b * (((e ^ 2) - (b ^ 2)) ^ (1 / 2)))
 
     'multiply together like each one is a single
     'dimension in 2D and root for the compound
-    TriangleArea = ((g * f) ^ (1 / 2))
+    TriangleArea = ((g * F) ^ (1 / 2))
 End Function
 
 
@@ -525,7 +538,7 @@ Public Function TriangleAveraged(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 
     With TriangleAveraged
         .X = ((p1.X + p2.X + p3.X) / 3)
         .Y = ((p1.Y + p2.Y + p3.Y) / 3)
-        .Z = ((p1.Z + p2.Z + p3.Z) / 3)
+        .z = ((p1.z + p2.z + p3.z) / 3)
     End With
 End Function
 
@@ -534,7 +547,7 @@ Public Function TriangleOffset(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As
     With TriangleOffset
         .X = (Large(p1.X, p2.X, p3.X) - Least(p1.X, p2.X, p3.X))
         .Y = (Large(p1.Y, p2.Y, p3.Y) - Least(p1.Y, p2.Y, p3.Y))
-        .Z = (Large(p1.Z, p2.Z, p3.Z) - Least(p1.Z, p2.Z, p3.Z))
+        .z = (Large(p1.z, p2.z, p3.z) - Least(p1.z, p2.z, p3.z))
     End With
 End Function
 
@@ -543,7 +556,7 @@ Public Function TriangleLowestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef 
     With TriangleLowestOfAll
         .X = Least(p1.X, p2.X, p3.X)
         .Y = Least(p1.Y, p2.Y, p3.Y)
-        .Z = Least(p1.Z, p2.Z, p3.Z)
+        .z = Least(p1.z, p2.z, p3.z)
     End With
 End Function
 
@@ -552,7 +565,7 @@ Public Function TriangleLargestOfAll(ByRef p1 As Point, ByRef p2 As Point, ByRef
     With TriangleLargestOfAll
         .X = Large(p1.X, p2.X, p3.X)
         .Y = Large(p1.Y, p2.Y, p3.Y)
-        .Z = Large(p1.Z, p2.Z, p3.Z)
+        .z = Large(p1.z, p2.z, p3.z)
     End With
 End Function
 
@@ -563,7 +576,7 @@ Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As P
         Set o = TriangleOffset(p1, p2, p3)
         .X = (Least(p1.X, p2.X, p3.X) + (o.X / 2))
         .Y = (Least(p1.Y, p2.Y, p3.Y) + (o.Y / 2))
-        .Z = (Least(p1.Z, p2.Z, p3.Z) + (o.Z / 2))
+        .z = (Least(p1.z, p2.z, p3.z) + (o.z / 2))
     End With
 End Function
 
@@ -603,11 +616,11 @@ Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As
     Dim d As Single
     With TriangleNormal
         Set o = TriangleDisplace(v0, V1, V2)
-        d = (Abs(o.X) + Abs(o.Y) + Abs(o.Z))
+        d = (Abs(o.X) + Abs(o.Y) + Abs(o.z))
         If (d <> 0) Then
-            .Z = (((Abs(o.X) + Abs(o.Y)) - Abs(o.Z)) / d)
-            .X = (((Abs(o.Y) + Abs(o.Z)) - Abs(o.X)) / d)
-            .Y = (((Abs(o.Z) + Abs(o.X)) - Abs(o.Y)) / d)
+            .z = (((Abs(o.X) + Abs(o.Y)) - Abs(o.z)) / d)
+            .X = (((Abs(o.Y) + Abs(o.z)) - Abs(o.X)) / d)
+            .Y = (((Abs(o.z) + Abs(o.X)) - Abs(o.Y)) / d)
         End If
     End With
 End Function
@@ -617,7 +630,7 @@ Public Function TriangleAccordance(ByRef v0 As Point, ByRef V1 As Point, ByRef V
     With TriangleAccordance
         .X = (((v0.X + V1.X) - V2.X) + ((V1.X + V2.X) - v0.X) - ((V2.X + v0.X) - V1.X))
         .Y = (((v0.Y + V1.Y) - V2.Y) + ((V1.Y + V2.Y) - v0.Y) - ((V2.Y + v0.Y) - V1.Y))
-        .Z = (((v0.Z + V1.Z) - V2.Z) + ((V1.Z + V2.Z) - v0.Z) - ((V2.Z + v0.Z) - V1.Z))
+        .z = (((v0.z + V1.z) - V2.z) + ((V1.z + V2.z) - v0.z) - ((V2.z + v0.z) - V1.z))
     End With
 End Function
 
@@ -626,7 +639,7 @@ Public Function TriangleDisplace(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 
     With TriangleDisplace
         .X = (Abs((Abs(v0.X) + Abs(V1.X)) - Abs(V2.X)) + Abs((Abs(V1.X) + Abs(V2.X)) - Abs(v0.X)) - Abs((Abs(V2.X) + Abs(v0.X)) - Abs(V1.X)))
         .Y = (Abs((Abs(v0.Y) + Abs(V1.Y)) - Abs(V2.Y)) + Abs((Abs(V1.Y) + Abs(V2.Y)) - Abs(v0.Y)) - Abs((Abs(V2.Y) + Abs(v0.Y)) - Abs(V1.Y)))
-        .Z = (Abs((Abs(v0.Z) + Abs(V1.Z)) - Abs(V2.Z)) + Abs((Abs(V1.Z) + Abs(V2.Z)) - Abs(v0.Z)) - Abs((Abs(V2.Z) + Abs(v0.Z)) - Abs(V1.Z)))
+        .z = (Abs((Abs(v0.z) + Abs(V1.z)) - Abs(V2.z)) + Abs((Abs(V1.z) + Abs(V2.z)) - Abs(v0.z)) - Abs((Abs(V2.z) + Abs(v0.z)) - Abs(V1.z)))
     End With
 End Function
 
@@ -635,7 +648,7 @@ Public Function VectorBalance(ByRef loZero As Point, ByRef hiWhole As Point, ByV
     With VectorBalance
         .X = (loZero.X + ((hiWhole.X - loZero.X) * folcrumPercent))
         .Y = (loZero.Y + ((hiWhole.Y - loZero.Y) * folcrumPercent))
-        .Z = (loZero.Z + ((hiWhole.Z - loZero.Z) * folcrumPercent))
+        .z = (loZero.z + ((hiWhole.z - loZero.z) * folcrumPercent))
     End With
 End Function
 
@@ -645,11 +658,11 @@ Public Function TriangleFolcrum(ByRef p1 As Point, ByRef p2 As Point, Optional B
         If (Not p3 Is Nothing) Then
             .X = (p3.X ^ 2)
             .Y = (p3.Y ^ 2)
-            .Z = (p3.Z ^ 2)
+            .z = (p3.z ^ 2)
         End If
         .X = (.X + (p1.X ^ 2) + (p2.X ^ 2)) ^ (1 / 2)
         .Y = (.Y + (p1.Y ^ 2) + (p2.Y ^ 2)) ^ (1 / 2)
-        .Z = (.Z + (p1.Z ^ 2) + (p2.Z ^ 2)) ^ (1 / 2)
+        .z = (.z + (p1.z ^ 2) + (p2.z ^ 2)) ^ (1 / 2)
     End With
 End Function
 
@@ -661,7 +674,7 @@ Public Function AngleAxisRestrict(ByRef AxisAngles As Point) As Point
     With AngleAxisRestrict
         .X = AngleRestrict(AxisAngles.X)
         .Y = AngleRestrict(AxisAngles.Y)
-        .Z = AngleRestrict(AxisAngles.Z)
+        .z = AngleRestrict(AxisAngles.z)
     End With
 End Function
 
@@ -695,7 +708,7 @@ End Function
 Public Function LineSlope3D(ByRef p2 As Point, Optional ByRef p1 As Point = Nothing) As Single
     If p1 Is Nothing Then Set p1 = New Point
      'run is the distance formula excluding the Y coordinate
-    LineSlope3D = (((p2.X - p1.X) ^ 2) + ((p2.Z - p1.Z) ^ 2)) ^ (1 / 2)
+    LineSlope3D = (((p2.X - p1.X) ^ 2) + ((p2.z - p1.z) ^ 2)) ^ (1 / 2)
     If LineSlope3D <> 0 Then 'rise doesn't include x or z, so now it's the same
         LineSlope3D = -((p2.Y - p1.Y) / LineSlope3D) 'rise over run
     Else
@@ -808,13 +821,13 @@ Public Function VectorAxisAngles(ByRef Point As Point) As Point
     Dim tmp As Point
     Set VectorAxisAngles = New Point
     With VectorAxisAngles
-        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
-            Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.Z, tmp.X)))
-            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
-            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.Z, tmp.X, tmp.Y)))
-            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Y))
-            .Z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.Z)))
+        If Not (Point.X = 0 And Point.Y = 0 And Point.z = 0) Then
+            Set tmp = MakePoint(Point.X, Point.Y, Point.z)
+            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.z, tmp.X)))
+            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), AngleInvertRotation(.X))
+            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.z, tmp.X, tmp.Y)))
+            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), AngleInvertRotation(.Y))
+            .z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.z)))
             Set tmp = Nothing
         End If
     End With
@@ -827,12 +840,12 @@ End Function
 
 Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
     Dim tmp As Point
-    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
+    Set tmp = MakePoint(Point.X, Point.Y, Point.z)
+    If (Not (Point.X = 0 And Point.Y = 0 And Point.z = 0)) And _
+        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.z = 0)) Then
+        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.z)
+        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.X)
+        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.z), Angles.Y)
     End If
     Set VectorRotateAxis = tmp
     Set tmp = Nothing
@@ -910,35 +923,35 @@ End Function
 '####################################################################################################
 
 Public Function VectorRotateX(ByRef Point As Point, ByVal angle As Single) As Point
-    Set VectorRotateX = MakePoint(Point.X, Point.Y, Point.Z)
+    Set VectorRotateX = MakePoint(Point.X, Point.Y, Point.z)
     If Round(angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
     CosPhi = Cos(-angle)
     SinPhi = Sin(-angle)
     With VectorRotateX
-        .Z = Point.Z * CosPhi - Point.Y * SinPhi
-        .Y = Point.Z * SinPhi + Point.Y * CosPhi
+        .z = Point.z * CosPhi - Point.Y * SinPhi
+        .Y = Point.z * SinPhi + Point.Y * CosPhi
         .X = Point.X
     End With
 End Function
 
 Public Function VectorRotateY(ByRef Point As Point, ByVal angle As Single) As Point
-    Set VectorRotateY = MakePoint(Point.X, Point.Y, Point.Z)
+    Set VectorRotateY = MakePoint(Point.X, Point.Y, Point.z)
     If Round(angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
     CosPhi = Cos(-angle)
     SinPhi = Sin(-angle)
     With VectorRotateY
-        .X = Point.X * CosPhi - Point.Z * SinPhi
-        .Z = Point.X * SinPhi + Point.Z * CosPhi
+        .X = Point.X * CosPhi - Point.z * SinPhi
+        .z = Point.X * SinPhi + Point.z * CosPhi
         .Y = Point.Y
     End With
 End Function
 
 Public Function VectorRotateZ(ByRef Point As Point, ByVal angle As Single) As Point
-    Set VectorRotateZ = MakePoint(Point.X, Point.Y, Point.Z)
+    Set VectorRotateZ = MakePoint(Point.X, Point.Y, Point.z)
     If Round(angle) = 0 Then Exit Function
     Dim CosPhi   As Single
     Dim SinPhi   As Single
@@ -947,7 +960,7 @@ Public Function VectorRotateZ(ByRef Point As Point, ByVal angle As Single) As Po
     With VectorRotateZ
         .X = Point.X * CosPhi - Point.Y * SinPhi
         .Y = Point.X * SinPhi + Point.Y * CosPhi
-        .Z = Point.Z
+        .z = Point.z
     End With
 End Function
 
@@ -965,7 +978,7 @@ Public Function VectorSlope(ByRef p1 As Point, ByRef p2 As Point) As Single
     VectorSlope = VectorRun(p1, p2) 'horizontal travel
     If (VectorSlope <> 0) Then 'slope is defined as rise over run, rise is vertical travel
         VectorSlope = Round((VectorRise(p1, p2) / VectorSlope), 6)
-        If (VectorSlope = 0) Then VectorSlope = -CInt(Not ((p1.X = p2.X) And (p1.Y = p2.Y) And (p1.Z = p2.Z)))
+        If (VectorSlope = 0) Then VectorSlope = -CInt(Not ((p1.X = p2.X) And (p1.Y = p2.Y) And (p1.z = p2.z)))
     ElseIf VectorRise(p1, p2) <> 0 Then
         VectorSlope = 1
     End If
@@ -975,7 +988,7 @@ Public Function VectorRise(ByRef p1 As Point, Optional ByRef p2 As Point = "[0,0
     VectorRise = (Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y))
 End Function
 Public Function VectorRun(ByRef p1 As Point, Optional ByRef p2 As Point = "[0,0,0]") As Single
-    VectorRun = DistanceEx(MakePoint(p1.X, 0, p1.Z), MakePoint(p2.X, 0, p2.Z))
+    VectorRun = DistanceEx(MakePoint(p1.X, 0, p1.z), MakePoint(p2.X, 0, p2.z))
 End Function
 
 Public Function VectorSine(ByRef p As Point) As Single
@@ -1098,9 +1111,9 @@ Public Function VectorCotangent(ByRef p As Point) As Single
     End If
 End Function
 
-Public Function AngleInvertRotation(ByVal A As Single) As Single
+Public Function AngleInvertRotation(ByVal a As Single) As Single
 
-    AngleInvertRotation = (-(PI * 2) - A + (PI * 4)) ' - PI
+    AngleInvertRotation = (-(PI * 2) - a + (PI * 4)) ' - PI
 
 End Function
 Public Function AngleAddition(ByVal a1 As Single, ByVal a2 As Single) As Single
@@ -1111,7 +1124,7 @@ Public Function AngleAxisInvert(ByVal p As Point) As Point
     With AngleAxisInvert
         .X = AngleInvertRotation(p.X)
         .Y = AngleInvertRotation(p.Y)
-        .Z = AngleInvertRotation(p.Z)
+        .z = AngleInvertRotation(p.z)
     End With
 End Function
 Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
@@ -1125,9 +1138,9 @@ Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     
         .X = (p3.X * DEGREE + P4.X * DEGREE) * RADIAN
         .Y = (p3.Y * DEGREE + P4.Y * DEGREE) * RADIAN
-        .Z = (p3.Z * DEGREE + P4.Z * DEGREE) * RADIAN
+        .z = (p3.z * DEGREE + P4.z * DEGREE) * RADIAN
         
-        Set AngleAxisAddition = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisAddition = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
     
 End Function
@@ -1156,30 +1169,30 @@ Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
         Set P4 = AngleAxisDifference(p1, p3)
        .X = P4.X
        .Y = P4.Y
-       .Z = -P4.Z
+       .z = -P4.z
         
         
        ' .X = ((p1.X * p2.X + p3.X * P4.X + p1.X * p3.X + p2.X * P4.X) ^ (1 / 4))
        ' .Y = ((p1.Y * p2.Y + p3.Y * P4.Y + p1.Y * p3.Y + p2.Y * P4.Y) ^ (1 / 4))
        ' .z = ((p1.z * p2.z + p3.z * P4.z + p1.z * p3.z + p2.z * P4.z) ^ (1 / 4))
         
-        Set AngleAxisCombine = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisCombine = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
 End Function
 
 Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim d1 As Point
     Dim d2 As Point
-    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.Z))
-    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.Z))
+    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.z))
+    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.z))
     
     d1.X = d1.X * DEGREE
     d1.Y = d1.Y * DEGREE
-    d1.Z = d1.Z * DEGREE
+    d1.z = d1.z * DEGREE
     
     d2.X = d2.X * DEGREE
     d2.Y = d2.Y * DEGREE
-    d2.Z = d2.Z * DEGREE
+    d2.z = d2.z * DEGREE
     
     Dim c1 As Single
     Dim C2 As Single
@@ -1194,11 +1207,11 @@ Public Function AngleAxisDifference(ByRef p1 As Point, ByRef p2 As Point) As Poi
         C2 = Least(d1.Y, d2.Y)
         .Y = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
         
-        c1 = Large(d1.Z, d2.Z)
-        C2 = Least(d1.Z, d2.Z)
-        .Z = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
+        c1 = Large(d1.z, d2.z)
+        C2 = Least(d1.z, d2.z)
+        .z = Least(((360 - c1) + C2), (c1 - C2)) * RADIAN
         
-        Set AngleAxisDifference = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisDifference = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
     
     
@@ -1209,16 +1222,16 @@ End Function
 Public Function AngleAxisSubtraction(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim d1 As Point
     Dim d2 As Point
-    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.Z))
-    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.Z))
+    Set d1 = AngleAxisRestrict(MakePoint(p1.X, p1.Y, p1.z))
+    Set d2 = AngleAxisRestrict(MakePoint(p2.X, p2.Y, p2.z))
     
     d1.X = d1.X * DEGREE
     d1.Y = d1.Y * DEGREE
-    d1.Z = d1.Z * DEGREE
+    d1.z = d1.z * DEGREE
     
     d2.X = d2.X * DEGREE
     d2.Y = d2.Y * DEGREE
-    d2.Z = d2.Z * DEGREE
+    d2.z = d2.z * DEGREE
     
     Dim c1 As Single
     Dim C2 As Single
@@ -1229,9 +1242,9 @@ Public Function AngleAxisSubtraction(ByRef p1 As Point, ByRef p2 As Point) As Po
         
         .Y = (Large(d1.Y, d2.Y) - Least(d1.Y, d2.Y)) * RADIAN
         
-        .Z = (Large(d1.Z, d2.Z) - Least(d1.Z, d2.Z)) * RADIAN
+        .z = (Large(d1.z, d2.z) - Least(d1.z, d2.z)) * RADIAN
         
-        Set AngleAxisSubtraction = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisSubtraction = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
     
     Set d1 = Nothing
@@ -1246,19 +1259,19 @@ Public Function AngleAxisDeduction(ByRef p1 As Point, ByRef p2 As Point) As Poin
     
     d1.X = d1.X * DEGREE
     d1.Y = d1.Y * DEGREE
-    d1.Z = d1.Z * DEGREE
+    d1.z = d1.z * DEGREE
     
     d2.X = d2.X * DEGREE
     d2.Y = d2.Y * DEGREE
-    d2.Z = d2.Z * DEGREE
+    d2.z = d2.z * DEGREE
     
     Set AngleAxisDeduction = New Point
     With AngleAxisDeduction
         .X = (d1.X - d2.X) * RADIAN
         .Y = (d1.Y - d2.Y) * RADIAN
-        .Z = (d1.Z - d2.Z) * RADIAN
+        .z = (d1.z - d2.z) * RADIAN
         
-        Set AngleAxisDeduction = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisDeduction = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
     
     
@@ -1318,17 +1331,17 @@ Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Op
             Set n = VectorNormalize(VectorInfluence)
             n.X = IIf(n.X = 0, 1, n.X) * 100
             n.Y = IIf(n.Y = 0, 1, n.Y) * 100
-            n.Z = IIf(n.Z = 0, 1, n.Z) * 100
+            n.z = IIf(n.z = 0, 1, n.z) * 100
         Else
             Set n = New Point
             n.X = 100
             n.Y = 100
-            n.Z = 100
+            n.z = 100
         End If
    
         .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
         .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
-        .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / n.Z), SnapRange)
+        .z = ValueInfluence(Final.z, Current.z, Amount * ((VectorInfluence.z * Factor) / n.z), SnapRange)
    
         Set n = Nothing
     End With
@@ -1383,17 +1396,17 @@ Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point,
             Set n = AngleAxisNormalize(AngleAxisInfluence)
             n.X = IIf(n.X = 0, 1, n.X) '* 100
             n.Y = IIf(n.Y = 0, 1, n.Y) ' * 100
-            n.Z = IIf(n.Z = 0, 1, n.Z) '* 100
+            n.z = IIf(n.z = 0, 1, n.z) '* 100
         Else
             Set n = New Point
             n.X = 0.01 '100
             n.Y = 0.01 '100
-            n.Z = 0.01 ' 100
+            n.z = 0.01 ' 100
         End If
         
         .X = AngleInfluence(Final.X, Current.X, Amount, ((.X * Factor) / n.X), SnapRange)
         .Y = AngleInfluence(Final.Y, Current.Y, Amount, ((.Y * Factor) / n.Y), SnapRange)
-        .Z = AngleInfluence(Final.Z, Current.Z, Amount, ((.Z * Factor) / n.Z), SnapRange)
+        .z = AngleInfluence(Final.z, Current.z, Amount, ((.z * Factor) / n.z), SnapRange)
         
         Set n = Nothing
     End With
@@ -1405,16 +1418,16 @@ Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred 
     Dim d1 As Point
     Dim d2 As Point
 
-    Set d1 = AngleAxisRestrict(MakePoint(ZeroPercent.X, ZeroPercent.Y, ZeroPercent.Z))
-    Set d2 = AngleAxisRestrict(MakePoint(OneHundred.X, OneHundred.Y, OneHundred.Z))
+    Set d1 = AngleAxisRestrict(MakePoint(ZeroPercent.X, ZeroPercent.Y, ZeroPercent.z))
+    Set d2 = AngleAxisRestrict(MakePoint(OneHundred.X, OneHundred.Y, OneHundred.z))
     
     d1.X = d1.X * DEGREE
     d1.Y = d1.Y * DEGREE
-    d1.Z = d1.Z * DEGREE
+    d1.z = d1.z * DEGREE
     
     d2.X = d2.X * DEGREE
     d2.Y = d2.Y * DEGREE
-    d2.Z = d2.Z * DEGREE
+    d2.z = d2.z * DEGREE
     
     Dim c1 As Single
     Dim C2 As Single
@@ -1462,27 +1475,27 @@ Public Function AngleAxisInbetween(ByRef ZeroPercent As Point, ByRef OneHundred 
         .Y = .Y * RADIAN
         
         
-        c1 = Large(d1.Z, d2.Z)
-        C2 = Least(d1.Z, d2.Z)
+        c1 = Large(d1.z, d2.z)
+        C2 = Least(d1.z, d2.z)
         If (c1 - C2) <= ((360 - C2) + c1) Then
-            .Z = ((c1 - C2) * DecimalPercent)
-            If d1.Z = c1 Then
-                .Z = c1 + .Z
+            .z = ((c1 - C2) * DecimalPercent)
+            If d1.z = c1 Then
+                .z = c1 + .z
             Else
-                .Z = C2 - .Z
+                .z = C2 - .z
             End If
         Else
-            .Z = (((360 - C2) + c1) * DecimalPercent)
-            If d1.Z = C2 Then
-                .Z = C2 + .Z
+            .z = (((360 - C2) + c1) * DecimalPercent)
+            If d1.z = C2 Then
+                .z = C2 + .z
             Else
-                .Z = c1 - .Z
+                .z = c1 - .z
             End If
         End If
-        .Z = .Z * RADIAN
+        .z = .z * RADIAN
                 
         
-        Set AngleAxisInbetween = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisInbetween = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
     
     
@@ -1494,20 +1507,20 @@ End Function
 
 Public Function AngleAxisPercentOf(ByRef AngleAxis As Point, ByVal DecimalPercent As Single) As Point
 
-    Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(AngleAxis.X, AngleAxis.Y, AngleAxis.Z))
+    Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(AngleAxis.X, AngleAxis.Y, AngleAxis.z))
     
 
     With AngleAxisPercentOf
         
         .X = .X * DEGREE
         .Y = .Y * DEGREE
-        .Z = .Z * DEGREE
+        .z = .z * DEGREE
 
         .X = .X * DecimalPercent * RADIAN
         .Y = .Y * DecimalPercent * RADIAN
-        .Z = .Z * DecimalPercent * RADIAN
+        .z = .z * DecimalPercent * RADIAN
         
-        Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
+        Set AngleAxisPercentOf = AngleAxisRestrict(MakePoint(.X, .Y, .z))
     End With
 
 End Function
@@ -1518,52 +1531,61 @@ Public Function VectorMultiply(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorMultiply
         .X = (p1.X * p2.X)
         .Y = (p1.Y * p2.Y)
-        .Z = (p1.Z * p2.Z)
+        .z = (p1.z * p2.z)
     End With
 End Function
 
 Public Function VectorDotProduct(ByRef p1 As Point, ByRef p2 As Point) As Single
-    VectorDotProduct = ((p1.X * p2.X) + (p1.Y * p2.Y) + (p1.Z * p2.Z))
+    VectorDotProduct = ((p1.X * p2.X) + (p1.Y * p2.Y) + (p1.z * p2.z))
 End Function
 
 
 Public Function VectorCrossProduct(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorCrossProduct = New Point
     With VectorCrossProduct
-        .X = ((p1.Y * p2.Z) - (p1.Z * p2.Y))
-        .Y = ((p1.Z * p2.X) - (p1.X * p2.Z))
-        .Z = ((p1.X * p2.Y) - (p1.Y * p2.X))
+        .X = ((p1.Y * p2.z) - (p1.z * p2.Y))
+        .Y = ((p1.z * p2.X) - (p1.X * p2.z))
+        .z = ((p1.X * p2.Y) - (p1.Y * p2.X))
+    End With
+End Function
+
+Public Function VectorRootBy(ByRef p1 As Point, ByVal Power As Single) As Point
+    Set VectorRootBy = New Point
+    With VectorRootBy
+        .X = p1.X ^ (1 / Power)
+        .Y = p1.Y ^ (1 / Power)
+        .z = p1.z ^ (1 / Power)
     End With
 End Function
 
 Public Function CrossProductLength(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Single
-    CrossProductLength = ((p1.X - p2.X) * (p2.Y - p2.Y) - (p1.Y - p2.Y) * (p2z - p2.Z) - (p1.Z - p2.Z) * (p2.X - p2.X))
+    CrossProductLength = ((p1.X - p2.X) * (p2.Y - p2.Y) - (p1.Y - p2.Y) * (p2z - p2.z) - (p1.z - p2.z) * (p2.X - p2.X))
 End Function
 
 Public Function VectorSubtraction(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorSubtraction = New Point
     With VectorSubtraction
-        .X = ((p1.X - p2.Z) - (p1.X - p2.Y))
-        .Y = ((p1.Y - p2.X) - (p1.Y - p2.Z))
-        .Z = ((p1.Z - p2.Y) - (p1.Z - p2.X))
+        .X = ((p1.X - p2.z) - (p1.X - p2.Y))
+        .Y = ((p1.Y - p2.X) - (p1.Y - p2.z))
+        .z = ((p1.z - p2.Y) - (p1.z - p2.X))
     End With
 End Function
 
 Public Function VectorAccordance(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorAccordance = New Point
     With VectorAccordance
-        .X = (((p1.X + p1.Y) - p2.Z) + ((p1.Z + p1.X) - p2.Y) - ((p1.Y + p1.Z) - p2.X))
-        .Y = (((p1.Y + p1.Z) - p2.X) + ((p1.X + p1.Y) - p2.Z) - ((p1.Z + p1.X) - p2.Y))
-        .Z = (((p1.Z + p1.X) - p2.Y) + ((p1.Y + p1.Z) - p2.X) - ((p1.X + p1.Y) - p2.Z))
+        .X = (((p1.X + p1.Y) - p2.z) + ((p1.z + p1.X) - p2.Y) - ((p1.Y + p1.z) - p2.X))
+        .Y = (((p1.Y + p1.z) - p2.X) + ((p1.X + p1.Y) - p2.z) - ((p1.z + p1.X) - p2.Y))
+        .z = (((p1.z + p1.X) - p2.Y) + ((p1.Y + p1.z) - p2.X) - ((p1.X + p1.Y) - p2.z))
     End With
 End Function
 
 Public Function VectorDisplace(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set VectorDisplace = New Point
     With VectorDisplace
-        .X = (Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.Z)) + Abs((Abs(p1.Z) + Abs(p1.X)) - Abs(p2.Y)) - Abs((Abs(p1.Y) + Abs(p1.Z)) - Abs(p2.X)))
-        .Y = (Abs((Abs(p1.Y) + Abs(p1.Z)) - Abs(p2.X)) + Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.Z)) - Abs((Abs(p1.Z) + Abs(p1.X)) - Abs(p2.Y)))
-        .Z = (Abs((Abs(p1.Z) + Abs(p1.X)) - Abs(p2.Y)) + Abs((Abs(p1.Y) + Abs(p1.Z)) - Abs(p2.X)) - Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.Z)))
+        .X = (Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.z)) + Abs((Abs(p1.z) + Abs(p1.X)) - Abs(p2.Y)) - Abs((Abs(p1.Y) + Abs(p1.z)) - Abs(p2.X)))
+        .Y = (Abs((Abs(p1.Y) + Abs(p1.z)) - Abs(p2.X)) + Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.z)) - Abs((Abs(p1.z) + Abs(p1.X)) - Abs(p2.Y)))
+        .z = (Abs((Abs(p1.z) + Abs(p1.X)) - Abs(p2.Y)) + Abs((Abs(p1.Y) + Abs(p1.z)) - Abs(p2.X)) - Abs((Abs(p1.X) + Abs(p1.Y)) - Abs(p2.z)))
     End With
 End Function
 
@@ -1572,12 +1594,12 @@ Public Function VectorOffset(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorOffset
         .X = (Large(p1.X, p2.X) - Least(p1.X, p2.X))
         .Y = (Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y))
-        .Z = (Large(p1.Z, p2.Z) - Least(p1.Z, p2.Z))
+        .z = (Large(p1.z, p2.z) - Least(p1.z, p2.z))
     End With
 End Function
 
 Public Function VectorQuantify(ByRef p1 As Point) As Single
-    VectorQuantify = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.Z))
+    VectorQuantify = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.z))
 End Function
 
 
@@ -1586,16 +1608,16 @@ Public Function VectorDeduction(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorDeduction
         .X = (p1.X - p2.X)
         .Y = (p1.Y - p2.Y)
-        .Z = (p1.Z - p2.Z)
+        .z = (p1.z - p2.z)
     End With
 End Function
 
 Public Function VectorCrossDeduct(ByRef p1 As Point, ByRef p2 As Point)
     Set VectorCrossDeduct = New Point
     With VectorCrossDeduct
-        .X = (p1.X - p2.Z)
+        .X = (p1.X - p2.z)
         .Y = (p1.Y - p2.X)
-        .Z = (p1.Z - p2.Y)
+        .z = (p1.z - p2.Y)
     End With
 End Function
 
@@ -1604,7 +1626,7 @@ Public Function VectorAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorAddition
         .X = (p1.X + p2.X)
         .Y = (p1.Y + p2.Y)
-        .Z = (p1.Z + p2.Z)
+        .z = (p1.z + p2.z)
     End With
 End Function
 
@@ -1613,7 +1635,7 @@ Public Function VectorMultiplyBy(ByRef p1 As Point, ByVal n As Single) As Point
     With VectorMultiplyBy
         .X = (p1.X * n)
         .Y = (p1.Y * n)
-        .Z = (p1.Z * n)
+        .z = (p1.z * n)
     End With
 End Function
 
@@ -1622,7 +1644,7 @@ Public Function VectorExponential(ByRef p1 As Point, ByVal n As Single) As Point
     With VectorExponential
         .X = (p1.X ^ n)
         .Y = (p1.Y ^ n)
-        .Z = (p1.Z ^ n)
+        .z = (p1.z ^ n)
     End With
 End Function
 
@@ -1631,29 +1653,29 @@ Public Function VectorCombination(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorCombination
         .X = ((p1.X + p2.X) / 2)
         .Y = ((p1.Y + p2.Y) / 2)
-        .Z = ((p1.Z + p2.Z) / 2)
+        .z = ((p1.z + p2.z) / 2)
     End With
 End Function
 Public Function AngleAxisNormalize(ByRef p1 As Point) As Point
     Set AngleAxisNormalize = New Point
     With AngleAxisNormalize
-        .Z = (AngleRestrict(p1.X) + AngleRestrict(p1.Y) + AngleRestrict(p1.Z)) / (360 * RADIAN)
-        If .Z <> 0 Then
-            .X = (p1.X * .Z)
-            .Y = (p1.Y * .Z)
-            .Z = (p1.Z * .Z)
+        .z = (AngleRestrict(p1.X) + AngleRestrict(p1.Y) + AngleRestrict(p1.z)) / (360 * RADIAN)
+        If .z <> 0 Then
+            .X = (p1.X * .z)
+            .Y = (p1.Y * .z)
+            .z = (p1.z * .z)
         End If
     End With
 End Function
 Public Function VectorNormalize(ByRef p1 As Point) As Point
     Set VectorNormalize = New Point
     With VectorNormalize
-        .Z = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.Z))
-        If (Round(.Z, 6) > 0) Then
-            .Z = (1 / .Z)
-            .X = (p1.X * .Z)
-            .Y = (p1.Y * .Z)
-            .Z = (p1.Z * .Z)
+        .z = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.z))
+        If (Round(.z, 6) > 0) Then
+            .z = (1 / .z)
+            .X = (p1.X * .z)
+            .Y = (p1.Y * .z)
+            .z = (p1.z * .z)
         End If
     End With
 
@@ -1672,29 +1694,29 @@ End Function
 Public Function VectorSign(ByVal p1 As Point) As Point
     Set VectorSign = New Point
     With VectorSign
-        If Abs(p1.X) >= Abs(p1.Y) And Abs(p1.X) >= Abs(p1.Z) Then
+        If Abs(p1.X) >= Abs(p1.Y) And Abs(p1.X) >= Abs(p1.z) Then
             .X = IIf(p1.X > 0, 1, IIf(p1.X < 0, -1, 0))
         End If
-        If Abs(p1.Y) >= Abs(p1.Z) And Abs(p1.Y) >= Abs(p1.X) Then
+        If Abs(p1.Y) >= Abs(p1.z) And Abs(p1.Y) >= Abs(p1.X) Then
             .Y = IIf(p1.Y > 0, 1, IIf(p1.Y < 0, -1, 0))
         End If
-        If Abs(p1.Z) >= Abs(p1.X) And Abs(p1.Z) >= Abs(p1.Y) Then
-            .Z = IIf(p1.Z > 0, 1, IIf(p1.Z < 0, -1, 0))
+        If Abs(p1.z) >= Abs(p1.X) And Abs(p1.z) >= Abs(p1.Y) Then
+            .z = IIf(p1.z > 0, 1, IIf(p1.z < 0, -1, 0))
         End If
     End With
 End Function
 Public Function VectorMagnitude(ByVal p1 As Point) As Single
-    VectorMagnitude = (p1.X * p1.X + p1.Y * p1.Y + p1.Z * p1.Z)
+    VectorMagnitude = (p1.X * p1.X + p1.Y * p1.Y + p1.z * p1.z)
 End Function
 Public Function LineNormalize(ByRef p1 As Point, ByRef p2 As Point) As Point
     Set LineNormalize = New Point
     With LineNormalize
-        .Z = DistanceEx(p1, p2)
-        If (.Z > 0) Then
-            .Z = (1 / .Z)
-            .X = ((p2.X - p1.X) * .Z)
-            .Y = ((p2.Y - p1.Y) * .Z)
-            .Z = ((p2.Z - p1.Z) * .Z)
+        .z = DistanceEx(p1, p2)
+        If (.z > 0) Then
+            .z = (1 / .z)
+            .X = ((p2.X - p1.X) * .z)
+            .Y = ((p2.Y - p1.Y) * .z)
+            .z = ((p2.z - p1.z) * .z)
         End If
     End With
 End Function
@@ -1704,7 +1726,7 @@ Public Function VectorMidPoint(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorMidPoint
         .X = ((Large(p1.X, p2.X) - Least(p1.X, p2.X)) / 2) + Least(p1.X, p2.X)
         .Y = ((Large(p1.Y, p2.Y) - Least(p1.Y, p2.Y)) / 2) + Least(p1.Y, p2.Y)
-        .Z = ((Large(p1.Z, p2.Z) - Least(p1.Z, p2.Z)) / 2) + Least(p1.Z, p2.Z)
+        .z = ((Large(p1.z, p2.z) - Least(p1.z, p2.z)) / 2) + Least(p1.z, p2.z)
     End With
 End Function
 
@@ -1713,52 +1735,65 @@ Public Function VectorNegative(ByRef p1 As Point) As Point
     With VectorNegative
         .X = -p1.X
         .Y = -p1.Y
-        .Z = -p1.Z
+        .z = -p1.z
     End With
 End Function
 
-Public Function VectorDivision(ByRef p1 As Point, ByVal n As Single) As Point
-    Set VectorDivision = New Point
-    With VectorDivision
+Public Function VectorDivideBy(ByRef p1 As Point, ByVal n As Single) As Point
+    Set VectorDivideBy = New Point
+    With VectorDivideBy
         .X = (p1.X / n)
         .Y = (p1.Y / n)
-        .Z = (p1.Z / n)
+        .z = (p1.z / n)
     End With
 End Function
-
+Public Function VectorDivision(ByRef p1 As Point, ByRef p2 As Point) As Point
+    Set VectorDivision = New Point
+    With VectorDivision
+        If p2.X <> 0 Then
+            .X = (p1.X / p2.X)
+        End If
+        If p2.Y <> 0 Then
+            .Y = (p1.Y / p2.Y)
+        End If
+        If p2.z <> 0 Then
+            .z = (p1.z / p2.z)
+        End If
+    End With
+End Function
 Public Function VectorIsNormal(ByRef p1 As Point) As Boolean
     'returns if a point provided is normalized, to the best of ability
-    VectorIsNormal = (Round(Abs(p1.X) + Abs(p1.Y) + Abs(p1.Z), 0) = 1) 'first kind is the absolute of all values equals one
+    VectorIsNormal = (Round(Abs(p1.X) + Abs(p1.Y) + Abs(p1.z), 0) = 1) 'first kind is the absolute of all values equals one
     If VectorIsNormal Then Exit Function
     VectorIsNormal = (DistanceEx(MakePoint(0, 0, 0), p1) = 1)  'another is the total length of vector is one
     If VectorIsNormal Then Exit Function
     'another is if any value exists non zero as well as adding up in any non specific arrangement cancels to zero, as has one
-    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.Z <> 0) And (( _
-        ((p1.X + p1.Y + p1.Z) = 0) Or ((p1.Y + p1.Z + p1.X) = 0) Or ((p1.Z + p1.X + p1.Y) = 0) Or _
-        ((p1.X + p1.Z + p1.Y) = 0) Or ((p1.Z + p1.Y + p1.X) = 0) Or ((p1.Y + p1.X + p1.Z) = 0) _
+    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (( _
+        ((p1.X + p1.Y + p1.z) = 0) Or ((p1.Y + p1.z + p1.X) = 0) Or ((p1.z + p1.X + p1.Y) = 0) Or _
+        ((p1.X + p1.z + p1.Y) = 0) Or ((p1.z + p1.Y + p1.X) = 0) Or ((p1.Y + p1.X + p1.z) = 0) _
         )))
     If VectorIsNormal Then Exit Function
     'triangle's normal, only the sides are expressed upon each axis
-    VectorIsNormal = ((((p1.X - p1.Y) + p1.Z) + ((p1.Y - p1.Z) + p1.X) + ((p1.Z - p1.X) + p1.Y)) = 1)
+    VectorIsNormal = ((((p1.X - p1.Y) + p1.z) + ((p1.Y - p1.z) + p1.X) + ((p1.z - p1.X) + p1.Y)) = 1)
     If VectorIsNormal Then Exit Function
     Dim tmp As Single
     'another is a reflection test and check if it falls with in -1 to 1 for triangle normals
     'reflection is 27 groups of three arithmitic (-1+(2-3)) and by the third group, the groups
     'reflect the same (-g+(g-g)) which are sub groups of lines of three groups doing the same
-    tmp = -((-(-p1.X + (p1.Y - p1.Z)) + ((-p1.Y + (p1.Z - p1.X)) - (-p1.Z + (p1.X - p1.Y)))) + _
-        ((-p1.Y + (p1.Z - p1.X)) + ((-p1.Z + (p1.X - p1.Y)) - (-p1.X + (p1.Y - p1.Z))) - _
-        (-p1.Z + (p1.X - p1.Y)) + ((-p1.X + (p1.Y - p1.Z)) - (-p1.Y + (p1.Z - p1.X))))) + ( _
-        ((-(-p1.Y + (p1.X - p1.Z)) + ((-p1.X + (p1.Z - p1.Y)) - (-p1.Z + (p1.Y - p1.X)))) + _
-        ((-p1.X + (p1.Z - p1.Y)) + ((-p1.Z + (p1.Y - p1.X)) - (-p1.Y + (p1.X - p1.Z))) - _
-        (-p1.Z + (p1.Y - p1.X)) + ((-p1.Y + (p1.X - p1.Z)) - (-p1.X + (p1.Z - p1.Y))))) - _
-        ((-(-p1.Z + (p1.Y - p1.X)) + ((-p1.Y + (p1.X - p1.Z)) - (-p1.X + (p1.Z - p1.Y)))) + _
-        ((-p1.Y + (p1.X - p1.Z)) + ((-p1.X + (p1.Z - p1.Y)) - (-p1.Z + (p1.Y - p1.X))) - _
-        (-p1.X + (p1.Z - p1.Y)) + ((-p1.Z + (p1.Y - p1.X)) - (-p1.Y + (p1.X - p1.Z))))))
+    tmp = -((-(-p1.X + (p1.Y - p1.z)) + ((-p1.Y + (p1.z - p1.X)) - (-p1.z + (p1.X - p1.Y)))) + _
+        ((-p1.Y + (p1.z - p1.X)) + ((-p1.z + (p1.X - p1.Y)) - (-p1.X + (p1.Y - p1.z))) - _
+        (-p1.z + (p1.X - p1.Y)) + ((-p1.X + (p1.Y - p1.z)) - (-p1.Y + (p1.z - p1.X))))) + ( _
+        ((-(-p1.Y + (p1.X - p1.z)) + ((-p1.X + (p1.z - p1.Y)) - (-p1.z + (p1.Y - p1.X)))) + _
+        ((-p1.X + (p1.z - p1.Y)) + ((-p1.z + (p1.Y - p1.X)) - (-p1.Y + (p1.X - p1.z))) - _
+        (-p1.z + (p1.Y - p1.X)) + ((-p1.Y + (p1.X - p1.z)) - (-p1.X + (p1.z - p1.Y))))) - _
+        ((-(-p1.z + (p1.Y - p1.X)) + ((-p1.Y + (p1.X - p1.z)) - (-p1.X + (p1.z - p1.Y)))) + _
+        ((-p1.Y + (p1.X - p1.z)) + ((-p1.X + (p1.z - p1.Y)) - (-p1.z + (p1.Y - p1.X))) - _
+        (-p1.X + (p1.z - p1.Y)) + ((-p1.z + (p1.Y - p1.X)) - (-p1.Y + (p1.X - p1.z))))))
         '9 lines, 27 groups, 81 values, full circle, the first value (-negative, plus (second minus third))
-    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.Z <> 0) And (tmp >= -1 And tmp <= 1))
+    VectorIsNormal = ((p1.X <> 0 Or p1.Y <> 0 Or p1.z <> 0) And (tmp >= -1 And tmp <= 1))
 End Function
 Public Function VectorIsSignOf(ByRef p1 As Point) As Boolean
-    VectorIsSignOf = (Abs(p1.X) = 0 Or Abs(p1.X) = 1) And (Abs(p1.Y) = 0 Or Abs(p1.Y) = 1) And (Abs(p1.Z) = 0 Or Abs(p1.Z) = 1) 'sign of a vector
+    VectorIsSignOf = (Abs(p1.X) = 0 Or Abs(p1.X) = 1) And (Abs(p1.Y) = 0 Or Abs(p1.Y) = 1) And (Abs(p1.z) = 0 Or Abs(p1.z) = 1) 'sign of a vector
 End Function
 Public Function AbsoluteFactor(ByVal n As Single) As Single
     'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
@@ -1810,7 +1845,7 @@ End Function
 
 Public Function VectorOctet(ByRef p As Point) As Single
     VectorOctet = VectorQuadrant(p)
-    If p.Z < 0 Then VectorOctet = VectorOctet + 4
+    If p.z < 0 Then VectorOctet = VectorOctet + 4
 End Function
 
 
@@ -1839,12 +1874,12 @@ Public Function VectorInbetween(ByRef ZeroPercent As Point, ByRef OneHundred As 
         End If
         
         
-        c1 = Large(ZeroPercent.Z, OneHundred.Z)
-        C2 = Least(ZeroPercent.Z, OneHundred.Z)
+        c1 = Large(ZeroPercent.z, OneHundred.z)
+        C2 = Least(ZeroPercent.z, OneHundred.z)
         If Abs(c1 - C2) <= Abs(C2 - c1) Then
-            .Z = ZeroPercent.Z + ((c1 - C2) * DecimalPercent)
+            .z = ZeroPercent.z + ((c1 - C2) * DecimalPercent)
         Else
-            .Z = ZeroPercent.Z + ((C2 - c1) * DecimalPercent)
+            .z = ZeroPercent.z + ((C2 - c1) * DecimalPercent)
         End If
 
     End With
@@ -1858,8 +1893,8 @@ Public Function AbsoluteInvert(ByVal Value As Long, Optional ByVal Whole As Long
     AbsoluteInvert = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
-Public Function Lerp(ByVal A As Single, ByVal b As Single, ByVal t As Single) As Single
-    Lerp = A + (b - A) * t
+Public Function Lerp(ByVal a As Single, ByVal b As Single, ByVal t As Single) As Single
+    Lerp = a + (b - a) * t
 End Function
 
 Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant

@@ -138,7 +138,7 @@ Public Property Set Offset(ByRef RHS As Point)
 End Property
 
 Public Property Get Rotate() As Point
-    If pRotate Is Nothing Then Set pRotate = New Point
+    If pRotate Is Nothing Then Set pRotate = ZeroRotation
     Set Rotate = pRotate
 End Property
 Public Property Set Rotate(ByRef RHS As Point)

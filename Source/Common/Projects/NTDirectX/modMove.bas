@@ -32,20 +32,20 @@ Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByV
         Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
         Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
     Else
-    
-        If Not Camera.Planet Is Nothing Then
-            Set ApplyTo.Rotate = AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, AngleAxisDeduction(Camera.Planet.Rotate, ApplyTo.Relative.Rotate)), Camera.Planet.Rotate)
-            Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
-            Set ApplyTo.Relative.Rotate = Nothing
-
-'            Set ApplyTo.Rotate = AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, AngleAxisAddition(Camera.Planet.Rotate, AngleAxisInvert(ApplyTo.Relative.Rotate))), Camera.Planet.Rotate)
+'
+'        If Not Camera.Planet Is Nothing Then
+'            Set ApplyTo.Rotate = AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, AngleAxisDeduction(Camera.Planet.Rotate, ApplyTo.Relative.Rotate)), Camera.Planet.Rotate)
 '            Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
 '            Set ApplyTo.Relative.Rotate = Nothing
-        Else
+'
+''            Set ApplyTo.Rotate = AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, AngleAxisAddition(Camera.Planet.Rotate, AngleAxisInvert(ApplyTo.Relative.Rotate))), Camera.Planet.Rotate)
+''            Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+''            Set ApplyTo.Relative.Rotate = Nothing
+'        Else
             Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
             Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
             Set ApplyTo.Relative.Rotate = Nothing
-        End If
+'        End If
         
         
 '        Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Rotate, ApplyTo.Relative.Rotate)

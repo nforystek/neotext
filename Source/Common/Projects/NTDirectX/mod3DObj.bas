@@ -565,9 +565,10 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
                 End If
             End If
 
+
             RenderMolecule p, Nothing, matMat
-    
-           ' RenderOrbits p.Molecules, False
+
+     '    RenderOrbits p.Molecules, False
 
 
             Set p = Nothing
