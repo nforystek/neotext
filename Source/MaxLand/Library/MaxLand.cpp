@@ -20,10 +20,11 @@
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
 /* Accepts inputs n1 and n2 as retruned from PointInPoly(X,Y) then again for (Z,Y) and n2 as returned from tri_tri_intersect() to return the determination of whether or not the collision is correct and satisfy bitwise and math equalaterally collision precise to real coordination from the preliminary possible collision information the other functions return. */
 
-extern bool PointBehindPoly (unsigned short pX, unsigned short pY, unsigned short pZ, unsigned short vX, unsigned short vY, unsigned short vZ, unsigned short nX, unsigned short nY, unsigned short nZ) ;
+extern bool PointBehindPoly (float a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8, float a9);
 /* Checks for the presence of a point behind a triangle, the first three inputs are the length of the triangles sides, the next three are the triangles normal, the last three are the point to test with the triangles center removed. */
 
-extern int PointInPoly (float pX, float pY, float polyX[], float polyY[], int polyN);
+extern int PointInPoly ( float pointX, float pointY, float polyDataX[], float polyDataY[], int polyDataCount);
+//extern int PointInPoly (float pointX,  float pointY, float polyDataX[], float polyDataY[], int polyDataCount);
 //extern int PointInPoly (float testx, float testy, float *vertx, float *verty, int nvert);
 
 //extern short PointInPoly(float pX, float pY,float *polyX, float *polyY, short polyN);
@@ -48,44 +49,27 @@ extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 				 || (((n1 - n2 || n3) && (n1 - n2 || n3)) + ((n1 || n2 + !n3) && (!n1 + n2 && n3))));
 }
 
-
-extern bool PointBehindPoly (unsigned short pointX, unsigned short pointY, unsigned short pointZ, unsigned short polyAxisX, unsigned short polyAxisY, unsigned short polyAxisZ, unsigned short polyNormalX, unsigned short polyNormalY, unsigned short polyNormalZ) 
+extern bool PointBehindPoly (float pointX, float pointY, float pointZ, float length1, float length2, float length3, float normalX, float normalY, float normalZ) 
 {
-  return ((pointZ * polyAxisZ + polyAxisY * pointY + polyAxisX * pointX - (polyAxisZ * polyNormalZ + polyAxisX * polyNormalX + polyAxisY * polyNormalY)) <= 0.0);
-
+	return pointZ * length3 + length2 * pointY + length1 * pointX - (length3 * normalZ + length1 * normalX + length2 * normalY) <= 0.0;
 }
 
-/*
-	Dim ref As Single
-    Dim ret As Single
-    If polyN > 2 Then
-        ref = (PX - polyX(0)) * (polyY(1) - polyY(0)) - (PY - polyY(0)) * (polyX(1) - polyX(0))
-        ret = ref
-        For PointInPoly2 = 1 To polyN
-            ref = ((PX - polyX(0)) * (polyY(PointInPoly2) - polyY(0)) - (PY - polyY(0)) * (polyX(PointInPoly2) - polyX(0)))
-            If ((ret >= 0) Xor (ref >= 0)) Then
-                PointInPoly2 = PointInPoly2 - 1
-                Exit Function
-            End If
-            ret = ref
-        Next
-        PointInPoly2 = 0
-    End If
-*/
-extern int PointInPoly (float pX, float pY, float polyX[], float polyY[], int polyN)
+extern int PointInPoly ( float pointX, float pointY, float polyDataX[], float polyDataY[], int polyDataCount)
 {
-	if (polyN>1) {
-		double ref=((pX - polyX[0]) * (polyY[1]-polyY[0]) - (pY - polyY[0]) * (polyX[1]-polyX[0]));
-		double ret=ref;
-		for (int i=1;i<polyN;i++) {
-			ref =  ((pX - polyX[0]) * (polyY[i]-polyY[0]) - (pY - polyY[0]) * (polyX[i]-polyX[0]));
-			if ((ret>=0)^(ref>=0)) return i-1;
+	if (polyDataCount>2) {
+		float ref=((pointX - polyDataX[0]) * (polyDataY[1] - polyDataY[0]) - (pointY - polyDataY[0]) * (polyDataX[1] - polyDataX[0]));
+		float ret=ref;
+		int result=0;
+		for (int i=1;i<=polyDataCount;i++) {
+			ref = ((pointX - polyDataX[i-1]) * (polyDataY[i] - polyDataY[i-1]) - (pointY - polyDataY[i-1]) * (polyDataX[i] - polyDataX[i-1]));
+			if ((ret >= 0) && (ref < 0) && (result==0)) result = i;
 			ret=ref;
 		}
+		if ((result==0)||(result>polyDataCount)) return 1;//todo: this is suppose to return a decimal percent
+														//of the total polygon points where in is found inside
 	}
 	return 0;
 }
-
 
 extern short tri_tri_intersect (unsigned short v0_0, unsigned short v0_1, unsigned short v0_2, unsigned short v1_0, unsigned short v1_1, unsigned short v1_2, unsigned short v2_0, unsigned short v2_1, unsigned short v2_2, unsigned short u0_0, unsigned short u0_1, unsigned short u0_2, unsigned short u1_0, unsigned short u1_1, unsigned short u1_2, unsigned short u2_0, unsigned short u2_1, unsigned short u2_2)
 {
