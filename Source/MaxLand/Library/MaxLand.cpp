@@ -71,6 +71,24 @@ extern int PointInPoly ( float pointX, float pointY, float polyDataX[], float po
 	return 0;
 }
 
+/*
+extern int PointInPoly ( float pointX, float pointY, float polyDataX[], float polyDataY[], int polyDataCount)
+{
+	if (polyDataCount>2) {
+		float ref=((pointX - polyDataX[0]) * (polyDataY[1] - polyDataY[0]) - (pointY - polyDataY[0]) * (polyDataX[1] - polyDataX[0]));
+		float ret=ref;
+		int result=0;
+		for (int i=1;i<=polyDataCount;i++) {
+			ref = ((pointX - polyDataX[i-1]) * (polyDataY[i] - polyDataY[i-1]) - (pointY - polyDataY[i-1]) * (polyDataX[i] - polyDataX[i-1]));
+			if ((ret >= 0) && (ref < 0) && (result==0)) result = i;
+			ret=ref;
+		}
+		if ((result==0)||(result>polyDataCount)) return 1;//todo: this is suppose to return a decimal percent
+														//of the total polygon points where in is found inside
+	}
+	return 0;
+}
+*/
 extern short tri_tri_intersect (unsigned short v0_0, unsigned short v0_1, unsigned short v0_2, unsigned short v1_0, unsigned short v1_1, unsigned short v1_2, unsigned short v2_0, unsigned short v2_1, unsigned short v2_2, unsigned short u0_0, unsigned short u0_1, unsigned short u0_2, unsigned short u1_0, unsigned short u1_1, unsigned short u1_2, unsigned short u2_0, unsigned short u2_1, unsigned short u2_2)
 {
 	return 0;
