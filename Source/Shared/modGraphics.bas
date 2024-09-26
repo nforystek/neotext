@@ -152,10 +152,10 @@ End Type
 
 Public Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectA" (lpLogFont As LOGFONT) As Long
 Public Const FW_NORMAL = 400
-Public Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
+Public Declare Function GetClientRect Lib "USER32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Public Declare Function SetBkMode Lib "gdi32" (ByVal hdc As Long, ByVal nBkMode As Long) As Long
 
-Public Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal e As Long, ByVal o As Long, ByVal W As Long, ByVal i As Long, ByVal u As Long, ByVal S As Long, ByVal c As Long, ByVal Op As Long, ByVal cP As Long, ByVal Q As Long, ByVal PAF As Long, ByVal F As String) As Long
+Public Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal e As Long, ByVal o As Long, ByVal W As Long, ByVal I As Long, ByVal u As Long, ByVal S As Long, ByVal C As Long, ByVal Op As Long, ByVal cP As Long, ByVal Q As Long, ByVal PAF As Long, ByVal F As String) As Long
 Public Const FW_DONTCARE = 0
 Public Const FW_THIN = 100
 Public Const FW_EXTRALIGHT = 200
@@ -262,22 +262,22 @@ Public Const FF_SWISS = 32
 'Public Const DFCS_MONO = &H8000         'Button has a monochrome
 '                                        'border
 
-Public Declare Function DrawFrameControl Lib "user32" (ByVal _
+Public Declare Function DrawFrameControl Lib "USER32" (ByVal _
    hdc&, lpRect As RECT, ByVal un1 As Long, ByVal un2 As Long) _
    As Boolean
    
-Public Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
+Public Declare Function IsWindow Lib "USER32" (ByVal hWnd As Long) As Long
 
 Private Const GWL_WNDPROC = -4
 
-Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function CallWindowProc Lib "USER32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function DefWindowProc Lib "USER32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SetWindowLong Lib "USER32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "USER32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function DestroyWindow Lib "USER32" (ByVal hWnd As Long) As Long
 
-Public Declare Function GetDC Lib "user32" (ByVal hwnd As Long) As Long
-Public Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hdc As Long) As Long
+Public Declare Function GetDC Lib "USER32" (ByVal hWnd As Long) As Long
+Public Declare Function ReleaseDC Lib "USER32" (ByVal hWnd As Long, ByVal hdc As Long) As Long
 Public Declare Function SaveDC Lib "gdi32" (ByVal hdc As Long) As Long
 Public Declare Function RestoreDC Lib "gdi32" (ByVal hdc As Long, ByVal nSavedDC As Long) As Long
 Public Declare Function DeleteDC Lib "gdi32" (ByVal hdc As Long) As Long
@@ -297,14 +297,14 @@ Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long
 Public Declare Function SetPixelV Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Public Declare Function MoveToEx Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Public Declare Function lineto Lib "gdi32" Alias "LineTo" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
-Public Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
-Public Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
+Public Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Public Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Public Declare Function Polygon Lib "gdi32" (ByVal hdc As Long, lpPoint As POINTAPI, ByVal nCount As Long) As Long
-Public Declare Function Arc Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
-Public Declare Function ArcTo Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
-Public Declare Function Pie Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function Arc Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function ArcTo Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function Pie Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
 Public Declare Function ExtFloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long, ByVal wFillType As Long) As Long
-Public Declare Function FillRect Lib "user32" (ByVal hdc As Long, lpRect As RECT, ByVal hbrush As Long) As Long
+Public Declare Function FillRect Lib "USER32" (ByVal hdc As Long, lpRect As RECT, ByVal hbrush As Long) As Long
 Public Declare Function FloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Public Declare Function PatBlt Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal dwRop As Long) As Long
 Public Declare Function GetPolyFillMode Lib "gdi32" (ByVal hdc As Long) As Long
@@ -317,7 +317,7 @@ Public Declare Function TextOut Lib "gdi32" Alias "TextOutA" (ByVal hdc As Long,
 Public Declare Function TextOutPtr Lib "gdi32" Alias "TextOutA" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal lpString As Long, ByVal nCount As Long) As Long
 Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
-Public Declare Function InvertRect Lib "user32" (ByVal hdc As Long, lpRect As RECT) As Long
+Public Declare Function InvertRect Lib "USER32" (ByVal hdc As Long, lpRect As RECT) As Long
 
 'Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal x As Long, ByVal y As Long) As Long
 'Public Declare Function GetPixelFormat Lib "gdi32" (ByVal hdc As Long) As Long
@@ -479,7 +479,7 @@ Private Type EncoderParameter
 End Type
 
 Private Type EncoderParameters
-   count As Long
+   Count As Long
    Parameter As EncoderParameter
 End Type
 
@@ -491,7 +491,7 @@ Private Declare Function GdipCreateBitmapFromHBITMAP Lib "GDIPlus" (ByVal hbm As
 
 Private Declare Function GdipDisposeImage Lib "GDIPlus" (ByVal Image As Long) As Long
 
-Private Declare Function GdipSaveImageToFile Lib "GDIPlus" (ByVal Image As Long, ByVal FileName As Long, clsidEncoder As GUID, encoderParams As Any) As Long
+Private Declare Function GdipSaveImageToFile Lib "GDIPlus" (ByVal Image As Long, ByVal Filename As Long, clsidEncoder As GUID, encoderParams As Any) As Long
    
 Public Const COLOR_SCROLLBAR = 0           ' Scroll Bar
 Private Const COLOR_BACKGROUND = 1          ' Windows desktop
@@ -533,12 +533,12 @@ Private Const COLOR_BTNHILIGHT = COLOR_BTNHIGHLIGHT
 
 
 Private Declare Function SetSysColors _
- Lib "user32" _
+ Lib "USER32" _
  (ByVal nChanges As Long, lpSysColor As Long, _
  lpColorValues As Long) As Long
  
 Public Declare Function GetSysColor _
- Lib "user32" (ByVal nIndex As Long) As Long
+ Lib "USER32" (ByVal nIndex As Long) As Long
 
 Public Function RECT(Left, Top, Right, Bottom) As RECT
     With RECT
@@ -618,7 +618,7 @@ SysOrLongColor:
 '
     End If
 HTMLorHexColor2:
-    Color = Right("000000" & Hex(lngColor), 6)
+    Color = Right("000000" & hex(lngColor), 6)
 HTMLorHexColor:
     Red = CByte("&h" & Mid(Color, 5, 2))
     Green = CByte("&h" & Mid(Color, 3, 2))
@@ -665,7 +665,7 @@ End Function
 
 ' ----==== SaveJPG ====----
 
-Public Sub SaveJPG(ByVal pict As StdPicture, ByVal FileName As String, Optional ByVal Quality As Byte = 80)
+Public Sub SaveJPG(ByVal pict As StdPicture, ByVal Filename As String, Optional ByVal Quality As Byte = 80)
 
 Dim tSI As GdiplusStartupInput
 Dim lRes As Long
@@ -680,7 +680,7 @@ Dim lBitmap As Long
 
       ' Create the GDI+ bitmap
       ' from the image handle
-      lRes = GdipCreateBitmapFromHBITMAP(pict.Handle, pict.hPal, lBitmap)
+      lRes = GdipCreateBitmapFromHBITMAP(pict.handle, pict.hPal, lBitmap)
 
       If lRes = 0 Then
          Dim tJpgEncoder As GUID
@@ -690,7 +690,7 @@ Dim lBitmap As Long
          CLSIDFromString StrPtr("{557CF401-1A04-11D3-9A73-0000F81EF32E}"), tJpgEncoder
 
          ' Initialize the encoder parameters
-         tParams.count = 1
+         tParams.Count = 1
          With tParams.Parameter ' Quality
             ' Set the Quality GUID
             CLSIDFromString StrPtr("{1D5BE4B5-FA4A-452D-9CDD-5DB35105E7EB}"), .GUID
@@ -702,7 +702,7 @@ Dim lBitmap As Long
          ' Save the image
          lRes = GdipSaveImageToFile( _
                   lBitmap, _
-                  StrPtr(FileName), _
+                  StrPtr(Filename), _
                   tJpgEncoder, _
                   tParams)
 
@@ -721,43 +721,43 @@ Dim lBitmap As Long
    End If
 
 End Sub
-Public Sub WriteBytes(ByVal FileName As String, ByRef c() As Byte)
+Public Sub WriteBytes(ByVal Filename As String, ByRef C() As Byte)
     Dim FileNo As Integer
     On Error GoTo Err_Init
-    If PathExists(FileName, True) Then Kill FileName
+    If PathExists(Filename, True) Then Kill Filename
     FileNo = FreeFile
-    Open FileName For Output As #FileNo
+    Open Filename For Output As #FileNo
     Close #FileNo
     FileNo = FreeFile
-    Open FileName For Binary Access Write As #FileNo
+    Open Filename For Binary Access Write As #FileNo
 
-    Put #FileNo, , c
+    Put #FileNo, , C
     Close #FileNo
     
     Exit Sub
 Err_Init:
-    MsgBox Err.number & " - " & Err.Description
+    MsgBox Err.Number & " - " & Err.description
 End Sub
 
 
-Public Function LoadFile(ByVal FileName As String) As Byte()
-    Dim FileNo As Integer, B() As Byte
+Public Function LoadFile(ByVal Filename As String) As Byte()
+    Dim FileNo As Integer, b() As Byte
     On Error GoTo Err_Init
-    If Dir(FileName, vbNormal Or vbArchive) = "" Then
+    If Dir(Filename, vbNormal Or vbArchive) = "" Then
         Exit Function
     End If
     FileNo = FreeFile
-    Open FileName For Binary Access Read As #FileNo
-    ReDim B(0 To LOF(FileNo) - 1)
-    Get #FileNo, , B
+    Open Filename For Binary Access Read As #FileNo
+    ReDim b(0 To LOF(FileNo) - 1)
+    Get #FileNo, , b
     Close #FileNo
-    LoadFile = B
+    LoadFile = b
     Exit Function
 Err_Init:
-    MsgBox Err.number & " - " & Err.Description
+    MsgBox Err.Number & " - " & Err.description
 End Function
 
-Public Function PictureFromByteStream(B() As Byte) As IPicture
+Public Function PictureFromByteStream(b() As Byte) As IPicture
     Dim LowerBound As Long
     Dim ByteCount  As Long
     Dim hMem  As Long
@@ -766,17 +766,17 @@ Public Function PictureFromByteStream(B() As Byte) As IPicture
     Dim istm As stdole.IUnknown
 
     On Error GoTo Err_Init
-    If UBound(B, 1) < 0 Then
+    If UBound(b, 1) < 0 Then
         Exit Function
     End If
     
-    LowerBound = LBound(B)
-    ByteCount = (UBound(B) - LowerBound) + 1
+    LowerBound = LBound(b)
+    ByteCount = (UBound(b) - LowerBound) + 1
     hMem = GlobalAlloc(&H2, ByteCount)
     If hMem <> 0 Then
         lpMem = GlobalLock(hMem)
         If lpMem <> 0 Then
-            MoveMemory ByVal lpMem, B(LowerBound), ByteCount
+            MoveMemory ByVal lpMem, b(LowerBound), ByteCount
             Call GlobalUnlock(hMem)
             If CreateStreamOnHGlobal(hMem, 1, istm) = 0 Then
 
@@ -790,11 +790,11 @@ Public Function PictureFromByteStream(B() As Byte) As IPicture
     Exit Function
     
 Err_Init:
-    If Err.number = 9 Then
+    If Err.Number = 9 Then
         'Uninitialized array
         MsgBox "You must pass a non-empty byte array to this function!"
     Else
-        MsgBox Err.number & " - " & Err.Description
+        MsgBox Err.Number & " - " & Err.description
     End If
 End Function
 
@@ -812,26 +812,26 @@ Public Function GetMonitorDPI(Optional ByVal LogicalPixelsX As Long = 88, Option
 
 End Function
 
-Public Function ImageDimensions(ByVal FileName As String, ByRef imgdim As ImageDimensions, Optional ByRef ext As String = "") As Boolean
+Public Function ImageDimensions(ByVal Filename As String, ByRef imgdim As ImageDimensions, Optional ByRef ext As String = "") As Boolean
 
-    If PathExists(FileName, True) Then
+    If PathExists(Filename, True) Then
 
         'declare vars
-        Dim Handle As Integer
+        Dim handle As Integer
         Dim byteArr(255) As Byte
         
         'open file and get 256 byte chunk
-        Handle = FreeFile
+        handle = FreeFile
         On Error GoTo endFunction
-        Open FileName For Binary Access Read As #Handle
-            Get Handle, , byteArr
-        Close #Handle
+        Open Filename For Binary Access Read As #handle
+            Get handle, , byteArr
+        Close #handle
         
         ImageDimensions = ImageDimensionsFromBytes(byteArr, imgdim, ext)
 
     
     Else
-        Debug.Print "Invalid picture file [" & FileName & "]"
+        Debug.Print "Invalid picture file [" & Filename & "]"
     End If
 endFunction:
 
@@ -841,7 +841,7 @@ End Function
 Public Function ImageDimensionsFromBytes(ByRef byteArr() As Byte, ByRef imgdim As ImageDimensions, Optional ByRef ext As String = "") As Boolean
 
     Dim isValidImage As Boolean
-    Dim i As Integer
+    Dim I As Integer
     
     'init vars
     isValidImage = False
@@ -858,13 +858,15 @@ Public Function ImageDimensionsFromBytes(ByRef byteArr() As Byte, ByRef imgdim A
     End If
     
     'check for SOF marker: &HFF and &HC0 TO &HCF
-    For i = 0 To UBound(byteArr) - 1
-        If byteArr(i) = &HFF And byteArr(i + 1) >= &HC0 And byteArr(i + 1) <= &HCF Then
-            imgdim.Height = byteArr(i + 5) * 256 + byteArr(i + 6)
-            imgdim.Width = byteArr(i + 7) * 256 + byteArr(i + 8)
+    For I = 0 To UBound(byteArr) - 1
+        If byteArr(I) = &HFF And byteArr(I + 1) >= &HC0 And byteArr(I + 1) <= &HCF Then
+'            imgdim.Height = byteArr(I + 5) * 256 + byteArr(I + 6)
+'            imgdim.Width = byteArr(I + 7) * 256 + byteArr(I + 8)
+            imgdim.Height = byteArr(I + 2) * 256 + byteArr(I + 3)
+            imgdim.Width = byteArr(I + 4) * 256 + byteArr(I + 5)
             Exit For
         End If
-    Next i
+    Next I
     
     'get image type and exit
     ext = "jpg"
@@ -944,25 +946,25 @@ End Function
 Public Function IsAlphaNumeric(ByVal Text As String) As Boolean
     Dim cnt As Integer
     Dim C2 As Integer
-    Dim retval As Boolean
-    retval = True
+    Dim retVal As Boolean
+    retVal = True
     If Not IsNumeric(Text) Then
     If Len(Text) > 0 Then
         For cnt = 1 To Len(Text)
             If (Asc(LCase(Mid(Text, cnt, 1))) = 46) Then
                 C2 = C2 + 1
             ElseIf (Not IsNumeric(Mid(Text, cnt, 1))) And (Not (Asc(LCase(Mid(Text, cnt, 1))) >= 97 And Asc(LCase(Mid(Text, cnt, 1))) <= 122)) Then
-                retval = False
+                retVal = False
                 Exit For
             End If
         Next
     Else
-        retval = False
+        retVal = False
     End If
     Else
-        retval = True
+        retVal = True
     End If
-    IsAlphaNumeric = retval And (C2 <= 1)
+    IsAlphaNumeric = retVal And (C2 <= 1)
 End Function
 
 #End If

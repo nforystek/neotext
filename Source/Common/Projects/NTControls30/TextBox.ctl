@@ -155,7 +155,7 @@ Private pPageBreaks() As Long
 Private pColorRecords() As ColorRange
 Private pBorderStyle As Integer
 Private pAppearance As Integer
-
+Private pWordWrap As Boolean
 
 Private pOldProc As Long
 
@@ -173,6 +173,20 @@ Private xUndoBuffer As Long
 
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
+Private Function GetLineWithWrap(ByVal Text As String) As String
+    if
+End Function
+Private Function GetLinesLineCount(ByVal Text As String)
+    GetLinesLineCount = WordCount(getlinewithwerap(Text), vbcrl)
+End Function
+Public Property Get WordWrap() As Boolean
+    WordWrap = pWordWrap
+End Property
+Public Property Let WordWrap(ByVal RHS As Boolean)
+    pWordWrap = RHS
+    BuildVisibleText
+    UserControl_Paint
+End Property
 
 Public Property Get GreyNoTextMsg() As String
     GreyNoTextMsg = pGreyNoTextMsg
@@ -180,7 +194,22 @@ End Property
 Public Property Let GreyNoTextMsg(ByVal RHS As String)
     pGreyNoTextMsg = RHS
 End Property
+'Private Function RanteType(ByVal StartPos As Long, ByVal StopPos As Long) As RangeType
+'    With RanteType
+'        .StartPos = StartPos
+'        .StopPos = StopPos
+'    End With
+'End Function
+    
 Private Sub BuildVisibleText()
+
+'                tText.Reset
+'                If pPasswordChar <> "" Then
+'                    tText.Concat Convert(String(StopPos - StartPos, pPasswordChar))
+'                Else
+'                    tText.Concat pText.Partial(StartPos, StopPos - StartPos)
+'                End If
+         
     Dim tmpsel As RangeType
     
     tText.Reset
@@ -188,8 +217,26 @@ Private Sub BuildVisibleText()
         tText.Concat Convert(String(pText.Length, pPasswordChar))
     Else
         tmpsel = VisibleRange
+        If pWordWrap Then
+        
+        
+        End If
         tText.Concat pText.Partial(tmpsel.StartPos, tmpsel.StopPos - tmpsel.StartPos)
     End If
+    
+'    Dim tmpsel As RangeType
+'
+'    tText.Reset
+'    If pPasswordChar <> "" Then
+'        tText.Concat Convert(String(pText.Length, pPasswordChar))
+'    Else
+'        tmpsel = VisibleRange
+'        If pWordWrap Then
+'
+'
+'        End If
+'        tText.Concat pText.Partial(tmpsel.StartPos, tmpsel.StopPos - tmpsel.StartPos)
+'    End If
 End Sub
 Public Property Get PasswordChar() As String
     PasswordChar = pPasswordChar
@@ -1369,6 +1416,10 @@ Private Sub ScrollBar1_MouseUp(Button As Integer, Shift As Integer, X As Single,
     End If
 End Sub
 
+Private Sub ScrollBar1_Paint()
+    SetScrollBars
+End Sub
+
 Private Sub ScrollBar2_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 1 Then
         If pScrollToCaret Then
@@ -1387,6 +1438,11 @@ End Sub
 Private Function InsertCharacter(ByVal StrText As String) As String
     InsertCharacter = IIf(StrText = vbLf, " ", StrText)
 End Function
+
+Private Sub ScrollBar2_Paint()
+    SetScrollBars
+End Sub
+
 Private Sub Timer1_Timer()
 'Debug.Print "Timer " & Timer1.Interval
     Static cursorBlink As Boolean
@@ -1408,7 +1464,7 @@ Private Sub Timer1_Timer()
     
     Static lastSel As RangeType
     If (lastSel.StartPos <> pSel.StartPos Or lastSel.StopPos <> pSel.StopPos) Then
-        
+    
         MakeCaretVisible newloc, True
         
         If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then cursorBlink = False
@@ -1443,15 +1499,22 @@ Private Sub Timer1_Timer()
         cursorBlink = Not cursorBlink
 
         
-    If Not Timer1.Enabled Then
-        Timer1.Enabled = cursorBlink
+'    If Not Timer1.Enabled Then
+'        Timer1.Enabled = cursorBlink
+'        If Not Timer1.Enabled Then
+'            Timer1_Timer
+'        End If
+'    End If
+
         If Not Timer1.Enabled Then
-            Timer1_Timer
+            Timer1.Enabled = cursorBlink
         End If
-    End If
     
     End If
 
+    If Not Timer1.Enabled And hasFocus Then
+        Timer1_Timer
+    End If
     
     If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
         cursorElapse = Timer
@@ -1461,6 +1524,7 @@ End Sub
 Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
     If Enabled Then
         If pScrollToCaret And (Not ClippingWouldDraw(DrawableRect, RECT(Loc.X, Loc.Y, Loc.X + TextWidth, Loc.Y + TextHeight), True)) Then
+        
             If Loc.X < 1 Then
                 If LargeJump Then
                     pOffsetX = ((pOffsetX + LineColumnWidth) + ((1 - Loc.X) + (UsercontrolWidth / 2)))
@@ -2420,6 +2484,7 @@ Private Sub UserControl_Initialize()
 
     ScrollBar1.Backbuffer.hdc = pBackBuffer.hdc
     ScrollBar2.Backbuffer.hdc = pBackBuffer.hdc
+    
     pTabSpace = "    "
     pLineNumbers = True
 
@@ -2432,7 +2497,8 @@ End Sub
 Private Sub UserControl_InitProperties()
     pForecolor = GetSysColor(COLOR_WINDOWTEXT)
     pBackcolor = GetSysColor(COLOR_WINDOW)
-    UserControl.BackColor = GetSysColor(COLOR_WINDOW)
+    UserControl.BackColor = GetSys
+    Color (COLOR_WINDOW)
     pScrollToCaret = True
     pHideSelection = True
     UserControl.Font.name = "Lucida Console"
@@ -2443,6 +2509,7 @@ Private Sub UserControl_InitProperties()
     pTabSpace = "    "
     xUndoLimit = 150
     pLineNumbers = True
+    pWordWrap = False
     ResetUndoRedo
     ResetColors
     
@@ -2820,7 +2887,7 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
                 If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
                     txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
                     tmpsel.StopPos = tmpsel.StopPos - (Len(CharStr) - 1)
-                    Debug.Print Len(CharStr)
+                    'Debug.Print Len(CharStr)
                 End If
             End If
         End If
@@ -3025,21 +3092,25 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
     If Button = 1 And hasFocus Then
         Dim lpos As Long
         lpos = CaretFromPoint(X, Y)
-        If lpos < pSel.StopPos And (dragStart = -1 Or dragStart = 0) Then
-            pSel.StopPos = lpos
-            dragStart = -1
-        ElseIf (dragStart = -2 Or dragStart = 0) Then
-            pSel.StartPos = lpos
-            dragStart = -2
-        ElseIf (dragStart > 0) Then
-            If dText Is Nothing Then
-                UserControl.OLEDrag
-            Else
-                pSel.StartPos = lpos
+        'Debug.Print lpos; dragStart; pSel.StartPos; pSel.StopPos
+        
+        
+            If (dragStart = -1 Or dragStart = 0) Then
                 pSel.StopPos = lpos
-                UserControl_Paint
+                dragStart = -1
+            ElseIf (dragStart = -2 Or dragStart = 0) Then
+                pSel.StartPos = lpos
+                dragStart = -2
+            ElseIf (dragStart > 0) Then
+                If dText Is Nothing Then
+                    UserControl.OLEDrag
+                Else
+                    pSel.StartPos = lpos
+                    pSel.StopPos = lpos
+                    UserControl_Paint
+                End If
             End If
-        End If
+        
         Dim Loc As POINTAPI
         Loc = CaretLocation
         Dim newloc As POINTAPI
@@ -3074,6 +3145,7 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
         If Loc.X <> newloc.X Or Loc.Y <> newloc.Y Then
             MakeCaretVisible newloc, False
         End If
+        InvalidateCursor
     Else
         dragStart = 0
     End If
@@ -3166,7 +3238,7 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
             Cancel = False
             
             RaiseEventChange
-            
+             
         Else
             Dim lpos As Long
             lpos = CaretFromPoint(X, Y)
@@ -3327,12 +3399,14 @@ Public Static Sub Refresh()
             Static lastPos As RangeType
             If lastPos.StartPos <> bpos Or lastPos.StopPos <> epos - bpos Then
                 
+              '  BuildVisibleText RanteType(bpos, epos)
                 tText.Reset
                 If pPasswordChar <> "" Then
                     tText.Concat Convert(String(epos - bpos, pPasswordChar))
                 Else
                     tText.Concat pText.Partial(bpos, epos - bpos)
                 End If
+                
 
             End If
                     
@@ -3462,6 +3536,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     CodePage = PropBag.ReadProperty("CodePage", 1)
     PasswordChar = PropBag.ReadProperty("PasswordChar", "")
     GreyNoTextMsg = PropBag.ReadProperty("GreyNoTextMsg", "")
+    WordWrap = PropBag.ReadProperty("WordWrap", False)
     Cancel = False
 End Sub
 
@@ -3474,19 +3549,31 @@ Private Sub UserControl_Resize()
 End Sub
 
 Private Sub ScrollBar1_Change()
-    If ScrollBar1.Visible Then OffsetY = -ScrollBar1.Value
+    If ScrollBar1.Visible Then
+        OffsetY = -ScrollBar1.Value
+        SetScrollBars
+    End If
 End Sub
 
 Private Sub ScrollBar1_Scroll()
-    If ScrollBar1.Visible Then OffsetY = -ScrollBar1.Value
+    If ScrollBar1.Visible Then
+        OffsetY = -ScrollBar1.Value
+        SetScrollBars
+    End If
 End Sub
 
 Private Sub ScrollBar2_Change()
-     If ScrollBar2.Visible Then OffsetX = -ScrollBar2.Value
+     If ScrollBar2.Visible Then
+        OffsetX = -ScrollBar2.Value
+        SetScrollBars
+    End If
 End Sub
 
 Private Sub ScrollBar2_Scroll()
-    If ScrollBar2.Visible Then OffsetX = -ScrollBar2.Value
+    If ScrollBar2.Visible Then
+        OffsetX = -ScrollBar2.Value
+        SetScrollBars
+    End If
 End Sub
 
 Friend Sub SetScrollBarsReverse()
@@ -3542,6 +3629,10 @@ Friend Sub SetScrollBars()
             If ScrollBar2.Top <> UsercontrolHeight Then ScrollBar2.Top = UsercontrolHeight
             If ScrollBar2.Width <> UsercontrolWidth + LineColumnWidth Then ScrollBar2.Width = UsercontrolWidth + LineColumnWidth
         End If
+'        If dragStart >= 0 Then
+'            ScrollBar1.Refresh
+'            ScrollBar2.Refresh
+'        End If
     Next
     
 End Sub
@@ -3587,6 +3678,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "CodePage", CodePage, 1
     PropBag.WriteProperty "PasswordChar", PasswordChar, ""
     PropBag.WriteProperty "GreyNoTextMsg", GreyNoTextMsg, ""
+    PropBag.WriteProperty "WordWrap", WordWrap, False
     
 End Sub
 

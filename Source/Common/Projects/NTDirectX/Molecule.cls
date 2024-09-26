@@ -135,9 +135,9 @@ Public Property Get Molecules() As Molecules
 End Property
 Public Property Set Molecules(ByRef RHS As Molecules)
     Set pMolecules = RHS
-'    If Not RHS Is Nothing Then
-'        Set RHS.Parent = Me
-'    End If
+    If Not RHS Is Nothing Then
+        Set RHS.Parent = Me
+    End If
 End Property
 
 Public Property Get Origin() As Point
@@ -206,11 +206,13 @@ Friend Sub Class_Terminate()
     Set pParent = Nothing
     
     If Not pMolecules Is Nothing Then
+        Set pMolecules.Parent = Nothing
         pMolecules.Clear
         Set pMolecules = Nothing
     End If
     
     If Not pVolume Is Nothing Then
+        
         pVolume.Clear
         Set pVolume = Nothing
     End If

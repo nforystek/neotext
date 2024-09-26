@@ -224,7 +224,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     Dim middlepartheader As String
                     Dim finalpartheader As String
 
-                    middlepartheader = "Path: " & sck.Host & vbLf
+                    middlepartheader = "Path: " & sck.host & vbLf
                     middlepartheader = middlepartheader & "From: " & PostAs & vbLf
                     middlepartheader = middlepartheader & "Newsgroups: " & NewsGroup & vbLf
                     middlepartheader = middlepartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part []" & String("0", 11) & vbLf
@@ -335,20 +335,18 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     End If
 
                     If (sck.Connected) Then
-                        Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
-                            DoTasks
-                        Loop
+                    
                         If Not pAuthenticated Then
                             If pAuthUser <> "" Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO USER " & pAuthUser & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO USER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHUSER " & pAuthUser & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHUSER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -358,14 +356,14 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             
                             If (pAuthPass <> "") Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO PASS " & pAuthPass & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO PASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHPASS " & pAuthPass & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHPASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -382,8 +380,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         End If
 
                         EventFlag = 0
-                       ' sck.SendString "POST" & vbCrLf
-                        sck.SendString "POST" & vbCrLf
+                        sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -394,7 +391,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             Err.Raise 8, , EventText
                         End If
                         
-                        detailheader = "Path: " & sck.Host & vbLf
+                        detailheader = "Path: " & sck.host & vbLf
                         detailheader = detailheader & "From: " & PostAs & vbLf
                         detailheader = detailheader & "Newsgroups: " & NewsGroup & vbLf
                         detailheader = detailheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(0, numParts + 1) & "]" & vbLf
@@ -408,7 +405,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         detailheader = detailheader & vbLf
                         detailheader = detailheader & "MessageID(s):" & vbLf
 
-                        firstpartheader = "Path: " & sck.Host & vbLf
+                        firstpartheader = "Path: " & sck.host & vbLf
                         firstpartheader = firstpartheader & "From: " & PostAs & vbLf
                         firstpartheader = firstpartheader & "Newsgroups: " & NewsGroup & vbLf
                         firstpartheader = firstpartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(1, numParts + 1) & "]" & vbLf
@@ -431,7 +428,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         firstpartheader = firstpartheader & "." & vbLf
         
                         EventFlag = 0
-                        sck.SendString firstpartheader
+                        sck.SendString StrConv(StrConv(firstpartheader, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -448,7 +445,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             For cnt = 1 To numParts - 1
                             
                                 EventFlag = 0
-                                sck.SendString "POST" & vbLf
+                                sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
@@ -464,7 +461,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                                 pId = SetDashes(pId, guidDashes)
                                 gid = SetDashes(gid, poolDashes)
                                 
-                                middlepartheader = "Path: " & sck.Host & vbLf
+                                middlepartheader = "Path: " & sck.host & vbLf
                                 middlepartheader = middlepartheader & "From: " & PostAs & vbLf
                                 middlepartheader = middlepartheader & "Newsgroups: " & NewsGroup & vbLf
                                 middlepartheader = middlepartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(cnt + 1, numParts + 1) & "]" & vbLf
@@ -485,7 +482,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                                 middlepartheader = middlepartheader & "." & vbLf
 
                                 EventFlag = 0
-                                sck.SendString middlepartheader
+                                sck.SendString StrConv(StrConv(middlepartheader, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
@@ -501,7 +498,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         End If
 
                         EventFlag = 0
-                        sck.SendString "POST" & vbLf
+                        sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -517,7 +514,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         pId = SetDashes(pId, guidDashes)
                         gid = SetDashes(gid, poolDashes)
                                 
-                        finalpartheader = "Path: " & sck.Host & vbLf
+                        finalpartheader = "Path: " & sck.host & vbLf
                         finalpartheader = finalpartheader & "From: " & PostAs & vbLf
                         finalpartheader = finalpartheader & "Newsgroups: " & NewsGroup & vbLf
                         finalpartheader = finalpartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(numParts + 1, numParts + 1) & "]" & vbLf
@@ -536,7 +533,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         detailheader = detailheader & vbLf & "." & vbLf
      
                         EventFlag = 0
-                        sck.SendString finalpartheader
+                        sck.SendString StrConv(StrConv(finalpartheader, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -559,7 +556,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If ((pDetails And DetailOptions.post) = DetailOptions.post) Then
                                    
                             EventFlag = 0
-                            sck.SendString "POST" & vbLf
+                            sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -571,7 +568,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             End If
                         
                             EventFlag = 0
-                            sck.SendString detailheader
+                            sck.SendString StrConv(StrConv(detailheader, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -595,7 +592,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         
                     If dc Then
                         EventFlag = 0
-                        sck.SendString "QUIT" & vbLf
+                        sck.SendString StrConv(StrConv("QUIT" & vbLf, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -705,14 +702,14 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         If Not pAuthenticated Then
                             If pAuthUser <> "" Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO USER " & pAuthUser & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO USER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHUSER " & pAuthUser & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHUSER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -722,14 +719,14 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                             
                             If (pAuthPass <> "") Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO PASS " & pAuthPass & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO PASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHPASS " & pAuthPass & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHPASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -746,7 +743,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         End If
                         
                         EventFlag = 0
-                        sck.SendString "GROUP " & pGroups & vbLf
+                        sck.SendString StrConv(StrConv("GROUP " & pGroups & vbLf, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -768,7 +765,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
 
                             If (MessageIDs Is Nothing) Then
                                 EventFlag = 0
-                                sck.SendString "STAT " & aStart & vbLf
+                                sck.SendString StrConv(StrConv("STAT " & aStart & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
@@ -788,7 +785,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                 If Not (MessageIDs Is Nothing) Then
                                     If MessageIDs.count > 0 Then
                                         EventFlag = 0
-                                        sck.SendString "HEAD " & MessageIDs.Item(1) & vbLf
+                                        sck.SendString StrConv(StrConv("HEAD " & MessageIDs.Item(1) & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag > 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -825,7 +822,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                     End If
                                 Else
                                     EventFlag = 0
-                                    sck.SendString "HEAD" & vbLf
+                                    sck.SendString StrConv(StrConv("HEAD" & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag > 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -865,7 +862,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                     If (Not aDone) Then
                                     
                                         EventFlag = 0
-                                        sck.SendString "NEXT" & vbLf
+                                        sck.SendString StrConv(StrConv("NEXT" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -926,7 +923,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                             aheader = ""
                                         
                                             EventFlag = 0
-                                            sck.SendString "BODY " & msgID & vbLf
+                                            sck.SendString StrConv(StrConv("BODY " & msgID & vbLf, vbUnicode), vbFromUnicode)
                                             lapse = Timer
                                             Do Until (EventFlag > 0) Or (Timer - lapse > 30)
                                                 DoTasks
@@ -1021,7 +1018,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                 
                         If dc Then
                             EventFlag = 0
-                            sck.SendString "QUIT" & vbLf
+                            sck.SendString StrConv(StrConv("QUIT" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -1438,14 +1435,14 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                         If Not pAuthenticated Then
                             If pAuthUser <> "" Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO USER " & pAuthUser & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO USER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHUSER " & pAuthUser & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHUSER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -1455,14 +1452,14 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
 
                             If (pAuthPass <> "") Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO PASS " & pAuthPass & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO PASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHPASS " & pAuthPass & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHPASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -1483,7 +1480,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                 Do Until Groups.count = 0
 
                     EventFlag = 0
-                    sck.SendString "GROUP " & Groups(1) & vbLf
+                    sck.SendString StrConv(StrConv("GROUP " & Groups(1) & vbLf, vbUnicode), vbFromUnicode)
                     lapse = Timer
                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                         DoTasks
@@ -1504,7 +1501,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                         aEnd = RemoveNextArg(EventText, " ")
 
                         EventFlag = 0
-                        sck.SendString "STAT" & vbLf
+                        sck.SendString StrConv(StrConv("STAT" & vbLf, vbUnicode), vbFromUnicode)
                         lapse = Timer
                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                             DoTasks
@@ -1525,7 +1522,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             Do
 
                                 EventFlag = 0
-                                sck.SendString "HEAD" & vbLf
+                                sck.SendString StrConv(StrConv("HEAD" & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag > 0) Or (Timer - lapse > 30)
                                     DoTasks
@@ -1549,7 +1546,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Articles.Add msgID
 
                                         EventFlag = 0
-                                        sck.SendString "GROUP control.cancel" & vbLf
+                                        sck.SendString StrConv(StrConv("GROUP control.cancel" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1563,7 +1560,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         PostCancel = True
                                         mpath = Not mpath
                                         EventFlag = 0
-                                        sck.SendString "POST" & vbLf
+                                        sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1586,7 +1583,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         EventFlag = 0
                                         Debug.Print msgpst
 
-                                        sck.SendString msgpst
+                                        sck.SendString StrConv(StrConv(msgpst, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1597,7 +1594,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         End If
                                         
                                         EventFlag = 0
-                                        sck.SendString "NEXT" & vbLf
+                                        sck.SendString StrConv(StrConv("NEXT" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1608,7 +1605,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         End If
 
                                         EventFlag = 0
-                                        sck.SendString "GROUP " & Groups(1) & vbLf
+                                        sck.SendString StrConv(StrConv("GROUP " & Groups(1) & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1619,7 +1616,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         End If
 
                                         EventFlag = 0
-                                        sck.SendString "STAT" & vbLf
+                                        sck.SendString StrConv(StrConv("STAT" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1635,7 +1632,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                 Next
 
                                 EventFlag = 0
-                                sck.SendString "NEXT" & vbLf
+                                sck.SendString StrConv(StrConv("NEXT" & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
@@ -1646,7 +1643,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
 
 
                             EventFlag = 0
-                            sck.SendString "GROUP control.cancel" & vbLf
+                            sck.SendString StrConv(StrConv("GROUP control.cancel" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -1666,7 +1663,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         PostCancel = True
                                         mpath = Not mpath
                                         EventFlag = 0
-                                        sck.SendString "POST" & vbLf
+                                        sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1688,7 +1685,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         EventFlag = 0
                                         Debug.Print msgpst
 
-                                        sck.SendString msgpst
+                                        sck.SendString StrConv(StrConv(msgpst, vbUnicode), vbFromUnicode)
                                         lapse = Timer
                                         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                             DoTasks
@@ -1707,7 +1704,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             End If
 
                             EventFlag = 0
-                            sck.SendString "STAT" & vbLf
+                            sck.SendString StrConv(StrConv("STAT" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -1718,7 +1715,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             End If
 
                             EventFlag = 0
-                            sck.SendString "GROUP " & Groups(1) & vbLf
+                            sck.SendString StrConv(StrConv("GROUP " & Groups(1) & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -1729,14 +1726,14 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             End If
 
                             EventFlag = 0
-                            sck.SendString "LAST" & vbLf
+                            sck.SendString StrConv(StrConv("LAST" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
                             Loop
 
                             EventFlag = 0
-                            sck.SendString "STAT" & vbLf
+                            sck.SendString StrConv(StrConv("STAT" & vbLf, vbUnicode), vbFromUnicode)
                             lapse = Timer
                             Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                 DoTasks
@@ -1759,7 +1756,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
 
                 If dc Then
                     EventFlag = 0
-                    sck.SendString "QUIT" & vbLf
+                    sck.SendString StrConv(StrConv("QUIT" & vbLf, vbUnicode), vbFromUnicode)
                     lapse = Timer
                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                         DoTasks
@@ -1830,14 +1827,14 @@ Public Sub Connect()
                         If Not pAuthenticated Then
                             If pAuthUser <> "" Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO USER " & pAuthUser & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO USER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHUSER " & pAuthUser & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHUSER " & pAuthUser & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -1847,14 +1844,14 @@ Public Sub Connect()
                             
                             If (pAuthPass <> "") Then
                                 EventFlag = 0
-                                sck.SendString "AUTHINFO PASS " & pAuthPass & vbLf
+                                sck.SendString StrConv(StrConv("AUTHINFO PASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                 lapse = Timer
                                 Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                     DoTasks
                                 Loop
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     EventFlag = 0
-                                    sck.SendString "AUTHPASS " & pAuthPass & vbLf
+                                    sck.SendString StrConv(StrConv("AUTHPASS " & pAuthPass & vbLf, vbUnicode), vbFromUnicode)
                                     lapse = Timer
                                     Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
                                         DoTasks
@@ -1886,7 +1883,7 @@ Public Sub Disconnect()
         Dim lapse As Single
 
         EventFlag = 0
-        sck.SendString "QUIT" & vbLf
+        sck.SendString StrConv(StrConv("QUIT" & vbLf, vbUnicode), vbFromUnicode)
         lapse = Timer
         Do Until (EventFlag <> 0) Or (Timer - lapse > 30)
             DoTasks
@@ -2109,7 +2106,6 @@ Private Sub sck_DataArriving()
                 Case "221", "222", "501", "502", "480"
                     EventText = inLine & vbLf
                     EventFlag = -1
-
                 Case "200", "340", "240", "381", "281", "205", "211", "223", "441", "335", "411"
                     EventText = inLine
                     If (InStr(inLine, "message-ID") > 0) And (InStr(inLine, "<") > 0) And (InStr(inLine, ">") > 0) Then
@@ -2140,6 +2136,3 @@ End Sub
 
 
 
-Private Sub sck_SendComplete()
-                        EventFlag = 5
-End Sub

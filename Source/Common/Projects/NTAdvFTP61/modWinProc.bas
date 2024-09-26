@@ -8,10 +8,10 @@ Public Const ftpBufferSize = 16384  ' - 1
 Public Const ftpPacketSize = 8192  ' - 1
 
 Private Type CWPSTRUCT
-    hwnd As Long
-    Message As Long
-    wParam As Long
-    lParam As Long
+        lParam As Long
+        wParam As Long
+        Message As Long
+        hwnd As Long
 End Type
 
 Private Declare Sub RtlMoveMemory Lib "kernel32" (Dest As Any, Source As Any, ByVal Length As Long)
@@ -35,30 +35,15 @@ Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVa
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
 
-Public Enum AutoRated
-    HaltRates = -3
-    OpenRates = -1
-    SendCalls = 1
-    SendWidth = 2
-    ReadCalls = 3
-    ReadWidth = 4
-
-    SendEvent = 5
-    ReadEvent = 6
-End Enum
-
 Private mSockets As Collection
-
 Private mSubProc As Long
 Private mForm As frmThread
 
 Public Function SocketsInitialize()
     If Not modSockets.WinsockControl Then
-        If mForm Is Nothing Then
-            Set mForm = New frmThread
-            Load mForm
-            mSubProc = SetWindowLong(mForm.hwnd, GWL_WNDPROC, AddressOf WinsockEvents)
-        End If
+        Set mForm = New frmThread
+        Load mForm
+        mSubProc = SetWindowLong(mForm.hwnd, GWL_WNDPROC, AddressOf WinsockEvents)
     End If
     modSockets.SocketsInitialize
 End Function
@@ -69,7 +54,6 @@ Public Function SocketsCleanUp()
         If Not mForm Is Nothing Then
             SetWindowLong mForm.hwnd, GWL_WNDPROC, mSubProc
             Unload mForm
-        
             Set mForm = Nothing
         End If
     End If
@@ -79,23 +63,13 @@ Public Function RegisterSocket(ByRef sock As ISocket)
     If mSockets Is Nothing Then
         Set mSockets = New Collection
     End If
-'    Dim ptrs As Memory
-'    ptrs = ObjectPointers(sock, 3, 12, 1, 20)
-        
-    
     mSockets.Add sock, "h" & sock.Handle
-
-    
 End Function
 Public Function UnregisterSocket(ByRef sock As ISocket)
-
     mSockets.Remove "h" & sock.Handle
-
     If mSockets.count = 0 Then
         Set mSockets = Nothing
-        TermCerts
     End If
-    
 End Function
 
 Public Property Get hwnd() As Long
@@ -103,14 +77,14 @@ Public Property Get hwnd() As Long
 End Property
 
 'Private Function WinsockEvents(ByVal args As Long, Optional arg1 As Long, Optional ByVal arg2 As Long, Optional ByVal arg3 As Long, Optional ByVal arg4 As Long) As Long
+'
+'End Function
 
 Private Function WinsockEvents(ByVal hwnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 On Error GoTo noproc
 On Local Error GoTo noproc
     Dim ret As Long
-    
-    
 
 '    Dim tmp As CWPSTRUCT
 '    Dim allarg As Msg
@@ -125,7 +99,7 @@ On Local Error GoTo noproc
 '    RtlMoveMemory tmp.hwnd, ByVal VarPtr(tmp) + 12, 4&
 '    hwnd = tmp.lParam
 '    uMsg = tmp.wParam
-'    wParam = tmp.uMsg
+'    wParam = tmp.Message
 '    lParam = tmp.hwnd
 '    RtlMoveMemory ByVal VarPtr(allarg.pt), ByVal VarPtr(tmp.lParam), (LenB(tmp) - (LenB(allarg.pt) + LenB(allarg.time)))
 '    RtlMoveMemory allarg.hwnd, ByVal VarPtr(tmp), LenB(allarg) + LenB(tmp)
@@ -133,33 +107,25 @@ On Local Error GoTo noproc
 '    uMsg = allarg.Message
 '    wParam = allarg.wParam
 '    lParam = allarg.lParam
+'
+'    Debug.Print hwnd & " " & uMsg & " " & wParam & " " & lParam
 
-   ' Debug.Print tmp.hwnd & " " & tmp.uMsg & " " & tmp.wParam & " " & tmp.lParam
 
-
-    If (mSubProc <> 0) Then
+    If (wParam > 32) And (mSubProc <> 0) Then
 
         Dim sck As ISocket
         Set sck = mSockets("h" & wParam)
-        vbaObjSetAddref sck, sck.Address
-        
-        'Set sck = mSockets("h" & wParam)
-       ' Debug.Print GlobalSize(ObjPtr(sck))
         Select Case uMsg
             Case WM_POWERBROADCAST
                 ret = sck.EventRaised(wParam, WM_POWERBROADCAST)
             Case WM_WINSOCK, WINSOCK_MESSAGE, SOCKET_MESSAGE
-                'Debug.Print "WM_WINSOCK " & hwnd & ", " & uMsg & ", " & wParam & ", " & lParam
+              '  Debug.Print "WM_WINSOCK " & hwnd & ", " & uMsg & ", " & wParam & ", " & lParam
                 ret = sck.EventRaised(wParam, lParam)
 
-            'Case Else
+            Case Else
 
         End Select
-        vbaObjSet sck, 0
-        
         Set sck = Nothing
-      '  vbaObjSetAddref mSockets("h" & wParam), ObjPtr(sck)
-        
     
     End If
 
@@ -169,7 +135,6 @@ On Local Error GoTo noproc
 Exit Function
 noproc:
     Err.Clear
-   ' WSAAsyncSelect lParam, hwnd, WM_WINSOCK, 0
 exitfunc:
     RtlMoveMemory WinsockEvents, ByVal VarPtr(ret), 4&
 End Function

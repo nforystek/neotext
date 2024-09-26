@@ -20,7 +20,6 @@ Begin VB.UserControl SiteInformation
          Left            =   4440
          TabIndex        =   5
          Top             =   795
-         Visible         =   0   'False
          Width           =   615
       End
       Begin VB.ComboBox Combo1 
@@ -54,8 +53,8 @@ Begin VB.UserControl SiteInformation
          TabIndex        =   0
          Top             =   300
          Width           =   5220
-         _extentx        =   9208
-         _extenty        =   556
+         _ExtentX        =   9208
+         _ExtentY        =   556
       End
       Begin VB.TextBox Text2 
          Height          =   285
@@ -185,7 +184,7 @@ Public Property Let ShowAdvSettings(ByVal newVal As Boolean)
     Combo1.Visible = newVal
     Check3.Visible = newVal
     Text1.Visible = newVal
-'    Check2.Visible = newVal
+    Check2.Visible = newVal
 
     
     If (Combo1.Text = "" Or Combo1.ListIndex = -1) And Combo1.ListCount > 0 Then Combo1.ListIndex = 0

@@ -247,8 +247,8 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 
     D3DXMatrixScaling matScale, p.Scaled.X, p.Scaled.Y, p.Scaled.Z
     D3DXMatrixMultiply matPlane, matScale, matPlane
-    
-   ' DDevice.SetTransform D3DTS_WORLD, matPlane
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
 
 
     If IsMissing(X) Or p.Follow Then
@@ -264,21 +264,12 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
     End If
 
 
+
+
     D3DXMatrixTranslation matPos, X, Y, Z
     D3DXMatrixMultiply matPlane, matPos, matPlane
 
     DDevice.SetTransform D3DTS_WORLD, matPlane
-
-'    D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.)
-'    D3DXMatrixMultiply matPlane, matPitch, matPlane
-'
-'    D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(0)
-'    D3DXMatrixMultiply matPlane, matYaw, matPlane
-'
-'    D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(0)
-'    D3DXMatrixMultiply matPlane, matRoll, matPlane
-'
-'    DDevice.SetTransform D3DTS_WORLD, matPlane
 
 
 
@@ -294,16 +285,16 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 '        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(Camera.Player.Rotate.Z)
 '        D3DXMatrixMultiply matPlane, matRoll, matPlane
 '    Else
-'
-'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(p.Rotate.X)
+
+'        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-p.Rotate.X)
 '        D3DXMatrixMultiply matPlane, matPitch, matPlane
 '
-'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(p.Rotate.Y)
+'        D3DXMatrixRotationY matYaw, AngleConvertWinToDX3DY(-p.Rotate.Y)
 '        D3DXMatrixMultiply matPlane, matYaw, matPlane
 '
-'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(p.Rotate.Z)
+'        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-p.Rotate.Z)
 '        D3DXMatrixMultiply matPlane, matRoll, matPlane
-'    End If
+''    End If
 '
 '    DDevice.SetTransform D3DTS_WORLD, matPlane
         
@@ -953,9 +944,9 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '###### make it restrictive to only up and down #############
 '############################################################
             
-            Set pop = PlaneNormal(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point3)
-            Set Camera.Player.Origin = VectorAddition(p.Origin, VectorMultiply(VectorDeduction(Camera.Player.Origin, p.Origin), pop))
-            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+'            Set pop = PlaneNormal(p.Volume(1).Point1, p.Volume(1).Point2, p.Volume(2).Point3)
+'            Set Camera.Player.Origin = VectorAddition(p.Origin, VectorMultiply(VectorDeduction(Camera.Player.Origin, p.Origin), pop))
+'            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
 
 
 '############################################################
@@ -963,10 +954,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '###### make it hone to the user #############
 '############################################################
 
-            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-            Set p.Absolute.Rotate = p.Rotate
-            Set p.Relative.Rotate = Nothing
-            p.Moved = True
+'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+'            Set p.Absolute.Rotate = p.Rotate
+'            Set p.Relative.Rotate = Nothing
+'            p.Moved = True
                         
             
 '            Set Camera.Player.Origin = VectorRotateAxis(VectorRotateAxis(Camera.Player.Origin, AngleAxisInvert(Camera.Player.Rotate)), AngleAxisAddition(Camera.Player.Rotate, tmp))

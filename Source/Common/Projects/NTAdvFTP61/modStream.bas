@@ -82,7 +82,7 @@ Public Function InStream(ByRef TheStream As Stream, ByRef SearchTerm As Stream, 
         ter = SearchTerm.Partial
         idx = 1 + Offset
         Do
-            'InStream = InStream + 1
+            InStream = InStream + 1
             Do While ins(idx) = ter(InStream + 1) And (InStream + 1) < SearchTerm.Length
                 InStream = InStream + 1
                 idx = idx + 1

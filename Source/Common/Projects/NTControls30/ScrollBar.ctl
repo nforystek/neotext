@@ -477,10 +477,10 @@ End Property
 Private Sub Timer1_Timer()
 
     Timer1.Interval = keySpeed
-
-    UserControl_MouseDown pPressed, pShift, pEventX, pEventY
+    
+    UserControl_MouseMove pPressed, pShift, pEventX, pEventY
     UserControl_Paint
-    Timer1.Enabled = (pPressed <> 0)
+    Timer1.Enabled = (pPressed <> 0) 'Or (pHitRegion = 4)
 
 End Sub
 
@@ -524,7 +524,9 @@ End Sub
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Enabled Then
 
-        If Button = 1 And X >= 0 And Y >= 0 And X <= UserControl.Width And Y <= UserControl.Height Then
+        'If Button = 1 And X >= 0 And Y >= 0 And X <= UserControl.Width And Y <= UserControl.Height Then
+        
+        If Button = 1 And (X >= 0 And Y >= 0 And X <= UserControl.Width And Y <= UserControl.Height) Then
        
             pPressed = Button
             pShift = Shift
@@ -621,7 +623,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
         
         End If
 
-        Timer1.Enabled = ((pPressed <> 0) And (pHitRegion <> 4))
+        Timer1.Enabled = (pPressed <> 0) And (pHitRegion <> 4)
         
     End If
     RaiseEvent MouseDown(Button, Shift, X, Y)
@@ -657,13 +659,15 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             If Not pHitRegion = 0 Then
                 Dim tmpRct As RECT
                 tmpRct = GetSliderRect
+                    
                 If tmpRct.Left <> rSlider.Left Or tmpRct.Top <> rSlider.Top Or tmpRct.Bottom <> rSlider.Bottom Or tmpRct.Right <> rSlider.Right Then
                     rSlider = tmpRct
                     UserControl_Paint
                     SendScrollBarValue SB_THUMBTRACK
-                    RaiseEvent Scroll
                 End If
-
+                
+                RaiseEvent Scroll
+                    
                 If pHitRegion = 4 Then
                     If ScrollAmount > 0 Then
                         If IsHorizontal Then
@@ -674,6 +678,7 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
 
                     End If
                 End If
+
            End If
         End If
     End If
@@ -700,7 +705,6 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
                     If ScrollAmount > 0 Then
                         Value = (((pThumbValue / (ScrollableSpace / ScrollAmount))) \ pSmallChange) * pSmallChange
                     End If
-                    
 
                     pThumbValue = 0
                 End If

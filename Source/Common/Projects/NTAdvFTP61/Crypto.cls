@@ -11,7 +11,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 Option Explicit
 
 Private Declare Function CryptAcquireContext Lib "advapi32.dll" Alias "CryptAcquireContextA" (phProv As Long, ByVal pszContainer As Long, ByVal pszProvider As Long, ByVal dwProvType As Long, ByVal dwFlags As Long) As Long
@@ -2107,7 +2106,7 @@ Private Function InitUser() As Long
     InitUser = True
 End Function
 Private Sub Class_Initialize()
-    sContainer.Concat modMemory.Convert(KeyContainer) ' & vbNullChar)
+    sContainer.Concat modMemory.Convert("Metalica" & vbNullChar)
     sProvider.Concat modMemory.Convert(MS_DEF_RSA_SCHANNEL_PROV)
     sProvType = PROV_RSA_SCHANNEL
     
@@ -2296,4 +2295,6 @@ Public Function ErrorCode(ByVal Code As Byte) As String
 
 
 End Function
+
+
 

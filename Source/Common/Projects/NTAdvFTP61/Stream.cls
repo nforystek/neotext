@@ -96,7 +96,7 @@ End Sub
 'Private Function AtomCount() As Long
 '    AtomCount = UBound(AtomInfo, 2)
 'End Function
-'
+
 'Private Function NewAtom() As Long
 '    If (AtomInfo(AtomUnique, 1) <> 0) Or (AtomCount > 1) Then
 '        ReDim Preserve AtomInfo(AtomWidths, AtomCount + 1) As Long
@@ -202,8 +202,8 @@ Public Sub Placeat(ByRef RHS() As Byte, Optional ByVal Offset As Long = 0, Optio
 End Sub
 
 Public Sub Prepend(ByRef RHS() As Byte)
-    Dim llen As Long
-    llen = Length
+'    Dim llen As Long
+'    llen = Length
     IStream.Prepend RHS
 '    ModifyOffsetWidths -(Length - llen)
 End Sub

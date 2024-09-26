@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1385.0#0"; "NTControls22.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "richtx32.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1390.0#0"; "NTControls22.ocx"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
    Caption         =   "Max-FTP"
@@ -475,6 +475,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -956,6 +957,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -3183,7 +3185,7 @@ On Error GoTo catch
                         myClient.ConnectionMode = IIf(passInfo.Pasv, "PASV", "PORT")
                         myClient.DataPortRange = passInfo.PortRange
                         myClient.NetAdapter = passInfo.Adapter + 1
-                       ' myClient.ImplicitSSL = passInfo.SSL
+                        myClient.ImplicitSSL = passInfo.SSL
                     End If
                 End If
 

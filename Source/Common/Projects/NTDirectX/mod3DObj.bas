@@ -501,11 +501,11 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 
     
 '    RenderOrbits Molecules, True
-''    For Each m In Molecules
-''        If m.Parent Is Nothing Then
-''            AllCommitRoutine m, Nothing
-''        End If
-''    Next
+'    For Each m In Molecules
+'        If m.Parent Is Nothing Then
+'            AllCommitRoutine m, Nothing
+'        End If
+'    Next
 ''
 ''    RenderOrbits Planets, False
 '
@@ -568,7 +568,7 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 
             RenderMolecule p, Nothing, matMat
 
-     '    RenderOrbits p.Molecules, False
+            RenderOrbits p.Molecules, False
 
 
             Set p = Nothing
@@ -733,19 +733,19 @@ Private Sub RenderMolecule(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, 
                 VertexDirectX((v.TriangleIndex * 3) + 2).Y = vout3.Y
                 VertexDirectX((v.TriangleIndex * 3) + 2).Z = vout3.Z
                 
-'                Set v.Normal = TriangleNormal(v.Point1, v.Point2, v.Point3)
-'
-'                VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
-'                VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
-'                VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.Z
-'
-'                VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
-'                VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
-'                VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.Z
-'
-'                VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
-'                VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
-'                VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.Z
+                Set v.Normal = TriangleNormal(v.Point1, v.Point2, v.Point3)
+
+                VertexDirectX(v.TriangleIndex * 3 + 0).NX = v.Normal.X
+                VertexDirectX(v.TriangleIndex * 3 + 0).NY = v.Normal.Y
+                VertexDirectX(v.TriangleIndex * 3 + 0).Nz = v.Normal.Z
+
+                VertexDirectX(v.TriangleIndex * 3 + 1).NX = v.Normal.X
+                VertexDirectX(v.TriangleIndex * 3 + 1).NY = v.Normal.Y
+                VertexDirectX(v.TriangleIndex * 3 + 1).Nz = v.Normal.Z
+
+                VertexDirectX(v.TriangleIndex * 3 + 2).NX = v.Normal.X
+                VertexDirectX(v.TriangleIndex * 3 + 2).NY = v.Normal.Y
+                VertexDirectX(v.TriangleIndex * 3 + 2).Nz = v.Normal.Z
         
                 VertexXAxis(0, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 0).X
                 VertexXAxis(1, v.TriangleIndex) = VertexDirectX(v.TriangleIndex * 3 + 1).X

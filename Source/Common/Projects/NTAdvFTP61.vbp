@@ -24,7 +24,6 @@ Module=modStream; NTAdvFTP61\modStream.bas
 Class=Crypto; NTAdvFTP61\Crypto.cls
 Class=IStream; NTAdvFTP61\IStream.cls
 Module=modDoTasks; ..\..\Shared\modDoTasks.bas
-Module=modCrypto; NTAdvFTP61\modCrypto.bas
 Class=Certificate; NTAdvFTP61\Certificate.cls
 Module=modGuid; ..\..\Shared\modGUID.bas
 Form=NTAdvFTP61\frmCert.frm
@@ -73,4 +72,4 @@ UseExistingBrowser=0
 AutoRefresh=1
 
 [Neotext]
-CompCond="modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:modProcess=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modCrypto=-1:modGuid=-1"
+CompCond="modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:modProcess=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modGuid=-1"

@@ -30,10 +30,12 @@ Friend Property Get Parent() As Molecule
 End Property
 Friend Property Set Parent(ByRef RHS As Molecule)
     Set pParent = RHS
-'    Dim m As Molecule
-'    For Each m In this
-'        Set m.Parent = pParent
-'    Next
+    If Not pParent Is Nothing Then
+        Dim m As Molecule
+        For Each m In this
+            Set m.Parent = pParent
+        Next
+    End If
 End Property
 
 Public Function NewEnum() As IUnknown ' _
@@ -54,6 +56,7 @@ End Sub
 Public Sub Remove(Optional KeyOrIndex) ' _
 Removes an item from the collection, by the optional parameter as key or index if it exists, if it does not exist, the first item is removed.
 Attribute Remove.VB_Description = "Removes an item from the collection, by the optional parameter as key or index if it exists, if it does not exist, the first item is removed."
+    Set this(KeyOrIndex).Parent = Nothing
     this.Remove KeyOrIndex
 End Sub
 

@@ -143,7 +143,7 @@ Public Event DataProgress(ByVal ProgressType As ProgressTypes, ByVal ReceivedByt
 Event that is called during a data socket transfering data and has progressed.
 Attribute DataProgress.VB_Description = "Event that is called during a data socket transfering data and has progressed."
 Public Event DataComplete(ByVal ProgressType As ProgressTypes) ' _
-Event that is called when the data socket has finished transfering and has closed.
+Event that is called when the data socket has finished transfering and has closed. ' _
 
 Private myObj As Client
 Private myServerObj As Client
@@ -167,6 +167,7 @@ Private ftpRaiseFTTPComplete As Client
 Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Private ftpElapse As Single
+
 
 Public Property Get GetLastError() As String
     GetLastError = SetLastError(ReturnError)
@@ -224,12 +225,17 @@ Gets or sets whether Secure Sockets Layer is implied on all connections to estab
     ImplicitSSL = mTCP.SSL
 End Property
 Public Property Let ImplicitSSL(ByVal RHS As Boolean)
-    If (Not mTCP.Connected) And (Not mData.Connected) Then
-        mTCP.SSL = RHS
-        mData.SSL = RHS
-    Else
-        SetLastError RaiseError, 40006, "Can not set this property while connected."
-        'Err.Raise 8, "SsL", "Can not set this property while connected."
+    If mTCP.SSL <> RHS Then
+        If mTCP.Connected Then mTCP.Disconnect
+        If mData.Connected Then mData.Disconnect
+        
+        If (Not mTCP.Connected) And (Not mData.Connected) Then
+            mTCP.SSL = RHS
+            mData.SSL = RHS
+        Else
+            SetLastError RaiseError, 40006, "Can not set this property while connected."
+            'Err.Raise 8, "SsL", "Can not set this property while connected."
+        End If
     End If
 End Property
 
@@ -449,11 +455,11 @@ Public Property Let URL(ByVal newVal As String)
     End If
     
     Dim nURL As New URL
+    If ImplicitSSL <> nURL.GetSSL(newVal) Then
+        Disconnect
     
-'    If ImplicitSSL <> nURL.GetSSL(newVal) Then
-'        Disconnect
-'        ImplicitSSL = nURL.GetSSL(newVal)
-'    End If
+        ImplicitSSL = nURL.GetSSL(newVal)
+    End If
     
     ftpType = nURL.GetType(newVal)
     ftpServer = nURL.GetServer(newVal)
@@ -646,12 +652,12 @@ Public Property Get DataPortRange() As String
     DataPortRange = ftpDataPortRange
 End Property
 
-Private Property Get DataPortRangeLow() As Integer
-    DataPortRangeLow = CInt(NextArg(ftpDataPortRange, "-"))
+Private Property Get DataPortRangeLow() As Long
+    DataPortRangeLow = CLng(NextArg(ftpDataPortRange, "-"))
 End Property
 
-Private Property Get DataPortRangeHi() As Integer
-    DataPortRangeHi = CInt(RemoveArg(ftpDataPortRange, "-"))
+Private Property Get DataPortRangeHi() As Long
+    DataPortRangeHi = CLng(RemoveArg(ftpDataPortRange, "-"))
 End Property
 
 Private Sub ResetDefaultValues()
@@ -710,7 +716,7 @@ Private Sub SendDataFTPCommand(ByVal ConnectMode As String, ByVal ftpCommand As 
     
     Select Case ConnectionMode
         Case "PORT"
-            Static LinkPort As Integer
+            Static LinkPort As Long
             
             If LinkPort = 0 Then
                 Randomize
@@ -720,8 +726,7 @@ Private Sub SendDataFTPCommand(ByVal ConnectMode As String, ByVal ftpCommand As 
                 If LinkPort > DataPortRangeHi Then LinkPort = DataPortRangeLow
             End If
             Do While (Not mTCP.Ready) And (Not mData.Ready)
-                'DoEvents
-                DoLoop
+                DoEvents
             Loop
            
             If mData.Connected Or mData.Listening Then mData.Disconnect
@@ -741,28 +746,16 @@ Private Sub SendDataFTPCommand(ByVal ConnectMode As String, ByVal ftpCommand As 
                 mData.Disconnect
 
             Loop
-
-            'Debug.Print "LINKPORT " & LinkPort
             
-'            Dim tmpPort As String
-'            tmpPort = Padding(4, Hex(IntegerToUnsigned(LinkPort)), "0")
-'
-'            If ftpRestCommand <> "" Then
-'                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CByte(Val("&H" & Left(tmpPort, 2))) & "," & CByte(Val("&H" & Right(tmpPort, 2))) & vbCrLf & ftpRestCommand & vbCrLf & ftpCommand & vbCrLf
-'            Else
-'                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CByte(Val("&H" & Left(tmpPort, 2))) & "," & CByte(Val("&H" & Right(tmpPort, 2))) & vbCrLf & ftpCommand & vbCrLf
-'            End If
-        
-            'Debug.Print Val("&H" & Padding(2, Hex(CByte(Val("&H" & Left(tmpPort, 2)))), "0") & Padding(2, Hex(CByte(Val("&H" & Right(tmpPort, 2)))), "0"))
+            Dim tmpPort As String
+            tmpPort = Padding(4, Hex(LinkPort), "0")
 
-            Debug.Print LinkPort
-            
             If ftpRestCommand <> "" Then
-                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CLng(LinkPort / 256) & "," & CLng(LinkPort Mod 256) & vbCrLf & ftpRestCommand & vbCrLf & ftpCommand & vbCrLf
+                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CByte(Val("&H" & Left(tmpPort, 2))) & "," & CByte(Val("&H" & Right(tmpPort, 2))) & vbCrLf & ftpRestCommand & vbCrLf & ftpCommand & vbCrLf
             Else
-                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CLng(LinkPort / 256) & "," & CLng(LinkPort Mod 256) & vbCrLf & ftpCommand & vbCrLf
+                SendFTPCommand "PORT " & Replace(GetPortIP.Item(ftpNetAdapter), ".", ",") & "," & CByte(Val("&H" & Left(tmpPort, 2))) & "," & CByte(Val("&H" & Right(tmpPort, 2))) & vbCrLf & ftpCommand & vbCrLf
             End If
-            
+
         Case "PASV"
 
             If ftpRestCommand <> "" Then
@@ -810,13 +803,9 @@ End Function
 Public Sub Connect(Optional ByVal eURL As String = "") ' _
 Connects to a remote system and sends the initial commands provided needing for a connection.  Server, Port, Account, Username, Password and Folder property will be handled address upon successful Connect.
 Attribute Connect.VB_Description = "Connects to a remote system and sends the initial commands provided needing for a connection.  Server, Port, Account, Username, Password and Folder property will be handled address upon successful Connect."
-    If mTCP.Connected Or (Not (ftpConnected = NotState)) Then
-        Disconnect
-        
-        'SetLastError RaiseError, 8, "Already connected, you must use disconnect first."
-    End If
-    
-    Disconnect
+'    If mTCP.Connected Or (Not (ftpConnected = NotState)) Then
+'        SetLastError RaiseError, 8, "Already connected, you must use disconnect first."
+'    End If
     
     Dim nURL As New URL
     If eURL <> "" Then
@@ -834,7 +823,8 @@ Attribute Connect.VB_Description = "Connects to a remote system and sends the in
     End If
     Set nURL = Nothing
     ResetDefaultValues
-    
+        
+        
     If ftpType = URLTypes.ftp Then
         
         ftpEventError = ErrorReturns.Wait
@@ -852,7 +842,7 @@ Attribute Connect.VB_Description = "Connects to a remote system and sends the in
         Else
             ftpNextCommand = ftpNextCommand & "USER " & ftpUsername & vbCrLf
         End If
-        
+
         mTCP.Connect ftpServer, ftpPort
     
         If ftpEventError = ErrorReturns.Last Then
@@ -906,29 +896,23 @@ Public Sub CancelTransfer(Optional ByVal AbortSignal As Boolean = False) ' _
 Cancels any ListContents or TransferFile action that is still in progress.  This does not send the Abort signal by default, so that any file upload remains partial on the remote system.
 Attribute CancelTransfer.VB_Description = "Cancels any ListContents or TransferFile action that is still in progress.  This does not send the Abort signal by default, so that any file upload remains partial on the remote system."
     On Error Resume Next
-
     
     ftpCancelThread = True
-    
     Static stack As Boolean
     If Not stack Then
-
         stack = True
+        
         If (Not (myObj Is Nothing)) Then
             myObj.CancelTransfer
         End If
-        
         If (Not (myServerObj Is Nothing)) Then
             myServerObj.CancelTransfer
         End If
     
         stack = False
     End If
-
-
     
     If Transfering Then
-        If mData.Connected Or mData.Listening Then mData.Disconnect
     
         If AbortSignal Then
             
@@ -937,9 +921,6 @@ Attribute CancelTransfer.VB_Description = "Cancels any ListContents or TransferF
         End If
         
     End If
-    
-    
-    
     If Err Then Err.Clear
     
 End Sub
@@ -1479,7 +1460,10 @@ Friend Function TransferFileLocalToServer(ByVal SourceObject As Client, ByVal So
             ftpResumeByte = 0
             SendDataFTPCommand ftpConnectionMode, "STOR " & DestFileName, _
                 IIf(((TotalFileSize - ResumeOffset) > 0) And ((ftpAllocation And AllocateSides.Remote) = AllocateSides.Remote), "ALLO " & (TotalFileSize - ResumeOffset), "")
-
+        
+'            Do Until mData.Connected And mData.Ready
+'                DoEvents
+'            Loop
             mData.Disconnect
         End If
         
@@ -1553,6 +1537,10 @@ Friend Function TransferFileLocalToServer(ByVal SourceObject As Client, ByVal So
             SendDataFTPCommand ftpConnectionMode, "STOR " & DestFileName, _
                 IIf(((TotalFileSize - ResumeOffset) > 0) And ((ftpAllocation And AllocateSides.Remote) = AllocateSides.Remote), "ALLO " & (TotalFileSize - ResumeOffset), "")
 
+'            Do Until mData.Connected And mData.Ready
+'                DoEvents
+'            Loop
+
             mData.Disconnect
         End If
     End If
@@ -1609,7 +1597,7 @@ Private Function TransferFileLocalToLocal(ByVal SourceFileName As String, ByVal 
                         ftpReadTextStream.Skip (modBitValue.LongBound \ 4)
                         ftpResumeByte = ftpResumeByte + (modBitValue.LongBound \ 4)
                         RaiseEvent DataProgress(ProgressTypes.PositioningFile, ftpResumeByte)
-                        'DoTasks
+                        DoTasks
                     Next
                     If Not ftpCancelThread Then
                         cnt = ReturnMod(ResumeOffset, (modBitValue.LongBound \ 4))
@@ -2171,50 +2159,48 @@ Private Sub mData_Connected()
 End Sub
 
 Private Sub mData_Connection(ByRef Handle As Long)
-    If mData.Listening Then
-    
-       ' If mData.WhosIs(mTCP.Handle) <> mTCP.RemoteIP() Then
-       '     mData.Decline Handle
-      '  Else
-            mData.Accept Handle
-       ' End If
 
-    'Else    'must be a data arrival mismatch in ip security
-   '     mData.Decline Handle
+    If mData.WhosIs(mTCP.Handle) <> mTCP.RemoteIP() Then
+        mData.Decline Handle
+    Else
+        mData.Accept Handle
     End If
+
 End Sub
 
 Private Sub mData_DataArriving()
 
     If ConnectedState(RemoteToLocal) Or ConnectedState(ListingToFile) Then
 
-        Dim Data() As Byte
+        Dim data() As Byte
         Dim inData As String
 
         On Error GoTo failerror
 
-        If mData.ReadBytes(Data) Then
+      '  Do Until Not mData.ReadBytes(data)
+        If mData.ReadBytes(data) Then
 
-            ftpFileSize = ftpFileSize + modMemory.ArraySize(Data)
-            inData = StrConv(Data, vbUnicode)
+            ftpFileSize = ftpFileSize + modMemory.ArraySize(data)
+            inData = StrConv(data, vbUnicode)
 
             SetServerUsesCRLF = inData
 
             If (myObj.ServerUsesCRLF And (myObj.TransferType = ASCII)) And (Not myObj.AssumeLineFeed) Then
-                Data = modMemory.Convert(Replace(Replace(modMemory.Convert(Data), vbLf, vbCrLf), vbCr & vbCr, vbCr))
+                data = modMemory.Convert(Replace(Replace(modMemory.Convert(data), vbLf, vbCrLf), vbCr & vbCr, vbCr))
             ElseIf ((Not myObj.ServerUsesCRLF) And (myObj.TransferType = ASCII)) And myObj.AssumeLineFeed Then
-                Data = modMemory.Convert(Replace(modMemory.Convert(Data), vbCr, ""))
+                data = modMemory.Convert(Replace(modMemory.Convert(data), vbCr, ""))
             End If
             
             If ftpLargeFileMode Then
                 ftpWriteTextStream.Write inData
             Else
-                Put #ftpWriteFileNum, , Data
+                Put #ftpWriteFileNum, , data
             End If
             
             TimerProgresses
-        End If
-    
+            End If
+'Loop
+
     End If
         
     
@@ -2251,8 +2237,12 @@ On Error GoTo failerror
         lSize = -1
         Do
                 
-            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+            If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
     
+'                Do While (Not mData.Ready) And mData.Connected
+'                   DoTasks
+'                Loop
+''
                 mData.Disconnect
                 TerminateTransfer
             Else
@@ -2270,7 +2260,8 @@ On Error GoTo failerror
                         If lSize > 0 Then
                             ReDim inFileData(1 To lSize) As Byte
                             inFileData = modMemory.Convert(ftpReadTextStream.Read(lSize))
-
+                           ' inFileData = StrConv(ftpReadTextStream.Read(lSize), vbFromUnicode)
+    
                             If ((Not myObj.ServerUsesCRLF) And (myObj.TransferType = ASCII)) And myObj.AssumeLineFeed Then
                                 inFileStr = modMemory.Convert(Replace(modMemory.Convert(inFileStr), vbCr, ""))
                             ElseIf (myObj.ServerUsesCRLF And (myObj.TransferType = ASCII)) And (Not myObj.AssumeLineFeed) Then
@@ -2315,18 +2306,25 @@ On Error GoTo failerror
                 
                 End If
 
+
             End If
                     
 
-        Loop While mData.Connected And (Not ftpCancelThread)
-
+        Loop While mData.Connected And (Not ftpCancelThread) 'And mData.Ready
+'        Do While (Not mData.Ready) And mData.Connected
+'            DoEvents
+'            Exit Do
+'        Loop
+        
+        
+        
     ElseIf ConnectedState(LocalToLocal) Then
         ConnectedState(DataStreaming) = True
         ftpLapse = Timer
         lSize = -1
         Do
             If ftpLargeFileMode Then
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2340,7 +2338,7 @@ On Error GoTo failerror
                     End If
                 End If
             Else
-                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Or CDbl(ftpFileSize - ftpResumeByte) = 0 Then
+                If CDbl(ftpSendIncrement * ftpSendPacketLen) > CDbl(ftpFileSize - ftpResumeByte) Then
                     Exit Do
                 Else
                     If ((Not ftpCancelThread) And (Not PauseTransfers)) Then
@@ -2427,24 +2425,19 @@ Private Sub mTCP_Connected()
 
 End Sub
 
-Private Sub mTCP_Connection(Handle As Long)
-    'not listening so must be a data arrival security mismatch, decline all
-   ' mTCP.Decline Handle
-End Sub
-
 Private Sub mTCP_DataArriving()
 
     Dim delim As String
     Dim oneMsg As String
     Dim inData As String
 '
-    Dim Data() As Byte
+    Dim data() As Byte
 
     On Error GoTo catch
 
-    If mTCP.ReadBytes(Data) Then
+    If mTCP.ReadBytes(data) Then
 
-        inData = inData & modMemory.Convert(Data)
+        inData = inData & modMemory.Convert(data)
         
         delim = GetDelimiter(inData)
         Do While (Len(inData) > 0)
@@ -2475,20 +2468,9 @@ Private Sub mTCP_DataArriving()
                         pServer = Mid(pServer, InStr(pServer, ",") + 1)
                         pPHigh = CLng(StrReverse(Left(pServer, InStr(pServer, ",") - 1)))
                         pServer = Replace(StrReverse(Mid(pServer, InStr(pServer, ",") + 1)), ",", ".")
-                        
-                        
-                        
-                     '  pPort = (Val(pPHigh) * 256) + Val(pPLow)
-                      '
-                       ' modBitValue.HiByte(pPort) = CByte(pPLow)
-                      
-                      '  modBitValue.LoByte(pPort) = CByte(pPHigh)
-
-                        
-'Debug.Print LongToUnsigned(Val("&H" & Padding(2, Hex(CByte(pPHigh)), "0") & Padding(2, Hex(CByte(pPLow)), "0")))
-                        
-                        pPort = CInt(IntegerToUnsigned(Val("&H" & Padding(2, Hex(CByte(pPHigh)), "0") & Padding(2, Hex(CByte(pPLow)), "0"))))
-                        
+                        pPort = (Val(pPHigh) * 256) + Val(pPLow)
+                        modBitValue.HiByte(pPort) = CByte(pPHigh)
+                        modBitValue.LoByte(pPort) = CByte(pPLow)
                         mData.Host = pServer
                         mData.Port = pPort
 
@@ -2497,6 +2479,11 @@ Private Sub mTCP_DataArriving()
                     ftpEventError = ErrorReturns.None
                     ftpEventReason = oneMsg
                     ConnectedState(DataStreaming) = True
+                    
+'                    If ftpConnectionMode = "PORT" Then
+'                        mData.Incoming (True)
+'                    End If
+
                     
                 Case "221"
                     ftpEventError = ErrorReturns.None
@@ -2569,15 +2556,10 @@ Private Sub mTCP_DataArriving()
                     If Mid(oneMsg, 4, 1) <> "-" Then
                         ConnectedState(CommandRequest) = False
                     End If
-                Case "212", "213", "331", "350"
+                Case "200", "212", "213", "331", "350"
                     ftpEventError = ErrorReturns.None
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
-                Case "200"
-                    ftpEventError = ErrorReturns.None
-                    ftpEventReason = oneMsg
-                    ConnectedState(CommandRequest) = False
-
                 Case Else
                     If oneMsg = "" Then Exit Do
                     Select Case ftpGatherType
@@ -2645,6 +2627,34 @@ Private Sub DoOutCommands()
         Do
         
             If ftpNextCommand <> "" Then
+                
+'                If (ftpEventError = ErrorReturns.Last) Then
+'
+'                    Select Case NextArg(priorSend, " ")
+'                        Case "ACCT"
+'
+'                        Case "USER"
+'
+'                        Case "REIN"
+'
+'                        Case "PASS"
+'
+'                        Case "TYPE"
+'
+'                        Case "SYST"
+'
+'                        Case "CWD", "PWD"
+'
+'                        Case "PASV", "PORT"
+'
+'                        Case "STOR", "RETR", "LIST", "REST", "APPE"
+'                            'CancelTransfer
+'
+'                    End Select
+'                ElseIf (ftpEventError = ErrorReturns.Wait) Then
+'                    ftpEventError = ErrorReturns.None
+'
+'                End If
         
                 ftpCommand = RemoveNextArg(ftpNextCommand, vbCrLf)
                 Select Case NextArg(ftpCommand, " ")
@@ -2713,36 +2723,46 @@ Private Sub DoOutCommands()
                         If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
                             ConnectedState(FullyRemoting) = True
                         End If
-                    Case "PASV"
-                    Case "PORT"
-                        'Stop
-
+                    Case "PASV", "PORT"
+    
     
                     Case "STOR", "RETR", "LIST", "REST", "APPE"
     
-
-                        If (ftpConnectionMode = "PASV") And (ftpEventError = ErrorReturns.None) Then
-
-                            If mData.Connected Then mData.Disconnect
-
-                            If Not mData.Connected Then
-                                mData.Connect mData.Host, mData.Port
-
+    
+                            If (ftpConnectionMode = "PASV") And (ftpEventError = ErrorReturns.None) Then
+    '                            Do While (Not mData.Ready) Or (Not mTCP.Ready)
+    '                                DoEvents
+    '                            Loop
+                                If mData.Connected Then mData.Disconnect
+    
+                                If Not mData.Connected Then
+                                    mData.Connect mData.Host, mData.Port
+                                        'ftpEventError = ErrorReturns.Last
+                                        'ftpEventReason = "Unable to accept connection."
+                                      '  ftpNextCommand = "NOOP" & vbCrLf & ftpCommand & vbCrLf & ftpNextCommand
+    
+                                End If
                             End If
-                        Else
-'                            Do Until mData.Connected
-'                                DoLoop
-'                            Loop
-                        
-                        End If
-
+    '                        If (ftpConnectionMode = "PORT") And (ftpEventError = ErrorReturns.None) Then
+    '                            Do While (Not mData.Ready) Or (Not mTCP.Ready)
+    '                                DoEvents
+    '                            Loop
+    '
+    '                            If Not mData.Connected Then
+    '
+    '                                If Not mData.Incoming(True) Then
+    '                                    'ftpEventError = ErrorReturns.Last
+    '                                    'ftpEventReason = "Unable to accept connection."
+    '                                    ftpNextCommand = "NOOP" & vbCrLf & ftpCommand & vbCrLf & ftpNextCommand
+    '                                End If
+    '                            End If
+    '                        End If
                         
                 End Select
                 If (ftpCommand <> "") And (ftpEventError = ErrorReturns.None) Then
                     
                     Do While (ftpEventError = ErrorReturns.Wait) And mTCP.Connected And (Not ftpCancelThread) And ConnectedState And Transfering
-                        'DoEvents
-                        DoLoop
+                        DoEvents
                     Loop
                     ConnectedState(CommandRequest) = True
                     ftpEventError = ErrorReturns.Wait
@@ -2754,11 +2774,12 @@ Private Sub DoOutCommands()
                     End If
     
                 Else
-
+                
+                'Debug.Print ftpEventError & " " & NextArg(ftpCommand, " ")
+    
                     Exit Do
                 End If
-                
-                
+            
 
             End If
         Loop While (ftpCommand <> "") And (ftpEventError = ErrorReturns.None)
