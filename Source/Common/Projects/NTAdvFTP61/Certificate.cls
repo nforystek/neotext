@@ -453,12 +453,14 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
                 out.Prepend ToBytes(Chr(CERT_SEQUENCE))
                 Fields = out.Partial
             
-            Case Extensions, Subject, Issuer, SerialNumber, Signature, Algorithm, SignatureAlgorithm
+            Case Extensions, Subject, Issuer, SerialNumber ', Signature, Algorithm, SignatureAlgorithm
             
                 Set out = New Stream
-                out.Concat ToBytes(pFields("ID_" & Refer))
-                AddLength out
-                out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
+                If Exists("ID_" & Refer) Then
+                    out.Concat ToBytes(pFields("ID_" & Refer))
+                    AddLength out
+                    out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
+                End If
                 Fields = out.Partial
                 
             Case Is > SignatureAlgorithm
@@ -509,18 +511,20 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
             Set out = New Stream
             Set itm = New Stream
 
-            Set itm = pFields("ID_" & Refer)
-            If inc = CERT_SETTINGS Then
-                AddLength itm
-                out.Concat ToBytes(Chr(inc))
-            ElseIf inc = CERT_TYPE_OIDS Then
-                out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
-            End If
-            out.Concat itm.Partial
-
-            If inc = CERT_TYPE_OIDS Then
-                out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
-            End If
+            If Exists("ID_" & Refer) Then
+                Set itm = pFields("ID_" & Refer)
+                If inc = CERT_SETTINGS Then
+                    AddLength itm
+                    out.Concat ToBytes(Chr(inc))
+                ElseIf inc = CERT_TYPE_OIDS Then
+                    out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
+                End If
+                out.Concat itm.Partial
+                End If
+                
+                If inc = CERT_TYPE_OIDS Then
+                    out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
+                End If
             Fields = out.Partial
 
         End If

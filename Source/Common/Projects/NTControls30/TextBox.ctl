@@ -174,10 +174,10 @@ Private xUndoBuffer As Long
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
 Private Function GetLineWithWrap(ByVal Text As String) As String
-    if
+
 End Function
 Private Function GetLinesLineCount(ByVal Text As String)
-    GetLinesLineCount = WordCount(getlinewithwerap(Text), vbcrl)
+    GetLinesLineCount = WordCount(GetLineWithWrap(Text), vbCrLf)
 End Function
 Public Property Get WordWrap() As Boolean
     WordWrap = pWordWrap
@@ -1523,7 +1523,9 @@ Private Sub Timer1_Timer()
 End Sub
 Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
     If Enabled Then
+        
         If pScrollToCaret And (Not ClippingWouldDraw(DrawableRect, RECT(Loc.X, Loc.Y, Loc.X + TextWidth, Loc.Y + TextHeight), True)) Then
+        Debug.Print Loc.X; Loc.Y
         
             If Loc.X < 1 Then
                 If LargeJump Then
@@ -1559,10 +1561,13 @@ Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Bool
                 If ScrollBar1.Visible And ScrollBar1.Value <> -pOffsetY Then ScrollBar1.Value = -pOffsetY
                 MakeCaretVisible = True
             End If
+
             
             If MakeCaretVisible = True Then
                 CanvasValidate True
+                
             End If
+
         End If
     End If
 End Function
@@ -2497,8 +2502,7 @@ End Sub
 Private Sub UserControl_InitProperties()
     pForecolor = GetSysColor(COLOR_WINDOWTEXT)
     pBackcolor = GetSysColor(COLOR_WINDOW)
-    UserControl.BackColor = GetSys
-    Color (COLOR_WINDOW)
+    UserControl.BackColor = GetSysColor(COLOR_WINDOW)
     pScrollToCaret = True
     pHideSelection = True
     UserControl.Font.name = "Lucida Console"

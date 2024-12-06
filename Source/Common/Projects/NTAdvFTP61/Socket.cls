@@ -600,48 +600,52 @@ Private Sub wClient_DataArriving()
 '
 ''                                            Debug.Print certslen; certlen
 ''
+                                            '####### OPEN IN WINDOWS CERTIFICATAE VIEWER
+                                            'WriteFile AppPath & "cert.cer", ToString(sTemp.Partial(10, certslen))
+                                            'RunProcess "rundll32.exe", "cryptext.dll,CryptExtOpenCER " & AppPath & "cert.cer"
 
-                                          ' WriteFile AppPath & "cert.cer", ToString(sTemp.Partial(7, certslen))
-''
-                                           ' RunProcess "rundll32.exe", "cryptext.dll,CryptExtOpenCER " & AppPath & "cert.cer"
-
+                                            '####### OPEN IN COMPONENT CERTIFICATE VIEWER
                                             Set cert = New Certificate
                                             cert.LoadCertificate Stream(sTemp.Partial(10, certslen))
-
+                                            cert.ViewCertificate
+                                            
+                                            '####### DIDPLAY ALL INFO FIELDS FROM THE CERTIFICATE
 '                                            Dim fields As NTNodes10.Collection
 '                                            Set fields = Cert.fields
 '                                            Dim num As Integer
 '                                            For num = 1 To fields.count
 '                                                Debug.Print fields.Key(num) & " " & Cert.Names(fields.Key(num)) & " " & Cert.Terms(fields.Key(num))
 '                                            Next
-'
-'                                            Debug.Print "Version " & Cert.HexStream(Cert.fields(Version))
-'                                            Debug.Print
-'                                            Debug.Print "SerialNumber " & Cert.HexStream(Cert.fields(SerialNumber))
-'                                            Debug.Print
-'                                            Debug.Print "Algorithm " & Cert.HexStream(Cert.fields(Algorithm))
-'                                            Debug.Print
-'                                            Debug.Print "Issuer " & Cert.HexStream(Cert.fields(Issuer))
-'                                            Debug.Print
-'                                            Debug.Print "Validity " & Cert.HexStream(Cert.fields(Validity))
-'                                            Debug.Print
-'                                            Debug.Print "Subject " & Cert.HexStream(Cert.fields(Subject))
-'                                            Debug.Print
-'                                            Debug.Print "PublicKey " & Cert.HexStream(Cert.fields(PublicKey))
-'                                            Debug.Print
-'                                            Debug.Print "Extensions " & Cert.HexStream(Cert.fields(Extensions))
-'                                            Debug.Print
-'                                            Debug.Print "SignatureAlgorithm " & Cert.HexStream(Cert.fields(SignatureAlgorithm))
-'                                            Debug.Print
-'                                            Debug.Print "Signature " & Cert.HexStream(Cert.fields(Signature))
-'                                            Debug.Print
+
+
+                                            '####### DISPLAY ALL FIELDS PARSED FROM THE CERTIFICATE
+                                            Debug.Print "Version " & cert.HexStream(cert.Fields(Version))
+                                            Debug.Print
+                                            Debug.Print "SerialNumber " & cert.HexStream(cert.Fields(SerialNumber))
+                                            Debug.Print
+                                            Debug.Print "Algorithm " & cert.HexStream(cert.Fields(Algorithm))
+                                            Debug.Print
+                                            Debug.Print "Issuer " & cert.HexStream(cert.Fields(Issuer))
+                                            Debug.Print
+                                            Debug.Print "Validity " & cert.HexStream(cert.Fields(Validity))
+                                            Debug.Print
+                                            Debug.Print "Subject " & cert.HexStream(cert.Fields(Subject))
+                                            Debug.Print
+                                            Debug.Print "PublicKey " & cert.HexStream(cert.Fields(PublicKey))
+                                            Debug.Print
+                                            Debug.Print "Extensions " & cert.HexStream(cert.Fields(Extensions))
+                                            Debug.Print
+                                            Debug.Print "SignatureAlgorithm " & cert.HexStream(cert.Fields(SignatureAlgorithm))
+                                            Debug.Print
+                                            Debug.Print "Signature " & cert.HexStream(cert.Fields(Signature))
+                                            Debug.Print
                                             
 '
 '                                           If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then   'If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then
 '                                                Debug.Print "Unable to verify signature!"
 '                                            End If
 
-                                           ' RSA_KEY_LEN = 256
+                                            RSA_KEY_LEN = 256
 ''
                                             SecureSession.InBuffer = ToString(sTemp.Partial(10, certslen)) '
                                           '  SecureSession.InBuffer = ToString(sTemp.Partial(certlen + 10, (certslen + 10) - (certlen + 10))) 'CertData
@@ -659,14 +663,15 @@ Private Sub wClient_DataArriving()
 
                                           '  SecureSession.SetPubKey
 
-                                            'SecureSession.Signature = StrReverse(ToString(cert.Fields(Signature)))
+                                          '  SecureSession.Signature = StrReverse(ToString(cert.Fields(Signature)))
                                             SecureSession.Signature = ToString(sTemp.Partial(10, certlen))
+                                            
 '
 '                                            If Not VerifySignature(StrReverse(ToString(cert.Fields(Signature)))) Then
 '                                                Debug.Print "Unable to verify signature!"
 '                                            End If
 
-                                           If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then   'If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then
+                                           If Not VerifySignature(SecureSession.Signature) Then   'If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then
                                                 Debug.Print "Unable to verify signature!"
                                             End If
 

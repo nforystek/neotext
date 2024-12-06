@@ -123,7 +123,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderMolecules UserControl, Camera
             RenderBrilliants UserControl, Camera
             
-            SetupCamera3 UserControl, Camera
+            SetupCamera2 UserControl, Camera
 
             InputScene UserControl
             

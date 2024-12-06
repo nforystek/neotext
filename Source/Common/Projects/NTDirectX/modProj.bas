@@ -196,13 +196,13 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
     Static matSave As D3DMATRIX
     If StartOrStop Then
         'do start
-        DDevice.GetTransform D3DTS_VIEW, matSave
-        matView = matSave
-        matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
-        DDevice.SetTransform D3DTS_VIEW, matView
-        DDevice.SetRenderState D3DRS_ZENABLE, 0
-
-        ResetProjection UserControl, Camera, True
+'        DDevice.GetTransform D3DTS_VIEW, matSave
+'        matView = matSave
+'        matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
+'        DDevice.SetTransform D3DTS_VIEW, matView
+'        DDevice.SetRenderState D3DRS_ZENABLE, 0
+'
+'        ResetProjection UserControl, Camera, True
 
   
     Else
@@ -211,15 +211,14 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
         
        '
         
-        matView = matSave
-        DDevice.SetTransform D3DTS_VIEW, matView
-        
-        
-        DDevice.SetTransform D3DTS_WORLD, matWorld
-  
-
-        
-        ResetProjection UserControl, Camera, False
+'        matView = matSave
+'        DDevice.SetTransform D3DTS_VIEW, matView
+'
+'        DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'
+'
+'        ResetProjection UserControl, Camera, False
 
         
 '

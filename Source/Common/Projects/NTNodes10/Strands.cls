@@ -60,18 +60,9 @@ Private Sub Terminate()
             PathHandle = 0
             If Left(PathFileName, 6) = MirrorPath_Temp Then Kill Mid(PathFileName, 7)
         End If
-        PathFileName = MirrorPath_None
         
-'        Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.ScopeNormal)
-'            Case Behaviors.ScopeGlobal
-'                'GlobalUnlock Pointer
-'                GlobalFree Pointer
-'            Case Behaviors.ScopeLocale
-'                'LocalUnlock Pointer
-'                LocalFree Pointer
-'            Case Else
-'                HeapFree GetProcessHeap, 0, Pointer
-'        End Select
+        PathFileName = MirrorPath_None 'deintitializes everything
+        
         ReDim Breaks(0 To 0) As Long
         Behave = Nothings_Initialized
         
@@ -121,14 +112,14 @@ Private Sub Change(ByVal Behavior As Behaviors, Optional ByVal MirrorFilePath As
         Select Case Left(MirrorFilePath, 6)
             Case MirrorPath_Temp
                 PathFileName = MirrorPath_Temp & GetTemporaryFile
-                PathHandle = CreateFile(Mid(PathFileName, 7), FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE, sc, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY And FILE_FLAG_DELETE_ON_CLOSE, ByVal 0&)
+                PathHandle = CreateFile(Mid(PathFileName, 7), FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_WRITE Or FILE_SHARE_READ, sc, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY And FILE_FLAG_DELETE_ON_CLOSE, ByVal 0&)
                 If PathHandle <= 0 Then Err.Raise 8, App.Title, "Error opening file."
             Case MirrorPath_None
                 PathHandle = 0
                 PathFileName = MirrorPath_None
             Case Else
                 PathFileName = MirrorFilePath
-                PathHandle = CreateFile(PathFileName, FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE, sc, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, ByVal 0&)
+                PathHandle = CreateFile(PathFileName, FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_WRITE Or FILE_SHARE_READ, sc, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, ByVal 0&)
                 If PathHandle <= 0 Then Err.Raise 8, App.Title, "Error opening file."
                 lSize = Length
                 If lSize = 0 Then
@@ -213,11 +204,11 @@ Attribute Clear.VB_Description = "Clears all the contents of the strands collect
     End If
 End Sub
 
-Public Property Get Count() As Long ' _
+Public Property Get count() As Long ' _
 Gets the number of lines in the strands collection.
-Attribute Count.VB_Description = "Gets the number of lines in the strands collection."
+Attribute count.VB_Description = "Gets the number of lines in the strands collection."
     If Behave <> Nothings_Initialized Then
-        Count = UBound(Breaks)
+        count = UBound(Breaks)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -227,9 +218,9 @@ Public Property Get Current() As Long ' _
 Gets or sets the current line number for which Item, Insert or Delete refers too.
 Attribute Current.VB_Description = "Gets or sets the current line number for which Item, Insert or Delete refers too."
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then
+        If (count > 0) Then
             If (Breaks(0) = 0) Then Breaks(0) = 1
-            If (Breaks(0) > Count) Then Breaks(0) = Count
+            If (Breaks(0) > count) Then Breaks(0) = count
             Current = Breaks(0)
         Else
             Current = 0
@@ -260,7 +251,7 @@ Public Function Delete() As Byte() ' _
 Deletes a line from the collection at the number indicated by the Current property.
 Attribute Delete.VB_Description = "Deletes a line from the collection at the number indicated by the Current property."
     If Behave <> Nothings_Initialized Then
-        If (Count <= 2) Or (Current = 1) Or (Current = Count) Then
+        If (count <= 2) Or (Current = 1) Or (Current = count) Then
             If (Current = 1) Then
                 Delete = Pop()
             Else
@@ -296,7 +287,7 @@ Public Property Get First() As Byte() ' _
 Gets or sets the bytes of the text to the first line of the strand collection.
 Attribute First.VB_Description = "Gets or sets the bytes of the text to the first line of the strand collection."
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then First = Item(1)
+        If (count > 0) Then First = Item(1)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -304,12 +295,12 @@ End Property
 
 Public Property Let First(ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then
+        If (count > 0) Then
             Dim llen As Long
             Dim cnt As Long
             Dim line() As Byte
             Do While NextLine(lines, line, llen)
-                If (Count > 1) Then
+                If (count > 1) Then
                     For cnt = UBound(Breaks) To 2 Step -1
                         Breaks(cnt) = Breaks(cnt) - (Breaks(1) - llen)
                     Next
@@ -339,7 +330,7 @@ Public Function Insert(ByRef lines() As Byte) As Long ' _
 Adds lines to the strand collection at the line that the Current property indicates, returning the last line number added.
 Attribute Insert.VB_Description = "Adds lines to the strand collection at the line that the Current property indicates, returning the last line number added."
     If Behave <> Nothings_Initialized Then
-        If (Count = 0) Or (Current = 1) Or (Current = Count) Then
+        If (count = 0) Or (Current = 1) Or (Current = count) Then
             If (Current = 1) Then
                 Insert = Add(lines)
             Else
@@ -373,16 +364,16 @@ Attribute Insert.VB_Description = "Adds lines to the strand collection at the li
     End If
 End Function
 
-Public Property Get Offset(Optional ByVal Number As Long = -1&) As Long ' _
+Public Property Get Offset(Optional ByVal number As Long = -1&) As Long ' _
 Gets the number of bytes existing before the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    Offset = Breaks(Number - 1)
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    Offset = Breaks(number - 1)
                 End If
             Else
                 Offset = Stream.Length
@@ -395,18 +386,18 @@ Gets the number of bytes existing before the line expressed by the Number argume
     End If
 End Property
 
-Public Property Get SizeOf(Optional ByVal Number As Long = -1&) As Long ' _
+Public Property Get SizeOf(Optional ByVal number As Long = -1&) As Long ' _
 Gets the number of bytes in the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    SizeOf = Breaks(Number) - Breaks(Number - 1)
-                ElseIf (Number = 1) Then
-                    SizeOf = Breaks(Number)
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    SizeOf = Breaks(number) - Breaks(number - 1)
+                ElseIf (number = 1) Then
+                    SizeOf = Breaks(number)
                 End If
             End If
        ' Else
@@ -417,19 +408,19 @@ Gets the number of bytes in the line expressed by the Number argument, if omitte
     End If
 End Property
 
-Public Property Get Item(Optional ByVal Number As Long = -1&) As Byte() ' _
+Public Property Get Item(Optional ByVal number As Long = -1&) As Byte() ' _
 Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number.
 Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number."
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
-            Number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
+            number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (Number <= UBound(Breaks)) Then
-                If (Number > 1) Then
-                    Item = Stream.Partial(Breaks(Number - 1), Breaks(Number) - Breaks(Number - 1))
-                ElseIf (Number = 1) Then
-                    Item = Stream.Partial(0, Breaks(Number))
+            If (number <= UBound(Breaks)) Then
+                If (number > 1) Then
+                    Item = Stream.Partial(Breaks(number - 1), Breaks(number) - Breaks(number - 1))
+                ElseIf (number = 1) Then
+                    Item = Stream.Partial(0, Breaks(number))
                 End If
             Else
                 ReDim Item(-1 To -1) As Byte
@@ -443,19 +434,19 @@ Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed b
     End If
 End Property
 
-Public Property Let Item(Optional ByVal Number As Long = -1&, ByRef lines() As Byte)
+Public Property Let Item(Optional ByVal number As Long = -1&, ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) And Number >= -1 Then
-            If (Number = 0) Then Number = 1
-            If (Number > Count) Then Number = Count
+        If (count > 0) And number >= -1 Then
+            If (number = 0) Then number = 1
+            If (number > count) Then number = count
         End If
-        If Number = -1 Then Number = Current
-        If (Count > 0) Then
+        If number = -1 Then number = Current
+        If (count > 0) Then
             Dim Temp As Long
             Temp = Breaks(0)
-            Breaks(0) = Number
+            Breaks(0) = number
             Delete
-            Breaks(0) = Number
+            Breaks(0) = number
             Insert lines
             Breaks(0) = Temp
         End If
@@ -468,7 +459,7 @@ Public Property Get Last() As Byte() ' _
 Gets or sets the bytes for the text of the last line in the strands collection.
 Attribute Last.VB_Description = "Gets or sets the bytes for the text of the last line in the strands collection."
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then Last = Item(Count)
+        If (count > 0) Then Last = Item(count)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -476,16 +467,16 @@ End Property
 
 Public Property Let Last(ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then
+        If (count > 0) Then
             Dim llen As Long
             Dim Temp As Long
             Dim line() As Byte
             Temp = Current
             Breaks(0) = 0
             Do While NextLine(lines, line, llen)
-                Stream.Length = Stream.Length - (Breaks(Count) - Breaks(Count - 1))
+                Stream.Length = Stream.Length - (Breaks(count) - Breaks(count - 1))
                 Concat2 line
-                Breaks(Count) = Breaks(Count - 1) + llen
+                Breaks(count) = Breaks(count - 1) + llen
             Loop
             Breaks(0) = Temp
         End If
@@ -539,7 +530,7 @@ Public Function Pop() As Byte() ' _
 Removes a line at the very beginning of the strand collection, and returns its text in bytes.
 Attribute Pop.VB_Description = "Removes a line at the very beginning of the strand collection, and returns its text in bytes."
     If Behave <> Nothings_Initialized Then
-        If (Count > 0) Then
+        If (count > 0) Then
             Dim Temp As Long
             Temp = Current
             Pop = Stream.Partial(0, Breaks(1))
@@ -575,7 +566,7 @@ Attribute Add.VB_Description = "Adds lines by bytes to the very beginning of the
             Prepend2 line
             ReDim Preserve Breaks(LBound(Breaks) To UBound(Breaks) + 1) As Long
             Add = Add + 1
-            If Count > 1 Then
+            If count > 1 Then
                 For cnt = UBound(Breaks) To 1 Step -1
                     Breaks(cnt) = Breaks(cnt - 1) + llen
                 Next
@@ -593,11 +584,11 @@ Public Function Remove() As Byte() ' _
 Removes a line at the very end of the strand collection, and returns its text in bytes.
 Attribute Remove.VB_Description = "Removes a line at the very end of the strand collection, and returns its text in bytes."
     If Behave <> Nothings_Initialized Then
-        If Count > 1 Then
+        If count > 1 Then
             Remove = Stream.Partial(Breaks(UBound(Breaks) - 1), (Breaks(UBound(Breaks)) - Breaks(UBound(Breaks) - 1)))
             Length = Length - (Breaks(UBound(Breaks)) - Breaks(UBound(Breaks) - 1))
             ReDim Preserve Breaks(0 To UBound(Breaks) - 1) As Long
-        ElseIf Count = 1 Then
+        ElseIf count = 1 Then
             Remove = Stream.Partial
             Reset
             ReDim Breaks(0 To 0) As Long
@@ -642,12 +633,12 @@ Attribute Reset.VB_Description = "Reset the stream object freeing up any allocat
         Select Case Left(PathFileName, 6)
             Case MirrorPath_Temp
                 PathFileName = MirrorPath_Temp & GetTemporaryFile
-                PathHandle = CreateFile(Mid(PathFileName, 7), FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE, sc, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY And FILE_FLAG_DELETE_ON_CLOSE, ByVal 0&)
+                PathHandle = CreateFile(Mid(PathFileName, 7), FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_WRITE Or FILE_SHARE_READ, sc, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY And FILE_FLAG_DELETE_ON_CLOSE, ByVal 0&)
                 If PathHandle <= 0 Then Err.Raise 8, App.Title, "Error opening file."
             Case MirrorPath_None
                 PathHandle = 0
             Case Else
-                PathHandle = CreateFile(PathFileName, FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE, sc, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL And FILE_FLAG_WRITE_THROUGH, ByVal 0&)
+                PathHandle = CreateFile(PathFileName, FILE_GENERIC_WRITE Or FILE_GENERIC_READ, FILE_SHARE_WRITE Or FILE_SHARE_READ, sc, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL And FILE_FLAG_WRITE_THROUGH, ByVal 0&)
                 If PathHandle <= 0 Then Err.Raise 8, App.Title, "Error opening file."
         End Select
         EndOfStream 0
@@ -890,7 +881,7 @@ Public Sub RebreakStream()
     If UBound(Breaks) > (cnt2 - 1) Then ReDim Preserve Breaks(0 To (cnt2 - 1)) As Long
     If Breaks(UBound(Breaks)) < Length Then
         ReDim Preserve Breaks(0 To UBound(Breaks) + 1) As Long
-        Breaks(UBound(Breaks)) = Length '+ -CInt(Not CBool(-LBound(Data)))
+        Breaks(UBound(Breaks)) = Length
     End If
 End Sub
 
@@ -900,19 +891,6 @@ Private Function ConcatNoFile(Data() As Byte, ByVal nSize As Long) As Long
             Dim lSize As Long
             lSize = Stream.Length
             Stream.Length = (nSize + lSize)
-'            Select Case Behave And (Behaviors.ScopeGlobal Or Behaviors.ScopeLocale Or Behaviors.scopeNormal)
-'                Case Behaviors.ScopeGlobal
-'                    'If GlobalUnlock(Pointer) <> 1 Then Err.Raise 8, App.Title, "Global memory unlock failure."
-'                    Stream.Address = GlobalReAlloc(Stream.Address, (nSize + lSize), modStrands.GMEM_MOVEABLE Or modStrands.GPTR)
-'                    'If Pointer <> GlobalLock(Pointer) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
-'                Case Behaviors.ScopeLocale
-'                    'If LocalUnlock(Pointer) <> 0 Then Err.Raise 8, App.Title, "Local memory unlock failure."
-'                    Stream.Address = LocalReAlloc(Stream.Address, (nSize + lSize), LMEM_MOVEABLE Or lPtr)
-'                    'If Pointer <> LocalLock(Pointer) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
-'                Case Else
-'                    Stream.Address = HeapReAlloc(GetProcessHeap, 0, Stream.Address, (nSize + lSize))
-'            End Select
-
             RtlMoveMemory ByVal Stream.Address + lSize, ByVal VarPtr(Data(LBound(Data))), nSize
             ConcatNoFile = lSize
         End If
@@ -947,16 +925,27 @@ Private Sub EndOfStream(ByVal Size As Long)
     Select Case Left(PathFileName, 6)
         Case MirrorPath_None
         Case Else
-            Dim loorder As Long
-            Dim hiorder As Long
-            loorder = LoWord(Size)
-            hiorder = HiWord(Size)
-            If SetFilePointer(PathHandle, loorder, hiorder, 0) = INVALID_SET_FILE_POINTER Then
-                Err.Raise 8, App.Title, "Error moving file position."
-            End If
-            If SetEndOfFile(PathHandle) = 0 Then
-                Err.Raise 8, App.Title, "Error allocating file size."
-            End If
+'            If Size = 0 Then
+'                Dim bh As Behaviors
+'                Dim fp As String
+'                fp = FileName
+'                bh = Behavior
+'                Change Nothings_Initialized
+'                Change bh, fp
+'            Else
+                Dim loorder As Long
+                Dim hiorder As Long
+                loorder = LoWord(Size)
+                hiorder = HiWord(Size)
+                If Size <> 0 Then
+                    If SetFilePointer(PathHandle, loorder, hiorder, 0) = INVALID_SET_FILE_POINTER Then
+                        Err.Raise 8, App.Title, "Error moving file position."
+                    End If
+                End If
+                If SetEndOfFile(PathHandle) = 0 Then
+                    Err.Raise 8, App.Title, "Error allocating file size."
+                End If
+'            End If
     End Select
 End Sub
 Private Function LineLength(ByRef Data() As Byte) As Long

@@ -28,7 +28,7 @@ Public Enum AngleValue
     angle = 2 'base, sine and cosine of the angle added together
 End Enum
 
-Public Const PI As Single = 3.14159265358979 'leaving out 65358979
+Public Const PI As Single = 3.141592 '65358979 'leaving out 65358979
                     'because the planes mess up and wobble
 
 Public Const epsilon As Double = 0.0001 '0.999999999999999
@@ -450,7 +450,7 @@ Public Function TrianglePerimeter(ByRef p1 As Point, ByRef p2 As Point, ByRef p3
     TrianglePerimeter = (DistanceEx(p1, p2) + DistanceEx(p2, p3) + DistanceEx(p3, p1))
 End Function
 
-Function TriangleArea1(ByVal a As Single, ByVal b As Single, ByVal c As Single) As Single
+Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal c As Single) As Single
     'I'm not sure this is anything correct, it doesn't seem to be acurate the higher it is
     'but it was an attempt to develop it logically using the 1/2 base * height
     'I think the function just under this is more accurate perhaps not though.
@@ -461,14 +461,14 @@ Function TriangleArea1(ByVal a As Single, ByVal b As Single, ByVal c As Single) 
     Dim e As Single
     Dim f As Single
     Dim g As Single
-    Dim h As Single
+    Dim H As Single
 
     'make c the largest side, doing so
     'sort us the base in any situation
-    If a > c Then
+    If A > c Then
         'swap
-        d = a
-        a = c
+        d = A
+        A = c
         c = d
     End If
     If b > c Then
@@ -478,21 +478,21 @@ Function TriangleArea1(ByVal a As Single, ByVal b As Single, ByVal c As Single) 
         c = d
     End If
     
-    If a + b < c Then
+    If A + b < c Then
         'invalid triangle
         Exit Function
     End If
     
     'now make c the odd side
     'if two sides are equal
-    If a = c Then
+    If A = c Then
         d = b
         b = c
         c = d
     End If
     If b = c Then
-        d = a
-        a = c
+        d = A
+        A = c
         c = d
     End If
     
@@ -515,9 +515,9 @@ Function TriangleArea1(ByVal a As Single, ByVal b As Single, ByVal c As Single) 
     'and are not larger then C, a percent
     'they may represent then if c is whole
     
-    d = (a + b) 'a total unit whole
+    d = (A + b) 'a total unit whole
     
-    e = (a / d) 'a percent of the unit that a is
+    e = (A / d) 'a percent of the unit that a is
     e = (e * c) 'applied to c for where to split
     
     f = (b / d) 'do it again, for b
@@ -530,14 +530,14 @@ Function TriangleArea1(ByVal a As Single, ByVal b As Single, ByVal c As Single) 
     'as the split in C forms right traingles
     'where a dn b are the hypotenuse
     
-    g = (((a ^ 2) - (e ^ 2)) ^ (1 / 2))
-    h = (((b ^ 2) - (f ^ 2)) ^ (1 / 2))
+    g = (((A ^ 2) - (e ^ 2)) ^ (1 / 2))
+    H = (((b ^ 2) - (f ^ 2)) ^ (1 / 2))
     
     'now do the area formula for each
     'area = ((1/2) * B * H)
      
-    d = ((1 / 2) * a * g)
-    e = ((1 / 2) * b * h)
+    d = ((1 / 2) * A * g)
+    e = ((1 / 2) * b * H)
     
     'finally add the two areas for the
     'original traingles total area
@@ -1144,9 +1144,9 @@ Public Function VectorCotangent(ByRef p As Point) As Single
     End If
 End Function
 
-Public Function AngleInvertRotation(ByVal a As Single) As Single
+Public Function AngleInvertRotation(ByVal A As Single) As Single
 
-    AngleInvertRotation = (-(PI * 2) - a + (PI * 4)) ' - PI
+    AngleInvertRotation = (-(PI * 2) - A + (PI * 4)) ' - PI
 
 End Function
 Public Function AngleAddition(ByVal a1 As Single, ByVal a2 As Single) As Single
@@ -1926,8 +1926,8 @@ Public Function AbsoluteInvert(ByVal Value As Long, Optional ByVal Whole As Long
     AbsoluteInvert = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
-Public Function Lerp(ByVal a As Single, ByVal b As Single, ByVal t As Single) As Single
-    Lerp = a + (b - a) * t
+Public Function Lerp(ByVal A As Single, ByVal b As Single, ByVal t As Single) As Single
+    Lerp = A + (b - A) * t
 End Function
 
 Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant

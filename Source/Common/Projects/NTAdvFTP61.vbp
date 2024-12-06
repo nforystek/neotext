@@ -28,6 +28,7 @@ Class=Certificate; NTAdvFTP61\Certificate.cls
 Module=modGuid; ..\..\Shared\modGUID.bas
 Form=NTAdvFTP61\frmCert.frm
 ResFile32="NTAdvFTP61\PGPKeys.RES"
+Module=modCrypto; NTAdvFTP61\modCrypto.bas
 Startup="Sub Main"
 HelpFile=""
 Title="NTAdvFTP61"
@@ -72,4 +73,4 @@ UseExistingBrowser=0
 AutoRefresh=1
 
 [Neotext]
-CompCond="modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:modProcess=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modGuid=-1"
+CompCond="modSockets=-1:modMain=-1:modWindow=-1:modWinProc=-1:modWildCard=-1:modProcess=-1:modCommon=-1:modMemory=-1:modBitValue=-1:modFileSys=-1:modStream=-1:modDoTasks=-1:modGuid=-1:modCrypto=-1"

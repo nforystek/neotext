@@ -74,7 +74,7 @@ Private Type TwoLong
    lVal(0 To 1) As Long
 End Type
 
-Private Declare Sub GetMem8 Lib "msvbvm60.dll" (ByRef pSrc As Any, ByRef pDest As Any)
+Private Declare Sub GetMem8 Lib "MSVBVM60.DLL" (ByRef pSrc As Any, ByRef pDest As Any)
 
 '########################################################################################
 Private Function FindBit(ByVal Index As Variant) As Variant
@@ -88,34 +88,34 @@ Private Function FindBit(ByVal Index As Variant) As Variant
     Else
         Err.Raise 8, "Bit", "Invalid arguments."
     End If
-    Dim check As Double
-    Dim count As Long
-    check = Index
-    count = 1
-    Do Until ((check = 0) Or ((check Mod 1) <> check))
-        check = Index Mod 2
-        count = count + 1
+    Dim Check As Double
+    Dim Count As Long
+    Check = Index
+    Count = 1
+    Do Until ((Check = 0) Or ((Check Mod 1) <> Check))
+        Check = Index Mod 2
+        Count = Count + 1
     Loop
-    If check = 0 Then
-        If count <= 24 Then
+    If Check = 0 Then
+        If Count <= 24 Then
             FindBit = Index
         Else
-            Select Case TypeName(Index)
+            Select Case VBA.TypeName(Index)
                 Case "Byte", "Integer", "Long"
                     FindBit = Index
                 Case Else
                     Err.Raise 8, "Bit", "Invalid arguments."
             End Select
         End If
-    ElseIf ((check Mod 1) <> check) Then
+    ElseIf ((Check Mod 1) <> Check) Then
         If Index <= 24 Then
-            count = 1
+            Count = 1
             Do Until Index = 0
-                count = count * 2
+                Count = Count * 2
                 Index = Index - 1
             Loop
-            count = count \ 2
-            FindBit = count
+            Count = Count \ 2
+            FindBit = Count
         Else
             FindBit = Index
         End If

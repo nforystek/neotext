@@ -122,12 +122,6 @@ End Function
 
 #Else
 
-Public Function HexDecode(ByVal Data As String) As String
-    HexDecode = HesDecodeData(Data)
-End Function
-Public Function HexEncode(ByVal Data As String) As String
-    HexEncode = HesEncodeData(Data)
-End Function
 
 Public Function HexDecode(ByVal Data As String) As String
     HexDecode = modHexStr.HesDecodeData(Data)

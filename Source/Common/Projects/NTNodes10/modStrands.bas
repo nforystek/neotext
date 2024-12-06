@@ -140,7 +140,7 @@ Public Type OVERLAPPED
         hEvent As Long
 End Type
 
-Public Declare Function VarPtrArray Lib "MSVBVM60.DLL" Alias "VarPtr" (Var() As Any) As Long
+Public Declare Function VarPtrArray Lib "msvbvm60.dll" Alias "VarPtr" (Var() As Any) As Long
 Public Declare Function StrCpy Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As String, ByVal lpString2 As Long) As Long
 Public Declare Function StrCpyReverse Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As Long, ByVal lpString2 As String) As Long
 Public Declare Function StrLen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
@@ -225,35 +225,35 @@ End Function
 '    End If
 'End Property
 
-Public Property Get LoWord(ByRef lThis As Long) As Long
-   LoWord = (lThis And &HFFFF&)
-End Property
-
-Public Property Let LoWord(ByRef lThis As Long, ByVal lLoWord As Long)
-   lThis = lThis And Not &HFFFF& Or lLoWord
-End Property
-
-Public Property Get HiWord(ByRef lThis As Long) As Long
-   If (lThis And &H80000000) = &H80000000 Then
-      HiWord = ((lThis And &H7FFF0000) \ &H10000) Or &H8000&
-   Else
-      HiWord = (lThis And &HFFFF0000) \ &H10000
-   End If
-End Property
-
-Public Property Let HiWord(ByRef lThis As Long, ByVal lHiWord As Long)
-   If (lHiWord And &H8000&) = &H8000& Then
-      lThis = lThis And Not &HFFFF0000 Or ((lHiWord And &H7FFF&) * &H10000) Or &H80000000
-   Else
-      lThis = lThis And Not &HFFFF0000 Or (lHiWord * &H10000)
-   End If
-End Property
+'Public Property Get LoWord(ByRef lThis As Long) As Long
+'   LoWord = (lThis And &HFFFF&)
+'End Property
+'
+'Public Property Let LoWord(ByRef lThis As Long, ByVal lLoWord As Long)
+'   lThis = lThis And Not &HFFFF& Or lLoWord
+'End Property
+'
+'Public Property Get HiWord(ByRef lThis As Long) As Long
+'   If (lThis And &H80000000) = &H80000000 Then
+'      HiWord = ((lThis And &H7FFF0000) \ &H10000) Or &H8000&
+'   Else
+'      HiWord = (lThis And &HFFFF0000) \ &H10000
+'   End If
+'End Property
+'
+'Public Property Let HiWord(ByRef lThis As Long, ByVal lHiWord As Long)
+'   If (lHiWord And &H8000&) = &H8000& Then
+'      lThis = lThis And Not &HFFFF0000 Or ((lHiWord And &H7FFF&) * &H10000) Or &H80000000
+'   Else
+'      lThis = lThis And Not &HFFFF0000 Or (lHiWord * &H10000)
+'   End If
+'End Property
 
 Public Function GetWinDir() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(MAX_PATH, Chr(0))
-    ret = GetWindowsDirectory(winDir, MAX_PATH)
+    Ret = GetWindowsDirectory(winDir, MAX_PATH)
     winDir = Trim(Replace(winDir, Chr(0), ""))
     If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.path
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
@@ -262,10 +262,10 @@ End Function
 
 Public Function GetWinTempDir() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetTempPath(255, winDir)
-    If (ret <> 16) And (ret <> 34) Then
+    Ret = GetTempPath(255, winDir)
+    If (Ret <> 16) And (Ret <> 34) Then
         winDir = GetWinDir()
         If LCase(Dir(winDir & "TEMP", vbDirectory)) = "" Then
             MkDir winDir + "TEMP"
@@ -280,14 +280,14 @@ End Function
 
 Public Function GetTemporaryFile() As String
     Dim winDir As String
-    Dim ret As Long
+    Dim Ret As Long
     winDir = String(255, Chr(0))
-    ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
-    If ret = 0 Then
+    Ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
+    If Ret = 0 Then
         winDir = GetWinTempDir & "\" & Left(Left(App.Title, 3) & Hex(CLng(Mid(CStr(Rnd), 3))), 14) & ".tmp"
-        ret = FreeFile
-        Open winDir For Output As #ret
-        Close #ret
+        Ret = FreeFile
+        Open winDir For Output As #Ret
+        Close #Ret
     Else
         winDir = Trim(Replace(winDir, Chr(0), ""))
     End If
@@ -329,34 +329,34 @@ dimerror:
 End Function
 
 Public Function Convert(Info)
-    Dim N As Long
+    Dim n As Long
     Dim out() As Byte
-    Dim ret As String
+    Dim Ret As String
     Select Case VBA.TypeName(Info)
         Case "String"
             If Len(Info) > 0 Then
                 ReDim out(0 To Len(Info) - 1) As Byte
-                For N = 0 To Len(Info) - 1
-                    out(N) = Asc(Mid(Info, N + 1, 1))
+                For n = 0 To Len(Info) - 1
+                    out(n) = Asc(Mid(Info, n + 1, 1))
                 Next
             End If
             Convert = out
         Case "Byte()"
             If (ArraySize(Info) > 0) Then
                 On Error GoTo dimcheck
-                For N = LBound(Info) To UBound(Info)
-                    ret = ret & Chr(Info(N))
+                For n = LBound(Info) To UBound(Info)
+                    Ret = Ret & Chr(Info(n))
                 Next
             End If
-            Convert = ret
+            Convert = Ret
     End Select
     Exit Function
 dimcheck:
     If Err Then Err.Clear
-    For N = LBound(Info, 2) To UBound(Info, 2)
-        ret = ret & Chr(Info(0, N))
+    For n = LBound(Info, 2) To UBound(Info, 2)
+        Ret = Ret & Chr(Info(0, n))
     Next
-    Convert = ret
+    Convert = Ret
 End Function
 
 

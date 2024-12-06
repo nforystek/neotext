@@ -12,19 +12,26 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 
+
+
+
+
 Option Explicit
 
 Option Compare Binary
-'A class that implements a linked list which allows objects, variants, and primitives mixed
-'in one concurrent list that has the add and remove of both queue and stack type of list
+
+
 
 Implements INode
+
 
 
 Private List As ListType
 
 
+
 Private Declare Function vbaObjSet Lib "MSVBVM60.DLL" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
+
 
 
 Private Sub Class_Initialize()
@@ -45,11 +52,11 @@ End Sub
 
 
 
-Private Function INode_Append() As Long
+Private Sub INode_Append()
 
-    INode_Append = Me.Append
+    Me.Append
 
-End Function
+End Sub
 
 
 
@@ -60,11 +67,13 @@ Private Sub INode_Backward()
 End Sub
 
 
-Private Function INode_BeginOfList() As Boolean
 
-    INode_BeginOfList = Me.BeginOfList
-    
-End Function
+Private Property Get INode_Check() As Long
+
+    INode_Check = Me.Check
+
+End Property
+
 
 
 Private Sub INode_Clear()
@@ -82,24 +91,14 @@ Private Property Get INode_Count() As Long
 End Property
 
 
-#If VBIDE = -1 Then
-Private Property Get INode_Count2() As Long
-    INode_Count2 = Me.Count2
-End Property
-#End If
 
-Private Function INode_Delete() As Long
+Private Sub INode_Delete()
 
-    INode_Delete = Me.Delete
-    
-End Function
+    Me.Delete
+
+End Sub
 
 
-Private Function INode_EndOfList() As Boolean
-
-    INode_EndOfList = Me.EndOfList
-    
-End Function
 
 Private Function INode_Exists() As Boolean
 
@@ -141,18 +140,13 @@ End Property
 
 
 
-Private Function INode_Insert() As Long
+Private Sub INode_Insert()
 
-    INode_Insert = Me.Insert
+    Me.Insert
 
-End Function
+End Sub
 
 
-Private Function INode_Inverse() As Boolean
-
-    INode_Inverse = Me.Inverse
-    
-End Function
 
 Private Property Get INode_IsObject() As Boolean
 
@@ -193,17 +187,12 @@ Private Property Get INode_Point() As Long
 End Property
 
 
-Private Property Get INode_Prior() As Long
-    
-    INode_Prior = Me.Prior
-    
-End Property
 
-Private Function INode_Remove() As Long
+Private Sub INode_Remove()
 
-    INode_Remove = Me.Remove
+    Me.Remove
 
-End Function
+End Sub
 
 
 
@@ -214,13 +203,6 @@ Private Sub INode_Save(Optional ByVal FileName As String, Optional ByVal Clear A
 End Sub
 
 
-Private Property Get INode_Total() As Long
-    INode_Total Me.Total
-End Property
-
-Private Property Get INode_Track() As Long
-    INode_Track = Me.Track
-End Property
 
 Private Property Get INode_TypeName() As String
 
@@ -246,13 +228,13 @@ End Property
 
 
 
-Public Function Append() As Long ' _
+Public Sub Append() ' _
 Adds a node to the end of the list, the point location reflects the new node after Append is called.
 
 
-    Append = INode.Append
+    INode.Append
 
-End Function
+End Sub
 
 
 
@@ -264,17 +246,13 @@ Moves to the prior node in the list.  This function projects along with forward 
 
 End Sub
 
-Public Function BeginOfList()
 
-    BeginOfList = INode.BeginOfList
-    
-End Function
 
-Public Property Get Prior() As Long ' _
+Public Property Get Check() As Long ' _
 Refers to the address of the Prior pointer node of the list, this changes with the pointer in movements relative to the First and Final.
 
 
-    Prior = INode.Prior
+    Check = INode.Check
 
 End Property
 
@@ -298,34 +276,16 @@ Returns the amount of total nodes taht exist with in the node list.
 
 End Property
 
-#If VBIDE = -1 Then
-'Public Property Get Track() As Long
-'    Track = INode.Track
-'End Property
-'Public Property Get Total() As Long
-'    Total = INode.Total
-'End Property
-Public Property Get Count2() As Long ' _
-Returns the amount of total nodes taht exist with in the node list.
 
 
-    Count2 = INode.Count2
-End Property
-#End If
-
-Public Function Delete() As Long ' _
+Public Sub Delete() ' _
 Deletes the node that is located at the current point in the list.
 
 
-    Delete = INode.Delete
+    INode.Delete
 
-End Function
+End Sub
 
-Public Function EndOfList()
-
-    EndOfList = INode.EndOfList
-    
-End Function
 
 
 Public Function Exists() As Boolean ' _
@@ -336,11 +296,8 @@ Checks the existance of a node or node list with the specified lsit.
 
 End Function
 
-Public Function Inverse() As Boolean
 
-    Inverse = INode.Inverse
-    
-End Function
+
 Public Property Get Final() As Long ' _
 The final node is the lists theoretical very last node, this is used to obtain logical reference and may not always reflect last added node to diminish itteration of the entire node list.
 
@@ -381,13 +338,13 @@ End Property
 
 
 
-Public Function Insert() As Long ' _
+Public Sub Insert() ' _
 Inserts a node at the current point in the list.  Nodes can be added to the end by using the Append function.
 
 
-    Insert = INode.Insert
+    INode.Insert
 
-End Function
+End Sub
 
 
 
@@ -441,13 +398,13 @@ End Property
 
 
 
-Public Function Remove() As Long ' _
+Public Sub Remove() ' _
 Removes a node from the list at the very beginning of the list.  You can use the delete function to remove at the current location point.
 
 
-    Remove = INode.Remove
+    INode.Remove
 
-End Function
+End Sub
 
 
 
@@ -488,6 +445,9 @@ Sets or gets the variable or object to this node.
     Value = INode.Value
 
 End Property
+
+
+
 
 
 

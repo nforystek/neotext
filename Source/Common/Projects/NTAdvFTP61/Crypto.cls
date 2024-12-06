@@ -1532,7 +1532,7 @@ Public Function SetPubKey() As Boolean
     NewPubKey.magic = &H31415352 '"RSA1"
     NewPubKey.bitlen = Len(sPublicKey) * 8
     NewPubKey.pubexp = 65537 '0x00010001
-    CopyMemory NewPubKey.modulus(1), bNewKey(0), Len(sPublicKey)
+    If Len(sPublicKey) > 0 Then CopyMemory NewPubKey.modulus(1), bNewKey(0), Len(sPublicKey)
     CopyMemory PublicKey.bPublicKey(1), NewPubKey, Len(sPublicKey) + 20
     SetPubKey = True
 End Function

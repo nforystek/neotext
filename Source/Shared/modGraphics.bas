@@ -297,12 +297,12 @@ Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long
 Public Declare Function SetPixelV Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Public Declare Function MoveToEx Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Public Declare Function lineto Lib "gdi32" Alias "LineTo" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
-Public Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
-Public Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Public Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
+Public Declare Function Ellipse Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 Public Declare Function Polygon Lib "gdi32" (ByVal hdc As Long, lpPoint As POINTAPI, ByVal nCount As Long) As Long
-Public Declare Function Arc Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
-Public Declare Function ArcTo Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
-Public Declare Function Pie Lib "gdi32" (ByVal hdc As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function Arc Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function ArcTo Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
+Public Declare Function Pie Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long, ByVal X3 As Long, ByVal y3 As Long, ByVal X4 As Long, ByVal Y4 As Long) As Long
 Public Declare Function ExtFloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long, ByVal wFillType As Long) As Long
 Public Declare Function FillRect Lib "USER32" (ByVal hdc As Long, lpRect As RECT, ByVal hbrush As Long) As Long
 Public Declare Function FloodFill Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
@@ -479,7 +479,7 @@ Private Type EncoderParameter
 End Type
 
 Private Type EncoderParameters
-   Count As Long
+   count As Long
    Parameter As EncoderParameter
 End Type
 
@@ -690,7 +690,7 @@ Dim lBitmap As Long
          CLSIDFromString StrPtr("{557CF401-1A04-11D3-9A73-0000F81EF32E}"), tJpgEncoder
 
          ' Initialize the encoder parameters
-         tParams.Count = 1
+         tParams.count = 1
          With tParams.Parameter ' Quality
             ' Set the Quality GUID
             CLSIDFromString StrPtr("{1D5BE4B5-FA4A-452D-9CDD-5DB35105E7EB}"), .GUID
@@ -736,7 +736,7 @@ Public Sub WriteBytes(ByVal Filename As String, ByRef C() As Byte)
     
     Exit Sub
 Err_Init:
-    MsgBox Err.Number & " - " & Err.description
+    MsgBox Err.number & " - " & Err.Description
 End Sub
 
 
@@ -746,15 +746,65 @@ Public Function LoadFile(ByVal Filename As String) As Byte()
     If Dir(Filename, vbNormal Or vbArchive) = "" Then
         Exit Function
     End If
+
+'    Dim newfile As String
+'
+'    If GetFileExt(Filename, True, True) = "png" Then
+'
+'
+'
+'        Dim imgdim As ImageDimensions
+'
+'        ImageDimensions Filename, imgdim
+'
+''        Set picBox.Picture = LoadPicture("")
+''        picBox.Cls
+'
+'        picBox.Width = imgdim.Width * Screen.TwipsPerPixelX
+'        picBox.Height = imgdim.Height * Screen.TwipsPerPixelY
+''        picBox.AutoRedraw = True
+'
+'
+'        newfile = GetFilePath(Filename) & "\" & GUID & ".bmp"
+'
+'        Dim png As New clsLoadPNG
+'        Set mPicBox = picBox
+'
+'        png.LoadPNG Filename
+'
+'        'Dim p As StdPicture
+'       ' Set p = picbox.Image'
+'     '   SavePicture picBox.Image, newfile
+'
+'      '  SaveJPG picbox.Image, Replace(newfile, ".bmp", ".jpg"), 100
+'
+'
+'       ' mPicBox.Picture.Render mPicBox.Picture.handle, 0, 0, mPicBox.Width * Screen.TwipsPerPixelX, mPicBox.Height * Screen.TwipsPerPixelY, 0, 0, mPicBox.Width * Screen.TwipsPerPixelX, mPicBox.Height * Screen.TwipsPerPixelY, SRCCOPY And SRCPAINT
+'
+'        Set mPicBox.Picture = mPicBox.Image
+'        'mPicBox.AutoRedraw = False
+'
+'        SavePicture mPicBox.Picture, newfile
+'        Swap newfile, Filename
+'
+'        Set png = Nothing
+'
+'    End If
+    
     FileNo = FreeFile
     Open Filename For Binary Access Read As #FileNo
     ReDim b(0 To LOF(FileNo) - 1)
-    Get #FileNo, , b
+    Get #FileNo, 1, b
     Close #FileNo
     LoadFile = b
+'    If newfile <> "" Then
+'        Swap newfile, Filename
+'        Kill newfile
+'    End If
+
     Exit Function
 Err_Init:
-    MsgBox Err.Number & " - " & Err.description
+    MsgBox Err.number & " - " & Err.Description
 End Function
 
 Public Function PictureFromByteStream(b() As Byte) As IPicture
@@ -790,11 +840,11 @@ Public Function PictureFromByteStream(b() As Byte) As IPicture
     Exit Function
     
 Err_Init:
-    If Err.Number = 9 Then
+    If Err.number = 9 Then
         'Uninitialized array
         MsgBox "You must pass a non-empty byte array to this function!"
     Else
-        MsgBox Err.Number & " - " & Err.description
+        MsgBox Err.number & " - " & Err.Description
     End If
 End Function
 
