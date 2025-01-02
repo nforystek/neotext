@@ -1467,7 +1467,11 @@ Private Sub Timer1_Timer()
     
         MakeCaretVisible newloc, True
         
-        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then cursorBlink = False
+        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
+            cursorBlink = False
+        Else
+            cursorBlink = True
+        End If
         
     End If
     lastSel.StartPos = pSel.StartPos
@@ -1493,10 +1497,9 @@ Private Sub Timer1_Timer()
     
     lastLoc.X = newloc.X
     lastLoc.Y = newloc.Y
-  
+
     If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
 
-        cursorBlink = Not cursorBlink
 
         
 '    If Not Timer1.Enabled Then
@@ -1509,16 +1512,33 @@ Private Sub Timer1_Timer()
         If Not Timer1.Enabled Then
             Timer1.Enabled = cursorBlink
         End If
-    
+  
+        cursorBlink = Not cursorBlink
+  
+  
+'    Else
+'
+'        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
+'            cursorElapse = Timer
+'        End If
+
     End If
 
     If Not Timer1.Enabled And hasFocus Then
+    
         Timer1_Timer
+
+    Else
+      ' cursorBlink = Not cursorBlink
     End If
     
-    If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
-        cursorElapse = Timer
-    End If
+    'If cursorBlink Then
+
+        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
+            cursorElapse = Timer
+        End If
+    'End If
+    
     
 End Sub
 Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Boolean) As Boolean
@@ -2563,7 +2583,7 @@ Public Function LineCount() As Long ' _
 Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text.
 Attribute LineCount.VB_Description = "Returns the numerical count of how many lines, delimited by line feeds, that exists with-in Text."
     If pText.Length > 0 Then
-        LineCount = pText.count
+        LineCount = pText.Count
     End If
 End Function
 
@@ -2628,7 +2648,7 @@ Attribute LineFirstVisible.VB_Description = "Returns the zero based line index n
 End Function
 
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
-  
+ 
     'Debug.Print "KeyDown "; Convert(Me.Text.Partial); Me.SelStart; Me.SelLength
     RaiseEvent KeyDown(KeyCode, Shift)
     If KeyCode <> 0 Then
@@ -3100,10 +3120,10 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
         
         
             If (dragStart = -1 Or dragStart = 0) Then
-                pSel.StopPos = lpos
+                pSel.StartPos = lpos
                 dragStart = -1
             ElseIf (dragStart = -2 Or dragStart = 0) Then
-                pSel.StartPos = lpos
+                pSel.StopPos = lpos
                 dragStart = -2
             ElseIf (dragStart > 0) Then
                 If dText Is Nothing Then

@@ -116,7 +116,11 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
   
             RenderEvents UserControl, Camera
             RenderMotions UserControl, Camera
+
+           ' SetupCamera2 UserControl, Camera
             
+
+        '    SetupCamera2 UserControl, Camera
             SetupCamera2 UserControl, Camera
             
             RenderPlanets UserControl, Camera
@@ -124,6 +128,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderBrilliants UserControl, Camera
             
             SetupCamera2 UserControl, Camera
+            
 
             InputScene UserControl
             
@@ -267,24 +272,24 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
         
 
 
-    Else
-        
-
-        D3DXMatrixRotationX matPitch, 0
-        D3DXMatrixMultiply matView, matPitch, matView
-
-        D3DXMatrixRotationY matYaw, 0
-        D3DXMatrixMultiply matView, matYaw, matView
-
-        D3DXMatrixRotationZ matRoll, 0
-        D3DXMatrixMultiply matView, matRoll, matView
-
-        DDevice.SetTransform D3DTS_VIEW, matView
-
-        D3DXMatrixTranslation matPos, 0, 0, 0
-        D3DXMatrixMultiply matView, matPos, matView
-
-        DDevice.SetTransform D3DTS_VIEW, matView
+'    Else
+'
+'
+'        D3DXMatrixRotationX matPitch, 0
+'        D3DXMatrixMultiply matView, matPitch, matView
+'
+'        D3DXMatrixRotationY matYaw, 0
+'        D3DXMatrixMultiply matView, matYaw, matView
+'
+'        D3DXMatrixRotationZ matRoll, 0
+'        D3DXMatrixMultiply matView, matRoll, matView
+'
+'        DDevice.SetTransform D3DTS_VIEW, matView
+'
+'        D3DXMatrixTranslation matPos, 0, 0, 0
+'        D3DXMatrixMultiply matView, matPos, matView
+'
+'        DDevice.SetTransform D3DTS_VIEW, matView
         
     End If
 
@@ -380,23 +385,23 @@ Public Sub SetupCamera3(ByRef UserControl As Macroscopic, ByRef Camera As Camera
         
 
 
-    Else
-
-        D3DXMatrixRotationX matPitch, 0
-        D3DXMatrixMultiply matView, matPitch, matView
-
-        D3DXMatrixRotationY matYaw, 0
-        D3DXMatrixMultiply matView, matYaw, matView
-
-        D3DXMatrixRotationZ matRoll, 0
-        D3DXMatrixMultiply matView, matRoll, matView
-
-        DDevice.SetTransform D3DTS_VIEW, matView
-
-        D3DXMatrixTranslation matPos, 0, 0, 0
-        D3DXMatrixMultiply matView, matPos, matView
-
-        DDevice.SetTransform D3DTS_VIEW, matView
+'    Else
+'
+'        D3DXMatrixRotationX matPitch, 0
+'        D3DXMatrixMultiply matView, matPitch, matView
+'
+'        D3DXMatrixRotationY matYaw, 0
+'        D3DXMatrixMultiply matView, matYaw, matView
+'
+'        D3DXMatrixRotationZ matRoll, 0
+'        D3DXMatrixMultiply matView, matRoll, matView
+'
+'        DDevice.SetTransform D3DTS_VIEW, matView
+'
+'        D3DXMatrixTranslation matPos, 0, 0, 0
+'        D3DXMatrixMultiply matView, matPos, matView
+'
+'        DDevice.SetTransform D3DTS_VIEW, matView
     End If
 
 

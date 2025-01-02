@@ -804,7 +804,7 @@ Public Function AngleOfCoord(ByRef Coord As Coord) As Single
         Least = (((angle ^ 2) - (Least ^ 2)) ^ (1 / 2))
         Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (Large / angle)) * (Least / angle))
         Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope)
-        angle = Large + Least
+        angle = Round(Large + Least, 6)
         If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
            (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
             angle = (PI / 4) - angle
