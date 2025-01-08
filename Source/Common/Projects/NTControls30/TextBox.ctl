@@ -171,6 +171,10 @@ Private xUndoActs() As UndoType
 Private xUndoStage As Long
 Private xUndoBuffer As Long
 
+Private cursorBlink As Boolean
+Private cursorElapse As Single
+Private cursorLastLoc As POINTAPI
+    
 Private pLastSel As RangeType
 Private pSel As RangeType 'where the current selection is held at all states or set
 Private Function GetLineWithWrap(ByVal Text As String) As String
@@ -187,6 +191,8 @@ Public Property Let WordWrap(ByVal RHS As Boolean)
     BuildVisibleText
     UserControl_Paint
 End Property
+
+
 
 Public Property Get GreyNoTextMsg() As String
     GreyNoTextMsg = pGreyNoTextMsg
@@ -877,7 +883,7 @@ End Property
 
 Private Property Get LineColumnWidth() As Long
     If pLineNumbers Then
-        LineColumnWidth = Me.TextWidth("." & (LineCount + (((UsercontrolHeight \ TextHeight) + 1) \ 2)) & ".")
+        LineColumnWidth = UserControl.TextWidth("." & (LineCount + (((UsercontrolHeight \ UserControl.TextHeight("W")) + 1) \ 2)) & ".")
     Else
         LineColumnWidth = 0
     End If
@@ -905,12 +911,19 @@ End Property
 Public Property Get TextHeight(Optional ByVal StrText As String = "Iy") As Long ' _
 Returns the twip measurement height using the current font size and line spacing vertically of SrrText.
 Attribute TextHeight.VB_Description = "Returns the twip measurement height using the current font size and line spacing vertically of SrrText."
+    
     TextHeight = UserControl.TextHeight(StrText)
+    
+    'If WordWrap Then TextHeight = TextHeight * ((UserControl.TextWidth(StrText) \ UsercontrolWidth) + IIf((UserControl.TextWidth(StrText) Mod UsercontrolWidth) = 0, 0, 1))
+
 End Property
 Public Property Get TextWidth(Optional ByVal StrText As String = "W") As Long ' _
 Returns the twip measurement width using the current font size and letter spacing horizontally of SrrText.
 Attribute TextWidth.VB_Description = "Returns the twip measurement width using the current font size and letter spacing horizontally of SrrText."
+
     TextWidth = UserControl.TextWidth(Replace(StrText, Chr(9), TabSpace))
+    'If WordWrap And TextWidth >= UsercontrolWidth Then TextWidth = UsercontrolWidth
+
 End Property
 Public Property Get MultipleLines() As Boolean ' _
 Returns whether or not this text control allows multiple lines in Text, delimited by line feeds., Sets whehter or not this text control allows multiple lines in Text, delimited by line feeds.
@@ -997,7 +1010,7 @@ End Function
 Friend Property Get GetCanvasWidth(Optional ByVal Changed As Boolean = False) As Long
     Static pCanvasWidth As Long
     If Changed Or pCanvasWidth = 0 Then
-        If pText.Length > 0 Then
+        If pText.Length > 0 Then 'And (Not WordWrap) Then
             Dim cnt As Long
             Dim Max As Long
             Dim tmp As Long
@@ -1401,6 +1414,7 @@ Private Property Get IControl_hWnd() As Long
 End Property
 
 Private Sub ScrollBar1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
     If Button = 1 Then
         If pScrollToCaret Then
             dragStart = -3
@@ -1445,20 +1459,17 @@ End Sub
 
 Private Sub Timer1_Timer()
 'Debug.Print "Timer " & Timer1.Interval
-    Static cursorBlink As Boolean
-    Static cursorElapse As Single
     
-    Static lastLoc As POINTAPI
     Dim ClrRec As Long
     Dim newloc As POINTAPI
     newloc = CaretLocation
     
-    If ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
+    If ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> cursorLastLoc.X) Or (newloc.Y <> cursorLastLoc.Y)) Then
         If insertMode Then
             ClrRec = LocateColorRecord(pSel.StartPos)
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
+            ClipPrintText cursorLastLoc.X, cursorLastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
         Else
-            ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
+            ClipLineDraw cursorLastLoc.X, cursorLastLoc.Y, cursorLastLoc.X, (cursorLastLoc.Y + TextHeight), pBackcolor
         End If
     End If
     
@@ -1467,10 +1478,9 @@ Private Sub Timer1_Timer()
     
         MakeCaretVisible newloc, True
         
-        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
-            cursorBlink = False
-        Else
-            cursorBlink = True
+        If ((Timer - cursorElapse) > (keySpeed * 10)) Then
+             cursorBlink = True
+
         End If
         
     End If
@@ -1479,65 +1489,43 @@ Private Sub Timer1_Timer()
 
     Paint
     
-    If (((cursorBlink Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y))) And hasFocus)) And Enabled Then
+    If (((cursorBlink Or ((newloc.X <> cursorLastLoc.X) Or (newloc.Y <> cursorLastLoc.Y))) And hasFocus)) And Enabled Then
         If insertMode Then
             ClipPrintText newloc.X, newloc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pBackcolor, pForecolor, True
         Else
             ClipLineDraw newloc.X, newloc.Y, newloc.X, (newloc.Y + TextHeight), pForecolor
         End If
         
-    ElseIf ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> lastLoc.X) Or (newloc.Y <> lastLoc.Y)) Then
+    ElseIf ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> cursorLastLoc.X) Or (newloc.Y <> cursorLastLoc.Y)) Then
         If insertMode Then
             ClrRec = LocateColorRecord(pSel.StartPos)
-            ClipPrintText lastLoc.X, lastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
+            ClipPrintText cursorLastLoc.X, cursorLastLoc.Y, InsertCharacter(Convert(pText.Partial(pSel.StartPos, 1))), pColorRecords(ClrRec).Forecolor, pColorRecords(ClrRec).BackColor, False
         Else
-            ClipLineDraw lastLoc.X, lastLoc.Y, lastLoc.X, (lastLoc.Y + TextHeight), pBackcolor
+            ClipLineDraw cursorLastLoc.X, cursorLastLoc.Y, cursorLastLoc.X, (cursorLastLoc.Y + TextHeight), pBackcolor
         End If
     End If
     
-    lastLoc.X = newloc.X
-    lastLoc.Y = newloc.Y
+    cursorLastLoc.X = newloc.X
+    cursorLastLoc.Y = newloc.Y
 
-    If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
-
-
-        
-'    If Not Timer1.Enabled Then
-'        Timer1.Enabled = cursorBlink
-'        If Not Timer1.Enabled Then
-'            Timer1_Timer
-'        End If
-'    End If
+    If ((Timer - cursorElapse) > (keySpeed * 10)) Then
 
         If Not Timer1.Enabled Then
             Timer1.Enabled = cursorBlink
         End If
-  
+
         cursorBlink = Not cursorBlink
-  
-  
-'    Else
-'
-'        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
-'            cursorElapse = Timer
-'        End If
 
     End If
 
+        
     If Not Timer1.Enabled And hasFocus Then
-    
+
         Timer1_Timer
 
-    Else
-      ' cursorBlink = Not cursorBlink
     End If
-    
-    'If cursorBlink Then
 
-        If ((Timer - cursorElapse) > ((keySpeed * 10) / 1000)) Then
-            cursorElapse = Timer
-        End If
-    'End If
+
     
     
 End Sub
@@ -2512,6 +2500,7 @@ Private Sub UserControl_Initialize()
     
     pTabSpace = "    "
     pLineNumbers = True
+    pWordWrap = False
 
     ResetColors
     Cancel = False
@@ -3087,6 +3076,8 @@ Private Sub UserControl_LostFocus()
 End Sub
 
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    
+
     RaiseEvent MouseDown(Button, Shift, X, Y)
     If Button = 1 And Shift = 0 Then
     
