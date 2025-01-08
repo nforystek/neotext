@@ -44,7 +44,7 @@ Public Enum vbOrientation
     OrientationVertical = 0
 End Enum
 
-Public Enum HitRegions
+Private Enum HitRegions
     None = 0
     ScrollButton1 = 1
     ScrollButton2 = 2
@@ -91,7 +91,7 @@ Private keySpeed As Long
 
 'what part of the scrollbar
 'mouse events are occuring
-Private pHitRegion As Long
+Private pHitRegion As HitRegions
 
 'values to save the initial mouse
 'events we'll analyze or repeat
@@ -149,7 +149,7 @@ Private Function IsVertical() As Boolean
     IsVertical = ((pOrientation = vbOrientation.OrientationAuto And UserControl.ScaleWidth < UserControl.ScaleHeight) Or pOrientation = vbOrientation.OrientationVertical)
 End Function
 
-Friend Sub UpdateRects() 'As Boolean
+Friend Sub UpdateRects()
 
     rCanvas.Left = 0
     rCanvas.Top = 0
@@ -188,10 +188,6 @@ Private Function GetSliderRect() As RECT
     Dim tmpRct As RECT
     Dim tmpVal As Single
     Dim fullamt As Single
-    
-    Dim ratioMoveable As Single
-    Dim ratioToScreen As Single
-    
 
     tmpRct = rSlider
     
@@ -208,36 +204,29 @@ Private Function GetSliderRect() As RECT
                     If pValue > 0 Then
                         .Left = rButton1.Right + ((pValue / fullamt) * ScrollableSpace)
                     End If
+                    
+                    If pProportionalThumb Then
+                        'Debug.Print (ScrollAmount(False) / ScrollableSpace(True)); UserControl.Width / Screen.Width
+                        
+                        .Right = (.Left + ((UserControl.ScaleWidth * UserControl.Width / Screen.Width)))
+                    Else
+                        .Right = (.Left + (rButton1.Bottom - rButton1.Top))
+                    End If
+        
+                    If (.Right - .Left) < ((rButton1.Bottom - rButton1.Top) / 2) Then
+                        .Right = .Left + ((rButton1.Bottom - rButton1.Top) / 2)
+                    End If
+                    If (.Left < rButton1.Left) Then .Left = rCanvas.Left
+                    If (.Right > rButton2.Left) Then .Left = rButton2.Left - (.Right - .Left)
+            
+                Else
+                    .Left = 0
+                    .Right = 0
                 End If
             End If
-            
-            If pProportionalThumb Then
-                .Right = (.Left + (rButton1.Bottom - rButton1.Top))
-            Else
-                .Right = (.Left + (rButton1.Bottom - rButton1.Top))
-            End If
-
-            If (.Right - .Left) < ((rButton1.Bottom - rButton1.Top) / 2) Then
-                .Right = .Left + ((rButton1.Bottom - rButton1.Top) / 2)
-            End If
-            If (.Left < rButton1.Left) Then .Left = rCanvas.Left
-            If (.Right > rButton2.Left) Then .Left = rButton2.Left - (.Right - .Left)
-
-'            If pThumbValue <> 0 Then 'draw at thumb locatoin
-'                If .Left + pThumbValue > .Right - tmpVal Then
-'                    .Left = (.Right - .Left)
-'                ElseIf Not (.Left + pThumbValue < .Left) Then
-'                    .Left = (.Left + pThumbValue)
-'                End If
-'            End If
-
 
         End With
-        'If (tmpRct.Left >= rButton1.Right) And (tmpRct.Right <= rButton2.Left) And (tmpRct.Top <> tmpRct.Bottom) Then
-            GetSliderRect = tmpRct
-        'Else
-        '    GetSliderRect = rSlider
-        'End If
+        
     ElseIf IsVertical Then
         
         With tmpRct
@@ -252,38 +241,32 @@ Private Function GetSliderRect() As RECT
                     If pValue > 0 Then
                         .Top = (rButton1.Bottom + ((pValue / fullamt) * ScrollableSpace))
                     End If
+                    
+                    If pProportionalThumb Then
+                        Debug.Print (ScrollAmount(False) / ScrollableSpace(True)); UserControl.Height / Screen.Height
+                        
+                        .Bottom = (.Top + ((UserControl.ScaleHeight * UserControl.Height / Screen.Height)))
+                    Else
+                        .Bottom = (.Top + (rButton1.Right - rButton1.Left))
+                    End If
+        
+                    If (.Bottom - .Top) < ((rButton1.Right - rButton1.Left) / 2) Then
+                        .Bottom = .Top + ((rButton1.Right - rButton1.Left) / 2)
+                    End If
+                    If (.Top < rButton1.Top) Then .Top = rCanvas.Top
+                    If (.Bottom > rButton2.Top) Then .Top = rButton2.Top - (.Bottom - .Top)
+                Else
+                    .Top = 0
+                    .Bottom = 0
                 End If
 
             End If
 
-            If pProportionalThumb Then
-                .Bottom = (.Top + (rButton1.Right - rButton1.Left))
-            Else
-                .Bottom = (.Top + (rButton1.Right - rButton1.Left))
-            End If
-
-            If (.Bottom - .Top) < ((rButton1.Right - rButton1.Left) / 2) Then
-                .Bottom = .Top + ((rButton1.Right - rButton1.Left) / 2)
-            End If
-            If (.Top < rButton1.Top) Then .Top = rCanvas.Top
-            If (.Bottom > rButton2.Top) Then .Top = rButton2.Top - (.Bottom - .Top)
-
-'            If pThumbValue <> 0 Then 'draw at thumb locatoin
-'                If .Top + pThumbValue > .Bottom - tmpVal Then
-'                    .Top = (.Bottom - .Top)
-'                ElseIf Not (.Top + pThumbValue < .Top) Then
-'                    .Top = (.Top + pThumbValue)
-'                End If
-'            End If
-            
         End With
         
-        'If (tmpRct.Top >= rButton1.Bottom) And (tmpRct.Bottom <= rButton2.Top) And (tmpRct.Top <> tmpRct.Bottom) Then
-            GetSliderRect = tmpRct
-        'Else
-        '    GetSliderRect = rSlider
-        'End If
     End If
+    
+    GetSliderRect = tmpRct
 
 End Function
             
@@ -554,7 +537,12 @@ Attribute Value.VB_Description = "Sets the current value of the scroll bar's sli
         
         UserControl_Paint
         
-        RaiseEvent Change
+        Static lastRaise As Single
+        If lastRaise <> pValue And lastRaise <> 0 Then
+            RaiseEvent Change
+        End If
+        lastRaise = pValue
+        
 
     End If
 End Property
@@ -625,7 +613,7 @@ Private Sub Timer1_Timer()
 
     UserControl_MouseMove pPressed, pShift, pEventX, pEventY
     UserControl_Paint
-    Timer1.Enabled = (pPressed <> 0) ' And (pHitRegion <> ScrollableArea)
+    Timer1.Enabled = (pPressed <> 0)
 
 End Sub
 
@@ -697,7 +685,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
                 End If
             ElseIf PtInRect(rSlider, X, Y) Then
 
-                If pHitRegion = 3 Then
+                If pHitRegion = SliderButton Then
                     'this is the very end of holding the mouse until silder contacts it
                     If IsHorizontal Then
                         pThumbValue = ((ScrollableSpace / ScrollAmount) * pValue)
@@ -706,7 +694,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
                     End If
                 End If
                 
-                pHitRegion = 4 'the slider
+                pHitRegion = ScrollableArea
 
                 If pThumbValue = 0 Then
                     pThumbValue = ((ScrollableSpace(True) / ScrollAmount) * pValue)
@@ -717,8 +705,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
                 
                     
             ElseIf PtInRect(rScroll, X, Y) Then
-                'pHitRegion = SliderButton 'scrollable space
-                pHitRegion = 3
+                pHitRegion = SliderButton
  
                 Dim tmpVal As Single
                 If IsHorizontal Then
@@ -772,9 +759,9 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
             End If
             
         End If
-'Debug.Print "Timer1Enabled " & pHitRegion
 
-        Timer1.Enabled = (pPressed <> 0) 'And (pHitRegion <> 4)
+
+        Timer1.Enabled = (pPressed <> 0)
 
     End If
     RaiseEvent MouseDown(Button, Shift, X, Y)
@@ -794,9 +781,9 @@ Private Sub SendScrollBarValue(ByVal SBConst As Integer)
 End Sub
 
 Private Sub StopLongClick()
-    If Not pHitRegion = 0 Then
-        Debug.Print "StopLongClick"
-        pHitRegion = 0
+    If Not pHitRegion = HitRegions.None Then
+        'Debug.Print "StopLongClick"
+        pHitRegion = HitRegions.None
         pThumbValue = 0
         Timer1.Interval = keySpeed * 10
         Timer1.Enabled = False
@@ -823,9 +810,8 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             StopLongClick
         ElseIf Button = 1 Then
 
-            'If Not pHitRegion = 0 Then
-            
-            If Not pHitRegion = 0 Then
+
+            If Not pHitRegion = HitRegions.None Then
                 Dim tmpRct As RECT
                 tmpRct = GetSliderRect
                     
@@ -833,13 +819,12 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
                     rSlider = tmpRct
                     UserControl_Paint
                     SendScrollBarValue SB_THUMBTRACK
-                End If
-                
-                RaiseEvent Scroll
-                
-                'UserControl_MouseDown Button, Shift, X, Y
                     
-                If pHitRegion = 4 Then
+                    RaiseEvent Scroll
+                End If
+                                
+
+                If pHitRegion = ScrollableArea Then
                     If ScrollAmount > 0 Then
                         If IsHorizontal Then
                             pThumbValue = pThumbValue + (X - pThumbX) '+ ((ScrollableSpace(True) / ScrollAmount) * pValue)
@@ -850,30 +835,8 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
                         End If
 
                     End If
-                ElseIf pHitRegion = 3 Then
-                   ' UserControl_MouseDown Button, Shift, X, Y
+
                 End If
-                'UserControl_MouseMove Button, Shift, X, Y
-'                If pHitRegion = 4 Then
-'                    If ScrollAmount > 0 Then
-'                        If IsHorizontal Then
-'                            If pThumbX < X Then
-'                                pThumbValue = pThumbValue + (X - pThumbX)  '+ ((ScrollableSpace(True) / ScrollAmount) * pValue)
-'                            ElseIf pThumbX > X Then
-'                                pThumbValue = pThumbValue - pSmallChange '+ ((ScrollableSpace(True) / ScrollAmount) * pValue)
-'                            End If
-'                            pThumbX = X
-'                        Else
-'                            If pThumbY < Y Then
-'                                pThumbValue = pThumbValue - pSmallChange '+ ((ScrollableSpace(True) / ScrollAmount) * pValue)
-'                            ElseIf pThumbY > Y Then
-'                                pThumbValue = pThumbValue + pSmallChange '+ ((ScrollableSpace(True) / ScrollAmount) * pValue)
-'                            End If
-'                            pThumbY = Y
-'                        End If
-'
-'                    End If
-'                End If
                 
                 If pThumbValue <> 0 Then
 
@@ -885,39 +848,27 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
 
            End If
            
-                If pHitRegion = SliderButton Then
-                
+           If pHitRegion = SliderButton Then
 
-                    If ScrollAmount > 0 Then
-                        UserControl_MouseDown Button, Shift, X, Y
-                        
-                        If IsHorizontal Then
-                            If rSlider.Right < X Then
-                                'scrollright
-                            ElseIf rSlider.Left > X Then
-                                'scrollleft
-                            Else
-                                pHitRegion = 0
-                            End If
-     
-                        Else
-                            If rSlider.Bottom < Y Then
-                                'scrolldown
-                            ElseIf rSlider.Top > Y Then
-                                'scrollup
-                            Else
-                                pHitRegion = 0
-                            End If
-                        End If
+               If ScrollAmount > 0 Then
+                   UserControl_MouseDown Button, Shift, X, Y
+                   
+                   If IsHorizontal Then
+                       If (Not (rSlider.Right < X)) And (Not (rSlider.Left > X)) Then
+                           pHitRegion = HitRegions.None
+                       End If
 
-                    End If
-                ElseIf pHitRegion = 3 Then
-      
-                    
-                ElseIf pHitRegion = ScrollButton1 Or pHitRegion = ScrollButton2 Or pHitRegion = ScrollableArea Then
-                    UserControl_MouseDown Button, Shift, X, Y
-                End If
+                   Else
+                       If (Not (rSlider.Bottom < Y)) And (Not (rSlider.Top > Y)) Then
+                           pHitRegion = HitRegions.None
+                       End If
+                   End If
 
+               End If
+
+           ElseIf pHitRegion = ScrollButton1 Or pHitRegion = ScrollButton2 Or pHitRegion = ScrollableArea Then
+               UserControl_MouseDown Button, Shift, X, Y
+           End If
            
         End If
     End If
@@ -933,10 +884,9 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
             StopLongClick
         ElseIf Button = 1 Then
 
-            If Not pHitRegion = 0 Then
+            If Not pHitRegion = HitRegions.None Then
                 If pThumbValue <> 0 Then
-                    'commit to change
-                    
+
                     SendScrollBarValue SB_THUMBPOSITION
 
                     rSlider = GetSliderRect
@@ -979,33 +929,35 @@ Private Sub UserControl_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
 End Sub
 
 Private Sub UserControl_Paint()
-    'If Visible Then
 
-        If AutoRedraw Then
-            Refresh
-            PaintBuffer
-        End If
-        RaiseEvent Paint
-    'End If
+    If AutoRedraw Then
+        Refresh
+        PaintBuffer
+    End If
+    RaiseEvent Paint
 End Sub
 Public Sub Refresh()
-    UpdateRects
-    If IsHorizontal Then
-        DrawhScrollBar
-    ElseIf IsVertical Then
-        DrawvScrollBar
+    If UserControl.Height > 0 And UserControl.Width > 0 Then
+        UpdateRects
+        If IsHorizontal Then
+            DrawhScrollBar
+        ElseIf IsVertical Then
+            DrawvScrollBar
+        End If
     End If
 End Sub
 Public Sub Paint() ' _
 Redraws the control, this is preformed automatically when AutoRedraw is true.
 Attribute Paint.VB_Description = "Redraws the control, this is preformed automatically when AutoRedraw is true."
+    
     Refresh
     PaintBuffer
 End Sub
 
 Friend Sub PaintBuffer()
- 
-    pBackBuffer.Paint rCanvas.Left, rCanvas.Top, rCanvas.Right, rCanvas.Bottom
+    If UserControl.Height > 0 And UserControl.Width > 0 Then
+        pBackBuffer.Paint rCanvas.Left, rCanvas.Top, rCanvas.Right, rCanvas.Bottom
+    End If
 
 End Sub
 Private Sub DrawvScrollBar()
