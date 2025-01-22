@@ -526,6 +526,7 @@ Private Property Get IControl_hWnd() As Long
     IControl_hWnd = Me.hWnd
 End Property
 
+
 Private Sub Timer1_Timer()
     
     Timer1.Interval = keySpeed
