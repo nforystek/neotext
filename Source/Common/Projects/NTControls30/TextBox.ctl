@@ -21,6 +21,7 @@ Begin VB.UserControl TextBox
       Orientation     =   1
       AutoRedraw      =   0   'False
       ProportionalThumb=   0   'False
+      ScrollType      =   0
    End
    Begin NTControls30.ScrollBar ScrollBar1 
       Height          =   2655
@@ -32,6 +33,7 @@ Begin VB.UserControl TextBox
       Orientation     =   0
       AutoRedraw      =   0   'False
       ProportionalThumb=   0   'False
+      ScrollType      =   0
    End
    Begin VB.Timer Timer1 
       Left            =   810
@@ -2485,7 +2487,7 @@ Private Sub UserControl_Initialize()
     ResetUndoRedo
         
     SystemParametersInfo SPI_GETKEYBOARDSPEED, 0, keySpeed, 0
-    Timer1.Interval = 1 ' keySpeed * 10
+    Timer1.Interval = keySpeed * 10
 
     Set pBackBuffer = New Backbuffer
     pBackBuffer.hWnd = UserControl.hWnd
@@ -2497,6 +2499,8 @@ Private Sub UserControl_Initialize()
 
     ScrollBar1.Backbuffer.hdc = pBackBuffer.hdc
     ScrollBar2.Backbuffer.hdc = pBackBuffer.hdc
+    ScrollBar1.ProportionalThumb = True
+    ScrollBar2.ProportionalThumb = True
     
     pTabSpace = "    "
     pLineNumbers = True
@@ -3612,11 +3616,17 @@ Friend Sub SetScrollBars()
             ScrollBar1.Enabled = Enabled
         End If
 
-        If ((CanvasWidth > UsercontrolWidth And UsercontrolWidth > ScrollBar1.Width) And (pScrollBars = vbScrollBars.Auto)) Or ((pScrollBars = vbScrollBars.Both) Or (pScrollBars = vbScrollBars.Horizontal)) Then
-            If Not ScrollBar2.Visible Then ScrollBar2.Visible = True
-        ElseIf ScrollBar2.Visible Then
+
+        If ScrollBar2.Visible And WordWrap Then
             ScrollBar2.Visible = False
+        Else
+            If ((CanvasWidth > UsercontrolWidth And UsercontrolWidth > ScrollBar1.Width) And (pScrollBars = vbScrollBars.Auto)) Or ((pScrollBars = vbScrollBars.Both) Or (pScrollBars = vbScrollBars.Horizontal)) Then
+                If (Not ScrollBar2.Visible) And (Not WordWrap) Then ScrollBar2.Visible = True
+            ElseIf ScrollBar2.Visible Then
+                ScrollBar2.Visible = False
+            End If
         End If
+        
         If ScrollBar2.Visible And CanvasWidth < UsercontrolWidth Then
             If ScrollBar2.Enabled Then ScrollBar2.Enabled = False
         ElseIf ScrollBar2.Visible And CanvasWidth >= UsercontrolWidth Then
