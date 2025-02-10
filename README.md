@@ -37,3 +37,16 @@ to design cross stitch patterns traditional like without all the could
 be more then a simple drawing program where the art creativity shines.
 However, one last feature it does not yet compile the pattern and key
 into PDF's portable ready to print out in large printers or portions.
+
+I had a dream that, when those parents that raised me died, I walked
+into a room with 4 to 6 elderly ladies sitting aound in typical older
+victorian furtinute, modern house nothing special but a house for gals
+like these ladies, juist a day room, and I felt so alone in the world
+I didn't know anyone in the room but that wasn't why, it was just that
+it made me feel like any other non immediate in-law relatives home as
+visited, real dry and void of presence I know or identify with.  Then
+my grand ma come in the room from already in the home and immediately
+it was like everytime I was at her home, not much comfortable there too
+but her personality just made me feel welcome as if it was her home.
+Lit up everything and this weight comes off all of a sudden I feel like
+I know all the ladies is they are haning out with my grandma takes up.
