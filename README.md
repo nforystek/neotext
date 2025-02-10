@@ -49,4 +49,8 @@ my grand ma come in the room from already in the home and immediately
 it was like everytime I was at her home, not much comfortable there too
 but her personality just made me feel welcome as if it was her home.
 Lit up everything and this weight comes off all of a sudden I feel like
-I know all the ladies is they are haning out with my grandma takes up.
+I know all the ladies is they are haning out with my grandma glows up.
+
+Yet I was also unsettled when I woke because she's that, not my in-law
+parents were as humbling or inviting, betraying if I had to guess and
+a lot drawn on longer then it had to be, if I stood a contest to them.
