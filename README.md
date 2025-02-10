@@ -27,12 +27,12 @@ Get it? No sew fun.
 
 DIMENSIONS!  Anyway, I hear a echo of her business before she passed,
 it says, yes, party toys, someone she asked to help her produce cross
-stitchs already done to be sold that way, ended up CNC researching her
+stitch already done to be sold that way, ended up CNC researching her
 new bsuiness, their lazy 3D printing alternative!  Anyway, I had too
 thought, one thread to rule all assembly line production movements of
 finihsed cross stitches on those labrynth marble game style cartridge.
-That nees capital to help her after what the Martha probably relieved
-isn't Martha giving it back to her, and so I made a program KadPatch
+That needs capital to help her after what the Martha probably relieved
+isn't Ms Stewart gets it back to her, and so I made a program KadPatch
 to design cross stitch patterns traditional like without all the could
 be more then a simple drawing program where the art creativity shines.
 However, one last feature it does not yet compile the pattern and key
