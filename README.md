@@ -58,7 +58,6 @@ a lot drawn on longer then it had to be, if I stood a contest to them.
 If I had to guess where I need to be to be healthy in heaven it is within
 Grandma's warm food embrace like nothing else, and I felt like blocked in.
 
-To feel like your inhailing the best water in the world at a consumption
-rate, but your really eating food, is to have no hot, cold or abrasion
-pain as you chew, and how does she doe it?  It's not me, I like a Dorito
-but let's be honest, I've been stabbed by those so hard I cut my mouth.
+To taste like your inhailing the best water in the world at consumption
+rates, but you're really eating food, is to have no hot, cold or abrasion
+pain I'll be honest, I've been stabbed by a Dorito so hard I cut my mouth.
