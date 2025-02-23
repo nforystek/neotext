@@ -204,11 +204,11 @@ Attribute Clear.VB_Description = "Clears all the contents of the strands collect
     End If
 End Sub
 
-Public Property Get count() As Long ' _
+Public Property Get Count() As Long ' _
 Gets the number of lines in the strands collection.
-Attribute count.VB_Description = "Gets the number of lines in the strands collection."
+Attribute Count.VB_Description = "Gets the number of lines in the strands collection."
     If Behave <> Nothings_Initialized Then
-        count = UBound(Breaks)
+        Count = UBound(Breaks)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -218,9 +218,9 @@ Public Property Get Current() As Long ' _
 Gets or sets the current line number for which Item, Insert or Delete refers too.
 Attribute Current.VB_Description = "Gets or sets the current line number for which Item, Insert or Delete refers too."
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then
+        If (Count > 0) Then
             If (Breaks(0) = 0) Then Breaks(0) = 1
-            If (Breaks(0) > count) Then Breaks(0) = count
+            If (Breaks(0) > Count) Then Breaks(0) = Count
             Current = Breaks(0)
         Else
             Current = 0
@@ -251,7 +251,7 @@ Public Function Delete() As Byte() ' _
 Deletes a line from the collection at the number indicated by the Current property.
 Attribute Delete.VB_Description = "Deletes a line from the collection at the number indicated by the Current property."
     If Behave <> Nothings_Initialized Then
-        If (count <= 2) Or (Current = 1) Or (Current = count) Then
+        If (Count <= 2) Or (Current = 1) Or (Current = Count) Then
             If (Current = 1) Then
                 Delete = Pop()
             Else
@@ -287,7 +287,7 @@ Public Property Get First() As Byte() ' _
 Gets or sets the bytes of the text to the first line of the strand collection.
 Attribute First.VB_Description = "Gets or sets the bytes of the text to the first line of the strand collection."
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then First = Item(1)
+        If (Count > 0) Then First = Item(1)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -295,12 +295,12 @@ End Property
 
 Public Property Let First(ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then
+        If (Count > 0) Then
             Dim llen As Long
             Dim cnt As Long
             Dim line() As Byte
             Do While NextLine(lines, line, llen)
-                If (count > 1) Then
+                If (Count > 1) Then
                     For cnt = UBound(Breaks) To 2 Step -1
                         Breaks(cnt) = Breaks(cnt) - (Breaks(1) - llen)
                     Next
@@ -330,7 +330,7 @@ Public Function Insert(ByRef lines() As Byte) As Long ' _
 Adds lines to the strand collection at the line that the Current property indicates, returning the last line number added.
 Attribute Insert.VB_Description = "Adds lines to the strand collection at the line that the Current property indicates, returning the last line number added."
     If Behave <> Nothings_Initialized Then
-        If (count = 0) Or (Current = 1) Or (Current = count) Then
+        If (Count = 0) Or (Current = 1) Or (Current = Count) Then
             If (Current = 1) Then
                 Insert = Add(lines)
             Else
@@ -364,16 +364,16 @@ Attribute Insert.VB_Description = "Adds lines to the strand collection at the li
     End If
 End Function
 
-Public Property Get Offset(Optional ByVal number As Long = -1&) As Long ' _
+Public Property Get Offset(Optional ByVal Number As Long = -1&) As Long ' _
 Gets the number of bytes existing before the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    Offset = Breaks(number - 1)
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    Offset = Breaks(Number - 1)
                 End If
             Else
                 Offset = Stream.Length
@@ -386,18 +386,18 @@ Gets the number of bytes existing before the line expressed by the Number argume
     End If
 End Property
 
-Public Property Get SizeOf(Optional ByVal number As Long = -1&) As Long ' _
+Public Property Get SizeOf(Optional ByVal Number As Long = -1&) As Long ' _
 Gets the number of bytes in the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    SizeOf = Breaks(number) - Breaks(number - 1)
-                ElseIf (number = 1) Then
-                    SizeOf = Breaks(number)
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    SizeOf = Breaks(Number) - Breaks(Number - 1)
+                ElseIf (Number = 1) Then
+                    SizeOf = Breaks(Number)
                 End If
             End If
        ' Else
@@ -408,19 +408,19 @@ Gets the number of bytes in the line expressed by the Number argument, if omitte
     End If
 End Property
 
-Public Property Get Item(Optional ByVal number As Long = -1&) As Byte() ' _
+Public Property Get Item(Optional ByVal Number As Long = -1&) As Byte() ' _
 Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number.
 Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed by the Number argument, if omitted, the Current property is used. Upon setting, the current property is changed to reflect Number."
     If Behave <> Nothings_Initialized Then
-        If ((Current > 0) And (Current <= UBound(Breaks))) And (number = -1) Then
-            number = Breaks(0)
+        If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
+            Number = Breaks(0)
         End If
         If (UBound(Breaks) > 0) Then
-            If (number <= UBound(Breaks)) Then
-                If (number > 1) Then
-                    Item = Stream.Partial(Breaks(number - 1), Breaks(number) - Breaks(number - 1))
-                ElseIf (number = 1) Then
-                    Item = Stream.Partial(0, Breaks(number))
+            If (Number <= UBound(Breaks)) Then
+                If (Number > 1) Then
+                    Item = Stream.Partial(Breaks(Number - 1), Breaks(Number) - Breaks(Number - 1))
+                ElseIf (Number = 1) Then
+                    Item = Stream.Partial(0, Breaks(Number))
                 End If
             Else
                 ReDim Item(-1 To -1) As Byte
@@ -434,19 +434,19 @@ Attribute Item.VB_Description = "Gets or sets the bytes for the line expressed b
     End If
 End Property
 
-Public Property Let Item(Optional ByVal number As Long = -1&, ByRef lines() As Byte)
+Public Property Let Item(Optional ByVal Number As Long = -1&, ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (count > 0) And number >= -1 Then
-            If (number = 0) Then number = 1
-            If (number > count) Then number = count
+        If (Count > 0) And Number >= -1 Then
+            If (Number = 0) Then Number = 1
+            If (Number > Count) Then Number = Count
         End If
-        If number = -1 Then number = Current
-        If (count > 0) Then
+        If Number = -1 Then Number = Current
+        If (Count > 0) Then
             Dim Temp As Long
             Temp = Breaks(0)
-            Breaks(0) = number
+            Breaks(0) = Number
             Delete
-            Breaks(0) = number
+            Breaks(0) = Number
             Insert lines
             Breaks(0) = Temp
         End If
@@ -459,7 +459,7 @@ Public Property Get Last() As Byte() ' _
 Gets or sets the bytes for the text of the last line in the strands collection.
 Attribute Last.VB_Description = "Gets or sets the bytes for the text of the last line in the strands collection."
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then Last = Item(count)
+        If (Count > 0) Then Last = Item(Count)
     Else
         Err.Raise 8, App.Title, "Object not initialized, the Behavior property must be set first to use this object."
     End If
@@ -467,16 +467,16 @@ End Property
 
 Public Property Let Last(ByRef lines() As Byte)
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then
+        If (Count > 0) Then
             Dim llen As Long
             Dim Temp As Long
             Dim line() As Byte
             Temp = Current
             Breaks(0) = 0
             Do While NextLine(lines, line, llen)
-                Stream.Length = Stream.Length - (Breaks(count) - Breaks(count - 1))
+                Stream.Length = Stream.Length - (Breaks(Count) - Breaks(Count - 1))
                 Concat2 line
-                Breaks(count) = Breaks(count - 1) + llen
+                Breaks(Count) = Breaks(Count - 1) + llen
             Loop
             Breaks(0) = Temp
         End If
@@ -530,7 +530,7 @@ Public Function Pop() As Byte() ' _
 Removes a line at the very beginning of the strand collection, and returns its text in bytes.
 Attribute Pop.VB_Description = "Removes a line at the very beginning of the strand collection, and returns its text in bytes."
     If Behave <> Nothings_Initialized Then
-        If (count > 0) Then
+        If (Count > 0) Then
             Dim Temp As Long
             Temp = Current
             Pop = Stream.Partial(0, Breaks(1))
@@ -566,7 +566,7 @@ Attribute Add.VB_Description = "Adds lines by bytes to the very beginning of the
             Prepend2 line
             ReDim Preserve Breaks(LBound(Breaks) To UBound(Breaks) + 1) As Long
             Add = Add + 1
-            If count > 1 Then
+            If Count > 1 Then
                 For cnt = UBound(Breaks) To 1 Step -1
                     Breaks(cnt) = Breaks(cnt - 1) + llen
                 Next
@@ -584,11 +584,11 @@ Public Function Remove() As Byte() ' _
 Removes a line at the very end of the strand collection, and returns its text in bytes.
 Attribute Remove.VB_Description = "Removes a line at the very end of the strand collection, and returns its text in bytes."
     If Behave <> Nothings_Initialized Then
-        If count > 1 Then
+        If Count > 1 Then
             Remove = Stream.Partial(Breaks(UBound(Breaks) - 1), (Breaks(UBound(Breaks)) - Breaks(UBound(Breaks) - 1)))
             Length = Length - (Breaks(UBound(Breaks)) - Breaks(UBound(Breaks) - 1))
             ReDim Preserve Breaks(0 To UBound(Breaks) - 1) As Long
-        ElseIf count = 1 Then
+        ElseIf Count = 1 Then
             Remove = Stream.Partial
             Reset
             ReDim Breaks(0 To 0) As Long

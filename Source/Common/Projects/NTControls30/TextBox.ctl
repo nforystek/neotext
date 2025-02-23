@@ -1,21 +1,21 @@
 VERSION 5.00
 Begin VB.UserControl TextBox 
    AutoRedraw      =   -1  'True
-   ClientHeight    =   3330
+   ClientHeight    =   1635
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   4155
+   ClientWidth     =   1830
    ClipControls    =   0   'False
    MouseIcon       =   "TextBox.ctx":0000
    OLEDropMode     =   1  'Manual
-   ScaleHeight     =   3330
-   ScaleWidth      =   4155
+   ScaleHeight     =   1635
+   ScaleWidth      =   1830
    ToolboxBitmap   =   "TextBox.ctx":0152
    Begin NTControls30.ScrollBar ScrollBar2 
-      Height          =   345
-      Left            =   285
-      Top             =   2655
-      Width           =   2280
+      Height          =   255
+      Left            =   75
+      Top             =   1125
+      Width           =   990
       _ExtentX        =   4022
       _ExtentY        =   556
       Orientation     =   1
@@ -24,10 +24,10 @@ Begin VB.UserControl TextBox
       ScrollType      =   0
    End
    Begin NTControls30.ScrollBar ScrollBar1 
-      Height          =   2655
-      Left            =   3510
-      Top             =   270
-      Width           =   330
+      Height          =   900
+      Left            =   1215
+      Top             =   105
+      Width           =   315
       _ExtentX        =   953
       _ExtentY        =   4683
       Orientation     =   0
@@ -36,8 +36,8 @@ Begin VB.UserControl TextBox
       ScrollType      =   0
    End
    Begin VB.Timer Timer1 
-      Left            =   810
-      Top             =   1020
+      Left            =   135
+      Top             =   75
    End
    Begin VB.Menu mnuEdit 
       Caption         =   "&Edit"
@@ -189,6 +189,9 @@ Public Property Get WordWrap() As Boolean
     WordWrap = pWordWrap
 End Property
 Public Property Let WordWrap(ByVal RHS As Boolean)
+    
+    Err.Raise 8, App.Title, "WordWrap not implmented."
+    
     pWordWrap = RHS
     BuildVisibleText
     UserControl_Paint
@@ -202,22 +205,9 @@ End Property
 Public Property Let GreyNoTextMsg(ByVal RHS As String)
     pGreyNoTextMsg = RHS
 End Property
-'Private Function RanteType(ByVal StartPos As Long, ByVal StopPos As Long) As RangeType
-'    With RanteType
-'        .StartPos = StartPos
-'        .StopPos = StopPos
-'    End With
-'End Function
-    
+
 Private Sub BuildVisibleText()
 
-'                tText.Reset
-'                If pPasswordChar <> "" Then
-'                    tText.Concat Convert(String(StopPos - StartPos, pPasswordChar))
-'                Else
-'                    tText.Concat pText.Partial(StartPos, StopPos - StartPos)
-'                End If
-         
     Dim tmpsel As RangeType
     
     tText.Reset
@@ -231,20 +221,7 @@ Private Sub BuildVisibleText()
         End If
         tText.Concat pText.Partial(tmpsel.StartPos, tmpsel.StopPos - tmpsel.StartPos)
     End If
-    
-'    Dim tmpsel As RangeType
-'
-'    tText.Reset
-'    If pPasswordChar <> "" Then
-'        tText.Concat Convert(String(pText.Length, pPasswordChar))
-'    Else
-'        tmpsel = VisibleRange
-'        If pWordWrap Then
-'
-'
-'        End If
-'        tText.Concat pText.Partial(tmpsel.StartPos, tmpsel.StopPos - tmpsel.StartPos)
-'    End If
+
 End Sub
 Public Property Get PasswordChar() As String
     PasswordChar = pPasswordChar
@@ -944,8 +921,6 @@ Public Property Let MultipleLines(ByVal RHS As Boolean)
             End If
             
             If kText.Length > 0 Then
-                'pText.Reset
-                'pText.Concat kText.Partial
                 
                 pText.Clone kText
             Else
@@ -998,10 +973,6 @@ Private Function VisibleRange(Optional ByVal StartingLine As Long = -1) As Range
         If StartingLine = -1 Then
             StartingLine = LineFirstVisible
         End If
-        
-'        .StartPos = pText.poll(Asc(vbLf), StartingLine)
-'        If .StartPos > 0 Then .StartPos = .StartPos + 1
-'        .StopPos = pText.poll(Asc(vbLf), StartingLine + (UsercontrolHeight \ TextHeight) + 1)
 
         .StartPos = pText.Offset(StartingLine + 1)
         .StopPos = pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight) + 1)
@@ -2050,9 +2021,8 @@ Private Sub DepleetColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
             For cnt = Index To UBound(pColorRecords) - 1
                 pColorRecords(cnt) = pColorRecords(cnt + 1)
             Next
-            'If UBound(pColorRecords) > 0 Then
+            
             ReDim Preserve pColorRecords(0 To UBound(pColorRecords) - 1) As ColorRange
-           ' End If
         Else
             If pColorRecords(Index).StartLoc > CursorLoc Then
                 pColorRecords(Index).StartLoc = pColorRecords(Index).StartLoc - Width
@@ -2078,7 +2048,6 @@ Private Sub CleanColorRecords(ByVal CursorLoc As Long, ByVal Width As Long)
     Dim Index As Long
     Index = LocateColorRecord(CursorLoc)
     Do While Index <= UBound(pColorRecords)
-        'If pColorRecords(Index).StartLoc < CursorLoc + Width Then
         If pColorRecords(Index).StartLoc >= CursorLoc And pColorRecords(Index).StartLoc < CursorLoc + Width Then
             If WidthOfColorRecord(Index) = 0 Then
                 DelColorRecord Index
@@ -2588,21 +2557,10 @@ Private Function CaretLocation(Optional ByVal AtCharPos As Long = -1) As POINTAP
         Dim cnt As Long
         cnt = pText.Pass(Asc(vbLf), 0, AtCharPos)
         If cnt >= 0 Then
-       ' Debug.Print LineFirstVisible
-        
-            CaretLocation.Y = (TextHeight * cnt) + pOffsetY '=+ (LineFirstVisible * TextHeight)
+            CaretLocation.Y = (TextHeight * cnt) + pOffsetY
             CaretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
-'            Dim part As String
-''            If LineIndex + 1 = LineCount Then
-'                part = Left(LineText(cnt), ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)))
-''            Else
-''            'If ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos)) > 0 Then
-''               ' part = Left(LineText(cnt), (((pText.Length + 1) - LineOffset(cnt)) - ((pText.Length + 1) - AtCharPos)))
-''           ' End If
-''           End If
-'            CaretLocation.X = Me.TextWidth(part)
         Else
-            CaretLocation.Y = pOffsetY '- (LineFirstVisible * TextHeight)
+            CaretLocation.Y = pOffsetY
         End If
     Else
         CaretLocation.Y = pOffsetY
@@ -2761,28 +2719,21 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                     
                     RaiseEventChange
                 Else
-                
-'                    lIndex = LineOffset(LineIndex(pSel.StartPos))
-'                    temp = LineOffset(LineIndex(pSel.StopPos))
-'                    If temp > lIndex Then
 
-                        Dim tmpsel As Long
-                        If Shift = 0 Then
-                            
-                            tmpsel = SelLength
-                            Indenting SelStart, SelLength, Chr(9), True
-                            ExpandColorRecords pSel.StartPos, pSel.StopPos - (tmpsel - SelLength)
-
-                        ElseIf Shift = 1 Then
-                            tmpsel = SelLength
-                            Indenting SelStart, SelLength, Chr(9) & Chr(8), True
-                            DepleetColorRecords pSel.StartPos, pSel.StopPos - (pSel.StartPos + tmpsel)
-                        End If
+                    Dim tmpsel As Long
+                    If Shift = 0 Then
                         
-                        KeyCode = 0
-  
-'                    End Ife
+                        tmpsel = SelLength
+                        Indenting SelStart, SelLength, Chr(9), True
+                        ExpandColorRecords pSel.StartPos, pSel.StopPos - (tmpsel - SelLength)
 
+                    ElseIf Shift = 1 Then
+                        tmpsel = SelLength
+                        Indenting SelStart, SelLength, Chr(9) & Chr(8), True
+                        DepleetColorRecords pSel.StartPos, pSel.StopPos - (pSel.StartPos + tmpsel)
+                    End If
+                    
+                    KeyCode = 0
 
                 End If
                 
@@ -2904,7 +2855,7 @@ Public Sub Indenting(ByVal SelStart As Long, ByVal SelLength As Long, Optional B
                 If Left(txt, Len(Replace(CharStr, Chr(8), ""))) = Replace(CharStr, Chr(8), "") Then
                     txt = Mid(txt, Len(Replace(CharStr, Chr(8), "")) + 1)
                     tmpsel.StopPos = tmpsel.StopPos - (Len(CharStr) - 1)
-                    'Debug.Print Len(CharStr)
+
                 End If
             End If
         End If
@@ -3112,23 +3063,22 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
         Dim lpos As Long
         lpos = CaretFromPoint(X, Y)
         'Debug.Print lpos; dragStart; pSel.StartPos; pSel.StopPos
-        
-        
-            If (dragStart = -1 Or dragStart = 0) Then
+                
+        If (dragStart = -1 Or dragStart = 0) Then
+            pSel.StartPos = lpos
+            dragStart = -1
+        ElseIf (dragStart = -2 Or dragStart = 0) Then
+            pSel.StopPos = lpos
+            dragStart = -2
+        ElseIf (dragStart > 0) Then
+            If dText Is Nothing Then
+                UserControl.OLEDrag
+            Else
                 pSel.StartPos = lpos
-                dragStart = -1
-            ElseIf (dragStart = -2 Or dragStart = 0) Then
                 pSel.StopPos = lpos
-                dragStart = -2
-            ElseIf (dragStart > 0) Then
-                If dText Is Nothing Then
-                    UserControl.OLEDrag
-                Else
-                    pSel.StartPos = lpos
-                    pSel.StopPos = lpos
-                    UserControl_Paint
-                End If
+                UserControl_Paint
             End If
+        End If
         
         Dim Loc As POINTAPI
         Loc = CaretLocation
@@ -3520,8 +3470,8 @@ End Sub
 
 Friend Sub PaintBuffer()
     If Not Cancel Then
-        ScrollBar1.Backbuffer.Paint (ScrollBar1.Left / Screen.TwipsPerPixelX), (ScrollBar1.Top / Screen.TwipsPerPixelY), ((ScrollBar1.Left + ScrollBar1.Width) / Screen.TwipsPerPixelX), ((ScrollBar1.Top + ScrollBar1.Height) / Screen.TwipsPerPixelY)
-        ScrollBar2.Backbuffer.Paint (ScrollBar2.Left / Screen.TwipsPerPixelX), (ScrollBar2.Top / Screen.TwipsPerPixelY), ((ScrollBar2.Left + ScrollBar2.Width) / Screen.TwipsPerPixelX), ((ScrollBar2.Top + ScrollBar2.Height) / Screen.TwipsPerPixelY)
+        If ScrollBar1.Visible Then ScrollBar1.Backbuffer.Paint (ScrollBar1.Left / Screen.TwipsPerPixelX), (ScrollBar1.Top / Screen.TwipsPerPixelY), ((ScrollBar1.Left + ScrollBar1.Width) / Screen.TwipsPerPixelX), ((ScrollBar1.Top + ScrollBar1.Height) / Screen.TwipsPerPixelY)
+        If ScrollBar2.Visible Then ScrollBar2.Backbuffer.Paint (ScrollBar2.Left / Screen.TwipsPerPixelX), (ScrollBar2.Top / Screen.TwipsPerPixelY), ((ScrollBar2.Left + ScrollBar2.Width) / Screen.TwipsPerPixelX), ((ScrollBar2.Top + ScrollBar2.Height) / Screen.TwipsPerPixelY)
 
         pBackBuffer.Paint 0, 0, ((UsercontrolWidth + LineColumnWidth) / Screen.TwipsPerPixelX), (UsercontrolHeight / Screen.TwipsPerPixelY)
     End If
@@ -3555,7 +3505,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     CodePage = PropBag.ReadProperty("CodePage", 1)
     PasswordChar = PropBag.ReadProperty("PasswordChar", "")
     GreyNoTextMsg = PropBag.ReadProperty("GreyNoTextMsg", "")
-    WordWrap = PropBag.ReadProperty("WordWrap", False)
+    'WordWrap = PropBag.ReadProperty("WordWrap", False)
     Cancel = False
 End Sub
 
@@ -3603,11 +3553,14 @@ Friend Sub SetScrollBars()
 
     Dim I As Integer
     For I = 0 To 1
+    
+    
         If ((CanvasHeight > UsercontrolHeight And UsercontrolHeight > ScrollBar2.Height) And (pScrollBars = vbScrollBars.Auto)) Or ((pScrollBars = vbScrollBars.Both) Or (pScrollBars = vbScrollBars.Vertical)) Then
             If Not ScrollBar1.Visible Then ScrollBar1.Visible = True
         ElseIf ScrollBar1.Visible Then
             ScrollBar1.Visible = False
         End If
+        
         If ScrollBar1.Visible And CanvasHeight < UsercontrolHeight Then
             If ScrollBar1.Enabled Then ScrollBar1.Enabled = False
         ElseIf ScrollBar1.Visible And CanvasHeight >= UsercontrolHeight Then
@@ -3616,12 +3569,11 @@ Friend Sub SetScrollBars()
             ScrollBar1.Enabled = Enabled
         End If
 
-
-        If ScrollBar2.Visible And WordWrap Then
+        If (ScrollBars = Auto And WordWrap) Or ScrollBars = Vertical Or ScrollBars = None Then
             ScrollBar2.Visible = False
         Else
             If ((CanvasWidth > UsercontrolWidth And UsercontrolWidth > ScrollBar1.Width) And (pScrollBars = vbScrollBars.Auto)) Or ((pScrollBars = vbScrollBars.Both) Or (pScrollBars = vbScrollBars.Horizontal)) Then
-                If (Not ScrollBar2.Visible) And (Not WordWrap) Then ScrollBar2.Visible = True
+                If (Not ScrollBar2.Visible) Then ScrollBar2.Visible = True
             ElseIf ScrollBar2.Visible Then
                 ScrollBar2.Visible = False
             End If
@@ -3630,34 +3582,32 @@ Friend Sub SetScrollBars()
         If ScrollBar2.Visible And CanvasWidth < UsercontrolWidth Then
             If ScrollBar2.Enabled Then ScrollBar2.Enabled = False
         ElseIf ScrollBar2.Visible And CanvasWidth >= UsercontrolWidth Then
-            If Not ScrollBar2.Enabled Then ScrollBar2.Enabled = Enabled
+            If Not ScrollBar2.Enabled Then ScrollBar2.Enabled = Enabled And (Not WordWrap)
         Else
-            ScrollBar2.Enabled = Enabled
+            ScrollBar2.Enabled = Enabled And (Not WordWrap)
         End If
+        
+        
         ScrollBar1.Max = (CanvasHeight - UsercontrolHeight)
         ScrollBar1.SmallChange = TextHeight
         ScrollBar1.LargeChange = ScrollBar1.SmallChange * 4
         If ScrollBar1.Visible Then
-
             If ScrollBar1.Top <> 0 Then ScrollBar1.Top = 0
             If ScrollBar1.Width <> Screen.TwipsPerPixelX ^ 2 Then ScrollBar1.Width = Screen.TwipsPerPixelX ^ 2
             If ScrollBar1.Left <> UsercontrolWidth + LineColumnWidth Then ScrollBar1.Left = UsercontrolWidth + LineColumnWidth
             If ScrollBar1.Height <> UsercontrolHeight Then ScrollBar1.Height = UsercontrolHeight
         End If
+        
         ScrollBar2.Max = (CanvasWidth - UsercontrolWidth)
         ScrollBar2.SmallChange = TextWidth
         ScrollBar2.LargeChange = ScrollBar2.SmallChange * 4
         If ScrollBar2.Visible Then
-
             If ScrollBar2.Left <> 0 Then ScrollBar2.Left = 0
             If ScrollBar2.Height <> Screen.TwipsPerPixelY ^ 2 Then ScrollBar2.Height = Screen.TwipsPerPixelY ^ 2
             If ScrollBar2.Top <> UsercontrolHeight Then ScrollBar2.Top = UsercontrolHeight
             If ScrollBar2.Width <> UsercontrolWidth + LineColumnWidth Then ScrollBar2.Width = UsercontrolWidth + LineColumnWidth
         End If
-'        If dragStart >= 0 Then
-'            ScrollBar1.Refresh
-'            ScrollBar2.Refresh
-'        End If
+
     Next
     
 End Sub
