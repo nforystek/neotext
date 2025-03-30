@@ -575,8 +575,10 @@ Attribute TabSpace.VB_Description = "Gets the character equivelent to a tab defi
     TabSpace = pTabSpace
 End Property
 Public Property Let TabSpace(ByVal RHS As String)
-    If Replace(RHS, " ", "") = "" And Len(RHS) > 0 Then
+    If Replace(RHS, " ", "") = "" And Len(RHS) > 2 Then
         pTabSpace = RHS
+    Else
+        pTabSpace = "    "
     End If
 End Property
 Public Sub SelectAll()
@@ -976,6 +978,8 @@ Private Function VisibleRange(Optional ByVal StartingLine As Long = -1) As Range
 
         .StartPos = pText.Offset(StartingLine + 1)
         .StopPos = pText.Offset(StartingLine + (UsercontrolHeight \ TextHeight) + 1)
+        
+        If .StartPos = 0 And .StopPos = 0 And pText.Length > 0 Then .StopPos = pText.Length
 
     End With
 End Function
@@ -1182,6 +1186,8 @@ Attribute SelText.VB_Description = "Sets the selected text, the portion of text 
     
     If pSel.StartPos >= 0 And pText.Length > pSel.StopPos And pSel.StopPos - pSel.StartPos > 0 Then
         pText.Pinch pSel.StartPos, pSel.StopPos - pSel.StartPos
+    ElseIf pSel.StartPos >= 0 And pText.Length >= pSel.StopPos And pSel.StopPos - pSel.StartPos > 0 Then
+        pText.Length = pText.Length - (pSel.StopPos - pSel.StartPos)
     End If
     
     If tText.Length > 0 Then
@@ -1436,6 +1442,7 @@ Private Sub Timer1_Timer()
     Dim ClrRec As Long
     Dim newloc As POINTAPI
     newloc = CaretLocation
+'    Debug.Print newloc.X & " " & newloc.Y
     
     If ((Not cursorBlink) Or (Not hasFocus)) Or ((newloc.X <> cursorLastLoc.X) Or (newloc.Y <> cursorLastLoc.Y)) Then
         If insertMode Then
@@ -1506,7 +1513,7 @@ Private Function MakeCaretVisible(ByRef Loc As POINTAPI, ByVal LargeJump As Bool
     If Enabled Then
         
         If pScrollToCaret And (Not ClippingWouldDraw(DrawableRect, RECT(Loc.X, Loc.Y, Loc.X + TextWidth, Loc.Y + TextHeight), True)) Then
-        Debug.Print Loc.X; Loc.Y
+       ' Debug.Print Loc.X; Loc.Y
         
             If Loc.X < 1 Then
                 If LargeJump Then
@@ -2507,6 +2514,7 @@ Attribute LineOffset.VB_Description = "Returns the offset amount of characters u
     If pText.Length > 0 Then
         LineOffset = pText.Offset(LineIndex + 1)
     End If
+   ' Debug.Print "LineOffset(" & LineIndex & "): " & LineOffset
 End Function
 
 Public Function LineLength(ByVal LineIndex As Long) As Long ' _
@@ -2515,6 +2523,7 @@ Attribute LineLength.VB_Description = "Returns the length of characters with-in 
     If pText.Length > 0 Then
         LineLength = pText.Offset(LineIndex + 2) - pText.Offset(LineIndex + 1)
     End If
+   ' Debug.Print "LineLength(" & LineIndex & "): " & LineLength
 End Function
 
 Public Function LineText(ByVal LineIndex As Long) As String ' _
@@ -2558,7 +2567,11 @@ Private Function CaretLocation(Optional ByVal AtCharPos As Long = -1) As POINTAP
         cnt = pText.Pass(Asc(vbLf), 0, AtCharPos)
         If cnt >= 0 Then
             CaretLocation.Y = (TextHeight * cnt) + pOffsetY
-            CaretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
+            CaretLocation.X = Me.TextWidth(Left(LineText(cnt), (AtCharPos - LineOffset(cnt))))
+            
+            'CaretLocation.X = Me.TextWidth * ((pText.Length - LineOffset(cnt)) - (pText.Length - AtCharPos))
+            'same as
+            'CaretLocation.X = Me.TextWidth * (AtCharPos - LineOffset(cnt))
         Else
             CaretLocation.Y = pOffsetY
         End If
@@ -2751,7 +2764,13 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
                 InvalidateCursor
             Case 35 'end
                 pSel.StartPos = LineIndex(pSel.StartPos)
-                pSel.StartPos = LineOffset(pSel.StartPos) + LineLength(pSel.StartPos) - 1
+                If InStr(LineText(pSel.StartPos), vbLf) > 0 Then
+                
+                    pSel.StartPos = LineOffset(pSel.StartPos) + LineLength(pSel.StartPos) - 1
+                Else
+                    pSel.StartPos = LineOffset(pSel.StartPos) + LineLength(pSel.StartPos)
+                End If
+                
                 If Shift = 0 Then pSel.StopPos = pSel.StartPos
                 InvalidateCursor
             Case 38 'up
@@ -3368,7 +3387,7 @@ Public Static Sub Refresh()
             Static lastPos As RangeType
             If lastPos.StartPos <> bpos Or lastPos.StopPos <> epos - bpos Then
                 
-              '  BuildVisibleText RanteType(bpos, epos)
+                'BuildVisibleText RanteType(bpos, epos)
                 tText.Reset
                 If pPasswordChar <> "" Then
                     tText.Concat Convert(String(epos - bpos, pPasswordChar))

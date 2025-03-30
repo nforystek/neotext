@@ -418,7 +418,7 @@ Attribute Value.VB_Description = "Gets the current value of the scroll bar's sli
             Value = pMax
         End If
     Else
-        Value = pMin
+        Value = pValue
     End If
 End Property
 Public Property Let Value(ByVal RHS As Long) ' _
@@ -1021,9 +1021,9 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     Enabled = PropBag.ReadProperty("Enabled", True)
     Tag = PropBag.ReadProperty("Tag", Empty)
     
-    Value = PropBag.ReadProperty("Value", 0)
     Min = PropBag.ReadProperty("Min", 0)
     Max = PropBag.ReadProperty("Max", 100)
+    Value = PropBag.ReadProperty("Value", 0)
     SmallChange = PropBag.ReadProperty("SmallChange", 1)
     LargeChange = PropBag.ReadProperty("LargeChange", 4)
     AutoRedraw = PropBag.ReadProperty("AutoRedraw", True)

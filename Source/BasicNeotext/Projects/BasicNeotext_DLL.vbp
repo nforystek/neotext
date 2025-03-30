@@ -26,7 +26,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="BasicNeotext"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="BasicNeotext"
-CondComp="BasicNeotext = -1 : VBIDE = -1 : modMWheel = -1"
+CondComp="BasicNeotext=-1:VBIDE=-1:modMWheel=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

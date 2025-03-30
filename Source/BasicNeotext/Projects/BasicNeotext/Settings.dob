@@ -15,7 +15,7 @@ Begin VB.UserDocument Settings
       Enabled         =   0   'False
       Interval        =   5
       Left            =   4035
-      Top             =   855
+      Top             =   840
    End
    Begin VB.CommandButton Command1 
       Caption         =   "?"
@@ -203,6 +203,7 @@ Option Explicit
 Implements ISettings
 
 Public VBInstance As VBIDE.VBE
+Public Event TimeFrame()
 
 Private Sub Command1_Click()
     MsgBox "On any header that begins a block of code of which may have descriptions," & vbCrLf & _
@@ -300,6 +301,8 @@ End Sub
 Private Sub Timer1_Timer()
     Timer1.Enabled = False
     
+    RaiseEvent TimeFrame
+    
     Dim elapse As Single
     elapse = Timer
     
@@ -320,6 +323,7 @@ Private Sub Timer1_Timer()
             Timer1.Enabled = True
         End If
     End If
+    
     
 End Sub
 

@@ -18,7 +18,11 @@ Public Type RECT
         Bottom As Long
 End Type
 
-Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Public Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
+Public Declare Function GetClientRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
+
+
+Public Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
 Private Declare Function ClientToScreen Lib "user32" (ByVal hwnd As Long, lpPoint As POINTAPI) As Long
 Private Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
 Private Declare Sub mouse_event Lib "user32" (ByVal dwFlags As Long, ByVal dx As Long, ByVal dy As Long, ByVal cButtons As Long, ByVal dwExtraInfo As Long)
@@ -40,6 +44,7 @@ Private Const GW_OWNER = 4
 Private Const GW_CHILD = 5
 Private Const GW_MAX = 5
 
+
 Public Declare Function IsWindowVisible Lib "user32" (ByVal hwnd As Long) As Long
 
 Private Declare Function RedrawWindow Lib "user32" (ByVal hwnd As Long, lprcUpdate As Any, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
@@ -49,11 +54,13 @@ Private Const RDW_ERASE = &H4
 Private Const RDW_FRAME = &H400
 Private Const RDW_INVALIDATE = &H1
 
+Public Declare Function WindowFromPoint Lib "user32" (ByVal xPoint As Long, ByVal yPoint As Long) As Long
+
 Private Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
 
 Private Declare Function GetWindowTextLength Lib "user32" Alias "GetWindowTextLengthA" (ByVal hwnd As Long) As Long
 Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hwnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
-Private Declare Function GetClassName Lib "user32" Alias "GetClassNameA" _
+Public Declare Function GetClassName Lib "user32" Alias "GetClassNameA" _
     (ByVal hwnd As Long, ByVal lpClassName As String, _
     ByVal nMaxCount As Long) As Long
     
@@ -100,7 +107,7 @@ Private Const WM_CHILDACTIVATE = &H22
 
 
 
-Private Type POINTAPI
+Public Type POINTAPI
         x As Long
         y As Long
 End Type
@@ -186,10 +193,10 @@ End Sub
 
 Private Sub CleanHooks()
     
-    If Hooks.count > 0 Then
+    If Hooks.Count > 0 Then
         Dim cnt As Long
         cnt = 1
-        Do While cnt <= Hooks.count
+        Do While cnt <= Hooks.Count
 
             If IsWindowVisible(Hooks(cnt).hwnd) = 0 Then
                 hWndCode = Replace(hWndCode, "h" & Hooks(cnt).hwnd, "")
@@ -249,7 +256,7 @@ Public Sub ItterateDialogs(ByRef VBInstance As VBE)
         hWndProp = 0
     End If
     
-    If Hooks.count > 0 Then
+    If Hooks.Count > 0 Then
 
         Dim frm As FormHWnd
         For Each frm In Hooks

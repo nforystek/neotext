@@ -286,15 +286,15 @@ dimerror:
 End Function
 
 Public Sub Hook(ByRef UserControl As IControl)
-    If ((IsCompiled Or IsRunMode) Or ((Not IsCompiled) And IsRunningMode)) Then
+'    If ((IsCompiled Or IsRunMode) Or ((Not IsCompiled) And IsRunningMode)) Then
         If UserControl.hProc = 0 Then
             SubClassed.Add UserControl, "H" & UserControl.hWnd
             UserControl.hProc = GetWindowLong(UserControl.hWnd, GWL_WNDPROC)
             SetWindowLong UserControl.hWnd, GWL_WNDPROC, AddressOf WinProc
         End If
-    Else
-       Unhook UserControl
-    End If
+'    Else
+'       Unhook UserControl
+'    End If
 End Sub
 
 Public Sub Unhook(ByRef UserControl As IControl)

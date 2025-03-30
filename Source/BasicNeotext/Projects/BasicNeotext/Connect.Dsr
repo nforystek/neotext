@@ -73,6 +73,8 @@ Private cmdButton8 As CommandBarButton 'stop the executable
 Private WithEvents cmdMenuButton8 As CommandBarEvents
 Attribute cmdMenuButton8.VB_VarHelpID = -1
 
+Private cmdButton9 As CommandBarButton 'coordinate display
+
 '##################Menu Objects and events (either new or existing built in + some built mocked of built in)
 
 
@@ -155,7 +157,8 @@ Attribute cmdBarBtnEvents10.VB_VarHelpID = -1
 Private cmdBarBtn6 As CommandBarButton 'sign
 Private cmdBarBtn7 As CommandBarButton 'sign
 
-Private docSettings As Settings
+Private WithEvents docSettings As Settings
+Attribute docSettings.VB_VarHelpID = -1
 
 Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
 
@@ -167,6 +170,39 @@ Public WithEvents FCE As FileControlEvents
 Attribute FCE.VB_VarHelpID = -1
 'Public VBInstance As VBIDE.VBE
 
+
+Private Sub docSettings_TimeFrame()
+    If Not cmdButton9 Is Nothing Then
+        Dim Wnd As Long
+        
+        Dim M_Mouse As POINTAPI
+        
+        Dim Wnd_Class As Long
+        Dim Wnd_ClassCaption As String
+    
+    
+        GetCursorPos M_Mouse ' Get the mouse x and y positions
+        
+        Wnd = WindowFromPoint(M_Mouse.x, M_Mouse.y) ' Get the windows handle
+        Wnd_ClassCaption = Space(256) ' ' Sets wnd_caption to a space of 256
+        
+        ' Get the class name
+        Wnd_Class = GetClassName(Wnd, Wnd_ClassCaption, Len(Wnd_ClassCaption))
+        Wnd_ClassCaption = Left(Wnd_ClassCaption, Wnd_Class)
+        Select Case Wnd_ClassCaption
+            Case "ThunderForm", "ThunderUserControl", "ThunderUserDocument"
+                Dim rt As RECT
+    
+                GetWindowRect Wnd, rt
+                
+                cmdButton9.Caption = "(" & (M_Mouse.x - rt.Left) & ", " & (M_Mouse.y - rt.Top) & ")"
+        
+            Case Else
+                cmdButton9.Caption = "(X, Y)"
+        
+        End Select
+    End If
+End Sub
 
 Private Sub FCE_AfterWriteFile(ByVal VBProject As VBIDE.VBProject, ByVal FileType As VBIDE.vbext_FileType, ByVal FileName As String, ByVal Result As Integer)
     On Error Resume Next
@@ -345,7 +381,6 @@ Private Sub AddinInstance_OnAddInsUpdate(custom() As Variant)
    
     SetUIState
 
-    
 End Sub
 
 Private Sub AddinInstance_OnBeginShutdown(custom() As Variant)
@@ -424,7 +459,13 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     cmdButton8.ToolTipText = "Stop the E&xecutable"
     cmdButton8.Style = msoButtonIcon
     cmdButton8.faceid = 348
-        
+
+    Set cmdButton9 = CmdBar.Controls.Add(msoControlButton)
+    cmdButton9.BeginGroup = True
+    cmdButton9.Caption = "(X, Y)"
+    cmdButton9.ToolTipText = "Displays the local coordinate of the mouse when over a designer."
+    cmdButton9.Style = msoButtonCaption
+    
 '    Set cmdBarBtn1 = VBInstance.CommandBars("Run").Controls("&Start").Copy(CmdBar)
 '    cmdBarBtn1.BeginGroup = True
 '    Set cmdBarBtn2 = VBInstance.CommandBars("Run").Controls("Brea&k").Copy(CmdBar)
@@ -460,6 +501,7 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
     Set cmdMenuButton6 = VBInstance.Events.CommandBarEvents(cmdButton6)
 '    Set cmdMenuButton7 = VBInstance.Events.CommandBarEvents(cmdButton7)
     Set cmdMenuButton8 = VBInstance.Events.CommandBarEvents(cmdButton8)
+
     
     Dim cbNextCommand As Office.CommandBarControl
     Dim cbMenu As Office.CommandBar
@@ -559,14 +601,21 @@ Private Sub AddinInstance_OnConnection(ByVal Application As Object, ByVal Connec
 '    Set cmdBarBtnEvents8 = VBInstance.Events.CommandBarEvents(VBInstance.CommandBars("Run").Controls("Start"))
 '    Set cmdBarBtnEvents9 = VBInstance.Events.CommandBarEvents(VBInstance.CommandBars("Run").Controls("Brea&k"))
 '    Set cmdBarBtnEvents10 = VBInstance.Events.CommandBarEvents(VBInstance.CommandBars("Run").Controls("&End"))
-    
+
+   
+   
     
     Set VBWindow = VBInstance.Windows.CreateToolWindow(AddInInst, "BasicNeotext.Settings", "Compiler Settings", guidPos, docSettings)
+    
+    Set docSettings = CreateObject("BasicNeotext.Settings")
+    
     VBWindow.Visible = GetSetting("BasicNeotext", "Options", "Settings_Visible", VBWindow.Visible)
+
     
     Set docSettings.VBInstance = VBInstance
     Set FCE = VBInstance.Events.FileControlEvents(Nothing)
     
+
     docSettings.StartTimer
     ''uncomment the following two lines to hook F5
     
@@ -575,9 +624,12 @@ End Sub
 
 
 Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjects.ext_DisconnectMode, custom() As Variant)
-    On Error GoTo exitthis
-    On Local Error GoTo exitthis
-    
+'    On Error GoTo exitthis
+'    On Local Error GoTo exitthis
+    On Error Resume Next
+    On Local Error Resume Next
+
+
     docSettings.StopTimer
     
     If Not CmdBar Is Nothing Then
@@ -649,6 +701,7 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     If Not cmdButton6 Is Nothing Then cmdButton6.Delete
     If Not cmdButton7 Is Nothing Then cmdButton7.Delete
     If Not cmdButton8 Is Nothing Then cmdButton8.Delete
+    If Not cmdButton9 Is Nothing Then cmdButton9.Delete
     
     Set cmdButton1 = Nothing
     Set cmdButton2 = Nothing
@@ -657,6 +710,8 @@ Private Sub AddinInstance_OnDisconnection(ByVal RemoveMode As AddInDesignerObjec
     Set cmdButton5 = Nothing
     Set cmdButton6 = Nothing
     Set cmdButton7 = Nothing
+    Set cmdButton8 = Nothing
+    Set cmdButton9 = Nothing
     
     If Not cmdBarBtn1 Is Nothing Then cmdBarBtn1.Delete
     If Not cmdBarBtn2 Is Nothing Then cmdBarBtn2.Delete
@@ -863,10 +918,10 @@ Private Function StartupProjectEXE(ByVal BinPath As String) As String
     Dim i2 As Project
     Dim i As Project
 
-    If modMain.Projs.Includes.count > 0 Then
+    If modMain.Projs.Includes.Count > 0 Then
         For Each i In modMain.Projs.Includes
             If UCase(Right(i.Compiled, 4)) = ".EXE" Then
-                If i.Includes.count > 0 Then
+                If i.Includes.Count > 0 Then
                     For Each i2 In i.Includes
                         If LCase(i2.Compiled) = LCase(BinPath) Then
                             StartupProjectEXE = i.Compiled
@@ -1090,10 +1145,10 @@ Private Sub DoMakeProj(ByRef vbp As VBProject)
     
     vbp.MakeCompiledFile
     
-    If Err.number <> 0 Then
+    If Err.Number <> 0 Then
 
-        If Err.number <> 0 Then
-            MsgBox Err.Description, vbCritical, "Error " & Err.number
+        If Err.Number <> 0 Then
+            MsgBox Err.Description, vbCritical, "Error " & Err.Number
         End If
     
         Err.Clear

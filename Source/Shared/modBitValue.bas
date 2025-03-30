@@ -124,6 +124,13 @@ Private Function FindBit(ByVal Index As Variant) As Variant
     End If
 
 End Function
+
+'########################################################################################
+'#### Property ByteBound/IntBound/LongBound/HighBound/DoubleBound/CurBound(Currency) ####
+'########################################################################################
+'#### Returns the maximum numerical value the respective datatype can contain with ######
+'#### the optional parameter to return the unsigned version, (i.e. int unsigned has #####
+'#### no negative number spectrum 0 to 65535, while signed, it does -32767 to 32767) ####
 '########################################################################################
 
 Public Function ByteBound(Optional ByVal UnSigned As Boolean = False) As Variant
@@ -160,17 +167,42 @@ Public Function HighBound(Optional ByVal UnSigned As Boolean = False) As Variant
     If UnSigned Then
         HighBound = CStr(CDec(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDec(2) * CDec(3.2768))
     Else
-        HighBound = ((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)
+        HighBound = ((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1) ' CStr(CDec(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDec(2) * CDec(3.2768))
+    End If
+
+End Function
+
+Public Function DoubleBound(Optional ByVal UnSigned As Boolean = False) As Variant
+
+    If Not UnSigned Then
+        DoubleBound = -CCur(CCur(-CurBound(False) + 0.0001) / 10000)
+    Else
+        DoubleBound = CDbl(CStr(CDbl(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDbl(2) * CDbl(3.2768))) ' CStr(CDec(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDec(2) * CDec(3.2768))
     End If
 
 End Function
 
 Public Function CurBound(Optional ByVal UnSigned As Boolean = False) As Variant
-
-    CurBound = ((((BitReg ^ BitReg) * ((BitReg ^ BitReg) ^ BitReg)) * (BitReg ^ BitReg)) ^ 2)
-
+    
+    CurBound = CCur(CCur(HighBound(False)) + 0.9557)   '"922337203685477.5807")
+    If UnSigned Then CurBound = HighBound(True) '-CCur(CCur(-CurBound + 0.0001) / 10000) '
+  '  If UnSigned Then CurBound = CStr(CDec(((((BitReg * 2) ^ (BitReg * 2) ^ (1 / 0.5)) * 3.2768) - 1)) * CDec(2) * CDec(3.2768))
+    
+'    CurBound = ((((BitReg * BitReg) * ((BitReg ^ BitReg) ^ BitReg)) * (BitReg ^ BitReg)) ^ 2)
+'    If UnSigned Then
+'        CurBound = ((((BitReg ^ BitReg) * ((BitReg ^ BitReg) ^ BitReg)) * (BitReg ^ BitReg)) ^ 2)
+'    Else
+'        CurBound = ((((BitReg * BitReg) * ((BitReg ^ BitReg) ^ BitReg)) * (BitReg ^ BitReg)) ^ 2)
+'    End If
+'
 End Function
+
 '########################################################################################
+'#### Property Bit ######################################################################
+'########################################################################################
+'#### A generic of the Bit* properties that follow, attempts to determine data type. ####
+'########################################################################################
+
 Public Property Let Bit(ByRef This As Variant, ByVal Index As Variant, ByRef Value As Boolean)
     Index = FindBit(Index)
     If (This And (Index)) And (Not Value) Then
@@ -183,7 +215,13 @@ Public Property Get Bit(ByRef This As Variant, ByVal Index As Variant) As Boolea
     Index = FindBit(Index)
     Bit = (This And Index)
 End Property
+
 '########################################################################################
+'#### Property BitByte ##################################################################
+'########################################################################################
+'#### Gets or sets a byte data type's (bthis) bit at bbit index (Bit01, ...) to value ###
+'########################################################################################
+
 Public Property Let BitByte(ByRef bThis As Byte, ByRef bBit As Byte, ByRef nValue As Boolean)
     If (bThis And bBit) And (Not nValue) Then
         bThis = bThis - bBit
@@ -194,7 +232,13 @@ End Property
 Public Property Get BitByte(ByRef bThis As Byte, ByRef bBit As Byte) As Boolean
     BitByte = (bThis And bBit)
 End Property
+
 '########################################################################################
+'#### Property BitWord ##################################################################
+'########################################################################################
+'#### Gets or sets an int data type's (ithis) bit at bbit index (Bit01, ...) to value ###
+'########################################################################################
+
 Public Property Let BitWord(ByRef iThis As Integer, ByRef bBit As Integer, ByRef nValue As Boolean)
     If (iThis And bBit) And (Not nValue) Then
         iThis = iThis - bBit
@@ -205,7 +249,14 @@ End Property
 Public Property Get BitWord(ByRef iThis As Integer, ByRef bBit As Integer) As Boolean
     BitWord = (iThis And bBit)
 End Property
+
+
 '########################################################################################
+'#### Property BitLong ##################################################################
+'########################################################################################
+'#### Gets or sets a long data type's (lthis) bit at bbit index (Bit01, ...) to value ###
+'########################################################################################
+
 Public Property Let BitLong(ByRef lThis As Long, ByRef Bit As Long, ByRef Value As Boolean)
     If (lThis And (Bit)) And (Not Value) Then
         lThis = lThis - (Bit)
@@ -216,6 +267,11 @@ End Property
 Public Property Get BitLong(ByRef lThis As Long, ByRef Bit As Long) As Boolean
     BitLong = (lThis And (Bit))
 End Property
+
+'########################################################################################
+'#### Property LoByte/HiByte ############################################################
+'########################################################################################
+'#### Gets or sets an int data type's (ithis) lo or hi order byte information value #####
 '########################################################################################
 
 Public Property Let LoByte(ByRef iThis As Integer, ByVal bLoByte As Byte)
@@ -231,6 +287,10 @@ Public Property Get HiByte(ByRef iThis As Integer) As Byte
     HiByte = iThis \ Num_256 And Num_255
 End Property
 
+'########################################################################################
+'#### Property LoWord/HiWord ############################################################
+'########################################################################################
+'#### Gets or sets a long data type's (lthis) lo or hi order int information value ######
 '########################################################################################
 
 Public Property Get LoWord(ByRef lThis As Long) As Long
@@ -257,6 +317,11 @@ Public Property Let HiWord(ByRef lThis As Long, ByVal lHiWord As Long)
    End If
 End Property
 
+
+'########################################################################################
+'#### Property LoLong/HiLong ############################################################
+'########################################################################################
+'#### Gets or sets a double data type's (lthis) lo or hi order long information value ###
 '########################################################################################
 
 Public Property Get LoLong(ByRef dThis As Double) As Long
@@ -287,85 +352,4 @@ End Property
 
 '########################################################################################
 
-'Public Property Get lo(ByVal Op As Variant) As Variant
-'    Select Case TypeName(Op)
-'        Case "Integer"
-'            'return lo byte of op
-'             lo = LoByte(CInt(Op))
-'        Case "Long"
-'            'return lo word of op
-'            lo = HiWord(CLng(Op))
-'        Case Else
-'            Err.Raise 8, "Lo", "Invalid arguments."
-'    End Select
-'End Property
-'Public Property Get hi(ByVal Op As Variant) As Variant
-'    Select Case TypeName(Op)
-'        Case "Integer"
-'            'return lo byte of op
-'             hi = HiByte(CInt(Op))
-'        Case "Long"
-'            'return lo word of op
-'            hi = LoWord(CLng(Op))
-'        Case Else
-'            Err.Raise 8, "Hi", "Invalid arguments."
-'    End Select
-'End Property
-'
-'Public Property Get Wo(ByVal lo As Variant, ByVal hi As Variant) As Variant
-'    Select Case TypeName(lo)
-'        Case "Byte"
-'            Select Case TypeName(hi)
-'                Case "Byte"
-'                    If hi And Num_128 Then
-'                       Wo = ((hi * Num_256) Or lo) Or Num_Neg_65536
-'                    Else
-'                       Wo = (hi * Num_256) Or lo
-'                    End If
-'                Case Else
-'                    Err.Raise 8, "Hi", "Invalid arguments."
-'            End Select
-'        Case "Integer", "Long"
-'            Select Case TypeName(hi)
-'                Case "Integer", "Long"
-''                    Dim ret As Long
-''                    LoWord(ret) = Lo
-''                    HiWord(ret) = Hi
-''
-''
-''                    Wo = CLng(ret)
-'
-'                    Wo = (hi * Num_65536) Or (lo And Num_65535)
-'                Case Else
-'                    Err.Raise 8, "Hi", "Invalid arguments."
-'            End Select
-'        Case Else
-'            Err.Raise 8, "Hi", "Invalid arguments."
-'    End Select
-'End Property
-'
-''Public Property Get Wo(ByRef Lo As Variant, ByVal Hi As Variant) As Variant
-''    Select Case TypeName(Lo)
-''        Case "Byte"
-''            Select Case TypeName(Hi)
-''                Case "Byte"
-''                    If Hi And Num_128 Then
-''                       Wo = ((Hi * Num_Num_256) Or Lo) Or Num_Neg_65536
-''                    Else
-''                       Wo = (Hi * Num_Num_256) Or Lo
-''                    End If
-''                Case Else
-''                    Err.Raise 8, "Hi", "Invalid arguments."
-''            End Select
-''        Case "Integer", "Long"
-''            Select Case TypeName(Hi)
-''                Case "Integer", "Long"
-''                    Wo = (Hi * Num_65536) Or (Lo And Num_65535)
-''                Case Else
-''                    Err.Raise 8, "Hi", "Invalid arguments."
-''            End Select
-''        Case Else
-''            Err.Raise 8, "Hi", "Invalid arguments."
-''    End Select
-''End Property
 

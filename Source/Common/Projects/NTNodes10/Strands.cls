@@ -367,6 +367,7 @@ End Function
 Public Property Get Offset(Optional ByVal Number As Long = -1&) As Long ' _
 Gets the number of bytes existing before the line expressed by the Number argument, if omitted, the Current property is used.
     If Behave <> Nothings_Initialized Then
+        RebreakStream
         If ((Current > 0) And (Current <= UBound(Breaks))) And (Number = -1) Then
             Number = Breaks(0)
         End If
@@ -378,6 +379,7 @@ Gets the number of bytes existing before the line expressed by the Number argume
             Else
                 Offset = Stream.Length
             End If
+
       '  Else
            ' Err.Raise 8, App.Title, "The number, or current line number, is invalid or no line exist."
         End If

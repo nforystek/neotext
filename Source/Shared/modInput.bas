@@ -206,6 +206,8 @@ End Function
 Public Function Pressed(ByVal vkCode As Long) As Boolean
     Pressed = VirtualKeys(vkCode).VKPressed
 End Function
+
+
 Public Function MouseXY() As POINTAPI
     MouseXY = VirtualMouse
 End Function
