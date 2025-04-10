@@ -2590,7 +2590,11 @@ Public Function LineLength(ByVal LineIndex As Long) As Long ' _
 Returns the length of characters with-in a line, specifiied by the zero based LineIndex.
 Attribute LineLength.VB_Description = "Returns the length of characters with-in a line, specifiied by the zero based LineIndex."
     If pText.Length > 0 Then
-        LineLength = pText.Offset(LineIndex + 2) - pText.Offset(LineIndex + 1)
+        If LineIndex >= LineCount Then
+            LineLength = pText.Length - pText.Offset(LineCount)
+        Else
+            LineLength = pText.Offset(LineIndex + 2) - pText.Offset(LineIndex + 1)
+        End If
     End If
    ' Debug.Print "LineLength(" & LineIndex & "): " & LineLength
 End Function
