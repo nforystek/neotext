@@ -202,7 +202,7 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
         DDevice.SetTransform D3DTS_VIEW, matView
         DDevice.SetRenderState D3DRS_ZENABLE, 0
 
-        ResetProjection UserControl, Camera, True
+        'ResetProjection UserControl, Camera, True
 
   
     Else
@@ -210,11 +210,11 @@ Private Sub SubRenderWorldSetup(ByRef UserControl As Macroscopic, ByRef Camera A
 
         
        
-        
+       
         matView = matSave
         DDevice.SetTransform D3DTS_VIEW, matView
 
-        DDevice.SetTransform D3DTS_WORLD, matWorld
+        'DDevice.SetTransform D3DTS_WORLD, matWorld
 
 
 
@@ -1021,11 +1021,11 @@ Private Sub SetRenderBlends(ByVal Transparent As Boolean, ByVal Translucent As B
 End Sub
 Private Sub BackOfTheLine(ByRef line As NTNodes10.Collection)
     Dim Key As String
-    Dim Obj As Object
+    Dim obj As Object
     Key = line.Key(1)
-    Set Obj = line.Item(1)
+    Set obj = line.Item(1)
     line.Remove 1
-    line.Add Obj, Key
+    line.Add obj, Key
 End Sub
 
 Public Sub BeginMirrors(ByRef UserControl As Macroscopic, ByRef Camera As Camera)

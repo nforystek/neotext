@@ -28,14 +28,10 @@ Public Enum AngleValue
     angle = 2 'base, sine and cosine of the angle added together
 End Enum
 
-Public Const PI As Single = 3.141592 '65358979 'leaving out 65358979
+Public Const PI As Double = 3.141592653589 '79 'leaving out 65358979
                     'because the planes mess up and wobble
 
-Public Const epsilon As Double = 0.0001 '0.999999999999999
-Public Const D90 As Single = (PI / 4)
-Public Const D180 As Single = (PI / 2)
-Public Const D360 As Single = PI
-Public Const D720 As Single = PI * 2
+Public Const epsilon As Double = 0.999999999999999 ' 0.0001 '
 Public Const DEGREE As Single = (180 / PI)
 Public Const RADIAN As Single = (PI / 180)
 Public Const FOOT As Single = 0.1
@@ -159,13 +155,13 @@ Public Function DistanceEx(ByRef p1 As Point, ByRef p2 As Point) As Single
 End Function
 
 
-Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal n As Single) As Point
+Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal N As Single) As Point
     Dim d As Single
     d = DistanceEx(p1, p2)
     Set DistanceSet = New Point
     With DistanceSet
-        If Not (d = n) Then
-            If ((d > 0) And (n <> 0)) And (Not (d = n)) Then
+        If Not (d = N) Then
+            If ((d > 0) And (N <> 0)) And (Not (d = N)) Then
         
 '                .x = ((d * p2.x) + (n * p1.x)) / (d + n)
 '                .y = ((d * p2.y) + (n * p1.y)) / (d + n)
@@ -182,19 +178,19 @@ Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal n As Sin
                 .X = p2.X - p1.X
                 .Y = p2.Y - p1.Y
                 .Z = p2.Z - p1.Z
-                .X = (p1.X + (n * (.X / d)))
-                .Y = (p1.Y + (n * (.Y / d)))
-                .Z = (p1.Z + (n * (.Z / d)))
+                .X = (p1.X + (N * (.X / d)))
+                .Y = (p1.Y + (N * (.Y / d)))
+                .Z = (p1.Z + (N * (.Z / d)))
 '#
                 
-            ElseIf (n = 0) Then
+            ElseIf (N = 0) Then
                 .X = p1.X
                 .Y = p1.Y
                 .Z = p1.Z
             ElseIf (d = 0) Then
                 .X = p2.X
                 .Y = p2.Y
-                .Z = p2.Z + IIf(p2.Z > p1.Z, n, -n)
+                .Z = p2.Z + IIf(p2.Z > p1.Z, N, -N)
             End If
         End If
     End With
@@ -215,13 +211,13 @@ Public Function PointNearOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 
     With PointNearOnPlane
         Dim r As Range
         Set r = ToPlane(v0, V1, V2)
-        Dim n As Point
-        Set n = PlaneNormal(v0, V1, V2)
+        Dim N As Point
+        Set N = PlaneNormal(v0, V1, V2)
         Dim d As Single
         d = DistanceToPlane(p, r)
-        .X = p.X - (d * n.X)
-        .Y = p.Y - (d * n.Y)
-        .Z = p.Z - (d * n.Z)
+        .X = p.X - (d * N.X)
+        .Y = p.Y - (d * N.Y)
+        .Z = p.Z - (d * N.Z)
     End With
 End Function
 
@@ -379,8 +375,8 @@ Public Function PointNormalize(ByRef v As Point) As Point
         .Z = (v.Z / .Z)
     End With
 End Function
-Public Function Sign(ByVal n As Single) As Single
-    Sign = ((-(Abs(n - 1) - n) - (-Abs(n + 1) + n)) * 0.5)
+Public Function Sign(ByVal N As Single) As Single
+    Sign = ((-(Abs(N - 1) - N) - (-Abs(N + 1) + N)) * 0.5)
 End Function
 
 Public Function Signn(ByVal Value As Single) As Single
@@ -450,7 +446,7 @@ Public Function TrianglePerimeter(ByRef p1 As Point, ByRef p2 As Point, ByRef p3
     TrianglePerimeter = (DistanceEx(p1, p2) + DistanceEx(p2, p3) + DistanceEx(p3, p1))
 End Function
 
-Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal c As Single) As Single
+Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal C As Single) As Single
     'I'm not sure this is anything correct, it doesn't seem to be acurate the higher it is
     'but it was an attempt to develop it logically using the 1/2 base * height
     'I think the function just under this is more accurate perhaps not though.
@@ -459,41 +455,41 @@ Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal c As Single) 
     
     Dim d As Single
     Dim e As Single
-    Dim f As Single
+    Dim F As Single
     Dim g As Single
     Dim H As Single
 
     'make c the largest side, doing so
     'sort us the base in any situation
-    If A > c Then
+    If A > C Then
         'swap
         d = A
-        A = c
-        c = d
+        A = C
+        C = d
     End If
-    If b > c Then
+    If b > C Then
         'swap
         d = b
-        b = c
-        c = d
+        b = C
+        C = d
     End If
     
-    If A + b < c Then
+    If A + b < C Then
         'invalid triangle
         Exit Function
     End If
     
     'now make c the odd side
     'if two sides are equal
-    If A = c Then
+    If A = C Then
         d = b
-        b = c
-        c = d
+        b = C
+        C = d
     End If
-    If b = c Then
+    If b = C Then
         d = A
-        A = c
-        c = d
+        A = C
+        C = d
     End If
     
     'now we have, c is our largest base or
@@ -518,10 +514,10 @@ Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal c As Single) 
     d = (A + b) 'a total unit whole
     
     e = (A / d) 'a percent of the unit that a is
-    e = (e * c) 'applied to c for where to split
+    e = (e * C) 'applied to c for where to split
     
-    f = (b / d) 'do it again, for b
-    f = (c * f) 'proof rill be same as (c-f)
+    F = (b / d) 'do it again, for b
+    F = (C * F) 'proof rill be same as (c-f)
     
     'Debug.Print (Round(e, 6) = (c - Round(f, 6))) = True
     
@@ -531,7 +527,7 @@ Function TriangleArea1(ByVal A As Single, ByVal b As Single, ByVal c As Single) 
     'where a dn b are the hypotenuse
     
     g = (((A ^ 2) - (e ^ 2)) ^ (1 / 2))
-    H = (((b ^ 2) - (f ^ 2)) ^ (1 / 2))
+    H = (((b ^ 2) - (F ^ 2)) ^ (1 / 2))
     
     'now do the area formula for each
     'area = ((1/2) * B * H)
@@ -1186,7 +1182,7 @@ Public Function AngleConvertWinToDX3DY(ByVal angle As Single) As Single
 End Function
 
 Public Function AngleConvertWinToDX3DZ(ByVal angle As Single) As Single
-    AngleConvertWinToDX3DZ = -AngleRestrict(angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
+    AngleConvertWinToDX3DZ = AngleRestrict(angle) '[(((360 - Abs(Angle * DEGREE)) * Sign(Angle * DEGREE)) * RADIAN))
 End Function
 
 Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
@@ -1316,9 +1312,9 @@ Public Function ValueInfluence(ByVal Final As Single, ByVal Current As Single, O
                                 Optional ByVal Factor As Single = 1, Optional ByVal SnapRange As Single = 0) As Single
 
     If (Not ValueSnapCheck(Final, Current, SnapRange)) Then
-        Dim n As Single
-        n = Large(Final, Current) - Least(Final, Current)
-        If (n <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
+        Dim N As Single
+        N = Large(Final, Current) - Least(Final, Current)
+        If (N <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
             ValueInfluence = Final
         Else
             If Current > Final Then
@@ -1345,9 +1341,9 @@ Public Function ValueSnapCheck(ByVal Final As Single, ByVal Current As Single, B
     If SnapRange = 0 Or (Current = Final) Then
         ValueSnapCheck = (Current = Final)
     Else
-        Dim n As Single
-        n = Abs((Large(Final, Current) - Least(Final, Current)))
-        If (n <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
+        Dim N As Single
+        N = Abs((Large(Final, Current) - Least(Final, Current)))
+        If (N <= Abs(SnapRange) And Abs(SnapRange) > 0) Then
             ValueSnapCheck = True
         End If
     End If
@@ -1359,24 +1355,24 @@ Public Function VectorInfluence(ByRef Final As Point, ByRef Current As Point, Op
                                 
     Set VectorInfluence = VectorDisplace(Current, Final)
     With VectorInfluence
-        Dim n As Point
+        Dim N As Point
         If Not Concurrent Then
-            Set n = VectorNormalize(VectorInfluence)
-            n.X = IIf(n.X = 0, 1, n.X) * 100
-            n.Y = IIf(n.Y = 0, 1, n.Y) * 100
-            n.Z = IIf(n.Z = 0, 1, n.Z) * 100
+            Set N = VectorNormalize(VectorInfluence)
+            N.X = IIf(N.X = 0, 1, N.X) * 100
+            N.Y = IIf(N.Y = 0, 1, N.Y) * 100
+            N.Z = IIf(N.Z = 0, 1, N.Z) * 100
         Else
-            Set n = New Point
-            n.X = 100
-            n.Y = 100
-            n.Z = 100
+            Set N = New Point
+            N.X = 100
+            N.Y = 100
+            N.Z = 100
         End If
    
-        .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / n.X), SnapRange)
-        .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / n.Y), SnapRange)
-        .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / n.Z), SnapRange)
+        .X = ValueInfluence(Final.X, Current.X, Amount * ((VectorInfluence.X * Factor) / N.X), SnapRange)
+        .Y = ValueInfluence(Final.Y, Current.Y, Amount * ((VectorInfluence.Y * Factor) / N.Y), SnapRange)
+        .Z = ValueInfluence(Final.Z, Current.Z, Amount * ((VectorInfluence.Z * Factor) / N.Z), SnapRange)
    
-        Set n = Nothing
+        Set N = Nothing
     End With
 End Function
 
@@ -1424,24 +1420,24 @@ Public Function AngleAxisInfluence(ByRef Final As Point, ByRef Current As Point,
     
     Set AngleAxisInfluence = AngleAxisDifference(Current, Final)
     With AngleAxisInfluence
-        Dim n As Point
+        Dim N As Point
         If Not Concurrent Then
-            Set n = AngleAxisNormalize(AngleAxisInfluence)
-            n.X = IIf(n.X = 0, 1, n.X) '* 100
-            n.Y = IIf(n.Y = 0, 1, n.Y) ' * 100
-            n.Z = IIf(n.Z = 0, 1, n.Z) '* 100
+            Set N = AngleAxisNormalize(AngleAxisInfluence)
+            N.X = IIf(N.X = 0, 1, N.X) '* 100
+            N.Y = IIf(N.Y = 0, 1, N.Y) ' * 100
+            N.Z = IIf(N.Z = 0, 1, N.Z) '* 100
         Else
-            Set n = New Point
-            n.X = 0.01 '100
-            n.Y = 0.01 '100
-            n.Z = 0.01 ' 100
+            Set N = New Point
+            N.X = 0.01 '100
+            N.Y = 0.01 '100
+            N.Z = 0.01 ' 100
         End If
         
-        .X = AngleInfluence(Final.X, Current.X, Amount, ((.X * Factor) / n.X), SnapRange)
-        .Y = AngleInfluence(Final.Y, Current.Y, Amount, ((.Y * Factor) / n.Y), SnapRange)
-        .Z = AngleInfluence(Final.Z, Current.Z, Amount, ((.Z * Factor) / n.Z), SnapRange)
+        .X = AngleInfluence(Final.X, Current.X, Amount, ((.X * Factor) / N.X), SnapRange)
+        .Y = AngleInfluence(Final.Y, Current.Y, Amount, ((.Y * Factor) / N.Y), SnapRange)
+        .Z = AngleInfluence(Final.Z, Current.Z, Amount, ((.Z * Factor) / N.Z), SnapRange)
         
-        Set n = Nothing
+        Set N = Nothing
     End With
 End Function
 
@@ -1663,21 +1659,21 @@ Public Function VectorAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     End With
 End Function
 
-Public Function VectorMultiplyBy(ByRef p1 As Point, ByVal n As Single) As Point
+Public Function VectorMultiplyBy(ByRef p1 As Point, ByVal N As Single) As Point
     Set VectorMultiplyBy = New Point
     With VectorMultiplyBy
-        .X = (p1.X * n)
-        .Y = (p1.Y * n)
-        .Z = (p1.Z * n)
+        .X = (p1.X * N)
+        .Y = (p1.Y * N)
+        .Z = (p1.Z * N)
     End With
 End Function
 
-Public Function VectorExponential(ByRef p1 As Point, ByVal n As Single) As Point
+Public Function VectorExponential(ByRef p1 As Point, ByVal N As Single) As Point
     Set VectorExponential = New Point
     With VectorExponential
-        .X = (p1.X ^ n)
-        .Y = (p1.Y ^ n)
-        .Z = (p1.Z ^ n)
+        .X = (p1.X ^ N)
+        .Y = (p1.Y ^ N)
+        .Z = (p1.Z ^ N)
     End With
 End Function
 
@@ -1772,12 +1768,12 @@ Public Function VectorNegative(ByRef p1 As Point) As Point
     End With
 End Function
 
-Public Function VectorDivideBy(ByRef p1 As Point, ByVal n As Single) As Point
+Public Function VectorDivideBy(ByRef p1 As Point, ByVal N As Single) As Point
     Set VectorDivideBy = New Point
     With VectorDivideBy
-        .X = (p1.X / n)
-        .Y = (p1.Y / n)
-        .Z = (p1.Z / n)
+        .X = (p1.X / N)
+        .Y = (p1.Y / N)
+        .Z = (p1.Z / N)
     End With
 End Function
 Public Function VectorDivision(ByRef p1 As Point, ByRef p2 As Point) As Point
@@ -1828,25 +1824,25 @@ End Function
 Public Function VectorIsSignOf(ByRef p1 As Point) As Boolean
     VectorIsSignOf = (Abs(p1.X) = 0 Or Abs(p1.X) = 1) And (Abs(p1.Y) = 0 Or Abs(p1.Y) = 1) And (Abs(p1.Z) = 0 Or Abs(p1.Z) = 1) 'sign of a vector
 End Function
-Public Function AbsoluteFactor(ByVal n As Single) As Single
+Public Function AbsoluteFactor(ByVal N As Single) As Single
     'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
-    AbsoluteFactor = ((-(AbsoluteValue(n - 1) - n) - (-AbsoluteValue(n + 1) + n)) * 0.5)
+    AbsoluteFactor = ((-(AbsoluteValue(N - 1) - N) - (-AbsoluteValue(N + 1) + N)) * 0.5)
 End Function
 
-Public Function AbsoluteValue(ByVal n As Single) As Single
+Public Function AbsoluteValue(ByVal N As Single) As Single
     'same as abs(), returns a number as positive quantified
-    AbsoluteValue = (-((-(n * -1) * n) ^ (1 / 2) * -1))
+    AbsoluteValue = (-((-(N * -1) * N) ^ (1 / 2) * -1))
 End Function
 
-Public Function AbsoluteWhole(ByVal n As Single) As Single
+Public Function AbsoluteWhole(ByVal N As Single) As Single
     'returns only the digits to the left of a decimal in any numerical
     'AbsoluteWhole = (AbsoluteValue(n) - (AbsoluteValue(n) - (AbsoluteValue(n) Mod (AbsoluteValue(n) + 1)))) * AbsoluteFactor(n)
-    AbsoluteWhole = (n \ 1) 'is also correct
+    AbsoluteWhole = (N \ 1) 'is also correct
 End Function
 
-Public Function AbsoluteDecimal(ByVal n As Single) As Single
+Public Function AbsoluteDecimal(ByVal N As Single) As Single
     'returns only the digits to the right of a decimal in any numerical
-    AbsoluteDecimal = (AbsoluteValue(n) - AbsoluteValue(AbsoluteWhole(n))) * AbsoluteFactor(n)
+    AbsoluteDecimal = (AbsoluteValue(N) - AbsoluteValue(AbsoluteWhole(N))) * AbsoluteFactor(N)
 End Function
 
 Public Function AngleQuadrant(ByVal angle As Single) As Single

@@ -24,6 +24,7 @@ Begin VB.Form frmSplash
       Width           =   1125
    End
    Begin VB.Timer Timer1 
+      Enabled         =   0   'False
       Interval        =   200
       Left            =   4740
       Top             =   705
@@ -401,11 +402,11 @@ Public Function PictureFromByteStream(b() As Byte) As Object
     Exit Function
     
 Err_Init:
-    If Err.number = 9 Then
+    If Err.Number = 9 Then
         'Uninitialized array
         MsgBox "You must pass a non-empty byte array to this function!"
     Else
-        MsgBox Err.number & " - " & Err.Description
+        MsgBox Err.Number & " - " & Err.Description
     End If
 End Function
 
@@ -413,7 +414,7 @@ End Function
 Private Sub Command1_Click()
     Command1.Enabled = False
     
-    If Label1.Caption = "Press F8 for Detailed" Then
+    If Label1.Caption = "Press F8 for details, or F5 to continue." Then
         End
     Else
         Label1.Caption = "Rollingback changes..."
@@ -428,6 +429,9 @@ Private Sub Command1_KeyDown(KeyCode As Integer, Shift As Integer)
             SimSilence = Normal
             frmMain.StartWizard
             Unload Me
+        ElseIf KeyCode = 116 Then
+            latency = 20
+            Timer1.Enabled = True
         End If
     End If
 End Sub
@@ -439,19 +443,22 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
             SimSilence = Normal
             frmMain.StartWizard
             Unload Me
+        ElseIf KeyCode = 116 Then
+            latency = 20
+            Timer1.Enabled = True
         End If
     End If
 End Sub
 
 Private Sub Form_Load()
-    Label1.Caption = "Press F8 for Detailed"
+    Label1.Caption = "Press F8 for details, or F5 to continue."
     Me.Caption = IIf(Program.Installed, "Uninstalling", "Installing") & " " & Program.Display
 End Sub
 
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     If UnloadMode <> 1 Then
-        Cancel = -CInt(Not CBool(Forms.count > 1))
+        Cancel = -CInt(Not CBool(Forms.Count > 1))
         Unload frmMain
     End If
 End Sub

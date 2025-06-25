@@ -11,6 +11,9 @@ Private Sub ApplyOrigin(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByV
         Set ApplyTo.Origin = VectorAddition(VectorRotateAxis(ApplyTo.Relative.Origin, ApplyTo.Rotate), ApplyTo.Origin)
         Set ApplyTo.Absolute.Origin = ApplyTo.Origin
         Set ApplyTo.Relative.Origin = Nothing
+
+
+
         
 
 
@@ -32,7 +35,11 @@ Private Sub ApplyRotate(ByRef ApplyTo As Molecule, ByRef Parent As Molecule, ByV
         Set ApplyTo.Rotate = AngleAxisDeduction(ApplyTo.Absolute.Rotate, ApplyTo.Rotate)
         Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
     Else
-
+'        Set ApplyTo.Rotate = AngleAxisAddition(ApplyTo.Relative.Rotate, ApplyTo.Rotate)
+'        Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate
+'        Set ApplyTo.Relative.Rotate = Nothing
+            
+            
 '        If Not Camera.Planet Is Nothing Then
 '            Set ApplyTo.Rotate = AngleAxisAddition(AngleAxisDeduction(ApplyTo.Rotate, AngleAxisDeduction(Camera.Planet.Rotate, ApplyTo.Relative.Rotate)), Camera.Planet.Rotate)
 '            Set ApplyTo.Absolute.Rotate = ApplyTo.Rotate

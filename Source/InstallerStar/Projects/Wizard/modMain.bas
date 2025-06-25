@@ -38,9 +38,9 @@ Public SimCommand As String
 Private Signing As Boolean
 
 Public Sub UninstallFirst()
-    If (SearchPath("*.mdb", 1, GetCurrentAppDataFolder & "\" & Program.AppValue, FindAll) <> "") Or _
+    If ((SearchPath("*.mdb", 1, GetCurrentAppDataFolder & "\" & Program.AppValue, FindAll) <> "") Or _
         (SearchPath("*.mdb", 1, GetProgramFilesFolder & "\" & Program.AppValue, FindAll) <> "") Or _
-        PathExists(GetCurrentAppDataFolder & "\" & Program.AppValue & "\Uninstall.exe", True) Then
+        PathExists(GetCurrentAppDataFolder & "\" & Program.AppValue & "\Uninstall.exe", True)) And Not Program.Installed Then
         Dim mdb As String
         Select Case SimSilence
             Case InstallMode.Normal, InstallMode.SheekG
@@ -74,50 +74,54 @@ Public Sub UninstallFirst()
 End Sub
 
 Public Function InstallLocation(Optional ItemType As String = "?") As String
-    Dim retval As String
+    Dim retVal As String
 
     If (Not Program.Legacy) Then
 
         Select Case ItemType
             Case "!", "-!"
-                retval = GetCurrentAppDataFolder
+                retVal = GetCurrentAppDataFolder
             Case "?", "-?"
-                retval = GetProgramFilesFolder
+                retVal = GetProgramFilesFolder
             Case "$", "-$"
-                retval = GetAllUsersAppDataFolder
+                retVal = GetAllUsersAppDataFolder
         End Select
 
     End If
 
-    If retval = "" Then
+    If retVal = "" Then
         If PathExists(GetCurrentAppDataFolder & "\" & Program.AppValue & "\" & Program.Default, True) Then
-            retval = GetCurrentAppDataFolder
+            retVal = GetCurrentAppDataFolder
 
         Else
-            retval = GetProgramFilesFolder
+            retVal = GetProgramFilesFolder
         End If
     End If
-    If Right(retval, 1) = "\" Then retval = Left(retval, Len(retval) - 1)
+    If Right(retVal, 1) = "\" Then retVal = Left(retVal, Len(retVal) - 1)
 
-    UninstallFirst
-    InstallLocation = retval
+    Static uninstOnce As Boolean
+    If Not uninstOnce Then
+        UninstallFirst
+        uninstOnce = True
+    End If
+    InstallLocation = retVal
     
 End Function
 
 Public Function System32Location(Optional ByVal ItemName As String) As String
-    Dim retval As String
+    Dim retVal As String
     If (InStr(LCase(WinVerInfo), "server") > 0) Then
         If PathExists(GetSystem32Folder & "inetsrv", False) Then
             If ItemName <> "" Then
                 If Not PathExists(GetSystem32Folder & ItemName, True) Then
-                    retval = GetSystem32Folder & "inetsrv"
+                    retVal = GetSystem32Folder & "inetsrv"
                 End If
             End If
         End If
     End If
-    If retval = "" Then retval = GetSystem32Folder
-    If Right(retval, 1) = "\" Then retval = Left(retval, Len(retval) - 1)
-    System32Location = retval & IIf(ItemName <> "", "\" & ItemName, "")
+    If retVal = "" Then retVal = GetSystem32Folder
+    If Right(retVal, 1) = "\" Then retVal = Left(retVal, Len(retVal) - 1)
+    System32Location = retVal & IIf(ItemName <> "", "\" & ItemName, "")
 End Function
 Public Sub Main()
 
@@ -305,7 +309,7 @@ Public Sub Main()
     
     LoadManifest AppPath & "Manifest.ini"
 
-    If PathExists(SimCommand & "\Uninstall.exe", True) Or Program.Installed Then
+    If (PathExists(SimCommand & "\Uninstall.exe", True) Or Program.Installed) Then
         Program.Installed = True
         Select Case StrReverse(NextArg(StrReverse(Registry.GetValue(HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" & Program.AppValue, "UninstallString", "/N")), " "))
             Case "/S"
@@ -375,10 +379,10 @@ Private Sub SaveManifest(ByVal FilePath As String, ByVal iniText As String)
     Dim skText As String
     Dim cnt As Long
     Dim item As String
-    If Program.ShortCuts.count > 0 Then
+    If Program.ShortCuts.Count > 0 Then
         skText = "[ShortCuts]" & vbCrLf
 
-        For cnt = 1 To Program.ShortCuts.count
+        For cnt = 1 To Program.ShortCuts.Count
             item = Program.ShortCuts(cnt)
             Select Case RemoveNextArg(item, " ")
                 Case "*"
@@ -390,10 +394,10 @@ Private Sub SaveManifest(ByVal FilePath As String, ByVal iniText As String)
         skText = skText & vbCrLf
     End If
 
-    If Program.Excludes.count > 0 Then
+    If Program.Excludes.Count > 0 Then
         skText = skText & "[Excludes]" & vbCrLf
 
-        For cnt = 1 To Program.Excludes.count
+        For cnt = 1 To Program.Excludes.Count
             item = Program.Excludes(cnt)
             Select Case RemoveNextArg(item, " ")
                 Case "*"
@@ -405,20 +409,20 @@ Private Sub SaveManifest(ByVal FilePath As String, ByVal iniText As String)
         skText = skText & vbCrLf
     End If
 
-    If Program.Includes.count > 0 Then
+    If Program.Includes.Count > 0 Then
         skText = skText & "[Includes]" & vbCrLf
 
-        For cnt = 1 To Program.Includes.count
+        For cnt = 1 To Program.Includes.Count
             skText = skText & Program.Includes(cnt) & vbCrLf
         Next
 
         skText = skText & vbCrLf
     End If
 
-    If Program.FileTypes.count > 0 Then
+    If Program.FileTypes.Count > 0 Then
         skText = skText & "[FileTypes]" & vbCrLf
 
-        For cnt = 1 To Program.FileTypes.count
+        For cnt = 1 To Program.FileTypes.Count
             item = Program.FileTypes(cnt)
             skText = skText & item & vbCrLf
         Next

@@ -127,7 +127,7 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             RenderMolecules UserControl, Camera
             RenderBrilliants UserControl, Camera
             
-            SetupCamera2 UserControl, Camera
+            SetupCamera3 UserControl, Camera
             
 
             InputScene UserControl
@@ -222,13 +222,15 @@ Public Sub SetupCamera1(ByRef UserControl As Macroscopic, ByRef Camera As Camera
    'ResetMatrix matWorld
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
-    
+
+
 
     'ResetMatrix matView
     D3DXMatrixIdentity matView
     DDevice.SetTransform D3DTS_VIEW, matView
-
     
+    
+
 
 End Sub
 
@@ -319,7 +321,7 @@ Public Sub SetupCamera2(ByRef UserControl As Macroscopic, ByRef Camera As Camera
     End If
 
 
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+ '   DDevice.SetTransform D3DTS_WORLD, matWorld
 End Sub
 
 
