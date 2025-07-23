@@ -1,9 +1,11 @@
 Attribute VB_Name = "modData"
 #Const modData = -1
 Option Explicit
-'TOP DOWN
+'TOP DoWN
 Option Compare Binary
 Option Private Module
+
+
 
 Public Function DatabaseFilePath(Optional ByVal UserLoc As Boolean = False) As String
     Dim retVal As String
@@ -24,7 +26,7 @@ Public Sub BackupDB()
     
     Dim txt As String
     
-    Set db = New clsDatabase
+    Set db = New Database
     db.rsQuery rs, "SELECT * FROM Settings;"
     If Not db.rsEnd(rs) Then
         rs.MoveFirst
@@ -52,7 +54,7 @@ Public Sub RestoreDB()
     
     Dim txt As String
     
-    Set db = New clsDatabase
+    Set db = New Database
     txt = ReadFile(DatabaseFilePath(True))
     Do Until txt = ""
         db.dbQuery RemoveNextArg(txt, ";")
@@ -63,7 +65,7 @@ Public Sub RestoreDB()
 
 End Sub
 Public Sub ResetDB()
-    Set db = New clsDatabase
+    Set db = New Database
     db.dbQuery "DELETE * FROM Serials;"
     db.dbQuery "DELETE * FROM Settings;"
     Set db = Nothing

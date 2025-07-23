@@ -17,11 +17,9 @@ Public Perspective As Playmode
 Public Resolution As String
 Public FullScreen As Boolean
 Public SoundFX As Boolean
-Public Ambient As Boolean
+Public AmbientFX As Boolean
 
 Public DebugMode As Boolean
-Public CameraClip As Boolean
-Public CameraZoom As Single
 
 Public Surface As Boolean
 Public AspectRatio As Single
@@ -31,14 +29,13 @@ Public StopGame As Boolean
 Public ShowHelp As Boolean
 Public ShowStat As Boolean
 Public ShowCredits As Boolean
-
-Public Player As MyPlayer
+Public CameraClip As Boolean
 
 Public FPSTimer As Double
 Public FPSCount As Long
 Public FPSRate As Long
 
-Public db As clsDatabase
+Public db As Database
 Public rs As ADODB.Recordset
 
 Public dx As DirectX8
@@ -55,6 +52,7 @@ Public PixelShaderDiffuse As Long
 
 Public Sub Main()
 
+
     On Error GoTo fault:
     
     Dim inCmd As String
@@ -65,16 +63,16 @@ Public Sub Main()
         Case "setupreset"
             ResetDB
             CompactDB
-            End
+            'End
         Case "backupdb"
             BackupDB
-            End
+            'End
         Case "restoredb"
             RestoreDB
-            End
+            'End
     End Select
     
-    Set db = New clsDatabase
+    Set db = New Database
     db.rsQuery rs, "SELECT * FROM Settings WHERE Username = '" & Replace(GetUserLoginName, "'", "''") & "';"
     If db.rsEnd(rs) Then inCmd = "setup"
     
@@ -96,34 +94,51 @@ Public Sub Main()
             Perspective = CLng(rs("Perspective"))
             Surface = CBool(rs("Surface"))
         End If
-        CameraClip = True
 
-        SetActivity GlobalGravityDirect, Actions.Directing, MakeVector(0, -0.2, 0), 1
-        SetActivity GlobalGravityRotate, Actions.Rotating, MakeVector(0, 0, 0), 0
-        SetActivity GlobalGravityScaled, Actions.Scaling, MakeVector(0, 0, 0), 0
-        
-        SetActivity LiquidGravityDirect, Actions.Directing, MakeVector(0, -0.005, 0), 2
-        SetActivity LiquidGravityRotate, Actions.Rotating, MakeVector(0, 0, 0), 0
-        SetActivity LiquidGravityScaled, Actions.Scaling, MakeVector(0, 0, 0), 0
         
         db.rsClose rs
                 
         FPSCount = 36
         TrapMouse = True
-        Player.CameraZoom = 5
+        ShowStat = False
+        CameraClip = True
+        
+        JumpGUID = Replace(modGuid.GUID, "-", "")
+        
+        SetMotion GlobalGravityDirect, Actions.Directing, MakePoint(0, -0.2, 0), 1
+        SetMotion GlobalGravityRotate, Actions.Rotating, MakePoint(0, 0, 0), 0
+        SetMotion GlobalGravityScaled, Actions.Scaling, MakePoint(0, 0, 0), 0
+        
+        SetMotion LiquidGravityDirect, Actions.Directing, MakePoint(0, -0.005, 0), 2
+        SetMotion LiquidGravityRotate, Actions.Rotating, MakePoint(0, 0, 0), 0
+        SetMotion LiquidGravityScaled, Actions.Scaling, MakePoint(0, 0, 0), 0
 
         Load frmMain
                 
-        frmMain.width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
-        frmMain.height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
+        frmMain.BackColor = &H323232
+
+        
+        frmMain.Width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
+        frmMain.Height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
         AspectRatio = CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))
+        
+
+
+        frmMain.Show
+        frmMain.CurrentY = Screen.TwipsPerPixelY * 5
+        frmMain.CurrentX = Screen.TwipsPerPixelX * 5
+        frmMain.Print "Loading..."
+        
+        DoEvents
+    
     
         On Error GoTo fault
         InitDirectX
         InitGameData
         On Error GoTo 0
+        frmMain.AutoRedraw = False
         
-        frmMain.Show
+
 
         Do While Not StopGame
             
@@ -161,8 +176,9 @@ Public Sub Main()
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
                                                    
                 DDevice.BeginScene
-                
+    
                 SetupWorld
+                
                 
                 RenderActive
                 RenderPlanes
@@ -173,7 +189,8 @@ Public Sub Main()
                 RenderBeacons
                 RenderPortals
                 RenderCameras
-
+                RenderRoutine
+                
                 On Error GoTo 0
         
                 InputMove
@@ -204,11 +221,19 @@ Public Sub Main()
                 Else
                     DoTasks
                 End If
+
             End If
             
             If D3DWindow.Windowed Then DoTasks
         
         Loop
+        frmMain.AutoRedraw = True
+        frmMain.Cls
+        frmMain.CurrentY = Screen.TwipsPerPixelY * 5
+        frmMain.CurrentX = Screen.TwipsPerPixelX * 5
+        frmMain.Print "Exiting..."
+        
+        DoEvents
         
         TermGameData
         TermDirectX
@@ -217,7 +242,7 @@ Public Sub Main()
     End If
 
     Set db = Nothing
-    End
+    'End
     
 Exit Sub
 fault:
@@ -226,7 +251,7 @@ fault:
     TermDirectX
     Err.Clear
 
-    End
+    'End
 Exit Sub
 Render:
 
@@ -236,9 +261,33 @@ Render:
     Unload frmMain
     
     MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
-
     Err.Clear
-    End
+Resume
+    'End
+End Sub
+
+Public Sub RenderRoutine()
+
+    If Millis <> 0 Then
+        If Timer - Millis >= 0.1 Then
+            Millis = Timer
+            frmMain.Run "Millis"
+        End If
+    End If
+
+    If Second <> 0 Then
+        If Timer - Second >= 1 Then
+            Second = Timer
+            frmMain.Run "Second"
+        End If
+    End If
+
+    If Frame Then
+        
+        frmMain.Run "Frame"
+
+    End If
+    
 End Sub
 
 Public Sub SetupWorld()
@@ -255,10 +304,11 @@ On Error GoTo WorldError
     Dim matPos As D3DMATRIX
     Dim matTemp As D3DMATRIX
 
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+    
     D3DXMatrixIdentity matWorld
 
-    DDevice.SetTransform D3DTS_WORLD1, matWorld
+    DDevice.SetTransform D3DTS_WORLD, matWorld
+    'DDevice.SetTransform D3DTS_WORLD1, matWorld
     
     D3DXMatrixMultiply matTemp, matWorld, matWorld
     D3DXMatrixRotationY matRotation, 0.5
@@ -271,28 +321,28 @@ On Error GoTo WorldError
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
     
-    If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= CameraCount)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
+    If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
         
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
+        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
         D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Location.X, -Cameras(Player.CameraIndex).Location.Y, -Cameras(Player.CameraIndex).Location.z
+        D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
         D3DXMatrixMultiply matLook, matPos, matLook
-        D3DXMatrixTranslation matPos, -Player.Object.Origin.X, -Player.Object.Origin.Y + 0.2, -Player.Object.Origin.z
+        D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y + 0.2, -Player.Origin.Z
         
     Else
     
-        D3DXMatrixRotationY matRotation, Player.CameraAngle
-        D3DXMatrixRotationX matPitch, Player.CameraPitch
+        D3DXMatrixRotationY matRotation, Player.angle
+        D3DXMatrixRotationX matPitch, Player.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.CameraPitch > 0 Then
+        If Player.Pitch > 0 Then
         
-            D3DXMatrixTranslation matPos, -Player.Object.Origin.X, -Player.Object.Origin.Y, -Player.Object.Origin.z
+            D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y, -Player.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         Else
-            D3DXMatrixTranslation matPos, -Player.Object.Origin.X, -Player.Object.Origin.Y + 0.2, -Player.Object.Origin.z
+            D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y + 0.2, -Player.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         
         End If
@@ -308,7 +358,7 @@ On Error GoTo WorldError
 
             If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0)) Then
 
-                Player.CameraAngle = 3
+                Player.angle = 3
             
             End If
         
@@ -316,8 +366,9 @@ On Error GoTo WorldError
             Dim cnt2 As Long
 
             Dim Face As Long
-            Dim zoom As Single
+            Dim Zoom As Single
             Dim factor As Single
+            Dim e1 As Element
 
             Dim verts(0 To 2) As D3DVECTOR
             Dim touched As Boolean
@@ -334,26 +385,26 @@ notdivcheck0:
                 
             Next
 
-            zoom = 0.2
+            Zoom = 0.2
             factor = 0.5
 
             Do
 
-                verts(0) = MakeVector(Player.Object.Origin.X, _
-                                            Player.Object.Origin.Y - 0.2, _
-                                            Player.Object.Origin.z)
+                verts(0) = MakeVector(Player.Origin.X, _
+                                            Player.Origin.Y - 0.2, _
+                                            Player.Origin.Z)
 
-                verts(1) = MakeVector(Player.Object.Origin.X - (Sin(D720 - Player.CameraAngle) * (zoom + factor)), _
-                                            Player.Object.Origin.Y - 0.2 + (Tan(D720 - Player.CameraPitch) * (zoom + factor)), _
-                                            Player.Object.Origin.z - (Cos(D720 - Player.CameraAngle) * (zoom + factor)))
+                verts(1) = MakeVector(Player.Origin.X - (Sin(D720 - Player.angle) * (Zoom + factor)), _
+                                            Player.Origin.Y - 0.2 + (Tan(D720 - Player.Pitch) * (Zoom + factor)), _
+                                            Player.Origin.Z - (Cos(D720 - Player.angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Object.Origin.X - (Sin(D720 - Player.CameraAngle)), _
-                                      Player.Object.Origin.Y - 0.1 + (Tan(D720 - Player.CameraPitch) * zoom), _
-                                      Player.Object.Origin.z - (Cos(D720 - Player.CameraAngle)))
+                verts(2) = MakeVector(Player.Origin.X - (Sin(D720 - Player.angle)), _
+                                      Player.Origin.Y - 0.1 + (Tan(D720 - Player.Pitch) * Zoom), _
+                                      Player.Origin.Z - (Cos(D720 - Player.angle)))
 
-                sngCamera(0, 0) = Player.Object.Origin.X
-                sngCamera(0, 1) = Player.Object.Origin.Y
-                sngCamera(0, 2) = Player.Object.Origin.z
+                sngCamera(0, 0) = Player.Origin.X
+                sngCamera(0, 1) = Player.Origin.Y
+                sngCamera(0, 2) = Player.Origin.Z
 
                 sngCamera(1, 0) = 1
                 sngCamera(1, 1) = -1
@@ -368,10 +419,13 @@ notdivcheck0:
                     lCullCalls = lCullCalls + 1
                 End If
 
-                If (ObjectCount > 0) Then
-                    For cnt = 1 To ObjectCount
-                        If ((Not (Objects(cnt).Effect = Collides.Ground)) And (Not (Objects(cnt).Effect = Collides.InDoor))) And (Objects(cnt).CollideIndex > -1) Then
-                            For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+                If (Elements.Count > 0) Then
+                    For Each e1 In Elements
+                    
+                    
+                    'For cnt = 1 To Elements.Count
+                        If ((Not (e1.Effect = Collides.Ground)) And (Not (e1.Effect = Collides.InDoor))) And (e1.CollideIndex > -1) Then
+                            For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                             On Error GoTo isdivcheck1
                                 sngFaceVis(3, cnt2) = 0
                                 GoTo notdivcheck1
@@ -382,8 +436,8 @@ notdivcheck1:
                                 On Error GoTo 0
                                 
                             Next
-                        ElseIf (Objects(cnt).Effect = Collides.Ground) And (Objects(cnt).CollideIndex > -1) And Objects(cnt).Visible Then
-                            For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+                        ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible Then
+                            For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                                 If Not (((sngFaceVis(0, cnt2) = 0) Or (sngFaceVis(0, cnt2) = 1) Or (sngFaceVis(0, cnt2) = -1)) And _
                                     ((sngFaceVis(1, cnt2) = 0) Or (sngFaceVis(1, cnt2) = 1) Or (sngFaceVis(1, cnt2) = -1)) And _
                                     ((sngFaceVis(2, cnt2) = 0) Or (sngFaceVis(2, cnt2) = 1) Or (sngFaceVis(2, cnt2) = -1))) Then
@@ -392,8 +446,8 @@ notdivcheck1:
                             Next
                         End If
                     Next
-                    If (Player.Object.CollideIndex > -1) Then
-                        For cnt2 = Player.Object.CollideIndex To (Player.Object.CollideIndex + Meshes(Player.Object.MeshIndex).Mesh.GetNumFaces) - 1
+                    If (Player.CollideIndex > -1) Then
+                        For cnt2 = Player.CollideIndex To (Player.CollideIndex + Meshes(Player.BoundsIndex).Mesh.GetNumFaces) - 1
                             On Error GoTo isdivcheck2
                                 sngFaceVis(3, cnt2) = 0
                                 GoTo notdivcheck2
@@ -411,19 +465,20 @@ notdivcheck2:
                 touched = TestCollisionEx(Face, 2)
                 DelCollisionEx Face, 1
 
-                If ((Not touched) And (zoom < Player.CameraZoom)) Then zoom = zoom + factor
+                If ((Not touched) And (Zoom < Player.Zoom)) Then Zoom = Zoom + factor
 
-            Loop Until ((touched) Or (zoom >= Player.CameraZoom))
+            Loop Until ((touched) Or (Zoom >= Player.Zoom))
 
-            If (touched And (zoom > 0.2)) Then zoom = zoom + -factor
+            If (touched And (Zoom > 0.2)) Then Zoom = Zoom + -factor
 
-            D3DXMatrixTranslation matTemp, 0, 0.2, zoom
+            D3DXMatrixTranslation matTemp, 0, 0.2, Zoom
             D3DXMatrixMultiply matView, matLook, matTemp
 
-            Player.Object.WireFrame = (zoom < 0.8)
+            Player.WireFrame = (Zoom < 0.8)
 
         Else
-            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.CameraZoom, 0)
+        
+            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.Zoom, 0)
             D3DXMatrixMultiply matView, matLook, matTemp
         End If
         DDevice.SetTransform D3DTS_VIEW, matView
@@ -437,7 +492,8 @@ notdivcheck2:
     Exit Sub
 WorldError:
     If Err.Number = 6 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
+Resume
 End Sub
 
 Public Sub InitDirectX()
@@ -685,7 +741,7 @@ End Sub
 '        On Error Resume Next
 '
 '        Set DSound = dx.DirectSoundCreate("")
-'        DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
+'        DSound.SetCooperativeLevel frmMain.hWnd, DSSCL_PRIORITY
 '        If Err.Number <> 0 Then
 '            Err.Clear
 '            DisableSound = True

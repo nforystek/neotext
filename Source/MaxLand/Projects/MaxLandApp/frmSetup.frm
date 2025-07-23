@@ -3,16 +3,16 @@ Begin VB.Form frmSetup
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Settings"
    ClientHeight    =   1260
-   ClientLeft      =   48
-   ClientTop       =   336
-   ClientWidth     =   4008
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   4005
    Icon            =   "frmSetup.frx":0000
    LinkTopic       =   "Form1"
    LockControls    =   -1  'True
    MaxButton       =   0   'False
    MinButton       =   0   'False
    ScaleHeight     =   1260
-   ScaleWidth      =   4008
+   ScaleWidth      =   4005
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
    Begin VB.CheckBox Check4 
@@ -109,7 +109,7 @@ Private Sub Check4_Click()
 End Sub
 
 Private Sub Check2_Click()
-    Ambient = (Check2.Value = 1)
+    AmbientFX = (Check2.Value = 1)
     db.dbQuery "UPDATE Settings SET Ambient = " & IIf(Check2.Value = 1, "No", "Yes") & " WHERE Username = '" & Replace(GetUserLoginName, "'", "''") & "';"
 End Sub
 
@@ -172,7 +172,7 @@ Private Sub Form_Load()
     
     Resolution = "1024x768"
     FullScreen = (Check1.Value = 1)
-    Ambient = (Check2.Value = 1)
+    AmbientFX = (Check2.Value = 1)
     SoundFX = (Check3.Value = 1)
     Surface = (Check4.Value = 1)
     

@@ -1,10 +1,41 @@
 Attribute VB_Name = "modMove"
 #Const modMove = -1
 Option Explicit
-'TOP DOWN
+'TOP DoWN
 Option Compare Binary
 
 Option Private Module
+
+'Collision Culling Flag Relation COnstraints
+'
+'Object
+'   Map
+'       Player
+'           Map
+'           Player
+'       Object
+'           Map
+'           Player
+'
+'   *Self
+'       Map
+'       Object
+'       Player
+'   Player
+'       Map
+'       Object
+'   Object
+'       Map
+'       Player
+
+Public Const CULL0 = 0
+Public Const CULL1 = 1
+Public Const CULL2 = 2
+Public Const CULL3 = 4
+Public Const CULL4 = 3
+Public Const CULL5 = 0
+Public Const CULL6 = -4
+
 
 '############################################################################################################
 'Derived Exports ############################################################################################
@@ -13,14 +44,19 @@ Option Private Module
 'MaxLandLib.dll exports
 'extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
 'Accepts inputs n1 and n2 as retruned from PointInPoly(X,Y) then again for (Z,Y) and n2 as returned from tri_tri_intersect() to return the determination of whether or not the collision is correct and satisfy bitwise and math equalaterally collision precise to real coordination from the preliminary possible collision information the other functions return.
+
 'extern short tri_tri_intersect (unsigned short v0_0, unsigned short v0_1, unsigned short v0_2, unsigned short v1_0, unsigned short v1_1, unsigned short v1_2, unsigned short v2_0, unsigned short v2_1, unsigned short v2_2, unsigned short u0_0, unsigned short u0_1, unsigned short u0_2, unsigned short u1_0, unsigned short u1_1, unsigned short u1_2, unsigned short u2_0, unsigned short u2_1, unsigned short u2_2);
 'Accepts two triangle inputs in hyperbolic paraboloid collision form and returns with in the unsiged whole the percentage of each others distance to plane as one value.  **NOTE Assumes the parameter input as triangles are TRUE for collision with one another.
+
 'extern int Forystek (int visType, int lngFaceCount, unsigned short *sngCamera[], unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], unsigned short *sngScreenX[], unsigned short *sngScreenY[], unsigned short *sngScreenZ[], unsigned short *sngZBuffer[]);
 'Culling function with three expirimental ways to cull, defined by visType, 0 to 2, returns the difference of input triangles. lngFaceCount, sngCamera[3 x 3], sngFaceVis[6 x lngFaceCount], sngVertexX[3 x lngFaceCount]..Y..Z, sngScreenX[3 x lngFaceCount]..Y..Z, sngZBuffer[4 x lngFaceCount].  The camera is defined by position [0,0]=X, [0,1]=Y, [0,2]=Z, direction [1,0]=X, [1,1]=Y, [1,2]=Z, and upvector [2,0]=X, [2,1]=Y, [2,2]=Z.  sngFaceVis should be initialized to zero, and sngVertex arrays are 3D coordinate equivelent to sngScreen with a screenZ buffer, and Zbuffer for the verticies.
+
 'extern bool PointBehindPoly (unsigned short pX, unsigned short pY, unsigned short pZ, unsigned short nX, unsigned short nY, unsigned short nZ, unsigned short vX, unsigned short vY, unsigned short vZ) ;
-'Checks for the presence of a point behind a triangle, the first three inputs are the length of the triangles sides, the next three are the triangles normal, the last three are the point to test with the triangles center removed.
+'Checks for the presence of a point behind a triangle, the first three inputs are the length of the triangles sides, the Next three are the triangles normal, the last three are the point to test with the triangles center removed.
+
 'extern int PointInPoly (int pX, int pY, unsigned short *polyX[], unsigned short *polyY[], int polyN);
 'Tests for the presence of a 2D point pX,pY anywhere within a 2D shape defined with a list of points polyX,polyY that has polyN number of coordinates, returning the the unsigned percentage of maximum datatype numerical relation to percentage of total coordinates, or zero if the point does not occur within the shapes defined boundaries.
+
 'extern bool Collision (int visType, int lngFaceCount, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngFaceNum, int *lngCollidedBrush, int *lngCollidedFace);
 'Tests collision of a lngFaceNum against a number of visible faces, lngFaceCount, whose sngFaceVis has been defined with visType as culled with the Forystek function, and returns whether or not a collision occurs also populating the lngCollidedBrush and lngCollidedFace indicating the exact object number (brush) and face number (triangle) that has the collision impact.
 
@@ -36,14 +72,6 @@ Public Declare Function Culling Lib "MaxLandLib" Alias "Forystek" (ByVal visType
 'Variable Declare ###########################################################################################
 '############################################################################################################
 
-Public Const CULL0 = 0
-Public Const CULL1 = 1
-Public Const CULL2 = 2
-Public Const CULL3 = 4
-Public Const CULL4 = 3
-Public Const CULL5 = 0
-Public Const CULL6 = -4
-
 Public lCullCalls As Long
 Public lCulledFaces As Long
 Public lMovingObjs As Long
@@ -54,25 +82,25 @@ Public lngFaceCount As Long
 
 Public lngTestCalls As Long
 
-Public sngFaceVis() As Single
-'sngFaceVis dimension (,n) where n=# is face number
+Public sngFaceVis() As Single 'object organization and normals
+'sngFaceVis dimension (,n) where n=# is face number (global in count)
 'sngFaceVis dimension (n,) where n=0 is x of face normal
 'sngFaceVis dimension (n,) where n=1 is y of face normal
 'sngFaceVis dimension (n,) where n=2 is z of face normal
-'sngFaceVis dimension (n,) where n=3 is vis Type, values
-'sngFaceVis dimension (n,) where n=4 is gBrush index
-'sngFaceVis dimension (n,) where n=4 is gFace index
+'sngFaceVis dimension (n,) where n=3 is vis Type, values (exclude flags)
+'sngFaceVis dimension (n,) where n=4 is gBrush index (object number)
+'sngFaceVis dimension (n,) where n=4 is gFace index (to vertex arrays)
 
-Public sngVertexX() As Single
-Public sngVertexY() As Single
-Public sngVertexZ() As Single
-'sngVertexX dimension (,n) where n=# is face number
+Public sngVertexX() As Single 'all the 3d data of the collision tests
+Public sngVertexY() As Single 'organized by face indexs of 4 vertex
+Public sngVertexZ() As Single 'that will be tested for collisions
+'sngVertexX dimension (,n) where n=# is face number (global in count)
 'sngVertexX dimension (n,) where n=0 is faces first vertex.X
 'sngVertexX dimension (n,) where n=1 is faces second vertex.X
 'sngVertexX dimension (n,) where n=2 is faces third vertex.X
 'sngVertexX dimension (n,) where n=3 is faces fourth vertex.X
 
-Public sngCamera() As Single
+Public sngCamera() As Single 'culling exclusion technique
 'sngCamera dimension (0,n) is camera position, n=0=x, n=1=y, n=2=z
 'sngCamera dimension (1,n) is camera direction, n=0=x, n=1=y, n=2=z
 'sngCamera dimension (2,n) is camera up vector, n=0=x, n=1=y, n=2=z
@@ -98,31 +126,31 @@ Public CullingObject As MyCulling
 Public CullingCount As Long
 Public Cullings() As MyCulling
 
-Private andCamera() As Single
-
-Private andFaceVis() As Single
-Private andVertexX() As Single
-Private andVertexY() As Single
-Private andVertexZ() As Single
-
-Private andScreenX() As Single
-Private andScreenY() As Single
-Private andScreenZ() As Single
-
-Private andZBuffer() As Single
-
-Private notCamera() As Single
-
-Private notFaceVis() As Single
-Private notVertexX() As Single
-Private notVertexY() As Single
-Private notVertexZ() As Single
-
-Private notScreenX() As Single
-Private notScreenY() As Single
-Private notScreenZ() As Single
-
-Private notZBuffer() As Single
+'Private andCamera() As Single
+'
+'Private andFaceVis() As Single
+'Private andVertexX() As Single
+'Private andVertexY() As Single
+'Private andVertexZ() As Single
+'
+'Private andScreenX() As Single
+'Private andScreenY() As Single
+'Private andScreenZ() As Single
+'
+'Private andZBuffer() As Single
+'
+'Private notCamera() As Single
+'
+'Private notFaceVis() As Single
+'Private notVertexX() As Single
+'Private notVertexY() As Single
+'Private notVertexZ() As Single
+'
+'Private notScreenX() As Single
+'Private notScreenY() As Single
+'Private notScreenZ() As Single
+'
+'Private notZBuffer() As Single
 
 Public Sub CreateMove()
 
@@ -171,299 +199,126 @@ Public Sub ComputeNormals()
                             MakeVector(sngVertexX(2, cnt), sngVertexY(2, cnt), sngVertexZ(2, cnt)))
         sngFaceVis(0, cnt) = vn.X
         sngFaceVis(1, cnt) = vn.Y
-        sngFaceVis(2, cnt) = vn.z
+        sngFaceVis(2, cnt) = vn.Z
     Next
 End Sub
 
-Public Sub SwapActivity(ByRef val1 As MyActivity, ByRef val2 As MyActivity)
-    Dim tmp As MyActivity
-    tmp = val1
-    val1 = val2
-    val2 = tmp
-End Sub
 
-Public Function SetActivity(ByRef act As MyActivity, ByRef Action As Actions, ByRef dat As D3DVECTOR, ByRef emp As Single) As String
-    act.Identity = Replace(modGuid.GUID, "-", "")
+Public Function SetMotion(ByRef act As Motion, ByRef Action As Actions, ByRef dat As Point, ByRef emp As Single) As String
+    act.Identity = Replace(modGuid.GUID, "-", "K")
     act.Action = Action
-    act.Data = dat
+    Set act.Data = dat
     act.Emphasis = emp
-    SetActivity = act.Identity
+    SetMotion = act.Identity
 End Function
 
-Public Function AddActivity(ByRef Obj As MyObject, ByRef Action As Actions, ByVal aGUID As String, ByRef Data As D3DVECTOR, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
-    Obj.ActivityCount = Obj.ActivityCount + 1
-    ReDim Preserve Obj.Activities(1 To Obj.ActivityCount) As MyActivity
-    With Obj.Activities(Obj.ActivityCount)
-        .Identity = IIf(aGUID = "", Replace(modGuid.GUID, "-", ""), aGUID)
-        .Action = Action
-        .Data = Data
-        .Emphasis = Emphasis
-        .Initials = Emphasis
-        .Friction = Friction
-        .Reactive = Reactive
-        .Latency = Timer
-        .Recount = Recount
-        .OnEvent = Script
-        AddActivity = .Identity
-    End With
-End Function
 
-Public Function AddActivityEx(ByRef Obj As MyPortal, ByRef Action As Actions, ByVal aGUID As String, ByRef Data As D3DVECTOR, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
-    Obj.ActivityCount = Obj.ActivityCount + 1
-    ReDim Preserve Obj.Activities(1 To Obj.ActivityCount) As MyActivity
-    With Obj.Activities(Obj.ActivityCount)
-        .Identity = IIf(aGUID = "", Replace(modGuid.GUID, "-", ""), aGUID)
-        .Action = Action
-        .Data = Data
-        .Emphasis = Emphasis
-        .Initials = Emphasis
-        .Friction = Friction
-        .Reactive = Reactive
-        .Latency = Timer
-        .Recount = Recount
-        .OnEvent = Script
-        AddActivityEx = .Identity
-    End With
-End Function
-
-Public Function ActivityExists(ByRef Obj As MyObject, ByVal MGUID As String) As Boolean
-    Dim a As Long
-    For a = 1 To Obj.ActivityCount
-        If Obj.Activities(a).Identity = MGUID Then
-            ActivityExists = True
+Public Function MotionExists(ByRef Motions As ntnodes10.Collection, ByVal MGUID As String) As Boolean
+    Dim A As Long
+    For A = 1 To Motions.Count
+        If Motions(A).Identity = MGUID Then
+            MotionExists = True
             Exit Function
         End If
     Next
-    ActivityExists = False
-End Function
-Public Function DeleteActivity(ByRef Obj As MyObject, ByVal MGUID As String) As Boolean
-    Dim a As Long
-    If Obj.ActivityCount > 0 Then
-        If Obj.Activities(Obj.ActivityCount).Identity = MGUID Then
-            Obj.ActivityCount = Obj.ActivityCount - 1
-            If Obj.ActivityCount > 0 Then
-                ReDim Preserve Obj.Activities(1 To Obj.ActivityCount) As MyActivity
-            Else
-                Erase Obj.Activities
-            End If
-            DeleteActivity = True
-        Else
-            For a = 1 To Obj.ActivityCount
-                If Obj.Activities(a).Identity = MGUID Then
-                    SwapActivity Obj.Activities(a), Obj.Activities(Obj.ActivityCount)
-                    Obj.ActivityCount = Obj.ActivityCount - 1
-                    If Obj.ActivityCount > 0 Then
-                        ReDim Preserve Obj.Activities(1 To Obj.ActivityCount) As MyActivity
-                    Else
-                        Erase Obj.Activities
-                    End If
-                    DeleteActivity = True
-                    Exit For
-                End If
-            Next
-        End If
-    End If
+    MotionExists = False
 End Function
 
-Public Function ValidActivity(ByRef Activity As MyActivity) As Boolean
-    ValidActivity = (Activity.Identity <> "")
+Public Function ValidMotion(ByRef Motion As Motion) As Boolean
+    ValidMotion = (Motion.Identity <> "")
 End Function
 
-Public Function CalculateActivity(ByRef Activity As MyActivity, ByRef Action As Actions) As D3DVECTOR
+Public Function CalculateMotion(ByRef Motion As Motion, ByRef Action As Actions) As D3DVECTOR
 
-    If (Activity.Action And Action) = Action Then
-        
-        If Activity.Friction <> 0 Then
-            Activity.Emphasis = Activity.Emphasis - (Activity.Emphasis * Activity.Friction)
-            If Activity.Emphasis < 0 Then
-                Activity.Emphasis = 0
-                Activity.Identity = ""
+    If (Action And Motion.Action) = Action Then
+
+        If Motion.Friction <> 0 Then
+
+            Motion.Emphasis = Motion.Emphasis - (Motion.Emphasis * Motion.Friction)
+            If Motion.Emphasis < 0 Then
+                Motion.Emphasis = 0
+                Motion.Identity = ""
             End If
         End If
 
-        If (Activity.Emphasis > 0.0001) Or (Activity.Emphasis < -0.0001) Then
-            CalculateActivity.X = Activity.Data.X * Activity.Emphasis
-            CalculateActivity.Y = Activity.Data.Y * Activity.Emphasis
-            CalculateActivity.z = Activity.Data.z * Activity.Emphasis
+        If (Motion.Emphasis > 0.001) Or (Motion.Emphasis < -0.001) Then
+            CalculateMotion.X = Motion.Data.X * Motion.Emphasis
+            CalculateMotion.Y = Motion.Data.Y * Motion.Emphasis
+            CalculateMotion.Z = Motion.Data.Z * Motion.Emphasis
         Else
-            Activity.Emphasis = 0
+            Motion.Emphasis = 0
         End If
-    
+
     End If
-    
+
 End Function
 
-Private Sub ApplyActivity(ByRef Obj As MyObject)
+Private Sub ApplyMotion(ByRef Obj As Element)
     Dim cnt As Long
     Dim cnt2 As Long
     Dim Offset As D3DVECTOR
+    Dim vout As D3DVECTOR
     
-    If ((Not (Perspective = Spectator)) And (Obj.CollideObject = Player.Object.CollideObject)) Or (Not (Obj.CollideObject = Player.Object.CollideObject)) Then
+    If ((Not (Perspective = Spectator)) And (Obj.CollideObject = Player.CollideObject)) Or (Not (Obj.CollideObject = Player.CollideObject)) Then
         
         If Obj.Gravitational Then
-            If Not Obj.States.OnLadder Then
-                If Obj.States.InLiquid Then
-                    D3DXVec3Add Obj.Direct, Obj.Direct, CalculateActivity(LiquidGravityDirect, Directing)
-                    D3DXVec3Add Obj.Twists, Obj.Twists, CalculateActivity(LiquidGravityRotate, Rotating)
-                    D3DXVec3Add Obj.Scalar, Obj.Scalar, CalculateActivity(LiquidGravityScaled, Scaling)
+            If Not Obj.OnLadder Then
+                If Obj.InLiquid Then
+                    D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(LiquidGravityDirect, Directing)
+                    Set Obj.Direct = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(LiquidGravityRotate, Rotating)
+                    Set Obj.Twists = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(LiquidGravityScaled, Scaling)
+                    Set Obj.Scalar = ToPoint(vout)
                 Else
-                    D3DXVec3Add Obj.Direct, Obj.Direct, CalculateActivity(GlobalGravityDirect, Directing)
-                    D3DXVec3Add Obj.Twists, Obj.Twists, CalculateActivity(GlobalGravityRotate, Rotating)
-                    D3DXVec3Add Obj.Scalar, Obj.Scalar, CalculateActivity(GlobalGravityScaled, Scaling)
+                    D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(GlobalGravityDirect, Directing)
+                    Set Obj.Direct = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(GlobalGravityRotate, Rotating)
+                    Set Obj.Twists = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(GlobalGravityScaled, Scaling)
+                    Set Obj.Scalar = ToPoint(vout)
                 End If
             End If
         End If
     End If
     If Obj.Effect = Collides.None Then
-        If Obj.ActivityCount > 0 Then
-            Dim a As Long
-            For a = 1 To Obj.ActivityCount
-                If ValidActivity(Obj.Activities(a)) Then
-                    D3DXVec3Add Obj.Direct, Obj.Direct, CalculateActivity(Obj.Activities(a), Directing)
-                    D3DXVec3Add Obj.Twists, Obj.Twists, CalculateActivity(Obj.Activities(a), Rotating)
-                    D3DXVec3Add Obj.Scalar, Obj.Scalar, CalculateActivity(Obj.Activities(a), Scaling)
+
+        If Obj.Motions.Count > 0 Then
+            Dim A As Long
+            For A = 1 To Obj.Motions.Count
+                If ValidMotion(Obj.Motions(A)) Then
+                    D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(Obj.Motions(A), Directing)
+                    Set Obj.Direct = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(Obj.Motions(A), Rotating)
+                    Set Obj.Twists = ToPoint(vout)
+                    D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(Obj.Motions(A), Scaling)
+                    Set Obj.Scalar = ToPoint(vout)
                 End If
             Next
         End If
     End If
 End Sub
 Public Sub ResetMotion()
-    Dim a As Long
+    Dim A As Long
     Dim o As Long
-    Player.Object.Direct = MakeVector(0, 0, 0)
-    If ObjectCount > 0 Then
-        For o = 1 To ObjectCount
-            Objects(o).Direct = MakeVector(0, 0, 0)
+    Set Player.Direct = MakePoint(0, 0, 0)
+    If Elements.Count > 0 Then
+        For o = 1 To Elements.Count
+           Set Elements(o).Direct = MakePoint(0, 0, 0)
         Next
     End If
 End Sub
-Public Sub ClearActivities()
-    Dim o As Long
-    Do Until Player.Object.ActivityCount = 0
-        DeleteActivity Player.Object, Player.Object.Activities(1).Identity
-    Loop
-    If ObjectCount > 0 Then
-        For o = 1 To ObjectCount
-            Do Until Objects(o).ActivityCount = 0
-                DeleteActivity Objects(o), Objects(o).Activities(1).Identity
-            Loop
-        Next
-    End If
-End Sub
+
 Public Sub RenderActive()
 On Error GoTo ObjectError
 
-    Dim d As Boolean
-    Dim o As Long
-    Dim a As Long
-    Dim act As MyActivity
-    Dim trig As String
-    Dim line As String
-    Dim id As String
-     
-    Do
-    Loop Until (Not DeleteActivity(Player.Object, ""))
-        
-    If Player.Object.Visible Then
-        ApplyActivity Player.Object
-
-        If Player.Object.ActivityCount > 0 Then
-
-            a = 1
-            Do While a <= Player.Object.ActivityCount
-                If Player.Object.Activities(a).Reactive > -1 Then
-                    If (Timer - Player.Object.Activities(a).Latency) > Player.Object.Activities(a).Reactive Then ' And Player.Object.Activities(a).Reactive > 0 Then
-                        Player.Object.Activities(a).Latency = Timer
-                        act = Player.Object.Activities(a)
-                        act.Emphasis = act.Initials
-                        DeleteActivity Player.Object, act.Identity
-                        If Not act.OnEvent = "" Then
-                            line = NextArg(act.OnEvent, ":")
-                            trig = RemoveArg(act.OnEvent, ":")
-                            If Left(Trim(trig), 1) = "<" Then
-                                id = RemoveQuotedArg(trig, "<", ">") & ","
-                                If ((InStr(id, Player.Object.Identity & ",") > 0) And (Player.Object.Identity <> "")) Or (id = ",") Then
-                                    ParseLand line, trig
-                                End If
-                            Else
-                                ParseLand line, trig
-                            End If
-                        End If
-                        If act.Recount > -1 Then
-                            If act.Recount > 0 Then
-                                act.Recount = act.Recount - 1
-                                AddActivity Player.Object, act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                            End If
-                        Else
-                            AddActivity Player.Object, act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                        End If
-                        a = a + 1
-
-                    Else
-                        a = a + 1
-                    End If
-                    
-                ElseIf ((Player.Object.Activities(a).Emphasis = 0) Or (Player.Object.Activities(a).Recount = 0)) And (Not Player.Object.Activities(a).Reactive = -1) Then
-                    DeleteActivity Player.Object, Player.Object.Activities(a).Identity
-                Else
-                    a = a + 1
-                End If
-            Loop
+    RenderActive2 Player
     
-        End If
-    End If
-
+    If Elements.Count > 0 Then
+        Dim e1 As Element
+        For Each e1 In Elements
     
-    If ObjectCount > 0 Then
-        For o = 1 To ObjectCount
-            Do
-            Loop Until (Not DeleteActivity(Objects(o), ""))
-            
-            If Objects(o).Visible Then
-                ApplyActivity Objects(o)
-
-                If Objects(o).ActivityCount > 0 Then
-                    a = 1
-                    Do While a <= Objects(o).ActivityCount
-                        If Objects(o).Activities(a).Reactive > -1 Then
-                            If (Timer - Objects(o).Activities(a).Latency) > Objects(o).Activities(a).Reactive Then 'And Objects(o).Activities(a).Reactive > 0 Then
-                                Objects(o).Activities(a).Latency = Timer
-                                act = Objects(o).Activities(a)
-                                act.Emphasis = act.Initials
-                                DeleteActivity Objects(o), act.Identity
-                                If Not act.OnEvent = "" Then
-                                    line = NextArg(act.OnEvent, ":")
-                                    trig = RemoveArg(act.OnEvent, ":")
-                                    If Left(Trim(trig), 1) = "<" Then
-                                        id = RemoveQuotedArg(trig, "<", ">") & ","
-                                        If ((InStr(id, Objects(o).Identity & ",") > 0) And (Objects(o).Identity <> "")) Or (id = ",") Then
-                                            ParseLand line, trig
-                                        End If
-                                    Else
-                                        ParseLand line, trig
-                                    End If
-                                End If
-                                If act.Recount > -1 Then
-                                    If act.Recount > 0 Then
-                                        act.Recount = act.Recount - 1
-                                        AddActivity Objects(o), act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                                    End If
-                                Else
-                                    AddActivity Objects(o), act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                                End If
-                                a = a + 1
-                            Else
-                                a = a + 1
-                            End If
-                            
-                        ElseIf ((Objects(o).Activities(a).Emphasis = 0) Or (Objects(o).Activities(a).Recount = 0)) And (Not Objects(o).Activities(a).Reactive = -1) Then
-                            DeleteActivity Objects(o), Objects(o).Activities(a).Identity
-                        Else
-                            a = a + 1
-                        End If
-                    Loop
-                End If
-            End If
+            RenderActive2 e1
             
         Next
     End If
@@ -472,14 +327,73 @@ On Error GoTo ObjectError
     Exit Sub
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
-'    Resume
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
+
+End Sub
+
+Private Sub RenderActive2(ByRef e1 As Element)
+    Dim d As Boolean
+    Dim o As Long
+    Dim A As Long
+    Dim act As Motion
+    Dim trig As String
+    Dim line As String
+    Dim id As String
+
+    Do
+    Loop Until (Not e1.DeleteMotion(""))
+    
+    If e1.Visible Then
+        ApplyMotion e1
+
+        If e1.Motions.Count > 0 Then
+            A = 1
+            Do While A <= e1.Motions.Count
+                Set act = e1.Motions(A)
+
+                If act.Reactive > -1 Then
+                    If (Timer - act.latency) > act.Reactive Then
+                        act.latency = Timer
+                        
+                        act.Emphasis = act.Initials
+                        e1.DeleteMotion act.Identity
+                        If Not act.Script = "" Then
+                            
+                            ExecuteScript e1, act.Script
+                        
+                        End If
+                        If act.Recount > -1 Then
+                            If act.Recount > 0 Then
+                                act.Recount = act.Recount - 1
+                                e1.AddMotion act.Action, act.Identity, act.Data, act.Initials, act.Friction, act.Reactive, act.Recount, act.Script
+                                'a = a + 1
+                            End If
+                        Else
+                            e1.AddMotion act.Action, act.Identity, act.Data, act.Initials, act.Friction, act.Reactive, act.Recount, act.Script
+                            'a = a + 1
+                        End If
+                        A = A + 1
+                        
+                    Else
+                        A = A + 1
+                    End If
+                    
+                ElseIf ((act.Emphasis = 0) Or (act.Recount = 0)) Then 'And (Not act.Reactive = -1) Then
+                    e1.DeleteMotion act.Identity
+                Else
+                    A = A + 1
+                End If
+                Set act = Nothing
+            Loop
+        End If
+    End If
+
 End Sub
 
 Public Sub InputMove()
 On Error GoTo ObjectError
 
-    lFacesShown = 0 'lCulledFaces
+    lFacesShown = 0
     lMovingObjs = 0
     lngTestCalls = 0
       
@@ -488,196 +402,59 @@ On Error GoTo ObjectError
                         
     If ((Perspective = Spectator) Or DebugMode) Then
     
-        Player.Object.Origin.X = Player.Object.Origin.X + Player.Object.Direct.X
-        Player.Object.Origin.Y = Player.Object.Origin.Y + Player.Object.Direct.Y
-        Player.Object.Origin.z = Player.Object.Origin.z + Player.Object.Direct.z
-        
-'        If DebugMode Then
-'
-'            ReDim andCamera(0 To 2, 0 To 2) As Single
-'
-'            ReDim andFaceVis(0 To 5, 0 To lngFaceCount) As Single
-'            ReDim andVertexX(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim andVertexY(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim andVertexZ(0 To 2, 0 To lngFaceCount) As Single
-'
-'            ReDim andScreenX(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim andScreenY(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim andScreenZ(0 To 2, 0 To lngFaceCount) As Single
-'
-'            ReDim andZBuffer(0 To 3, 0 To lngFaceCount) As Single
-'
-'            ReDim notCamera(0 To 2, 0 To 2) As Single
-'
-'            ReDim notFaceVis(0 To 5, 0 To lngFaceCount) As Single
-'            ReDim notVertexX(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim notVertexY(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim notVertexZ(0 To 2, 0 To lngFaceCount) As Single
-'
-'            ReDim notScreenX(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim notScreenY(0 To 2, 0 To lngFaceCount) As Single
-'            ReDim notScreenZ(0 To 2, 0 To lngFaceCount) As Single
-'
-'            ReDim notZBuffer(0 To 3, 0 To lngFaceCount) As Single
-'
-'            notFaceVis = sngFaceVis
-'            notVertexX = sngVertexX
-'            notVertexY = sngVertexY
-'            notVertexZ = sngVertexZ
-'            notScreenX = sngScreenX
-'            notScreenY = sngScreenY
-'            notScreenZ = sngScreenZ
-'            notZBuffer = sngZBuffer
-'
-'            For cnt2 = 0 To lngFaceCount - 1
-'                sngFaceVis(3, cnt2) = 0
-'            Next
-'
-'            Player.Object.CulledFaces = 0
-'
-'            If CullingSetup > 0 Then
-'                notCamera(0, 0) = CullingObject.Position.X
-'                notCamera(0, 1) = CullingObject.Position.Y
-'                notCamera(0, 2) = CullingObject.Position.z
-'
-'                notCamera(1, 0) = CullingObject.Direction.X
-'                notCamera(1, 1) = CullingObject.Direction.Y
-'                notCamera(1, 2) = CullingObject.Direction.z
-'
-'                notCamera(2, 0) = CullingObject.UpVector.X
-'                notCamera(2, 1) = CullingObject.UpVector.Y
-'                notCamera(2, 2) = CullingObject.UpVector.z
-'
-'                Select Case CullingObject.visType
-'                Case CULL0
-'                        For cnt = 0 To lngFaceCount - 1
-'                            notFaceVis(3, cnt) = 0
-'                        Next
-'                    Case Else
-'                        Player.Object.CulledFaces = Culling(CullingObject.visType, lngFaceCount, notCamera, notFaceVis, notVertexX, notVertexY, notVertexZ, notScreenX, notScreenY, notScreenZ, notZBuffer)
-'                        For cnt2 = 0 To lngFaceCount - 1
-'                            If notFaceVis(3, cnt2) > 1 Then notFaceVis(3, cnt2) = CullingObject.visType
-'                        Next
-'
-'                End Select
-'                lCullCalls = lCullCalls + 1
-'
-'            End If
-'
-'            If CullingCount > 0 Then
-'                For cnt = 1 To CullingCount
-'                    andCamera(0, 0) = Cullings(cnt).Position.X
-'                    andCamera(0, 1) = Cullings(cnt).Position.Y
-'                    andCamera(0, 2) = Cullings(cnt).Position.z
-'
-'                    andCamera(1, 0) = Cullings(cnt).Direction.X
-'                    andCamera(1, 1) = Cullings(cnt).Direction.Y
-'                    andCamera(1, 2) = Cullings(cnt).Direction.z
-'
-'                    andCamera(2, 0) = Cullings(cnt).UpVector.X
-'                    andCamera(2, 1) = Cullings(cnt).UpVector.Y
-'                    andCamera(2, 2) = Cullings(cnt).UpVector.z
-'
-'                    andFaceVis = sngFaceVis
-'                    andVertexX = sngVertexX
-'                    andVertexY = sngVertexY
-'                    andVertexZ = sngVertexZ
-'                    andScreenX = sngScreenX
-'                    andScreenY = sngScreenY
-'                    andScreenZ = sngScreenZ
-'                    andZBuffer = sngZBuffer
-'
-'                    Select Case Cullings(cnt).visType
-'                        Case 0
-'                            For cnt2 = 0 To lngFaceCount - 1
-'                                andFaceVis(3, cnt2) = 0
-'                            Next
-'                        Case Else
-'                            Player.Object.CulledFaces = Culling(Cullings(cnt).visType, lngFaceCount, andCamera, andFaceVis, andVertexX, andVertexY, andVertexZ, andScreenX, andScreenY, andScreenZ, andZBuffer)
-'
-'                        For cnt2 = 0 To lngFaceCount - 1
-'                            If andFaceVis(3, cnt2) > 1 Then andFaceVis(3, cnt2) = Cullings(cnt).visType
-'                        Next
-'
-'                    End Select
-'                    lCullCalls = lCullCalls + 1
-'
-'                    If cnt > 1 Then
-'
-'                        For cnt2 = 0 To lngFaceCount - 1
-'                            If andFaceVis(3, cnt2) > 1 Then
-'                                notFaceVis(3, cnt2) = andFaceVis(3, cnt2)
-'
-'                            End If
-'
-'                        Next
-'
-'                    End If
-'
-'                Next
-'
-'            End If
-'
-'            sngFaceVis = notFaceVis
-'            sngVertexX = notVertexX
-'            sngVertexY = notVertexY
-'            sngVertexZ = notVertexZ
-'            sngScreenX = notScreenX
-'            sngScreenY = notScreenY
-'            sngScreenZ = notScreenZ
-'            sngZBuffer = notZBuffer
-'
-'        End If
-        
+        Player.Origin.X = Player.Origin.X + Player.Direct.X
+        Player.Origin.Y = Player.Origin.Y + Player.Direct.Y
+        Player.Origin.Z = Player.Origin.Z + Player.Direct.Z
+                
     Else
     
-        If (Player.Object.CollideIndex > -1) Then
+        If (Player.CollideIndex > -1) Then
         
             Dim oldorg As D3DVECTOR
-            oldorg = Player.Object.Origin
+            oldorg = ToVector(Player.Origin)
 
-            SpinObject Player.Object
-            BlowObject Player.Object
-            MoveObject Player.Object
+            SpinObject Player
+            BlowObject Player
+            MoveObject Player
 
-            lFacesShown = lFacesShown + Player.Object.CulledFaces
+            lFacesShown = lFacesShown + Player.CulledFaces
             lMovingObjs = lMovingObjs + 1
-            If (Distance(Player.Object.Origin, MakeVector(0, 0, 0)) > Player.Boundary) Then Player.Object.Origin = oldorg
+            If (DistanceEx(Player.Origin, MakePoint(0, 0, 0)) > Space.Boundary) Then Set Player.Origin = ToPoint(oldorg)
             
         End If
 
     End If
 
-    If (ObjectCount > 0) And (Not DebugMode) Then
-        Dim a As Long
-        Dim act As MyActivity
-        For cnt = 1 To ObjectCount
-            
-            If (Objects(cnt).Effect = Collides.None) Then
-                If (Objects(cnt).CollideIndex > -1) Then
+    If (Elements.Count > 0) And (Not DebugMode) Then
+        Dim A As Long
+        Dim e1 As Element
+        For Each e1 In Elements
 
-                    SpinObject Objects(cnt)
-                    BlowObject Objects(cnt)
-                    MoveObject Objects(cnt)
+            If (e1.Effect = Collides.None) Then
+                If (e1.CollideIndex > -1) Then
 
-                    lFacesShown = lFacesShown + Objects(cnt).CulledFaces
+                    SpinObject e1
+                    BlowObject e1
+                    MoveObject e1
+
+                    lFacesShown = lFacesShown + e1.CulledFaces
                     lMovingObjs = lMovingObjs + 1
-                ElseIf (Objects(cnt).Direct.X <> 0) Or (Objects(cnt).Direct.Y <> 0) Or (Objects(cnt).Direct.z <> 0) Then
-                    Objects(cnt).Origin.X = Objects(cnt).Origin.X + Objects(cnt).Direct.X
-                    Objects(cnt).Origin.Y = Objects(cnt).Origin.Y + Objects(cnt).Direct.Y
-                    Objects(cnt).Origin.z = Objects(cnt).Origin.z + Objects(cnt).Direct.z
+                ElseIf (e1.Direct.X <> 0) Or (e1.Direct.Y <> 0) Or (e1.Direct.Z <> 0) Then
+                    e1.Origin.X = e1.Origin.X + e1.Direct.X
+                    e1.Origin.Y = e1.Origin.Y + e1.Direct.Y
+                    e1.Origin.Z = e1.Origin.Z + e1.Direct.Z
                     
-                    Objects(cnt).Rotate.X = Objects(cnt).Rotate.X + Objects(cnt).Twists.X
-                    Objects(cnt).Rotate.Y = Objects(cnt).Rotate.Y + Objects(cnt).Twists.Y
-                    Objects(cnt).Rotate.z = Objects(cnt).Rotate.z + Objects(cnt).Twists.z
+                    e1.Rotate.X = e1.Rotate.X + e1.Twists.X
+                    e1.Rotate.Y = e1.Rotate.Y + e1.Twists.Y
+                    e1.Rotate.Z = e1.Rotate.Z + e1.Twists.Z
 
-                    Objects(cnt).Scaled.X = Objects(cnt).Scaled.X + Objects(cnt).Scalar.X
-                    Objects(cnt).Scaled.Y = Objects(cnt).Scaled.Y + Objects(cnt).Scalar.Y
-                    Objects(cnt).Scaled.z = Objects(cnt).Scaled.z + Objects(cnt).Scalar.z
+                    e1.Scaled.X = e1.Scaled.X + e1.Scalar.X
+                    e1.Scaled.Y = e1.Scaled.Y + e1.Scalar.Y
+                    e1.Scaled.Z = e1.Scaled.Z + e1.Scalar.Z
                 End If
     
-                If (Objects(cnt).Origin.X > SpaceBoundary) Or (Objects(cnt).Origin.X < -SpaceBoundary) Then Objects(cnt).Origin.X = -Objects(cnt).Origin.X
-                If (Objects(cnt).Origin.z > SpaceBoundary) Or (Objects(cnt).Origin.z < -SpaceBoundary) Then Objects(cnt).Origin.z = -Objects(cnt).Origin.z
+                If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
+                If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
             End If
         Next
     End If
@@ -686,31 +463,33 @@ On Error GoTo ObjectError
     Exit Sub
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
-    'Resume
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
+
 End Sub
 
-Public Function CoupleMove(ByRef Obj As MyObject, ByVal objCollision As Long) As Boolean
+Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As Boolean
 '###################################################################################
 '########## couple the activities of objects in collision with others ##############
 '###################################################################################
 
-    Dim a As Long
+    Dim A As Long
     Dim cnt As Long
-    Dim act As MyActivity
+    Dim act As Motion
     If (objCollision > -1) Then
-        If (ObjectCount > 0) Then
-            For cnt = 1 To ObjectCount
-                If (Objects(cnt).Effect = Collides.None) And (Obj.CollideIndex > -1) Then
-                    If (Not Objects(cnt).CollideObject = Obj.CollideObject) Then
-                        If (Objects(cnt).CollideObject = objCollision) Then
+        If (Elements.Count > 0) Then
+            Dim e1 As Element
+            For Each e1 In Elements
 
-                            For a = 1 To Obj.ActivityCount
-                                act = Obj.Activities(a)
-                                AddActivity Objects(cnt), act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
+                If (e1.Effect = Collides.None) And (Obj.CollideIndex > -1) Then
+                    If (Not e1.CollideObject = Obj.CollideObject) Then
+                        If (e1.CollideObject = objCollision) Then
+
+                            For A = 1 To Obj.Motions.Count
+                                Set act = Obj.Motions(A)
+                                e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
                             Next
 
-                            Objects(cnt).Direct = Obj.Direct
+                            e1.Direct = Obj.Direct
                             CoupleMove = True
                             Exit Function
                         End If
@@ -721,7 +500,7 @@ Public Function CoupleMove(ByRef Obj As MyObject, ByVal objCollision As Long) As
     End If
 End Function
 
-Private Sub MoveObject(ByRef Obj As MyObject)
+Private Sub MoveObject(ByRef Obj As Element)
 On Error GoTo ObjectError
 
     Dim objCollision As Long
@@ -742,60 +521,66 @@ On Error GoTo ObjectError
 
     Dim cnt As Long
     Dim cnt2 As Long
-
+    Dim act As Motion
+    
 '#####################################################################################
 '############# preliminary sort the type of space collision checks ###################
 '#####################################################################################
 
-    Obj.States.IsMoving = Moving.None
+    Obj.IsMoving = Moving.None
 
     For cnt = 0 To lngFaceCount - 1
         sngFaceVis(3, cnt) = 0
     Next
-
-    If (ObjectCount > 0) Then
-        For cnt = 1 To ObjectCount
-            If (Objects(cnt).Effect = Collides.Ladder) And (Objects(cnt).CollideIndex > -1) And Objects(cnt).Visible Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+    Dim e1 As Element
+    
+    If (Elements.Count > 0) Then
+        For Each e1 In Elements
+            If (e1.Effect = Collides.Ladder) And (e1.CollideIndex > -1) And e1.Visible Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = bitType
                 Next
             End If
         Next
 
-        If Obj.States.OnLadder Then
-            Obj.States.OnLadder = TestCollision(Obj, Actions.None, bitType)
+        If Obj.OnLadder Then
+            Obj.OnLadder = TestCollision(Obj, Actions.None, bitType)
         Else
-            Obj.States.OnLadder = TestCollision(Obj, Actions.None, bitType)
-            If Obj.States.OnLadder Then
+            Obj.OnLadder = TestCollision(Obj, Actions.None, bitType)
+            If Obj.OnLadder Then
                 Do
-                Loop Until Not DeleteActivity(Obj, JumpGUID)
-                For cnt = 1 To PortalCount
-                    For cnt2 = 1 To Portals(cnt).ActivityCount
-                        DeleteActivity Obj, Portals(cnt).Activities(cnt2).Identity
+                Loop Until Not Obj.DeleteMotion(JumpGUID)
+                For cnt = 1 To Portals.Count
+                    For cnt2 = 1 To Portals(cnt).Motions.Count
+                        Set act = Portals(cnt).Motions(cnt2)
+                        Obj.DeleteMotion act.Identity
+                        Set act = Nothing
                     Next
 
                 Next
             End If
         End If
 
-        For cnt = 1 To ObjectCount
-            If (Objects(cnt).Effect = Collides.Liquid) And (Objects(cnt).CollideIndex > -1) And Objects(cnt).Visible Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+        For Each e1 In Elements
+            If (e1.Effect = Collides.Liquid) And (e1.CollideIndex > -1) And e1.Visible Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = bitType
                 Next
             End If
         Next
 
-        If Obj.States.InLiquid Then
-            Obj.States.InLiquid = TestCollision(Obj, Actions.None, bitType)
+        If Obj.InLiquid Then
+            Obj.InLiquid = TestCollision(Obj, Actions.None, bitType)
         Else
-            Obj.States.InLiquid = TestCollision(Obj, Actions.None, bitType)
-            If Obj.States.InLiquid Then
+            Obj.InLiquid = TestCollision(Obj, Actions.None, bitType)
+            If Obj.InLiquid Then
                 Do
-                Loop Until Not DeleteActivity(Obj, JumpGUID)
-                For cnt = 1 To PortalCount
-                    For cnt2 = 1 To Portals(cnt).ActivityCount
-                        DeleteActivity Obj, Portals(cnt).Activities(cnt2).Identity
+                Loop Until Not Obj.DeleteMotion(JumpGUID)
+                For cnt = 1 To Portals.Count
+                    For cnt2 = 1 To Portals(cnt).Motions.Count
+                        Set act = Portals(cnt).Motions(cnt2)
+                        Obj.DeleteMotion act.Identity
+                        Set act = Nothing
                     Next
                 Next
             End If
@@ -810,7 +595,7 @@ On Error GoTo ObjectError
 
     sngCamera(0, 0) = Obj.Origin.X
     sngCamera(0, 1) = Obj.Origin.Y + 1
-    sngCamera(0, 2) = Obj.Origin.z
+    sngCamera(0, 2) = Obj.Origin.Z
 
     sngCamera(1, 0) = 1
     sngCamera(1, 1) = -1
@@ -820,25 +605,27 @@ On Error GoTo ObjectError
     sngCamera(2, 1) = 1
     sngCamera(2, 2) = -1
 
-    Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
-    lCullCalls = lCullCalls + 1
+    If lngFaceCount > 0 Then
+        Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
+        lCullCalls = lCullCalls + 1
+    End If
 
-    If (ObjectCount > 0) Then
-        For cnt = 1 To ObjectCount
-            If (Objects(cnt).Effect = Collides.Ladder) And (Objects(cnt).CollideIndex > -1) Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+    If (Elements.Count > 0) Then
+        For Each e1 In Elements
+            If (e1.Effect = Collides.Ladder) And (e1.CollideIndex > -1) Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = 0
                 Next
-            ElseIf (Objects(cnt).Effect = Collides.Ground) And (Objects(cnt).CollideIndex > -1) And Objects(cnt).Visible Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+            ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     If Not (((sngFaceVis(0, cnt2) = 0) Or (sngFaceVis(0, cnt2) = 1) Or (sngFaceVis(0, cnt2) = -1)) And _
                         ((sngFaceVis(1, cnt2) = 0) Or (sngFaceVis(1, cnt2) = 1) Or (sngFaceVis(1, cnt2) = -1)) And _
                         ((sngFaceVis(2, cnt2) = 0) Or (sngFaceVis(2, cnt2) = 1) Or (sngFaceVis(2, cnt2) = -1))) Then
                         sngFaceVis(3, cnt2) = visType
                     End If
                 Next
-            ElseIf (Objects(cnt).Effect = Collides.Liquid) And (Objects(cnt).CollideIndex > -1) Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+            ElseIf (e1.Effect = Collides.Liquid) And (e1.CollideIndex > -1) Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = 0
                 Next
             End If
@@ -850,19 +637,21 @@ On Error GoTo ObjectError
 '############# predict the Y movements of objects in motion ##########################
 '#####################################################################################
 
-    tmpset = Obj.Direct
+    tmpset = ToVector(Obj.Direct)
 
+    'With Obj.Direct
+    
     Obj.Direct.Y = tmpset.Y
     Obj.Direct.X = 0
-    Obj.Direct.z = 0
+    Obj.Direct.Z = 0
 
     If (Obj.Direct.Y <> 0) Then
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y
             If Obj.Direct.Y > 0 Then
-                If Not ((Obj.States.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Flying
+                If Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.IsMoving = Obj.IsMoving + Moving.Flying
             ElseIf Obj.Direct.Y < 0 Then
-                If Not ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Falling
+                If Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving + Moving.Falling
             End If
             newset.Y = Obj.Direct.Y
         ElseIf (Obj.Direct.Y < 0) Then
@@ -872,7 +661,7 @@ On Error GoTo ObjectError
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
             If (Obj.Direct.Y < 0) Then
                 Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y
-                If Not ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Falling
+                If Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving + Moving.Falling
                 newset.Y = Obj.Direct.Y
             End If
         ElseIf (Obj.Direct.Y > 0) Then
@@ -882,30 +671,32 @@ On Error GoTo ObjectError
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
             If (Obj.Direct.Y > 0) Then
                 Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y
-                If Not ((Obj.States.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Flying
+                If Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.IsMoving = Obj.IsMoving + Moving.Flying
                 newset.Y = Obj.Direct.Y
             End If
         End If
     End If
     
-
+    
+    'End With
+    
 '#####################################################################################
 '############# adjust face data based on the TestCollision resulted ##################
 '#####################################################################################
 
 
-    If (ObjectCount > 0) Then
-        For cnt = 1 To ObjectCount
-            If (Objects(cnt).CollideObject = Obj.CollideObject) And (Objects(cnt).CollideIndex > -1) Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+    If (Elements.Count > 0) Then
+        For Each e1 In Elements
+            If (e1.CollideObject = Obj.CollideObject) And (e1.CollideIndex > -1) Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = visType
                 Next
-            ElseIf (Objects(cnt).Effect = Collides.Ladder) And (Objects(cnt).CollideIndex > -1) Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+            ElseIf (e1.Effect = Collides.Ladder) And (e1.CollideIndex > -1) Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = 0
                 Next
-            ElseIf (Objects(cnt).Effect = Collides.Liquid) And (Objects(cnt).CollideIndex > -1) Then
-                For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+            ElseIf (e1.Effect = Collides.Liquid) And (e1.CollideIndex > -1) Then
+                For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = 0
                 Next
             End If
@@ -913,7 +704,7 @@ On Error GoTo ObjectError
     End If
     
 '#####################################################################################
-'############# last call to MoveObejct collisions couple activity here ###############
+'############# last call to MoveObejct collisions couple Motion here ###############
 '#####################################################################################
 
 
@@ -924,15 +715,17 @@ On Error GoTo ObjectError
 '############# predict the X movements of objects in motion ##########################
 '#####################################################################################
 
+    'With Obj
+
     Obj.Direct.Y = 0
     Obj.Direct.X = tmpset.X
 
     If (Obj.Direct.X <> 0) Then
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-            If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-            If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+            If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
             End If
             newset.X = Obj.Direct.X
         ElseIf (Obj.Direct.X < 0) Then
@@ -942,9 +735,9 @@ On Error GoTo ObjectError
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
             If (Obj.Direct.X < 0) Then
                 Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                    If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
                 newset.X = Obj.Direct.X
             End If
@@ -955,9 +748,9 @@ On Error GoTo ObjectError
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
             If (Obj.Direct.X > 0) Then
                 Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                    If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
                 newset.X = Obj.Direct.X
             End If
@@ -967,50 +760,52 @@ On Error GoTo ObjectError
 '#####################################################################################
 '############# predict the Z movements of objects in motion ##########################
 '#####################################################################################
-
+    
     Obj.Direct.X = 0
-    Obj.Direct.z = tmpset.z
+    Obj.Direct.Z = tmpset.Z
 
-    If (Obj.Direct.z <> 0) Then
+    If (Obj.Direct.Z <> 0) Then
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-            Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-            If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-            If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+            Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+            If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
             End If
-            newset.z = Obj.Direct.z
-        ElseIf (Obj.Direct.z < 0) Then
+            newset.Z = Obj.Direct.Z
+        ElseIf (Obj.Direct.Z < 0) Then
             Do
-                Obj.Direct.z = Obj.Direct.z + adjust
-                If (Obj.Direct.z >= 0) Then Exit Do
+                Obj.Direct.Z = Obj.Direct.Z + adjust
+                If (Obj.Direct.Z >= 0) Then Exit Do
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.z < 0) Then
-                Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                    If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+            If (Obj.Direct.Z < 0) Then
+                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
-                newset.z = Obj.Direct.z
+                newset.Z = Obj.Direct.Z
             End If
-        ElseIf (Obj.Direct.z > 0) Then
+        ElseIf (Obj.Direct.Z > 0) Then
             Do
-                Obj.Direct.z = Obj.Direct.z - adjust
-                If (Obj.Direct.z <= 0) Then Exit Do
+                Obj.Direct.Z = Obj.Direct.Z - adjust
+                If (Obj.Direct.Z <= 0) Then Exit Do
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.z > 0) Then
-                Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                If (tmpset.X <> newset.X) And (tmpset.z <> newset.z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
-                    If ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Falling
+            If (Obj.Direct.Z > 0) Then
+                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                If (tmpset.X <> newset.X) And (tmpset.Z <> newset.Z) And (Not (tmpset.Y = newset.Y)) And (Not tmpset.Y = 0) Then
+                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
-                newset.z = Obj.Direct.z
+                newset.Z = Obj.Direct.Z
             End If
         End If
     End If
 
 
-    Obj.Direct = newset
+    Set Obj.Direct = ToPoint(newset)
 
+    'End With
+    
 '#####################################################################################
 '############# before applying predictions couple activities of touching #############
 '#####################################################################################
@@ -1023,100 +818,102 @@ On Error GoTo ObjectError
 '############# push/pull of moving objects in Y slope and small step ups #############
 '#####################################################################################
 
-    If (Not Obj.States.IsMoving = Moving.None) And _
-        (tmpset.X <> newset.X Or tmpset.z <> newset.z) And _
-        (Not ((Obj.States.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling)) Then
+    If (Not Obj.IsMoving = Moving.None) And _
+        (tmpset.X <> newset.X Or tmpset.Z <> newset.Z) And _
+        (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
 
         Obj.Origin.Y = Obj.Origin.Y + 0.2
 
+        'With Obj.Direct
         Obj.Direct.Y = 0
         Obj.Direct.X = tmpset.X
-        Obj.Direct.z = tmpset.z
+        Obj.Direct.Z = tmpset.Z
 
         push = True
         pull = False
 
-        If (Obj.Direct.X <> 0) Or (Obj.Direct.z <> 0) Then
+        If (Obj.Direct.X <> 0) Or (Obj.Direct.Z <> 0) Then
             If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
                 If Obj.Direct.X <> 0 Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
                     newset.X = Obj.Direct.X
                     pull = True
                 End If
-                If Obj.Direct.z <> 0 Then
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    newset.z = Obj.Direct.z
+                If Obj.Direct.Z <> 0 Then
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    newset.Z = Obj.Direct.Z
                     pull = True
                 End If
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.z < 0) Then
+            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then
                 Do
                     Obj.Direct.X = Obj.Direct.X + adjust
-                    Obj.Direct.z = Obj.Direct.z + adjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.z >= 0)) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z + adjust
+                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.z < 0) Then
+                If (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
-                    newset.z = Obj.Direct.z
+                    newset.Z = Obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.z > 0) Then
+            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then
                 Do
                     Obj.Direct.X = Obj.Direct.X - adjust
-                    Obj.Direct.z = Obj.Direct.z - adjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.z <= 0)) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z - adjust
+                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.z > 0) Then
+                If (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
-                    newset.z = Obj.Direct.z
+                    newset.Z = Obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.z > 0) Then
+            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then
                 Do
                     Obj.Direct.X = Obj.Direct.X + adjust
-                    Obj.Direct.z = Obj.Direct.z - adjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.z <= 0)) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z - adjust
+                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.z > 0) Then
+                If (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
-                    newset.z = Obj.Direct.z
+                    newset.Z = Obj.Direct.Z
                     pull = True
                 End If
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.z < 0) Then
+            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then
                 Do
                     Obj.Direct.X = Obj.Direct.X - adjust
-                    Obj.Direct.z = Obj.Direct.z + adjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.z >= 0)) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z + adjust
+                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.z < 0) Then
+                If (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
-                    newset.z = Obj.Direct.z
+                    newset.Z = Obj.Direct.Z
                     pull = True
                 End If
             End If
         End If
-
+        'End With
+        
         Obj.Origin.Y = Obj.Origin.Y - 0.2
 
         If pull Then push = False
 
     End If
 
-    Obj.Direct = tmpset
+    Set Obj.Direct = ToPoint(tmpset)
 
 '#####################################################################################
 '############# those passing with out pressure couple activities first ###############
@@ -1131,23 +928,25 @@ On Error GoTo ObjectError
 '#####################################################################################
 
 
-    If push And (Not Obj.States.IsMoving = Moving.None) And _
-        (tmpset.X <> newset.X Or tmpset.z <> newset.z) And _
-        (Not ((Obj.States.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling)) Then
+    If push And (Not Obj.IsMoving = Moving.None) And _
+        (tmpset.X <> newset.X Or tmpset.Z <> newset.Z) And _
+        (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
 
         Obj.Origin.Y = Obj.Origin.Y + 0.2
 
+        'With Obj.Direct
+        
         Obj.Direct.Y = 0
         Obj.Direct.X = tmpset.X
-        Obj.Direct.z = tmpset.z
+        Obj.Direct.Z = tmpset.Z
 
         push = False
 
         If (Obj.Direct.X <> 0) Then
             If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
                 Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                 newset.X = Obj.Direct.X
                 push = True
             ElseIf (Obj.Direct.X < 0) Then
@@ -1157,7 +956,7 @@ On Error GoTo ObjectError
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
                 If (Obj.Direct.X < 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
                     push = True
                 End If
@@ -1169,46 +968,47 @@ On Error GoTo ObjectError
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
                 If (Obj.Direct.X > 0) Then
                     Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
                     newset.X = Obj.Direct.X
                     push = True
                 End If
             End If
         End If
-
-        If (Obj.Direct.z <> 0) Then
+        
+        If (Obj.Direct.Z <> 0) Then
             If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-                Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                newset.z = Obj.Direct.z
+                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                newset.Z = Obj.Direct.Z
                 push = True
-            ElseIf (Obj.Direct.z < 0) Then
+            ElseIf (Obj.Direct.Z < 0) Then
                 Do
-                    Obj.Direct.z = Obj.Direct.z + adjust
-                    If (Obj.Direct.z >= 0) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z + adjust
+                    If (Obj.Direct.Z >= 0) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.z < 0) Then
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                    newset.z = Obj.Direct.z
+                If (Obj.Direct.Z < 0) Then
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                    newset.Z = Obj.Direct.Z
                     push = True
                 End If
 
-            ElseIf (Obj.Direct.z > 0) Then
+            ElseIf (Obj.Direct.Z > 0) Then
                 Do
-                    Obj.Direct.z = Obj.Direct.z - adjust
-                    If (Obj.Direct.z <= 0) Then Exit Do
+                    Obj.Direct.Z = Obj.Direct.Z - adjust
+                    If (Obj.Direct.Z <= 0) Then Exit Do
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.z > 0) Then
-                    Obj.Origin.z = Obj.Origin.z + Obj.Direct.z
-                    If Not ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Level
-                    newset.z = Obj.Direct.z
+                If (Obj.Direct.Z > 0) Then
+                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
+                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+                    newset.Z = Obj.Direct.Z
                     push = True
                 End If
 
             End If
         End If
-
+        'End With
+        
         Obj.Origin.Y = Obj.Origin.Y - 0.2
 
     End If
@@ -1219,13 +1019,14 @@ On Error GoTo ObjectError
 '#####################################################################################
 
 
-    If (pull Xor push) And (Not ((Obj.States.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.States.IsMoving And Moving.Falling) = Moving.Falling)) And _
-        ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then
-
+    If (pull Xor push) And (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) And _
+        ((Obj.IsMoving And Moving.Level) = Moving.Level) Then
+        'With Obj.Direct
+        
         Obj.Direct.Y = 0
         Obj.Direct.X = 0
-        Obj.Direct.z = 0
+        Obj.Direct.Z = 0
 
         Do While (TestCollision(Obj, Directing, visType, objCollision) = True)
             Obj.Direct.Y = Obj.Direct.Y + adjust
@@ -1235,16 +1036,18 @@ On Error GoTo ObjectError
             ((Obj.Direct.Y >= 0) And (Obj.Direct.Y <= 0.2)) Then
 
             Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y
-            If Not ((Obj.States.IsMoving And Moving.Stepping) = Moving.Stepping) Then Obj.States.IsMoving = Obj.States.IsMoving + Moving.Stepping
-            If ((Obj.States.IsMoving And Moving.Level) = Moving.Level) Then Obj.States.IsMoving = Obj.States.IsMoving - Moving.Level
+            If Not ((Obj.IsMoving And Moving.Stepping) = Moving.Stepping) Then Obj.IsMoving = Obj.IsMoving + Moving.Stepping
+            If ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving - Moving.Level
             newset.Y = Obj.Direct.Y
         End If
-
-    ElseIf ((Obj.States.IsMoving = Moving.None) And ((tmpset.X = 0 And tmpset.z = 0) And (newset.X = 0 And newset.z = 0))) Then
+        'End With
+    ElseIf ((Obj.IsMoving = Moving.None) And ((tmpset.X = 0 And tmpset.Z = 0) And (newset.X = 0 And newset.Z = 0))) Then
 
         push = False
         pull = False
 
+        'With Obj.Direct
+        
         Obj.Direct.Y = -adjust
         If Not push Then Obj.Direct.X = adjust
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
@@ -1256,13 +1059,13 @@ On Error GoTo ObjectError
         End If
 
         If Not pull Then Obj.Direct.Y = -adjust
-        Obj.Direct.z = adjust
+        Obj.Direct.Z = adjust
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             push = True
         Else
             push = False
             Obj.Direct.Y = 0
-            Obj.Direct.z = 0
+            Obj.Direct.Z = 0
         End If
 
         If Not pull And Not push Then Obj.Direct.Y = -adjust
@@ -1275,13 +1078,16 @@ On Error GoTo ObjectError
         End If
 
         If Not push And Not pull Then Obj.Direct.Y = -adjust
-        Obj.Direct.z = -adjust
+        Obj.Direct.Z = -adjust
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             push = (pull And Not push) Or (Not push And Not pull)
         Else
             Obj.Direct.Y = 0
-            Obj.Direct.z = 0
+            Obj.Direct.Z = 0
         End If
+        
+        'End With
+        'With Obj.Origin
 
         If (push Xor pull) Or (push And pull) Then
 
@@ -1311,47 +1117,49 @@ On Error GoTo ObjectError
                     End If
                 ElseIf push Then
 
-                    Obj.Origin.z = Obj.Origin.z + adjust
+                    Obj.Origin.Z = Obj.Origin.Z + adjust
                     If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                        Obj.Origin.z = Obj.Origin.z - (adjust * 2)
+                        Obj.Origin.Z = Obj.Origin.Z - (adjust * 2)
                         If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
                             Obj.Origin.Y = Obj.Origin.Y + (adjust / 3)
                         Else
                             Do
-                                If Obj.Origin.z + (adjust / 3) <> adjust Then Exit Do
-                                Obj.Origin.z = Obj.Origin.z + (adjust / 3)
+                                If Obj.Origin.Z + (adjust / 3) <> adjust Then Exit Do
+                                Obj.Origin.Z = Obj.Origin.Z + (adjust / 3)
                             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                            Obj.Origin.z = Obj.Origin.z - (adjust / 3)
+                            Obj.Origin.Z = Obj.Origin.Z - (adjust / 3)
                         End If
                     Else
                         Do
-                            If Obj.Origin.z - (adjust / 3) <> adjust Then Exit Do
-                            Obj.Origin.z = Obj.Origin.z - (adjust / 3)
+                            If Obj.Origin.Z - (adjust / 3) <> adjust Then Exit Do
+                            Obj.Origin.Z = Obj.Origin.Z - (adjust / 3)
                         Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                        Obj.Origin.z = Obj.Origin.z + (adjust / 3)
+                        Obj.Origin.Z = Obj.Origin.Z + (adjust / 3)
                     End If
                 End If
 
             Loop While (TestCollision(Obj, Directing, visType, objCollision) = True)
 
         End If
-
+        
+        'End With
+        
     End If
 
 
 '#####################################################################################
-'############# direct activities are primed for next call to MoveObject  #############
+'############# direct activities are primed for Next call to MoveObject  #############
 '#####################################################################################
 
 
     Exit Sub
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
    ' Resume
 End Sub
 
-Private Sub SpinObject(ByRef Obj As MyObject)
+Private Sub SpinObject(ByRef Obj As Element)
 On Error GoTo ObjectError
 
 '#####################################################################################
@@ -1363,17 +1171,17 @@ On Error GoTo ObjectError
             
         Obj.Rotate.X = Obj.Rotate.X + Obj.Twists.X
         Obj.Rotate.Y = Obj.Rotate.Y + Obj.Twists.Y
-        Obj.Rotate.z = Obj.Rotate.z + Obj.Twists.z
+        Obj.Rotate.Z = Obj.Rotate.Z + Obj.Twists.Z
    
     End If
 
     Exit Sub
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Sub
 
-Private Sub BlowObject(ByRef Obj As MyObject)
+Private Sub BlowObject(ByRef Obj As Element)
 On Error GoTo ObjectError
 
 '#####################################################################################
@@ -1385,7 +1193,7 @@ On Error GoTo ObjectError
     
         Obj.Scaled.X = Obj.Scaled.X + Obj.Scalar.X
         Obj.Scaled.Y = Obj.Scaled.Y + Obj.Scalar.Y
-        Obj.Scaled.z = Obj.Scaled.z + Obj.Scalar.z
+        Obj.Scaled.Z = Obj.Scaled.Z + Obj.Scalar.Z
         
     End If
 
@@ -1393,10 +1201,10 @@ On Error GoTo ObjectError
     Exit Sub
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Sub
 
-Public Function TestCollision(ByRef Obj As MyObject, ByRef Action As Actions, ByVal visType As Long, Optional ByRef lngCollideObj As Long = -1) As Boolean
+Public Function TestCollision(ByRef Obj As Element, ByRef Action As Actions, ByVal visType As Long, Optional ByRef lngCollideObj As Long = -1) As Boolean
 On Error GoTo ObjectError
 
 
@@ -1405,7 +1213,7 @@ On Error GoTo ObjectError
 '#####################################################################################
 
 
-    If Action = Rotating And (Not Obj.CollideIndex = -1) Then
+    If Action = Rotating And Obj.CollideIndex > -1 Then
 
 '#####################################################################################
 '############# in rotation collision we re-adjsut culling view direction #############
@@ -1413,7 +1221,7 @@ On Error GoTo ObjectError
 
         sngCamera(0, 0) = Obj.Origin.X
         sngCamera(0, 1) = Obj.Origin.Y + 1
-        sngCamera(0, 2) = Obj.Origin.z
+        sngCamera(0, 2) = Obj.Origin.Z
 
         sngCamera(1, 0) = 1
         sngCamera(1, 1) = -1
@@ -1423,8 +1231,10 @@ On Error GoTo ObjectError
         sngCamera(2, 1) = 1
         sngCamera(2, 2) = -1
 
-        Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
-        lCullCalls = lCullCalls + 1
+        If lngFaceCount > 0 Then
+            Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
+            lCullCalls = lCullCalls + 1
+        End If
 
     End If
 
@@ -1437,7 +1247,7 @@ On Error GoTo ObjectError
     Dim Face As Long
     Dim Index As Long
     Dim v(2) As D3DVECTOR
-    Dim n As D3DVECTOR
+    Dim N As D3DVECTOR
 
     Dim matScale As D3DMATRIX
     Dim matMesh As D3DMATRIX
@@ -1448,9 +1258,9 @@ On Error GoTo ObjectError
     D3DXMatrixIdentity matScale
 
     If Action = Scaling Then
-        D3DXMatrixScaling matScale, Obj.Scaled.X + Obj.Scalar.X, Obj.Scaled.Y + Obj.Scalar.Y, Obj.Scaled.z + Obj.Scalar.z
+        D3DXMatrixScaling matScale, Obj.Scaled.X + Obj.Scalar.X, Obj.Scaled.Y + Obj.Scalar.Y, Obj.Scaled.Z + Obj.Scalar.Z
     Else
-        D3DXMatrixScaling matScale, Obj.Scaled.X, Obj.Scaled.Y, Obj.Scaled.z
+        D3DXMatrixScaling matScale, Obj.Scaled.X, Obj.Scaled.Y, Obj.Scaled.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
     
@@ -1464,7 +1274,7 @@ On Error GoTo ObjectError
         D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
         
-        D3DXMatrixRotationZ matRot, ((Obj.Rotate.z + Obj.Twists.z) * (PI / 180))
+        D3DXMatrixRotationZ matRot, ((Obj.Rotate.Z + Obj.Twists.Z) * (PI / 180))
         D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
     Else
@@ -1475,39 +1285,39 @@ On Error GoTo ObjectError
         D3DXMatrixRotationY matRot, (Obj.Rotate.Y * (PI / 180))
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
-        D3DXMatrixRotationZ matRot, (Obj.Rotate.z * (PI / 180))
+        D3DXMatrixRotationZ matRot, (Obj.Rotate.Z * (PI / 180))
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
     End If
 
     If Action = Directing Then
-        D3DXMatrixTranslation matScale, Obj.Origin.X + Obj.Direct.X, Obj.Origin.Y + Obj.Direct.Y, Obj.Origin.z + Obj.Direct.z
+        D3DXMatrixTranslation matScale, Obj.Origin.X + Obj.Direct.X, Obj.Origin.Y + Obj.Direct.Y, Obj.Origin.Z + Obj.Direct.Z
     Else
-        D3DXMatrixTranslation matScale, Obj.Origin.X, Obj.Origin.Y, Obj.Origin.z
+        D3DXMatrixTranslation matScale, Obj.Origin.X, Obj.Origin.Y, Obj.Origin.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
     
             
-    If lngFaceCount > 0 And Obj.CollideIndex <> -1 Then
+    If lngFaceCount > 0 And Obj.CollideIndex > -1 Then
     
 
 '#####################################################################################
 '############# update face data with the transformation matrix #######################
 '#####################################################################################
 
-        For Face = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.MeshIndex).Mesh.GetNumFaces) - 1
+        For Face = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.BoundsIndex).Mesh.GetNumFaces) - 1
     
             For cnt = 0 To 2
                 
-                v(cnt).X = Meshes(Obj.MeshIndex).Verticies(Index + cnt).X
-                v(cnt).Y = Meshes(Obj.MeshIndex).Verticies(Index + cnt).Y
-                v(cnt).z = Meshes(Obj.MeshIndex).Verticies(Index + cnt).z
+                v(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).X
+                v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
+                v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
     
                 D3DXVec3TransformCoord v(cnt), v(cnt), matMesh
                 
                 sngVertexX(cnt, Face) = v(cnt).X
                 sngVertexY(cnt, Face) = v(cnt).Y
-                sngVertexZ(cnt, Face) = v(cnt).z
+                sngVertexZ(cnt, Face) = v(cnt).Z
 
             Next
             
@@ -1521,13 +1331,15 @@ On Error GoTo ObjectError
         Dim lngCollideIdx As Long
         lngCollideIdx = -1
 
-        For cnt = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.MeshIndex).Mesh.GetNumFaces) - 1
+        For cnt = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.BoundsIndex).Mesh.GetNumFaces) - 1
             lngTestCalls = lngTestCalls + 1
             lFacesShown = lFacesShown + lngFaceCount
-            If CBool(Collision(visType, lngFaceCount, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, cnt, lngCollideObj, lngCollideIdx)) Then
-    
-                TestCollision = True
-                GoTo exitfunction
+            If lngFaceCount > 0 Then
+                If CBool(Collision(visType, lngFaceCount, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, cnt, lngCollideObj, lngCollideIdx)) Then
+        
+                    TestCollision = True
+                    GoTo exitfunction
+                End If
             End If
         Next
 
@@ -1539,7 +1351,7 @@ exitfunction:
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
 Public Function TestCollisionEx(ByVal FaceNum As Long, ByVal visType As Long, Optional ByRef objCollision As Long = -1, Optional ByRef objFaceIndex As Long = -1) As Boolean
@@ -1552,9 +1364,11 @@ On Error GoTo ObjectError
 
     lngTestCalls = lngTestCalls + 1
     lFacesShown = lFacesShown + lngFaceCount
-    If CBool(Collision(visType, lngFaceCount, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, FaceNum, objCollision, objFaceIndex)) Then
-        TestCollisionEx = True
-        Exit Function
+    If lngFaceCount > 0 Then
+        If CBool(Collision(visType, lngFaceCount, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, FaceNum, objCollision, objFaceIndex)) Then
+            TestCollisionEx = True
+            Exit Function
+        End If
     End If
 
     TestCollisionEx = False
@@ -1562,93 +1376,96 @@ On Error GoTo ObjectError
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
-Public Function DelCollision(ByRef Obj As MyObject)
+Public Function DelCollision(ByRef Obj As Element)
 On Error GoTo ObjectError
-
+    Stats_Collision_Count = Stats_Collision_Count - 1
+    'Debug.Print "DelCollision"
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
     
-    Index = Meshes(Obj.MeshIndex).Mesh.GetNumFaces
-    If Obj.CollideIndex + Index < lngFaceCount Then
+    Index = Meshes(Obj.BoundsIndex).Mesh.GetNumFaces
+    If lngFaceCount - Index > 0 Then 'Obj.CollideIndex + Index < lngFaceCount Then
 
-        For Face = Obj.CollideIndex To Obj.CollideIndex + Index - 1
-            sngFaceVis(0, Face) = sngFaceVis(0, Index + Face)
-            sngFaceVis(1, Face) = sngFaceVis(1, Index + Face)
-            sngFaceVis(2, Face) = sngFaceVis(2, Index + Face)
-            sngFaceVis(3, Face) = sngFaceVis(3, Index + Face)
-            sngFaceVis(4, Face) = sngFaceVis(4, Index + Face)
-            sngFaceVis(5, Face) = sngFaceVis(5, Index + Face)
-            sngVertexX(0, Face) = sngVertexX(0, Index + Face)
-            sngVertexX(1, Face) = sngVertexX(1, Index + Face)
-            sngVertexX(2, Face) = sngVertexX(2, Index + Face)
-            sngVertexY(0, Face) = sngVertexY(0, Index + Face)
-            sngVertexY(1, Face) = sngVertexY(1, Index + Face)
-            sngVertexY(2, Face) = sngVertexY(2, Index + Face)
-            sngVertexZ(0, Face) = sngVertexZ(0, Index + Face)
-            sngVertexZ(1, Face) = sngVertexZ(1, Index + Face)
-            sngVertexZ(2, Face) = sngVertexZ(2, Index + Face)
+        For Face = Obj.CollideIndex To lngFaceCount - Index - 1 'Obj.CollideIndex + Index - 1
+            sngFaceVis(0, Face) = sngFaceVis(0, Index + Face - 1)
+            sngFaceVis(1, Face) = sngFaceVis(1, Index + Face - 1)
+            sngFaceVis(2, Face) = sngFaceVis(2, Index + Face - 1)
+            sngFaceVis(3, Face) = sngFaceVis(3, Index + Face - 1)
+            sngFaceVis(4, Face) = sngFaceVis(4, Index + Face - 1)
+            sngFaceVis(5, Face) = sngFaceVis(5, Index + Face - 1)
+            sngVertexX(0, Face) = sngVertexX(0, Index + Face - 1)
+            sngVertexX(1, Face) = sngVertexX(1, Index + Face - 1)
+            sngVertexX(2, Face) = sngVertexX(2, Index + Face - 1)
+            sngVertexY(0, Face) = sngVertexY(0, Index + Face - 1)
+            sngVertexY(1, Face) = sngVertexY(1, Index + Face - 1)
+            sngVertexY(2, Face) = sngVertexY(2, Index + Face - 1)
+            sngVertexZ(0, Face) = sngVertexZ(0, Index + Face - 1)
+            sngVertexZ(1, Face) = sngVertexZ(1, Index + Face - 1)
+            sngVertexZ(2, Face) = sngVertexZ(2, Index + Face - 1)
             
-            sngScreenX(0, Face) = sngScreenX(0, Index + Face)
-            sngScreenX(1, Face) = sngScreenX(1, Index + Face)
-            sngScreenX(2, Face) = sngScreenX(2, Index + Face)
-            sngScreenY(0, Face) = sngScreenY(0, Index + Face)
-            sngScreenY(1, Face) = sngScreenY(1, Index + Face)
-            sngScreenY(2, Face) = sngScreenY(2, Index + Face)
-            sngScreenZ(0, Face) = sngScreenZ(0, Index + Face)
-            sngScreenZ(1, Face) = sngScreenZ(1, Index + Face)
-            sngScreenZ(2, Face) = sngScreenZ(2, Index + Face)
+            sngScreenX(0, Face) = sngScreenX(0, Index + Face - 1)
+            sngScreenX(1, Face) = sngScreenX(1, Index + Face - 1)
+            sngScreenX(2, Face) = sngScreenX(2, Index + Face - 1)
+            sngScreenY(0, Face) = sngScreenY(0, Index + Face - 1)
+            sngScreenY(1, Face) = sngScreenY(1, Index + Face - 1)
+            sngScreenY(2, Face) = sngScreenY(2, Index + Face - 1)
+            sngScreenZ(0, Face) = sngScreenZ(0, Index + Face - 1)
+            sngScreenZ(1, Face) = sngScreenZ(1, Index + Face - 1)
+            sngScreenZ(2, Face) = sngScreenZ(2, Index + Face - 1)
             
-            sngZBuffer(0, Face) = sngZBuffer(0, Index + Face)
-            sngZBuffer(1, Face) = sngZBuffer(1, Index + Face)
-            sngZBuffer(2, Face) = sngZBuffer(2, Index + Face)
-            sngZBuffer(3, Face) = sngZBuffer(3, Index + Face)
+            sngZBuffer(0, Face) = sngZBuffer(0, Index + Face - 1)
+            sngZBuffer(1, Face) = sngZBuffer(1, Index + Face - 1)
+            sngZBuffer(2, Face) = sngZBuffer(2, Index + Face - 1)
+            sngZBuffer(3, Face) = sngZBuffer(3, Index + Face - 1)
             
         Next
         
-        For cnt = 1 To ObjectCount
-            If Objects(cnt).CollideIndex > Obj.CollideIndex Then
-                Objects(cnt).CollideIndex = Objects(cnt).CollideIndex - Index
+        Dim e1 As Element
+        For Each e1 In Elements
+        'For cnt = 1 To Elements.count
+            If e1.CollideIndex > Obj.CollideIndex Then
+                e1.CollideIndex = e1.CollideIndex - Index
             End If
         Next
         
-        If Obj.CollideIndex + Index < lngFaceCount - 2 Then
-        
-            For Face = Obj.CollideIndex + Index To lngFaceCount - 2
-                sngFaceVis(0, Face) = sngFaceVis(0, Face + 1)
-                sngFaceVis(1, Face) = sngFaceVis(1, Face + 1)
-                sngFaceVis(2, Face) = sngFaceVis(2, Face + 1)
-                sngFaceVis(3, Face) = sngFaceVis(3, Face + 1)
-                sngFaceVis(4, Face) = sngFaceVis(4, Face + 1)
-                sngFaceVis(5, Face) = sngFaceVis(5, Face + 1)
-                sngVertexX(0, Face) = sngVertexX(0, Face + 1)
-                sngVertexX(1, Face) = sngVertexX(1, Face + 1)
-                sngVertexX(2, Face) = sngVertexX(2, Face + 1)
-                sngVertexY(0, Face) = sngVertexY(0, Face + 1)
-                sngVertexY(1, Face) = sngVertexY(1, Face + 1)
-                sngVertexY(2, Face) = sngVertexY(2, Face + 1)
-                sngVertexZ(0, Face) = sngVertexZ(0, Face + 1)
-                sngVertexZ(1, Face) = sngVertexZ(1, Face + 1)
-                sngVertexZ(2, Face) = sngVertexZ(2, Face + 1)
-                
-                sngScreenX(0, Face) = sngScreenX(0, Face + 1)
-                sngScreenX(1, Face) = sngScreenX(1, Face + 1)
-                sngScreenX(2, Face) = sngScreenX(2, Face + 1)
-                sngScreenY(0, Face) = sngScreenY(0, Face + 1)
-                sngScreenY(1, Face) = sngScreenY(1, Face + 1)
-                sngScreenY(2, Face) = sngScreenY(2, Face + 1)
-                sngScreenZ(0, Face) = sngScreenZ(0, Face + 1)
-                sngScreenZ(1, Face) = sngScreenZ(1, Face + 1)
-                sngScreenZ(2, Face) = sngScreenZ(2, Face + 1)
-                
-                sngZBuffer(0, Face) = sngZBuffer(0, Face + 1)
-                sngZBuffer(1, Face) = sngZBuffer(1, Face + 1)
-                sngZBuffer(2, Face) = sngZBuffer(2, Face + 1)
-                sngZBuffer(3, Face) = sngZBuffer(3, Face + 1)
-            Next
-        End If
+'        If Obj.CollideIndex + Index < lngFaceCount - 2 Then
+'
+'            For Face = Obj.CollideIndex + Index To lngFaceCount - 2
+'                sngFaceVis(0, Face) = sngFaceVis(0, Face + 1)
+'                sngFaceVis(1, Face) = sngFaceVis(1, Face + 1)
+'                sngFaceVis(2, Face) = sngFaceVis(2, Face + 1)
+'                sngFaceVis(3, Face) = sngFaceVis(3, Face + 1)
+'                sngFaceVis(4, Face) = sngFaceVis(4, Face + 1)
+'                sngFaceVis(5, Face) = sngFaceVis(5, Face + 1)
+'                sngVertexX(0, Face) = sngVertexX(0, Face + 1)
+'                sngVertexX(1, Face) = sngVertexX(1, Face + 1)
+'                sngVertexX(2, Face) = sngVertexX(2, Face + 1)
+'                sngVertexY(0, Face) = sngVertexY(0, Face + 1)
+'                sngVertexY(1, Face) = sngVertexY(1, Face + 1)
+'                sngVertexY(2, Face) = sngVertexY(2, Face + 1)
+'                sngVertexZ(0, Face) = sngVertexZ(0, Face + 1)
+'                sngVertexZ(1, Face) = sngVertexZ(1, Face + 1)
+'                sngVertexZ(2, Face) = sngVertexZ(2, Face + 1)
+'
+'                sngScreenX(0, Face) = sngScreenX(0, Face + 1)
+'                sngScreenX(1, Face) = sngScreenX(1, Face + 1)
+'                sngScreenX(2, Face) = sngScreenX(2, Face + 1)
+'                sngScreenY(0, Face) = sngScreenY(0, Face + 1)
+'                sngScreenY(1, Face) = sngScreenY(1, Face + 1)
+'                sngScreenY(2, Face) = sngScreenY(2, Face + 1)
+'                sngScreenZ(0, Face) = sngScreenZ(0, Face + 1)
+'                sngScreenZ(1, Face) = sngScreenZ(1, Face + 1)
+'                sngScreenZ(2, Face) = sngScreenZ(2, Face + 1)
+'
+'                sngZBuffer(0, Face) = sngZBuffer(0, Face + 1)
+'                sngZBuffer(1, Face) = sngZBuffer(1, Face + 1)
+'                sngZBuffer(2, Face) = sngZBuffer(2, Face + 1)
+'                sngZBuffer(3, Face) = sngZBuffer(3, Face + 1)
+'            Next
+'        End If
         
     End If
     
@@ -1670,20 +1487,27 @@ On Error GoTo ObjectError
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
-Public Function DelCollisionEx(ByVal CollideIndex As Long, ByVal NumFaces As Long)
-On Error GoTo ObjectError
 
+
+Public Function DelCollisionEx(ByRef CollideIndex As Long, ByVal NumFaces As Long)
+On Error GoTo ObjectError
+    Stats_CollisionEx_Count = Stats_CollisionEx_Count - 1
+    'Debug.Print "DelCollisionEx"
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
     
     Index = NumFaces
-    If CollideIndex + Index < lngFaceCount Then
+    
+    If lngFaceCount - Index > 0 Then 'Obj.CollideIndex + Index < lngFaceCount Then
 
-        For Face = CollideIndex To CollideIndex + Index - 1
+        For Face = CollideIndex To lngFaceCount - Index - 1 'Obj.CollideIndex + Index - 1
+'    If CollideIndex + Index < lngFaceCount Then
+'
+'        For Face = CollideIndex To CollideIndex + Index - 1
             sngFaceVis(0, Face) = sngFaceVis(0, Index + Face)
             sngFaceVis(1, Face) = sngFaceVis(1, Index + Face)
             sngFaceVis(2, Face) = sngFaceVis(2, Index + Face)
@@ -1717,50 +1541,53 @@ On Error GoTo ObjectError
             
         Next
         
-        For cnt = 1 To ObjectCount
-            If Objects(cnt).CollideIndex > CollideIndex Then
-                Objects(cnt).CollideIndex = Objects(cnt).CollideIndex - Index
+        Dim e1 As Element
+        For Each e1 In Elements
+        'For cnt = 1 To Elements.Count
+            If e1.CollideIndex > CollideIndex Then
+                e1.CollideIndex = e1.CollideIndex - Index
             End If
         Next
         
-        If CollideIndex + Index < lngFaceCount - 2 Then
-        
-            For Face = CollideIndex + Index To lngFaceCount - 2
-                sngFaceVis(0, Face) = sngFaceVis(0, Face + 1)
-                sngFaceVis(1, Face) = sngFaceVis(1, Face + 1)
-                sngFaceVis(2, Face) = sngFaceVis(2, Face + 1)
-                sngFaceVis(3, Face) = sngFaceVis(3, Face + 1)
-                sngFaceVis(4, Face) = sngFaceVis(4, Face + 1)
-                sngFaceVis(5, Face) = sngFaceVis(5, Face + 1)
-                sngVertexX(0, Face) = sngVertexX(0, Face + 1)
-                sngVertexX(1, Face) = sngVertexX(1, Face + 1)
-                sngVertexX(2, Face) = sngVertexX(2, Face + 1)
-                sngVertexY(0, Face) = sngVertexY(0, Face + 1)
-                sngVertexY(1, Face) = sngVertexY(1, Face + 1)
-                sngVertexY(2, Face) = sngVertexY(2, Face + 1)
-                sngVertexZ(0, Face) = sngVertexZ(0, Face + 1)
-                sngVertexZ(1, Face) = sngVertexZ(1, Face + 1)
-                sngVertexZ(2, Face) = sngVertexZ(2, Face + 1)
-                
-                sngScreenX(0, Face) = sngScreenX(0, Face + 1)
-                sngScreenX(1, Face) = sngScreenX(1, Face + 1)
-                sngScreenX(2, Face) = sngScreenX(2, Face + 1)
-                sngScreenY(0, Face) = sngScreenY(0, Face + 1)
-                sngScreenY(1, Face) = sngScreenY(1, Face + 1)
-                sngScreenY(2, Face) = sngScreenY(2, Face + 1)
-                sngScreenZ(0, Face) = sngScreenZ(0, Face + 1)
-                sngScreenZ(1, Face) = sngScreenZ(1, Face + 1)
-                sngScreenZ(2, Face) = sngScreenZ(2, Face + 1)
-                
-                sngZBuffer(0, Face) = sngZBuffer(0, Face + 1)
-                sngZBuffer(1, Face) = sngZBuffer(1, Face + 1)
-                sngZBuffer(2, Face) = sngZBuffer(2, Face + 1)
-                sngZBuffer(3, Face) = sngZBuffer(3, Face + 1)
-            Next
-        End If
+'        If CollideIndex + Index < lngFaceCount - 2 Then
+'
+'            For Face = CollideIndex + Index To lngFaceCount - 2
+'                sngFaceVis(0, Face) = sngFaceVis(0, Face + 1)
+'                sngFaceVis(1, Face) = sngFaceVis(1, Face + 1)
+'                sngFaceVis(2, Face) = sngFaceVis(2, Face + 1)
+'                sngFaceVis(3, Face) = sngFaceVis(3, Face + 1)
+'                sngFaceVis(4, Face) = sngFaceVis(4, Face + 1)
+'                sngFaceVis(5, Face) = sngFaceVis(5, Face + 1)
+'                sngVertexX(0, Face) = sngVertexX(0, Face + 1)
+'                sngVertexX(1, Face) = sngVertexX(1, Face + 1)
+'                sngVertexX(2, Face) = sngVertexX(2, Face + 1)
+'                sngVertexY(0, Face) = sngVertexY(0, Face + 1)
+'                sngVertexY(1, Face) = sngVertexY(1, Face + 1)
+'                sngVertexY(2, Face) = sngVertexY(2, Face + 1)
+'                sngVertexZ(0, Face) = sngVertexZ(0, Face + 1)
+'                sngVertexZ(1, Face) = sngVertexZ(1, Face + 1)
+'                sngVertexZ(2, Face) = sngVertexZ(2, Face + 1)
+'
+'                sngScreenX(0, Face) = sngScreenX(0, Face + 1)
+'                sngScreenX(1, Face) = sngScreenX(1, Face + 1)
+'                sngScreenX(2, Face) = sngScreenX(2, Face + 1)
+'                sngScreenY(0, Face) = sngScreenY(0, Face + 1)
+'                sngScreenY(1, Face) = sngScreenY(1, Face + 1)
+'                sngScreenY(2, Face) = sngScreenY(2, Face + 1)
+'                sngScreenZ(0, Face) = sngScreenZ(0, Face + 1)
+'                sngScreenZ(1, Face) = sngScreenZ(1, Face + 1)
+'                sngScreenZ(2, Face) = sngScreenZ(2, Face + 1)
+'
+'                sngZBuffer(0, Face) = sngZBuffer(0, Face + 1)
+'                sngZBuffer(1, Face) = sngZBuffer(1, Face + 1)
+'                sngZBuffer(2, Face) = sngZBuffer(2, Face + 1)
+'                sngZBuffer(3, Face) = sngZBuffer(3, Face + 1)
+'            Next
+'        End If
         
     End If
     
+    CollideIndex = -1
     lngObjCount = lngObjCount - 1
     lngFaceCount = lngFaceCount - Index
     
@@ -1778,27 +1605,28 @@ On Error GoTo ObjectError
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
 
-Public Function AddCollision(ByRef Obj As MyObject, Optional ByVal visType As Long = 0) As Long
+Public Function AddCollision(ByRef Obj As Element, Optional ByVal visType As Long = 0) As Long
 On Error GoTo ObjectError
-
+    Stats_Collision_Count = Stats_Collision_Count + 1
 '#####################################################################################
 '############# create face data for a mesh to external compatability #################
 '#####################################################################################
-
+    'Debug.Print "AddCollision"
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
-    Dim v() As D3DVERTEX
+    
+    Dim v() As D3DVECTOR
 
-    Dim v1 As D3DVECTOR
-    Dim v2 As D3DVECTOR
+    Dim V1 As D3DVECTOR
+    Dim V2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
-    ReDim v(0 To 3) As D3DVERTEX
+    ReDim v(0 To 3) As D3DVECTOR
 
     Obj.CollideIndex = lngFaceCount
     AddCollision = lngFaceCount
@@ -1806,19 +1634,22 @@ On Error GoTo ObjectError
     Dim FaceCount As Long
     Dim addingFace As Boolean
 
+    
     Index = 0
-    For Face = 0 To Meshes(Obj.MeshIndex).Mesh.GetNumFaces - 1
+    For Face = 0 To Meshes(Obj.BoundsIndex).Mesh.GetNumFaces - 1
 
         For cnt = 0 To 2
 
-            v(cnt).X = Meshes(Obj.MeshIndex).Verticies(Meshes(Obj.MeshIndex).Indicies(Index + cnt)).X
-            v(cnt).Y = Meshes(Obj.MeshIndex).Verticies(Meshes(Obj.MeshIndex).Indicies(Index + cnt)).Y
-            v(cnt).z = Meshes(Obj.MeshIndex).Verticies(Meshes(Obj.MeshIndex).Indicies(Index + cnt)).z
+            v(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).X
+            v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
+            v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
 
-            D3DXVec3TransformCoord vn, ConvertVertexToVector(v(cnt)), Obj.Matrix
+            'D3DXVec3TransformCoord vn, v(cnt), matObject
+            vn = ToVector(Obj.PointMatrix(ToPoint(v(cnt))))
+            
             v(cnt).X = vn.X
             v(cnt).Y = vn.Y
-            v(cnt).z = vn.z
+            v(cnt).Z = vn.Z
         Next
 
         ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
@@ -1832,19 +1663,19 @@ On Error GoTo ObjectError
 
         ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
         
-        vn = TriangleNormal(ConvertVertexToVector(v(0)), ConvertVertexToVector(v(1)), ConvertVertexToVector(v(2)))
+        vn = TriangleNormal(v(0), v(1), v(2))
         
         For cnt = 0 To 2
 
             sngVertexX(cnt, lngFaceCount) = v(cnt).X
             sngVertexY(cnt, lngFaceCount) = v(cnt).Y
-            sngVertexZ(cnt, lngFaceCount) = v(cnt).z
+            sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
 
         Next
 
         sngFaceVis(0, lngFaceCount) = vn.X
         sngFaceVis(1, lngFaceCount) = vn.Y
-        sngFaceVis(2, lngFaceCount) = vn.z
+        sngFaceVis(2, lngFaceCount) = vn.Z
         sngFaceVis(3, lngFaceCount) = visType
         sngFaceVis(4, lngFaceCount) = lngObjCount
 
@@ -1863,19 +1694,21 @@ On Error GoTo ObjectError
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
+
 
 Public Function AddCollisionEx(ByRef Verticies() As D3DVECTOR, ByVal NumFaces As Long, Optional ByVal visType As Long = 0) As Long
 On Error GoTo ObjectError
-
+    Stats_CollisionEx_Count = Stats_CollisionEx_Count + 1
+    'Debug.Print "AddCollisionEx"
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
     Dim v() As D3DVECTOR
 
-    Dim v1 As D3DVECTOR
-    Dim v2 As D3DVECTOR
+    Dim V1 As D3DVECTOR
+    Dim V2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
     ReDim v(0 To 3) As D3DVECTOR
@@ -1892,7 +1725,7 @@ On Error GoTo ObjectError
             
             v(cnt).X = Verticies(Index + cnt).X
             v(cnt).Y = Verticies(Index + cnt).Y
-            v(cnt).z = Verticies(Index + cnt).z
+            v(cnt).Z = Verticies(Index + cnt).Z
                         
         Next
         
@@ -1913,13 +1746,13 @@ On Error GoTo ObjectError
             
             sngVertexX(cnt, lngFaceCount) = v(cnt).X
             sngVertexY(cnt, lngFaceCount) = v(cnt).Y
-            sngVertexZ(cnt, lngFaceCount) = v(cnt).z
+            sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
 
         Next
 
         sngFaceVis(0, lngFaceCount) = vn.X
         sngFaceVis(1, lngFaceCount) = vn.Y
-        sngFaceVis(2, lngFaceCount) = vn.z
+        sngFaceVis(2, lngFaceCount) = vn.Z
         sngFaceVis(3, lngFaceCount) = visType
         sngFaceVis(4, lngFaceCount) = lngObjCount
 
@@ -1936,227 +1769,27 @@ On Error GoTo ObjectError
     Exit Function
 ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
 
 Public Sub RenderPortals()
-On Error GoTo ObjectError
-
-    Dim pos As D3DVECTOR
-    
-    Dim cnt3 As Long
-    Dim cnt2 As Long
-    
-    Dim cnt As Long
-    Dim Obj As Long
-    
-    Dim id As String
-    Dim trig As String
-    Dim line As String
-                            
-    Dim a As Long
-    Dim act As MyActivity
-    
-    If PortalCount > 0 Then
-        For cnt = 1 To PortalCount
-'            ParseSetGet 0, "$beaconPortal" & cnt & ".x", Portals(cnt).Location.X
-'            ParseSetGet 0, "$beaconPortal" & cnt & ".y", Portals(cnt).Location.Y
-'            ParseSetGet 0, "$beaconPortal" & cnt & ".z", Portals(cnt).Location.z
+     
+    If Portals.Count > 0 Then
+        Dim t1 As Portal
+        
+        For Each t1 In Portals
             
-            If Portals(cnt).Enable Then
-                If (Distance(Player.Object.Origin, Portals(cnt).Location) <= Portals(cnt).Range) Then
-    
-                    If Not ((Portals(cnt).Teleport.X = 0) And (Portals(cnt).Teleport.Y = 0) And (Portals(cnt).Teleport.z = 0)) Then
-                        pos = Player.Object.Origin
-                        If ObjectCount > 0 Then
-                            For cnt2 = 1 To ObjectCount
-                                If Objects(cnt2).CollideIndex > -1 Then
-                                    If Not Objects(cnt2).CollideIndex = Player.Object.CollideIndex And Objects(cnt2).Gravitational Then
-                                        For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                            sngFaceVis(3, cnt3) = 1
-                                        Next
-                                    ElseIf Objects(cnt2).CollideIndex = Player.Object.CollideIndex Then
-                                        For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                            sngFaceVis(3, cnt3) = 1
-                                        Next
-                                    Else
-                                        For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                            sngFaceVis(3, cnt3) = 0
-                                        Next
-                                    End If
-                                End If
-                            Next
-                        End If
-                        Player.Object.Origin = Portals(cnt).Teleport
-                        If TestCollision(Player.Object, Actions.None, 1) Then
-                            Player.Object.Origin = pos
-                            FadeMessage "Teleport error: simultaneous spawn attempt."
-                        Else
-                            Do While Player.Object.ActivityCount > 0
-                                DeleteActivity Player.Object, Player.Object.Activities(1).Identity
-                            Loop
-                        End If
-                    End If
-                    If Portals(cnt).ClearActivities Then
-                        Do While Player.Object.ActivityCount > 0
-                            DeleteActivity Player.Object, Player.Object.Activities(1).Identity
-                        Loop
-                    End If
-                    If Portals(cnt).ActivityCount > 0 Then
-                        For a = 1 To Portals(cnt).ActivityCount
-                            act = Portals(cnt).Activities(a)
-                            AddActivity Player.Object, act.Action, Portals(cnt).Activities(a).Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                        Next
-                    
-                    End If
-                    If Portals(cnt).OnInRange <> "" Then
-                        line = NextArg(Portals(cnt).OnInRange, ":")
-                        trig = RemoveArg(Portals(cnt).OnInRange, ":")
-                        If Left(Trim(trig), 1) = "<" Then
-                            id = RemoveQuotedArg(trig, "<", ">") & ","
-                            If ((InStr(id, Player.Object.Identity & ",") > 0) And (Player.Object.Identity <> "")) Or (id = ",") Then
-                                ParseLand CLng(line), trig
-                            End If
-                        Else
-                            ParseLand CLng(line), trig
-                        End If
-                    End If
-                Else
-                    If Portals(cnt).OnOutRange <> "" Then
-                        line = NextArg(Portals(cnt).OnOutRange, ":")
-                        trig = RemoveArg(Portals(cnt).OnOutRange, ":")
-                        If Left(Trim(trig), 1) = "<" Then
-                            id = RemoveQuotedArg(trig, "<", ">") & ","
-                            If ((InStr(id, Player.Object.Identity & ",") > 0) And (Player.Object.Identity <> "")) Or (id = ",") Then
-                                ParseLand CLng(line), trig
-                            End If
-                        Else
-                            ParseLand CLng(line), trig
-                        End If
-                    End If
-                End If
-
-                If ObjectCount > 0 Then
+            If t1.Enabled Then
+            
+                RenderPortals2 t1, Player
                 
-                    Dim txtobj As String
-                        
-                    For Obj = 1 To ObjectCount
+                If Elements.Count > 0 Then
+                    Dim e1 As Element
                     
-                        cnt3 = 0
-                        If Objects(Obj).FolcrumCount > 0 Then
-                          '  Static added As Boolean
-                            
-                            For cnt2 = 1 To Objects(Obj).FolcrumCount
+                    For Each e1 In Elements
 
-                                
-                                pos.X = Objects(Obj).Folcrum(cnt2).X
-                                pos.Y = Objects(Obj).Folcrum(cnt2).Y
-                                pos.z = Objects(Obj).Folcrum(cnt2).z
+                        RenderPortals2 t1, e1
 
-                    
-                                D3DXVec3TransformCoord pos, pos, Objects(Obj).Matrix
-                                
-'                                If Not added Then
-'                                    txtobj = "beacon" & vbCrLf & "{" & vbCrLf
-'                                    txtobj = txtobj & "identity beaconFolcrum" & cnt2 & vbCrLf
-'                                    txtobj = txtobj & "visible true" & vbCrLf
-'                                    txtobj = txtobj & "percentxy 100 100" & vbCrLf
-'                                    txtobj = txtobj & "origin " & CSng(pos.X) & " " & CSng(pos.Y) & " " & CSng(pos.z) & vbCrLf
-'                                    txtobj = txtobj & "blackalpha" & vbCrLf
-'                                    txtobj = txtobj & "filename bubble.bmp" & vbCrLf
-'                                    txtobj = txtobj & "beaconlight 1" & vbCrLf
-'                                    txtobj = txtobj & "verticallock" & vbCrLf
-'                                    txtobj = txtobj & "}" & vbCrLf
-'                                    ParseLand 0, txtobj
-'                                Else
-'                                    ParseSetGet 0, "$beaconFolcrum" & cnt2 & ".x", pos.X
-'                                    ParseSetGet 0, "$beaconFolcrum" & cnt2 & ".y", pos.Y
-'                                    ParseSetGet 0, "$beaconFolcrum" & cnt2 & ".z", pos.z
-'
-'                                End If
-                                
-                                cnt3 = CInt(Distance(MakeVector(pos.X, pos.Y, pos.z), Portals(cnt).Location) <= Portals(cnt).Range)
-                                                
-                                If cnt3 = -1 Then Exit For
-                            Next
-                          '  added = True
-                            
-                        ElseIf (Distance(Objects(Obj).Origin, Portals(cnt).Location) <= Portals(cnt).Range) Then
-                            cnt3 = -1
-                        End If
-
-                        If cnt3 = -1 Then
-
-                                If Not ((Portals(cnt).Teleport.X = 0) And (Portals(cnt).Teleport.Y = 0) And (Portals(cnt).Teleport.z = 0)) Then
-                                    pos = Objects(Obj).Origin
-                                    If ObjectCount > 0 Then
-                                        For cnt2 = 1 To ObjectCount
-                                            If Objects(cnt2).CollideIndex > -1 Then
-                                                If Not Objects(cnt2).CollideIndex = Objects(Obj).CollideIndex And Objects(cnt2).Gravitational Then
-                                                    For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                                        sngFaceVis(3, cnt3) = 1
-                                                    Next
-                                                ElseIf Objects(cnt2).CollideIndex = Objects(Obj).CollideIndex Then
-                                                    For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                                        sngFaceVis(3, cnt3) = 1
-                                                    Next
-                                                Else
-                                                    For cnt3 = Objects(cnt2).CollideIndex To (Objects(cnt2).CollideIndex + Meshes(Objects(cnt2).MeshIndex).Mesh.GetNumFaces) - 1
-                                                        sngFaceVis(3, cnt3) = 0
-                                                    Next
-                                                End If
-                                            End If
-                                        Next
-                                    End If
-                                    Objects(Obj).Origin = Portals(cnt).Teleport
-                                    If TestCollision(Objects(Obj), Actions.None, 1) Then
-                                        Objects(Obj).Origin = pos
-                                    Else
-                                        Do While Objects(Obj).ActivityCount > 0
-                                            DeleteActivity Objects(Obj), Objects(Obj).Activities(1).Identity
-                                        Loop
-                                    End If
-                                End If
-                                If Portals(cnt).ClearActivities Then
-                                    Do While Objects(Obj).ActivityCount > 0
-                                        DeleteActivity Objects(Obj), Objects(Obj).Activities(1).Identity
-                                    Loop
-                                End If
-                                If Portals(cnt).ActivityCount > 0 Then
-                                   
-                                    For a = 1 To Portals(cnt).ActivityCount
-                                        act = Portals(cnt).Activities(a)
-                                        AddActivity Objects(Obj), act.Action, Portals(cnt).Activities(a).Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.OnEvent
-                                    Next
-                                
-                                End If
-                                If (Portals(cnt).OnInRange <> "") Then
-                                    line = NextArg(Portals(cnt).OnInRange, ":")
-                                    trig = RemoveArg(Portals(cnt).OnInRange, ":")
-                                    If Left(Trim(trig), 1) = "<" Then
-                                        id = RemoveQuotedArg(trig, "<", ">") & ","
-                                        If ((InStr(id, Objects(Obj).Identity & ",") > 0) And (Objects(Obj).Identity <> "")) Or (id = ",") Then
-                                            ParseLand line, trig
-                                        End If
-                                    Else
-                                        ParseLand line, trig
-                                    End If
-                                End If
-                            Else
-                                If (Portals(cnt).OnOutRange <> "") Then
-                                    line = NextArg(Portals(cnt).OnOutRange, ":")
-                                    trig = RemoveArg(Portals(cnt).OnOutRange, ":")
-                                    If Left(Trim(trig), 1) = "<" Then
-                                        id = RemoveQuotedArg(trig, "<", ">") & ","
-                                        If ((InStr(id, Objects(Obj).Identity & ",") > 0) And (Objects(Obj).Identity <> "")) Or (id = ",") Then
-                                            ParseLand line, trig
-                                        End If
-                                    Else
-                                        ParseLand line, trig
-                                    End If
-                                End If
-                            'End If
-                        End If
                     Next
                 End If
                 
@@ -2165,21 +1798,184 @@ On Error GoTo ObjectError
     End If
 
     Exit Sub
-ObjectError:
-    If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+
 End Sub
+
+Private Sub RenderPortals2(ByRef t1 As Portal, ByRef e1 As Element)
+On Error GoTo scripterror
+
+       
+    Dim pos As D3DVECTOR
+    
+    Dim cnt3 As Long
+    Dim cnt2 As Long
+    
+    Dim cnt As Long
+    Dim Obj As Long
+                            
+    Dim A As Long
+    Dim act As Motion
+    Dim txtobj As String
+    Dim errline As Long
+    Dim errsource As String
+
+    Dim e2 As Element
+        
+    If (DistanceEx(e1.Origin, t1.Location) <= t1.Range) Then
+
+        If Not ((t1.Teleport.X = 0) And (t1.Teleport.Y = 0) And (t1.Teleport.Z = 0)) Then
+            pos = ToVector(e1.Origin)
+            If Elements.Count > 0 Then
+                For Each e2 In Elements
+                    If e1.Collision Then
+                        If e2.CollideIndex > -1 Then
+                            If Not e2.CollideIndex = e1.CollideIndex And e2.Gravitational Then
+                                For cnt3 = e2.CollideIndex To (e2.CollideIndex + Meshes(e2.BoundsIndex).Mesh.GetNumFaces) - 1
+                                    sngFaceVis(3, cnt3) = 1
+                                Next
+                            ElseIf e2.CollideIndex = e1.CollideIndex Then
+                                For cnt3 = e2.CollideIndex To (e2.CollideIndex + Meshes(e2.BoundsIndex).Mesh.GetNumFaces) - 1
+                                    sngFaceVis(3, cnt3) = 1
+                                Next
+                            Else
+                                For cnt3 = e2.CollideIndex To (e2.CollideIndex + Meshes(e2.BoundsIndex).Mesh.GetNumFaces) - 1
+                                    sngFaceVis(3, cnt3) = 0
+                                Next
+                            End If
+                        End If
+                    End If
+                Next
+            End If
+            e1.Origin = t1.Teleport
+            If e1.Collision Then
+                If TestCollision(e1, Actions.None, 1) Then
+                    Set e1.Origin = ToPoint(pos)
+                Else
+                    e1.ClearMotions
+                End If
+            End If
+        End If
+        If t1.DropsMotions Then
+            e1.ClearMotions
+        End If
+        
+        If t1.Motions.Count > 0 Then
+            For A = 1 To t1.Motions.Count
+                Set act = t1.Motions(A)
+                e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
+            Next
+        End If
+
+        
+        If Not t1.OnInRange Is Nothing Then
+        
+            If InStr(t1.OnInRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
+            
+                If Not t1.OnInRange.RunFlag Then
+                    t1.OnInRange.RunFlag = True
+                    errsource = "OnInRange"
+                    errline = CLng(t1.OnInRange.StartLine)
+                    
+                    frmMain.Run t1.OnInRange.RunMethod, e1.Key, errline
+                    Debug.Print "OnInRange " & t1.Key & " " & e1.Key
+                End If
+                
+                If Not t1.OnOutRange Is Nothing Then
+                    t1.OnOutRange.RunFlag = False
+                End If
+                
+            End If
+            
+        End If
+        
+
+        
+
+    Else
+        If Not t1.OnOutRange Is Nothing Then
+        
+            If InStr(t1.OnOutRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnOutRange.AppliesTo = "" Then
+
+                If Not t1.OnOutRange.RunFlag Then
+                    t1.OnOutRange.RunFlag = True
+                    errsource = "OnOutRange"
+                    errline = CLng(t1.OnOutRange.StartLine)
+                    frmMain.Run t1.OnOutRange.RunMethod, e1.Key, errline
+                    Debug.Print "OnOutRange " & t1.Key & " " & e1.Key
+                                        
+                End If
+               
+                If Not t1.OnInRange Is Nothing Then
+                    t1.OnInRange.RunFlag = False
+                End If
+            End If
+            
+        End If
+        
+
+        
+
+    End If
+
+scripterror:
+    If Err.Number = 6 Or Err.Number = 11 Then Resume
+    If Err.Number <> 0 Then
+        DoEvents
+    
+        If Not ConsoleVisible Then
+            ConsoleToggle
+        End If
+        Process "echo An error " & Err.Number & " occurd in " & errsource & _
+        "\nIn the event starting at Line: " & errline & _
+        "\nError: " & Err.Description
+        'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
+        
+        If frmMain.ScriptControl1.Error.Number <> 0 Then frmMain.ScriptControl1.Error.Clear
+        If Err.Number <> 0 Then Err.Clear
+    End If
+
+End Sub
+Private Sub ExecuteScript(ByRef e1 As Element, ByVal EventText As String)
+    Dim trig As String
+    Dim line As String
+    Dim id As String
+        
+    line = NextArg(EventText, ":")
+    trig = RemoveArg(EventText, ":")
+    If Left(Trim(trig), 1) = "<" Then
+        id = RemoveQuotedArg(trig, "<", ">") & ","
+        If ((InStr(id, e1.Key & ",") > 0) And (e1.Key <> "")) Or (id = ",") Then
+            If IsNumeric(line) And trig <> "" Then
+                frmMain.ExecuteStatement trig, e1.Key, CLng(line)
+            ElseIf trig <> "" Then
+                frmMain.ExecuteStatement trig, e1.Key
+            Else
+                frmMain.ExecuteStatement trig, line
+            End If
+        End If
+    Else
+        If IsNumeric(line) And trig <> "" Then
+            frmMain.ExecuteStatement trig, e1.Key, CLng(line)
+        ElseIf trig <> "" Then
+            frmMain.ExecuteStatement trig, e1.Key
+        Else
+            frmMain.ExecuteStatement trig, line
+        End If
+    End If
+
+End Sub
+
 
 Private Function GetClosestCamera(Optional ByVal Exclude As String = "") As Long
 
     Dim cnt As Long
     Dim Dist As Single
     Dim past As Single
-    If CameraCount > 0 Then
+    If Cameras.Count > 0 Then
         Static toggle As Boolean
         toggle = Not toggle
-        For cnt = IIf(toggle, 1, CameraCount) To IIf(toggle, CameraCount, 1) Step IIf(toggle, 1, -1)
-            Dist = Distance(Player.Object.Origin, Cameras(cnt).Location)
+        For cnt = IIf(toggle, 1, Cameras.Count) To IIf(toggle, Cameras.Count, 1) Step IIf(toggle, 1, -1)
+            Dist = DistanceEx(Player.Origin, Cameras(cnt).Origin)
             If ((Dist <= past) Or (past = 0)) And (InStr(Exclude, cnt & ",") = 0) Then
                 GetClosestCamera = cnt
                 past = Dist
@@ -2195,8 +1991,8 @@ On Error GoTo CameraError
     Dim cnt2 As Long
     Dim Dist As Single
     Dim past As Long
-    Dim v1 As D3DVECTOR
-    Dim v2 As D3DVECTOR
+    Dim V1 As D3DVECTOR
+    Dim V2 As D3DVECTOR
     
     
     Dim pos As D3DVECTOR
@@ -2206,26 +2002,29 @@ On Error GoTo CameraError
     
     Dim dot As Single
     Dim v As D3DVECTOR
-    Dim n As D3DVECTOR
+    Dim N As D3DVECTOR
     
     Dim verts(0 To 2) As D3DVECTOR
     Dim lastCam As Long
     'two quests about cameras
     '1 default projection should be in short range leainant not to turning camera around rather to a any range put projection variance in direction
-    '2 movement from one camera to the next could have a flying adaptation in a swing and out of the constructs way while it flies to genral next 1
+    '2 movement from one camera to the Next could have a flying adaptation in a swing and out of the constructs way while it flies to genral Next 1
         
     If Perspective = Playmode.CameraMode Then
     
-        If CameraCount > 0 Then
+        If Cameras.Count > 0 Then
             
-            If (ObjectCount > 0) Then
-                For cnt = 1 To ObjectCount
-                    If ((Objects(cnt).Effect = Collides.Ground) Or (Objects(cnt).Effect = Collides.InDoor)) And (Objects(cnt).CollideIndex > -1) Then
-                        For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+            If (Elements.Count > 0) Then
+                Dim e1 As Element
+                For Each e1 In Elements
+                
+                'For cnt = 1 To Elements.count
+                    If ((e1.Effect = Collides.Ground) Or (e1.Effect = Collides.InDoor)) And (e1.CollideIndex > -1) Then
+                        For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                             sngFaceVis(3, cnt2) = 1
                         Next
-                    ElseIf (Objects(cnt).CollideIndex > -1) Then
-                        For cnt2 = Objects(cnt).CollideIndex To (Objects(cnt).CollideIndex + Meshes(Objects(cnt).MeshIndex).Mesh.GetNumFaces) - 1
+                    ElseIf (e1.CollideIndex > -1) Then
+                        For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                             sngFaceVis(3, cnt2) = 0
                         Next
                     End If
@@ -2242,70 +2041,71 @@ On Error GoTo CameraError
                 touched = False
                         
                 If (cnt > 0) Then
-
-                    verts(0) = Player.Object.Origin
-                    verts(1) = VectorAdd(Player.Object.Origin, MakeVector(0, -0.01, 0))
-                    verts(2) = Cameras(cnt).Location
-
-                    Face = AddCollisionEx(verts, 1)
-                    touched = TestCollisionEx(Face, 1)
-                    DelCollisionEx Face, 1
-
-                    If (ClassifyPoint(v1, v1, v1, Player.Object.Origin) = 1) Then touched = True
-
-
-                    If Not touched Then
-                        
-                        
-                        v1 = VectorSubtract(MakeVector(Cameras(cnt).Location.X + Sin(D720 - Cameras(cnt).Angle), _
-                                                                        Cameras(cnt).Location.Y - Tan(D720 - Cameras(cnt).Pitch), _
-                                                                        Cameras(cnt).Location.z + Cos(D720 - Cameras(cnt).Angle)), _
-                                                                        Cameras(cnt).Location)
-                                                                        
-                        v2 = VectorSubtract(MakeVector(Player.Object.Origin.X - Sin(D720 - Cameras(cnt).Angle), _
-                                                        Player.Object.Origin.Y + Tan(D720 - Cameras(cnt).Pitch), _
-                                                        Player.Object.Origin.z - Cos(D720 - Cameras(cnt).Angle)), _
-                                                        Cameras(cnt).Location)
-                        
-                        If ((v2.X > 0 And v1.X > 0) Or (v2.X < 0 And v1.X < 0)) And _
-                            ((v2.Y > 0 And v1.Y > 0) Or (v2.Y < 0 And v1.Y < 0)) And _
-                            ((v2.z > 0 And v1.z > 0) Or (v2.z < 0 And v1.z < 0)) Then
-                            touched = False
+                    With Cameras(cnt)
+                    
+                        verts(0) = ToVector(Player.Origin)
+                        verts(1) = VectorAdd(ToVector(Player.Origin), MakeVector(0, -0.01, 0))
+                        verts(2) = ToVector(.Origin)
+    
+                        Face = AddCollisionEx(verts, 1)
+                        touched = TestCollisionEx(Face, 1)
+                        DelCollisionEx Face, 1
+    
+                        If (ClassifyPoint(V1, V1, V1, ToVector(Player.Origin)) = 1) Then touched = True
+    
+    
+                        If Not touched Then
                             
+                            
+                            V1 = VectorSubtract(MakeVector(.Origin.X + Sin(D720 - .angle), _
+                                                                            .Origin.Y - Tan(D720 - .Pitch), _
+                                                                            .Origin.Z + Cos(D720 - .angle)), _
+                                                                            ToVector(.Origin))
+                                                                            
+                            V2 = VectorSubtract(MakeVector(Player.Origin.X - Sin(D720 - .angle), _
+                                                            Player.Origin.Y + Tan(D720 - .Pitch), _
+                                                            Player.Origin.Z - Cos(D720 - .angle)), _
+                                                            ToVector(.Origin))
+                            
+                            If ((V2.X > 0 And V1.X > 0) Or (V2.X < 0 And V1.X < 0)) And _
+                                ((V2.Y > 0 And V1.Y > 0) Or (V2.Y < 0 And V1.Y < 0)) And _
+                                ((V2.Z > 0 And V1.Z > 0) Or (V2.Z < 0 And V1.Z < 0)) Then
+                                touched = False
+                                
+                                If past <> 0 Then
+                                    If DistanceEx(.Origin, Player.Origin) > Dist Then
+                                        cnt = past
+                                        Dist = DistanceEx(.Origin, Player.Origin)
+                                    End If
+                                End If
+    
+                            Else
+                                touched = True
+                            End If
+                            If Not touched Then
+    
+                                dot = modDecs.VectorDotProduct(V1, V2) / (modDecs.VectorDotProduct(V1, V1) * modDecs.VectorDotProduct(V2, V2))
+                            End If
+                        End If
+                        
+                        If Not touched Then
                             If past <> 0 Then
-                                If Distance(Cameras(cnt).Location, Player.Object.Origin) > Dist Then
+                                If DistanceEx(.Origin, Player.Origin) > Dist Then
                                     cnt = past
-                                    Dist = Distance(Cameras(cnt).Location, Player.Object.Origin)
+                                    Dist = DistanceEx(.Origin, Player.Origin)
+                                    ex = ex & cnt & ", "
                                 End If
                             End If
-
-                        Else
-                            touched = True
-                        End If
-                        If Not touched Then
-
-                            dot = VectorDotProduct(v1, v2) / (VectorDotProduct(v1, v1) * VectorDotProduct(v2, v2))
-                        End If
-                    End If
-                    
-                    If Not touched Then
-                        If past <> 0 Then
-                            If Distance(Cameras(cnt).Location, Player.Object.Origin) > Dist Then
-                                cnt = past
-                                Dist = Distance(Cameras(cnt).Location, Player.Object.Origin)
-                                ex = ex & cnt & ", "
+    
+                            If cnt >= 0 And cnt <= Cameras.Count Then
+                                Player.CameraIndex = cnt
+                                past = cnt
+                                Dist = DistanceEx(.Origin, Player.Origin)
                             End If
+                        Else
+                            ex = ex & cnt & ", "
                         End If
-
-                        If cnt >= 0 And cnt <= CameraCount Then
-                            Player.CameraIndex = cnt
-                            past = cnt
-                            Dist = Distance(Cameras(cnt).Location, Player.Object.Origin)
-                        End If
-                    Else
-                        ex = ex & cnt & ", "
-                    End If
-                    
+                    End With
                 End If
 
             Loop Until (cnt = 0) Or (Player.CameraIndex <> 0)
@@ -2326,18 +2126,18 @@ On Error GoTo CameraError
     Exit Sub
 CameraError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
-    Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Sub
 
 Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As Long = 3)
-    Dim a As D3DVECTOR
+    Dim A As D3DVECTOR
     Dim b As D3DVECTOR
-    Dim c As D3DVECTOR
+    Dim C As D3DVECTOR
     
     Dim p As D3DVECTOR
     
     Dim cnt As Long
-    Dim Angle As Single
+    Dim angle As Single
     
     Dim smallest As Long
     Dim smallestAngle As Single
@@ -2346,35 +2146,35 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
 
     For cnt = 0 To VertexCount - 1
         v(cnt) = MakeVector(sngVertexX(cnt, FaceIndex), sngVertexY(cnt, FaceIndex), sngVertexZ(cnt, FaceIndex))
-        c.X = c.X + v(cnt).X
-        c.Y = c.Y + v(cnt).Y
-        c.z = c.z + v(cnt).z
+        C.X = C.X + v(cnt).X
+        C.Y = C.Y + v(cnt).Y
+        C.Z = C.Z + v(cnt).Z
     Next
     
-    c.X = c.X / VertexCount
-    c.Y = c.Y / VertexCount
-    c.z = c.z / VertexCount
+    C.X = C.X / VertexCount
+    C.Y = C.Y / VertexCount
+    C.Z = C.Z / VertexCount
 
     p = GetPlaneNormal(v(0), v(1), v(2))
         
-    Dim n As Long
+    Dim N As Long
     Dim m As Long
     
-    For n = 0 To VertexCount - 1
+    For N = 0 To VertexCount - 1
         
-        a = VectorNormalize(VectorSubtract(v(n), c))
+        A = modDecs.VectorNormalize(modDecs.VectorSubtract(v(N), C))
         
         smallest = -1
         smallestAngle = -1
         
-        For m = n + 1 To 2
-            If Not ClassifyPoint(v(n), c, VectorAdd(c, p), v(m)) = 2 Then 'not back
-                b = VectorNormalize(VectorSubtract(v(m), c))
+        For m = N + 1 To 2
+            If Not ClassifyPoint(v(N), C, VectorAdd(C, p), v(m)) = 2 Then 'not back
+                b = modDecs.VectorNormalize(modDecs.VectorSubtract(v(m), C))
                 
-                Angle = VectorDotProduct(a, b)
+                angle = modDecs.VectorDotProduct(A, b)
                 
-                If Angle > smallestAngle Then
-                    smallestAngle = Angle
+                If angle > smallestAngle Then
+                    smallestAngle = angle
                     smallest = m
         
                 End If
@@ -2383,26 +2183,26 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
         
         If smallest = -1 Then Exit Sub
         
-        If Not ((n + 1) = smallest) Then
-            SwapVector FaceIndex, n + 1, smallest
+        If Not ((N + 1) = smallest) Then
+            SwapVector FaceIndex, N + 1, smallest
         End If
     
     Next
     
-    a = GetPlaneNormal(v(0), v(1), v(2))
+    A = GetPlaneNormal(v(0), v(1), v(2))
     b = p
     
-    If VectorDotProduct(a, b) < 0 Then
+    If modDecs.VectorDotProduct(A, b) < 0 Then
         ReverseFaceVertices FaceIndex, VertexCount
     End If
     
-    sngFaceVis(0, FaceIndex) = a.X
-    sngFaceVis(1, FaceIndex) = a.Y
-    sngFaceVis(2, FaceIndex) = a.z
+    sngFaceVis(0, FaceIndex) = A.X
+    sngFaceVis(1, FaceIndex) = A.Y
+    sngFaceVis(2, FaceIndex) = A.Z
 
 End Sub
 
-Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
+Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR) As D3DVECTOR
 
     Dim vector1 As D3DVECTOR
     Dim vector2 As D3DVECTOR
@@ -2411,28 +2211,28 @@ Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByR
 
     '/*Calculate the Normal*/
     '/*Vector 1*/
-    vector1.X = (v0.X - v1.X)
-    vector1.Y = (v0.Y - v1.Y)
-    vector1.z = (v0.z - v1.z)
+    vector1.X = (v0.X - V1.X)
+    vector1.Y = (v0.Y - V1.Y)
+    vector1.Z = (v0.Z - V1.Z)
 
     '/*Vector 2*/
-    vector2.X = (v1.X - v2.X)
-    vector2.Y = (v1.Y - v2.Y)
-    vector2.z = (v1.z - v2.z)
+    vector2.X = (V1.X - V2.X)
+    vector2.Y = (V1.Y - V2.Y)
+    vector2.Z = (V1.Z - V2.Z)
 
     '/*Apply the Cross Product*/
-    Normal.X = (vector1.Y * vector2.z - vector1.z * vector2.Y)
-    Normal.Y = (vector1.z * vector2.X - vector1.X * vector2.z)
-    Normal.z = (vector1.X * vector2.Y - vector1.Y * vector2.X)
+    Normal.X = (vector1.Y * vector2.Z - vector1.Z * vector2.Y)
+    Normal.Y = (vector1.Z * vector2.X - vector1.X * vector2.Z)
+    Normal.Z = (vector1.X * vector2.Y - vector1.Y * vector2.X)
 
     '/*Normalize to a unit vector*/
-    Length = Sqr(Normal.X * Normal.X + Normal.Y * Normal.Y + Normal.z * Normal.z)
+    Length = Sqr(Normal.X * Normal.X + Normal.Y * Normal.Y + Normal.Z * Normal.Z)
 
     If Length = 0 Then Length = 1
 
     Normal.X = (Normal.X / Length)
     Normal.Y = (Normal.Y / Length)
-    Normal.z = (Normal.z / Length)
+    Normal.Z = (Normal.Z / Length)
 
     GetPlaneNormal = Normal
 End Function
@@ -2451,7 +2251,7 @@ Public Sub SwapVector(ByVal FaceIndex As Long, ByVal FirstIndex As Long, ByVal S
     Dim v As D3DVECTOR
     v.X = sngVertexX(FirstIndex, FaceIndex)
     v.Y = sngVertexY(FirstIndex, FaceIndex)
-    v.z = sngVertexZ(FirstIndex, FaceIndex)
+    v.Z = sngVertexZ(FirstIndex, FaceIndex)
     
     sngVertexX(FirstIndex, FaceIndex) = sngVertexX(SecondIndex, FaceIndex)
     sngVertexY(FirstIndex, FaceIndex) = sngVertexY(SecondIndex, FaceIndex)
@@ -2459,6 +2259,10 @@ Public Sub SwapVector(ByVal FaceIndex As Long, ByVal FirstIndex As Long, ByVal S
 
     sngVertexX(SecondIndex, FaceIndex) = v.X
     sngVertexY(SecondIndex, FaceIndex) = v.Y
-    sngVertexZ(SecondIndex, FaceIndex) = v.z
+    sngVertexZ(SecondIndex, FaceIndex) = v.Z
 End Sub
+
+
+
+
 

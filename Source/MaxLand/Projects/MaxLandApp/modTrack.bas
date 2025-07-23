@@ -5,18 +5,18 @@ Option Explicit
 Option Compare Binary
 Option Private Module
 
-Public UC As Collection
+Public UC As ntnodes10.Collection
 
 Public Const GWL_WNDPROC = -4
 Public Const WS_DISABLED = &H8000000
 
-Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Public Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef source As Any, ByVal Length As Long)
 Public Declare Function mciSendString Lib "winmm" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
 
 Public Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExA" (ByVal dwExStyle As Long, ByVal lpClassName As String, ByVal lpWindowName As String, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, lpParam As Any) As Long
-Public Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
-Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
+Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Property Get GetPlayerByPtr(ByVal lPtr As Long) As Object
     Dim NewObj As Object
@@ -29,48 +29,57 @@ Public Sub DestroyObject(ByRef Obj As Object)
     RtlMoveMemory Obj, 0&, 4
 End Sub
 
-Public Sub UnSetControlHost(ByVal lPtr As Long, ByVal hWnd As Long)
-    UC.Remove "H" & hWnd
-    If UC.Count = 0 Then Set UC = Nothing
-End Sub
-
-Public Sub SetControlHost(ByVal lPtr As Long, ByVal hWnd As Long)
-    If UC Is Nothing Then
-        Set UC = New Collection
+Public Sub UnSetControlHost(ByVal lPtr As Long, ByVal hwnd As Long)
+    If Not UC Is Nothing Then
+        UC.Remove "H" & hwnd
+        If UC.count = 0 Then Set UC = Nothing
     End If
-    UC.Add lPtr, "H" & hWnd
 End Sub
 
-Public Function WndProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Sub SetControlHost(ByVal lPtr As Long, ByVal hwnd As Long)
+    If UC Is Nothing Then
+        Set UC = New ntnodes10.Collection
+    End If
+    If Not UC.Exists("H" & hwnd) Then
+        UC.Add lPtr, "H" & hwnd
+    End If
+End Sub
+
+Public Function WndProc(ByVal hwnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 On Error GoTo clearit
 
     Select Case uMsg
         Case 953
-            Dim objPlayer As clsAmbient
-            Set objPlayer = GetPlayerByPtr(Trim(Str(UC("H" & hWnd))))
+            Dim objPlayer As Track
+            Set objPlayer = GetPlayerByPtr(Trim(Str(UC("H" & hwnd))))
             objPlayer.NotifySound
             Set objPlayer = Nothing
     End Select
 
-    WndProc = DefWindowProc(hWnd, uMsg, wParam, lParam)
+    WndProc = DefWindowProc(hwnd, uMsg, wParam, lParam)
     Exit Function
 clearit:
-    WindowTerminate hWnd
+    WindowTerminate hwnd
 End Function
 
 Public Function WindowInitialize(ByVal lpWndProc As Long) As Long
 
-    Dim hWnd As Long
-    hWnd = CreateWindowEx(ByVal 0&, "Message", "", WS_DISABLED, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, App.hInstance, ByVal 0&)
-    
-    SetWindowLong hWnd, GWL_WNDPROC, lpWndProc
-    
-    WindowInitialize = hWnd
-    
+    If InIDE Then
+        WindowInitialize = frmMain.hwnd
+    Else
+        Dim hwnd As Long
+        hwnd = CreateWindowEx(ByVal 0&, "Message", "", WS_DISABLED, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, ByVal 0&, App.hInstance, ByVal 0&)
+        
+        SetWindowLong hwnd, GWL_WNDPROC, lpWndProc
+        
+        WindowInitialize = hwnd
+    End If
 End Function
 
-Public Sub WindowTerminate(ByVal hWnd As Long)
+Public Sub WindowTerminate(ByVal hwnd As Long)
         
-    DestroyWindow hWnd
+    If Not InIDE Then
+        DestroyWindow hwnd
+    End If
 
 End Sub

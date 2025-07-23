@@ -1,0 +1,2269 @@
+space {
+	.fogcolor=[1, 1.385, 1.275, 1.133]
+	.skytop="sky_top.bmp"
+	.skyleft="sky_left.bmp"
+	.skyright="sky_right.bmp"
+	.skyback="sky_back.bmp"
+	.skyfront="sky_front.bmp"
+	.skybottom="sky_bottom.bmp"
+	.skyrotate=3.125
+	.serialize=true
+	.boundary=150
+	.gravity=-0.2
+}
+
+bindings {
+
+
+	E=[]
+	D=[]
+	W=[]
+	R=[]
+	S=[]
+	F=[]
+
+
+	.mouseinput=Trapping
+	.serialize=true
+}
+player <player>
+{
+	.visible=true
+	.speed=0.01
+	.friction=0.05
+
+	.origin=[3, 0, 0]
+
+	.angle=1.5705
+	.pitch=-0.177
+
+	.scaled=[.50, .50, .50]
+	.rotate=[0, 0, 0]
+	.boundsmodel="bounds-player.x"
+	.visualmodel="visual-player.x"
+
+	
+	.gravitational=true
+
+}
+
+
+variable <tempswap1>=0
+variable <orders>=0
+variable <upriver>=False
+variable <puzzlewon> = false
+variable <windvix1var>=2
+variable <windvix2var>=1
+variable <windvix3var>=3
+variable <firevix1var>=2
+variable <firevix2var>=1
+variable <firevix3var>=3
+
+
+
+track <ambient1>
+{
+	.enabled=true
+	.filename="waterfall.mp3"
+	.origin=[-46.716, 1.356, 20.172]
+	.range=17
+	.loops=true
+	.volume=0
+}
+Tracks("ambient1").playTrack
+
+
+
+screen	<hudwaterimg> {
+	.filename="hud_water.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<dudwaterimg> {
+	.filename="hud_water2.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen	<hudwaterrimg> {
+	.filename="hud_water_r.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwaterbimg> {
+	.filename="hud_water_b.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwaterfimg> {
+	.filename="hud_water_f.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen <hudwatersimg> {
+	.filename="hud_water_s.bmp"
+	.padding=10
+	.alignright
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+
+screen	<hudwindimg> {
+	.filename="hud_wind.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<dudwindimg> {
+	.filename="hud_wind2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen	<hudwindi1img> {
+	.filename="hud_wind_i1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwindi2img> {
+	.filename="hud_wind_i2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<hudwindi3img> {
+	.filename="hud_wind_i3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen	<hudwindv1img> {
+	.filename="hud_wind_v1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<hudwindv2img> {
+	.filename="hud_wind_v2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwindv3img> {
+	.filename="hud_wind_v3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+screen	<hudwindx1img> {
+	.filename="hud_wind_x1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwindx2img> {
+	.filename="hud_wind_x2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudwindx3img> {
+	.filename="hud_wind_x3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+
+
+
+
+screen	<hudfireimg> {
+	.filename="hud_fire.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<dudfireimg> {
+	.filename="hud_fire2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen	<hudfirei1img> {
+	.filename="hud_fire_i1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudfirei2img> {
+	.filename="hud_fire_i2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<hudfirei3img> {
+	.filename="hud_fire_i3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+screen	<hudfirev1img> {
+	.filename="hud_fire_v1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<hudfirev2img> {
+	.filename="hud_fire_v2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudfirev3img> {
+	.filename="hud_fire_v3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen	<hudfirex1img> {
+	.filename="hud_fire_x1.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudfirex2img> {
+	.filename="hud_fire_x2.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen	<hudfirex3img> {
+	.filename="hud_fire_x3.bmp"
+	.padding=10
+	.aligncenter
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+
+
+screen	<hudearthimg> {
+	.filename="hud_earth.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=true
+	.alphablend=true
+}
+screen	<dudearthimg> {
+	.filename="hud_earth2.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+screen <hudearthkimg>
+{
+	.filename="hud_earth_k.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen <hudearthrimg>
+{
+	.filename="hud_earth_r.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen <hudearthbimg>
+{
+	.filename="hud_earth_b.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+screen <hudearth2img>
+{
+	.filename="hud_earth_2.bmp"
+	.padding=10
+	.alignleft
+	.alignbottom
+	.visible=false
+	.alphablend=true
+}
+
+
+
+
+light
+{
+	.lighttype=omni
+	.enabled=false
+	.ambient=[0, 0.3, 0.3, 0.3]
+	.diffuse =[1, 0.8, 0.8, 0.8]
+	.direction =[0, 1, 0]
+	.range=10
+	.attenuation =[0, 0.005, 0]
+	.origin =[0, 0, 0]
+}
+
+light <firelight1>
+{
+	.lighttype=omni
+	.enabled=true
+	.diffuse=[0, 0.5, 0.5, 0.5]
+	.direction=[0, 1, 0]
+	.range=2
+	.attenuation=[0.7, 0.001, 1]
+	.origin=[-2.22, 1, -2.45]
+	.LightBlink=0.07
+	.diffuseroll=0.009
+	.diffusemax=12
+}
+light <firelight2>
+{
+	.lighttype=omni
+	.enabled=true
+	.diffuse=[1, 0, 0, 0.3]
+	.direction=[0, 1, 0]
+	.range=1
+	.attenuation=[1.3, 0.0001, 1]
+	.origin=[-2.22, 1.2, -2.45]
+	.LightBlink=0.05
+}
+light
+{
+	.lighttype=directed
+	.enabled=true
+	.ambient=[1, 0.6, 0.6, 0.6]
+	.diffuse=[1, 0.3, 0.3, 0.3]
+	.direction=[0, -1, 0]
+	.range=1000
+	.origin=[0, 1000, 0]
+	.diffuseroll=50
+	.diffusemax=-30
+	.sunlight=true
+}
+
+
+
+board <water>
+{
+	.animated=.045
+	.translucent=true
+	.filename="waterpool0.bmp"
+	.filename="waterpool1.bmp"
+	.filename="waterpool2.bmp"
+	.filename="waterpool3.bmp"
+	.filename="waterpool4.bmp"
+	.filename="waterpool5.bmp"
+	.filename="waterpool6.bmp"
+	.filename="waterpool7.bmp"
+	.filename="waterpool8.bmp"
+	.filename="waterpool9.bmp"
+}
+board <fall>
+{
+	.animated=.048
+	.translucent=true
+	.filename="waterfall0.bmp"
+	.filename="waterfall1.bmp"
+	.filename="waterfall2.bmp"
+	.filename="waterfall3.bmp"
+	.filename="waterfall4.bmp"
+	.filename="waterfall5.bmp"
+	.filename="waterfall6.bmp"
+	.filename="waterfall7.bmp"
+	.filename="waterfall8.bmp"
+}
+
+board <rain>
+{
+	.animated=.001
+	.alphablend=true
+	.filename="waterrain01.bmp"
+	.filename="waterrain02.bmp"
+	.filename="waterrain03.bmp"
+	.filename="waterrain04.bmp"
+	.filename="waterrain05.bmp"
+	.filename="waterrain06.bmp"
+	.filename="waterrain07.bmp"
+	.filename="waterrain08.bmp"
+	.filename="waterrain09.bmp"
+	.filename="waterrain10.bmp"
+	.filename="waterrain11.bmp"
+	.filename="waterrain12.bmp"
+	.filename="waterrain13.bmp"
+	.filename="waterrain14.bmp"
+	.filename="waterrain15.bmp"
+	.filename="waterrain16.bmp"
+	.filename="waterrain17.bmp"
+	.filename="waterrain18.bmp"
+	.filename="waterrain19.bmp"
+	.filename="waterrain20.bmp"
+	.filename="waterrain21.bmp"
+	.filename="waterrain22.bmp"
+	.filename="waterrain23.bmp"
+	.filename="waterrain24.bmp"
+	.filename="waterrain25.bmp"
+	.filename="waterrain26.bmp"
+	.filename="waterrain27.bmp"
+	.filename="waterrain28.bmp"
+	.filename="waterrain29.bmp"
+	.filename="waterrain30.bmp"
+	.filename="waterrain31.bmp"
+	.filename="waterrain32.bmp"
+	.filename="waterrain33.bmp"
+	.filename="waterrain34.bmp"
+	.filename="waterrain35.bmp"
+	.filename="waterrain36.bmp"
+	.filename="waterrain37.bmp"
+	.filename="waterrain38.bmp"
+	.filename="waterrain39.bmp"
+	.filename="waterrain40.bmp"
+}
+board <dial>
+{
+	.animated=3.125
+	.filename="sundial07.bmp"
+	.filename="sundial08.bmp"
+	.filename="sundial09.bmp"
+	.filename="sundial10.bmp"
+	.filename="sundial11.bmp"
+	.filename="sundial12.bmp"
+	.filename="sundial13.bmp"
+	.filename="sundial14.bmp"
+	.filename="sundial15.bmp"
+	.filename="sundial16.bmp"
+	.filename="sundial17.bmp"
+	.filename="sundial18.bmp"
+	.filename="sundial19.bmp"
+	.filename="sundial20.bmp"
+	.filename="sundial21.bmp"
+	.filename="sundial22.bmp"
+	.filename="sundial23.bmp"
+	.filename="sundial24.bmp"
+	.filename="sundial01.bmp"
+	.filename="sundial02.bmp"
+	.filename="sundial03.bmp"
+	.filename="sundial04.bmp"
+	.filename="sundial05.bmp"
+	.filename="sundial06.bmp"
+}
+board <tank>
+{
+	.translucent=true
+	.filename="watertank.bmp"
+}
+board <dime>
+{
+	.filename="stonegray.bmp"
+}
+board
+{
+	.visible=true
+	.point1=[ 1.6, -1, -2]
+	.point2=[-1.6, -1, -2]
+	.point3=[-1.6, -1, 2]
+	.point4=[ 1.6, -1, 2]
+	.scalex=2
+	.scaley=2
+	.animated=0.090
+	.filename="bubbles1.bmp"
+	.filename="bubbles2.bmp"
+	.filename="bubbles3.bmp"
+	.filename="bubbles4.bmp"
+	.filename="bubbles5.bmp"
+	.filename="bubbles6.bmp"
+	.filename="bubbles7.bmp"
+	.filename="bubbles8.bmp"
+
+}
+board
+{
+	.visible=true
+	.point1=[-0.6, -1, 2]
+	.point2=[0.6, -1, 2]
+	.point3=[0.6, -1, -2]
+	.point4=[-0.6, -1, -2]
+	.scalex=1
+	.scaley=2
+	.animated=0.083
+	.filename="bubbles1.bmp"
+	.filename="bubbles2.bmp"
+	.filename="bubbles3.bmp"
+	.filename="bubbles4.bmp"
+	.filename="bubbles5.bmp"
+	.filename="bubbles6.bmp"
+	.filename="bubbles7.bmp"
+	.filename="bubbles8.bmp"
+}
+
+
+
+beacon <firegraphic>
+{
+	.visible=true
+	.origin=[ -2.20, 0.33, -2.44]
+	.percentxy=[ 54, 75]
+	.translucent=true
+	.filename="giphy01.bmp"
+	.filename="giphy02.bmp"
+	.filename="giphy03.bmp"
+	.filename="giphy04.bmp"
+	.filename="giphy05.bmp"
+	.filename="giphy06.bmp"
+	.filename="giphy07.bmp"
+	.filename="giphy08.bmp"
+	.filename="giphy09.bmp"
+	.filename="giphy10.bmp"
+	.filename="giphy11.bmp"
+	.filename="giphy12.bmp"
+	.filename="giphy13.bmp"
+	.beaconlight=1
+	.verticalskew=true
+}
+beacon
+{
+	.visible=true
+	.origin=[ -2.23, 0.33, -0.88]
+	.percentxy=[ 35, 35]
+	.alphablend=true
+	.filename="bubble.bmp"
+	.beaconlight=1
+	.verticallock=true
+}
+beacon
+{
+	.visible=true
+	.origin=[ -0.90, -1.89, -407.10]
+	.percentxy=[ 45, 45]
+	.filename="nn.bmp"
+	.beaconlight=1
+	.translucent=true
+}
+beacon
+{
+	.visible=true
+	.origin=[ -2.255, 0.27, 0.64]
+	.percentxy=[ 85, 85]
+	.alphablend=true
+	.filename="smoke01.bmp"
+	.filename="smoke02.bmp"
+	.filename="smoke03.bmp"
+	.filename="smoke04.bmp"
+	.filename="smoke05.bmp"
+	.filename="smoke06.bmp"
+	.filename="smoke07.bmp"
+	.filename="smoke08.bmp"
+	.filename="smoke09.bmp"
+	.filename="smoke10.bmp"
+	.filename="smoke11.bmp"
+	.filename="smoke12.bmp"
+	.filename="smoke13.bmp"
+	.filename="smoke14.bmp"
+	.filename="smoke15.bmp"
+	.filename="smoke16.bmp"
+	.filename="smoke17.bmp"
+	.filename="smoke18.bmp"
+	.filename="smoke19.bmp"
+	.filename="smoke20.bmp"
+	.filename="smoke21.bmp"
+	.filename="smoke22.bmp"
+	.filename="smoke23.bmp"
+	.filename="smoke24.bmp"
+	.filename="smoke25.bmp"
+	.beaconlight=1
+	.roundingcut=45
+}
+beacon
+{
+	.visible=true
+	.origin=[ -2.75, 0.8, 16.75]
+	.percentxy=[ 35, 85]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon
+{
+	.visible=true
+	.origin=[ -3.9, 1.7, 18.25]
+	.percentxy=[ 35, 85]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon
+{
+	.visible=true
+	.origin=[ -3.09, 2.5, 19.97]
+	.percentxy=[ 35, 85]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+beacon
+{
+	.visible=true
+	.origin=[ -1.45 ,3.55, 20.78]
+	.percentxy=[ 35, 85]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon
+{
+	.visible=true
+	.origin=[ -0.64, 0.5, 15.5]
+	.percentxy=[ 20, 25]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+
+beacon
+{
+	.visible=true
+	.origin=[ 0.10, 0.5, 15.82]
+	.percentxy=[ 20 ,50]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+
+
+beacon
+{
+	.visible=true
+	.origin=[ 0.75 ,0.5 ,16.32]
+	.percentxy=[ 20, 75]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+
+
+beacon
+{
+	.visible=true
+	.origin=[ 1.27 ,0.5 ,16.92]
+	.percentxy=[ 20, 100]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+
+beacon
+{
+	.visible=true
+	.origin=[1.59, 0.5, 17.68]
+	.percentxy=[ 20, 125]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+beacon
+{
+	.visible=true
+	.origin=[ 1.65, 0.5 ,18.51]
+	.percentxy=[ 20,150]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+
+beacon
+{
+	.visible=true
+	.origin=[ 1.56 ,0.5, 19.35]
+	.percentxy=[ 20, 175]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon
+{
+	.visible=true
+	.origin=[ 1.27, 0.5, 20.07]
+	.percentxy=[ 20, 200]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon
+{
+	.visible=true
+	.origin=[ 0.76, 0.5, 20.71]
+	.percentxy=[ 20, 225]
+	.alphablend=true
+	.filename="waterleak01.bmp"
+	.filename="waterleak02.bmp"
+	.filename="waterleak03.bmp"
+	.filename="waterleak04.bmp"
+	.filename="waterleak05.bmp"
+	.filename="waterleak06.bmp"
+	.filename="waterleak07.bmp"
+	.filename="waterleak08.bmp"
+	.filename="waterleak09.bmp"
+	.filename="waterleak10.bmp"
+	.filename="waterleak11.bmp"
+	.filename="waterleak12.bmp"
+	.beaconlight=1
+}
+beacon <bubble>
+{
+	.visible=true
+	.origin=[-7, 2.5, -0.26]
+	.percentxy=[35, 35]
+	.alphablend=true
+	.filename="bubble.bmp"
+	.beaconlight=1
+	.verticallock=true
+}
+beacon
+{
+	.origin=[-45.545, 9.786, 20.055]
+	.percentxy=[45, 45]
+	.filename="nn.bmp"
+	.beaconlight=1
+	.translucent=true
+	.visible=true
+	.verticallock=true
+}
+
+
+element <pawn1>
+{
+	.visible=true
+	.origin=[-8.948, 1.8, -11.312]
+	.scaled=[0.50, 0.50, 0.50]
+	.rotate=[0, 0, 0]
+	.offset=[0, 1.3, 0]
+
+
+	.boundsmodel="bounds-pawn.x"
+	.visualmodel="visual-pawn.x"
+
+	.gravitational=true
+
+	motion <pawn4>  {
+		.action=1
+		.data=[0, 1, 0]
+		.emphasis=0.5
+		.Friction=0.2
+		.Reactive=3
+	}
+
+}
+
+element <pawn3>
+{
+	.visible=true
+	.origin=[-7.948, 1.8 ,-11.312]
+	.scaled=[.50 ,.50, .50]
+	.rotate=[0, 0, 0]
+	.offset=[0, 1.3, 0]
+
+	.boundsmodel="bounds-pawn.x"
+	.visualmodel="visual-pawn.x"
+	.gravitational=true
+
+	motion <pawn5>  {
+		.action=1
+		.data=[0, 1, 0]
+		.emphasis=0.5
+		.Friction=0.2
+		.Reactive=3
+
+	}
+}
+
+element <pawn2>
+{
+	.visible=true
+	.origin=[-11.606, -3.782, 26.708]
+	.scaled=[.50, .50, .50]
+	.rotate=[0, 0, 0]
+	.offset=[0, 1.3, 0]
+
+	.boundsmodel="bounds-pawn.x"
+	.visualmodel="visual-pawn.x"
+
+	.gravitational=true
+
+	motion <pawn6> {
+		.action=1
+		.data=[0, 1, 0]
+		.emphasis=0.5
+		.Friction=0.2
+		.Reactive=3
+
+	}
+}
+
+element <hilltops>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="hilltops.x"
+	.collision=false
+	.effect=indoor
+}
+element <palace>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="palace.x"
+	.replacer "watertank.bmp", "tank"
+	.replacer "sundial01.bmp", "dial"
+	.effect=indoor
+}
+element <land>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="ground.x"
+	.effect=ground
+}
+element
+{
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="backfaces.x"
+	.effect=indoor
+}
+element
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="liquid.x"
+	.effect=liquid
+}
+element
+{
+	.visible=true
+	.origin=[0 ,0, 0]
+	.scaled=[1 ,1 ,1]
+	.filename="ladder.x"
+	.effect=ladder
+}
+element <upfalls>
+{
+	.visible=false
+	.origin=[0, 0 ,0]
+	.scaled=[1, 1 ,1]
+	.filename="upfalls.x"
+	.effect=ladder
+}
+element <diamond2>
+{
+	.visible=true
+	.origin=[-2.26, .37, 2.13]
+	.scaled=[.65, .65 ,.65]
+	.filename="diamond.x"
+	.collision=false
+	.alphablend=true
+}
+element <diamond1>
+{
+	.visible=true
+	.origin=[-2.26 ,.37,2.13]
+	.scaled=[.65, .65, .65]
+	.filename="diamond.x"
+	.replacer "diamond.bmp", "dime"
+	.collision=false
+	.wireframe=true
+}
+element <waters>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="water.x"
+	.replacer "waterpool0.bmp", "water"
+	.replacer "waterfall0.bmp", "fall"
+	.replacer "waterrain01.bmp", "rain"
+	.collision=false
+}
+element <nautical>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="nautical.x"
+	.collision=false
+}
+element <restrooms>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="restrooms.x"
+	.collision=false
+}
+element <statues>
+{
+	.visible=true
+	.origin=[0, 0, 0]
+	.scaled=[1, 1, 1]
+	.filename="statues.x"
+	.collision=false
+}
+element <decals>
+{
+	.visible=true
+	.origin=[0 ,0, 0]
+	.scaled=[1, 1, 1]
+	.filename="decals.x"
+	.collision=false
+}
+element <blacklawn>
+{
+	.visible=true
+	.origin=[-2000, -1, -40]
+	.scaled=[.50 ,.50, .50]
+	.rotate=[ 0, 0, 0]
+	.boundsmodel="blacklawn.x"
+	.visualmodel="blacklawn.x"
+	.collision=false
+	'activity direct wings 1 0 0 .5 0
+	motion <wings> {
+		.action=1
+		.data=[1, 0 ,0]
+		.emphasis=.5
+		.friction=0
+	}
+}
+
+
+portal
+{
+	.location=[2000,-1,-40]
+	.teleport=[-2000,-1,-40]
+	.range=1
+
+}
+portal
+{
+	.location=[9.748, -3.399, -3.611]
+	.range=1.3
+	oninrange [ <player>
+		hudearth2img.visible=true
+		checkearth
+	]
+
+}
+portal
+{
+	.location=[-4.449, -2.3, 1.547]
+	.range=1
+	oninrange [ <player>
+
+			if (orders=0) then
+				orders=1
+				oneditorders
+
+			end if
+
+
+	]
+
+}
+portal
+{
+	.location=[-4.283, -2.3 ,-1.643]
+	.range=1
+	oninrange [ <player>
+
+			if (orders=0) then
+				orders=1
+				oneditorders
+			end if
+
+
+	]
+
+}
+portal <hottub>
+{
+	.location=[ -0.05 ,-1.05 ,-0.028]
+	.range=0.8
+	oninrange [ <player>
+
+			tempswap1=windvix2var
+			windvix2var=windvix1var
+			windvix1var=tempswap1
+			oneditwindvix1var
+			oneditwindvix2var
+
+			tempswap1=firevix3var
+			firevix3var=firevix2var
+			firevix2var=tempswap1
+			oneditfirevix3var
+			oneditfirevix2var
+
+		checkvix
+	]
+
+}
+portal
+{
+	.location=[-45.911, 1.726, 17.392]
+	.range=1
+	oninrange [ <player>
+
+			tempswap1=windvix1var
+			windvix1var=windvix2var
+			windvix2var=windvix3var
+			windvix3var=tempswap1
+			oneditwindvix1var
+			oneditwindvix2var
+			oneditwindvix3var
+
+			tempswap1=firevix1var
+			firevix1var=firevix3var
+			firevix3var=tempswap1
+			oneditfirevix1var
+			oneditfirevix3var
+
+		checkvix
+	]
+
+}
+portal
+{
+	.location=[ -2.252, 1.201, -2.443]
+	.range=.6
+	oninrange	[ <player,pawn1,pawn2>
+		smuther
+	]
+	motion <file1> {
+		.action=method
+		.reactive=7
+		.recount=1
+		script [
+			fireup
+		]
+	
+	}
+}
+portal
+{
+	.location=[-1.439, 1.571, 18.378]
+	.range=2
+	oninrange [ <player>
+		hudearthkimg.visible=true
+		checkearth
+	]
+}
+portal
+{
+	.range=1
+	.location=[ 0.5, -1.927, -2.156 ]
+	oninrange [ <player>
+		hudearthrimg.visible=true
+		checkearth
+	]
+}
+portal
+{
+	.location=[9.434, -3.614, 12.575]
+	.range=1.3
+	oninrange [ <player>
+		hudearthbimg.visible=true
+		checkearth
+	]
+}
+portal
+{
+	.location=[-2.75, 1.5, 16.75]
+	.range=0.3
+	motion <leak1> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[ -3.9, 2.4, 18.25]
+	.range=0.3
+	motion <leak2> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[ -3.09, 3.2, 19.97]
+	.range=0.3
+	motion <leak3> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[-1.45, 4.25, 20.78]
+	.range=0.3
+	motion <leak4> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[-0.64, 1.252, 15.5]
+	.range=0.2
+	motion <leak5> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[0.10, 1.446, 15.82]
+	.range=0.3
+	motion <leak6> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[1.56, 2.416, 19.35]
+	.range=0.3
+	motion <leak11> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+	]
+
+}
+portal
+{
+	.location=[ 0.75, 1.64, 16.32]
+	.range=0.3
+	motion <leak7> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+
+portal
+{
+	.location=[1.27, 1.834, 16.92]
+	.range=0.3
+	motion <leak8> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+	]
+
+}
+portal
+{
+	.location=[ 1.59, 2.028, 17.68]
+	.range=0.3
+	motion <leak9> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[1.65, 2.222, 18.51]
+	.range=0.3
+	motion <leak10> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[1.27 ,2.61, 20.07]
+	.range=0.3
+	motion <leak12> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+
+	]
+
+}
+portal
+{
+	.location=[0.76 ,2.804, 20.71]
+	.range=0.3
+	motion <leak13> {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=0.02
+		.friction=0.015
+	}
+
+	oninrange [ <player>
+
+			if (orders=2) then
+				orders=3
+				oneditorders
+			 end if
+	]
+
+}
+portal
+{
+	.location=[-2.167, 1.2, -0.882]
+	.teleport=[-6.9, 1.3, -0.1]
+	.range=0.6
+
+	oninrange [ <player>
+
+			if (orders="3") then
+				orders=4
+				oneditorders
+			 end if
+
+
+	]
+
+}
+portal
+{
+	.location=[ -7, 2.7, -0.26]
+	.teleport=[-2.272, 1.2, 0.606]
+	.range=.7
+}
+portal
+{
+	.location=[ -2.272, 1.2, 0.606]
+	motion {
+		.action=1
+		.data=[ 0, 1, 0]
+		.emphasis=.02
+		.friction=.015
+	}
+	.range=0.6
+	oninrange [ <player>
+
+			if (orders=1) then
+				orders=2
+				'oneditorders
+			 end if
+
+
+	]
+
+}
+portal
+{
+	.location=[7.09, 1.35, 1.71]
+	.range=0.3
+	.clearmotions
+	motion <jump1> {
+		.action=1
+		.data=[0, 1, 0]
+		.emphasis=0.4
+		.friction=0.2
+	}
+	motion <move1> {
+		.action=1
+		.data=[0, 0, -1]
+		.emphasis=0.005
+		.friction=0.01
+	}
+
+	oninrange [ <player>
+
+
+			tempswap1=windvix2var
+			windvix2var=windvix3var
+			windvix3var=tempswap1
+			oneditwindvix2var
+			oneditwindvix3var
+
+			tempswap1=firevix2var
+			firevix2var=firevix3var
+			firevix3var=tempswap1
+			oneditfirevix2var
+			oneditfirevix3var
+
+
+		checkvix
+
+	]
+
+
+}
+portal
+{
+	.location=[-45.545, 9.786, 20.055]
+	.range=2
+	oninrange [ <player>
+		puzzlewon = true
+		checkgame
+	]
+}
+
+method <oneditorders>
+[
+		if (orders=1) then
+			hudwaterrimg.visible=true
+			hudwaterbimg.visible=false
+			hudwaterfimg.visible=false
+			hudwatersimg.visible=false
+		else
+			hudwaterrimg.visible=false
+		end if
+		if (orders=2) then
+			hudwaterrimg.visible=true
+			hudwaterbimg.visible=true
+			hudwaterfimg.visible=false
+			hudwatersimg.visible=false
+		else
+			hudwaterbimg.visible=false
+		end if
+		if (orders=3) then
+			hudwaterrimg.visible=true
+			hudwaterbimg.visible=true
+			hudwaterfimg.visible=true
+			hudwatersimg.visible=false
+		else
+			hudwaterfimg.visible=false
+		end if
+		if (orders=4) then
+			hudwaterrimg.visible=true
+			hudwaterbimg.visible=true
+			hudwaterfimg.visible=true
+			hudwatersimg.visible=true
+
+			hudwaterimg.visible=false
+			dudwaterimg.visible=true
+		else 
+			hudwatersimg.visible=false
+			hudwaterimg.visible=true
+			dudwaterimg.visible=false
+		end if
+		checkgame
+]
+
+
+method <checkvix>
+[
+
+		if (hudwindimg.visible or hudfireimg.visible) then
+			if (windvix1var=1) then
+				if (windvix2var=2) then
+					if (windvix3var=3) then
+						hudwindimg.visible=false
+						dudwindimg.visible=true
+					else
+						hudwindimg.visible=true
+						dudwindimg.visible=false
+					end if
+				else
+					hudwindimg.visible=true
+					dudwindimg.visible=false
+				end if
+			else 
+				hudwindimg.visible=true
+				dudwindimg.visible=false
+			end if
+	
+			if (firevix1var=1) then
+				if (firevix2var=2) then
+					if (firevix3var=3) then
+						hudfireimg.visible=false
+						dudfireimg.visible=true
+					else 
+						hudfireimg.visible=true
+						dudfireimg.visible=false
+					end if
+				else 
+					hudfireimg.visible=true
+					dudfireimg.visible=false
+				end if
+			else
+				hudfireimg.visible=true
+				dudfireimg.visible=false
+			end if
+		end if
+		checkgame
+]
+
+method <oneditwindvix1var>
+[
+
+		if (windvix1var=1) then
+			hudwindi1img.visible=true
+			hudwindv1img.visible=false
+			hudwindx1img.visible=false
+		elseif (windvix1var=2) then
+			hudwindi1img.visible=false
+			hudwindv1img.visible=true
+			hudwindx1img.visible=false
+		elseif (windvix1var=3) then
+			hudwindi1img.visible=false
+			hudwindv1img.visible=false
+			hudwindx1img.visible=true
+		end if
+]
+method <oneditwindvix2var>
+[
+		if (windvix2var=1) then
+			hudwindi2img.visible=true
+			hudwindv2img.visible=false
+			hudwindx2img.visible=false
+		elseif (windvix2var=2) then
+			hudwindi2img.visible=false
+			hudwindv2img.visible=true
+			hudwindx2img.visible=false
+		elseif (windvix2var=3) then
+			hudwindi2img.visible=false
+			hudwindv2img.visible=false
+			hudwindx2img.visible=true
+		end if
+]
+method <oneditwindvix3var>
+[
+		if (windvix3var=1) then
+			hudwindi3img.visible=true
+			hudwindv3img.visible=false
+			hudwindx3img.visible=false
+		elseif (windvix3var=2) then
+			hudwindi3img.visible=false
+			hudwindv3img.visible=true
+			hudwindx3img.visible=false
+		elseif (windvix3var=3) then
+			hudwindi3img.visible=false
+			hudwindv3img.visible=false
+			hudwindx3img.visible=true
+		end if
+]
+
+method <smuther>
+[
+
+		if (firelight1.enabled) then
+			firelight1.enabled=false
+			firelight2.enabled=false
+			firegraphic.visible=false
+
+			tempswap1=firevix3var
+			firevix3var=firevix2var
+			firevix2var=firevix1var
+			firevix1var=tempswap1
+			oneditfirevix1var
+			oneditfirevix2var
+			oneditfirevix3var
+
+			tempswap1=windvix3var
+			windvix3var=windvix1var
+			windvix1var=tempswap1
+			oneditwindvix1var
+			oneditwindvix3var
+
+			orders=0
+			oneditorders
+		end if	
+		checkvix
+]
+method <fireup>
+[
+		if (not firelight1.enabled) then
+			firelight1.enabled=true
+			firelight2.enabled=true
+			firegraphic.visible=true
+		end if
+		checkvix
+]
+method <oneditfirevix1var>
+[
+
+		if (firevix1var=1) then
+			hudfirei1img.visible=true
+			hudfirev1img.visible=false
+			hudfirex1img.visible=false
+		elseif (firevix1var=2) then
+			hudfirei1img.visible=false
+			hudfirev1img.visible=true
+			hudfirex1img.visible=false
+		elseif (firevix1var=3) then
+			hudfirei1img.visible=false
+			hudfirev1img.visible=false
+			hudfirex1img.visible=true
+		end if
+
+]
+method <oneditfirevix2var>
+[
+
+		if (firevix2var=1) then
+			hudfirei2img.visible=true
+			hudfirev2img.visible=false
+			hudfirex2img.visible=false
+		elseif (firevix2var=2) then
+			hudfirei2img.visible=false
+			hudfirev2img.visible=true
+			hudfirex2img.visible=false
+		elseif (firevix2var=3) then
+			hudfirei2img.visible=false
+			hudfirev2img.visible=false
+			hudfirex2img.visible=true
+		end if
+
+
+]
+method <oneditfirevix3var>
+[
+
+		if (firevix3var=1) then
+			hudfirei3img.visible=true
+			hudfirev3img.visible=false
+			hudfirex3img.visible=false
+		elseif (firevix3var=2) then
+			hudfirei3img.visible=false
+			hudfirev3img.visible=true
+			hudfirex3img.visible=false
+		elseif (firevix3var=3) then
+			hudfirei3img.visible=false
+			hudfirev3img.visible=false
+			hudfirex3img.visible=true
+		end if
+
+]
+
+method <checkgame>
+[
+
+		if (dudearthimg.visible and dudwindimg.visible and dudfireimg.visible and dudwaterimg.visible) then
+
+			if (not upriver.value) then
+				upriver=true
+				upfalls.visible=true
+				puzzlewon=true			
+			end if
+		end if
+		if puzzlewon then
+			
+			player.visible=false
+			land.visible=false
+			palace.visible=false
+			blacklawn.visible=false
+			hilltops.visible=false
+			statues.visible=false
+			decals.visible=false
+			restrooms.visible=false
+			nautical.visible=false
+			posting.visible=false
+			pawn1.visible=false
+			pawn2.visible=false
+			diamond1.visible=false
+			diamond2.visible=false
+			waters.visible=false
+			player.x=-45.898
+			player.y=8.533
+			player.z=19.434
+			player.angle=-0.57
+			player.pitch=1.327
+
+			process "level level2"
+		end if
+
+]
+method <checkearth>
+[
+
+		if (hudearthkimg.visible and hudearthbimg.visible and hudearthrimg.visible and hudearth2img.visible) then
+			hudearthimg.visible=false
+			dudearthimg.visible=true
+		end if
+		checkgame
+
+]
+method <checkwater>
+[
+
+		if (hudwaterrimg.visible and hudwaterbimg.visible and hudwaterfimg.visible and hudwatersimg.visible) then
+			hudwaterimg.visible=false
+			dudwaterimg.visible=true
+		end if
+		checkgame
+
+]
+
+
+
+camera {
+	.origin=[-3.727864, -1.898001, -9.150569]
+	.angle=-0.1676403
+	.pitch=0.6270023
+}
+camera {
+	 .origin=[12.0312, 0.3746421, -16.27538]
+	.angle= 0.7398628
+	.pitch= -0.2309998
+}
+camera {
+	 .origin=[12.66191, 3.880524, -1.726307]
+	.angle= 1.165866
+	.pitch= -0.6870028
+}
+camera {
+	 .origin=[7.635109, 3.963608, 13.86588]
+	.angle= 2.677823
+	.pitch= -0.3405004
+}
+camera {
+	 .origin=[8.811858, 5.095017, 26.77451]
+	.angle= 2.307349
+	.pitch= -0.5445018
+}
+camera {
+	 .origin=[-11.70464, 5.795365, 26.13777]
+	.angle=3.639253
+	.pitch= -0.579002
+}
+camera {
+	 .origin=[-21.25207, 3.008778, 0.8571591]
+	.angle= 4.581277
+	.pitch= -0.2444997
+}
+camera {
+	 .origin=[-13.42644, 0.1182264, -16.00976]
+	.angle= 5.533859
+	.pitch= -0.3450004
+}
+camera {
+	 .origin=[-11.41585, -1.342565, 10.99494]
+	.angle=-2.57473
+	.pitch= -5.849997E-02
+}
+camera {
+	 .origin=[7.35132, -4.311385, 9.697162]
+	.angle= -4.62368
+	.pitch= 0.1395001
+}
+camera {
+	 .origin=[2.563711, -3.444107, -0.9724076]
+	.angle= -8.175938E-02
+	.pitch= -9.150002E-02
+}
+camera {
+	 .origin=[8.885255, -4.645283, 10.69647]
+	.angle= 2.787695
+	.pitch= -0.4020008
+}
+camera {
+	 .origin=[9.491446, -3.289573, 26.55566]
+	.angle= 2.691702
+	.pitch= -3.000008E-03
+}
+camera {
+	 .origin=[-11.18301, -2.467458, 26.54332]
+	.angle= 3.891615
+	.pitch= -8.100003E-02
+}
+camera {
+	 .origin=[1.347265, -0.4101134, 14.63133]
+	.angle= -1.047384
+	.pitch= -7.050001E-02
+}
+camera {
+	 .origin=[8.872601, 4.654193, 32.65849]
+	.angle= 1.798132
+	.pitch= 1.500022E-03
+}
+camera {
+	 .origin=[-35.72995, 7.197384, 26.80061]
+	.angle= 5.195591
+	.pitch= -0.3420004
+}
+camera {
+	 .origin=[-42.38638, 5.657622, 40.02435]
+	.angle= 3.338536
+	.pitch= -0.3015001
+}
+camera {
+	 .origin=[-43.2525, 19.13707, 0.5642707]
+	.angle=-0.3659959
+	.pitch= -1.170006
+}
+camera {
+	 .origin=[-22.24286, 1.205498, -17.90334]
+	.angle= -0.2999954
+	.pitch= -0.3405004
+}
+camera {
+	 .origin=[9.038647, -1.4838, 4.549771]
+	.angle=0.6795074
+	.pitch= -0.1200001
+}
+camera {
+	 .origin=[3.725664, -1.57322, -3.458859]
+	.angle= 0.763508
+	.pitch= -0.1485
+}
+camera {
+	 .origin=[4.449638E-02, -1.73281, -2.476685]
+	.angle= 3.75589
+	.pitch= -0.1725084
+}
+camera {
+	 .origin=[-0.4845495, -1.808818, 4.309614]
+	.angle= 5.408994
+	.pitch= -5.700846E-02
+}
+camera {
+	 .origin=[10.81721, -1.965197, 12.64573]
+	.angle= 1.564895
+	.pitch= 4.491522E-03
+}
+camera {
+	 .origin=[6.380943, -1.962754, 12.96667]
+	.angle= -0.5321161
+	.pitch= -1.650848E-02
+}
+camera {
+	 .origin=[0.3841579, -1.63054, 12.77046]
+	.angle= -1.552504
+	.pitch= -0.1005085
+}
+camera {
+	 .origin=[5.590574, -1.792194, 13.03555]
+	.angle= 0.7380075
+	.pitch= -6.600846E-02
+}
+camera {
+	 .origin=[8.27344, -2.008877, -12.83777]
+	.angle= 0.753363
+	.pitch= 0.859504
+}
+camera {
+	 .origin=[16.2699, 7.673531, 4.378298]
+	.angle= 2.238354
+	.pitch= -0.724503
+}
+camera {
+	 .origin=[13.1102, 3.755364, -16.11969]
+	.angle= 0.771363
+	.pitch= -0.5385017
+}
+camera {
+	 .origin=[-0.2318533, 4.372891, -17.25176]
+	.angle= 4.235967E-02
+	.pitch= -0.8340038
+}
+camera {
+	 .origin=[-13.91476, 0.7565122, -16.54501]
+	.angle= -0.7331434
+	.pitch= -0.2865
+}
+camera {
+	 .origin=[-15.92659, 3.598749, -8.618135]
+	.angle= -0.8201441
+	.pitch= -0.4425011
+}
+camera {
+	 .origin=[6.127727, 3.15189, 1.362179]
+	.angle= 1.79587
+	.pitch= -0.5910021
+}
+camera {
+	 .origin=[-3.938129, 2.784335, 3.003888]
+	.angle= 5.43185
+	.pitch= -0.3225002
+}
+camera {
+	 .origin=[7.759987, 8.319905, 9.516278]
+	.angle= 0.3982463
+	.pitch= -0.6675026
+}
+camera {
+	 .origin=[-2.934893, 7.815292, 28.24745]
+	.angle= 3.327661
+	.pitch= -0.7605033
+}
+camera {
+	 .origin=[-0.2229092, 5.454669, 21.72459]
+	.angle= 2.012257
+	.pitch= -0.5580019
+}
+camera {
+	 .origin=[-17.60918, 2.236566, 17.57527]
+	.angle= -0.5557562
+	.pitch= -1.949999E-02
+}
+camera {
+	 .origin=[-43.16224, 5.314007, 36.67743]
+	.angle= -2.111258
+	.pitch= -0.2309998
+}
+camera {
+	 .origin=[-56.05182, 3.89929, 5.806763]
+	.angle= -0.813758
+	.pitch= -0.3435004
+}
+camera {
+	 .origin=[-56.05424, 3.893992, 5.814156]
+	.angle= -1.895266
+	.pitch= -0.3705006
+}
+camera {
+	 .origin=[-11.47059, -1.452489, 10.06566]
+	.angle= -2.661718
+	.pitch= -0.1140001
+}
+camera {
+	 .origin=[9.183407, -1.314229, 6.8363]
+	.angle= -3.911128
+	.pitch= -0.1545
+}
+camera {
+	 .origin=[-0.4497865, -1.297364, -1.99974]
+	.angle= -2.385739
+	.pitch= -0.1515
+}
+camera {
+	 .origin=[3.398274, -3.677293, 6.380284]
+	.angle= -3.222678
+	.pitch= -7.349999E-02
+}
+camera {
+	 .origin=[5.75411, -3.304948, 10.20695]
+	.angle= -4.502165
+	.pitch= -0.162
+}
+camera {
+	 .origin=[8.602193, -6.086119, 4.52833]
+	.angle= 0.4417465
+	.pitch= 9.900007E-02
+}
+camera {
+	 .origin=[8.83449, -3.382539, 26.92801]
+	.angle= -3.218178
+	.pitch= 4.500022E-03
+}
+camera {
+	 .origin=[-12.26256, -1.799615, 26.96855]
+	.angle= -2.037764
+	.pitch= -0.1635
+}
+camera {
+	 .origin=[-7.671865, -1.305757, 16.55041]
+	.angle= 0.2047453
+	.pitch= -0.429001
+}
+camera {
+	 .origin=[1.866523, -0.2760385, 15.58411]
+	.angle= -1.10026
+	.pitch= -0.1814999
+}
+camera {
+	 .origin=[8.999644, -3.371893, 26.33484]
+	.angle= -3.081688
+	.pitch= 0.1335086
+}
+
+variable <idletext>="Puzzle objective: To change the words Earth, Wind, Water and Fire from the color white to turquoise."
+
+
+variable <credittext>="-----Credits-----\n\n3D Chess Pieces are by\nSketchup 3D Artists on\nGoogle 3D Warehouse\n\nProgramming, Concept,\nDesign and All other\nScenery, or Art by\nNicholas Forystek\n\nSpecial Thanks To\nPinky, my BFF"
+
+
+
+variable <data>=9 
+'Echo data
+
+
+
+serialize [
+	Player.Origin
+	orders
+	firevix1var
+	firevix2var
+	firevix3var
+	windvix1var
+	windvix2var
+	windvix3var
+	upriver
+
+	hudwaterimg.visible
+	dudwaterimg.visible
+	hudwaterrimg.visible
+	hudwaterbimg.visible
+	hudwaterfimg.visible
+	hudwatersimg.visible
+
+	hudwindimg.visible
+	dudwindimg.visible
+
+	hudfireimg.visible
+	dudfireimg.visible
+
+	hudearthimg.visible
+	dudearthimg.visible
+	hudearthkimg.visible
+	hudearthrimg.visible
+	hudearthbimg.visible
+	hudearth2img.visible
+	pawn1.origin
+	pawn2.origin
+	pawn3.origin
+
+]
+deserialize [
+	checkvix
+	checkearth
+	checkwater
+	checkgame
+]

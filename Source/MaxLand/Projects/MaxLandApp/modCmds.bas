@@ -4,6 +4,16 @@ Option Explicit
 'TOP DOWN
 Option Compare Binary
 Option Private Module
+
+
+Private Const MaxConsoleMsgs = 20
+Private Const MaxHistoryMsgs = 10
+
+Private ConsoleMsgs As VBA.Collection
+Private HistoryMsgs As VBA.Collection
+Private HistoryPoint As Integer
+Private CommandLine As String
+
 Private DInput As DirectInput8
 Private DIKeyBoardDevice As DirectInputDevice8
 Private DIKEYBOARDSTATE As DIKEYBOARDSTATE
@@ -11,36 +21,9 @@ Private DIKEYBOARDSTATE As DIKEYBOARDSTATE
 Private DIMouseDevice As DirectInputDevice8
 Private DIMOUSESTATE As DIMOUSESTATE
 
-Private ToggleSound1 As Boolean
-Private ToggleSound2 As Boolean
-Private ToggleSound3 As Boolean
 Private TogglePress1 As Long
 Private TogglePress2 As Long
 Private TogglePress3 As Long
-
-Private ToggleMouse1 As Long
-Private ToggleMouse2 As Long
-
-Private IdleInput As Single
-
-Private Enum ToggleIdents
-    MoveAuto = 0
-    MoveJump = 1
-    MoveForward = 2
-    MoveBackward = 3
-    MoveStepLeft = 4
-    MoveStepRight = 5
-End Enum
-
-Private ToggleMotion(0 To 5) As Long
-
-Private Const MaxConsoleMsgs = 20
-Private Const MaxHistoryMsgs = 10
-
-Private ConsoleMsgs As Collection
-Private HistoryMsgs As Collection
-Private HistoryPoint As Integer
-Private CommandLine As String
 
 Private Type KeyState
     VKState As Integer
@@ -48,6 +31,9 @@ Private Type KeyState
     VKPressed As Boolean
     VKLatency As Single
  End Type
+
+Private IdleInput As Single
+
 
 Private CapsLock As Boolean
 Private KeyState(255) As KeyState
@@ -74,9 +60,34 @@ Public DrawCount As Long
 Public Draws() As Variant
 
 
+
+
+Private ToggleSound1 As Boolean
+Private ToggleSound2 As Boolean
+Private ToggleSound3 As Boolean
+
+Private ToggleMouse1 As Long
+Private ToggleMouse2 As Long
+
+
+Private Enum ToggleIdents
+    MoveAuto = 0
+    MoveJump = 1
+    MoveForward = 2
+    MoveBackward = 3
+    MoveStepLeft = 4
+    MoveStepRight = 5
+End Enum
+
+Private ToggleMotion(0 To 5) As Long
+
 Public JumpGUID As String
 
-Public Bindings(0 To 255) As String
+Private lX As Integer
+Private lY As Integer
+Private lZ As Integer
+
+'Public Bindings(0 To 255) As String
 
 'Public Enum SurfaceControl
 '    Forward = 1
@@ -93,6 +104,8 @@ Public Bindings(0 To 255) As String
 
 Public Function GetBindingIndex(ByVal BindText As String) As Integer
     Select Case Trim(UCase(BindText))
+        Case "CONTROLLER"
+            GetBindingIndex = -2
         Case "0"
             GetBindingIndex = DIK_0
         Case "1"
@@ -261,9 +274,9 @@ Public Function GetBindingIndex(ByVal BindText As String) As Integer
             GetBindingIndex = DIK_MYCOMPUTER
         Case "N"
             GetBindingIndex = DIK_N
-        Case "NEXT"
+        Case "Next"
             GetBindingIndex = DIK_NEXT
-        Case "NEXTTRACK"
+        Case "NextTRACK"
             GetBindingIndex = DIK_NEXTTRACK
         Case "NOCONVERT"
             GetBindingIndex = DIK_NOCONVERT
@@ -415,6 +428,336 @@ Public Function GetBindingIndex(ByVal BindText As String) As Integer
             GetBindingIndex = -1
     End Select
 End Function
+
+Public Function GetBindingText(ByVal BindIndex As Integer) As String
+    Select Case BindIndex
+        Case -2
+            GetBindingText = "CONTROLLER"
+        Case DIK_0
+            GetBindingText = "0"
+        Case DIK_1
+            GetBindingText = "1"
+        Case DIK_2
+            GetBindingText = "2"
+        Case DIK_3
+            GetBindingText = "3"
+        Case DIK_4
+            GetBindingText = "4"
+        Case DIK_5
+            GetBindingText = "5"
+        Case DIK_6
+            GetBindingText = "6"
+        Case DIK_7
+            GetBindingText = "7"
+        Case DIK_8
+            GetBindingText = "8"
+        Case DIK_9
+            GetBindingText = "9"
+        Case DIK_A
+            GetBindingText = "A"
+        Case DIK_ABNT_C1
+            GetBindingText = "ABNT_C1"
+        Case DIK_ABNT_C2
+            GetBindingText = "ABNT_C2"
+        Case DIK_ADD
+            GetBindingText = "ADD"
+        Case DIK_APOSTROPHE
+            GetBindingText = "APOSTROPHE"
+        Case DIK_APPS
+            GetBindingText = "APPS"
+        Case DIK_AT
+            GetBindingText = "AT"
+        Case DIK_AX
+            GetBindingText = "AX"
+        Case DIK_B
+            GetBindingText = "B"
+        Case DIK_BACK
+            GetBindingText = "BACK"
+        Case DIK_BACKSLASH
+            GetBindingText = "BACKSLASH"
+        Case DIK_BACKSPACE
+            GetBindingText = "BACKSPACE"
+        Case DIK_C
+            GetBindingText = "C"
+        Case DIK_CALCULATOR
+            GetBindingText = "CALCULATOR"
+        Case DIK_CAPITAL
+            GetBindingText = "CAPITAL"
+        Case DIK_CAPSLOCK
+            GetBindingText = "CAPSLOCK"
+        Case DIK_CIRCUMFLEX
+            GetBindingText = "CIRCUMFLEX"
+        Case DIK_COLON
+            GetBindingText = "COLON"
+        Case DIK_COMMA
+            GetBindingText = "COMMA"
+        Case DIK_CONVERT
+            GetBindingText = "CONVERT"
+        Case DIK_D
+            GetBindingText = "D"
+        Case DIK_DECIMAL
+            GetBindingText = "DECIMAL"
+        Case DIK_DELETE
+            GetBindingText = "DELETE"
+        Case DIK_DIVIDE
+            GetBindingText = "DIVIDE"
+        Case DIK_DOWN
+            GetBindingText = "DOWN"
+        Case DIK_DOWNARROW
+            GetBindingText = "DOWNARROW"
+        Case DIK_E
+            GetBindingText = "E"
+        Case DIK_END
+            GetBindingText = "END"
+        Case DIK_EQUALS
+            GetBindingText = "EQUALS"
+        Case DIK_ESCAPE
+            GetBindingText = "ESCAPE"
+        Case DIK_F
+            GetBindingText = "F"
+        Case DIK_F1
+            GetBindingText = "F1"
+        Case DIK_F10
+            GetBindingText = "F10"
+        Case DIK_F11
+            GetBindingText = "F11"
+        Case DIK_F12
+            GetBindingText = "F12"
+        Case DIK_F13
+            GetBindingText = "F13"
+        Case DIK_F14
+            GetBindingText = "F14"
+        Case DIK_F15
+            GetBindingText = "F15"
+        Case DIK_F2
+            GetBindingText = "F2"
+        Case DIK_F3
+            GetBindingText = "F3"
+        Case DIK_F4
+            GetBindingText = "F4"
+        Case DIK_F5
+            GetBindingText = "F5"
+        Case DIK_F6
+            GetBindingText = "F6"
+        Case DIK_F7
+            GetBindingText = "F7"
+        Case DIK_F8
+            GetBindingText = "F8"
+        Case DIK_F9
+            GetBindingText = "F9"
+        Case DIK_G
+            GetBindingText = "G"
+        Case DIK_GRAVE
+            GetBindingText = "GRAVE"
+        Case DIK_H
+            GetBindingText = "H"
+        Case DIK_HOME
+            GetBindingText = "HOME"
+        Case DIK_I
+            GetBindingText = "I"
+        Case DIK_INSERT
+            GetBindingText = "INSERT"
+        Case DIK_J
+            GetBindingText = "J"
+        Case DIK_K
+            GetBindingText = "K"
+        Case DIK_KANA
+            GetBindingText = "KANA"
+        Case DIK_KANJI
+            GetBindingText = "KANJI"
+        Case DIK_L
+            GetBindingText = "L"
+        Case DIK_LALT
+            GetBindingText = "LALT"
+        Case DIK_LBRACKET
+            GetBindingText = "LBRACKET"
+        Case DIK_LCONTROL
+            GetBindingText = "LCONTROL"
+        Case DIK_LEFT
+            GetBindingText = "LEFT"
+        Case DIK_LEFTARROW
+            GetBindingText = "LEFTARROW"
+        Case DIK_LMENU
+            GetBindingText = "LMENU"
+        Case DIK_LSHIFT
+            GetBindingText = "LSHIFT"
+        Case DIK_LWIN
+            GetBindingText = "LWIN"
+        Case DIK_M
+            GetBindingText = "M"
+        Case DIK_MAIL
+            GetBindingText = "MAIL"
+        Case DIK_MEDIASELECT
+            GetBindingText = "MEDIASELECT"
+        Case DIK_MEDIASTOP
+            GetBindingText = "MEDIASTOP"
+        Case DIK_MINUS
+            GetBindingText = "MINUS"
+        Case DIK_MULTIPLY
+            GetBindingText = "MULTIPLY"
+        Case DIK_MUTE
+            GetBindingText = "MUTE"
+        Case DIK_MYCOMPUTER
+            GetBindingText = "MYCOMPUTER"
+        Case DIK_N
+            GetBindingText = "N"
+        Case DIK_NEXTTRACK
+            GetBindingText = "NextTRACK"
+        Case DIK_NOCONVERT
+            GetBindingText = "NOCONVERT"
+        Case DIK_NUMLOCK
+            GetBindingText = "NUMLOCK"
+        Case DIK_NUMPAD0
+            GetBindingText = "NUMPAD0"
+        Case DIK_NUMPAD1
+            GetBindingText = "NUMPAD1"
+        Case DIK_NUMPAD2
+            GetBindingText = "NUMPAD2"
+        Case DIK_NUMPAD3
+            GetBindingText = "NUMPAD3"
+        Case DIK_NUMPAD4
+            GetBindingText = "NUMPAD4"
+        Case DIK_NUMPAD5
+            GetBindingText = "NUMPAD5"
+        Case DIK_NUMPAD6
+            GetBindingText = "NUMPAD6"
+        Case DIK_NUMPAD7
+            GetBindingText = "NUMPAD7"
+        Case DIK_NUMPAD8
+            GetBindingText = "NUMPAD8"
+        Case DIK_NUMPAD9
+            GetBindingText = "NUMPAD9"
+        Case DIK_NUMPADCOMMA
+            GetBindingText = "NUMPADCOMMA"
+        Case DIK_NUMPADENTER
+            GetBindingText = "NUMPADENTER"
+        Case DIK_NUMPADEQUALS
+            GetBindingText = "NUMPADEQUALS"
+        Case DIK_NUMPADMINUS
+            GetBindingText = "NUMPADMINUS"
+        Case DIK_NUMPADPERIOD
+            GetBindingText = "NUMPADPERIOD"
+        Case DIK_NUMPADPLUS
+            GetBindingText = "NUMPADPLUS"
+        Case DIK_NUMPADSLASH
+            GetBindingText = "NUMPADSLASH"
+        Case DIK_NUMPADSTAR
+            GetBindingText = "NUMPADSTAR"
+        Case DIK_O
+            GetBindingText = "O"
+        Case DIK_OEM_102
+            GetBindingText = "OEM_102"
+        Case DIK_P
+            GetBindingText = "P"
+        Case DIK_PAUSE
+            GetBindingText = "PAUSE"
+        Case DIK_PERIOD
+            GetBindingText = "PERIOD"
+        Case DIK_PGDN
+            GetBindingText = "PGDN"
+        Case DIK_PGUP
+            GetBindingText = "PGUP"
+        Case DIK_PLAYPAUSE
+            GetBindingText = "PLAYPAUSE"
+        Case DIK_NEXT
+            GetBindingText = "Next"
+        Case DIK_POWER
+            GetBindingText = "POWER"
+        Case DIK_PREVTRACK
+            GetBindingText = "PREVTRACK"
+        Case DIK_PRIOR
+            GetBindingText = "PRIOR"
+        Case DIK_Q
+            GetBindingText = "Q"
+        Case DIK_R
+            GetBindingText = "R"
+        Case DIK_RALT
+            GetBindingText = "RALT"
+        Case DIK_RBRACKET
+            GetBindingText = "RBRACKET"
+        Case DIK_RCONTROL
+            GetBindingText = "RCONTROL"
+        Case DIK_RETURN
+            GetBindingText = "RETURN"
+        Case DIK_RIGHT
+            GetBindingText = "RIGHT"
+        Case DIK_RIGHTARROW
+            GetBindingText = "RIGHTARROW"
+        Case DIK_RMENU
+            GetBindingText = "RMENU"
+        Case DIK_RSHIFT
+            GetBindingText = "RSHIFT"
+        Case DIK_RWIN
+            GetBindingText = "RWIN"
+        Case DIK_S
+            GetBindingText = "S"
+        Case DIK_SCROLL
+            GetBindingText = "SCROLL"
+        Case DIK_SEMICOLON
+            GetBindingText = "SEMICOLON"
+        Case DIK_SLASH
+            GetBindingText = "SLASH"
+        Case DIK_SLEEP
+            GetBindingText = "SLEEP"
+        Case DIK_STOP
+            GetBindingText = "STOP"
+        Case DIK_SUBTRACT
+            GetBindingText = "SUBTRACT"
+        Case DIK_SYSRQ
+            GetBindingText = "SYSRQ"
+        Case DIK_T
+            GetBindingText = "T"
+        Case DIK_TAB
+            GetBindingText = "TAB"
+        Case DIK_U
+            GetBindingText = "U"
+        Case DIK_UNDERLINE
+            GetBindingText = "UNDERLINE"
+        Case DIK_UNLABELED
+            GetBindingText = "UNLABELED"
+        Case DIK_UP
+            GetBindingText = "UP"
+        Case DIK_UPARROW
+            GetBindingText = "UPARROW"
+        Case DIK_V
+            GetBindingText = "V"
+        Case DIK_VOLUMEDOWN
+            GetBindingText = "VOLUMEDOWN"
+        Case DIK_VOLUMEUP
+            GetBindingText = "VOLUMEUP"
+        Case DIK_W
+            GetBindingText = "W"
+        Case DIK_WAKE
+            GetBindingText = "WAKE"
+        Case DIK_WEBBACK
+            GetBindingText = "WEBBACK"
+        Case DIK_WEBFAVORITES
+            GetBindingText = "WEBFAVORITES"
+        Case DIK_WEBFORWARD
+            GetBindingText = "WEBFORWARD"
+        Case DIK_WEBHOME
+            GetBindingText = "WEBHOME"
+        Case DIK_WEBREFRESH
+            GetBindingText = "WEBREFRESH"
+        Case DIK_WEBSEARCH
+            GetBindingText = "WEBSEARCH"
+        Case DIK_WEBSTOP
+            GetBindingText = "WEBSTOP"
+        Case DIK_X
+            GetBindingText = "X"
+        Case DIK_Y
+            GetBindingText = "Y"
+        Case DIK_YEN
+            GetBindingText = "YEN"
+        Case DIK_Z
+            GetBindingText = "Z"
+        Case Else
+            GetBindingText = -1
+    End Select
+End Function
+
+
+
 Public Sub ResetIdle()
     IdleInput = Timer
 End Sub
@@ -449,8 +792,8 @@ End Property
 'Public Function SurfaceCatch(ByVal X As Single, ByVal Y As Single) As Boolean
 '    Static ToggleJump As Boolean
 '    Dim vecDirect As D3DVECTOR
-'    Dim moveFriction As Single
-'    moveFriction = 0.05
+'    Dim Friction As Single
+'    Friction = 0.05
 '    SurfaceCatch = True
 '    Select Case SurfaceHit(X / Screen.TwipsPerPixelX, Y / Screen.TwipsPerPixelY)
 '        Case MouseUp
@@ -470,60 +813,60 @@ End Property
 '            ResetIdle
 '            ToggleJump = False
 '        Case Forward
-'            If Player.Object.Direct.Y = 0 Then
-'                vecDirect.X = Sin(D720 - Player.CameraAngle)
-'                vecDirect.z = Cos(D720 - Player.CameraAngle)
-'                If ((Perspective = Spectator) Or DebugMode) Or Player.Object.States.InLiquid Then
-'                    vecDirect.Y = -(Tan(D720 - Player.CameraPitch))
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin(D720 - Player.Angle)
+'                vecDirect.z = Cos(D720 - Player.Angle)
+'                If ((Perspective = Spectator) Or DebugMode) Or Player.InLiquid Then
+'                    vecDirect.Y = -(Tan(D720 - Player.Pitch))
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case Backward
 '
-'            If Player.Object.Direct.Y = 0 Then
-'                vecDirect.X = -Sin(D720 - Player.CameraAngle)
-'                vecDirect.z = -Cos(D720 - Player.CameraAngle)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = -Sin(D720 - Player.Angle)
+'                vecDirect.z = -Cos(D720 - Player.Angle)
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = Tan(D720 - Player.CameraPitch)
+'                    vecDirect.Y = Tan(D720 - Player.Pitch)
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case LeftStep
-'            If Player.Object.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - Player.CameraAngle) - D180)
-'                vecDirect.z = Cos((D720 - Player.CameraAngle) - D180)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - Player.Angle) - D180)
+'                vecDirect.z = Cos((D720 - Player.Angle) - D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case RightStep
-'            If Player.Object.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - Player.CameraAngle) + D180)
-'                vecDirect.z = Cos((D720 - Player.CameraAngle) + D180)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - Player.Angle) + D180)
+'                vecDirect.z = Cos((D720 - Player.Angle) + D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
@@ -534,23 +877,23 @@ End Property
 '                ToggleJump = True
 '
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = vecDirect.Y + IIf(Player.MoveSpeed < 1, 1, Player.MoveSpeed)
-'                    AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
+'                    vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                Else
 '
-'                    If ActivityExists(Player.Object, JumpGUID) Then
-'                        If (Not ((Player.Object.States.IsMoving And Moving.Flying) = Moving.Flying) Or _
-'                                ((Player.Object.States.IsMoving And Moving.Falling) = Moving.Falling)) Then
-'                            'If ActivityExists(Player.Object, JumpGUID) Then
-'                                Do Until Not ActivityExists(Player.Object, JumpGUID)
-'                                    DeleteActivity Player.Object, JumpGUID
+'                    If Player.Activities.Exists(JumpGUID) Then
+'                        If (Not ((Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
+'                                ((Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
+'                            'If Player.Activities.Exists(JumpGUID) Then
+'                                Do Until Not MotionExists(JumpGUID)
+'                                    DeleteMotion Player, JumpGUID
 '                                Loop
 '                            'End If
 '                        End If
 '                    End If
-'                    If Not ActivityExists(Player.Object, JumpGUID) Then
-'                        vecDirect.Y = IIf(Player.Object.States.InLiquid, 5, 9)
-'                        JumpGUID = AddActivity(Player.Object, Actions.Directing, JumpGUID, vecDirect, (Player.MoveSpeed * 4), moveFriction)
+'                    If Not Player.Activities.Exists(JumpGUID) Then
+'                        vecDirect.Y = IIf(Player.InLiquid, 5, 9)
+'                        JumpGUID = AddMotion(Player, Actions.Directing, JumpGUID, vecDirect, (Player.Speed * 4), Friction)
 '                    End If
 '                End If
 '            Else
@@ -572,495 +915,360 @@ Private Function Pressed(ByVal vkCode As Long) As Boolean
 End Function
 
 Public Sub InputScene()
-        
-    Dim cnt As Long
-    Dim cnt2 As Long
-    Dim hit As Long
-    
     On Error GoTo pausing
-   
+
     DIKeyBoardDevice.GetDeviceStateKeyboard DIKEYBOARDSTATE
 
-    If (GetActiveWindow = frmMain.hwnd) Then
-        If FullScreen And Not TrapMouse Then TrapMouse = True
-        
-        ConsoleInput DIKEYBOARDSTATE
-        
-        Dim uses(0 To 255) As Boolean
-        For cnt = 0 To 255
-            If DIKEYBOARDSTATE.Key(cnt) Then
-                If Not Bindings(cnt) = "" Then
-                    uses(cnt) = True
+    Dim cnt As Long
+    Dim uses(0 To 255) As Boolean
     
-                    ParseLand 0, Bindings(cnt)
+    If ((GetActiveWindow = frmMain.hwnd)) Then
     
-                End If
-            End If
-        Next
-        
-        If DIKEYBOARDSTATE.Key(DIK_F2) And (Not uses(DIK_F2)) Then
-            If (Not TogglePress1 = DIK_F2) Then
-                TogglePress1 = DIK_F2
-                
-                '############### SHOW StATS ################
-                ResetIdle
-                ShowStat = (Not ShowStat) Or (ShowStat And Not ShowHelp)
-                If ShowStat Then ShowHelp = True
-                
-            End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_F1) And (Not uses(DIK_F1)) Then
-            If (Not TogglePress1 = DIK_F1) Then
-                TogglePress1 = DIK_F1
-                
-                '############### SHOW HELP ################
-                ResetIdle
-                ShowHelp = Not ShowHelp
-                
-            End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_F3) And (Not uses(DIK_F3)) Then
-            If (Not TogglePress1 = DIK_F3) Then
-                TogglePress1 = DIK_F3
-                
-                '############### SHOW CrEDIts ################
-                ResetIdle
-                ShowCredits = Not ShowCredits
-                
-            End If
-    
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_F5) And (Not uses(DIK_F5)) Then
-    '        If DebugMode Then
-    '            If (Not TogglePress1 = DIK_F5) Then
-    '                TogglePress1 = DIK_F5
-    '
-    '                '###############  ################
-    '                ResetIdle
-    '                CullingObject.Position = Player.Object.Origin
-    '                CullingObject.Direction = VectorNormalize(VectorSubtract(MakeVector(Player.Object.Origin.X + (Sin(D720 - Player.CameraAngle) * 1), _
-    '                                                                    Player.Object.Origin.Y - (Tan(D720 - Player.CameraPitch) * 1), _
-    '                                                                Player.Object.Origin.z + (Cos(D720 - Player.CameraAngle) * 1)), Player.Object.Origin))
-    '                CullingObject.UpVector = VectorNormalize(VectorSubtract(MakeVector(Player.Object.Origin.X + (Sin(D720 - Player.CameraAngle) * 1), _
-    '                                                                    Player.Object.Origin.Y - (Tan(D720 - Player.CameraPitch) * 1), _
-    '                                                                Player.Object.Origin.z + (Cos(D720 - Player.CameraAngle) * 1)), Player.Object.Origin))
-    '                CullingSetup = 1
-    '
-    '            End If
-    '        End If
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_F6) And (Not uses(DIK_F6)) Then
-    '        If DebugMode Then
-    '            If (Not TogglePress1 = DIK_F6) Then
-    '                TogglePress1 = DIK_F6
-    '
-    '                '###############  ################
-    '                ResetIdle
-    '                CullingSetup = 2
-    '
-    '            End If
-    '        End If
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_F7) And (Not uses(DIK_F7)) Then
-    '        If DebugMode Then
-    '            If (Not TogglePress1 = DIK_F7) Then
-    '                TogglePress1 = DIK_F7
-    '
-    '                '###############  ################
-    '                ResetIdle
-    '                CullingCount = CullingCount + 1
-    '                ReDim Preserve Cullings(1 To CullingCount) As MyCulling
-    '                Cullings(CullingCount) = CullingObject
-    '                CullingSetup = 0
-    '
-    '            End If
-    '        End If
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_F8) And (Not uses(DIK_F8)) Then
-    '        If DebugMode Then
-    '            If (Not TogglePress1 = DIK_F8) Then
-    '                TogglePress1 = DIK_F8
-    '
-    '                '###############  ################
-    '                ResetIdle
-    '                If CullingCount > 0 Then
-    '                    CullingCount = 0
-    '                    Erase Cullings
-    '                End If
-    '
-    '            End If
-    '        End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_ESCAPE) And (Not uses(DIK_ESCAPE)) Then
+        If (FullScreen And Not TrapMouse) Then TrapMouse = True And (Bindings.MouseInput = Trapping)
+
+        If DIKEYBOARDSTATE.Key(DIK_ESCAPE) Then
             If (Not TogglePress1 = DIK_ESCAPE) Then
                 TogglePress1 = DIK_ESCAPE
-                
-                '###############  ################
+
+                '############################################
+                '############### UNTRAP/QUIT ################
                 ResetIdle
-                If ((Not FullScreen) And TrapMouse) Or ConsoleVisible Then
+
+'                If ((Not FullScreen) And TrapMouse) Then
+'                    TrapMouse = False
+'                ElseIf (FullScreen Or (Not FullScreen And Not TrapMouse)) And (Bindings.MouseInput = Trapping) Then
+'                    StopGame = True
+'                End If
+
+
+                If ((Not FullScreen) Or ConsoleVisible) And TrapMouse Then
                     TrapMouse = False
                 ElseIf FullScreen Or (Not FullScreen And Not TrapMouse) Then
                     StopGame = True
                 End If
-                
+                '############################################
+                '############################################
+
             End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_GRAVE) And (Not uses(DIK_GRAVE)) Then
-            If (Not TogglePress1 = DIK_GRAVE) Then
-                TogglePress1 = DIK_GRAVE
-                
-                '###############  ################
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F1) Then
+            If (Not TogglePress1 = DIK_F1) Then
+                TogglePress1 = DIK_F1
+
+                '############################################
+                '################ SHOW HELP #################
                 ResetIdle
-                ConsoleToggle
-                
+                ShowHelp = Not ShowHelp
+                '############################################
+                '############################################
+
             End If
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) And (Not uses(DIK_LALT)) Then
-    '        If (Not TogglePress1 = DIK_LALT) Then
-    '            TogglePress1 = DIK_LALT
-    '
-    '            '###############  ################
-    '            ResetIdle
-    '            If DIKEYBOARDSTATE.Key(DIK_TAB) Then
-    '
-    '
-    '                DoPauseGame
-    '                frmMain.WindowState = 1
-    '            End If
-    '
-    '        End If
-    '    ElseIf DIKEYBOARDSTATE.Key(DIK_RALT) And (Not uses(DIK_RALT)) Then
-    '        If (Not TogglePress1 = DIK_RALT) Then
-    '            TogglePress1 = DIK_RALT
-    '
-    '            '###############  ################
-    '            ResetIdle
-    '            If DIKEYBOARDSTATE.Key(DIK_TAB) Then
-    '
-    '                DoPauseGame
-    '                frmMain.WindowState = 1
-    '
-    '            End If
-    '
-    '        End If
-            ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT) Then
-                If DIKEYBOARDSTATE.Key(DIK_TAB) Then
-                    If (Not TogglePress1 = DIK_TAB) Then
-                        TogglePress1 = DIK_TAB
-                        TrapMouse = False
-                        frmMain.WindowState = 1
-                    End If
-                End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F2) Then
+            If (Not TogglePress1 = DIK_F2) Then
+                TogglePress1 = DIK_F2
+
+                '############################################
+                '################ SHOW StATS ################
+                ResetIdle
+                ShowStat = (Not ShowStat) Or (ShowStat And Not ShowHelp)
+                If ShowStat Then ShowHelp = True
+                '############################################
+                '############################################
+
+            End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F3) Then
+            If (Not TogglePress1 = DIK_F3) Then
+                TogglePress1 = DIK_F3
+
+                '############################################
+                '############### RESET GAME #################
                 
-    '    ElseIf ((DIKEYBOARDSTATE.Key(DIK_RALT) Or DIKEYBOARDSTATE.Key(DIK_LALT)) And DIKEYBOARDSTATE.Key(DIK_TAB)) Then
-    '
-    '        If (Not TogglePress1 = DIK_LALT + DIK_RALT + DIK_TAB) Then
-    '            TogglePress1 = DIK_LALT + DIK_RALT + DIK_TAB
-    '
-    '            '###############  ################
-    '            ResetIdle
-    '
-    '            If (GetActiveWindow = frmMain.hwnd) And TrapMouse Then
-    '                TrapMouse = False
-    '                frmMain.WindowState = 1
-    '            End If
-    '
-    '        End If
+                ResetIdle
+                Process "reset"
+
+                '############################################
+                '############################################
+            End If
             
-        ElseIf Not (TogglePress1 = 0) Then
-            TogglePress1 = 0
-        End If
-    
-    End If
-    
-       
-    If (Not ConsoleVisible) And TrapMouse Then
-        
-        If (DIKEYBOARDSTATE.Key(DIK_TAB)) And (Not (DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT))) Then
-            If (Not TogglePress3 = DIK_TAB) Then
-                TogglePress3 = DIK_TAB
-                
-                '###############  ################
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F4) Then
+            If (Not TogglePress1 = DIK_F4) Then
+                TogglePress1 = DIK_F4
+            
+                '############################################
+                '############### SHOW CREDITS ###############
+                ResetIdle
+                ShowCredits = Not ShowCredits
+                '############################################
+                '############################################
+
+            End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F6) Then
+            If (Not TogglePress1 = DIK_F6) Then
+                TogglePress1 = DIK_F6
+            
+                '############################################
+                '############ SWITCH PERSPECTIVE ############
                 ResetIdle
                 If Perspective = Playmode.ThirdPerson Then
                     Perspective = Playmode.FirstPerson
                 ElseIf Perspective = Playmode.FirstPerson Then
-                    Perspective = IIf((CameraCount > 0), Playmode.CameraMode, Playmode.ThirdPerson)
+                    Perspective = IIf((Cameras.Count > 0), Playmode.CameraMode, Playmode.ThirdPerson)
                 ElseIf Perspective = Playmode.CameraMode Then
                     Perspective = Playmode.ThirdPerson
                 End If
-                
+                '############################################
+                '############################################
+
             End If
-        ElseIf Not (TogglePress3 = 0) Then
-            TogglePress3 = 0
+        ElseIf DIKEYBOARDSTATE.Key(DIK_LALT) Or DIKEYBOARDSTATE.Key(DIK_RALT) Then
+            If DIKEYBOARDSTATE.Key(DIK_TAB) Then
+                If (Not TogglePress1 = DIK_TAB) Then
+                    TogglePress1 = DIK_TAB
+                    
+                    '############################################
+                    '############### ALT+TAB SWAP ###############
+                    ResetIdle
+
+                    TrapMouse = False
+
+                    If FullScreen Then
+                        frmMain.WindowState = 1
+                        DoPauseGame
+                    End If
+
+'                    TrapMouse = False
+'                    frmMain.WindowState = 1
+    
+                    '############################################
+                    '############################################
+                    
+                    
+                End If
+            End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_GRAVE) Then
+            If (Not TogglePress1 = DIK_GRAVE) Then
+                TogglePress1 = DIK_GRAVE
+
+
+                '############################################
+                '############## TOGGLE CONSOLE ##############
+                ResetIdle
+                ConsoleToggle
+
+                '############################################
+                '############################################
+            End If
+        ElseIf Not (TogglePress1 = 0) Then
+            TogglePress1 = 0
         End If
-        
-        If Player.MoveSpeed > MaxDisplacement Then Player.MoveSpeed = MaxDisplacement
-        If Player.MoveSpeed < 0.01 Then Player.MoveSpeed = 0.01
-        
-        Dim vecDirect As D3DVECTOR
-        Dim moveFriction As Single
-        moveFriction = 0.05
-        
-        If ((Perspective = Spectator) Or DebugMode) Or _
-            ((((Not ((Player.Object.States.IsMoving And Moving.Falling) = Moving.Falling))) _
-            Or Player.Object.States.InLiquid) And Player.Object.Visible) Then
-                     
-            If (DIKEYBOARDSTATE.Key(DIK_E)) And (Not uses(DIK_E)) Then
-            
-                '###############  ################
-                ResetIdle
-                If Player.Object.Direct.Y = 0 Then
-                    vecDirect.X = Sin(D720 - Player.CameraAngle)
-                    vecDirect.z = Cos(D720 - Player.CameraAngle)
-                    If ((Perspective = Spectator) Or DebugMode) Or Player.Object.States.InLiquid Then
-                        vecDirect.Y = -(Tan(D720 - Player.CameraPitch))
-                    End If
-                    D3DXVec3Normalize vecDirect, vecDirect
-                    If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
-                    Else
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
-                    End If
-                End If
-                
+    
+        If (Not TogglePress1 = DIK_TAB) Then ConsoleInput DIKEYBOARDSTATE
+    
+        Dim rec  As RECT
+        Dim mloc As modDecs.POINTAPI
+        GetCursorPos mloc
+        GetWindowRect frmMain.hwnd, rec
+   
+        Dim mX As Integer
+        Dim mY As Integer
+        Dim mZ As Integer
+        DIMouseDevice.GetDeviceStateMouse DIMOUSESTATE
+        mX = DIMOUSESTATE.lX
+        mY = DIMOUSESTATE.lY
+        mZ = DIMOUSESTATE.lZ
+                       
+        If ((TrapMouse Or FullScreen) And (Bindings.MouseInput = Trapping)) Or ((Bindings.MouseInput = Hidden) _
+            And ((mloc.X >= rec.Left) And (mloc.X <= rec.Right) And (mloc.Y >= rec.Top) And (mloc.Y <= rec.Bottom))) Then
+            If (Not (VB.Screen.MousePointer = 99)) Then
+                VB.Screen.MousePointer = 99
+                Set VB.Screen.MouseIcon = LoadPicture(AppPath & "mouse.cur")
             End If
-            If (DIKEYBOARDSTATE.Key(DIK_D)) And (Not uses(DIK_D)) Then
             
-                '###############  ################
-                ResetIdle
-                If Player.Object.Direct.Y = 0 Then
-                    vecDirect.X = -Sin(D720 - Player.CameraAngle)
-                    vecDirect.z = -Cos(D720 - Player.CameraAngle)
-                    If (Perspective = Spectator) Or DebugMode Then
-                        vecDirect.Y = Tan(D720 - Player.CameraPitch)
-                    End If
-                    D3DXVec3Normalize vecDirect, vecDirect
-                    If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
-                    Else
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
-                    End If
-                End If
-                
-            End If
-            If (DIKEYBOARDSTATE.Key(DIK_W)) And (Not uses(DIK_W)) Then
-            
-                '###############  ################
-                ResetIdle
-                If Player.Object.Direct.Y = 0 Then
-                    vecDirect.X = Sin((D720 - Player.CameraAngle) - D180)
-                    vecDirect.z = Cos((D720 - Player.CameraAngle) - D180)
-                    D3DXVec3Normalize vecDirect, vecDirect
-                    If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
-                    Else
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
-                    End If
-                End If
-                
-            End If
-            If (DIKEYBOARDSTATE.Key(DIK_R)) And (Not uses(DIK_R)) Then
-            
-                '###############  ################
-                ResetIdle
-                If Player.Object.Direct.Y = 0 Then
-                    vecDirect.X = Sin((D720 - Player.CameraAngle) + D180)
-                    vecDirect.z = Cos((D720 - Player.CameraAngle) + D180)
-                    D3DXVec3Normalize vecDirect, vecDirect
-                    If Player.Object.States.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, (Player.MoveSpeed / 2), moveFriction
-                    Else
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
-                    End If
-                End If
-                
-            End If
+        ElseIf Not TrapMouse Then
+            If (Not (VB.Screen.MousePointer = 0)) Then VB.Screen.MousePointer = 0
         End If
-        If ((Perspective = Spectator) Or DebugMode) Or (((Not ((Player.Object.States.IsMoving And Moving.Flying) = Moving.Flying))) And _
-                                        (Not ((Player.Object.States.IsMoving And Moving.Falling) = Moving.Falling))) Then
+
+
+        If Player.Speed > MaxDisplacement Then Player.Speed = MaxDisplacement
+        If Player.Speed < 0.01 Then Player.Speed = 0.01
+
+
+        If ((TrapMouse And (Not ConsoleVisible)) And (Bindings.MouseInput = Trapping)) Or _
+            (((Not TrapMouse) And (Not ConsoleVisible)) And (Bindings.MouseInput = Hidden)) Or _
+            ((Bindings.MouseInput = Visual) And ((mloc.X >= rec.Left) And (mloc.X <= rec.Right) _
+            And (mloc.Y >= rec.Top) And (mloc.Y <= rec.Bottom))) Then
             
-            If (DIKEYBOARDSTATE.Key(DIK_SPACE)) And (Not uses(DIK_SPACE)) Then
+            MouseLook mX, mY, mZ
+        
+            For cnt = 0 To 255
+                If DIKEYBOARDSTATE.Key(cnt) Then
+                    If Not Bindings(cnt) = "" Then
+                        uses(cnt) = True
+                        frmMain.ExecuteStatement Bindings(cnt) & vbCrLf
+                    End If
+                End If
+            Next
+
+            If DIKEYBOARDSTATE.Key(DIK_E) And (Bindings(DIK_E) = "") And (Not uses(DIK_E)) Then
+                uses(DIK_E) = True
+                ResetIdle
+                Player.MoveForward
+            ElseIf DIKEYBOARDSTATE.Key(DIK_D) And (Bindings(DIK_D) = "") And (Not uses(DIK_D)) Then
+                uses(DIK_D) = True
+                ResetIdle
+                Player.MoveBackwards
+            End If
+
+            If DIKEYBOARDSTATE.Key(DIK_W) And (Bindings(DIK_W) = "") And (Not uses(DIK_W)) Then
+                uses(DIK_W) = True
+                ResetIdle
+                Player.SlideLeft
+            ElseIf DIKEYBOARDSTATE.Key(DIK_R) And (Bindings(DIK_R) = "") And (Not uses(DIK_R)) Then
+                uses(DIK_R) = True
+                ResetIdle
+                Player.SlideRight
+            End If
+            
+            If DIKEYBOARDSTATE.Key(DIK_SPACE) And (Bindings(DIK_SPACE) = "") And (Not uses(DIK_SPACE)) Then
+                uses(DIK_SPACE) = True
+
                 If (ToggleMotion(ToggleIdents.MoveJump) <> DIK_SPACE) Then
                     ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE
                     
-                    '###############  ################
                     ResetIdle
-                    If (Perspective = Spectator) Or DebugMode Then
-                        vecDirect.Y = vecDirect.Y + IIf(Player.MoveSpeed < 1, 1, Player.MoveSpeed)
-                        AddActivity Player.Object, Actions.Directing, Replace(modGuid.GUID, "-", ""), vecDirect, Player.MoveSpeed, moveFriction
-                    Else
-                    
-                        If ActivityExists(Player.Object, JumpGUID) Then
-                            If (Not ((Player.Object.States.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                                    ((Player.Object.States.IsMoving And Moving.Falling) = Moving.Falling)) Then
-                                Do Until Not ActivityExists(Player.Object, JumpGUID)
-                                    DeleteActivity Player.Object, JumpGUID
-                                Loop
-                            End If
-                        End If
-                        If Not ActivityExists(Player.Object, JumpGUID) Then
-                            vecDirect.Y = IIf(Player.Object.States.InLiquid, 5, 9)
-                            JumpGUID = AddActivity(Player.Object, Actions.Directing, JumpGUID, vecDirect, (Player.MoveSpeed * 4), moveFriction)
-                        End If
-                    End If
+                    Player.Jump
                     
                 End If
             ElseIf (ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE) Then
                 ToggleMotion(ToggleIdents.MoveJump) = 0
             End If
-        End If
-    End If
-
-    DIMouseDevice.GetDeviceStateMouse DIMOUSESTATE
-
-    Dim mX As Single
-    Dim mY As Single
-    Dim mZ As Single
-
-    mX = DIMOUSESTATE.lX
-    mY = DIMOUSESTATE.lY
-    mZ = DIMOUSESTATE.lZ
-    
-    If (GetActiveWindow = frmMain.hwnd) And TrapMouse Then
-
-        If Not (frmMain.MousePointer = 99) Then
-            frmMain.MousePointer = 99
-            frmMain.MouseIcon = LoadPicture(AppPath & "mouse.cur")
-        End If
-        
-        If Player.Object.Visible Then
-            MouseLook mX, mY, mZ
-     
-            If (((Not PauseGame) And TrapMouse) And (Not ConsoleVisible)) Then
             
-                If (DIKEYBOARDSTATE.Key(DIK_RIGHTARROW)) And (Not uses(DIK_RIGHTARROW)) Then
-                
-        '        Case MouseRight
-                    '###############  ################
-                    MouseLook 20, 0, 0
-                    ResetIdle
 
-                ElseIf (DIKEYBOARDSTATE.Key(DIK_LEFTARROW)) And (Not uses(DIK_LEFTARROW)) Then
-                
-        '        Case MouseLeft
-                    '###############  ################
-                    MouseLook -20, 0, 0
-                    ResetIdle
+            
+'            If ((mX < 0) And (Bindings(DIK_LEFT) <> "")) And (Not uses(DIK_LEFT)) Then
+'                uses(DIK_LEFT) = True
+'                For cnt = (mX * MouseSensitivity) To 0
+'                    frmMain.RunEvent Bindings(DIK_LEFT)
+'                Next
+'            ElseIf ((mX > 0) And (Bindings(DIK_RIGHT) <> "")) And (Not uses(DIK_RIGHT)) Then
+'                uses(DIK_RIGHT) = True
+'                For cnt = 0 To (mX * MouseSensitivity)
+'                    frmMain.RunEvent Bindings(DIK_RIGHT)
+'                Next
+'            End If
+'
+'            If ((mY < 0) And (Bindings(DIK_DOWN) <> "")) And (Not uses(DIK_DOWN)) Then
+'                uses(DIK_DOWN) = True
+'                For cnt = (mY * MouseSensitivity) To 0
+'                    frmMain.RunEvent Bindings(DIK_DOWN)
+'                Next
+'            ElseIf ((mY > 0) And (Bindings(DIK_UP) <> "")) And (Not uses(DIK_UP)) Then
+'                uses(DIK_UP) = True
+'                For cnt = 0 To (mY * MouseSensitivity)
+'                    frmMain.RunEvent Bindings(DIK_UP)
+'                Next
+'            End If
 
-                ElseIf (DIKEYBOARDSTATE.Key(DIK_DOWNARROW)) And (Not uses(DIK_DOWNARROW)) Then
-                
-        '        Case MouseDown
-                    '###############  ################
-                    MouseLook 0, 20, 0
-                    ResetIdle
+            If (DIMOUSESTATE.Buttons(0) And (Bindings(DIK_LCONTROL) <> "")) And (Not uses(DIK_LCONTROL)) Then
+                frmMain.ExecuteStatement Bindings(DIK_LCONTROL)
+            End If
+            If (DIMOUSESTATE.Buttons(1) And (Bindings(DIK_LALT) <> "")) And (Not uses(DIK_LALT)) Then
+                frmMain.ExecuteStatement Bindings(DIK_LALT)
+            End If
 
-                ElseIf (DIKEYBOARDSTATE.Key(DIK_UPARROW)) And (Not uses(DIK_UPARROW)) Then
-                
-        '        Case MouseUp
-                    '###############  ################
-                    MouseLook 0, -20, 0
-                    ResetIdle
+            If (DIMOUSESTATE.Buttons(2) And (Bindings(DIK_RCONTROL) <> "")) And (Not uses(DIK_RCONTROL)) Then
+                frmMain.ExecuteStatement Bindings(DIK_RCONTROL)
+            End If
+            If (DIMOUSESTATE.Buttons(3) And (Bindings(DIK_RALT) <> "")) And (Not uses(DIK_RALT)) Then
+                frmMain.ExecuteStatement Bindings(DIK_RALT)
+            End If
 
-                End If
+            If (Bindings.MouseInput = Trapping) Then
+                SetCursorPos (frmMain.Left / VB.Screen.TwipsPerPixelX) + (frmMain.Width / VB.Screen.TwipsPerPixelX / 2), (frmMain.Top / VB.Screen.TwipsPerPixelY) + (frmMain.Height / VB.Screen.TwipsPerPixelY / 2)
+            End If
+            
+        End If
     
-                If DIMOUSESTATE.Buttons(0) Then 'left
-                    If Not (ToggleMouse1 = DIMOUSESTATE.Buttons(0)) Then
-                        ToggleMouse1 = DIMOUSESTATE.Buttons(0)
-                        
-                        '###############  ################
-                        ResetIdle
-                        If (Perspective = Playmode.Spectator) Then
-                            Player.CameraIndex = Player.CameraIndex + 1
-                            If Player.CameraIndex > CameraCount Then
-                                Player.CameraIndex = 0
-                            End If
-
-                            If Player.CameraIndex = 0 Then
-                                FadeMessage "Spectator View"
-                            Else
-                                FadeMessage "Camera View " & Player.CameraIndex
-                            End If
-                        End If
-                        
-                        
-                    End If
-                ElseIf Not (ToggleMouse1 = 0) Then
-                    ToggleMouse1 = 0
-                End If
-                
-                If DIMOUSESTATE.Buttons(1) Then 'right
-                    If Not (ToggleMouse2 = DIMOUSESTATE.Buttons(1)) Then
-                        ToggleMouse2 = DIMOUSESTATE.Buttons(1)
-                        
-                        '###############  ################
-                        ResetIdle
-                       
-                    End If
-                ElseIf Not (ToggleMouse2 = 0) Then
-                    ToggleMouse2 = 0
-                End If
-                                
-
+        If ((mloc.X > rec.Left) And (mloc.X < rec.Right)) And ((mloc.Y > rec.Top) And (mloc.Y < rec.Bottom)) Then
+            If DIMOUSESTATE.Buttons(0) Then
+                TrapMouse = True And (Bindings.MouseInput = Trapping)
             End If
         End If
-    
-        Dim rec As RECT
-        GetWindowRect frmMain.hwnd, rec
-        SetCursorPos rec.Right + ((rec.Left - rec.Right) / 2), rec.Top + ((rec.Bottom - rec.Top) / 2)
-
+                
+        lX = mX
+        lY = mX
+        lZ = mZ
         
-    'ElseIf (GetActiveWindow = frmMain.hwnd) And Not TrapMouse Then
-        'TrapMouse = True
-    Else
-        If Not (frmMain.MousePointer = 1) Then frmMain.MousePointer = 1
     End If
 
     Exit Sub
 pausing:
     Err.Clear
+
+
+
+
+    Err.Clear
     DoPauseGame
 End Sub
 
-Public Sub MouseLook(ByVal X As Integer, ByVal Y As Integer, ByVal z As Integer)
+Public Sub MouseLook(ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer)
 
     Dim cnt As Long
-
-    If Perspective = ThirdPerson Then
     
-        If z < 0 Then
-            Player.CameraZoom = Player.CameraZoom + 0.25
-        ElseIf z > 0 Then
-            Player.CameraZoom = Player.CameraZoom - 0.25
+    If Z < 0 Then
+        If Bindings(DIK_PGDN) = "" Then
+            ResetIdle
+            For cnt = 0 To -Z
+                Player.ZoomOut
+            Next
         End If
-        
-        If Player.CameraZoom > MaxCameraZoom Then Player.CameraZoom = MaxCameraZoom
-        If Player.CameraZoom < MinCameraZoom Then Player.CameraZoom = MinCameraZoom
-    
+    ElseIf Z > 0 Then
+        If Bindings(DIK_PGUP) = "" Then
+            ResetIdle
+            For cnt = 0 To Z
+                Player.ZoomIn
+            Next
+        End If
     End If
+    
     
     If Perspective = CameraMode Then
         If Player.CameraIndex > 0 Then
-            Player.CameraAngle = Cameras(Player.CameraIndex).Angle
+            Player.angle = Cameras(Player.CameraIndex).angle
         End If
     Else
         If X < 0 Then
-            For cnt = (X * MouseSensitivity) To 0
-                Player.CameraAngle = Player.CameraAngle - -0.0015
-            Next
+            If Bindings(DIK_LEFT) = "" Then
+                ResetIdle
+                For cnt = 0 To (-X * MouseSensitivity)
+                    Player.LookLeft
+                Next
+            End If
         ElseIf X > 0 Then
-            For cnt = 0 To (X * MouseSensitivity)
-                Player.CameraAngle = Player.CameraAngle - 0.0015
-            Next
+            If Bindings(DIK_RIGHT) = "" Then
+                ResetIdle
+                For cnt = 0 To (X * MouseSensitivity)
+                    Player.LookRight
+                Next
+            End If
         End If
     End If
 
-    If Player.CameraAngle > (PI * 2) Then Player.CameraAngle = Player.CameraAngle - (PI * 2)
-    If Player.CameraAngle < -(PI * 2) Then Player.CameraAngle = Player.CameraAngle + (PI * 2)
-
     If Y < 0 Then
-        For cnt = (Y * MouseSensitivity) To 0
-            Player.CameraPitch = Player.CameraPitch - -0.0015
-        Next
+        If Bindings(DIK_DOWN) = "" Then
+            ResetIdle
+            For cnt = 0 To (-Y * MouseSensitivity)
+                Player.LookDown
+            Next
+        End If
     ElseIf Y > 0 Then
-        For cnt = 0 To (Y * MouseSensitivity)
-            Player.CameraPitch = Player.CameraPitch - 0.0015
-        Next
+        If Bindings(DIK_UP) = "" Then
+            ResetIdle
+            For cnt = 0 To (Y * MouseSensitivity)
+                Player.LookUp
+            Next
+        End If
     End If
-    
-    If Player.CameraPitch < -1.5 Then Player.CameraPitch = -1.5
-    If Player.CameraPitch > 1.5 Then Player.CameraPitch = 1.5
 End Sub
 
 Public Property Get ConsoleVisible() As Boolean
@@ -1188,6 +1396,8 @@ Public Sub RenderCmds()
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
     End If
+    
+    
 End Sub
 
 Public Function AddMessage(ByVal Message As String)
@@ -1328,7 +1538,7 @@ Public Sub ConsoleInput(ByRef kState As DIKEYBOARDSTATE)
                     End If
                     
                 ElseIf cnt = DIK_TAB Then
-                
+                                
                     ResetIdle
                     If Len(CommandLine) <= 40 Then
                         CommandLine = Left(CommandLine, CursorPos) & vbTab & Mid(CommandLine, CursorPos + 1)
@@ -1475,330 +1685,7 @@ Private Function InitKeys()
     KeyChars(181) = "/"
 
 End Function
-Public Function BindingIndex(ByVal KeyString As String) As Integer
-    Select Case UCase(KeyString)
-        Case "0"
-            BindingIndex = DIK_0
-        Case "1"
-            BindingIndex = DIK_1
-        Case "2"
-            BindingIndex = DIK_2
-        Case "3"
-            BindingIndex = DIK_3
-        Case "4"
-            BindingIndex = DIK_4
-        Case "5"
-            BindingIndex = DIK_5
-        Case "6"
-            BindingIndex = DIK_6
-        Case "7"
-            BindingIndex = DIK_7
-        Case "8"
-            BindingIndex = DIK_8
-        Case "9"
-            BindingIndex = DIK_9
-        Case "A"
-            BindingIndex = DIK_A
-        Case "ABNT_C1"
-            BindingIndex = DIK_ABNT_C1
-        Case "ABNT_C2"
-            BindingIndex = DIK_ABNT_C2
-        Case "ADD"
-            BindingIndex = DIK_ADD
-        Case "APOSTROPHE"
-            BindingIndex = DIK_APOSTROPHE
-        Case "APPS"
-            BindingIndex = DIK_APPS
-        Case "AT"
-            BindingIndex = DIK_AT
-        Case "AX"
-            BindingIndex = DIK_AX
-        Case "B"
-            BindingIndex = DIK_B
-        Case "BACK"
-            BindingIndex = DIK_BACK
-        Case "BACKSLASH"
-            BindingIndex = DIK_BACKSLASH
-        Case "BACKSPACE"
-            BindingIndex = DIK_BACKSPACE
-        Case "C"
-            BindingIndex = DIK_C
-        Case "CALCULATOR"
-            BindingIndex = DIK_CALCULATOR
-        Case "CAPITAL"
-            BindingIndex = DIK_CAPITAL
-        Case "CAPSLOCK"
-            BindingIndex = DIK_CAPSLOCK
-        Case "CIRCUMFLEX"
-            BindingIndex = DIK_CIRCUMFLEX
-        Case "COLON"
-            BindingIndex = DIK_COLON
-        Case "COMMA"
-            BindingIndex = DIK_COMMA
-        Case "CONVERT"
-            BindingIndex = DIK_CONVERT
-        Case "D"
-            BindingIndex = DIK_D
-        Case "DECIMAL"
-            BindingIndex = DIK_DECIMAL
-        Case "DELETE"
-            BindingIndex = DIK_DELETE
-        Case "DIVIDE"
-            BindingIndex = DIK_DIVIDE
-        Case "DOWN"
-            BindingIndex = DIK_DOWN
-        Case "DOWNARROW"
-            BindingIndex = DIK_DOWNARROW
-        Case "E"
-            BindingIndex = DIK_E
-        Case "END"
-            BindingIndex = DIK_END
-        Case "EQUALS"
-            BindingIndex = DIK_EQUALS
-        Case "ESCAPE"
-            BindingIndex = DIK_ESCAPE
-        Case "F"
-            BindingIndex = DIK_F
-        Case "F1"
-            BindingIndex = DIK_F1
-        Case "F10"
-            BindingIndex = DIK_F10
-        Case "F11"
-            BindingIndex = DIK_F11
-        Case "F12"
-            BindingIndex = DIK_F12
-        Case "F13"
-            BindingIndex = DIK_F13
-        Case "F14"
-            BindingIndex = DIK_F14
-        Case "F15"
-            BindingIndex = DIK_F15
-        Case "F2"
-            BindingIndex = DIK_F2
-        Case "F3"
-            BindingIndex = DIK_F3
-        Case "F4"
-            BindingIndex = DIK_F4
-        Case "F5"
-            BindingIndex = DIK_F5
-        Case "F6"
-            BindingIndex = DIK_F6
-        Case "F7"
-            BindingIndex = DIK_F7
-        Case "F8"
-            BindingIndex = DIK_F8
-        Case "F9"
-            BindingIndex = DIK_F9
-        Case "G"
-            BindingIndex = DIK_G
-        Case "GRAVE"
-            BindingIndex = DIK_GRAVE
-        Case "H"
-            BindingIndex = DIK_H
-        Case "HOME"
-            BindingIndex = DIK_HOME
-        Case "I"
-            BindingIndex = DIK_I
-        Case "INSERT"
-            BindingIndex = DIK_INSERT
-        Case "J"
-            BindingIndex = DIK_J
-        Case "K"
-            BindingIndex = DIK_K
-        Case "KANA"
-            BindingIndex = DIK_KANA
-        Case "KANJI"
-            BindingIndex = DIK_KANJI
-        Case "L"
-            BindingIndex = DIK_L
-        Case "LALT"
-            BindingIndex = DIK_LALT
-        Case "LBRACKET"
-            BindingIndex = DIK_LBRACKET
-        Case "LCONTROL"
-            BindingIndex = DIK_LCONTROL
-        Case "LEFT"
-            BindingIndex = DIK_LEFT
-        Case "LEFTARROW"
-            BindingIndex = DIK_LEFTARROW
-        Case "LMENU"
-            BindingIndex = DIK_LMENU
-        Case "LSHIFT"
-            BindingIndex = DIK_LSHIFT
-        Case "LWIN"
-            BindingIndex = DIK_LWIN
-        Case "M"
-            BindingIndex = DIK_M
-        Case "MAIL"
-            BindingIndex = DIK_MAIL
-        Case "MEDIASELECT"
-            BindingIndex = DIK_MEDIASELECT
-        Case "MEDIASTOP"
-            BindingIndex = DIK_MEDIASTOP
-        Case "MINUS"
-            BindingIndex = DIK_MINUS
-        Case "MULTIPLY"
-            BindingIndex = DIK_MULTIPLY
-        Case "MUTE"
-            BindingIndex = DIK_MUTE
-        Case "MYCOMPUTER"
-            BindingIndex = DIK_MYCOMPUTER
-        Case "N"
-            BindingIndex = DIK_N
-        Case "NEXT"
-            BindingIndex = DIK_NEXT
-        Case "NEXTTRACK"
-            BindingIndex = DIK_NEXTTRACK
-        Case "NOCONVERT"
-            BindingIndex = DIK_NOCONVERT
-        Case "NUMLOCK"
-            BindingIndex = DIK_NUMLOCK
-        Case "NUMPAD0"
-            BindingIndex = DIK_NUMPAD0
-        Case "NUMPAD1"
-            BindingIndex = DIK_NUMPAD1
-        Case "NUMPAD2"
-            BindingIndex = DIK_NUMPAD2
-        Case "NUMPAD3"
-            BindingIndex = DIK_NUMPAD3
-        Case "NUMPAD4"
-            BindingIndex = DIK_NUMPAD4
-        Case "NUMPAD5"
-            BindingIndex = DIK_NUMPAD5
-        Case "NUMPAD6"
-            BindingIndex = DIK_NUMPAD6
-        Case "NUMPAD7"
-            BindingIndex = DIK_NUMPAD7
-        Case "NUMPAD8"
-            BindingIndex = DIK_NUMPAD8
-        Case "NUMPAD9"
-            BindingIndex = DIK_NUMPAD9
-        Case "NUMPADCOMMA"
-            BindingIndex = DIK_NUMPADCOMMA
-        Case "NUMPADENTER"
-            BindingIndex = DIK_NUMPADENTER
-        Case "NUMPADEQUALS"
-            BindingIndex = DIK_NUMPADEQUALS
-        Case "NUMPADMINUS"
-            BindingIndex = DIK_NUMPADMINUS
-        Case "NUMPADPERIOD"
-            BindingIndex = DIK_NUMPADPERIOD
-        Case "NUMPADPLUS"
-            BindingIndex = DIK_NUMPADPLUS
-        Case "NUMPADSLASH"
-            BindingIndex = DIK_NUMPADSLASH
-        Case "NUMPADSTAR"
-            BindingIndex = DIK_NUMPADSTAR
-        Case "O"
-            BindingIndex = DIK_O
-        Case "OEM_102"
-            BindingIndex = DIK_OEM_102
-        Case "P"
-            BindingIndex = DIK_P
-        Case "PAUSE"
-            BindingIndex = DIK_PAUSE
-        Case "PERIOD"
-            BindingIndex = DIK_PERIOD
-        Case "PGDN"
-            BindingIndex = DIK_PGDN
-        Case "PGUP"
-            BindingIndex = DIK_PGUP
-        Case "PLAYPAUSE"
-            BindingIndex = DIK_PLAYPAUSE
-        Case "POWER"
-            BindingIndex = DIK_POWER
-        Case "PREVTRACK"
-            BindingIndex = DIK_PREVTRACK
-        Case "PRIOR"
-            BindingIndex = DIK_PRIOR
-        Case "Q"
-            BindingIndex = DIK_Q
-        Case "R"
-            BindingIndex = DIK_R
-        Case "RALT"
-            BindingIndex = DIK_RALT
-        Case "RBRACKET"
-            BindingIndex = DIK_RBRACKET
-        Case "RCONTROL"
-            BindingIndex = DIK_RCONTROL
-        Case "RETURN"
-            BindingIndex = DIK_RETURN
-        Case "RIGHT"
-            BindingIndex = DIK_RIGHT
-        Case "RIGHTARROW"
-            BindingIndex = DIK_RIGHTARROW
-        Case "RMENU"
-            BindingIndex = DIK_RMENU
-        Case "RSHIFT"
-            BindingIndex = DIK_RSHIFT
-        Case "RWIN"
-            BindingIndex = DIK_RWIN
-        Case "S"
-            BindingIndex = DIK_S
-        Case "SCROLL"
-            BindingIndex = DIK_SCROLL
-        Case "SEMICOLON"
-            BindingIndex = DIK_SEMICOLON
-        Case "SLASH"
-            BindingIndex = DIK_SLASH
-        Case "SLEEP"
-            BindingIndex = DIK_SLEEP
-        Case "STOP"
-            BindingIndex = DIK_STOP
-        Case "SUBTRACT"
-            BindingIndex = DIK_SUBTRACT
-        Case "SYSRQ"
-            BindingIndex = DIK_SYSRQ
-        Case "T"
-            BindingIndex = DIK_T
-        Case "TAB"
-            BindingIndex = DIK_TAB
-        Case "U"
-            BindingIndex = DIK_U
-        Case "UNDERLINE"
-            BindingIndex = DIK_UNDERLINE
-        Case "UNLABELED"
-            BindingIndex = DIK_UNLABELED
-        Case "UP"
-            BindingIndex = DIK_UP
-        Case "UPARROW"
-            BindingIndex = DIK_UPARROW
-        Case "V"
-            BindingIndex = DIK_V
-        Case "VOLUMEDOWN"
-            BindingIndex = DIK_VOLUMEDOWN
-        Case "VOLUMEUP"
-            BindingIndex = DIK_VOLUMEUP
-        Case "W"
-            BindingIndex = DIK_W
-        Case "WAKE"
-            BindingIndex = DIK_WAKE
-        Case "WEBBACK"
-            BindingIndex = DIK_WEBBACK
-        Case "WEBFAVORITES"
-            BindingIndex = DIK_WEBFAVORITES
-        Case "WEBFORWARD"
-            BindingIndex = DIK_WEBFORWARD
-        Case "WEBHOME"
-            BindingIndex = DIK_WEBHOME
-        Case "WEBREFRESH"
-            BindingIndex = DIK_WEBREFRESH
-        Case "WEBSEARCH"
-            BindingIndex = DIK_WEBSEARCH
-        Case "WEBSTOP"
-            BindingIndex = DIK_WEBSTOP
-        Case "X"
-            BindingIndex = DIK_X
-        Case "Y"
-            BindingIndex = DIK_Y
-        Case "YEN"
-            BindingIndex = DIK_YEN
-        Case "Z"
-            BindingIndex = DIK_Z
-        Case Else
-            BindingIndex = -1
-    End Select
-End Function
+
 
 'Public Function SurfaceHit(ByVal X As Single, ByVal Y As Single) As SurfaceControl
 '    Dim idx As Single
@@ -1896,20 +1783,21 @@ Public Sub CreateCmds()
 '
 '    End If
     
+    Set Bindings = New Bindings
     
-    Set ConsoleMsgs = New Collection
-    Set HistoryMsgs = New Collection
+    Set ConsoleMsgs = New VBA.Collection
+    Set HistoryMsgs = New VBA.Collection
     
     Bottom = 0
     
     Vertex(0) = MakeScreen(0, 0, -1, 0, 0)
-    Vertex(1) = MakeScreen((frmMain.width / Screen.TwipsPerPixelX), 0, -1, 1, 0)
+    Vertex(1) = MakeScreen((frmMain.Width / Screen.TwipsPerPixelX), 0, -1, 1, 0)
     Vertex(2) = MakeScreen(0, 0, -1, 0, 1)
-    Vertex(3) = MakeScreen((frmMain.width / Screen.TwipsPerPixelX), 0, -1, 1, 1)
+    Vertex(3) = MakeScreen((frmMain.Width / Screen.TwipsPerPixelX), 0, -1, 1, 1)
     
-    ConsoleWidth = (frmMain.width / Screen.TwipsPerPixelX)
+    ConsoleWidth = (frmMain.Width / Screen.TwipsPerPixelX)
     ConsoleHeight = (MaxConsoleMsgs * (frmMain.TextHeight("A") / Screen.TwipsPerPixelY)) + (TextSpace * MaxConsoleMsgs) + TextSpace
-    If ConsoleHeight > ((frmMain.height / Screen.TwipsPerPixelY) \ 2) Then ConsoleHeight = ((frmMain.height / Screen.TwipsPerPixelY) \ 2)
+    If ConsoleHeight > ((frmMain.Height / Screen.TwipsPerPixelY) \ 2) Then ConsoleHeight = ((frmMain.Height / Screen.TwipsPerPixelY) \ 2)
     
     InitKeys
     
@@ -1943,10 +1831,13 @@ End Sub
 Public Sub CleanupCmds()
     ClearText
     
-    Dim cnt As Integer
-    For cnt = 0 To 255
-        Bindings(cnt) = ""
-    Next
+    If Not Bindings Is Nothing Then
+        Dim cnt As Integer
+        For cnt = 0 To 255
+            Bindings(cnt) = ""
+        Next
+        Set Bindings = Nothing
+    End If
     
     Erase Draws
     
@@ -2007,18 +1898,22 @@ Public Sub Process(ByVal inArg As String)
     If Left(inCmd, 1) = "/" Then inCmd = Mid(inCmd, 2)
     
     Select Case Trim(LCase(inCmd))
-        Case "debug"
-            DebugMode = Not DebugMode
-            If DebugMode Then
-                AddMessage "Debug mode enabled."
-            Else
-                AddMessage "Debug mode disabled."
-            End If
+'        Case "debug"
+'            DebugMode = Not DebugMode
+'            If DebugMode Then
+'                AddMessage "Debug mode enabled."
+'            Else
+'                AddMessage "Debug mode disabled."
+'            End If
+        Case "goto"
+            
+            
+            Player.Origin = inArg
         Case "parse"
             If PathExists(inArg, True) Then
                 inTmp = ReadFile(inArg)
                 If inTmp <> "" Then
-                    ParseLand 0, inTmp
+                    ParseScript inTmp, , 0
                     AddMessage "Parse complete."
                 Else
                     AddMessage "Nothing to parse."
@@ -2031,45 +1926,33 @@ Public Sub Process(ByVal inArg As String)
         Case "exit", "quit", "close"
             StopGame = True
         Case "spectate"
-            'If Not DebugMode Then
-                If Not (Perspective = Spectator) Then
-                    Perspective = Spectator
-                    AddMessage "Changed to spectate mode."
-                Else
-                    AddMessage "Already in spectate mode."
-                End If
-            'Else
-            '    AddMessage "Not available in debug mode."
-            'End If
-        Case "join"
-            If Not DebugMode Then
-                If (Perspective = Spectator) Then
-                    Perspective = ThirdPerson
-                    AddMessage "You've entered the game."
-                Else
-                    
-                    AddMessage "Already joined the game."
-                End If
+            If Not (Perspective = Spectator) Then
+                Perspective = Spectator
+                AddMessage "Changed to spectate mode."
             Else
-                AddMessage "Not available in debug mode."
+                AddMessage "Already in spectate mode."
+            End If
+        Case "join"
+            If (Perspective = Spectator) Then
+                Perspective = ThirdPerson
+                AddMessage "You've entered the game."
+            Else
+                AddMessage "Already joined the game."
             End If
         Case "eval"
-            Process ParseValues(inArg)
+            Process frmMain.Evaluate(inArg)
         Case "echo"
-            AddMessage ParseSetGet(0, inArg)
-        
+            inArg = Replace(inArg, "\n", vbCrLf)
+            Do Until inArg = ""
+                AddMessage RemoveNextArg(inArg, vbCrLf)
+            Loop
         Case "fade"
             FadeMessage inArg
         Case "clear"
             ClearText
-        Case "draw"
-            inX = RemoveNextArg(inArg, " ")
-            inY = RemoveNextArg(inArg, " ")
-            PrintText inArg, inX, inY
-        Case "print"
-            inX = RemoveNextArg(inArg, " ")
-            inY = RemoveNextArg(inArg, " ")
-            PrintText inArg, (((frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, Row(inY)
+
+
+            
         Case "help", "cmdlist", "?", "--?"
             Select Case LCase(inArg)
                 Case "commands"
@@ -2103,22 +1986,22 @@ Public Sub Process(ByVal inArg As String)
                     AddMessage "   HELP COMMANDS (Displays the help of basic console commands)"
                     AddMessage "   HELP EDITING (Displays the help of editing files in console)"
             End Select
-        
+
 
         Case "stat"
             AddMessage ""
-            AddMessage "Origin X: " & Round(CSng(Player.Object.Origin.X), 3)
-            AddMessage "Origin Y: " & Round(CSng(Player.Object.Origin.Y), 3)
-            AddMessage "Origin Z: " & Round(CSng(Player.Object.Origin.z), 3)
-            AddMessage "Distance: " & Round(CSng(Distance(Player.Object.Origin, MakeVector(0, 0, 0))), 3)
-            AddMessage "Angle: " & Round(CSng(Player.CameraAngle), 3)
-            AddMessage "Pitch: " & Round(CSng(Player.CameraPitch), 3)
-        Case "credits"
-            ShowCredits = Not ShowCredits
-        Case "showcredits"
-            ShowCredits = True
-        Case "hidecredits"
-            ShowCredits = False
+            AddMessage "Origin X: " & Round(CSng(Player.Origin.X), 3)
+            AddMessage "Origin Y: " & Round(CSng(Player.Origin.Y), 3)
+            AddMessage "Origin Z: " & Round(CSng(Player.Origin.Z), 3)
+            AddMessage "Distance: " & Round(CSng(DistanceEx(Player.Origin, MakePoint(0, 0, 0))), 3)
+            AddMessage "Angle: " & Round(CSng(Player.angle), 3)
+            AddMessage "Pitch: " & Round(CSng(Player.Pitch), 3)
+'        Case "credits"
+'            ShowCredits = Not ShowCredits
+'        Case "showcredits"
+'            ShowCredits = True
+'        Case "hidecredits"
+'            ShowCredits = False
         Case "reset"
             AddMessage "Resetting Game."
             CurrentLoadedLevel = ""
@@ -2129,15 +2012,15 @@ Public Sub Process(ByVal inArg As String)
             CreateLand
             
         Case "refresh"
-            
+
             CleanupLand
             CleanupMove
             CreateMove
             CreateLand
             AddMessage "Level Refreshed."
         Case "level"
-            If PathExists(AppPath & "Levels\" & inArg & ".px", False) Then
-                
+            If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
+
                 If Not CurrentLoadedLevel = "" Then
                     CleanupLand
                     CleanupMove
@@ -2148,143 +2031,142 @@ Public Sub Process(ByVal inArg As String)
                 Else
                     CurrentLoadedLevel = inArg
                 End If
-                
-            ElseIf PathExists(AppPath & "Levels\" & CurrentLoadedLevel & ".px", False) Then
+
+            ElseIf PathExists(AppPath & "Levels\" & CurrentLoadedLevel & ".vbx", True) Then
                 CleanupLand
                 CleanupMove
                 CreateMove
                 CreateLand
                 AddMessage "Level Reloaded."
             Else
-                AddMessage "Invalid Level - [" & AppPath & "Levels\" & inArg & ".px" & "]"
+                AddMessage "Invalid Level - [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
             End If
-            
-            
+
+
         Case "load"
             If inArg = "" Then
                 If EditFileName = "" Then
                     AddMessage "No file is loaded, use ""LOAD <name>"" to load one."
                 Else
-                    AddMessage "File loaded [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
+                    AddMessage "File loaded [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
             Else
-                If PathExists(AppPath & "Levels\" & inArg & ".px", True) Then
+                If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
                     EditFileName = inArg
-                    EditFileData = ReadFile(AppPath & "Levels\" & inArg & ".px")
-                    AddMessage "File loaded [" & AppPath & "Levels\" & inArg & ".px" & "]"
+                    EditFileData = ReadFile(AppPath & "Levels\" & inArg & ".vbx")
+                    AddMessage "File loaded [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
                 Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & inArg & ".px" & "]"
+                    AddMessage "File not found [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
                 End If
             End If
-            
         Case "view"
-                If PathExists(AppPath & "Levels\" & EditFileName & ".px", True) Then
-                    
-                    If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
-                        
-                        If Not IsNumeric(NextArg(inArg, " ")) Then
-                            l = NextArg(NextArg(inArg, " "), "-")
-                            o = RemoveArg(NextArg(inArg, " "), "-")
-                        Else
-                            l = NextArg(inArg, " ")
-                            o = l
-                        End If
-                        If l <= o Then
-                            AddMessage "Begin View"
-                            inTmp = EditFileData
-                            cnt = 1
-                            Do Until inTmp = ""
-                                If cnt >= l And cnt <= o Then
-                                    AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
-                                Else
-                                    RemoveNextArg inTmp, vbCrLf
-                                End If
-                                cnt = cnt + 1
-                            Loop
-                            AddMessage "End View"
-                        Else
-                            AddMessage "Invalid line number(s) specified."
-                        End If
+            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+
+                If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
+
+                    If Not IsNumeric(NextArg(inArg, " ")) Then
+                        l = NextArg(NextArg(inArg, " "), "-")
+                        o = RemoveArg(NextArg(inArg, " "), "-")
                     Else
-                        AddMessage "Invalid line number(s) specified."
+                        l = NextArg(inArg, " ")
+                        o = l
                     End If
-                ElseIf EditFileName = "" Then
-                    AddMessage "File not loaded."
-                Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
-                End If
-        Case "lines"
-                If PathExists(AppPath & "Levels\" & EditFileName & ".px", True) Then
-                    If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
-                        
-                        If Not IsNumeric(NextArg(inArg, " ")) Then
-                            l = NextArg(NextArg(inArg, " "), "-")
-                            o = RemoveArg(NextArg(inArg, " "), "-")
-                        Else
-                            l = NextArg(inArg, " ")
-                            o = l
-                        End If
-                        If l <= o Then
-                            inTmp = EditFileData
-                            cnt = 1
-                            Do Until inTmp = ""
-                                If cnt >= l And cnt <= o Then
-                                    inNew = inNew & vbCrLf
-                                Else
-                                    inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
-                                End If
-                                cnt = cnt + 1
-                            Loop
-                            EditFileData = inNew
-                            AddMessage "Blank line" & IIf(l = o, " ", "s ") & inArg & " added."
-                        Else
-                            AddMessage "Invalid line number(s) specified."
-                        End If
-                    Else
-                        AddMessage "Invalid line number(s) specified."
-                    End If
-                ElseIf EditFileName = "" Then
-                    AddMessage "File not loaded."
-                Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
-                End If
-        Case "edit"
-                If PathExists(AppPath & "Levels\" & EditFileName & ".px", True) Then
-                    If IsNumeric(NextArg(inArg, " ")) Then
-                        l = RemoveNextArgNoTrim(inArg, " ")
+                    If l <= o Then
+                        AddMessage "Begin View"
                         inTmp = EditFileData
                         cnt = 1
                         Do Until inTmp = ""
-                            If cnt = l Then
-                                inNew = inNew & inArg & vbCrLf
+                            If cnt >= l And cnt <= o Then
+                                AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
+                            Else
                                 RemoveNextArg inTmp, vbCrLf
+                            End If
+                            cnt = cnt + 1
+                        Loop
+                        AddMessage "End View"
+                    Else
+                        AddMessage "Invalid line number(s) specified."
+                    End If
+                Else
+                    AddMessage "Invalid line number(s) specified."
+                End If
+            ElseIf EditFileName = "" Then
+                AddMessage "File not loaded."
+            Else
+                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+            End If
+        Case "lines"
+            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
+
+                    If Not IsNumeric(NextArg(inArg, " ")) Then
+                        l = NextArg(NextArg(inArg, " "), "-")
+                        o = RemoveArg(NextArg(inArg, " "), "-")
+                    Else
+                        l = NextArg(inArg, " ")
+                        o = l
+                    End If
+                    If l <= o Then
+                        inTmp = EditFileData
+                        cnt = 1
+                        Do Until inTmp = ""
+                            If cnt >= l And cnt <= o Then
+                                inNew = inNew & vbCrLf
                             Else
                                 inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
                             End If
                             cnt = cnt + 1
                         Loop
                         EditFileData = inNew
-                        AddMessage "Edited " & l & ": " & Replace(inArg, vbTab, "     ")
+                        AddMessage "Blank line" & IIf(l = o, " ", "s ") & inArg & " added."
                     Else
                         AddMessage "Invalid line number(s) specified."
                     End If
-                ElseIf EditFileName = "" Then
-                    AddMessage "File not loaded."
                 Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
+                    AddMessage "Invalid line number(s) specified."
                 End If
+            ElseIf EditFileName = "" Then
+                AddMessage "File not loaded."
+            Else
+                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+            End If
+        Case "edit"
+            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                If IsNumeric(NextArg(inArg, " ")) Then
+                    l = RemoveNextArgNoTrim(inArg, " ")
+                    inTmp = EditFileData
+                    cnt = 1
+                    Do Until inTmp = ""
+                        If cnt = l Then
+                            inNew = inNew & inArg & vbCrLf
+                            RemoveNextArg inTmp, vbCrLf
+                        Else
+                            inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                        End If
+                        cnt = cnt + 1
+                    Loop
+                    EditFileData = inNew
+                    AddMessage "Edited " & l & ": " & Replace(inArg, vbTab, "     ")
+                Else
+                    AddMessage "Invalid line number(s) specified."
+                End If
+            ElseIf EditFileName = "" Then
+                AddMessage "File not loaded."
+            Else
+                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+            End If
         Case "save"
-                If PathExists(AppPath & "Levels\" & EditFileName & ".px", True) Then
-                    WriteFile AppPath & "Levels\" & EditFileName & ".px", EditFileData
-                    AddMessage "Saved data file [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
-                ElseIf EditFileName = "" Then
-                    AddMessage "File not loaded."
-                Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".px" & "]"
-                End If
+            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                WriteFile AppPath & "Levels\" & EditFileName & ".vbx", EditFileData
+                AddMessage "Saved data file [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+            ElseIf EditFileName = "" Then
+                AddMessage "File not loaded."
+            Else
+                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+            End If
         Case ""
         Case Else
-            AddMessage "Unknown command."
+            frmMain.ExecuteStatement inCmd & IIf(inArg <> "", " " & inArg, "")
     End Select
 End Sub
 

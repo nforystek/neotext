@@ -10,7 +10,7 @@ Public DisableSound As Boolean
 Public Waves() As DirectSoundSecondaryBuffer8
 
 Public Sub PlayWave(ByVal Index As Long, Optional ByVal Repeat As Boolean = False)
-    If (Not DisableSound) And Sounds(Index).Enable Then
+    If (Not DisableSound) Then
         If SoundFX Then
             Waves(Index).Play IIf(Repeat, DSBPLAY_LOOPING, DSBPLAY_DEFAULT)
         Else
@@ -19,7 +19,7 @@ Public Sub PlayWave(ByVal Index As Long, Optional ByVal Repeat As Boolean = Fals
     End If
 End Sub
 Public Sub VolumeWave(ByVal Index As Long, ByVal Dist As Single)
-    If (Not DisableSound) And Sounds(Index).Enable Then
+    If (Not DisableSound) Then
         
         Dim div As Single
         Dim r As Single

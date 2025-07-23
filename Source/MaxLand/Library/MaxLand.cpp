@@ -61,20 +61,12 @@ extern int PointInPoly ( float pointX, float pointY, float polyDataX[], float po
 		float ret=ref;
 		int result=0;
 		for (int i=1;i<=polyDataCount;i++) {
-			ref = ((pointX - polyDataX[i]) * (polyDataY[i] - polyDataY[i-1]) - (pointY - polyDataY[i]) * (polyDataX[i] - polyDataX[i-1]));
-			if ((ret > 0) && (ref < 0) && (result==0)) result = i;
+			ref = ((pointX - polyDataX[i-1]) * (polyDataY[i] - polyDataY[i-1]) - (pointY - polyDataY[i-1]) * (polyDataX[i] - polyDataX[i-1]));
+			if ((ret >= 0) && (ref < 0) && (result==0)) result = i;
 			ret=ref;
 		}
-		if (result!=0) {
-			return ((ret>0) && (ref>0));
-		} else {
-			return ((ret>0) ^ (ref<0));
-
-		}
-		//if ((result==0)||(result>polyDataCount)) {
-		//	return 1;//todo: this is suppose to return a decimal percent
-		//			//of the total polygon points where in is found inside
-		//} 
+		if ((result==0)||(result>polyDataCount)) return 1;//todo: this is suppose to return a decimal percent
+														//of the total polygon points where in is found inside
 	}
 	return 0;
 }

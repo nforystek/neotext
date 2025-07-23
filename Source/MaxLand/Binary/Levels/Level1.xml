@@ -1,0 +1,50 @@
+<?xml version="1.0"?><Serial>  <Variables>
+        <Player.Origin>[3, -0.124, 0]</Player.Origin>
+        <orders>0</orders>
+        <firevix1var>2</firevix1var>
+        <firevix2var>1</firevix2var>
+        <firevix3var>3</firevix3var>
+        <windvix1var>2</windvix1var>
+        <windvix2var>1</windvix2var>
+        <windvix3var>3</windvix3var>
+        <upriver>False</upriver>
+        <hudwaterimg.visible>True</hudwaterimg.visible>
+        <dudwaterimg.visible>False</dudwaterimg.visible>
+        <hudwaterrimg.visible>False</hudwaterrimg.visible>
+        <hudwaterbimg.visible>False</hudwaterbimg.visible>
+        <hudwaterfimg.visible>False</hudwaterfimg.visible>
+        <hudwatersimg.visible>False</hudwatersimg.visible>
+        <hudwindimg.visible>True</hudwindimg.visible>
+        <dudwindimg.visible>False</dudwindimg.visible>
+        <hudfireimg.visible>True</hudfireimg.visible>
+        <dudfireimg.visible>False</dudfireimg.visible>
+        <hudearthimg.visible>True</hudearthimg.visible>
+        <dudearthimg.visible>False</dudearthimg.visible>
+        <hudearthkimg.visible>False</hudearthkimg.visible>
+        <hudearthrimg.visible>False</hudearthrimg.visible>
+        <hudearthbimg.visible>False</hudearthbimg.visible>
+        <hudearth2img.visible>False</hudearth2img.visible>
+        <pawn1.origin>[-8.948, -1.802098, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -3.778036, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.802098, -11.312]</pawn3.origin>
+  </Variables>
+<DateTime>7%2F22%2F2025+6%3A59%3A49+PM</DateTime>
+<Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
+Bindings%2EMouseInput%3D2
+
+</Bindings>
+  <Space>
+Space%2ESkyTop+%3D+%22sky%5Ftop%2Ebmp%22
+Space%2ESkyBottom+%3D+%22sky%5Fbottom%2Ebmp%22
+Space%2ESkyFront+%3D+%22sky%5Ffront%2Ebmp%22
+Space%2ESkyBack+%3D+%22sky%5Fback%2Ebmp%22
+Space%2ESkyRight+%3D+%22sky%5Fright%2Ebmp%22
+Space%2ESkyLeft+%3D+%22sky%5Fleft%2Ebmp%22
+Space%2EFogColor+%3D+%22%5B+1+%2C+1%2E385%2C+1%2E275%2C+1%2E133%5D%22
+Space%2EFogEnabled+%3D+False
+Space%2EFogDistance+%3D+800
+Space%2ESkyRotate+%3D+3%2E125
+Space%2EGravity+%3D+%2D0%2E2
+
+</Space>
+</Serial>
