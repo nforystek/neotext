@@ -40,7 +40,11 @@ Private LastCall As String
 Public Function ParseNumerical(ByRef inValues As String) As Variant
     'parses the next numerical where seperated by commas, returns it
     'not used in this module, rather is for values tostring elsewhere
-    ParseNumerical = RemoveNextArg(inValues, ",")
+    If (InStr(inValues, ",") = 0 And InStr(inValues, " ") > 0) Then
+        ParseNumerical = RemoveNextArg(inValues, " ")
+    Else
+        ParseNumerical = RemoveNextArg(inValues, ",")
+    End If
     If IsNumeric(ParseNumerical) Then
         ParseNumerical = CSng(ParseNumerical)
     ElseIf Trim(ParseNumerical) = "" Then

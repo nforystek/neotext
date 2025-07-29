@@ -271,6 +271,7 @@ Public Property Let VisualModel(ByVal RHS As String)
             ReDim Meshes(pVisualIndex).Textures(0 To 0) As Direct3DTexture8
             ReDim Meshes(pVisualIndex).Materials(0 To 0) As D3DMATERIAL8
             pVisualIndex = 0
+            AddMessage "Mesh file " * RHS & " not found."
         End If
     End If
 
@@ -327,6 +328,7 @@ Public Property Let BoundsModel(ByVal RHS As String)
             ReDim Meshes(pBoundsIndex).Textures(0 To 0) As Direct3DTexture8
             ReDim Meshes(pBoundsIndex).Materials(0 To 0) As D3DMATERIAL8
             pBoundsIndex = 0
+            AddMessage "Mesh file " * RHS & " not found."
         End If
     End If
 

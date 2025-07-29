@@ -265,7 +265,7 @@ Public Sub RenderWorld()
                         'End If
                     End If
                         
-                    If MeshCount > 0 Then
+                    If MeshCount > 0 And Not v = 0 Then
                     
                         With Meshes(v)
                             

@@ -24,7 +24,6 @@ Private pZoom As Single
 Private pMinZoom As Single
 Private pMaxZoom As Single
 
-
 Private pCameraIndex As Long
 
 Private pSpeed As Single
@@ -32,7 +31,12 @@ Private pSpeed As Single
 Private pFriction As Single
 
 Private pElement As Element
-
+Public Property Get CameraClip() As Boolean
+    CameraClip = modMain.CameraClip
+End Property
+Public Property Let CameraClip(ByVal RHS As Boolean)
+    modMain.CameraClip = RHS
+End Property
 Public Property Get Object() As Element
     Set Object = pElement
 End Property
@@ -69,16 +73,14 @@ Public Property Get Angle() As Single
 End Property
 Public Property Let Angle(ByVal RHS As Single)
     pAngle = RHS
-    Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
+    'Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
 End Property
 
 Public Property Get Pitch() As Single
     Pitch = pPitch
-    'Pitch = Player.Rotate.X '* RADIAN
 End Property
 Public Property Let Pitch(ByVal RHS As Single)
     pPitch = RHS
-    'Player.Rotate.X = RHS '* RADIAN
 End Property
 
 Public Property Get Zoom() As Single

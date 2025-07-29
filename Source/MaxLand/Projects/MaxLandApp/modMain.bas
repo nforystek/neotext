@@ -50,6 +50,10 @@ Public CurrentLoadedLevel As String
 Public PixelShaderDefault As Long
 Public PixelShaderDiffuse As Long
 
+Private elapsed As Long
+Private Declare Function GetTickCount Lib "kernel32" () As Long
+
+
 Public Sub Main()
 
     On Error GoTo fault:
@@ -176,30 +180,103 @@ Public Sub Main()
                                                    
                 DDevice.BeginScene
     
+                'elapsed = GetTickCount
                 SetupWorld
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
                 
-                
+                'elapsed = GetTickCount
                 RenderMotion
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+                
+                'elapsed = GetTickCount
                 RenderPlanes
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlanes: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderWorld
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderPlayer
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderBoards
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderLucent
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderBeacons
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderPortals
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderCameras
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 RenderRoutine
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderRoutine: " & elapsed
                 
                 On Error GoTo 0
         
+                'elapsed = GetTickCount
                 InputMove
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "InputMove: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 ResetMotion
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "ResetMotion: " & elapsed
+                
+                
+                'elapsed = GetTickCount
                 InputScene
+                'elapsed = (GetTickCount - elapsed)
+                'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+                
+                
 
                 If Not PauseGame Then
                     
+                    'elapsed = GetTickCount
                     RenderInfo
+                    'elapsed = (GetTickCount - elapsed)
+                    'If elapsed > 0 Then Debug.Print "RenderInfo: " & elapsed
+                    
+                    
+                    'elapsed = GetTickCount
                     RenderCmds
+                    'elapsed = (GetTickCount - elapsed)
+                    'If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
+   
    
                     DDevice.EndScene
 
@@ -261,7 +338,7 @@ Render:
     
     MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
     Err.Clear
-Resume
+
     'End
 End Sub
 

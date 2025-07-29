@@ -1211,7 +1211,7 @@ Public Sub CreateCmds()
     End If
     DIMouseDevice.Acquire
     
-    If CurrentLoadedLevel = "" Then InitialCommands
+    If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Harddrive"
     
 End Sub
 
@@ -1394,7 +1394,7 @@ On Error GoTo ProcessError
         Case "reset"
             AddMessage "Resetting Game."
             CurrentLoadedLevel = ""
-            InitialCommands
+'            InitialCommands
             CleanupLand True
             CleanupMove
             CreateMove
@@ -1408,25 +1408,20 @@ On Error GoTo ProcessError
             CreateLand
             AddMessage "Level Refreshed."
         Case "level"
+            
             If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
 
                 If Not CurrentLoadedLevel = "" Then
                     CleanupLand
                     CleanupMove
+                End If
+
                     CurrentLoadedLevel = inArg
                     CreateMove
                     CreateLand
                     AddMessage "Level Loaded."
-                Else
-                    CurrentLoadedLevel = inArg
-                End If
 
-            ElseIf PathExists(AppPath & "Levels\" & CurrentLoadedLevel & ".vbx", True) Then
-                CleanupLand
-                CleanupMove
-                CreateMove
-                CreateLand
-                AddMessage "Level Reloaded."
+
             Else
                 AddMessage "Invalid Level - [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
             End If

@@ -411,7 +411,6 @@ On Error GoTo ObjectError
     
         InputMove2 Player
 
-
     End If
 
     If (Elements.Count > 0) And (Not DebugMode) Then
@@ -456,14 +455,6 @@ Public Sub InputMove2(ByRef e1 As Element)
             Dim dOrigin As New Point
             Dim dRotate As New Point
             Dim dScaled As New Point
-            
-'            For Each e2 In e1.Attachments
-'
-'                e2.Direct = e1.Direct
-'                e2.Twists = e1.Twists
-'                e2.Scalar = e1.Scalar
-'
-'            Next
                    
         End If
     End If
@@ -552,12 +543,7 @@ Public Sub InputMove2(ByRef e1 As Element)
                 'restore e2's origin localization of (0,0, 0) at e1's
                 'origin to what now it would be after changed e1.origin
                 Set e2.Origin = VectorAddition(e2.Origin, e1.Origin)
-                
-                
-                
-
-
-
+            
             Next
         End If
     End If
@@ -594,11 +580,23 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
 
                             e1.Direct = Obj.Direct
                             e1.Scalar = Obj.Scalar
-                            
+                           
                             'TODO: a bit part of rotation on interaction, if, center of push is withi in averages it's point defined centoid
                             ' then a inverted rotation to the pusher object is correct, otherwise off centoid the motion mor or less determines
                             'the object would rotate until not pushed
                             
+                            
+                            'average out points in first object
+                            'average out points in second object
+                            'find distance of those points mid point
+                            'find distance of the points vector direction
+                            'find the pushing objects vector direction difference
+                            'if the angle is with in -45 to  45 pushing the object midly directs it until
+                            'if the angle is <-45 or >45 pushing the object rotates it the mild direction
+   
+                            'then repeat for the vertical axis and such that flat floor would not rotate or
+                            'mild direct it could possibly push over like rotate if the weights are included
+                            'rather their vertical direction should not change when flat on the floor for now
                             e1.Twists = Obj.Twists
                             
                             CoupleMove = True
@@ -613,6 +611,8 @@ End Function
 
 Private Sub MoveObject(ByRef Obj As Element)
 On Error GoTo ObjectError
+
+    If Obj.Direct.Equals(NoPoint) Then Exit Sub
 
     Dim objCollision As Long
     objCollision = -1
