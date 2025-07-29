@@ -1,0 +1,294 @@
+
+
+space
+{
+	.fogcolor = [1 1.385 1.275 1.133]
+	.skytop ="sky_top.bmp"
+	.skyleft ="sky_left.bmp"
+	.skyright ="sky_right.bmp"
+	.skyback ="sky_back.bmp"
+	.skyfront ="sky_front.bmp"
+	.skybottom ="sky_bottom.bmp"
+	.skyrotate =31.25
+	.boundary =30
+
+}
+
+
+
+light
+{
+	.lighttype =3
+	.ambient=[ 1, .6,.6, .6]
+	.diffuse=[ 1, .3, .3, .3]
+	.direction=[ 0, -1, 0]
+	.range= 1000
+	.origin=[ 0, 500, 0]
+	.diffuseroll= 50
+	.diffusemax =-30
+	.sunlight=true
+}
+
+
+player
+{
+	.visible= true
+	.origin =[2, 2, -2]
+	.speed =0.002
+	.angle= 0
+	.pitch =0
+	
+	.scaled =[.3, .3, .3]
+	.rotate=[ 0, 0, 0]
+	.boundsmodel="bounds-player.x"
+	.visualmodel= "harddrive_player.x"
+	.replacer "harddrive_player.bmp", "plr"
+	.cameraclip = false
+	.maxzoom =90
+}
+
+board <plr>
+{
+	.translucent=true
+
+	.filename = "harddrive_player.bmp"
+}
+
+
+board <disc1>
+{
+
+	.animated= .01
+
+	.filename = "harddisk_disc_1.bmp"
+	.filename = "harddisk_disc_2.bmp"
+	.filename = "harddisk_disc_3.bmp"
+	.filename = "harddisk_disc_4.bmp"
+	.filename = "harddisk_disc_5.bmp"
+	.filename = "harddisk_disc_6.bmp"
+	.filename = "harddisk_disc_7.bmp"
+	.filename = "harddisk_disc_8.bmp"
+	.filename = "harddisk_disc_9.bmp"
+	.filename = "harddisk_disc_10.bmp"
+	.filename = "harddisk_disc_11.bmp"
+	.filename = "harddisk_disc_12.bmp"
+	.filename = "harddisk_disc_13.bmp"
+	.filename = "harddisk_disc_14.bmp"
+	.filename = "harddisk_disc_15.bmp"
+	.filename = "harddisk_disc_16.bmp"
+	.filename = "harddisk_disc_17.bmp"
+	.filename = "harddisk_disc_18.bmp"
+}
+
+
+board <disc2>
+{
+
+	.animated= .02
+
+	.filename = "harddisk_disc_1.bmp"
+	.filename = "harddisk_disc_1_2.bmp"
+	.filename = "harddisk_disc_2.bmp"
+	.filename = "harddisk_disc_2_2.bmp"
+	.filename = "harddisk_disc_3.bmp"
+	.filename = "harddisk_disc_3_2.bmp"
+	.filename = "harddisk_disc_4.bmp"
+	.filename = "harddisk_disc_4_2.bmp"
+	.filename = "harddisk_disc_5.bmp"
+	.filename = "harddisk_disc_5_2.bmp"
+	.filename = "harddisk_disc_6.bmp"
+	.filename = "harddisk_disc_6_2.bmp"
+	.filename = "harddisk_disc_7.bmp"
+	.filename = "harddisk_disc_7_2.bmp"
+	.filename = "harddisk_disc_8.bmp"
+	.filename = "harddisk_disc_8_2.bmp"
+	.filename = "harddisk_disc_9.bmp"
+	.filename = "harddisk_disc_9_2.bmp"
+	.filename = "harddisk_disc_10.bmp"
+	.filename = "harddisk_disc_10_2.bmp"
+	.filename = "harddisk_disc_11.bmp"
+	.filename = "harddisk_disc_11_2.bmp"
+	.filename = "harddisk_disc_12.bmp"
+	.filename = "harddisk_disc_12_2.bmp"
+	.filename = "harddisk_disc_13.bmp"
+	.filename = "harddisk_disc_13_2.bmp"
+	.filename = "harddisk_disc_14.bmp"
+	.filename = "harddisk_disc_14_2.bmp"
+	.filename = "harddisk_disc_15.bmp"
+	.filename = "harddisk_disc_15_2.bmp"
+	.filename = "harddisk_disc_16.bmp"
+	.filename = "harddisk_disc_16_2.bmp"
+	.filename = "harddisk_disc_17.bmp"
+	.filename = "harddisk_disc_17_2.bmp"
+	.filename = "harddisk_disc_18.bmp"
+	.filename = "harddisk_disc_18_2.bmp"
+}
+
+
+
+
+element <nonmoving>
+{
+	.visible = true
+	.origin =[0, 0, 0]
+	.scaled =[1, 1, 1]
+
+
+	.filename = "non-moving.x"
+
+}
+
+
+
+
+element <arm>
+{
+	.visible =true
+	.origin =[0, 0, 0]
+	.scaled =[1, 1, 1]
+
+	.filename = "arm.x"
+	motion <armleft> {
+		.action = rotate
+		.data = [ 0, -0.2, 0]
+		.emphasis = 0
+		.friction =.6
+		.reactive = 0
+		.recount = -1
+	}
+	motion <armright> {
+		.action = rotate
+		.data = [ 0, 0.2, 0]
+		.emphasis = 0
+		.friction =.6
+		.reactive = 0
+		.recount = -1
+	}
+
+}
+
+
+
+variable <armdirection> =  0
+
+
+portal<rightweight>
+
+{
+
+	.location=  [2, 0, 2]
+
+	.range=.5
+	.enabled= true
+	
+	oninrange [ <arm>
+
+	]
+	onoutrange [ <arm>
+
+
+	]
+}
+
+
+portal <leftedge>
+{
+
+	.location =[1, 0, 3]
+	.range =.5
+	.enabled= true
+	oninrange [ <arm>
+
+		'armleft.emphasis= 0
+		'armright.emphasis= 0.4
+		'armdirection= 1
+	]
+	onoutrange [ <arm>
+
+		'armright.emphasis= 0
+	]
+}
+portal <rightedge>
+{
+	.location=[ 3, 0, 1]
+	.range =.5
+	.enabled= true
+
+	oninrange [ <arm>
+
+		'armright.emphasis= 0
+		'armleft.emphasis=0.4
+		'armdirection= 0
+	]
+
+	onoutrange [ <arm>
+
+
+		'armleft.emphasis= 0
+	]
+}
+
+
+element <platetwo>
+{
+
+	.visible =true
+	.origin =[0, 0, 0]
+	.scaled =[1, 1, 1]
+
+	.replacer "harddisk_disc.bmp", "disc2"
+	.filename = "disc.x"
+
+}
+
+
+
+element <plate1>
+{
+	.visible= true
+	.origin=[ 0, -0.4, 0]
+	.scaled=[ 1, 1, 1]
+
+	.replacer "harddisk_disc.bmp","disc1"
+	.filename = "disc.x"
+
+
+
+
+}
+
+
+
+method <doarmright>
+[
+		'armleft.emphasis= 0
+		'armright.emphasis= 0.4
+	]
+method <doarmleft>
+ [
+		'armright.emphasis= 0
+		'armleft.emphasis= 0.4
+	]
+
+method <test>
+[
+		if (armdirection=0) then
+
+				Process "echo 1"
+
+		else 
+	
+				process "echo 0"
+	
+
+		end if
+	]
+
+	bindings {
+
+		0=[doarmright]
+		1=[doarmleft]
+		T=[test]
+		.mouseinput = trapping
+
+	}
