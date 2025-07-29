@@ -26,26 +26,39 @@ bindings {
 	.mouseinput=Trapping
 	.serialize=true
 }
+
+
 player <player>
 {
-	.visible=true
 	.speed=0.01
 	.friction=0.05
-
-	.origin=[3, 0, 0]
-
 	.angle=1.5705
 	.pitch=-0.177
 
+	.visible=true
+	.origin=[3, 0, 0]
 	.scaled=[.50, .50, .50]
 	.rotate=[0, 0, 0]
 	.boundsmodel="bounds-player.x"
 	.visualmodel="visual-player.x"
-
-	
 	.gravitational=true
 
+
 }
+
+
+'element <pawn7>
+'{
+'	.visible=true
+'	.origin=[4, 0, 0]
+'	.scaled=[.50 ,.50, .50]
+'	.rotate=[0, 0, 0]
+'	.offset=[0, 0, 0]
+'	.boundsmodel="bounds-pawn.x"
+'	.visualmodel="visual-pawn.x"
+'	.gravitational=true
+'	.attachedto = "player"
+'}
 
 
 variable <tempswap1>=0
@@ -956,10 +969,10 @@ beacon
 element <pawn1>
 {
 	.visible=true
-	.origin=[-8.948, 1.8, -11.312]
+	.origin=[-8.948, 3.1, -11.312]
 	.scaled=[0.50, 0.50, 0.50]
 	.rotate=[0, 0, 0]
-	.offset=[0, 1.3, 0]
+	.offset=[0, 0, 0]
 
 
 	.boundsmodel="bounds-pawn.x"
@@ -980,10 +993,10 @@ element <pawn1>
 element <pawn3>
 {
 	.visible=true
-	.origin=[-7.948, 1.8 ,-11.312]
+	.origin=[-7.948, 3.1 ,-11.312]
 	.scaled=[.50 ,.50, .50]
 	.rotate=[0, 0, 0]
-	.offset=[0, 1.3, 0]
+	.offset=[0, 0, 0]
 
 	.boundsmodel="bounds-pawn.x"
 	.visualmodel="visual-pawn.x"
@@ -1002,10 +1015,10 @@ element <pawn3>
 element <pawn2>
 {
 	.visible=true
-	.origin=[-11.606, -3.782, 26.708]
+	.origin=[-11.606, -5.082, 26.708]
 	.scaled=[.50, .50, .50]
 	.rotate=[0, 0, 0]
-	.offset=[0, 1.3, 0]
+	.offset=[0, 0, 0]
 
 	.boundsmodel="bounds-pawn.x"
 	.visualmodel="visual-pawn.x"
@@ -2266,4 +2279,5 @@ deserialize [
 	checkearth
 	checkwater
 	checkgame
+
 ]

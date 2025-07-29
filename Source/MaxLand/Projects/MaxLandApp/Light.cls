@@ -72,11 +72,10 @@ Public Property Let LightBlink(ByVal RHS As Single)
     pLightBlink = RHS
 End Property
 
-Public Property Get LightTimer() As Single
-Attribute LightTimer.VB_MemberFlags = "40"
+Friend Property Get LightTimer() As Single
     LightTimer = pLightTimer
 End Property
-Public Property Let LightTimer(ByVal RHS As Single)
+Friend Property Let LightTimer(ByVal RHS As Single)
     pLightTimer = RHS
 End Property
 
@@ -84,7 +83,7 @@ Public Property Get LightIsOn() As Boolean
 Attribute LightIsOn.VB_MemberFlags = "40"
     LightIsOn = pLightIsOn
 End Property
-Public Property Let LightIsOn(ByVal RHS As Boolean)
+Friend Property Let LightIsOn(ByVal RHS As Boolean)
     pLightIsOn = RHS
 End Property
 
@@ -350,7 +349,7 @@ Private Sub Class_Initialize()
     Stats_Light_Count = Stats_Light_Count + 1
 
         
-    LightIndex = Lights.count + 1
+    LightIndex = Lights.Count + 1
     ReDim Preserve DXLights(1 To LightIndex) As D3DLIGHT8
 
     

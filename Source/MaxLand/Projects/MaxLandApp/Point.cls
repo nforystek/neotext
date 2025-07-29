@@ -73,7 +73,6 @@ Public Property Let ToString(ByVal RHS As String)
             pZ = ParseNumerical(RHS)
         End If
     End If
-
 End Property
 
 Public Property Get Clone() As Point

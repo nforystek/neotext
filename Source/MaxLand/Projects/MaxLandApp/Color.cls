@@ -36,12 +36,12 @@ End Property
 Public Property Let RGB(ByVal RHS As Long)
     Dim r As Long
     Dim g As Long
-    Dim b As Long
+    Dim B As Long
     
-    ConvertColor CLng(RHS), r, g, b
+    ConvertColor CLng(RHS), r, g, B
     pRed = CSng(r) '/ 255
     pGreen = CSng(g) '/ 255
-    pBlue = CSng(b) '/ 255
+    pBlue = CSng(B) '/ 255
     
 '    pRed = rgbRed(RHS) / 255
 '    pGreen = rgbGreen(RHS) / 255

@@ -187,20 +187,18 @@ Public Property Let Animated(ByVal RHS As Single)
     pAnimatePoint = 1
 End Property
 
-Public Property Get AnimateTimer() As Double
-Attribute AnimateTimer.VB_MemberFlags = "40"
+Friend Property Get AnimateTimer() As Double
     AnimateTimer = pAnimateTimer
 End Property
 
-Public Property Let AnimateTimer(ByVal RHS As Double)
+Friend Property Let AnimateTimer(ByVal RHS As Double)
     pAnimateTimer = RHS
 End Property
 
-Public Property Get AnimatePoint() As Long
-Attribute AnimatePoint.VB_MemberFlags = "40"
+Friend Property Get AnimatePoint() As Long
     AnimatePoint = pAnimatePoint
 End Property
-Public Property Let AnimatePoint(ByVal RHS As Long)
+Friend Property Let AnimatePoint(ByVal RHS As Long)
     pAnimatePoint = RHS
 End Property
 
@@ -265,16 +263,14 @@ Public Property Let Visible(ByVal RHS As Boolean)
     pVisible = RHS
 End Property
 
-Public Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
-Attribute SetTexture.VB_MemberFlags = "40"
+Friend Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
     If Index = -1 Then
         DDevice.SetTexture Stage, Nothing
     Else
         DDevice.SetTexture Stage, pSkin(Index)
     End If
 End Sub
-Public Sub Render()
-Attribute Render.VB_MemberFlags = "40"
+Friend Sub Render()
     DDevice.SetStreamSource 0, pVBuf, Len(pPlaq(0))
     DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
 End Sub

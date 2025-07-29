@@ -1052,7 +1052,7 @@ Public Sub RenderPlanes()
     DDevice.SetTransform D3DTS_PROJECTION, matProj
 
     If Not SkyRotated = 0 Then
-        D3DXMatrixRotationY matWorld, SkyRotated * (PI / 180)
+        D3DXMatrixRotationY matWorld, SkyRotated * RADIAN
     End If
     DDevice.SetTransform D3DTS_WORLD, matWorld
                     
@@ -1093,20 +1093,20 @@ Public Sub RenderPlanes()
     
 End Sub
 
-Public Sub CreateLand()
+Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
  
-    Set All = New NTNodes10.Collection
-    Set Beacons = New NTNodes10.Collection
-    Set Boards = New NTNodes10.Collection
-    Set Cameras = New NTNodes10.Collection
-    Set Elements = New NTNodes10.Collection
-    Set Lights = New NTNodes10.Collection
+    Set All = New ntnodes10.Collection
+    Set Beacons = New ntnodes10.Collection
+    Set Boards = New ntnodes10.Collection
+    Set Cameras = New ntnodes10.Collection
+    Set Elements = New ntnodes10.Collection
+    Set Lights = New ntnodes10.Collection
     Set Player = New Player
-    Set Portals = New NTNodes10.Collection
-    Set Screens = New NTNodes10.Collection
-    Set Sounds = New NTNodes10.Collection
+    Set Portals = New ntnodes10.Collection
+    Set Screens = New ntnodes10.Collection
+    Set Sounds = New ntnodes10.Collection
     Set Space = New Space
-    Set Tracks = New NTNodes10.Collection
+    Set Tracks = New ntnodes10.Collection
     
     frmMain.Startup
     If ScriptRoot = "" Then
@@ -1124,7 +1124,7 @@ Public Sub CreateLand()
     End If
 
     If PathExists(ScriptRoot & "Levels\" & CurrentLoadedLevel & ".vbx") Then
-        ParseScript ScriptRoot & "Levels\" & CurrentLoadedLevel & ".vbx"
+        ParseScript ScriptRoot & "Levels\" & CurrentLoadedLevel & ".vbx", , , NoDeserialize
     End If
     
     ComputeNormals

@@ -15,18 +15,39 @@ Option Explicit
 
 Implements Element
 
-Private pMaxZoom As Single
-Private pMinZoom As Single
 
 Private pAngle As Single
 Private pPitch As Single
+Private pRoll As Single
+
 Private pZoom As Single
+Private pMinZoom As Single
+Private pMaxZoom As Single
+
 
 Private pCameraIndex As Long
 
 Private pSpeed As Single
 
 Private pFriction As Single
+
+Private pElement As Element
+
+Public Property Get Object() As Element
+    Set Object = pElement
+End Property
+Public Property Set Object(ByRef RHS As Element)
+    Set pElement = RHS
+End Property
+Public Property Let Object(ByRef RHS)
+    Set pElement = ObjectByPtr(RHS)
+End Property
+
+Public Property Get Value() As Long
+Attribute Value.VB_UserMemId = 0
+Attribute Value.VB_MemberFlags = "40"
+    Value = ObjPtr(Element)
+End Property
 
 Public Property Get MaxZoom() As Single
     MaxZoom = pMaxZoom
@@ -44,16 +65,20 @@ End Property
 
 Public Property Get Angle() As Single
     Angle = pAngle
+    
 End Property
 Public Property Let Angle(ByVal RHS As Single)
     pAngle = RHS
+    Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
 End Property
 
 Public Property Get Pitch() As Single
     Pitch = pPitch
+    'Pitch = Player.Rotate.X '* RADIAN
 End Property
 Public Property Let Pitch(ByVal RHS As Single)
     pPitch = RHS
+    'Player.Rotate.X = RHS '* RADIAN
 End Property
 
 Public Property Get Zoom() As Single
@@ -84,59 +109,88 @@ Public Property Let Friction(ByVal RHS As Single)
     pFriction = RHS
 End Property
 
-Public Sub ZoomIn(Optional ByVal Measure As Single = 0.0015)
+Public Sub ZoomIn(Optional ByVal Measure As Single = 0.015)
     If Perspective = ThirdPerson Then
-        
         Player.Zoom = Player.Zoom - Measure
-        
         If Player.Zoom < Player.MinZoom Then Player.Zoom = Player.MinZoom
-    
     End If
 End Sub
-Public Sub ZoomOut(Optional ByVal Measure As Single = 0.0015)
+
+Public Sub ZoomOut(Optional ByVal Measure As Single = 0.015)
     If Perspective = ThirdPerson Then
-        
         Player.Zoom = Player.Zoom + Measure
-        
         If Player.Zoom > Player.MaxZoom Then Player.Zoom = Player.MaxZoom
+    End If
+End Sub
+
+Public Sub LookLeft(Optional ByVal Measure As Single = 0.015)
+
+'    Dim vecRotate As D3DVECTOR
+'    vecRotate.Y = 1
+'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.9, 0, 0
     
-    End If
+    If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - -Measure)
+    If Player.Angle < -(PI * 2) Then Player.Angle = (Player.Angle + (PI * 2))
+    
+    'Player.Rotate.Y = -Player.Angle * DEGREE
+    
+    
+  '  Player.Twists.Y = Player.Angle * DEGREE
+
+    
+    'Player.Twists.Y = 0
+    
 End Sub
+Public Sub LookRight(Optional ByVal Measure As Single = 0.015)
 
-Public Sub LookLeft(Optional ByVal Measure As Single = 0.0015)
-    If Not Perspective = CameraMode Then
-        Player.Angle = Player.Angle - -Measure
-    End If
+'    Dim vecRotate As D3DVECTOR
+'    vecRotate.Y = -1
+'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.9, 0, 0
 
-    If Player.Angle < -(PI * 2) Then Player.Angle = Player.Angle + (PI * 2)
+'    Player.Twists.Y = Player.Angle * DEGREE
 
+    If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - Measure)
+    If Player.Angle > (PI * 2) Then Player.Angle = (Player.Angle - (PI * 2))
+
+
+    'Player.Rotate.Y = -Player.Angle * DEGREE
+    
+
+
+    'Player.Twists.Y = 0
+    
 End Sub
-Public Sub LookRight(Optional ByVal Measure As Single = 0.0015)
-    If Not Perspective = CameraMode Then
-        Player.Angle = Player.Angle - Measure
-    End If
+Public Sub LookUp(Optional ByVal Measure As Single = 0.015)
 
-    If Player.Angle > (PI * 2) Then Player.Angle = Player.Angle - (PI * 2)
 
-End Sub
-Public Sub LookUp(Optional ByVal Measure As Single = 0.0015)
+'    Dim vecRotate As D3DVECTOR
+'    vecRotate.Z = 1
+'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.8, 0, 0
+    
     Player.Pitch = Player.Pitch - Measure
-    
     If Player.Pitch < -1.5 Then Player.Pitch = -1.5
-
+    'Player.Rotate.X = Player.Pitch * DEGREE
+    
 End Sub
 
-Public Sub LookDown(Optional ByVal Measure As Single = 0.0015)
-    Player.Pitch = Player.Pitch - -Measure
+Public Sub LookDown(Optional ByVal Measure As Single = 0.015)
+ 
+'    Dim vecRotate As D3DVECTOR
+'    vecRotate.Z = -1
+'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.8, 0, 0
     
+    Player.Pitch = Player.Pitch - -Measure
     If Player.Pitch > 1.5 Then Player.Pitch = 1.5
+    'Player.Rotate.X = Player.Pitch * DEGREE
+    
 End Sub
 
 Public Sub MoveForward()
-    Dim vecDirect As D3DVECTOR
-    
+
+
     '############################################
     '################ FOREWARDS #################
+    Dim vecDirect As D3DVECTOR
     If Player.Direct.Y = 0 Then
         vecDirect.X = Sin(D720 - Player.Angle)
         vecDirect.Z = Cos(D720 - Player.Angle)
@@ -156,10 +210,11 @@ Public Sub MoveForward()
 
 End Sub
 Public Sub MoveBackwards()
-    Dim vecDirect As D3DVECTOR
 
+    
     '############################################
     '################ BACKWARDS #################
+    Dim vecDirect As D3DVECTOR
     If Player.Direct.Y = 0 Then
         vecDirect.X = -Sin(D720 - Player.Angle)
         vecDirect.Z = -Cos(D720 - Player.Angle)
@@ -179,10 +234,11 @@ Public Sub MoveBackwards()
 
 End Sub
 Public Sub SlideLeft()
-    Dim vecDirect As D3DVECTOR
+
 
     '############################################
     '############### STRAFE LEFT ################
+    Dim vecDirect As D3DVECTOR
     If Player.Direct.Y = 0 Then
         vecDirect.X = Sin((D720 - Player.Angle) - D180)
         vecDirect.Z = Cos((D720 - Player.Angle) - D180)
@@ -199,10 +255,10 @@ Public Sub SlideLeft()
 
 End Sub
 Public Sub SlideRight()
-    Dim vecDirect As D3DVECTOR
 
     '############################################
     '############### STRAFE RIGHT ###############
+    Dim vecDirect As D3DVECTOR
     If Player.Direct.Y = 0 Then
         vecDirect.X = Sin((D720 - Player.Angle) + D180)
         vecDirect.Z = Cos((D720 - Player.Angle) + D180)
@@ -222,10 +278,9 @@ Public Sub Jump()
 
     If ((Perspective = Spectator) Or DebugMode) Or (((Not ((Player.IsMoving And Moving.Flying) = Moving.Flying))) And _
                                         (Not ((Player.IsMoving And Moving.Falling) = Moving.Falling))) Then
-
-        Dim vecDirect As D3DVECTOR
         '############################################
         '################## JUMP ####################
+        Dim vecDirect As D3DVECTOR
         If (Perspective = Spectator) Or DebugMode Then
             vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
             Player.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
@@ -269,6 +324,23 @@ Private Sub Class_Terminate()
     vbaObjSet Element, ObjPtr(Nothing)
     Stats_Player_Count = Stats_Player_Count - 1
 End Sub
+
+
+Public Property Let AttachedTo(ByVal RHS As String)
+    Element.AttachedTo = RHS
+End Property
+
+Public Property Get AttachedTo() As String
+    AttachedTo = Element.AttachedTo
+End Property
+
+Public Property Set Attachments(RHS As ntnodes10.Collection)
+    Set Element.Attachments = RHS
+End Property
+
+Public Property Get Attachments() As ntnodes10.Collection
+    Set Attachments = Element.Attachments
+End Property
 
 Public Property Get Motions() As ntnodes10.Collection
     Set Motions = Element.Motions
@@ -473,21 +545,19 @@ Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
     Element.Replacer TextFilename, BoardKey
 End Sub
 
-Public Property Set ReplacerKeys(ByVal RHS As ntnodes10.Collection)
+Public Property Set ReplacerKeys(ByRef RHS As ntnodes10.Collection)
     Set Element.ReplacerKeys = RHS
 End Property
 
 Public Property Get ReplacerKeys() As ntnodes10.Collection
-Attribute ReplacerKeys.VB_MemberFlags = "440"
     Set ReplacerKeys = Element.ReplacerKeys
 End Property
 
-Public Property Set ReplacerVals(ByVal RHS As ntnodes10.Collection)
+Public Property Set ReplacerVals(ByRef RHS As ntnodes10.Collection)
     Set Element.ReplacerVals = RHS
 End Property
 
 Public Property Get ReplacerVals() As ntnodes10.Collection
-Attribute ReplacerVals.VB_MemberFlags = "440"
     Set ReplacerVals = Element.ReplacerVals
 End Property
 
@@ -571,6 +641,22 @@ Public Property Get WireFrame() As Boolean
     WireFrame = Element.WireFrame
 End Property
 
+
+Private Property Let Element_AttachedTo(ByVal RHS As String)
+    Element.AttachedTo = RHS
+End Property
+
+Private Property Get Element_AttachedTo() As String
+    Set Element_AttachedTo = Element.AttachedTo
+End Property
+
+Private Property Set Element_Attachments(RHS As ntnodes10.Collection)
+    Set Element.Attachments = RHS
+End Property
+
+Private Property Get Element_Attachments() As ntnodes10.Collection
+    Set Element_Attachments = Element.Attachments
+End Property
 
 Private Property Get Element_Motions() As ntnodes10.Collection
     Set Element_Motions = Element.Motions
@@ -760,7 +846,7 @@ Private Sub Element_Replacer(ByVal TextFilename As String, ByVal BoardKey As Str
     Element.Replacer TextFilename, BoardKey
 End Sub
 
-Private Property Set Element_ReplacerKeys(ByVal RHS As ntnodes10.Collection)
+Private Property Set Element_ReplacerKeys(ByRef RHS As ntnodes10.Collection)
     Set Element.ReplacerKeys = RHS
 End Property
 
@@ -768,7 +854,7 @@ Private Property Get Element_ReplacerKeys() As ntnodes10.Collection
     Set Element_ReplacerKeys = Element.ReplacerKeys
 End Property
 
-Private Property Set Element_ReplacerVals(ByVal RHS As ntnodes10.Collection)
+Private Property Set Element_ReplacerVals(ByRef RHS As ntnodes10.Collection)
     Set Element.ReplacerVals = RHS
 End Property
 
@@ -818,6 +904,10 @@ End Property
 
 Private Property Get Element_Twists() As Point
     Set Element_Twists = Element.Twists
+End Property
+
+Private Property Get Element_Value() As Long
+    Element_Value = ObjPtr(Element)
 End Property
 
 Private Property Let Element_Visible(ByVal RHS As Boolean)

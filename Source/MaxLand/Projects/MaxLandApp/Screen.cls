@@ -28,7 +28,7 @@ Private pDimensions As ImageDimensions
 
 Private pPadding As Long
 
-Public Sub Render()
+Friend Sub Render()
     DDevice.SetTexture 0, pImage
     DDevice.SetTexture 1, pImage
     DDevice.DrawPrimitiveUP D3DPT_TRIANGLESTRIP, 2, pVerticies(0), LenB(pVerticies(0))

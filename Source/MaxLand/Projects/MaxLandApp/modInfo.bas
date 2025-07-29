@@ -120,13 +120,25 @@ Public Sub RenderInfo()
             End If
         End If
                 
-'        If ShowHelp And ShowStat Then
-'
-'            DrawText "", 2, Row(1)
-'            DrawText "Per World Stats: " & lngFaceCount & " Triangles Total; Culling " & ((lCulledFaces * lCullCalls) \ FPSRate) & " Triangles Ignored", 2, Row(2)
-'            DrawText "Per Frame Stats: " & lngTestCalls & " Calls To Collision; Totaling at " & lFacesShown & " Triangles", 2, Row(3)
-'
-'        End If
+        If ShowHelp And ShowStat Then
+
+            DrawText "", 2, Row(1)
+            DrawText "Per World Stats: " & lngFaceCount & " Triangles Total; Culling " & ((lCulledFaces * lCullCalls) \ FPSRate) & " Triangles Ignored", 2, Row(2)
+            DrawText "Per Frame Stats: " & lngTestCalls & " Calls To Collision; Totaling at " & lFacesShown & " Triangles", 2, Row(3)
+            txt = "Counts; Motion " & Stats_Motion_Count & " " & "Beacon " & Stats_Beacon_Count & " " & _
+                "Bindings " & Stats_Bindings_Count & " " & "Board " & Stats_Board_Count & " " & _
+                "Collection " & Stats_Collection_Count & " " & "Color " & Stats_Color_Count & " " & vbCrLf & _
+                "Coord " & Stats_Coord_Count & " " & "Database " & Stats_Database_Count & " " & _
+                "Image " & Stats_Image_Count & " " & "Include " & Stats_Include_Count & " " & _
+                "Light " & Stats_Light_Count & " " & "Element " & Stats_Element_Count & " " & vbCrLf & _
+                "Player " & Stats_Player_Count & " " & "Point " & Stats_Point_Count & " " & _
+                "Portal " & Stats_Portal_Count & " " & "Sound " & Stats_Sound_Count & " " & _
+                "Space " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
+                "Camera " & Stats_Camera_Count & " " & "Range " & Stats_Range_Count & " " & _
+                "Collision " & Stats_Collision_Count & " " & "CollisionEx " & Stats_CollisionEx_Count
+                
+            DrawText txt, 2, Row(4)
+        End If
         
 '        If CheckIdle(4) Or ShowHelp Then
 '            If VariableCount > 0 Then
@@ -147,28 +159,19 @@ Public Sub RenderInfo()
         End If
         DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), 2
 
-            
-        If ShowStat Then
-            txt = "Motion " & Stats_Motion_Count & " " & "Beacon " & Stats_Beacon_Count & " " & _
-                "Bindings " & Stats_Bindings_Count & " " & "Board " & Stats_Board_Count & " " & _
-                "Collection " & Stats_Collection_Count & " " & "Color " & Stats_Color_Count & " " & vbCrLf & _
-                "Coord " & Stats_Coord_Count & " " & "Database " & Stats_Database_Count & " " & _
-                "Image " & Stats_Image_Count & " " & "Include " & Stats_Include_Count & " " & _
-                "Light " & Stats_Light_Count & " " & "Element " & Stats_Element_Count & " " & vbCrLf & _
-                "Player " & Stats_Player_Count & " " & "Point " & Stats_Point_Count & " " & _
-                "Portal " & Stats_Portal_Count & " " & "Sound " & Stats_Sound_Count & " " & _
-                "Space " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
-                "Camera " & Stats_Camera_Count & " " & "Range " & Stats_Range_Count & " " & _
-                "Collision " & Stats_Collision_Count & " " & "CollisionEx " & Stats_CollisionEx_Count
-
-
-            
-            DrawText txt, 2, Row(2)
-            
-        End If
         If ShowStat Then
             txt = "Frames Per Second: " & FPSRate
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(2)
+            txt = "Origin.X = " & Player.Origin.X & vbCrLf & _
+                    "Origin.y = " & Player.Origin.Y & vbCrLf & _
+                    "Origin.z = " & Player.Origin.Z & vbCrLf & _
+                    "Distance = " & Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, 0, 0, 0) & vbCrLf & _
+                    "Angle = " & Player.Twists.Y & vbCrLf & _
+                    "Pitch = " & Player.Twists.Y & vbCrLf & _
+                    "Zoom = " & Player.Zoom & vbCrLf
+                    
+            DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(3)
+            
 
         End If
         

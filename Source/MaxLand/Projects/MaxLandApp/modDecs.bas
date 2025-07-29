@@ -85,7 +85,7 @@ Public Const FVF_RENDER_SIZE = 32
 Public Const FVF_SCREEN = D3DFVF_XYZRHW Or D3DFVF_DIFFUSE Or D3DFVF_TEX1
 Public Const FVF_RENDER = D3DFVF_XYZ Or D3DFVF_NORMAL Or D3DFVF_TEX1
 Public Const Transparent As Long = &HFFFF00FF
-Public Const MouseSensitivity As Long = 4
+Public Const MouseSensitivity As Long = 0.6
 Public Const MaxDisplacement As Single = 0.05
 Public Const BeaconSpacing As Single = 40
 Public Const BeaconRange As Single = 1000
@@ -163,7 +163,7 @@ End Function
 Public Function ImageDimensionsFromBytes(ByRef byteArr() As Byte, ByRef imgdim As ImageDimensions, Optional ByRef ext As String = "") As Boolean
 
     Dim isValidImage As Boolean
-    Dim I As Integer
+    Dim i As Integer
     
     'init vars
     isValidImage = False
@@ -180,15 +180,15 @@ Public Function ImageDimensionsFromBytes(ByRef byteArr() As Byte, ByRef imgdim A
     End If
     
     'check for SOF marker: &HFF and &HC0 TO &HCF
-    For I = 0 To UBound(byteArr) - 1
-        If byteArr(I) = &HFF And byteArr(I + 1) >= &HC0 And byteArr(I + 1) <= &HCF Then
+    For i = 0 To UBound(byteArr) - 1
+        If byteArr(i) = &HFF And byteArr(i + 1) >= &HC0 And byteArr(i + 1) <= &HCF Then
 '            imgdim.Height = byteArr(I + 5) * 256 + byteArr(I + 6)
 '            imgdim.Width = byteArr(I + 7) * 256 + byteArr(I + 8)
-            imgdim.Height = byteArr(I + 2) * 256 + byteArr(I + 3)
-            imgdim.Width = byteArr(I + 4) * 256 + byteArr(I + 5)
+            imgdim.Height = byteArr(i + 2) * 256 + byteArr(i + 3)
+            imgdim.Width = byteArr(i + 4) * 256 + byteArr(i + 5)
             Exit For
         End If
-    Next I
+    Next i
     
     'get image type and exit
     ext = "jpg"
@@ -1154,6 +1154,12 @@ Public Sub SwapSingle(ByRef val1 As Single, ByRef val2 As Single)
     val2 = tmp
 End Sub
 
+Public Function NoAngle() As Point
+    Set NoAngle = MakePoint(360, 360, 360)
+End Function
+Public Function NoPoint() As Point
+    Set NoPoint = MakePoint(0, 0, 0)
+End Function
 Public Function ClassifyPoint(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
     Dim dtp As Single
     Dim N As D3DVECTOR

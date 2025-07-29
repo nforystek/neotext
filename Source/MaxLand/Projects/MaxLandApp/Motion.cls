@@ -32,7 +32,7 @@ Private pEmphasis As Single
 Private pFriction As Single
 Private pInitials As Single
 Public Property Get Key() As String
-    Key = "K" & ObjPtr(Me)
+    Key = pIdentity
 End Property
     
 Public Property Let Key(ByVal RHS As String)
@@ -79,10 +79,10 @@ Public Property Let Reactive(ByRef RHS As Single)
     pReactive = RHS
 End Property
 
-Public Property Get latency() As Single
+Friend Property Get latency() As Single
     latency = pLatency
 End Property
-Public Property Let latency(ByRef RHS As Single)
+Friend Property Let latency(ByRef RHS As Single)
     pLatency = RHS
 End Property
 

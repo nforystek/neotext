@@ -88,16 +88,16 @@ Public Function IsScreenSaverRunning() As Boolean
     SystemParametersInfo SPI_GETSCREENSAVERRUNNING, 0, bRunning, False
     IsScreenSaverRunning = bRunning
 End Function
-Public Function CreateObjectPrivate(ByVal Class As String) As IUnknown
+Public Function NewObject(ByVal Class As String) As IUnknown
     '
     ' When you work in the compiled form and the different mechanisms will be used by the IDE.
 #If VBIDE = -1 Then
  '   If InIDE Then
 
-        Set CreateObjectPrivate = IdeCreateInstance(Class)
+        Set NewObject = IdeCreateInstance(Class)
   '  Else
 #Else
-        Set CreateObjectPrivate = ExeCreateInstance(Class)
+        Set NewObject = ExeCreateInstance(Class)
 #End If
 '#If VBIDE = -1 Then
  '   End If
@@ -156,7 +156,7 @@ Private Function GetOiOfClass(ByVal Class As String, ByRef lpObjInfo As Long) As
     '
     Static Modules()        As modFactory.MODDESCRTBL_ENTRY
     Static bModulesSet      As Boolean
-    Dim I                   As Long
+    Dim i                   As Long
     '
     #If ALSO_USERCONTROLS Then
         Const mfBadFlags As Long = mfUserControl
@@ -174,15 +174,15 @@ Private Function GetOiOfClass(ByVal Class As String, ByRef lpObjInfo As Long) As
     End If
     '
     ' We are looking for a descriptor corresponding to the specified class.
-    For I = LBound(Modules) To UBound(Modules)
-        With Modules(I)
+    For i = LBound(Modules) To UBound(Modules)
+        With Modules(i)
         If lstrcmpi(Class, .lpszName) = 0 And CBool(.ModuleType And mfNonStatic) And Not CBool(.ModuleType And mfBadFlags) Then
                 lpObjInfo = .lpObjectInfo
                 GetOiOfClass = True
                 Exit Function
             End If
         End With
-    Next I
+    Next i
 End Function
 
 Private Function LoadDescriptorsTable(dt() As MODDESCRTBL_ENTRY) As Boolean
@@ -218,7 +218,7 @@ Private Function FindEpiSimple(ByRef lpEPI As Long) As Boolean
     Dim DWords()            As Long: ReDim DWords(0)
     Dim PotentionalEPI(0)   As modFactory.EXEPROJECTINFO
     Dim PotentionalPD(0)    As modFactory.ProjectData
-    Dim I                   As Long
+    Dim i                   As Long
     '
     Const EPI_Signature     As Long = &H21354256 ' "VB5/6!"
     Const PD_Version        As Long = &H1F4
@@ -233,18 +233,18 @@ Private Function FindEpiSimple(ByRef lpEPI As Long) As Boolean
     '
     SaMap AryPtr(DWords), App.hInstance
     Do
-        If DWords(I) = EPI_Signature Then
-            SaMap AryPtr(PotentionalEPI), VarPtr(DWords(I))
+        If DWords(i) = EPI_Signature Then
+            SaMap AryPtr(PotentionalEPI), VarPtr(DWords(i))
             SaMap AryPtr(PotentionalPD), PotentionalEPI(0).lpProjectData
             If PotentionalPD(0).Version = PD_Version Then
-                lpEPI = VarPtr(DWords(I))
+                lpEPI = VarPtr(DWords(i))
                 FindEpiSimple = True
             End If
             SaUnmap AryPtr(PotentionalPD)
             SaUnmap AryPtr(PotentionalEPI)
             If FindEpiSimple Then Exit Do
         End If
-        I = I + 1
+        i = i + 1
     Loop
     SaUnmap AryPtr(DWords)
 End Function

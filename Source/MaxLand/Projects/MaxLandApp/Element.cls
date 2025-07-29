@@ -64,12 +64,48 @@ Private pCollideObject As Long
 Private pCollideFaces As Long
 Private pCulledFaces As Long
 
-Public ReplacerVals As ntnodes10.Collection
-Attribute ReplacerVals.VB_VarMemberFlags = "440"
-Public ReplacerKeys As ntnodes10.Collection
-Attribute ReplacerKeys.VB_VarMemberFlags = "440"
+Private pReplacerVals As ntnodes10.Collection
+Private pReplacerKeys As ntnodes10.Collection
+Attribute pReplacerKeys.VB_VarMemberFlags = "440"
+
+Private pAttachments As ntnodes10.Collection
+Private pAttachedTo As String
 
 Private Matrix As D3DMATRIX
+
+Public Property Get Attachments() As ntnodes10.Collection
+    Set Attachments = pAttachments
+End Property
+Public Property Set Attachments(ByRef RHS As ntnodes10.Collection)
+    Set pAttachments = RHS
+End Property
+
+Public Property Get AttachedTo() As String
+    AttachedTo = pAttachedTo
+End Property
+Public Property Let AttachedTo(ByVal RHS As String)
+    If pAttachedTo <> "" Then
+        All(pAttachedTo).Attachments.Remove Me.Key
+    End If
+    pAttachedTo = RHS
+    If RHS <> "" Then
+        All(pAttachedTo).Attachments.Add Me, RHS
+    End If
+    
+End Property
+
+Friend Property Get ReplacerVals() As ntnodes10.Collection
+    Set ReplacerVals = pReplacerVals
+End Property
+Friend Property Set ReplacerVals(ByRef RHS As ntnodes10.Collection)
+ Set pReplacerVals = RHS
+End Property
+Friend Property Get ReplacerKeys() As ntnodes10.Collection
+    Set ReplacerKeys = pReplacerKeys
+End Property
+Friend Property Set ReplacerKeys(ByRef RHS As ntnodes10.Collection)
+    Set pReplacerKeys = RHS
+End Property
 
 Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
     If Key = "" Then
@@ -81,10 +117,7 @@ Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
 End Sub
 
 Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
-'    If Me.Key = "pawn1" Then
-'        Stop
-'    End If
-    
+
     Dim act As Motion
     Set act = New Motion
     With act
@@ -104,22 +137,56 @@ Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Dat
         .Script = Script
         AddMotion = .Identity
     End With
-
     If pMotions.Count > 0 Then
         pMotions.Add act, , 1
     Else
         pMotions.Add act
     End If
-   ' Set act = Nothing
+    
+'    If Not pAttachments Is Nothing Then
+'        If pAttachments.Count > 0 Then
+'            Dim e2 As Element
+'            For Each e2 In pAttachments
+'                If e2.Motions.Count > 0 Then
+'                    e2.Motions.Add act, , 1
+'                Else
+'                    e2.Motions.Add act
+'                End If
+'            Next
+'
+'        End If
+'    End If
+
+    
+    
+    Set act = Nothing
+    
+    
 
 End Function
 
 Public Function DeleteMotion(ByVal MGUID As String) As Boolean
-'    If Me.Key = "pawn1" Then
-'        Stop
-'    End If
+
     Dim A As Long
     Dim act As Motion
+    A = 1
+    Do While A <= Motions.Count
+        Set act = Motions(A)
+        If act.Identity = MGUID Or (act.Identity = "") Then
+            Motions.Remove A
+            DeleteMotion = True
+        Else
+            A = A + 1
+        End If
+        Set act = Nothing
+    Loop
+
+'a prior way that only removed one occurance of the idenity in the collection
+'only it started with checking the very last item,and removed it if was idenity
+'otherwise it begane a forward iteration, as well it did not check for blank id's
+'
+'this one is slightly different, it only delete's one occurance and starts from
+'the back of the list, iterating all, it also considers blank ID match for removal
 '
 '    A = Motions.count
 '    Do While A > 0
@@ -133,18 +200,14 @@ Public Function DeleteMotion(ByVal MGUID As String) As Boolean
 '        A = A - 1
 '    Loop
 '    Set act = Nothing
-    
-        A = 1
-        Do While A <= Motions.Count
-            Set act = Motions(A)
-            If act.Identity = MGUID Or (act.Identity = "") Then
-                Motions.Remove A
-                DeleteMotion = True
-            Else
-                A = A + 1
-            End If
-            Set act = Nothing
-        Loop
+'
+'
+'because of array differences the above was working, yet no longer in objects
+'so the choice is a full iteration of the collection from the start and blanks
+'are considered matches for removal as well as ID matching, and all matches are
+'removed if satisfying those conditions, now it acts like before, with out
+'stacking too many motions that do or don't remove bogging down the system
+
 
 End Function
 
@@ -282,18 +345,21 @@ End Property
 
 
 Public Property Get CollideIndex() As Long
+Attribute CollideIndex.VB_MemberFlags = "440"
     CollideIndex = pCollideIndex
 End Property
 Public Property Let CollideIndex(ByVal RHS As Long)
     pCollideIndex = RHS
 End Property
 Public Property Get CollideObject() As Long
+Attribute CollideObject.VB_MemberFlags = "440"
     CollideObject = pCollideObject
 End Property
 Public Property Let CollideObject(ByVal RHS As Long)
     pCollideObject = RHS
 End Property
 Public Property Get CollideFaces() As Long
+Attribute CollideFaces.VB_MemberFlags = "440"
     CollideFaces = pCollideFaces
 End Property
 Public Property Let CollideFaces(ByVal RHS As Long)
@@ -321,6 +387,7 @@ Public Property Let Collision(ByVal RHS As Boolean)
 End Property
 
 Public Property Get CulledFaces() As Long
+Attribute CulledFaces.VB_MemberFlags = "440"
     CulledFaces = pCulledFaces
 End Property
 Public Property Let CulledFaces(ByVal RHS As Long)
@@ -349,18 +416,21 @@ Public Property Let Effect(ByVal RHS As Long)
 End Property
 
 Public Property Get IsMoving() As Long
+Attribute IsMoving.VB_MemberFlags = "440"
     IsMoving = pIsMoving
 End Property
 Public Property Let IsMoving(ByVal RHS As Long)
     pIsMoving = RHS
 End Property
 Public Property Get InLiquid() As Boolean
+Attribute InLiquid.VB_MemberFlags = "440"
     InLiquid = pInLiquid
 End Property
 Public Property Let InLiquid(ByVal RHS As Boolean)
     pInLiquid = RHS
 End Property
 Public Property Get OnLadder() As Boolean
+Attribute OnLadder.VB_MemberFlags = "440"
     OnLadder = pOnLadder
 End Property
 Public Property Let OnLadder(ByVal RHS As Boolean)
@@ -429,6 +499,13 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
+Public Property Get Value() As Long
+Attribute Value.VB_UserMemId = 0
+Attribute Value.VB_MemberFlags = "40"
+    Value = ObjPtr(Me)
+End Property
+
+
 Public Property Get Key() As String
     Key = pKey
 End Property
@@ -450,44 +527,71 @@ Public Property Let Gravitational(ByVal RHS As Boolean)
     pGravitational = RHS
 End Property
 
-Public Sub PrepairMatrix()
-Attribute PrepairMatrix.VB_MemberFlags = "40"
+Friend Sub PrepairMatrix()
                         
     D3DXMatrixIdentity Matrix
     D3DXMatrixTranslation Matrix, pOffset.X, pOffset.Y, pOffset.Z
-    D3DXMatrixRotationX Matrix, pRotate.X * (PI / 180)
-    D3DXMatrixRotationY Matrix, pRotate.Y * (PI / 180)
-    D3DXMatrixRotationZ Matrix, pRotate.Z * (PI / 180)
+    D3DXMatrixRotationX Matrix, pRotate.X * RADIAN
+    D3DXMatrixRotationY Matrix, pRotate.Y * RADIAN
+    D3DXMatrixRotationZ Matrix, pRotate.Z * RADIAN
     D3DXMatrixScaling Matrix, pScaled.X, pScaled.Y, pScaled.Z
 
     D3DXMatrixIdentity matWorld
 
 End Sub
-Public Sub ApplyMatrix()
-Attribute ApplyMatrix.VB_MemberFlags = "40"
-    Dim matMesh As D3DMATRIX
+Friend Sub ApplyMatrix()
 
+'    Dim matMesh As D3DMATRIX
+'
+'
+'    D3DXMatrixIdentity matMesh
+'    D3DXMatrixRotationX Matrix, Rotate.X * (PI / 180)
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
+'    D3DXMatrixMultiply matMesh, Matrix, matMesh
+'    D3DXMatrixRotationY Matrix, Rotate.Y * (PI / 180)
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
+'    D3DXMatrixMultiply matMesh, Matrix, matMesh
+'    D3DXMatrixRotationZ Matrix, Rotate.Z * (PI / 180)
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
+'    D3DXMatrixMultiply matMesh, Matrix, matMesh
+'    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
+'    DDevice.SetTransform D3DTS_WORLD, Matrix
+'    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
+'    D3DXMatrixMultiply matMesh, matMesh, Matrix
+'    DDevice.SetTransform D3DTS_WORLD, matMesh
+'
+            
+    Dim matMesh As D3DMATRIX
+    
+
+    D3DXMatrixIdentity matWorld
     D3DXMatrixIdentity matMesh
-    D3DXMatrixRotationX Matrix, pRotate.X * (PI / 180)
-    D3DXMatrixMultiply Matrix, matMesh, Matrix
-    D3DXMatrixMultiply matMesh, Matrix, matMesh
-    D3DXMatrixRotationY Matrix, pRotate.Y * (PI / 180)
-    D3DXMatrixMultiply Matrix, matMesh, Matrix
-    D3DXMatrixMultiply matMesh, Matrix, matMesh
-    D3DXMatrixRotationZ Matrix, pRotate.Z * (PI / 180)
-    D3DXMatrixMultiply Matrix, matMesh, Matrix
-    D3DXMatrixMultiply matMesh, Matrix, matMesh
-    D3DXMatrixTranslation Matrix, pOrigin.X, pOrigin.Y, pOrigin.Z
+
+    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
-    D3DXMatrixScaling matMesh, pScaled.X, pScaled.Y, pScaled.Z
-    D3DXMatrixMultiply matMesh, matMesh, Matrix
-    DDevice.SetTransform D3DTS_WORLD, matMesh
+    
+    
+    D3DXMatrixRotationX matMesh, Rotate.X * (PI / 180)
+    D3DXMatrixMultiply Matrix, matMesh, Matrix
+    D3DXMatrixRotationY matMesh, Rotate.Y * (PI / 180)
+    D3DXMatrixMultiply matMesh, Matrix, matMesh
+    D3DXMatrixRotationZ Matrix, Rotate.Z * (PI / 180)
+    D3DXMatrixMultiply Matrix, matMesh, Matrix
+    DDevice.SetTransform D3DTS_WORLD, Matrix
+    
+    
+    D3DXMatrixTranslation matMesh, Offset.X, Offset.Y, Offset.Z
+    D3DXMatrixMultiply Matrix, matMesh, Matrix
+    DDevice.SetTransform D3DTS_WORLD, Matrix
+
+
 
 End Sub
 
-Public Sub PlayerMatrix()
-Attribute PlayerMatrix.VB_MemberFlags = "40"
+Friend Sub PlayerMatrix()
     
     D3DXMatrixIdentity matWorld
     D3DXMatrixIdentity Matrix
@@ -495,7 +599,7 @@ Attribute PlayerMatrix.VB_MemberFlags = "40"
     D3DXMatrixScaling Matrix, pScaled.X, pScaled.Y, pScaled.Z
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
-    D3DXMatrixRotationY Matrix, -Player.angle
+    D3DXMatrixRotationY Matrix, -Player.Angle
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
     D3DXMatrixTranslation Matrix, pOrigin.X, pOrigin.Y, pOrigin.Z
@@ -505,22 +609,19 @@ Attribute PlayerMatrix.VB_MemberFlags = "40"
 
 End Sub
 
-Public Sub SetWorldMatrix()
-Attribute SetWorldMatrix.VB_MemberFlags = "40"
+Friend Sub SetWorldMatrix()
     DDevice.SetTransform D3DTS_WORLD, Matrix
 End Sub
 
 
-Public Function PointMatrix(ByRef p As Point) As Point
-Attribute PointMatrix.VB_MemberFlags = "40"
+Friend Function PointMatrix(ByRef p As Point) As Point
     Dim v As D3DVECTOR
     v = ToVector(p)
     D3DXVec3TransformCoord v, v, Matrix
     Set PointMatrix = ToPoint(v)
 End Function
 
-Public Sub DefaultMatrix()
-Attribute DefaultMatrix.VB_MemberFlags = "40"
+Friend Sub DefaultMatrix()
     D3DXMatrixIdentity Matrix
     D3DXMatrixTranslation Matrix, 0, 0, 0
     D3DXMatrixRotationX Matrix, 0
@@ -560,9 +661,12 @@ Private Sub Class_Initialize()
     Set pTwists = New Point
     Set pScalar = New Point
     
-    Set ReplacerVals = New ntnodes10.Collection
-    Set ReplacerKeys = New ntnodes10.Collection
-    Set Motions = New ntnodes10.Collection
+    Set pReplacerVals = New ntnodes10.Collection
+    Set pReplacerKeys = New ntnodes10.Collection
+   
+    Set pAttachments = New ntnodes10.Collection
+  
+    Set pMotions = New ntnodes10.Collection
     
     'DefaultMatrix
     
@@ -576,18 +680,32 @@ Private Sub Class_Terminate()
         DelCollision Me
     End If
     
-    Do Until ReplacerVals.Count = 0
-        ReplacerVals.Remove 1
-    Loop
-    Set ReplacerVals = Nothing
-    
-    Do Until ReplacerKeys.Count = 0
-        ReplacerKeys.Remove 1
-    Loop
-    Set ReplacerKeys = Nothing
 
-    ClearMotions
-    Set Motions = Nothing
+    
+    If Not pReplacerVals Is Nothing Then
+        Do Until pReplacerVals.Count = 0
+            pReplacerVals.Remove 1
+        Loop
+        Set pReplacerVals = Nothing
+    End If
+    
+    If Not pReplacerKeys Is Nothing Then
+        Do Until pReplacerKeys.Count = 0
+            pReplacerKeys.Remove 1
+        Loop
+        Set pReplacerKeys = Nothing
+    End If
+    If Not pMotions Is Nothing Then
+        ClearMotions
+        Set pMotions = Nothing
+    End If
+    
+    If Not pAttachments Is Nothing Then
+        Do Until pAttachments.Count = 0
+            pAttachments.Remove 1
+        Loop
+        Set pAttachments = Nothing
+    End If
 
     Set pOrigin = Nothing
     Set pScaled = Nothing

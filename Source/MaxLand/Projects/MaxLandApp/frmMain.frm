@@ -4,10 +4,10 @@ Begin VB.Form frmMain
    AutoRedraw      =   -1  'True
    BorderStyle     =   1  'Fixed Single
    Caption         =   "MaxLand"
-   ClientHeight    =   4380
+   ClientHeight    =   570
    ClientLeft      =   45
    ClientTop       =   330
-   ClientWidth     =   6285
+   ClientWidth     =   1590
    BeginProperty Font 
       Name            =   "Lucida Console"
       Size            =   9.75
@@ -23,12 +23,18 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MouseIcon       =   "frmMain.frx":0D4A
    MousePointer    =   1  'Arrow
-   ScaleHeight     =   4380
-   ScaleWidth      =   6285
+   ScaleHeight     =   570
+   ScaleWidth      =   1590
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
+   Begin MSScriptControlCtl.ScriptControl ScriptControl2 
+      Left            =   840
+      Top             =   0
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+   End
    Begin MSScriptControlCtl.ScriptControl ScriptControl1 
-      Left            =   0
+      Left            =   120
       Top             =   0
       _ExtentX        =   1005
       _ExtentY        =   1005
@@ -58,10 +64,13 @@ End Sub
 
 Public Sub Startup()
     With ScriptControl1
-
+        
         Static AlreadyRan As Boolean
-        If AlreadyRan Then .Reset
-        AlreadyRan = True
+        If AlreadyRan Then
+            .Reset
+        Else
+            AlreadyRan = True
+        End If
 
         If PathExists(AppPath & "Script.log", True) Then Kill AppPath & "Script.log"
         
@@ -89,6 +98,7 @@ End Sub
 
 
 Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
+
     ScriptControl1.AddCode Code
     Do Until Code = ""
         DebugPrint "Addcode: " & RemoveNextArg(Code, vbCrLf)
@@ -108,8 +118,18 @@ End Sub
 
 
 Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As String = "Run", Optional ByVal LineNumber As Long = 0) As Variant
-    ScriptControl1.Run ProcedureName
-    DebugPrint "Run: " & ProcedureName
+
+    If ScriptControl1.Procedures.Count > 0 Then
+        Dim i As Long
+        For i = 1 To ScriptControl1.Procedures.Count
+            If LCase(ScriptControl1.Procedures(i).Name) = LCase(ProcedureName) Then
+                ScriptControl1.Run ProcedureName
+                DebugPrint "Run: " & ProcedureName
+                Exit For
+            End If
+        Next
+    End If
+
 End Function
 
 Private Sub DebugPrint(ByVal txt As String)

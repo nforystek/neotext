@@ -198,19 +198,17 @@ Public Property Let RoundingCut(ByVal RHS As Integer)
     pRoundingCut = RHS
 End Property
 
-Public Property Get BeaconAnim() As Double
-Attribute BeaconAnim.VB_MemberFlags = "40"
+Friend Property Get BeaconAnim() As Double
     BeaconAnim = pBeaconAnim
 End Property
-Public Property Let BeaconAnim(ByVal RHS As Double)
+Friend Property Let BeaconAnim(ByVal RHS As Double)
     pBeaconAnim = RHS
 End Property
 
-Public Property Get BeaconText() As Long
-Attribute BeaconText.VB_MemberFlags = "40"
+Friend Property Get BeaconText() As Long
     BeaconText = pBeaconText
 End Property
-Public Property Let BeaconText(ByVal RHS As Long)
+Friend Property Let BeaconText(ByVal RHS As Long)
     pBeaconText = RHS
 End Property
 

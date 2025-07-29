@@ -5,7 +5,7 @@ Option Explicit
 Option Compare Binary
 Option Private Module
 
-Public UC As ntnodes10.Collection
+Public UC As NTNodes10.Collection
 
 Public Const GWL_WNDPROC = -4
 Public Const WS_DISABLED = &H8000000
@@ -18,10 +18,10 @@ Public Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
-Public Property Get GetPlayerByPtr(ByVal lPtr As Long) As Object
+Public Property Get ObjectByPtr(ByVal lPtr As Long) As Object
     Dim NewObj As Object
     RtlMoveMemory NewObj, lPtr, 4
-    Set GetPlayerByPtr = NewObj
+    Set ObjectByPtr = NewObj
     DestroyObject NewObj
 End Property
 
@@ -32,13 +32,13 @@ End Sub
 Public Sub UnSetControlHost(ByVal lPtr As Long, ByVal hwnd As Long)
     If Not UC Is Nothing Then
         UC.Remove "H" & hwnd
-        If UC.count = 0 Then Set UC = Nothing
+        If UC.Count = 0 Then Set UC = Nothing
     End If
 End Sub
 
 Public Sub SetControlHost(ByVal lPtr As Long, ByVal hwnd As Long)
     If UC Is Nothing Then
-        Set UC = New ntnodes10.Collection
+        Set UC = New NTNodes10.Collection
     End If
     If Not UC.Exists("H" & hwnd) Then
         UC.Add lPtr, "H" & hwnd
@@ -51,7 +51,7 @@ On Error GoTo clearit
     Select Case uMsg
         Case 953
             Dim objPlayer As Track
-            Set objPlayer = GetPlayerByPtr(Trim(Str(UC("H" & hwnd))))
+            Set objPlayer = ObjectByPtr(Trim(Str(UC("H" & hwnd))))
             objPlayer.NotifySound
             Set objPlayer = Nothing
     End Select

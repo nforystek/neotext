@@ -84,10 +84,10 @@ Public Sub StopPlay()
     StopWave Index
 End Sub
 
-Public Property Get Index() As Long
+Friend Property Get Index() As Long
     Index = pIndex
 End Property
-Public Property Let Index(ByVal RHS As Long)
+Friend Property Let Index(ByVal RHS As Long)
     pIndex = RHS
 End Property
 

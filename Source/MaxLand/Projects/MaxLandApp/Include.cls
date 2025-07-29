@@ -14,6 +14,60 @@ Attribute VB_Exposed = False
 Option Explicit
 
 
+'Public Const PI As Single = 3.14159265359
+''Public Const PI As Double = 3.14159265358979            '653589 '79 'leaving out 65358979
+'                    'because the planes mess up and wobble
+'
+'Public Const Epsilon As Double = 0.999999999999999 ' 0.0001 '
+'Public Const DEGREE As Single = (180 / PI)
+'Public Const RADIAN As Single = (PI / 180)
+'Public Const FOOT As Single = 0.1
+'Public Const MILE As Single = 5280 * FOOT
+''Public Const FOVY As Single = (FOOT * 8) '(FOOT * 8) '4 feet left, and 4 feet right = 0.8
+'Public Const SKYFOVY As Single = (MILE * 4)
+'Public Const Far  As Single = 900000000
+'Public Const Near As Single = 0 '0.05 'one millimeter (308.4 per foor) or greater
+'
+'
+'
+'Public Const FOVY As Single = 1.047198 '2.3561946
+'
+'Public Const D90 As Single = (PI / 4)
+'Public Const D180 As Single = (PI / 2)
+'Public Const D360 As Single = PI
+'Public Const D720 As Single = (PI * 2)
+
+Public Property Get PI() As Single
+    PI = modGeometry.PI
+End Property
+Public Property Get Epsilon() As Single
+    Epsilon = modGeometry.Epsilon
+End Property
+Public Property Get DEGREE() As Single
+    DEGREE = modGeometry.DEGREE
+End Property
+Public Property Get RADIAN() As Single
+    RADIAN = modGeometry.RADIAN
+End Property
+Public Property Get FOOT() As Single
+    FOOT = modGeometry.FOOT
+End Property
+Public Property Get MILE() As Single
+    MILE = modGeometry.MILE
+End Property
+Public Property Get SKYFOV() As Single
+    SKSKYFOVYFOV = modGeometry.SKYFOV
+End Property
+Public Property Get NEAR() As Single
+    NEAR = modGeometry.NEAR
+End Property
+Public Property Get FAR() As Single
+    FAR = modGeometry.FAR
+End Property
+Public Property Get FOVY() As Single
+    FOVY = modGeometry.FOVY
+End Property
+
 'Public Enum Collides
 '    InDoor = 1
 '    Ground = 2
@@ -257,8 +311,8 @@ End Property
 '########## Functions ##############################
 '###################################################
 
-Public Function CreateObjectPrivate(ByVal Class As String)
-    Set CreateObjectPrivate = modFactory.CreateObjectPrivate(Class)
+Public Function NewObject(ByVal Class As String)
+    Set NewObject = modFactory.NewObject(Class)
 End Function
 
 Public Sub DebugPrint(ByVal Text As String)

@@ -52,7 +52,6 @@ Public PixelShaderDiffuse As Long
 
 Public Sub Main()
 
-
     On Error GoTo fault:
     
     Dim inCmd As String
@@ -180,7 +179,7 @@ Public Sub Main()
                 SetupWorld
                 
                 
-                RenderActive
+                RenderMotion
                 RenderPlanes
                 RenderWorld
                 RenderPlayer
@@ -268,6 +267,7 @@ End Sub
 
 Public Sub RenderRoutine()
 
+    
     If Millis <> 0 Then
         If Timer - Millis >= 0.1 Then
             Millis = Timer
@@ -280,6 +280,11 @@ Public Sub RenderRoutine()
             Second = Timer
             frmMain.Run "Second"
         End If
+    End If
+
+    If CheckIdle(60) Then
+        ResetIdle
+        frmMain.Run "OnIdle"
     End If
 
     If Frame Then
@@ -319,11 +324,10 @@ On Error GoTo WorldError
     D3DXMatrixMultiply matLook, matRotation, matPitch
     
     DDevice.SetTransform D3DTS_WORLD, matWorld
-    
-    
+  
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
         
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
+        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
         D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
@@ -333,7 +337,7 @@ On Error GoTo WorldError
         
     Else
     
-        D3DXMatrixRotationY matRotation, Player.angle
+        D3DXMatrixRotationY matRotation, Player.Angle
         D3DXMatrixRotationX matPitch, Player.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
@@ -358,7 +362,7 @@ On Error GoTo WorldError
 
             If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0)) Then
 
-                Player.angle = 3
+                Player.Twists.Y = 3
             
             End If
         
@@ -372,7 +376,8 @@ On Error GoTo WorldError
 
             Dim verts(0 To 2) As D3DVECTOR
             Dim touched As Boolean
-
+            
+            'initialie sngFaceVis for camera collision checking
             For cnt = 1 To lngFaceCount - 1
                             On Error GoTo isdivcheck0
                                 sngFaceVis(3, cnt) = 0
@@ -385,6 +390,10 @@ notdivcheck0:
                 
             Next
 
+
+            'commence the camera clip collision checking, this is what keeps
+            'the camera from being inside of the level seeing out backfaces
+            
             Zoom = 0.2
             factor = 0.5
 
@@ -394,13 +403,13 @@ notdivcheck0:
                                             Player.Origin.Y - 0.2, _
                                             Player.Origin.Z)
 
-                verts(1) = MakeVector(Player.Origin.X - (Sin(D720 - Player.angle) * (Zoom + factor)), _
+                verts(1) = MakeVector(Player.Origin.X - (Sin(D720 - Player.Twists.Y) * (Zoom + factor)), _
                                             Player.Origin.Y - 0.2 + (Tan(D720 - Player.Pitch) * (Zoom + factor)), _
-                                            Player.Origin.Z - (Cos(D720 - Player.angle) * (Zoom + factor)))
+                                            Player.Origin.Z - (Cos(D720 - Player.Twists.Y) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Origin.X - (Sin(D720 - Player.angle)), _
+                verts(2) = MakeVector(Player.Origin.X - (Sin(D720 - Player.Twists.Y)), _
                                       Player.Origin.Y - 0.1 + (Tan(D720 - Player.Pitch) * Zoom), _
-                                      Player.Origin.Z - (Cos(D720 - Player.angle)))
+                                      Player.Origin.Z - (Cos(D720 - Player.Twists.Y)))
 
                 sngCamera(0, 0) = Player.Origin.X
                 sngCamera(0, 1) = Player.Origin.Y
@@ -424,7 +433,7 @@ notdivcheck0:
                     
                     
                     'For cnt = 1 To Elements.Count
-                        If ((Not (e1.Effect = Collides.Ground)) And (Not (e1.Effect = Collides.InDoor))) And (e1.CollideIndex > -1) Then
+                        If ((Not (e1.Effect = Collides.Ground)) And (Not (e1.Effect = Collides.InDoor))) And (e1.CollideIndex > -1) And (e1.BoundsIndex > 0) Then
                             For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                             On Error GoTo isdivcheck1
                                 sngFaceVis(3, cnt2) = 0
@@ -436,7 +445,7 @@ notdivcheck1:
                                 On Error GoTo 0
                                 
                             Next
-                        ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible Then
+                        ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible And (e1.BoundsIndex > 0) Then
                             For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                                 If Not (((sngFaceVis(0, cnt2) = 0) Or (sngFaceVis(0, cnt2) = 1) Or (sngFaceVis(0, cnt2) = -1)) And _
                                     ((sngFaceVis(1, cnt2) = 0) Or (sngFaceVis(1, cnt2) = 1) Or (sngFaceVis(1, cnt2) = -1)) And _
@@ -446,7 +455,7 @@ notdivcheck1:
                             Next
                         End If
                     Next
-                    If (Player.CollideIndex > -1) Then
+                    If (Player.CollideIndex > -1) And (Player.BoundsIndex > 0) And (Player.BoundsIndex > 0) Then
                         For cnt2 = Player.CollideIndex To (Player.CollideIndex + Meshes(Player.BoundsIndex).Mesh.GetNumFaces) - 1
                             On Error GoTo isdivcheck2
                                 sngFaceVis(3, cnt2) = 0
@@ -474,6 +483,9 @@ notdivcheck2:
             D3DXMatrixTranslation matTemp, 0, 0.2, Zoom
             D3DXMatrixMultiply matView, matLook, matTemp
 
+
+            'all said and done, if the zoom is under a certian val the
+            'toon is in the way, so change it to wireframe see through
             Player.WireFrame = (Zoom < 0.8)
 
         Else

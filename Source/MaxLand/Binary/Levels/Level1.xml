@@ -1,5 +1,5 @@
 <?xml version="1.0"?><Serial>  <Variables>
-        <Player.Origin>[3, -0.124, 0]</Player.Origin>
+        <Player.Origin>[2.608273, -0.123588, -0.526558]</Player.Origin>
         <orders>0</orders>
         <firevix1var>2</firevix1var>
         <firevix2var>1</firevix2var>
@@ -24,11 +24,11 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.802098, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -3.778036, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.802098, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.805283, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -137.4041, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.805283, -11.312]</pawn3.origin>
   </Variables>
-<DateTime>7%2F22%2F2025+6%3A59%3A49+PM</DateTime>
+<DateTime>7%2F28%2F2025+3%3A38%3A41+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
 Bindings%2EMouseInput%3D2
 

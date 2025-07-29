@@ -64,18 +64,18 @@ Public Property Let Range(ByVal RHS As Single)
     pRange = RHS
 End Property
 
-Public Property Get OnInRange() As OnEvent
+Friend Property Get OnInRange() As OnEvent
     Set OnInRange = pOnInRange
 End Property
-Public Property Set OnInRange(ByRef RHS As OnEvent)
+Friend Property Set OnInRange(ByRef RHS As OnEvent)
     Set pOnInRange = RHS
 End Property
 
 
-Public Property Get OnOutRange() As OnEvent
+Friend Property Get OnOutRange() As OnEvent
     Set OnOutRange = pOnOutRange
 End Property
-Public Property Set OnOutRange(ByRef RHS As OnEvent)
+Friend Property Set OnOutRange(ByRef RHS As OnEvent)
     Set pOnOutRange = RHS
 End Property
 

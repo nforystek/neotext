@@ -108,7 +108,8 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
         '#######################################################################################
         'objects whose tags repeat newly in creating, or special use case scenario functions
         
-        Case "serialize", "deserialize", "frame", "second", "millis", "sound", "track", "light", "camera", "screen", "board", "beacon", "portal", "element", "motion"
+        Case "deserialize", "frame", "millis", "onidle", "second", "serialize", _
+            "beacon", "board", "camera", "element", "light", "motion", "portal", "screen", "sound", "track"
 
             ParseReservedWord = 3
             
@@ -434,22 +435,60 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
         
         inName = "m" & Replace(modGuid.GUID(), "-", "")
         frmMain.AddCode "Sub " & inName & "()" & vbCrLf & inBlock & vbCrLf & "End Sub" & vbCrLf, , LineNum
-            
-        If LCase(inEvent) = "script" Then
         
-            frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
-            
-        ElseIf frmMain.Evaluate(inWith & "." & inEvent & " Is Nothing") Then
 
-    
-            frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = CreateObjectPrivate(""OnEvent"")"
-            frmMain.ExecuteStatement inWith & "." & inEvent & ".RunMethod=""" & inName & """"
-            frmMain.ExecuteStatement inWith & "." & inEvent & ".AppliesTo=""" & inApplyTo & """"
-            frmMain.ExecuteStatement inWith & "." & inEvent & ".StartLine=" & LineNum
-            
-        Else
-            Err.Raise 8, , "The event " & inEvent & " for " & inWith & " already exists."
+        If LCase(inEvent) = "script" Then
+            frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
+        ElseIf LCase(inEvent) = "oninrange" Or LCase(inEvent) = "onoutrange" Then
+            Dim oev As OnEvent
+            Set oev = New OnEvent
+            oev.RunMethod = inName
+            oev.AppliesTo = inApplyTo
+            oev.StartLine = LineNum
+            inName = RemoveQuotedArg(inWith, """", """")
+            Dim p As Portal
+            Set p = Portals(inName)
+            Select Case LCase(inEvent)
+                Case "oninrange"
+                    Set p.OnInRange = oev
+                Case "onoutrange"
+                    Set p.OnOutRange = oev
+            End Select
+            Set p = Nothing
+            Set oev = Nothing
         End If
+        
+     
+
+'        If LCase(inEvent) = "script" Then
+'            frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
+'        ElseIf frmMain.Evaluate(inWith & "." & inEvent & " Is Nothing") Then
+'            frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = NewObject(""OnEvent"")"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".RunMethod=""" & inName & """"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".AppliesTo=""" & inApplyTo & """"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".StartLine=" & LineNum
+'        End If
+        
+            
+'        If LCase(inEvent) = "script" Then
+'
+'            frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
+'
+'        ElseIf frmMain.Evaluate(inWith & "." & inEvent & " Is Nothing") Then
+'
+'
+'            frmMain.ExecuteStatement "Set " & inWith & "." & inEvent & " = NewObject(""OnEvent"")"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".RunMethod=""" & inName & """"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".AppliesTo=""" & inApplyTo & """"
+'            frmMain.ExecuteStatement inWith & "." & inEvent & ".StartLine=" & LineNum
+'
+'        Else
+'            Err.Raise 8, , "The event " & inEvent & " for " & inWith & " already exists."
+'        End If
+        
+        
+        
+        
     End If
 scripterror:
     If Err.Number <> 0 Then
@@ -515,7 +554,7 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
     ElseIf ParseReservedWord(inObj) = 3 Then
         Dim Temporary As Object
         inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
-        Set Temporary = CreateObjectPrivate(inObj)
+        Set Temporary = NewObject(inObj)
 
         ParseSetupObject Temporary, inObj, inName, inWith, (LineNum - CountWord(inLine, vbCrLf))
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)", LineNum
@@ -550,7 +589,7 @@ Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Op
     End If
 
     If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " Is Nothing", , LineNum) Then
-        frmMain.ExecuteStatement "Set " & IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " = CreateObjectPrivate(""" & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & """)", , LineNum
+        frmMain.ExecuteStatement "Set " & IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " = NewObject(""" & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & """)", , LineNum
     End If
 
     If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)", , LineNum) Then
@@ -616,7 +655,7 @@ End Function
 '### Main parsing of scripts function ###
 '########################################
 
-Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As String = "", Optional ByRef LineNum As Long = 0, Optional ByVal Deserialize As String = ".xml") As String
+Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As String = "", Optional ByRef LineNum As Long = 0, Optional ByVal NoDeserialize As Boolean = False) As String
     On Error GoTo parseerror
     On Local Error GoTo parseerror
     Static serialLevel As Integer
@@ -636,9 +675,9 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
             'add on a trailing vbCrLf ffor line counting in case inText ends in text
             If serialLevel = 1 Then 'so no stacking occurs for serilse/deserialize
                 'at loading of a script, check whether a serialized XML file is present with it
-                If PathExists(ScriptRoot & "Levels\" & CurrentLoadedLevel & Deserialize, True) Then
+                If PathExists(ScriptRoot & "Levels\" & CurrentLoadedLevel & ".xml", True) Then
                     'build the deserialize function that will be executed at the end of loading the script
-                    deSer = ParseDeserialize(ReadFile(ScriptRoot & "Levels\" & CurrentLoadedLevel & Deserialize))
+                    deSer = ParseDeserialize(ReadFile(ScriptRoot & "Levels\" & CurrentLoadedLevel & ".xml"))
                     frmMain.AddCode deSer ', , (LineNum - CountWord(inText, vbCrLf)) 'and add it as script code
                 Else
                     frmMain.AddCode "Sub Deserialize()" & vbCrLf & "End Sub" & vbCrLf
@@ -692,6 +731,7 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
                         Case "player"
                             If inName <> "" Then
                                 frmMain.ExecuteStatement inType & ".key=""" & inName & """"
+                                frmMain.ExecuteStatement "All.Add " & inName & ", """ & inName & """"
                             End If
                     End Select
 
@@ -730,10 +770,12 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
     If serialLevel = 0 Then
         'before we deserialize, built the serialize function
         'that will be executed when the project is closing
+        
         deSer = ParseSerialize(4) 'finalize adding with the footer
         frmMain.AddCode deSer, , atLine  'add it to the code
-        
-        frmMain.Run "Deserialize" 'now run the deserialzation generated at the beginning
+        If Not NoDeserialize Then
+            frmMain.Run "Deserialize" 'now run the deserialzation generated at the beginning
+        End If
     End If
     Exit Function
 parseerror:

@@ -18,6 +18,9 @@ Private pOrigin As Point
 Private pAngle As Single
 Private pPitch As Single
 Private pRoll As Single
+Private pZoom As Single
+Private pMinZoom As Single
+Private pMaxZoom As Single
 
 Private pKey As String
 Private pSerialize As Boolean
@@ -71,8 +74,15 @@ Public Property Let Roll(ByVal RHS As Single)
     pRoll = RHS
 End Property
 
+Public Property Get Zoom() As Single
+    Zoom = pZoom
+End Property
+Public Property Let Zoom(ByVal RHS As Single)
+    pZoom = RHS
+End Property
+
 Public Property Get ToString() As String
-    ToString = "[" & pOrigin.X & ", " & pOrigin.Y & ", " & pOrigin.Z & ", " & pAngle & ", " & pPitch & ", " & pRoll & "]"
+    ToString = "[" & pOrigin.X & ", " & pOrigin.Y & ", " & pOrigin.Z & ", " & pAngle & ", " & pPitch & ", " & pRoll & ", " & pZoom & ", " & pMinZoom & ", " & pMaxZoom & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)
@@ -85,7 +95,10 @@ Public Property Let ToString(ByVal RHS As String)
         pAngle = ParseNumerical(RHS)
         pPitch = ParseNumerical(RHS)
         pRoll = ParseNumerical(RHS)
-        
+   
+        pZoom = ParseNumerical(RHS)
+        pMinZoom = ParseNumerical(RHS)
+        pMaxZoom = ParseNumerical(RHS)
     End If
 End Property
 
@@ -93,6 +106,9 @@ Private Sub Class_Initialize()
     Stats_Camera_Count = Stats_Camera_Count + 1
     Set pOrigin = New Point
     Key = "K" & ObjPtr(Me)
+    pMaxZoom = 10
+    pMinZoom = 1
+    pZoom = 5
 End Sub
 
 Private Sub Class_Terminate()

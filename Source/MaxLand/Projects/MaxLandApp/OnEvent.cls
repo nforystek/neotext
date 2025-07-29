@@ -8,9 +8,9 @@ BEGIN
 END
 Attribute VB_Name = "OnEvent"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = True
+Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = True
+Attribute VB_Exposed = False
 Option Explicit
 
 Private pAppliesTo As String
@@ -19,10 +19,10 @@ Private pStartLine As String
 Private pRunFlag As Boolean
 
 
-Public Property Get RunFlag() As Boolean
+Friend Property Get RunFlag() As Boolean
     RunFlag = pRunFlag
 End Property
-Public Property Let RunFlag(ByVal RHS As Boolean)
+Friend Property Let RunFlag(ByVal RHS As Boolean)
     pRunFlag = RHS
 End Property
 
@@ -40,10 +40,10 @@ Public Property Let RunMethod(ByVal RHS As String)
     pRunMethod = RHS
 End Property
 
-Public Property Get StartLine() As String
+Friend Property Get StartLine() As String
     StartLine = pStartLine
 End Property
-Public Property Let StartLine(ByVal RHS As String)
+Friend Property Let StartLine(ByVal RHS As String)
     pStartLine = RHS
 End Property
 
