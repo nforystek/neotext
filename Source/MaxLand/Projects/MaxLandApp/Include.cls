@@ -56,7 +56,7 @@ Public Property Get MILE() As Single
     MILE = modGeometry.MILE
 End Property
 Public Property Get SKYFOV() As Single
-    SKSKYFOVYFOV = modGeometry.SKYFOV
+    SKYFOV = modGeometry.SKYFOVY
 End Property
 Public Property Get NEAR() As Single
     NEAR = modGeometry.NEAR

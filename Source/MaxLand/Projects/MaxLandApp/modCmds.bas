@@ -1211,7 +1211,7 @@ Public Sub CreateCmds()
     End If
     DIMouseDevice.Acquire
     
-    If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Harddrive"
+    If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Level1"
     
 End Sub
 

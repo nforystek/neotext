@@ -260,12 +260,16 @@ Private Sub SaUnmap(ByVal ppSA As Long)
 End Sub
 
 Public Function InIDE() As Boolean
-    On Error GoTo InTheIDE
 #If VBIDE = 0 Then
+    InIDE = False
+    Exit Function
+#End If
+    On Error GoTo InTheIDE
+
     Debug.Print 1 / 0
     Exit Function
-#Else
+
 InTheIDE:
     InIDE = True
-#End If
+
 End Function

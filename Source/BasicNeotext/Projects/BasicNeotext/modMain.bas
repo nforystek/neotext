@@ -43,7 +43,7 @@ Public Sub Main()
 
         ParseCommand
 
-        If Execs.count = 0 Then
+        If Execs.Count = 0 Then
             RunProcessEx Paths("VisBasic"), "", , True
         Else
             Dim func As String
@@ -55,6 +55,9 @@ Public Sub Main()
                 Do Until (switch = "")
                     
                     Select Case func
+                        Case "windiff"
+                            DoCaseInsensitive
+                            switch = ""
                         Case "copy"
                             DoCleanCopy
                             switch = ""
@@ -380,7 +383,125 @@ End Sub
 '
 '
 'End Sub
+Private Function FixLine(ByVal inLine As String) As String
+    
+    Do Until inLine = ""
+        Select Case Left(inLine, 1)
+            Case "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "W", "Z"
+                FixLine = FixLine + Left(inLine, 1)
+                inLine = Mid(inLine, 2)
+            Case Else
+                If IsAlphaNumeric(Left(inLine, 1)) Then
+                    FixLine = FixLine & UCase(Left(inLine, 1))
+                    inLine = Mid(inLine, 2)
+                End If
+                    
+        End Select
+        Do
+            FixLine = FixLine & LCase(Left(inLine, 1))
+            inLine = Mid(inLine, 2)
+        Loop Until Not IsAlphaNumeric(Left(inLine, 1)) Or inLine = ""
+    Loop
+End Function
+Private Function DoCaseInsensitive() As Boolean
+    Dim File1 As String
+    Dim File2 As String
+    Dim File3 As String
+    Dim Back1 As String
+    
+    Dim File As String
+    Dim cnt As Long
 
+    Dim line1 As String
+    Dim line2 As String
+    
+    File = Paths("windiff1")
+    File = Paths("windiff2")
+    DoCaseInsensitive = True
+    If Err.Number = 0 Then
+
+        If PathExists(Paths("windiff1"), False) Then
+            If PathExists(Paths("windiff2"), False) Then
+                Dim ListAllSourceFiles As String
+                ListAllSourceFiles = GatherFileList(Paths("windiff1"))
+                
+                Dim ListAllDestFiles As String
+                ListAllDestFiles = GatherFileList(Paths("windiff2"))
+                
+                Do Until ListAllSourceFiles = ""
+                    File = RemoveNextArg(ListAllSourceFiles, vbCrLf)
+                    If PathExists(File, True) Then
+                        If InStr(LCase(ListAllDestFiles), Replace(LCase(File), LCase(Paths("windiff1")), "")) > 0 Then
+                            File = Replace(File, Paths("windiff1"), "", , , vbTextCompare)
+                            Select Case GetFileExt(File, True, True)
+                                Case "vbg", "bas", "ctl", "frm", "cls", "dsr", "dob", "pag", "vbp", "nsi", "nsh", "bat"
+                                   ' Debug.Print "File Match: " & File
+                                    File1 = ReadFile(Paths("windiff1") & File)
+                                    File2 = ReadFile(Paths("windiff2") & File)
+                                    Back1 = File1
+                                    File3 = File1
+                                    
+                                    Do Until File2 = ""
+                                        line2 = Trim(RTrimStrip(LTrimStrip(modCommon.RemoveNextArg(File2, vbCrLf), vbTab), vbTab))
+                                        If Not line2 = "" Then
+                                            line1 = Trim(TrimStrip(LTrimStrip(Replace(Replace(File1, modCommon.NextArg(File1, line2, vbTextCompare), ""), modCommon.RemoveArg(File1, line2, vbTextCompare), ""), vbTab), vbTab))
+                                            
+
+                                            If line1 <> line2 And line1 <> "" And LCase(line1) = LCase(line2) Then
+                                                'Debug.Print line1 & " " & line2
+   
+                                                Do While InStr(File3, line1) > 0
+                                                    File3 = Replace(File3, line1, line2, , , vbBinaryCompare)
+                                                Loop
+                                            End If
+                                        End If
+                                    Loop
+  
+                                   ' Debug.Print "Safe: " & (LCase(File1) = LCase(File3)) & " to Change: " & (File1 <> File3)
+                                    If (LCase(File1) = LCase(File3)) And (File1 <> File3) Then
+
+                                        
+                                        WriteFile Paths("windiff1") & File, File3
+                                        
+                                        
+
+
+                                    End If
+
+                                    File3 = ""
+                                    File1 = ""
+                                    File2 = ""
+                                    line1 = ""
+                                    Back1 = ""
+
+                                    line2 = ""
+                                
+                            End Select
+                        End If
+                    End If
+                Loop
+            
+
+            Else
+                DoCaseInsensitive = False
+            End If
+        Else
+            DoCaseInsensitive = False
+        End If
+    Else
+        Err.Clear
+        DoCaseInsensitive = False
+    End If
+    If Not DoCaseInsensitive Then
+        MsgBox "The /windiff switch requires a 1st location folder, followed by a 2nd location folder." & vbCrLf & _
+                "All projects under the both paths will be corrected for case insensitive anomlies" & vbCrLf & _
+                "that occur naturally from compiling the code for speed/size and a dash in what is" & vbCrLf & _
+                "considered True verses the precondition compiler in C, that which is -1 and not 1.", vbInformation
+    Else
+        RunProcess "Windiff", """" & Paths("windiff1") & """ """ & Paths("windiff2") & """", vbNormalFocus
+        
+    End If
+End Function
 
 Private Function DoCleanCopy() As Boolean
 

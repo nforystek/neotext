@@ -113,19 +113,21 @@ Public Sub RenderFrame(ByRef UserControl As Macroscopic)
             DDevice.BeginScene
             
             SetupCamera1 UserControl, Camera
-  
+
+            
             RenderEvents UserControl, Camera
             RenderMotions UserControl, Camera
 
            ' SetupCamera2 UserControl, Camera
             
 
-        '    SetupCamera2 UserControl, Camera
             SetupCamera2 UserControl, Camera
+            
             
             RenderPlanets UserControl, Camera
             RenderMolecules UserControl, Camera
             RenderBrilliants UserControl, Camera
+
             
             SetupCamera3 UserControl, Camera
             

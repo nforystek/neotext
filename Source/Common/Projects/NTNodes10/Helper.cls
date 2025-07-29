@@ -16,11 +16,19 @@ Option Explicit
 Public Holder As Object
 
 Public Function ObjPtr(ByRef Obj) As Long
-    RtlMoveMemory ObjPtr, VBA.ObjPtr(Obj), 4
+    If Not VBA.IsMissing(Obj) Then
+        If VBA.IsObject(Obj) Then
+            RtlMoveMemory ObjPtr, VBA.ObjPtr(Obj), 4
+        End If
+    End If
 End Function
 
 Public Function VarPtr(ByRef Obj) As Long
-    RtlMoveMemory VarPtr, VBA.VarPtr(Obj), 4
+    If Not VBA.IsMissing(Obj) Then
+        If Not VBA.IsObject(Obj) Then
+            RtlMoveMemory VarPtr, VBA.VarPtr(Obj), 4
+        End If
+    End If
 End Function
 
 

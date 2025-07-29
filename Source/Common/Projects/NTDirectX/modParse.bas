@@ -481,6 +481,7 @@ End Function
 
 Public Function ParseScript(ByVal txt As String, Optional ByVal inWith As String = "", Optional ByRef LineNum As Long = 0, Optional ByVal Deserialize As String = "Serial.xml") As String
     On Error GoTo parseerror
+    On Local Error GoTo parseerror
     Static serialLevel As Integer
     serialLevel = serialLevel + 1
     If (InStr(Left(txt, 3), ":") > 0) Or (InStr(Left(txt, 3), "\") > 0) Then

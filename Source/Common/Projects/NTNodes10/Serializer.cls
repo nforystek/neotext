@@ -30,6 +30,8 @@ Private Enum ImportantMembers
 End Enum
 
 
+
+
 Private Function KeysExist(ByRef col) As Boolean
     On Error Resume Next
     Dim Key As String
@@ -199,6 +201,8 @@ Private Function GetImportantMembers(ByVal lib As TypeLibInfo, ByVal classname A
             If Trim(LCase(classname)) = Trim(LCase(cls.Item(cnt).Name)) Then
                 Set fce = cls.Item(cnt).Interfaces
                 For cnt2 = 1 To fce.Count
+                
+                    On Error GoTo unimplement
                     Set mem = fce.Item(cnt2).Members
                     If mem.Count > 0 Then
                         For cnt3 = 1 To mem.Count
@@ -217,6 +221,15 @@ Private Function GetImportantMembers(ByVal lib As TypeLibInfo, ByVal classname A
                                 End Select
                             End If
                         Next
+                    End If
+unimplement:
+                    If Err.Number = -2147319765 Then
+                        Err.Clear
+                        On Error GoTo 0
+                    ElseIf Err.Number <> 0 Then
+                        cnt3 = Err.Number
+                        On Error GoTo -1
+                        Err.Raise cnt3
                     End If
                 Next
             End If
@@ -241,9 +254,9 @@ Private Function GetLibraryObject(ByVal ObjToSerial, Optional ByVal LibFilePath 
             col.Add modCommon.AppEXE(False, True)
             col.Add modCommon.AppEXE(False, False)
         Else
-            col.Add "C:\Development\Neotext\Common\Projects\NTNodes10\Test\Project8.exe"
-            col.Add "C:\Development\Neotext\Common\Binary\NTDirectX.ocx"
-            col.Add "C:\Development\Neotext\Common\Binary\NTNodes10.dll"
+
+            col.Add "C:\Development\Neotext\MaxLand\Binary\MaxLandApp.ocx"
+
         End If
         If LibFilePath <> "" Then col.Add LibFilePath
         If InStr(seekName, ".") > 0 Then

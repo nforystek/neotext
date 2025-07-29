@@ -435,7 +435,8 @@ ObjectError:
 End Sub
 
 Public Sub InputMove2(ByRef e1 As Element)
-
+    
+    
     Dim e2 As Element
         
     If Not e1.Attachments Is Nothing Then

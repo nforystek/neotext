@@ -1,7 +1,6 @@
 Type=OleDll
 Object={0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}#1.0#0; msscript.ocx
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
-Reference=*\G{7C0FFAB0-CD84-11D0-949A-00A0C91110ED}#1.0#0#..\..\..\..\WINDOWS\system32\msdatsrc.tlb#Microsoft Data Source Interfaces
 Reference=*\G{D63E0CE2-A0A2-11D0-9C02-00C04FC99C8E}#2.0#0#..\..\..\..\WINDOWS\system32\msxml.dll#Microsoft XML, version 2.0
 Reference=*\G{8B217740-717D-11CE-AB5B-D41203C10000}#1.0#0#..\..\..\..\WINDOWS\system32\TLBINF32.DLL#TypeLib Information
 Module=modStrands; NTNodes10\modStrands.bas
@@ -41,7 +40,7 @@ VersionCompanyName="Nicholas Randall Forystek"
 VersionFileDescription="Neotext Hyper Node Objects 1.0"
 VersionLegalTrademarks="Nicholas Randall Forystek, Visual Basic"
 VersionProductName="HyperNodes 3.1"
-CondComp="NTNodes10=-1:VBIDE=0:modBase=-1:modStrands=-1:modIndexer=-1:modCommon=-1:modFactory=-1:modBitValue=-1"
+CondComp="NTNodes10 = -1 : VBIDE = -1 : modBase = -1 : modStrands = -1 : modIndexer = -1 : modCommon = -1 : modFactory = -1 : modBitValue = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

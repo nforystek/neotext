@@ -24,15 +24,12 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.805977, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -732.7813, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.805977, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.804212, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -755.3959, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.804212, -11.312]</pawn3.origin>
   </Variables>
 <DateTime>7%2F28%2F2025+3%3A38%3A41+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
-Bindings%2EItem%28%221%22%29+%3D+Include%2EURLDecode%28%22doarmleft%22%29
-Bindings%2EItem%28%220%22%29+%3D+Include%2EURLDecode%28%22doarmright%22%29
-Bindings%2EItem%28%22T%22%29+%3D+Include%2EURLDecode%28%22test%22%29
 Bindings%2EMouseInput%3D2
 
 </Bindings>

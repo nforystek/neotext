@@ -124,6 +124,7 @@ Friend Property Get GetKeyIndex(ByVal Key)
         Dim idx
         For Each itm In propList
             idx = idx + 1
+            'Debug.Print itm.Key & " " & Key
             If itm.Key = Key Then
                 GetKeyIndex = idx
                 Exit Property

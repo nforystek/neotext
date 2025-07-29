@@ -59,12 +59,14 @@ Public Sub CleanUpProj()
     ser = frmMain.Serialize
     If ser <> "" Then WriteFile ScriptRoot & "\Serial.xml", ser
     
-    Dim A As Long
-    If All.Count > 0 Then
-        For A = 1 To All.Count
-            frmMain.ScriptControl1.ExecuteStatement "Set " & All(A).Key & " = Nothing"
-        Next
-    End If
+'    Dim A As Long
+'    If All.Count > 0 Then
+'        For A = 1 To All.Count
+''            frmMain.ScriptControl1.ExecuteStatement "Set " & All(A).Key & " = Nothing"
+'        Next
+'    End If
+    All.Clear
+    
     
     frmMain.ScriptControl1.Reset
     
@@ -970,10 +972,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '############################################################
 
 
-'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'            Set p.Absolute.Rotate = p.Rotate
-'            Set p.Relative.Rotate = Nothing
-'            p.Moved = True
+            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+            Set p.Absolute.Rotate = p.Rotate
+            Set p.Relative.Rotate = Nothing
+            p.Moved = True
                                       
             SubRenderPlateau UserControl, Camera, p
 

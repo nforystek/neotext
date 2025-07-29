@@ -183,15 +183,15 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
     Dim lSize As Long
     lSize = Length
     If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    Dim ret() As Byte
+    Dim Ret() As Byte
     If (Width > 0) And (Pointer <> 0) Then
-        ReDim ret(0 To Width - 1) As Byte
-        RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + Offset, Width
+        ReDim Ret(0 To Width - 1) As Byte
+        RtlMoveMemory ByVal VarPtr(Ret(LBound(Ret))), ByVal Pointer + Offset, Width
     Else
-        ReDim ret(-1 To -1) As Byte
+        ReDim Ret(-1 To -1) As Byte
     End If
-    Partial = ret
-    Erase ret
+    Partial = Ret
+    Erase Ret
 End Function
 
 Public Sub Prepend(ByRef Data() As Byte) ' _
@@ -250,6 +250,7 @@ End Sub
 
 Public Function Pass(ByVal Data As Byte, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) As Long ' _
 Preforms a pass for Data returning the count of it in the stream, optionally confined to Offset and Width.
+'i.e. a stream with "hello" as the only thing in it's buffer, then calling Pass(asc("l")) returns a 2.
     Dim lPos As Long
     Dim bPart() As Byte
     bPart = Partial(Offset, Width)
@@ -260,6 +261,7 @@ End Function
 
 Public Function Poll(ByVal Data As Byte, ByVal Ballot As Long, Optional ByVal Offset As Long = 0, Optional ByRef Width As Long = -1) As Long ' _
 Preforms a poll for Data returning the offset up to the numerical Ballot's occurance of it, optionally confined to Offset and Width.
+'i.e. Poll(vbCr, 3) returns the offset of the third occurance of vbCr with in the stream, if non exist, the length of the stream is returned.
     If Ballot > 0 And Width <> 0 And Length > 0 Then
         Dim lPos As Long
         Dim bPart() As Byte
@@ -311,7 +313,9 @@ Removes a portion of the stream defined by Offset and Width.
 End Sub
 
 Public Sub Pyramid(ByRef SubStream As Stream, ByVal Offset As Long, ByVal Width As Long) ' _
-Topples a SubStream, which were initially an exact Partial reflection of this base stream defined by where were Offset and Width, reflecting the smaller substream's changes into this base stream.
+Places the full SubStream data into the calling stream overwriting the segment Offset and Wdith define.
+'the size of Offset to Width and SubStream make no difference, only and all from OFffset to Width get
+'overwritten by the size of SubStream put into the Calling stream, potentially changing its size.
     Dim lSize As Long
     lSize = Length
     If Offset >= 0 And Offset + Width <= lSize Then
@@ -344,7 +348,7 @@ Gets the first byte in the data stream, optionally excluding Offset number of by
 End Function
 
 Public Sub Plot(ByVal Offset As Long, ByVal Data As Byte)   ' _
-Sets a byte in the data stream immediatly after Offset.
+Sets a byte in the data stream immediatly after Offset and does not alter the size of the stream.
 
     If Offset >= 0 And Offset < Length Then
         RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(Data), 1

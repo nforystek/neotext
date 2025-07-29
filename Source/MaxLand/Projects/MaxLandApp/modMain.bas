@@ -66,13 +66,13 @@ Public Sub Main()
         Case "setupreset"
             ResetDB
             CompactDB
-            'End
+            End
         Case "backupdb"
             BackupDB
-            'End
+            End
         Case "restoredb"
             RestoreDB
-            'End
+            End
     End Select
     
     Set db = New Database
@@ -318,7 +318,7 @@ Public Sub Main()
     End If
 
     Set db = Nothing
-    'End
+    End
     
 Exit Sub
 fault:
@@ -327,7 +327,7 @@ fault:
     TermDirectX
     Err.Clear
 
-    'End
+    End
 Exit Sub
 Render:
 
@@ -339,7 +339,7 @@ Render:
     MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
     Err.Clear
 
-    'End
+    End
 End Sub
 
 Public Sub RenderRoutine()

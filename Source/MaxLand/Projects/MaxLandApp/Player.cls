@@ -649,7 +649,7 @@ Private Property Let Element_AttachedTo(ByVal RHS As String)
 End Property
 
 Private Property Get Element_AttachedTo() As String
-    Set Element_AttachedTo = Element.AttachedTo
+    Element_AttachedTo = Element.AttachedTo
 End Property
 
 Private Property Set Element_Attachments(RHS As ntnodes10.Collection)
