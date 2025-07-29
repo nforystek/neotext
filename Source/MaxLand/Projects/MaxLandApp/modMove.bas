@@ -436,32 +436,31 @@ End Sub
 
 Public Sub InputMove2(ByRef e1 As Element)
     
-    
     Dim e2 As Element
         
-    If Not e1.Attachments Is Nothing Then
-        If e1.Attachments.Count > 0 Then
-        'if we have attachments
-        
-            'originals
-            Dim oOrigin As New Point
-            Dim oRotate As New Point
-            Dim oScaled As New Point
+    If (e1.CollideIndex > -1) And (e1.Effect = 0) Then
+    
+        If Not e1.Attachments Is Nothing Then
+            If e1.Attachments.Count > 0 Then
+            'if we have attachments
             
-            oOrigin = e1.Origin
-            oRotate = e1.Rotate
-            oScaled = e1.Scaled
-            
-            'differences
-            Dim dOrigin As New Point
-            Dim dRotate As New Point
-            Dim dScaled As New Point
-                   
+                'originals
+                Dim oOrigin As New Point
+                Dim oRotate As New Point
+                Dim oScaled As New Point
+                
+                oOrigin = e1.Origin
+                oRotate = e1.Rotate
+                oScaled = e1.Scaled
+                
+                'differences
+                Dim dOrigin As New Point
+                Dim dRotate As New Point
+                Dim dScaled As New Point
+                       
+            End If
         End If
-    End If
-        
-    If (e1.CollideIndex > -1) Then
-      
+    
         'commit the following object view changes based on then
         'functions called to determine the restrictive nature of
         
@@ -473,9 +472,59 @@ Public Sub InputMove2(ByRef e1 As Element)
         lMovingObjs = lMovingObjs + 1
         
         
+        If Not e1.Attachments Is Nothing Then
+            If e1.Attachments.Count > 0 Then
+                'if we have attachments
+    
+                'get the differences in the parent objectss changes
+                Set dOrigin = VectorDeduction(e1.Origin, oOrigin)
+                Set dRotate = VectorMultiplyBy(AngleAxisDeduction(VectorMultiplyBy(e1.Rotate, RADIAN), VectorMultiplyBy(oRotate, RADIAN)), DEGREE)
+                Set dScaled = VectorDeduction(e1.Scaled, dScaled)
+                
+                '## originals ##
+                'oOrigin
+                'oRotate
+                'oScaled
+                
+                '## differences ##
+                'dOrigin
+                'dOrigin
+                'dScaled
+                
+                '## finals ##
+                'e1.Origin
+                'e1.Rotate
+                'e1.Scaled
+                
+                
+                For Each e2 In e1.Attachments
+                    'per each attachment
+                
+                    'make e1's origin the point (0,0,0) according
+                    'to e2's origin berfore e1 had modifications.
+                    Set e2.Origin = VectorDeduction(e2.Origin, oOrigin)
+                    'if the rotation is not blank
+                    If Not ((Round(oRotate.X, 0) = 360) And (Round(oRotate.Y, 0) = 358) And (Round(oRotate.Z, 0) = 360)) Then
+                        'revert the old rotation
+                        Set e2.Origin = VectorRotateAxis(e2.Origin, VectorMultiplyBy(oRotate, RADIAN))
+                        'rotate to the new rotation
+                        Set e2.Origin = VectorRotateAxis(e2.Origin, AngleAxisInvert(VectorMultiplyBy(e1.Rotate, RADIAN)))
+                    End If
+                    'restore e2's origin localization of (0,0, 0) at e1's
+                    'origin to what now it would be after changed e1.origin
+                    Set e2.Origin = VectorAddition(e2.Origin, e1.Origin)
+                
+                Next
+            End If
+        End If
+    
+        Set oScaled = Nothing
+        Set oRotate = Nothing
+        Set oOrigin = Nothing
+
 
         
-    Else
+    ElseIf e1.Effect = 0 Then
         'the freespace changes similar to the functions above with no restrictions
         If (e1.Direct.X <> 0) Or (e1.Direct.Y <> 0) Or (e1.Direct.Z <> 0) Then
             e1.Origin.X = e1.Origin.X + e1.Direct.X
@@ -502,57 +551,6 @@ Public Sub InputMove2(ByRef e1 As Element)
     If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
     If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
     
-    
-    If Not e1.Attachments Is Nothing Then
-        If e1.Attachments.Count > 0 Then
-            'if we have attachments
-
-            'get the differences in the parent objectss changes
-            Set dOrigin = VectorDeduction(e1.Origin, oOrigin)
-            Set dRotate = VectorMultiplyBy(AngleAxisDeduction(VectorMultiplyBy(e1.Rotate, RADIAN), VectorMultiplyBy(oRotate, RADIAN)), DEGREE)
-            Set dScaled = VectorDeduction(e1.Scaled, dScaled)
-            
-            '## originals ##
-            'oOrigin
-            'oRotate
-            'oScaled
-            
-            '## differences ##
-            'dOrigin
-            'dOrigin
-            'dScaled
-            
-            '## finals ##
-            'e1.Origin
-            'e1.Rotate
-            'e1.Scaled
-            
-            
-            For Each e2 In e1.Attachments
-                'per each attachment
-            
-                'make e1's origin the point (0,0,0) according
-                'to e2's origin berfore e1 had modifications.
-                Set e2.Origin = VectorDeduction(e2.Origin, oOrigin)
-                'if the rotation is not blank
-                If Not ((Round(oRotate.X, 0) = 360) And (Round(oRotate.Y, 0) = 358) And (Round(oRotate.Z, 0) = 360)) Then
-                    'revert the old rotation
-                    Set e2.Origin = VectorRotateAxis(e2.Origin, VectorMultiplyBy(oRotate, RADIAN))
-                    'rotate to the new rotation
-                    Set e2.Origin = VectorRotateAxis(e2.Origin, AngleAxisInvert(VectorMultiplyBy(e1.Rotate, RADIAN)))
-                End If
-                'restore e2's origin localization of (0,0, 0) at e1's
-                'origin to what now it would be after changed e1.origin
-                Set e2.Origin = VectorAddition(e2.Origin, e1.Origin)
-            
-            Next
-        End If
-    End If
-
-    Set oScaled = Nothing
-    Set oRotate = Nothing
-    Set oOrigin = Nothing
-
 End Sub
 
 Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As Boolean
@@ -611,9 +609,10 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
 End Function
 
 Private Sub MoveObject(ByRef Obj As Element)
-On Error GoTo ObjectError
 
     If Obj.Direct.Equals(NoPoint) Then Exit Sub
+
+On Error GoTo ObjectError
 
     Dim objCollision As Long
     objCollision = -1
@@ -1317,6 +1316,9 @@ ObjectError:
 End Sub
 
 Private Sub SpinObject(ByRef Obj As Element)
+    
+    If Obj.Twists.Equals(NoPoint) Then Exit Sub
+    
 On Error GoTo ObjectError
 
 '#####################################################################################
@@ -1346,6 +1348,10 @@ ObjectError:
 End Sub
 
 Private Sub BlowObject(ByRef Obj As Element)
+
+    
+    If Obj.Scalar.Equals(NoPoint) Then Exit Sub
+    
 On Error GoTo ObjectError
 
 '#####################################################################################

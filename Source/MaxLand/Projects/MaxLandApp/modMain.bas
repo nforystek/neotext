@@ -300,7 +300,15 @@ Public Sub Main()
 
             End If
             
-            If D3DWindow.Windowed Then DoTasks
+'            If D3DWindow.Windowed Then
+'                Static skipframes As Integer
+'                skipframes = skipframes + 1
+'                If skipframes >= 5 Then
+'                    DoTasks
+'                    skiframes = 0
+'                End If
+'            End If
+            If D3DWindow.Windowed And FPSCount >= FPSRate / 3 Then DoTasks
         
         Loop
         frmMain.AutoRedraw = True
@@ -456,14 +464,14 @@ On Error GoTo WorldError
             
             'initialie sngFaceVis for camera collision checking
             For cnt = 1 To lngFaceCount - 1
-                            On Error GoTo isdivcheck0
+                           ' On Error GoTo isdivcheck0
                                 sngFaceVis(3, cnt) = 0
-                                GoTo notdivcheck0
-isdivcheck0:
-                                If Err.Number = 11 Then Resume
-notdivcheck0:
-                                If Err Then Err.Clear
-                                On Error GoTo 0
+                             '   GoTo notdivcheck0
+'isdivcheck0:
+                                'If Err.Number = 11 Then Resume
+'notdivcheck0:
+                               ' If Err Then Err.Clear
+                              '  On Error GoTo 0
                 
             Next
 
@@ -512,14 +520,14 @@ notdivcheck0:
                     'For cnt = 1 To Elements.Count
                         If ((Not (e1.Effect = Collides.Ground)) And (Not (e1.Effect = Collides.InDoor))) And (e1.CollideIndex > -1) And (e1.BoundsIndex > 0) Then
                             For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
-                            On Error GoTo isdivcheck1
+                      '      On Error GoTo isdivcheck1
                                 sngFaceVis(3, cnt2) = 0
-                                GoTo notdivcheck1
-isdivcheck1:
-                                If Err.Number = 11 Then Resume
-notdivcheck1:
-                                If Err Then Err.Clear
-                                On Error GoTo 0
+                           '     GoTo notdivcheck1
+'isdivcheck1:
+                             '   If Err.Number = 11 Then Resume
+'notdivcheck1:
+                            '    If Err Then Err.Clear
+                           '     On Error GoTo 0
                                 
                             Next
                         ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible And (e1.BoundsIndex > 0) Then
@@ -534,14 +542,14 @@ notdivcheck1:
                     Next
                     If (Player.CollideIndex > -1) And (Player.BoundsIndex > 0) And (Player.BoundsIndex > 0) Then
                         For cnt2 = Player.CollideIndex To (Player.CollideIndex + Meshes(Player.BoundsIndex).Mesh.GetNumFaces) - 1
-                            On Error GoTo isdivcheck2
+                          '  On Error GoTo isdivcheck2
                                 sngFaceVis(3, cnt2) = 0
-                                GoTo notdivcheck2
-isdivcheck2:
-                                If Err.Number = 11 Then Resume
-notdivcheck2:
-                                If Err Then Err.Clear
-                                On Error GoTo 0
+                                'GoTo notdivcheck2
+'isdivcheck2:
+   '                             If Err.Number = 11 Then Resume
+'notdivcheck2:
+                          '      If Err Then Err.Clear
+                          '      On Error GoTo 0
 
                         Next
                     End If
