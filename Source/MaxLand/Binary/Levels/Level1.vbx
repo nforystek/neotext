@@ -7,7 +7,7 @@ space {
 	.skyfront="sky_front.bmp"
 	.skybottom="sky_bottom.bmp"
 	.skyrotate=3.125
-	.serialize=true
+
 	.boundary=150
 	.gravity=-0.2
 }
@@ -47,18 +47,18 @@ player <player>
 }
 
 
-'element <pawn7>
-'{
-'	.visible=true
-'	.origin=[4, 0, 0]
-'	.scaled=[.50 ,.50, .50]
-'	.rotate=[0, 0, 0]
-'	.offset=[0, 0, 0]
-'	.boundsmodel="bounds-pawn.x"
-'	.visualmodel="visual-pawn.x"
-'	.gravitational=true
-'	.attachedto = "player"
-'}
+element <pawn7>
+{
+	.visible=true
+	.origin=[4, 0, 0]
+	.scaled=[.50 ,.50, .50]
+	.rotate=[0, 0, 0]
+	.offset=[0, 0, 0]
+	.boundsmodel="bounds-pawn.x"
+	.visualmodel="visual-pawn.x"
+	.gravitational=true
+	.attachedto = "player"
+}
 
 
 variable <tempswap1>=0

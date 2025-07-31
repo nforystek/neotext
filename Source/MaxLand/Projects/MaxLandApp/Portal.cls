@@ -22,7 +22,7 @@ Private pRange As Single
 Private pLocation As Point
 Private pTeleport As Point
 
-Public Motions As ntnodes10.Collection
+Public Motions As NTNodes10.Collection
 
 Private pDropsMotions As Boolean
 
@@ -112,13 +112,16 @@ Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Dat
         .Script = Script
         AddMotion = .Identity
     End With
+    If Motions Is Nothing Then
+        Set Motions = New NTNodes10.Collection
+    End If
     Motions.Add act
 End Function
 
 Public Function DeleteMotion(ByVal MGUID As String) As Boolean
     Dim A As Long
     Dim act As Motion
-
+    If Not Motions Is Nothing Then
         A = 1
         Do While A <= Motions.Count
             If Motions(A).Identity = MGUID Or (Motions(A).Identity = "") Then
@@ -130,16 +133,18 @@ Public Function DeleteMotion(ByVal MGUID As String) As Boolean
                 A = A + 1
             End If
         Loop
-
+    End If
 End Function
 
 Public Sub ClearMotions()
-    Dim act As Motion
-    Do While Motions.Count > 0
-        Set act = Motions(1)
-        Motions.Remove 1
-        Set act = Nothing
-    Loop
+    If Not Motions Is Nothing Then
+        Dim act As Motion
+        Do While Motions.Count > 0
+            Set act = Motions(1)
+            Motions.Remove 1
+            Set act = Nothing
+        Loop
+    End If
 End Sub
 
 Public Property Get DropsMotions() As Boolean
@@ -155,7 +160,6 @@ Private Sub Class_Initialize()
     Set pLocation = New Point
     Set pTeleport = New Point
     pEnabled = True
-    Set Motions = New ntnodes10.Collection
     
     
     Key = "K" & ObjPtr(Me)

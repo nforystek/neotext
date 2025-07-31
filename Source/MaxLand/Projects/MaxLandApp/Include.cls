@@ -312,7 +312,12 @@ End Property
 '###################################################
 
 Public Function NewObject(ByVal Class As String)
-    Set NewObject = modFactory.NewObject(Class)
+    Select Case LCase(Class)
+        Case "motions", "boards", "cameras", "elements", "lights", "portals", "screens", "sounds", "tracks"
+            Set NewObject = New Ntnodes10.Collection
+        Case Else
+            Set NewObject = modFactory.NewObject(Class)
+    End Select
 End Function
 
 Public Sub DebugPrint(ByVal Text As String)

@@ -42,7 +42,7 @@ Private pAlphablend As Boolean
 Private pWireFrame As Boolean
 Private pEffect As Long
 Private pCollision As Boolean
-Private pMotions As ntnodes10.Collection
+Private pMotions As NTNodes10.Collection
 
 
 Private pSerialize As Boolean
@@ -64,19 +64,84 @@ Private pCollideObject As Long
 Private pCollideFaces As Long
 Private pCulledFaces As Long
 
-Private pReplacerVals As ntnodes10.Collection
-Private pReplacerKeys As ntnodes10.Collection
+Private pReplacerVals As NTNodes10.Collection
+Private pReplacerKeys As NTNodes10.Collection
 Attribute pReplacerKeys.VB_VarMemberFlags = "440"
 
-Private pAttachments As ntnodes10.Collection
+Private pAttachments As NTNodes10.Collection
 Private pAttachedTo As String
+
+Private pFolcrums As VBA.Collection
 
 Private Matrix As D3DMATRIX
 
-Public Property Get Attachments() As ntnodes10.Collection
+Public Property Get Folcrums() As VBA.Collection
+    Set Folcrums = pFolcrums
+End Property
+Public Property Get Folcrum(Optional ByVal Index As Integer = 0) As Point
+    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
+        Set Folcrum = pFolcrums(Index)
+    ElseIf pFolcrums.Count > 0 Then
+        Set Folcrum = pFolcrums(1)
+    End If
+End Property
+Public Property Set Folcrum(Optional ByVal Index As Integer = 0, ByRef RHS As Point)
+    If pFolcrums Is Nothing Then Set pFolcrums = New VBA.Collection
+    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
+        pFolcrums.Add RHS, , , Index
+        pFolcrums.Remove Index
+    Else
+        pFolcrums.Add RHS
+    End If
+End Property
+Public Property Let Folcrum(Optional ByVal Index As Integer = 0, ByVal RHS)
+    If pFolcrums Is Nothing Then Set pFolcrums = New VBA.Collection
+    Dim o As New Point
+    o = RHS
+    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
+        pFolcrums.Add o, , , Index
+        pFolcrums.Remove Index
+    Else
+        pFolcrums.Add o
+    End If
+End Property
+
+Public Sub AutoFolcrums()
+    Dim useIndex As Long
+    
+    If BoundsIndex > 0 Then
+        If VisualIndex = 0 Then
+            useIndex = BoundsIndex
+        Else
+            useIndex = VisualIndex
+        End If
+        
+        Dim p As Point
+        If pFolcrums Is Nothing Then
+            Set pFolcrums = New VBA.Collection
+        Else
+            Do Until pFolcrums.Count = 0
+                Set p = pFolcrums(1)
+                pFolcrums.Remove 1
+                Set p = Nothing
+            Loop
+        End If
+        
+        Dim cnt As Long
+        For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
+            Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
+            pFolcrums.Add p
+            Set p = Nothing
+        Next
+    
+    Else
+        Err.Raise 8, , "AutoFolcrums requires a BoundsModel or VisualModel to be loaded."
+    End If
+End Sub
+Public Property Get Attachments() As NTNodes10.Collection
     Set Attachments = pAttachments
 End Property
-Public Property Set Attachments(ByRef RHS As ntnodes10.Collection)
+Public Property Set Attachments(ByRef RHS As NTNodes10.Collection)
     Set pAttachments = RHS
 End Property
 
@@ -89,25 +154,32 @@ Public Property Let AttachedTo(ByVal RHS As String)
     End If
     pAttachedTo = RHS
     If RHS <> "" Then
+        If All(pAttachedTo).Attachments Is Nothing Then
+            Set All(pAttachedTo).Attachments = New NTNodes10.Collection
+        End If
         All(pAttachedTo).Attachments.Add Me, RHS
     End If
     
 End Property
 
-Friend Property Get ReplacerVals() As ntnodes10.Collection
+Friend Property Get ReplacerVals() As NTNodes10.Collection
     Set ReplacerVals = pReplacerVals
 End Property
-Friend Property Set ReplacerVals(ByRef RHS As ntnodes10.Collection)
+Friend Property Set ReplacerVals(ByRef RHS As NTNodes10.Collection)
  Set pReplacerVals = RHS
 End Property
-Friend Property Get ReplacerKeys() As ntnodes10.Collection
+Friend Property Get ReplacerKeys() As NTNodes10.Collection
     Set ReplacerKeys = pReplacerKeys
 End Property
-Friend Property Set ReplacerKeys(ByRef RHS As ntnodes10.Collection)
+Friend Property Set ReplacerKeys(ByRef RHS As NTNodes10.Collection)
     Set pReplacerKeys = RHS
 End Property
 
 Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
+    If pReplacerKeys Is Nothing Then
+        Set pReplacerKeys = New NTNodes10.Collection
+        Set pReplacerVals = New NTNodes10.Collection
+    End If
     If Key = "" Then
         Err.Raise 8, App.EXEName, "Key must be set before using Replacer"
     Else
@@ -137,6 +209,9 @@ Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Dat
         .Script = Script
         AddMotion = .Identity
     End With
+    If pMotions Is Nothing Then
+        Set pMotions = New NTNodes10.Collection
+    End If
     If pMotions.Count > 0 Then
         pMotions.Add act, , 1
     Else
@@ -167,20 +242,21 @@ End Function
 
 Public Function DeleteMotion(ByVal MGUID As String) As Boolean
 
-    Dim A As Long
-    Dim act As Motion
-    A = 1
-    Do While A <= Motions.Count
-        Set act = Motions(A)
-        If act.Identity = MGUID Or (act.Identity = "") Then
-            Motions.Remove A
-            DeleteMotion = True
-        Else
-            A = A + 1
-        End If
-        Set act = Nothing
-    Loop
-
+    If Not Motions Is Nothing Then
+        Dim A As Long
+        Dim act As Motion
+        A = 1
+        Do While A <= Motions.Count
+            Set act = Motions(A)
+            If act.Identity = MGUID Or (act.Identity = "") Then
+                Motions.Remove A
+                DeleteMotion = True
+            Else
+                A = A + 1
+            End If
+            Set act = Nothing
+        Loop
+    End If
 'a prior way that only removed one occurance of the idenity in the collection
 'only it started with checking the very last item,and removed it if was idenity
 'otherwise it begane a forward iteration, as well it did not check for blank id's
@@ -212,18 +288,20 @@ Public Function DeleteMotion(ByVal MGUID As String) As Boolean
 End Function
 
 Public Sub ClearMotions()
-    Dim act As Motion
-    Do While pMotions.Count > 0
-        Set act = pMotions(1)
-        pMotions.Remove 1
-        Set act = Nothing
-    Loop
+    If Not pMotions Is Nothing Then
+        Dim act As Motion
+        Do While pMotions.Count > 0
+            Set act = pMotions(1)
+            pMotions.Remove 1
+            Set act = Nothing
+        Loop
+    End If
 End Sub
 
-Public Property Get Motions() As ntnodes10.Collection
+Public Property Get Motions() As NTNodes10.Collection
     Set Motions = pMotions
 End Property
-Public Property Set Motions(ByRef RHS As ntnodes10.Collection)
+Public Property Set Motions(ByRef RHS As NTNodes10.Collection)
     Set pMotions = RHS
 End Property
 
@@ -662,13 +740,7 @@ Private Sub Class_Initialize()
     Set pDirect = New Point
     Set pTwists = New Point
     Set pScalar = New Point
-    
-    Set pReplacerVals = New ntnodes10.Collection
-    Set pReplacerKeys = New ntnodes10.Collection
-   
-    Set pAttachments = New ntnodes10.Collection
-  
-    Set pMotions = New ntnodes10.Collection
+
     
     'DefaultMatrix
     
@@ -681,7 +753,6 @@ Private Sub Class_Terminate()
     If pCollision Or (pCollideIndex > -1) And (pBoundsIndex > 0) Then
         DelCollision Me
     End If
-    
 
     
     If Not pReplacerVals Is Nothing Then

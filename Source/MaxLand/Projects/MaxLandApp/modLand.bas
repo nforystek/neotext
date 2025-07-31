@@ -51,14 +51,16 @@ Public SkyRotated As Single
 Public matWorld As D3DMATRIX
 
 Public Function GetBoardKey(ByRef Obj As Element, ByVal TextName As String) As String
-    If Obj.ReplacerKeys.Count > 0 Then
-        Dim i As Long
-        For i = 1 To Obj.ReplacerKeys.Count
-            If Obj.ReplacerKeys(i) = Obj.Key & "_" & Replace(TextName, ".", "") Then
-                GetBoardKey = Obj.ReplacerVals(Obj.Key & "_" & Replace(TextName, ".", ""))
-                Exit Function
-            End If
-        Next
+    If Not Obj.ReplacerKeys Is Nothing Then
+        If Obj.ReplacerKeys.Count > 0 Then
+            Dim i As Long
+            For i = 1 To Obj.ReplacerKeys.Count
+                If Obj.ReplacerKeys(i) = Obj.Key & "_" & Replace(TextName, ".", "") Then
+                    GetBoardKey = Obj.ReplacerVals(Obj.Key & "_" & Replace(TextName, ".", ""))
+                    Exit Function
+                End If
+            Next
+        End If
     End If
 End Function
 
@@ -660,18 +662,9 @@ Public Sub RenderBeacons()
 
                         If d <= FadeDistance Then
                             If a1.Consumable And (d <= 3) Then
-                                If l + 1 < a1.Origins.Count Then
-                                    For d = l To (a1.Origins.Count - 1) Step 1
-                                        a1.Origin(l) = a1.Origin(l + 1)
-                                    Next
-                                ElseIf Not (l = a1.Origins.Count) Then
-                                    a1.Origin(l) = a1.Origin(l + 1)
-                                End If
-                                a1.Origins.Remove a1.Origins.Count
-'                                a1.Origins.Count = a1.Origins.Count - 1
-'                                If a1.Origins.Count > 0 Then
-'                                    ReDim Preserve a1.Origin(1 To a1.Origins.Count) As D3DVECTOR
-'                                End If
+
+                                a1.Origins.Remove l
+
     
                             ElseIf l <= a1.Origins.Count Then
     
@@ -1095,20 +1088,22 @@ End Sub
 
 Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
  
-    Set All = New ntnodes10.Collection
-    Set Beacons = New ntnodes10.Collection
-    Set Boards = New ntnodes10.Collection
-    Set Cameras = New ntnodes10.Collection
-    Set Elements = New ntnodes10.Collection
-    Set Lights = New ntnodes10.Collection
+    Set All = New NTNodes10.Collection
+    Set Beacons = New NTNodes10.Collection
+    Set Boards = New NTNodes10.Collection
+    Set Cameras = New NTNodes10.Collection
+    Set Elements = New NTNodes10.Collection
+    Set Lights = New NTNodes10.Collection
+    Set Portals = New NTNodes10.Collection
+    Set Screens = New NTNodes10.Collection
+    Set Sounds = New NTNodes10.Collection
+    Set Tracks = New NTNodes10.Collection
+
     Set Player = New Player
-    Set Portals = New ntnodes10.Collection
-    Set Screens = New ntnodes10.Collection
-    Set Sounds = New ntnodes10.Collection
     Set Space = New Space
-    Set Tracks = New ntnodes10.Collection
     
     frmMain.Startup
+    
     If ScriptRoot = "" Then
         If PathExists(AppPath & "Levels\" & CurrentLoadedLevel & ".vbx") Then
             ScriptRoot = AppPath
@@ -1256,6 +1251,7 @@ serialerror:
         Erase Waves
         Set Sounds = Nothing
     End If
+    
 End Sub
 
 

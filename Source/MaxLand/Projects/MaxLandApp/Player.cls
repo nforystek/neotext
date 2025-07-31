@@ -73,7 +73,7 @@ Public Property Get Angle() As Single
 End Property
 Public Property Let Angle(ByVal RHS As Single)
     pAngle = RHS
-    'Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
+    Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
 End Property
 
 Public Property Get Pitch() As Single
@@ -327,7 +327,6 @@ Private Sub Class_Terminate()
     Stats_Player_Count = Stats_Player_Count - 1
 End Sub
 
-
 Public Property Let AttachedTo(ByVal RHS As String)
     Element.AttachedTo = RHS
 End Property
@@ -336,19 +335,39 @@ Public Property Get AttachedTo() As String
     AttachedTo = Element.AttachedTo
 End Property
 
-Public Property Set Attachments(RHS As ntnodes10.Collection)
+Public Property Set Attachments(RHS As NTNodes10.Collection)
     Set Element.Attachments = RHS
 End Property
 
-Public Property Get Attachments() As ntnodes10.Collection
+Public Property Get Attachments() As NTNodes10.Collection
     Set Attachments = Element.Attachments
 End Property
 
-Public Property Get Motions() As ntnodes10.Collection
+Public Sub AutoFolcrums()
+    Element.AutoFolcrums
+End Sub
+
+Public Property Set Folcrum(Optional ByVal Index As Integer = 0, RHS As Point)
+    Set Element.Folcrums(Index) = RHS
+End Property
+
+Public Property Let Folcrum(Optional ByVal Index As Integer = 0, ByVal RHS As Variant)
+    Element.Folcrums(Index) = RHS
+End Property
+
+Public Property Get Folcrum(Optional ByVal Index As Integer = 0) As Point
+    Set Folcrum = Element.Folcrum(Index)
+End Property
+
+Public Property Get Folcrums() As Collection
+    Set Folcrums = Element.Folcrums
+End Property
+
+Public Property Get Motions() As NTNodes10.Collection
     Set Motions = Element.Motions
 End Property
 
-Public Property Set Motions(ByRef RHS As ntnodes10.Collection)
+Public Property Set Motions(ByRef RHS As NTNodes10.Collection)
     Set Element.Motions = RHS
 End Property
 
@@ -547,19 +566,19 @@ Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
     Element.Replacer TextFilename, BoardKey
 End Sub
 
-Public Property Set ReplacerKeys(ByRef RHS As ntnodes10.Collection)
+Public Property Set ReplacerKeys(ByRef RHS As NTNodes10.Collection)
     Set Element.ReplacerKeys = RHS
 End Property
 
-Public Property Get ReplacerKeys() As ntnodes10.Collection
+Public Property Get ReplacerKeys() As NTNodes10.Collection
     Set ReplacerKeys = Element.ReplacerKeys
 End Property
 
-Public Property Set ReplacerVals(ByRef RHS As ntnodes10.Collection)
+Public Property Set ReplacerVals(ByRef RHS As NTNodes10.Collection)
     Set Element.ReplacerVals = RHS
 End Property
 
-Public Property Get ReplacerVals() As ntnodes10.Collection
+Public Property Get ReplacerVals() As NTNodes10.Collection
     Set ReplacerVals = Element.ReplacerVals
 End Property
 
@@ -652,19 +671,39 @@ Private Property Get Element_AttachedTo() As String
     Element_AttachedTo = Element.AttachedTo
 End Property
 
-Private Property Set Element_Attachments(RHS As ntnodes10.Collection)
+Private Property Set Element_Attachments(RHS As NTNodes10.Collection)
     Set Element.Attachments = RHS
 End Property
 
-Private Property Get Element_Attachments() As ntnodes10.Collection
+Private Property Get Element_Attachments() As NTNodes10.Collection
     Set Element_Attachments = Element.Attachments
 End Property
 
-Private Property Get Element_Motions() As ntnodes10.Collection
+Private Sub Element_AutoFolcrums()
+    Element.AutoFolcrums
+End Sub
+
+Private Property Set Element_Folcrum(Optional ByVal Index As Integer = 0, RHS As Point)
+    Set Element.Folcrums(Index) = RHS
+End Property
+
+Private Property Let Element_Folcrum(Optional ByVal Index As Integer = 0, ByVal RHS As Variant)
+    Element.Folcrums(Index) = RHS
+End Property
+
+Private Property Get Element_Folcrum(Optional ByVal Index As Integer = 0) As Point
+    Set Element_Folcrum = Element.Folcrum(Index)
+End Property
+
+Private Property Get Element_Folcrums() As Collection
+    Set Element_Folcrums = Element.Folcrums
+End Property
+
+Private Property Get Element_Motions() As NTNodes10.Collection
     Set Element_Motions = Element.Motions
 End Property
 
-Private Property Set Element_Motions(ByRef RHS As ntnodes10.Collection)
+Private Property Set Element_Motions(ByRef RHS As NTNodes10.Collection)
     Set Element.Motions = RHS
 End Property
 
@@ -848,19 +887,19 @@ Private Sub Element_Replacer(ByVal TextFilename As String, ByVal BoardKey As Str
     Element.Replacer TextFilename, BoardKey
 End Sub
 
-Private Property Set Element_ReplacerKeys(ByRef RHS As ntnodes10.Collection)
+Private Property Set Element_ReplacerKeys(ByRef RHS As NTNodes10.Collection)
     Set Element.ReplacerKeys = RHS
 End Property
 
-Private Property Get Element_ReplacerKeys() As ntnodes10.Collection
+Private Property Get Element_ReplacerKeys() As NTNodes10.Collection
     Set Element_ReplacerKeys = Element.ReplacerKeys
 End Property
 
-Private Property Set Element_ReplacerVals(ByRef RHS As ntnodes10.Collection)
+Private Property Set Element_ReplacerVals(ByRef RHS As NTNodes10.Collection)
     Set Element.ReplacerVals = RHS
 End Property
 
-Private Property Get Element_ReplacerVals() As ntnodes10.Collection
+Private Property Get Element_ReplacerVals() As NTNodes10.Collection
     Set Element_ReplacerVals = Element.ReplacerVals
 End Property
 

@@ -127,12 +127,7 @@ Public Sub Main()
         
 
 
-        frmMain.Show
-        frmMain.CurrentY = Screen.TwipsPerPixelY * 5
-        frmMain.CurrentX = Screen.TwipsPerPixelX * 5
-        frmMain.Print "Loading..."
-        
-        DoEvents
+        WorkingScreen "Loading..."
     
     
         On Error GoTo fault
@@ -165,7 +160,9 @@ Public Sub Main()
                     End If
                     
                     If (Not PauseGame) And (Err.Number = 0) Then
+                        WorkingScreen "Resuming..."
                         InitGameData
+                        frmMain.AutoRedraw = False
                     Else
                         TermDirectX
                     End If
@@ -311,14 +308,8 @@ Public Sub Main()
             If D3DWindow.Windowed And FPSCount >= FPSRate / 3 Then DoTasks
         
         Loop
-        frmMain.AutoRedraw = True
-        frmMain.Cls
-        frmMain.CurrentY = Screen.TwipsPerPixelY * 5
-        frmMain.CurrentX = Screen.TwipsPerPixelX * 5
-        frmMain.Print "Exiting..."
-        
-        DoEvents
-        
+        WorkingScreen "Exiting..."
+       
         TermGameData
         TermDirectX
         
@@ -350,6 +341,15 @@ Render:
     End
 End Sub
 
+Public Sub WorkingScreen(ByVal Text As String)
+    frmMain.AutoRedraw = True
+    frmMain.Cls
+    frmMain.CurrentY = Screen.TwipsPerPixelY * 5
+    frmMain.CurrentX = Screen.TwipsPerPixelX * 5
+    frmMain.Print Text
+    frmMain.Show
+    DoEvents
+End Sub
 Public Sub RenderRoutine()
 
     

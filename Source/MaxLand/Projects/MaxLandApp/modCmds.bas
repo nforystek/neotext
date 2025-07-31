@@ -1211,7 +1211,9 @@ Public Sub CreateCmds()
     End If
     DIMouseDevice.Acquire
     
-    If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Level1"
+    InitialCommands
+    
+    
     
 End Sub
 
@@ -1266,6 +1268,8 @@ Public Sub InitialCommands()
         inLine = RemoveNextArg(CommandsINI, vbCrLf)
         Process inLine
     Loop
+    
+    If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Level1"
     
 End Sub
 
@@ -1392,34 +1396,52 @@ On Error GoTo ProcessError
 '        Case "hidecredits"
 '            ShowCredits = False
         Case "reset"
-            AddMessage "Resetting Game."
+            'AddMessage "Resetting Game."
+            WorkingScreen "Resetting..."
+            
             CurrentLoadedLevel = ""
-'            InitialCommands
+            
             CleanupLand True
             CleanupMove
+            
+            InitialCommands
+            
             CreateMove
             CreateLand True
+
+            frmMain.AutoRedraw = False
+
+            AddMessage "Game Reset."
             
         Case "refresh"
+            WorkingScreen "Refreshing..."
 
             CleanupLand
             CleanupMove
+ 
             CreateMove
             CreateLand
-            AddMessage "Level Refreshed."
+            
+            frmMain.AutoRedraw = False
+            AddMessage "Game Refreshed."
+            
         Case "level"
             
             If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
 
+                WorkingScreen "Loading..."
                 If Not CurrentLoadedLevel = "" Then
                     CleanupLand
                     CleanupMove
-                End If
-
                     CurrentLoadedLevel = inArg
                     CreateMove
                     CreateLand
-                    AddMessage "Level Loaded."
+                Else
+                    CurrentLoadedLevel = inArg
+                End If
+                frmMain.AutoRedraw = False
+                
+                AddMessage "Level Loaded."
 
 
             Else

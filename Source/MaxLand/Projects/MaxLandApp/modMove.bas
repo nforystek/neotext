@@ -213,14 +213,16 @@ Public Function SetMotion(ByRef act As Motion, ByRef Action As Actions, ByRef da
 End Function
 
 
-Public Function MotionExists(ByRef Motions As ntnodes10.Collection, ByVal MGUID As String) As Boolean
-    Dim A As Long
-    For A = 1 To Motions.Count
-        If Motions(A).Identity = MGUID Then
-            MotionExists = True
-            Exit Function
-        End If
-    Next
+Public Function MotionExists(ByRef Motions As NTNodes10.Collection, ByVal MGUID As String) As Boolean
+    If Not Motions Is Nothing Then
+        Dim A As Long
+        For A = 1 To Motions.Count
+            If Motions(A).Identity = MGUID Then
+                MotionExists = True
+                Exit Function
+            End If
+        Next
+    End If
     MotionExists = False
 End Function
 
@@ -283,19 +285,20 @@ Private Sub ApplyMotion(ByRef Obj As Element)
     End If
     
     If Obj.Effect = Collides.None Then
-
-        If Obj.Motions.Count > 0 Then
-            Dim A As Long
-            For A = 1 To Obj.Motions.Count
-                If ValidMotion(Obj.Motions(A)) Then
-                    D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(Obj.Motions(A), Directing)
-                    Set Obj.Direct = ToPoint(vout)
-                    D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(Obj.Motions(A), Rotating)
-                    Set Obj.Twists = ToPoint(vout)
-                    D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(Obj.Motions(A), Scaling)
-                    Set Obj.Scalar = ToPoint(vout)
-                End If
-            Next
+        If Not Obj.Motions Is Nothing Then
+            If Obj.Motions.Count > 0 Then
+                Dim A As Long
+                For A = 1 To Obj.Motions.Count
+                    If ValidMotion(Obj.Motions(A)) Then
+                        D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(Obj.Motions(A), Directing)
+                        Set Obj.Direct = ToPoint(vout)
+                        D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(Obj.Motions(A), Rotating)
+                        Set Obj.Twists = ToPoint(vout)
+                        D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(Obj.Motions(A), Scaling)
+                        Set Obj.Scalar = ToPoint(vout)
+                    End If
+                Next
+            End If
         End If
     End If
 End Sub
@@ -347,45 +350,47 @@ Private Sub RenderMotion2(ByRef e1 As Element)
     If e1.Visible Then
         ApplyMotion e1
 
-        If e1.Motions.Count > 0 Then
-            A = 1
-            Do While A <= e1.Motions.Count
-                Set act = e1.Motions(A)
-
-                If act.Reactive > -1 Then
-                    If (Timer - act.latency) > act.Reactive Then
-                        act.latency = Timer
-                        
-                        act.Emphasis = act.Initials
-                        e1.DeleteMotion act.Identity
-                        If Not act.Script = "" Then
+        If Not e1.Motions Is Nothing Then
+            If e1.Motions.Count > 0 Then
+                A = 1
+                Do While A <= e1.Motions.Count
+                    Set act = e1.Motions(A)
+    
+                    If act.Reactive > -1 Then
+                        If (Timer - act.latency) > act.Reactive Then
+                            act.latency = Timer
                             
-                            ExecuteScript e1, act.Script
-                        
-                        End If
-                        If act.Recount > -1 Then
-                            If act.Recount > 0 Then
-                                act.Recount = act.Recount - 1
+                            act.Emphasis = act.Initials
+                            e1.DeleteMotion act.Identity
+                            If Not act.Script = "" Then
+                                
+                                ExecuteScript e1, act.Script
+                            
+                            End If
+                            If act.Recount > -1 Then
+                                If act.Recount > 0 Then
+                                    act.Recount = act.Recount - 1
+                                    e1.AddMotion act.Action, act.Identity, act.Data, act.Initials, act.Friction, act.Reactive, act.Recount, act.Script
+                                    'a = a + 1
+                                End If
+                            Else
                                 e1.AddMotion act.Action, act.Identity, act.Data, act.Initials, act.Friction, act.Reactive, act.Recount, act.Script
                                 'a = a + 1
                             End If
+                            A = A + 1
+                            
                         Else
-                            e1.AddMotion act.Action, act.Identity, act.Data, act.Initials, act.Friction, act.Reactive, act.Recount, act.Script
-                            'a = a + 1
+                            A = A + 1
                         End If
-                        A = A + 1
                         
+                    ElseIf ((act.Emphasis = 0) Or (act.Recount = 0)) Then 'And (Not act.Reactive = -1) Then
+                        e1.DeleteMotion act.Identity
                     Else
                         A = A + 1
                     End If
-                    
-                ElseIf ((act.Emphasis = 0) Or (act.Recount = 0)) Then 'And (Not act.Reactive = -1) Then
-                    e1.DeleteMotion act.Identity
-                Else
-                    A = A + 1
-                End If
-                Set act = Nothing
-            Loop
+                    Set act = Nothing
+                Loop
+            End If
         End If
     End If
 
@@ -572,11 +577,13 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
                         'if found to be with the colliding object
                         
                             'add all motions from one to another
-                            For A = 1 To Obj.Motions.Count
-                                Set act = Obj.Motions(A)
-                                e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
-                            Next
-
+                            If Not Obj.Motions Is Nothing Then
+                                For A = 1 To Obj.Motions.Count
+                                    Set act = Obj.Motions(A)
+                                    e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
+                                Next
+                            End If
+                            
                             e1.Direct = Obj.Direct
                             e1.Scalar = Obj.Scalar
                            
@@ -2009,11 +2016,21 @@ On Error GoTo scripterror
     Dim txtobj As String
     Dim errline As Long
     Dim errsource As String
+    Dim portalHit As Boolean
+    
 
     Dim e2 As Element
         
-    If (DistanceEx(e1.Origin, t1.Location) <= t1.Range) Then
-
+    portalHit = (DistanceEx(e1.Origin, t1.Location) <= t1.Range)
+    
+    If (Not (e1.Folcrums Is Nothing)) And (Not portalHit) Then
+        For cnt = 1 To e1.Folcrums.Count
+            portalHit = (DistanceEx(e1.Folcrums(cnt), t1.Location) <= t1.Range)
+            If portalHit Then Exit For
+        Next
+    End If
+    
+    If portalHit Then
         If Not ((t1.Teleport.X = 0) And (t1.Teleport.Y = 0) And (t1.Teleport.Z = 0)) Then
             pos = ToVector(e1.Origin)
             If Elements.Count > 0 Then
@@ -2041,22 +2058,19 @@ On Error GoTo scripterror
             If e1.Collision Then
                 If TestCollision(e1, Actions.None, 1) Then
                     Set e1.Origin = ToPoint(pos)
-                Else
+                ElseIf t1.DropsMotions Then
                     e1.ClearMotions
                 End If
             End If
         End If
-        If t1.DropsMotions Then
-            e1.ClearMotions
+        If Not t1.Motions Is Nothing Then
+            If t1.Motions.Count > 0 Then
+                For A = 1 To t1.Motions.Count
+                    Set act = t1.Motions(A)
+                    e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
+                Next
+            End If
         End If
-        
-        If t1.Motions.Count > 0 Then
-            For A = 1 To t1.Motions.Count
-                Set act = t1.Motions(A)
-                e1.AddMotion act.Action, act.Identity, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
-            Next
-        End If
-
         
         If Not t1.OnInRange Is Nothing Then
         
@@ -2068,7 +2082,7 @@ On Error GoTo scripterror
                     errline = CLng(t1.OnInRange.StartLine)
                     
                     frmMain.Run t1.OnInRange.RunMethod, e1.Key, errline
-                    Debug.Print "OnInRange " & t1.Key & " " & e1.Key
+                    'Debug.Print "OnInRange " & t1.Key & " " & e1.Key
                 End If
                 
                 If Not t1.OnOutRange Is Nothing Then
@@ -2092,7 +2106,7 @@ On Error GoTo scripterror
                     errsource = "OnOutRange"
                     errline = CLng(t1.OnOutRange.StartLine)
                     frmMain.Run t1.OnOutRange.RunMethod, e1.Key, errline
-                    Debug.Print "OnOutRange " & t1.Key & " " & e1.Key
+                    'Debug.Print "OnOutRange " & t1.Key & " " & e1.Key
                                         
                 End If
                
