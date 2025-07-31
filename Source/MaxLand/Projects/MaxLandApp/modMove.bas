@@ -2025,7 +2025,8 @@ On Error GoTo scripterror
     
     If (Not (e1.Folcrums Is Nothing)) And (Not portalHit) Then
         For cnt = 1 To e1.Folcrums.Count
-            portalHit = (DistanceEx(e1.Folcrums(cnt), t1.Location) <= t1.Range)
+        
+            portalHit = (DistanceEx(VectorRotateAxis(e1.Folcrums(cnt), VectorMultiplyBy(e1.Rotate, RADIAN)), t1.Location) <= t1.Range)
             If portalHit Then Exit For
         Next
     End If

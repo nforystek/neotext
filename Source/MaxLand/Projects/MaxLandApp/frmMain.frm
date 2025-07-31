@@ -100,20 +100,20 @@ End Sub
 Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
 
     ScriptControl1.AddCode Code
-    Do Until Code = ""
-        DebugPrint "Addcode: " & RemoveNextArg(Code, vbCrLf)
-    Loop
+'    Do Until Code = ""
+'        DebugPrint "Addcode: " & RemoveNextArg(Code, vbCrLf)
+'    Loop
 End Sub
 
 
 Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As String = "Evaluate", Optional ByVal LineNumber As Long = 0) As Variant
     Evaluate = ScriptControl1.Eval(Expression)
-    DebugPrint "Eval: " & Expression & " = " & Evaluate
+   ' DebugPrint "Eval: " & Expression & " = " & Evaluate
 End Function
 
 Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As String = "ExecuteStatement", Optional ByVal LineNumber As Long = 0)
     ScriptControl1.ExecuteStatement Statement
-    DebugPrint "Execute: " & Statement
+   ' DebugPrint "Execute: " & Statement
 End Sub
 
 
@@ -124,7 +124,7 @@ Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As Str
         For i = 1 To ScriptControl1.Procedures.Count
             If LCase(ScriptControl1.Procedures(i).Name) = LCase(ProcedureName) Then
                 ScriptControl1.Run ProcedureName
-                DebugPrint "Run: " & ProcedureName
+               ' DebugPrint "Run: " & ProcedureName
                 Exit For
             End If
         Next

@@ -1,0 +1,252 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+  Persistable = 0  'NotPersistable
+  DataBindingBehavior = 0  'vbNone
+  DataSourceBehavior  = 0  'vbNone
+  MTSTransactionMode  = 0  'NotAnMTSObject
+END
+Attribute VB_Name = "Light"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = True
+Option Explicit
+
+
+
+Private pEnabled As Boolean
+
+Public SunLight As Boolean
+
+Public LightBlink As Single
+Public LightTimer As Single
+Public LightIsOn As Boolean
+
+    
+Public DiffuseRoll As Single
+Public DiffuseTimer As Single
+Public DIffuseMax As Single
+Public DiffuseNow As Single
+    
+Private pLightIndex As Long
+
+Private pOrigin As Point
+
+Private pKey As String
+
+Private pSerialize As Boolean
+
+
+Public Property Get Serialize() As Boolean
+    Serialize = pSerialize
+End Property
+Public Property Let Serialize(ByVal RHS As Boolean)
+    pSerialize = RHS
+End Property
+
+Public Property Get Key() As String
+    Key = pKey
+End Property
+Public Property Let Key(ByVal RHS As String)
+    If RHS <> "" Then
+        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+        If All.Exists(RHS) Then
+            All.Remove RHS
+            All.Add Me, RHS
+        End If
+        pKey = RHS
+    End If
+End Property
+
+Private Sub SetMyLight()
+    DDevice.SetLight pLightIndex - 1, Lights(pLightIndex)
+    DDevice.LightEnable pLightIndex - 1, -CInt(pEnabled)
+End Sub
+
+Public Property Get Enabled() As Boolean
+    Enabled = pEnabled
+End Property
+Public Property Let Enabled(ByVal RHS As Boolean)
+    pEnabled = RHS
+    SetMyLight
+End Property
+
+Friend Property Get LightIndex() As Long
+    LightIndex = pLightIndex
+End Property
+Friend Property Let LightIndex(ByVal RHS As Long)
+    pLightIndex = RHS
+End Property
+Public Property Get Origin() As Point
+    Set Origin = New Point
+    Origin.X = Lights(pLightIndex).Position.X
+    Origin.Y = Lights(pLightIndex).Position.Y
+    Origin.Z = Lights(pLightIndex).Position.Z
+End Property
+Public Property Set Origin(ByRef RHS As Point)
+    Lights(pLightIndex).Position.X = RHS.X
+    Lights(pLightIndex).Position.Y = RHS.Y
+    Lights(pLightIndex).Position.Z = RHS.Z
+   ' DDevice.SetLight pLightIndex - 1, Lights(pLightIndex)
+   ' DDevice.LightEnable pLightIndex - 1, -CInt(pEnabled)
+    SetMyLight
+End Property
+
+Public Property Get Diffuse() As Color
+    Set Diffuse = New Color
+    Diffuse.Alpha = Lights(pLightIndex).Diffuse.a
+    Diffuse.Red = Lights(pLightIndex).Diffuse.r
+    Diffuse.Green = Lights(pLightIndex).Diffuse.g
+    Diffuse.Blue = Lights(pLightIndex).Diffuse.b
+End Property
+Public Property Set Diffuse(ByRef RHS As Color)
+    Lights(pLightIndex).Diffuse.a = RHS.Alpha
+    Lights(pLightIndex).Diffuse.r = RHS.Red
+    Lights(pLightIndex).Diffuse.g = RHS.Green
+    Lights(pLightIndex).Diffuse.b = RHS.Blue
+    'SetMyLight
+End Property
+
+Public Property Get Specular() As Color
+    Set Specular = New Color
+    Specular.Alpha = Lights(pLightIndex).Specular.a
+    Specular.Red = Lights(pLightIndex).Specular.r
+    Specular.Green = Lights(pLightIndex).Specular.g
+    Specular.Blue = Lights(pLightIndex).Specular.b
+End Property
+Public Property Set Specular(ByRef RHS As Color)
+    Lights(pLightIndex).Specular.a = RHS.Alpha
+    Lights(pLightIndex).Specular.r = RHS.Red
+    Lights(pLightIndex).Specular.g = RHS.Green
+    Lights(pLightIndex).Specular.b = RHS.Blue
+    'SetMyLight
+End Property
+
+Public Property Get Ambient() As Color
+    Set Ambient = New Color
+    Ambient.Alpha = Lights(pLightIndex).Ambient.a
+    Ambient.Red = Lights(pLightIndex).Ambient.r
+    Ambient.Green = Lights(pLightIndex).Ambient.g
+    Ambient.Blue = Lights(pLightIndex).Ambient.b
+End Property
+Public Property Set Ambient(ByRef RHS As Color)
+    Lights(pLightIndex).Ambient.a = RHS.Alpha
+    Lights(pLightIndex).Ambient.r = RHS.Red
+    Lights(pLightIndex).Ambient.g = RHS.Green
+    Lights(pLightIndex).Ambient.b = RHS.Blue
+    'SetMyLight
+End Property
+
+Public Property Get Attenuation() As Point
+    Set Attenuation = New Point
+    Attenuation.X = Attenuation0
+    Attenuation.Y = Attenuation1
+    Attenuation.Z = Attenuation2
+End Property
+Public Property Set Attenuation(ByRef RHS As Point)
+    Attenuation0 = RHS.X
+    Attenuation1 = RHS.Y
+    Attenuation2 = RHS.Z
+End Property
+Public Property Get Attenuation0() As Single
+    Attenuation0 = Lights(pLightIndex).Attenuation0
+End Property
+Public Property Let Attenuation0(ByVal RHS As Single)
+    Lights(pLightIndex).Attenuation0 = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Attenuation1() As Single
+    Attenuation1 = Lights(pLightIndex).Attenuation1
+End Property
+Public Property Let Attenuation1(ByVal RHS As Single)
+    Lights(pLightIndex).Attenuation1 = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Attenuation2() As Single
+    Attenuation2 = Lights(pLightIndex).Attenuation2
+End Property
+Public Property Let Attenuation2(ByVal RHS As Single)
+    Lights(pLightIndex).Attenuation2 = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Phi() As Single
+    Phi = Lights(pLightIndex).Phi
+End Property
+Public Property Let Phi(ByVal RHS As Single)
+    Lights(pLightIndex).Phi = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Theta() As Single
+    Theta = Lights(pLightIndex).Theta
+End Property
+Public Property Let Theta(ByVal RHS As Single)
+    Lights(pLightIndex).Theta = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Range() As Single
+    Range = Lights(pLightIndex).Range
+End Property
+Public Property Let Range(ByVal RHS As Single)
+    Lights(pLightIndex).Range = RHS
+    'SetMyLight
+End Property
+
+
+Public Property Get FallOff() As Single
+    FallOff = Lights(pLightIndex).FallOff
+End Property
+Public Property Let FallOff(ByVal RHS As Single)
+    Lights(pLightIndex).FallOff = RHS
+    'SetMyLight
+End Property
+
+Public Property Get Direction() As Point
+    Set Direction = New Point
+    Direction.X = Lights(pLightIndex).Direction.X
+    Direction.Y = Lights(pLightIndex).Direction.Y
+    Direction.Z = Lights(pLightIndex).Direction.Z
+End Property
+Public Property Set Direction(ByRef RHS As Point)
+    Lights(pLightIndex).Direction.X = RHS.X
+    Lights(pLightIndex).Direction.Y = RHS.Y
+    Lights(pLightIndex).Direction.Z = RHS.Z
+    SetMyLight
+End Property
+
+Public Property Get LightType() As Long
+    Select Case Lights(pLightIndex).Type
+        Case D3DLIGHT_DIRECTIONAL
+            LightType = Lighting.Directed
+        Case D3DLIGHT_POINT
+            LightType = Lighting.Omni
+        Case D3DLIGHT_SPOT
+            LightType = Lighting.Spot
+    End Select
+End Property
+Public Property Let LightType(ByVal RHS As Long)
+    Select Case RHS
+        Case Lighting.Directed
+            Lights(pLightIndex).Type = D3DLIGHT_DIRECTIONAL
+        Case Lighting.Omni
+            Lights(pLightIndex).Type = D3DLIGHT_POINT
+        Case Lighting.Spot
+            Lights(pLightIndex).Type = D3DLIGHT_SPOT
+    End Select
+    'SetMyLight
+End Property
+
+Private Sub Class_Initialize()
+
+    Key = "K" & ObjPtr(Me)
+
+
+    Enabled = True
+    
+End Sub
+
