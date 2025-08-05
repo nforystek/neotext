@@ -14,7 +14,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Enum Collides
-    None = 0
+    Normal = 0
     InDoor = 1
     Ground = 2
     Liquid = 3
@@ -75,14 +75,30 @@ Private pFolcrums As VBA.Collection
 
 Private Matrix As D3DMATRIX
 
+Private pCentoid As New Point
+Private pDisplace As New Point
+
+Public Property Get Centoid() As Point
+    Set Centoid = pCentoid
+End Property
+Public Property Set Centoid(ByRef RHS As Point)
+    Set pCentoid = RHS
+End Property
+Public Property Get Displace() As Point
+    Set Displace = pDisplace
+End Property
+Public Property Set Displace(ByRef RHS As Point)
+    Set pDisplace = RHS
+End Property
+
 Public Property Get Folcrums() As VBA.Collection
     Set Folcrums = pFolcrums
 End Property
 Public Property Get Folcrum(Optional ByVal Index As Integer = 0) As Point
     If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
-        Set Folcrum = pFolcrums(Index)
+        Set Folcrum = VectorRotateAxis(pFolcrums(Index), VectorMultiplyBy(pRotate, RADIAN))
     ElseIf pFolcrums.Count > 0 Then
-        Set Folcrum = pFolcrums(1)
+        Set Folcrum = VectorRotateAxis(pFolcrums(1), VectorMultiplyBy(pRotate, RADIAN))
     End If
 End Property
 Public Property Set Folcrum(Optional ByVal Index As Integer = 0, ByRef RHS As Point)
@@ -106,7 +122,7 @@ Public Property Let Folcrum(Optional ByVal Index As Integer = 0, ByVal RHS)
     End If
 End Property
 
-Public Sub AutoFolcrums()
+Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
     Dim useIndex As Long
     
     If BoundsIndex > 0 Then
@@ -128,12 +144,41 @@ Public Sub AutoFolcrums()
         End If
         
         Dim cnt As Long
-        For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
-            Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
-            pFolcrums.Add p
-            Set p = Nothing
-        Next
-    
+        If Not Smart Then
+            For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
+                Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
+                pFolcrums.Add p
+                Set p = Nothing
+            Next
+        Else
+            Dim avgWidth As Single
+            Dim avgHeight As Single
+            Dim avgDepth As Single
+            Dim totalVerts As Long
+            totalVerts = UBound(Meshes(useIndex).Verticies) + IIf(LBound(Meshes(useIndex).Verticies) = 0, 1, 0)
+            
+            For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
+                avgWidth = avgWidth + Meshes(useIndex).Verticies(cnt).X
+                avgHeight = avgHeight + Meshes(useIndex).Verticies(cnt).Y
+                avgDepth = avgDepth + Meshes(useIndex).Verticies(cnt).Z
+            Next
+             
+            avgWidth = avgWidth / totalVerts
+            avgHeight = avgHeight / totalVerts
+            avgDepth = avgDepth / totalVerts
+            For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
+
+                If (Meshes(useIndex).Verticies(cnt).X >= avgWidth And Meshes(useIndex).Verticies(cnt).Y >= avgHeight) Or _
+                     (Meshes(useIndex).Verticies(cnt).Y >= avgHeight And Meshes(useIndex).Verticies(cnt).Z >= avgDepth) Or _
+                      (Meshes(useIndex).Verticies(cnt).Z >= avgDepth And Meshes(useIndex).Verticies(cnt).X >= avgWidth) Then
+                    Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
+                    pFolcrums.Add p
+                    Set p = Nothing
+                End If
+
+            Next
+        
+        End If
     Else
         Err.Raise 8, , "AutoFolcrums requires a BoundsModel or VisualModel to be loaded."
     End If
@@ -188,115 +233,31 @@ Public Sub Replacer(ByVal TextFilename As String, ByVal BoardKey As String)
     End If
 End Sub
 
-Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
+Public Function AddMotion(ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
 
-    Dim act As Motion
-    Set act = New Motion
-    With act
-        If aGUID = "" Then
-            .Identity = Replace(modGuid.GUID, "-", "K")
-        Else
-            .Identity = aGUID
-        End If
-        .Action = Action
-        Set .Data = Data
-        .Emphasis = Emphasis
-        .Initials = Emphasis
-        .Friction = Friction
-        .Reactive = Reactive
-        .latency = Timer
-        .Recount = Recount
-        .Script = Script
-        AddMotion = .Identity
-    End With
-    If pMotions Is Nothing Then
-        Set pMotions = New NTNodes10.Collection
-    End If
-    If pMotions.Count > 0 Then
-        pMotions.Add act, , 1
-    Else
-        pMotions.Add act
-    End If
-    
-'    If Not pAttachments Is Nothing Then
-'        If pAttachments.Count > 0 Then
-'            Dim e2 As Element
-'            For Each e2 In pAttachments
-'                If e2.Motions.Count > 0 Then
-'                    e2.Motions.Add act, , 1
-'                Else
-'                    e2.Motions.Add act
-'                End If
-'            Next
-'
-'        End If
-'    End If
-
-    
-    
-    Set act = Nothing
-    
-    
+    AddMotion = modMove.AddMotion(pMotions, Action, Key, Data, Emphasis, Friction, Reactive, Recount, Script)
 
 End Function
 
-Public Function DeleteMotion(ByVal MGUID As String) As Boolean
+Public Function DeleteMotion(ByVal Key As String) As Boolean
 
-    If Not Motions Is Nothing Then
-        Dim A As Long
-        Dim act As Motion
-        A = 1
-        Do While A <= Motions.Count
-            Set act = Motions(A)
-            If act.Identity = MGUID Or (act.Identity = "") Then
-                Motions.Remove A
-                DeleteMotion = True
-            Else
-                A = A + 1
-            End If
-            Set act = Nothing
-        Loop
-    End If
-'a prior way that only removed one occurance of the idenity in the collection
-'only it started with checking the very last item,and removed it if was idenity
-'otherwise it begane a forward iteration, as well it did not check for blank id's
-'
-'this one is slightly different, it only delete's one occurance and starts from
-'the back of the list, iterating all, it also considers blank ID match for removal
-'
-'    A = Motions.count
-'    Do While A > 0
-'        Set act = Motions(A)
-'        If act.Identity = MGUID Or (act.Identity = "") Then
-'            Motions.Remove A
-'            DeleteMotion = True
-'            Set act = Nothing
-'            Exit Function
-'        End If
-'        A = A - 1
-'    Loop
-'    Set act = Nothing
-'
-'
-'because of array differences the above was working, yet no longer in objects
-'so the choice is a full iteration of the collection from the start and blanks
-'are considered matches for removal as well as ID matching, and all matches are
-'removed if satisfying those conditions, now it acts like before, with out
-'stacking too many motions that do or don't remove bogging down the system
-
+    DeleteMotion = modMove.DeleteMotion(pMotions, Key)
 
 End Function
 
 Public Sub ClearMotions()
-    If Not pMotions Is Nothing Then
-        Dim act As Motion
-        Do While pMotions.Count > 0
-            Set act = pMotions(1)
-            pMotions.Remove 1
-            Set act = Nothing
-        Loop
-    End If
+
+    pDirect = "0,0,0"
+    pTwists = "0,0,0"
+    pScalar = "0,0,0"
+    modMove.ClearMotions pMotions
+
 End Sub
+
+Public Function MotionExists(ByVal Key As String) As Boolean
+    MotionExists = modMove.MotionExists(pMotions, Key)
+End Function
+
 
 Public Property Get Motions() As NTNodes10.Collection
     Set Motions = pMotions
@@ -342,8 +303,8 @@ Public Property Let VisualModel(ByVal RHS As String)
         pVisualIndex = MeshCount
         Meshes(pVisualIndex).FileName = LCase(RHS)
         If PathExists(ScriptRoot & "\Models\" & Meshes(pVisualIndex).FileName, True) Then
-            CreateMesh ScriptRoot & "\Models\" & Meshes(pVisualIndex).FileName, Meshes(pVisualIndex).Mesh, Meshes(pVisualIndex).MaterialBuffer, _
-                    ToVector(pOrigin), ToVector(pScaled), Meshes(pVisualIndex).Materials, Meshes(pVisualIndex).Textures, _
+            CreateMesh Me, ScriptRoot & "\Models\" & Meshes(pVisualIndex).FileName, Meshes(pVisualIndex).Mesh, Meshes(pVisualIndex).MaterialBuffer, _
+                     Meshes(pVisualIndex).Materials, Meshes(pVisualIndex).Textures, _
                     Meshes(pVisualIndex).Verticies, Meshes(pVisualIndex).Indicies, Meshes(pVisualIndex).MaterialCount
         Else
             ReDim Meshes(pVisualIndex).Textures(0 To 0) As Direct3DTexture8
@@ -399,8 +360,8 @@ Public Property Let BoundsModel(ByVal RHS As String)
         pBoundsIndex = MeshCount
         Meshes(pBoundsIndex).FileName = LCase(RHS)
         If PathExists(ScriptRoot & "\Models\" & Meshes(pBoundsIndex).FileName, True) Then
-            CreateMesh ScriptRoot & "\Models\" & Meshes(pBoundsIndex).FileName, Meshes(pBoundsIndex).Mesh, Meshes(pBoundsIndex).MaterialBuffer, _
-                    ToVector(pOrigin), ToVector(pScaled), Meshes(pBoundsIndex).Materials, Meshes(pBoundsIndex).Textures, _
+            CreateMesh Me, ScriptRoot & "\Models\" & Meshes(pBoundsIndex).FileName, Meshes(pBoundsIndex).Mesh, Meshes(pBoundsIndex).MaterialBuffer, _
+                     Meshes(pBoundsIndex).Materials, Meshes(pBoundsIndex).Textures, _
                     Meshes(pBoundsIndex).Verticies, Meshes(pBoundsIndex).Indicies, Meshes(pBoundsIndex).MaterialCount
         Else
             ReDim Meshes(pBoundsIndex).Textures(0 To 0) As Direct3DTexture8
@@ -653,7 +614,6 @@ Friend Sub ApplyMatrix()
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
     
-    
     D3DXMatrixRotationX matMesh, Rotate.X * (PI / 180)
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     D3DXMatrixRotationY matMesh, Rotate.Y * (PI / 180)
@@ -661,7 +621,12 @@ Friend Sub ApplyMatrix()
     D3DXMatrixRotationZ Matrix, Rotate.Z * (PI / 180)
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
-    
+
+
+'    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+'    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
+'    DDevice.SetTransform D3DTS_WORLD, Matrix
     
     D3DXMatrixTranslation matMesh, Offset.X, Offset.Y, Offset.Z
     D3DXMatrixMultiply Matrix, matMesh, Matrix
@@ -727,7 +692,7 @@ Private Sub Class_Initialize()
 
     pBoundsIndex = 0
     pVisualIndex = 0
-    pEffect = Collides.None
+    pEffect = Collides.Normal
     pGravitational = False
     pAlphablend = False
     pCollideIndex = 0
@@ -750,7 +715,7 @@ End Sub
 
 Private Sub Class_Terminate()
 
-    If pCollision Or (pCollideIndex > -1) And (pBoundsIndex > 0) Then
+    If ((pCollideIndex > -1) And (pBoundsIndex > 0)) Then
         DelCollision Me
     End If
 

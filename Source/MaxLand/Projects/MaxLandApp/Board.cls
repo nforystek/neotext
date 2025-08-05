@@ -38,6 +38,7 @@ Private pAnimateTimer As Double
 Private pAnimatePoint As Long
 
 Private pVisible As Boolean
+Private pMirror As Boolean
 
 Private pKey As String
 Private pSerialize As Boolean
@@ -163,6 +164,12 @@ Public Property Let ScaleY(ByVal RHS As Single)
     pScaleY = RHS
     pAlign = 1
     RecreateSkins
+End Property
+Public Property Get Mirror() As Boolean
+    Mirror = pMirror
+End Property
+Public Property Let Mirror(ByVal RHS As Boolean)
+    pMirror = RHS
 End Property
 Public Property Get Translucent() As Boolean
     Translucent = pTranslucent

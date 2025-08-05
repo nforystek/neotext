@@ -96,56 +96,29 @@ Public Property Set Teleport(ByRef RHS As Point)
 End Property
 
 
-Public Function AddMotion(ByRef Action As Long, ByVal aGUID As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
-    Dim act As Motion
-    Set act = New Motion
-    With act
-        .Identity = IIf(aGUID = "", Replace(modGuid.GUID, "-", "K"), aGUID)
-        .Action = Action
-        Set .Data = Data
-        .Emphasis = Emphasis
-        .Initials = Emphasis
-        .Friction = Friction
-        .Reactive = Reactive
-        .latency = Timer
-        .Recount = Recount
-        .Script = Script
-        AddMotion = .Identity
-    End With
-    If Motions Is Nothing Then
-        Set Motions = New NTNodes10.Collection
-    End If
-    Motions.Add act
+Public Function AddMotion(ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
+
+    AddMotion = modMove.AddMotion(Motions, Action, Key, Data, Emphasis, Friction, Reactive, Recount, Script)
+
 End Function
 
-Public Function DeleteMotion(ByVal MGUID As String) As Boolean
-    Dim A As Long
-    Dim act As Motion
-    If Not Motions Is Nothing Then
-        A = 1
-        Do While A <= Motions.Count
-            If Motions(A).Identity = MGUID Or (Motions(A).Identity = "") Then
-                Set act = Motions(A)
-                Motions.Remove A
-                Set act = Nothing
-                DeleteMotion = True
-            Else
-                A = A + 1
-            End If
-        Loop
-    End If
+Public Function DeleteMotion(ByVal Key As String) As Boolean
+
+    DeleteMotion = modMove.DeleteMotion(Motions, Key)
+
 End Function
 
 Public Sub ClearMotions()
-    If Not Motions Is Nothing Then
-        Dim act As Motion
-        Do While Motions.Count > 0
-            Set act = Motions(1)
-            Motions.Remove 1
-            Set act = Nothing
-        Loop
-    End If
+
+    modMove.ClearMotions Motions
+
 End Sub
+
+
+Public Function MotionExists(ByVal Key As String) As Boolean
+    MotionExists = modMove.MotionExists(Motions, Key)
+End Function
+
 
 Public Property Get DropsMotions() As Boolean
     DropsMotions = pDropsMotions

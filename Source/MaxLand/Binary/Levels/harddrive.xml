@@ -1,8 +1,7 @@
-<?xml version="1.0"?><Serial><DateTime>7%2F29%2F2025+7%3A51%3A08+AM</DateTime>
+<?xml version="1.0"?><Serial><DateTime>8%2F4%2F2025+9%3A03%3A55+PM</DateTime>
 <Code></Code>  <Bindings>
 Bindings%2EItem%28%221%22%29+%3D+Include%2EURLDecode%28%22doarmleft%22%29
 Bindings%2EItem%28%220%22%29+%3D+Include%2EURLDecode%28%22doarmright%22%29
-Bindings%2EItem%28%22T%22%29+%3D+Include%2EURLDecode%28%22test%22%29
 Bindings%2EMouseInput%3D2
 
 </Bindings>

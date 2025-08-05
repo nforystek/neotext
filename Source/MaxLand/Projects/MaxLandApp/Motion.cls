@@ -14,14 +14,14 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Enum Actions
-    None = 0
+    NotDefined = 0
     Directing = 1
     Rotating = 2
     Scaling = 4
     Method = 8
 End Enum
 
-Private pIdentity As String
+Private pKey As String
 Private pAction As Long
 Private pData As Point
 Private pScript As String
@@ -32,19 +32,13 @@ Private pEmphasis As Single
 Private pFriction As Single
 Private pInitials As Single
 Public Property Get Key() As String
-    Key = pIdentity
+    Key = pKey
 End Property
     
 Public Property Let Key(ByVal RHS As String)
-    pIdentity = RHS
+    pKey = RHS
 End Property
 
-Public Property Get Identity() As String
-    Identity = pIdentity
-End Property
-Public Property Let Identity(ByRef RHS As String)
-    pIdentity = RHS
-End Property
 
 Public Property Get Action() As Actions
     Action = pAction
@@ -117,7 +111,7 @@ End Property
 
 Private Sub Class_Initialize()
     Stats_Motion_Count = Stats_Motion_Count + 1
-    pIdentity = "K" & ObjPtr(Me)
+    pKey = "K" & ObjPtr(Me)
     pReactive = -1
     pRecount = -1
 End Sub

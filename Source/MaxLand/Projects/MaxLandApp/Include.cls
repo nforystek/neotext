@@ -81,11 +81,11 @@ Public Function GetBindingIndex(ByVal BindText As String) As Integer
     GetBindingIndex = modCmds.GetBindingIndex(BindText)
 End Function
 
-Public Function Point(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
-    Set Point = New Point
-    Point.X = X
-    Point.Y = Y
-    Point.Z = Z
+Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
+    Set MakePoint = New Point
+    MakePoint.X = X
+    MakePoint.Y = Y
+    MakePoint.Z = Z
 End Function
 
 Public Function URLDecode(ByVal encodedString As String) As String
@@ -207,7 +207,7 @@ Public Property Get Omni() As Lighting
 End Property
 
 'Public Enum Actions
-'    None = 0
+'    NotDefined = 0
 '    Directing = 1
 '    Rotating = 2
 '    Scaling = 4
@@ -228,13 +228,15 @@ Public Property Get Method() As Actions
 End Property
 
 'Public Enum Collides
-'    None = 0
+'    Normal = 0
 '    InDoor = 1
 '    Ground = 2
 '    Liquid = 3
 '    Ladder = 4
 'End Enum
-
+Public Property Get Normal() As Long
+    Normal = 0
+End Property
 Public Property Get InDoor() As Long
     InDoor = 1
 End Property
@@ -314,7 +316,7 @@ End Property
 Public Function NewObject(ByVal Class As String)
     Select Case LCase(Class)
         Case "motions", "boards", "cameras", "elements", "lights", "portals", "screens", "sounds", "tracks"
-            Set NewObject = New Ntnodes10.Collection
+            Set NewObject = New NTNodes10.Collection
         Case Else
             Set NewObject = modFactory.NewObject(Class)
     End Select
@@ -324,14 +326,10 @@ Public Sub DebugPrint(ByVal Text As String)
     Debug.Print Text
 End Sub
 
-Public Sub Echo(ByVal Text As String)
-    Process "echo " & Text
+Public Sub Console(ByVal Text As String)
+    ConsoleCommand Text
 End Sub
 
-Public Sub Process(ByVal Commands As String)
-    modCmds.Process Commands
-End Sub
-    
 
 Private Sub Class_Initialize()
     Stats_Include_Count = Stats_Include_Count + 1

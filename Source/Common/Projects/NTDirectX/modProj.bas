@@ -125,21 +125,21 @@ Public Sub RenderBrilliants(ByRef UserControl As Macroscopic, ByRef Camera As Ca
     'D3DXMatrixIdentity matWorld
     'DDevice.SetTransform D3DTS_WORLD, matWorld
 
-    Dim b As Brilliant
+    Dim B As Brilliant
     Dim l As Long
     If Brilliants.Count > 0 Then
         For l = 1 To Brilliants.Count
-            Set b = Brilliants(l)
-            b.UpdateValues
+            Set B = Brilliants(l)
+            B.UpdateValues
             If Brilliants(l).SunLight Then
                 DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.r * 255, _
-                    Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.g * 255, Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.b * 255)
+                    Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.g * 255, Lights(Brilliants(l).LightIndex).Diffuse.A * 164 + Lights(Brilliants(l).LightIndex).Diffuse.B * 255)
                
                ' DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(0, 164 + Lights(Brilliants(l).LightIndex).Diffuse.r * 255, _
               '       164 + Lights(Brilliants(l).LightIndex).Diffuse.g * 255, 164 + Lights(Brilliants(l).LightIndex).Diffuse.b * 255)
 
             End If
-            Set b = Nothing
+            Set B = Nothing
         Next
     End If
 
@@ -315,7 +315,7 @@ Private Sub SubRenderPlateau(ByRef UserControl As Macroscopic, ByRef Camera As C
                 'If (p.PlateauInfinite Or p.PlateauHole) Then 'first 12 triangles is the rolling backdrop
     
                 Dim testFar As Long
-                testFar = Far '10 * MILE
+                testFar = FAR '10 * MILE
     
                 If (Not ((Abs(Camera.Player.Origin.X - p.Origin.X) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Y - p.Origin.Y) > (testFar / 2)) Or (Abs(Camera.Player.Origin.Z - p.Origin.Z) > (testFar / 2)))) And p.PlateauHole Then
                     'draws hole type of plane if in range of the hole, else the infinite plane is used further down
@@ -474,7 +474,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
             
             rsam = DDevice.GetRenderState(D3DRS_AMBIENT)
         
-            If p.Alphablend Then
+            If p.AlphaBlend Then
     
                If Not p.Follow Then
                     DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB(255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
@@ -497,7 +497,7 @@ Public Sub SubRenderWorld(ByRef UserControl As Macroscopic, ByRef Camera As Came
                     DDevice.DrawPrimitiveUP D3DPT_TRIANGLELIST, 2, VertexDirectX(p.Volume(i).TriangleIndex * 3), Len(VertexDirectX(0))
                 Next
                     
-            ElseIf ((Not p.Translucent) And (Not p.Alphablend)) Then
+            ElseIf ((Not p.Translucent) And (Not p.AlphaBlend)) Then
                 
                 If Not p.Follow Then
                     DDevice.SetRenderState D3DRS_AMBIENT, D3DColorARGB((1 - RelativeFactor) * 255, 255 * RelativeFactor, 255 * RelativeFactor, 255 * RelativeFactor)
@@ -690,7 +690,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         dist = GetWorldRelativeFactor(p, Camera)
                         Camera.BuildColor p.Color.RGB, dist
 
-                        If (dist > 0) And (Not (p.Translucent Or p.Transparent Or p.Alphablend)) Then
+                        If (dist > 0) And (Not (p.Translucent Or p.Transparent Or p.AlphaBlend)) Then
 
                             SubRenderWorld UserControl, Camera, p, dist
 
@@ -820,8 +820,8 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
         DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Camera.Planet.Field / 2)
         DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Camera.Planet.Field)
     Else
-        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(Far / 2)
-        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(Far)
+        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(FAR / 2)
+        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(FAR)
     End If
     DDevice.SetRenderState D3DRS_FOGDENSITY, 0.9
 
@@ -854,7 +854,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                     
 '                    Dist = Distance(p.Origin.X, 0, p.Origin.z, 0, Camera.Player.Origin.Y, 0)
                     
-                    If ((dist <= 1) And (dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent Or p.Alphablend) Then
+                    If ((dist <= 1) And (dist > 0) And (i < Planets.Count)) And (p.Translucent Or p.Transparent Or p.AlphaBlend) Then
                         'hot sort the list to opaque World, not on plateau, then
                         'alpha blend world and finally on plateau is already last
                         j = i
@@ -880,7 +880,7 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
                         
                     End If
                     
-                    If p.Form = World And (dist <= 1) And (dist > 0) And (p.Translucent Or p.Transparent Or p.Alphablend) Then
+                    If p.Form = World And (dist <= 1) And (dist > 0) And (p.Translucent Or p.Transparent Or p.AlphaBlend) Then
                     
                         If ((dist <= 1) And (dist > 0)) Then
                             'draw the world with the alpha blend a relativefactor

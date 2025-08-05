@@ -10,19 +10,19 @@ Option Explicit
 Global ScriptRoot As String
 Global Include As New Include
 
-Global All As ntnodes10.Collection
-Global Beacons As ntnodes10.Collection
+Global All As NTNodes10.Collection
+Global Beacons As NTNodes10.Collection
 Global Bindings As Bindings
-Global Boards As ntnodes10.Collection
-Global Cameras As ntnodes10.Collection
-Global Elements As ntnodes10.Collection
-Global Lights As ntnodes10.Collection
+Global Boards As NTNodes10.Collection
+Global Cameras As NTNodes10.Collection
+Global Elements As NTNodes10.Collection
+Global Lights As NTNodes10.Collection
 Global Player As Player
-Global Portals As ntnodes10.Collection
-Global Screens As ntnodes10.Collection
-Global Sounds As ntnodes10.Collection
+Global Portals As NTNodes10.Collection
+Global Screens As NTNodes10.Collection
+Global Sounds As NTNodes10.Collection
 Global Space As Space
-Global Tracks As ntnodes10.Collection
+Global Tracks As NTNodes10.Collection
 
 
 Global Frame As Boolean
@@ -791,10 +791,10 @@ parseerror:
     If Not ConsoleVisible Then
         ConsoleToggle
     End If
-    Process "echo An error " & Err.Number & " occurd in " & Err.source & "\nError: " & Err.Description & "\n" & LastCall
+    ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.sourc & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
     'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
     
-    If frmMain.ScriptControl1.Error.Number <> 0 Then frmMain.ScriptControl1.Error.Clear
+    If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear
     If Err.Number <> 0 Then Err.Clear
 
 End Function

@@ -245,8 +245,10 @@ Public Sub RenderWorld()
     If Elements.Count > 0 Then
         Dim e1 As Element
         Dim b1 As Board
-        
-        For Each e1 In Elements
+        For cnt = 1 To Elements.Count
+            Set e1 = Elements(cnt)
+            
+        'For Each e1 In Elements
 
             If e1.Visible And (Not (e1.Effect = Collides.Ladder Or e1.Effect = Collides.Liquid)) Then
             
@@ -355,6 +357,7 @@ Public Sub RenderWorld()
                     End If
                 End If
             End If
+            Set e1 = Nothing
         Next
     End If
 End Sub
@@ -388,7 +391,7 @@ Public Sub RenderBoards()
         Dim b1 As Board
         For Each b1 In Boards
         
-            If b1.Visible Then
+            If b1.Visible And Not b1.Mirror Then
                 If DistanceEx(Player.Origin, b1.Origin) <= FadeDistance Then
                     
                     If Not b1.Translucent Then
@@ -437,6 +440,8 @@ Public Sub RenderLucent()
     Dim i As Long
     Dim l As Long
     Dim bkey As String
+    Dim cnt As Long
+    
     'Dim matLucent As D3DMATRIX
     
     D3DXMatrixIdentity matWorld
@@ -445,7 +450,9 @@ Public Sub RenderLucent()
     Dim b1 As Board
     If Elements.Count > 0 Then
         Dim e1 As Element
-        For Each e1 In Elements
+        For cnt = 1 To Elements.Count
+            Set e1 = Elements(cnt)
+        'For Each e1 In Elements
         
         'For o = 1 To Elements.count
             If e1.Visible And (Not DebugMode) Then
@@ -544,6 +551,7 @@ Public Sub RenderLucent()
                     End With
                 End If
             End If
+            Set e1 = Nothing
         Next
     End If
     
@@ -1102,6 +1110,10 @@ Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
     Set Player = New Player
     Set Space = New Space
     
+    Bindings.MouseInput = Trapping
+    Perspective = ThirdPerson
+    CameraClip = True
+        
     frmMain.Startup
     
     If ScriptRoot = "" Then
@@ -1146,13 +1158,15 @@ serialerror:
         End If
 
     End If
+    
+    frmMain.Reset
+    
 
     If Not All Is Nothing Then
         All.Clear
         Set All = Nothing
     End If
-    
-    frmMain.ScriptControl1.Reset
+
 
     ShowCredits = False
 
@@ -1162,17 +1176,28 @@ serialerror:
     
     Dim q As Integer
     Dim o As Integer
-
-    Set Player = Nothing
     
-    If Not Elements Is Nothing Then
-        For o = 1 To Elements.Count
-            Elements(o).ClearMotions
+    If Not Bindings Is Nothing Then
+        For o = 0 To Bindings.Count - 1
+            Bindings.Item(o) = ""
         Next
-        Elements.Clear
-        Set Elements = Nothing
+    
     End If
         
+        
+    If Not Elements Is Nothing Then
+'        Dim e As Element
+'
+'        Do While Elements.Count > 0
+'            Set e = Elements(1)
+'            e.ClearMotions
+'            Elements.Remove 1
+'            Set e = Nothing
+'        Loop
+        Elements.Clear
+        
+        Set Elements = Nothing
+    End If
     
     If MeshCount > 0 Then
         For o = 1 To MeshCount
@@ -1192,7 +1217,6 @@ serialerror:
         Erase Meshes
         MeshCount = 0
     End If
-
 
     If Not Portals Is Nothing Then
         If Portals.Count > 0 Then
@@ -1252,6 +1276,98 @@ serialerror:
         Set Sounds = Nothing
     End If
     
+    CurrentLoadedLevel = ""
+    
+End Sub
+
+Public Sub BeginMirrors()
+
+'    Dim e As Board
+'    Dim i As Long
+'    Dim l As Single
+'
+'    Dim dm As D3DDISPLAYMODE
+'    Dim pal As PALETTEENTRY
+'    Dim rct As RECT
+''
+''    If Not Mirrors Is Nothing Then Mirrors.Clear
+'    If Boards.Count > 0 Then
+'        For i = 1 To Boards.Count
+'            Set e = Boards(i)
+'
+'            If e.Visible And e.Mirror Then
+'
+'                l = Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+'                If l <= FAR Then
+'
+'                    DViewPort.Width = 128
+'                    DViewPort.Height = 128
+'
+'                    DSurface.BeginScene DefaultRenderTarget, DViewPort
+'
+''                    BeginWorld UserControl, e.Transposing
+''
+''                    RenderPlanets UserControl, e.Transposing
+''                    RenderObject UserControl, e.Transposing
+'
+'                    DSurface.EndScene
+'
+'                    DDevice.GetDisplayMode dm
+'
+'                    rct.Top = 0
+'                    rct.Left = 0
+'
+'                    rct.Right = DViewPort.Width
+'                    rct.Bottom = DViewPort.Height
+'
+'                    D3DX.SaveSurfaceToFile GetTemporaryFolder & "\" & e.Key & ".bmp", D3DXIFF_BMP, DefaultRenderTarget, pal, rct
+'                    Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & e.Key & ".bmp", _
+'                        DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
+'                        D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), e.Key
+'                    Kill GetTemporaryFolder & "\" & e.Key & ".bmp"
+'
+'                End If
+'
+'            End If
+'            Set e = Nothing
+'        Next
+'''    End If
+End Sub
+
+
+Public Sub RenderMirror()
+
+'    Dim e As Billboard
+'    Dim i As Long
+'    Dim l As Single
+'
+'    If Boards.Count > 0 Then
+'        For i = 1 To Boards.Count
+'            Set e = Boards(i)
+'
+'            If e.Visible And ((e.Form And ThreeDimensions) = ThreeDimensions) Then
+'
+'                l = Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+'                If l <= FAR Then
+'
+''                    If Mirrors.Exists(Billboards.Key(i)) Then
+''                        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+''                        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+''                        DDevice.SetMaterial GenericMaterial
+''                        DDevice.SetTexture 0, Mirrors.Item(Boards.Key(i))
+''                        DDevice.SetTexture 1, Nothing
+''
+''                        DDevice.SetStreamSource 0, Faces(e.FaceIndex).VBuffer, Len(Faces(e.FaceIndex).Verticies(0))
+''                        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+''
+''                    End If
+'
+'                End If
+'
+'            End If
+'            Set e = Nothing
+'        Next
+'    End If
 End Sub
 
 

@@ -135,7 +135,7 @@ element <nonmoving>
 
 
 	.filename = "non-moving.x"
-
+	.collision = false
 }
 
 
@@ -148,88 +148,16 @@ element <arm>
 	.scaled =[1, 1, 1]
 
 	.filename = "arm.x"
-	motion <armleft> {
-		.action = rotate
-		.data = [ 0, -0.2, 0]
-		.emphasis = 0
-		.friction =.6
-		.reactive = 0
-		.recount = -1
-	}
-	motion <armright> {
-		.action = rotate
-		.data = [ 0, 0.2, 0]
-		.emphasis = 0
-		.friction =.6
-		.reactive = 0
-		.recount = -1
-	}
+	.collision = false
+	.folcrum =[2.37, 0, 2.37]
 
 }
 
 
 
-variable <armdirection> =  0
 
 
-portal<rightweight>
-
-{
-
-	.location=  [2, 0, 2]
-
-	.range=.5
-	.enabled= true
-	
-	oninrange [ <arm>
-
-	]
-	onoutrange [ <arm>
-
-
-	]
-}
-
-
-portal <leftedge>
-{
-
-	.location =[1, 0, 3]
-	.range =.5
-	.enabled= true
-	oninrange [ <arm>
-
-		'armleft.emphasis= 0
-		'armright.emphasis= 0.4
-		'armdirection= 1
-	]
-	onoutrange [ <arm>
-
-		'armright.emphasis= 0
-	]
-}
-portal <rightedge>
-{
-	.location=[ 3, 0, 1]
-	.range =.5
-	.enabled= true
-
-	oninrange [ <arm>
-
-		'armright.emphasis= 0
-		'armleft.emphasis=0.4
-		'armdirection= 0
-	]
-
-	onoutrange [ <arm>
-
-
-		'armleft.emphasis= 0
-	]
-}
-
-
-element <platetwo>
+element <plate2>
 {
 
 	.visible =true
@@ -239,6 +167,7 @@ element <platetwo>
 	.replacer "harddisk_disc.bmp", "disc2"
 	.filename = "disc.x"
 
+	.collision = false
 }
 
 
@@ -252,43 +181,95 @@ element <plate1>
 	.replacer "harddisk_disc.bmp","disc1"
 	.filename = "disc.x"
 
-
+	.collision = false
 
 
 }
 
 
+variable <armdirection> = 0
 
-method <doarmright>
-[
-		'armleft.emphasis= 0
-		'armright.emphasis= 0.4
+portal <leftedge>
+{
+
+	.location =[-1, 0, 3]
+	.range =2
+	.enabled= true
+	.dropsmotions = true
+	oninrange [ <arm>
+		armdirection=1
+		doarmright
+
+
 	]
-method <doarmleft>
- [
-		'armright.emphasis= 0
-		'armleft.emphasis= 0.4
+	onoutrange [ <arm>
+		armdirection=0
 	]
 
-method <test>
-[
-		if (armdirection=0) then
+}
 
-				Process "echo 1"
 
-		else 
-	
-				process "echo 0"
-	
+portal <rightedge>
+{
+	.location=[ 3, 0, -1]
+	.range =2
+	.enabled= true
+	.dropsmotions = true
+	oninrange [ <arm>
+		armdirection=2
+		doarmleft
+
+	]
+	onoutrange [ <arm>
+		armdirection=0
+	]
+
+
+}
+
+'beacon <tmp>
+'{
+'	.visible =true
+'	.origin=rightedge.location
+'	.origin=leftedge.location
+'	.filename = "circle.bmp"
+'	.percentx =90
+'	.percenty =90
+'	.VerticalLock=true
+'}
+
+
+method <doarmright>[
+		if armdirection=1 or armdirection=0 then
+
+			arm.addmotion 2,"armright", MakePoint( 0, 1, 0), 0.1, 0.5
+		end if
+
+]
+
+
+method <doarmleft> [
+
+		if armdirection=2 or armdirection=0 then
+
+			arm.addmotion 2,"armleft", MakePoint( 0, -1, 0), 0.1, 0.5
 
 		end if
-	]
 
-	bindings {
+]
 
-		0=[doarmright]
-		1=[doarmleft]
-		T=[test]
-		.mouseinput = trapping
 
-	}
+
+bindings {
+
+	0=[doarmright]
+	1=[doarmleft]
+
+	.mouseinput = trapping
+
+}
+
+
+
+
+

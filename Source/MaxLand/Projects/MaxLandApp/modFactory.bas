@@ -264,6 +264,10 @@ Public Function InIDE() As Boolean
     InIDE = False
     Exit Function
 #End If
+#If VBIDE = -1 Then
+    InIDE = True
+    Exit Function
+#End If
     On Error GoTo InTheIDE
 
     Debug.Print 1 / 0

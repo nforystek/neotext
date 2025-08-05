@@ -1087,7 +1087,7 @@ Public Sub CreateSquareEx(ByRef Data() As MyVertex, ByVal Index As Long, ByRef p
     
 End Sub
 
-Public Function CreateMesh(ByVal FileName As String, Mesh As D3DXMesh, Buffer As D3DXBuffer, Origin As D3DVECTOR, Scaled As D3DVECTOR, MeshMaterials() As D3DMATERIAL8, MeshTextures() As Direct3DTexture8, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long)
+Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh As D3DXMesh, Buffer As D3DXBuffer, MeshMaterials() As D3DMATERIAL8, MeshTextures() As Direct3DTexture8, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long)
     Dim TextureName As String
 
     Set Mesh = D3DX.LoadMeshFromX(FileName, D3DXMESH_DYNAMIC, DDevice, Nothing, Buffer, nMaterials)
@@ -1132,6 +1132,39 @@ Public Function CreateMesh(ByVal FileName As String, Mesh As D3DXMesh, Buffer As
     D3DIndexBuffer8GetData Mesh.GetIndexBuffer, 0, id.Size, 0, MeshIndicies(0)
     
     D3DX.ComputeNormals Mesh
+
+    Dim i As Long
+    
+    Dim v As Long
+    
+    Dim avg As New Point
+    If Obj.Displace Is Nothing Then Set Obj.Displace = New Point
+    
+    
+    
+    For i = 0 To ((id.Size \ 2) - 1)
+        v = MeshIndicies(i)
+            
+        avg.X = avg.X + MeshVerticies(v).X
+        avg.Y = avg.Y + MeshVerticies(v).Y
+        avg.Z = avg.Z + MeshVerticies(v).Z
+        If Abs(MeshVerticies(v).X - Obj.Origin.X) > Obj.Displace.X Then
+            Obj.Displace.X = Abs(MeshVerticies(v).X - Obj.Origin.X)
+        End If
+        If Abs(MeshVerticies(v).Y - Obj.Origin.Y) > Obj.Displace.Y Then
+            Obj.Displace.Y = Abs(MeshVerticies(v).Y - Obj.Origin.Y)
+        End If
+        If Abs(MeshVerticies(v).Z - Obj.Origin.Z) > Obj.Displace.Z Then
+            Obj.Displace.Z = Abs(MeshVerticies(v).Z - Obj.Origin.Z)
+        End If
+    Next
+    i = ((id.Size \ 2) - 1)
+    avg.X = avg.X / i
+    avg.Y = avg.Y / i
+    avg.Z = avg.Z / i
+    Set Obj.Centoid = avg
+    
+    
 
 End Function
 

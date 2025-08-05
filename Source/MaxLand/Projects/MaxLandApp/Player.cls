@@ -69,7 +69,6 @@ End Property
 
 Public Property Get Angle() As Single
     Angle = pAngle
-    
 End Property
 Public Property Let Angle(ByVal RHS As Single)
     pAngle = RHS
@@ -127,64 +126,30 @@ End Sub
 
 Public Sub LookLeft(Optional ByVal Measure As Single = 0.015)
 
-'    Dim vecRotate As D3DVECTOR
-'    vecRotate.Y = 1
-'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.9, 0, 0
-    
     If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - -Measure)
     If Player.Angle < -(PI * 2) Then Player.Angle = (Player.Angle + (PI * 2))
-    
-    'Player.Rotate.Y = -Player.Angle * DEGREE
-    
-    
-  '  Player.Twists.Y = Player.Angle * DEGREE
-
-    
-    'Player.Twists.Y = 0
+    Player.Twists.Y = 1
     
 End Sub
 Public Sub LookRight(Optional ByVal Measure As Single = 0.015)
 
-'    Dim vecRotate As D3DVECTOR
-'    vecRotate.Y = -1
-'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.9, 0, 0
-
-'    Player.Twists.Y = Player.Angle * DEGREE
-
     If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - Measure)
     If Player.Angle > (PI * 2) Then Player.Angle = (Player.Angle - (PI * 2))
-
-
-    'Player.Rotate.Y = -Player.Angle * DEGREE
-    
-
-
-    'Player.Twists.Y = 0
+    Player.Twists.Y = -1
     
 End Sub
 Public Sub LookUp(Optional ByVal Measure As Single = 0.015)
 
-
-'    Dim vecRotate As D3DVECTOR
-'    vecRotate.Z = 1
-'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.8, 0, 0
-    
     Player.Pitch = Player.Pitch - Measure
     If Player.Pitch < -1.5 Then Player.Pitch = -1.5
-    'Player.Rotate.X = Player.Pitch * DEGREE
-    
+
 End Sub
 
 Public Sub LookDown(Optional ByVal Measure As Single = 0.015)
- 
-'    Dim vecRotate As D3DVECTOR
-'    vecRotate.Z = -1
-'    Player.AddMotion Actions.Rotating, Replace(modGuid.GUID, "-", "K"), ToPoint(vecRotate), 0.5, 0.8, 0, 0
-    
+
     Player.Pitch = Player.Pitch - -Measure
     If Player.Pitch > 1.5 Then Player.Pitch = 1.5
-    'Player.Rotate.X = Player.Pitch * DEGREE
-    
+
 End Sub
 
 Public Sub MoveForward()
@@ -287,15 +252,15 @@ Public Sub Jump()
             vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
             Player.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
         Else
-'            If MotionExists(Player.Motions, JumpGUID) Then
+'            If Player.MotionExists(JumpGUID) Then
                 If (Not ((Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
                         ((Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
-                    Do Until Not MotionExists(Player.Motions, JumpGUID)
+                    Do Until Not Player.MotionExists(JumpGUID)
                         Player.DeleteMotion JumpGUID
                     Loop
                 End If
 '            End If
-'            If Not MotionExists(Player.Motions, JumpGUID) Then
+'            If Not Player.MotionExists(JumpGUID) Then
                 vecDirect.Y = IIf(Player.InLiquid, 5, 9)
                 JumpGUID = Player.AddMotion(Actions.Directing, JumpGUID, ToPoint(vecDirect), Player.Speed * 4, Friction)
 '            End If
@@ -319,6 +284,7 @@ Private Sub Class_Initialize()
     pPitch = 0
     pSpeed = 0.01
     pFriction = 0.05
+    modMain.CameraClip = True
     
 End Sub
 
@@ -343,9 +309,25 @@ Public Property Get Attachments() As NTNodes10.Collection
     Set Attachments = Element.Attachments
 End Property
 
-Public Sub AutoFolcrums()
-    Element.AutoFolcrums
+Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
+    Element.AutoFolcrums Smart
 End Sub
+
+Public Property Set Centoid(RHS As Point)
+    Set Element.Centoid = RHS
+End Property
+
+Public Property Get Centoid() As Point
+    Set Centoid = Element.Centoid
+End Property
+
+Public Property Set Displace(RHS As Point)
+    Set Element.Displace = RHS
+End Property
+
+Public Property Get Displace() As Point
+    Set Displace = Element.Displace
+End Property
 
 Public Property Set Folcrum(Optional ByVal Index As Integer = 0, RHS As Point)
     Set Element.Folcrums(Index) = RHS
@@ -362,6 +344,10 @@ End Property
 Public Property Get Folcrums() As Collection
     Set Folcrums = Element.Folcrums
 End Property
+
+Public Function MotionExists(ByVal Key As String) As Boolean
+    MotionExists = Element.MotionExists(Key)
+End Function
 
 Public Property Get Motions() As NTNodes10.Collection
     Set Motions = Element.Motions
@@ -679,9 +665,25 @@ Private Property Get Element_Attachments() As NTNodes10.Collection
     Set Element_Attachments = Element.Attachments
 End Property
 
-Private Sub Element_AutoFolcrums()
-    Element.AutoFolcrums
+Private Sub Element_AutoFolcrums(Optional ByVal Smart As Boolean = True)
+    Element.AutoFolcrums Smart
 End Sub
+
+Private Property Set Element_Centoid(RHS As Point)
+    Set Element.Centoid = RHS
+End Property
+
+Private Property Get Element_Centoid() As Point
+    Set Element_Centoid = Element.Centoid
+End Property
+
+Private Property Set Element_Displace(RHS As Point)
+    Set Element.Displace = RHS
+End Property
+
+Private Property Get Element_Displace() As Point
+    Set Element_Displace = Element.Displace
+End Property
 
 Private Property Set Element_Folcrum(Optional ByVal Index As Integer = 0, RHS As Point)
     Set Element.Folcrums(Index) = RHS
@@ -698,6 +700,10 @@ End Property
 Private Property Get Element_Folcrums() As Collection
     Set Element_Folcrums = Element.Folcrums
 End Property
+
+Private Function Element_MotionExists(ByVal Key As String) As Boolean
+    Element_MotionExists = Element.MotionExists(Key)
+End Function
 
 Private Property Get Element_Motions() As NTNodes10.Collection
     Set Element_Motions = Element.Motions

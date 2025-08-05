@@ -13,6 +13,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+    
+
 Private pSkyTop As String
 Private pSkyBottom As String
 Private pSkyFront As String
@@ -209,6 +211,8 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
+    
+    On Error Resume Next
     
     Set SkyVBuf = Nothing
     

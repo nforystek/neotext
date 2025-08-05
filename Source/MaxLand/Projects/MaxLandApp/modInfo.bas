@@ -103,7 +103,7 @@ Public Sub RenderInfo()
     If Not ConsoleVisible Then
     
         If DebugMode Then
-            DrawText "F1=Help, E=Forward, D=Back, W/R=Sideways, SPACE=Jump, TILDA=Console, ESC=Exit", 2, 2
+            DrawText "F1=Help, E=Forward, D=Back, W/R=Sideways, TILDA=Console, ESC=Exit", 2, 2
             txt = ""
             If CullingSetup > 0 Then
                 txt = "Use number keys to set vistype, use F5 to set direction, use F6 to set upvector, use F7 to complete" & vbCrLf & _
@@ -114,7 +114,7 @@ Public Sub RenderInfo()
             DrawText txt, ((frmMain.ScaleWidth / Screen.TwipsPerPixelX) / 2) - ((frmMain.TextWidth(txt) / Screen.TwipsPerPixelX) / 2), Row(6)
         Else
             If ShowHelp Then
-                DrawText "F1=Hide, E/D=Forward/Back, W/R=Left/Right, Arrows=Direction, SPACE=Jump, TAB=View, F2=Stats, F3=Credits", 2, 2
+                DrawText "F1=Hide, E/D=Forward/Back, W/R=Left/Right, Arrows=Direction, SPACE=Jump, TAB=View, F2=Stats, F3=Reload", 2, 2
             Else
                 DrawText "F1=Help", 2, 2
             End If

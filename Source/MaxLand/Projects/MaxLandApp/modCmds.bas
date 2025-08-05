@@ -9,6 +9,7 @@ Option Private Module
 Private Const MaxConsoleMsgs = 20
 Private Const MaxHistoryMsgs = 10
 
+Private ConsoleQueue As VBA.Collection
 Private ConsoleMsgs As VBA.Collection
 Private HistoryMsgs As VBA.Collection
 Private HistoryPoint As Integer
@@ -232,7 +233,7 @@ End Property
 '                        If (Not ((Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
 '                                ((Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
 '                            'If Player.Activities.Exists(JumpGUID) Then
-'                                Do Until Not MotionExists(JumpGUID)
+'                                Do Until Not Player.MotionExists(JumpGUID)
 '                                    DeleteMotion Player, JumpGUID
 '                                Loop
 '                            'End If
@@ -266,6 +267,7 @@ Public Sub InputScene()
 
     DIKeyBoardDevice.GetDeviceStateKeyboard DIKEYBOARDSTATE
 
+    
     Dim cnt As Long
     
     For cnt = 0 To 255
@@ -280,6 +282,7 @@ Public Sub InputScene()
             If (Not TogglePress1 = DIK_ESCAPE) Then
                 TogglePress1 = DIK_ESCAPE
                 Uses(DIK_ESCAPE) = True
+                
 
                 '############################################
                 '############### UNTRAP/QUIT ################
@@ -336,7 +339,7 @@ Public Sub InputScene()
                 '############### RESET GAME #################
                 
                 ResetIdle
-                Process "reset"
+                ConsoleCommand "reload"
 
                 '############################################
                 '############################################
@@ -591,11 +594,54 @@ Public Sub InputScene()
         
     End If
 
+
+
     Exit Sub
 pausing:
 
-    Err.Clear
-    DoPauseGame
+    'Debug.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
+    'frmMain.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
+    DoEvents
+
+    If Not ConsoleVisible Then
+        ConsoleToggle
+    End If
+    
+    Dim LastCall As String
+    For cnt = 0 To 255
+        If Uses(cnt) Then
+            If LastCall <> "" Then
+                LastCall = LastCall & "+" & GetBindingText(cnt)
+            Else
+                LastCall = GetBindingText(cnt)
+            End If
+        End If
+    Next
+    
+    ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.source & "\nError: " & Err.Description & "\nOn binding: " & LastCall
+    'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
+    
+    If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear
+    If Err.Number <> 0 Then Err.Clear
+    
+    
+'    Exit Sub
+'pausing:
+'
+'    If Err.Number <> 0 Then
+'        Dim num As Long
+'        Dim des As String
+'
+'        num = Err.Number
+'
+'        des = Err.Description
+'        Err.Clear
+'        On Error GoTo 0
+'        '"An error occured during serialization." & vbCrLf
+'        Err.Raise num, , "Error: " & des
+'    End If
+    
+
 End Sub
 
 Public Sub MouseLook(ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer)
@@ -657,7 +703,9 @@ Public Sub MouseLook(ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer)
         End If
     End If
 End Sub
-
+Public Sub ConsoleCommand(ByVal Text As String)
+    ConsoleQueue.Add Text
+End Sub
 Public Property Get ConsoleVisible() As Boolean
     ConsoleVisible = Not (State = 0)
 End Property
@@ -675,6 +723,8 @@ Public Sub ConsoleToggle()
 End Sub
 
 Public Sub RenderCmds()
+
+    ConsoleProcess
 
     Select Case State
         Case 0 'up
@@ -857,7 +907,7 @@ Public Sub ConsoleInput(ByRef kState As DIKEYBOARDSTATE)
                     End If
                     HistoryPoint = HistoryMsgs.Count + 1
                     
-                    Process CommandLine
+                    ConsoleCommand CommandLine
                     
                     CommandLine = ""
                     CursorPos = 0
@@ -1174,6 +1224,7 @@ Public Sub CreateCmds()
     
     Set ConsoleMsgs = New VBA.Collection
     Set HistoryMsgs = New VBA.Collection
+    Set ConsoleQueue = New VBA.Collection
     
     Bottom = 0
     
@@ -1229,6 +1280,12 @@ Public Sub CleanupCmds()
     End If
     
     Erase Draws
+
+    If Not (ConsoleQueue Is Nothing) Then
+        Do While ConsoleQueue.Count > 0
+            ConsoleQueue.Remove 1
+        Loop
+    End If
     
     If Not (ConsoleMsgs Is Nothing) Then
         Do While ConsoleMsgs.Count > 0
@@ -1241,6 +1298,8 @@ Public Sub CleanupCmds()
             HistoryMsgs.Remove 1
         Loop
     End If
+    
+    Set ConsoleQueue = Nothing
     
     Set ConsoleMsgs = Nothing
     Set HistoryMsgs = Nothing
@@ -1266,328 +1325,350 @@ Public Sub InitialCommands()
     Dim inLine As String
     Do Until CommandsINI = ""
         inLine = RemoveNextArg(CommandsINI, vbCrLf)
-        Process inLine
+        ConsoleCommand inLine
     Loop
     
     If CurrentLoadedLevel = "" Then CurrentLoadedLevel = "Level1"
     
 End Sub
 
-Public Sub Process(ByVal inArg As String)
+Public Sub ConsoleProcess()
 
-On Error GoTo ProcessError
+    On Error GoTo ProcessError
+    
+    
+    If ConsoleQueue.Count > 0 Then
+        Dim LastCall As String
+        
+    
+        Dim inArg As String
+        inArg = ConsoleQueue.Item(1)
+        LastCall = inArg
+        ConsoleQueue.Remove 1
+        
+        Dim o As Long
+        Dim l As Long
+        Dim cnt As Long
+        Dim inNew As String
+        Dim inTmp As String
+        Dim inX As Single
+        Dim inY As Single
+        
+        Dim inCmd As String
+        
+        inCmd = RemoveNextArg(inArg, " ")
+        If Left(inCmd, 1) = "/" Then inCmd = Mid(inCmd, 2)
+        
+        Select Case Trim(LCase(inCmd))
 
-    Dim o As Long
-    Dim l As Long
-    Dim cnt As Long
-    Dim inNew As String
-    Dim inTmp As String
-    Dim inX As Single
-    Dim inY As Single
-    
-    Dim inCmd As String
-    
-    inCmd = RemoveNextArg(inArg, " ")
-    If Left(inCmd, 1) = "/" Then inCmd = Mid(inCmd, 2)
-    
-    Select Case Trim(LCase(inCmd))
-'        Case "debug"
-'            DebugMode = Not DebugMode
-'            If DebugMode Then
-'                AddMessage "Debug mode enabled."
-'            Else
-'                AddMessage "Debug mode disabled."
-'            End If
-        Case "goto"
-            
-            
-            Player.Origin = inArg
-        Case "parse"
-            If PathExists(inArg, True) Then
-                inTmp = ReadFile(inArg)
-                If inTmp <> "" Then
-                    ParseScript inTmp, , 0
+            Case "goto"
+                
+                
+                Player.Origin = inArg
+            Case "parse"
+                If PathExists(inArg, True) Then
+                    inTmp = ReadFile(inArg)
+                    If inTmp <> "" Then
+                        ParseScript inTmp, , 0
+                        AddMessage "Parse complete."
+                    Else
+                        AddMessage "Nothing to parse."
+                    End If
+                ElseIf inArg <> "" Then
                     AddMessage "Parse complete."
                 Else
                     AddMessage "Nothing to parse."
                 End If
-            ElseIf inArg <> "" Then
-                AddMessage "Parse complete."
-            Else
-                AddMessage "Nothing to parse."
-            End If
-        Case "exit", "quit", "close"
-            StopGame = True
-        Case "spectate"
-            If Not (Perspective = Spectator) Then
-                Perspective = Spectator
-                AddMessage "Changed to spectate mode."
-            Else
-                AddMessage "Already in spectate mode."
-            End If
-        Case "join"
-            If (Perspective = Spectator) Then
-                Perspective = ThirdPerson
-                AddMessage "You've entered the game."
-            Else
-                AddMessage "Already joined the game."
-            End If
-        Case "eval"
-            Process frmMain.Evaluate(inArg)
-        Case "echo"
-            inArg = Replace(inArg, "\n", vbCrLf)
-            Do Until inArg = ""
-                AddMessage RemoveNextArg(inArg, vbCrLf)
-            Loop
-        Case "fade"
-            FadeMessage inArg
-        Case "clear"
-            ClearText
-
-
-            
-        Case "help", "cmdlist", "?", "--?"
-            Select Case LCase(inArg)
-                Case "commands"
-                    
-                    AddMessage ""
-                    AddMessage "Console Commands:"
-                    AddMessage "   EXIT (completely exit out of the game)"
-                    AddMessage "   ECHO <Text> (Displays Text in the console)"
-                    AddMessage "   EVAL <Text> (Evalutes Text as a console command)"
-                    AddMessage "   FADE <Text> (Displays Text in the center of screen)"
-                    AddMessage "   DRAW <X> <Y> <Text> (Draw Text on the screen at X,Y)"
-                    AddMessage "   PRINT <Row> <Col> <Test> (Like DRAW but use row,col)"
-                    AddMessage "   CLEAR (Clears all text being drawn by DRAW or PRINT)"
-                    AddMessage "   STAT (Displays XYZ, Distance, Camera Angle and Pitch)"
-                    AddMessage "   LEVEL [<Title>] (Load a Title PX in the Levels Folder)"
-                    AddMessage "   RESET (Resets the game reloading everything like new)"
-                    AddMessage "   SPECTATE (Change in game involvement to a spectator)"
-                    AddMessage "   JOIN (Rejoins the game when yopur in spectator mode)"
-                Case "editing"
-                    AddMessage ""
-                    AddMessage "Editing Commands:"
-                    AddMessage "   REFRESH (This command will cause the engine to reload the levels PX)"
-                    AddMessage "   LOAD <file> (This command loads the specified file to be edited live)"
-                    AddMessage "   VIEW <#[-#]> (This command displays the specified line numbers text)"
-                    AddMessage "   LINES <#[-#]> (This command adds lines # to the current loaded file)"
-                    AddMessage "   EDIT <#> <text> (This command changes the specified line numbers text)"
-                    AddMessage "   SAVE (This command saves any edited changes made with a loaded file)"
-                Case Else
-                    AddMessage ""
-                    AddMessage "For detail help please type one of the following help commands:"
-                    AddMessage "   HELP COMMANDS (Displays the help of basic console commands)"
-                    AddMessage "   HELP EDITING (Displays the help of editing files in console)"
-            End Select
-
-
-        Case "stat"
-            AddMessage ""
-            AddMessage "Origin X: " & Round(CSng(Player.Origin.X), 3)
-            AddMessage "Origin Y: " & Round(CSng(Player.Origin.Y), 3)
-            AddMessage "Origin Z: " & Round(CSng(Player.Origin.Z), 3)
-            AddMessage "Distance: " & Round(CSng(DistanceEx(Player.Origin, MakePoint(0, 0, 0))), 3)
-            AddMessage "Angle: " & Round(CSng(Player.Twists.Y), 3)
-            AddMessage "Pitch: " & Round(CSng(Player.Pitch), 3)
-'        Case "credits"
-'            ShowCredits = Not ShowCredits
-'        Case "showcredits"
-'            ShowCredits = True
-'        Case "hidecredits"
-'            ShowCredits = False
-        Case "reset"
-            'AddMessage "Resetting Game."
-            WorkingScreen "Resetting..."
-            
-            CurrentLoadedLevel = ""
-            
-            CleanupLand True
-            CleanupMove
-            
-            InitialCommands
-            
-            CreateMove
-            CreateLand True
-
-            frmMain.AutoRedraw = False
-
-            AddMessage "Game Reset."
-            
-        Case "refresh"
-            WorkingScreen "Refreshing..."
-
-            CleanupLand
-            CleanupMove
- 
-            CreateMove
-            CreateLand
-            
-            frmMain.AutoRedraw = False
-            AddMessage "Game Refreshed."
-            
-        Case "level"
-            
-            If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
-
-                WorkingScreen "Loading..."
-                If Not CurrentLoadedLevel = "" Then
-                    CleanupLand
-                    CleanupMove
-                    CurrentLoadedLevel = inArg
-                    CreateMove
-                    CreateLand
+            Case "exit", "quit", "close"
+                StopGame = True
+            Case "spectate"
+                If Not (Perspective = Spectator) Then
+                    Perspective = Spectator
+                    AddMessage "Changed to spectate mode."
                 Else
-                    CurrentLoadedLevel = inArg
+                    AddMessage "Already in spectate mode."
                 End If
-                frmMain.AutoRedraw = False
+            Case "join"
+                If (Perspective = Spectator) Then
+                    Perspective = ThirdPerson
+                    AddMessage "You've entered the game."
+                Else
+                    AddMessage "Already joined the game."
+                End If
+            Case "eval"
+                ConsoleCommand "echo " & frmMain.Evaluate(inArg)
+            Case "echo"
+                inArg = Replace(inArg, "\n", vbCrLf)
+                Do Until inArg = ""
+                    AddMessage RemoveNextArg(inArg, vbCrLf)
+                Loop
+            Case "fade"
+                FadeMessage inArg
+            Case "clear"
+                ClearText
+    
+    
                 
-                AddMessage "Level Loaded."
-
-
-            Else
-                AddMessage "Invalid Level - [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
-            End If
-
-
-        Case "load"
-            If inArg = "" Then
-                If EditFileName = "" Then
-                    AddMessage "No file is loaded, use ""LOAD <name>"" to load one."
-                Else
-                    AddMessage "File loaded [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-                End If
-            Else
+            Case "help", "cmdlist", "?", "--?"
+                Select Case LCase(inArg)
+                    Case "commands"
+                        
+                        AddMessage ""
+                        AddMessage "Console Commands:"
+                        AddMessage "   EXIT (completely exit out of the game)"
+                        AddMessage "   ECHO <Text> (Displays Text in the console)"
+                        AddMessage "   EVAL <Text> (Evalutes Text as a console command)"
+                        AddMessage "   FADE <Text> (Displays Text in the center of screen)"
+                        AddMessage "   DRAW <X> <Y> <Text> (Draw Text on the screen at X,Y)"
+                        AddMessage "   PRINT <Row> <Col> <Test> (Like DRAW but use row,col)"
+                        AddMessage "   CLEAR (Clears all text being drawn by DRAW or PRINT)"
+                        AddMessage "   STAT (Displays XYZ, Distance, Camera Angle and Pitch)"
+                        AddMessage "   LEVEL [<Title>] (Load a Title PX in the Levels Folder)"
+                        AddMessage "   RESET (Resets the game reloading everything like new)"
+                        AddMessage "   SPECTATE (Change in game involvement to a spectator)"
+                        AddMessage "   JOIN (Rejoins the game when yopur in spectator mode)"
+                    Case "editing"
+                        AddMessage ""
+                        AddMessage "Editing Commands:"
+                        AddMessage "   REFRESH (This command will cause the engine to reload the levels PX)"
+                        AddMessage "   LOAD <file> (This command loads the specified file to be edited live)"
+                        AddMessage "   VIEW <#[-#]> (This command displays the specified line numbers text)"
+                        AddMessage "   LINES <#[-#]> (This command adds lines # to the current loaded file)"
+                        AddMessage "   EDIT <#> <text> (This command changes the specified line numbers text)"
+                        AddMessage "   SAVE (This command saves any edited changes made with a loaded file)"
+                    Case Else
+                        AddMessage ""
+                        AddMessage "For detail help please type one of the following help commands:"
+                        AddMessage "   HELP COMMANDS (Displays the help of basic console commands)"
+                        AddMessage "   HELP EDITING (Displays the help of editing files in console)"
+                End Select
+    
+    
+            Case "stat"
+                AddMessage ""
+                AddMessage "Origin X: " & Round(CSng(Player.Origin.X), 3)
+                AddMessage "Origin Y: " & Round(CSng(Player.Origin.Y), 3)
+                AddMessage "Origin Z: " & Round(CSng(Player.Origin.Z), 3)
+                AddMessage "Distance: " & Round(CSng(DistanceEx(Player.Origin, MakePoint(0, 0, 0))), 3)
+                AddMessage "Angle: " & Round(CSng(Player.Twists.Y), 3)
+                AddMessage "Pitch: " & Round(CSng(Player.Pitch), 3)
+    '        Case "credits"
+    '            ShowCredits = Not ShowCredits
+    '        Case "showcredits"
+    '            ShowCredits = True
+    '        Case "hidecredits"
+    '            ShowCredits = False
+            Case "reset"
+                'AddMessage "Resetting Game."
+                WorkingScreen "Resetting..."
+                
+                CurrentLoadedLevel = ""
+                
+                CleanupLand True
+                CleanupMove
+                
+                InitialCommands
+                
+                CreateMove
+                CreateLand True
+    
+                frmMain.AutoRedraw = False
+    
+                AddMessage "Game Reset."
+                
+            Case "refresh"
+                WorkingScreen "Refreshing..."
+    
+                inTmp = CurrentLoadedLevel
+                
+                CleanupLand True
+                CleanupMove
+    
+                CurrentLoadedLevel = inTmp
+                
+                CreateMove
+                CreateLand True
+                
+                frmMain.AutoRedraw = False
+                AddMessage "Game Refreshed."
+                
+            Case "reload"
+                WorkingScreen "Reloading..."
+    
+                inTmp = CurrentLoadedLevel
+                
+                CleanupLand
+                CleanupMove
+                
+                CurrentLoadedLevel = inTmp
+     
+                CreateMove
+                CreateLand
+                
+                frmMain.AutoRedraw = False
+                AddMessage "Game Reloaded."
+                
+            Case "level"
+                
                 If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
-                    EditFileName = inArg
-                    EditFileData = ReadFile(AppPath & "Levels\" & inArg & ".vbx")
-                    AddMessage "File loaded [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
-                Else
-                    AddMessage "File not found [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
-                End If
-            End If
-        Case "view"
-            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
-
-                If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
-
-                    If Not IsNumeric(NextArg(inArg, " ")) Then
-                        l = NextArg(NextArg(inArg, " "), "-")
-                        o = RemoveArg(NextArg(inArg, " "), "-")
+    
+                    WorkingScreen "Loading..."
+                    If Not CurrentLoadedLevel = "" Then
+                        CleanupLand
+                        CleanupMove
+                        CurrentLoadedLevel = inArg
+                        CreateMove
+                        CreateLand
                     Else
-                        l = NextArg(inArg, " ")
-                        o = l
+                        CurrentLoadedLevel = inArg
                     End If
-                    If l <= o Then
-                        AddMessage "Begin View"
-                        inTmp = EditFileData
-                        cnt = 1
-                        Do Until inTmp = ""
-                            If cnt >= l And cnt <= o Then
-                                AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
-                            Else
-                                RemoveNextArg inTmp, vbCrLf
-                            End If
-                            cnt = cnt + 1
-                        Loop
-                        AddMessage "End View"
+                    frmMain.AutoRedraw = False
+                    
+                    AddMessage "Level Loaded."
+    
+    
+                Else
+                    AddMessage "Invalid Level - [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
+                End If
+    
+    
+            Case "load"
+                If inArg = "" Then
+                    If EditFileName = "" Then
+                        AddMessage "No file is loaded, use ""LOAD <name>"" to load one."
+                    Else
+                        AddMessage "File loaded [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+                    End If
+                Else
+                    If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
+                        EditFileName = inArg
+                        EditFileData = ReadFile(AppPath & "Levels\" & inArg & ".vbx")
+                        AddMessage "File loaded [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
+                    Else
+                        AddMessage "File not found [" & AppPath & "Levels\" & inArg & ".vbx" & "]"
+                    End If
+                End If
+            Case "view"
+                If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+    
+                    If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
+    
+                        If Not IsNumeric(NextArg(inArg, " ")) Then
+                            l = NextArg(NextArg(inArg, " "), "-")
+                            o = RemoveArg(NextArg(inArg, " "), "-")
+                        Else
+                            l = NextArg(inArg, " ")
+                            o = l
+                        End If
+                        If l <= o Then
+                            AddMessage "Begin View"
+                            inTmp = EditFileData
+                            cnt = 1
+                            Do Until inTmp = ""
+                                If cnt >= l And cnt <= o Then
+                                    AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
+                                Else
+                                    RemoveNextArg inTmp, vbCrLf
+                                End If
+                                cnt = cnt + 1
+                            Loop
+                            AddMessage "End View"
+                        Else
+                            AddMessage "Invalid line number(s) specified."
+                        End If
                     Else
                         AddMessage "Invalid line number(s) specified."
                     End If
+                ElseIf EditFileName = "" Then
+                    AddMessage "File not loaded."
                 Else
-                    AddMessage "Invalid line number(s) specified."
+                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
-            ElseIf EditFileName = "" Then
-                AddMessage "File not loaded."
-            Else
-                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-            End If
-        Case "lines"
-            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
-                If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
-
-                    If Not IsNumeric(NextArg(inArg, " ")) Then
-                        l = NextArg(NextArg(inArg, " "), "-")
-                        o = RemoveArg(NextArg(inArg, " "), "-")
+            Case "lines"
+                If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                    If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
+    
+                        If Not IsNumeric(NextArg(inArg, " ")) Then
+                            l = NextArg(NextArg(inArg, " "), "-")
+                            o = RemoveArg(NextArg(inArg, " "), "-")
+                        Else
+                            l = NextArg(inArg, " ")
+                            o = l
+                        End If
+                        If l <= o Then
+                            inTmp = EditFileData
+                            cnt = 1
+                            Do Until inTmp = ""
+                                If cnt >= l And cnt <= o Then
+                                    inNew = inNew & vbCrLf
+                                Else
+                                    inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                                End If
+                                cnt = cnt + 1
+                            Loop
+                            EditFileData = inNew
+                            AddMessage "Blank line" & IIf(l = o, " ", "s ") & inArg & " added."
+                        Else
+                            AddMessage "Invalid line number(s) specified."
+                        End If
                     Else
-                        l = NextArg(inArg, " ")
-                        o = l
+                        AddMessage "Invalid line number(s) specified."
                     End If
-                    If l <= o Then
+                ElseIf EditFileName = "" Then
+                    AddMessage "File not loaded."
+                Else
+                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+                End If
+            Case "edit"
+                If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                    If IsNumeric(NextArg(inArg, " ")) Then
+                        l = RemoveNextArgNoTrim(inArg, " ")
                         inTmp = EditFileData
                         cnt = 1
                         Do Until inTmp = ""
-                            If cnt >= l And cnt <= o Then
-                                inNew = inNew & vbCrLf
+                            If cnt = l Then
+                                inNew = inNew & inArg & vbCrLf
+                                RemoveNextArg inTmp, vbCrLf
                             Else
                                 inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
                             End If
                             cnt = cnt + 1
                         Loop
                         EditFileData = inNew
-                        AddMessage "Blank line" & IIf(l = o, " ", "s ") & inArg & " added."
+                        AddMessage "Edited " & l & ": " & Replace(inArg, vbTab, "     ")
                     Else
                         AddMessage "Invalid line number(s) specified."
                     End If
+                ElseIf EditFileName = "" Then
+                    AddMessage "File not loaded."
                 Else
-                    AddMessage "Invalid line number(s) specified."
+                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
-            ElseIf EditFileName = "" Then
-                AddMessage "File not loaded."
-            Else
-                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-            End If
-        Case "edit"
-            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
-                If IsNumeric(NextArg(inArg, " ")) Then
-                    l = RemoveNextArgNoTrim(inArg, " ")
-                    inTmp = EditFileData
-                    cnt = 1
-                    Do Until inTmp = ""
-                        If cnt = l Then
-                            inNew = inNew & inArg & vbCrLf
-                            RemoveNextArg inTmp, vbCrLf
-                        Else
-                            inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
-                        End If
-                        cnt = cnt + 1
-                    Loop
-                    EditFileData = inNew
-                    AddMessage "Edited " & l & ": " & Replace(inArg, vbTab, "     ")
+            Case "save"
+                If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
+                    WriteFile AppPath & "Levels\" & EditFileName & ".vbx", EditFileData
+                    AddMessage "Saved data file [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
+                ElseIf EditFileName = "" Then
+                    AddMessage "File not loaded."
                 Else
-                    AddMessage "Invalid line number(s) specified."
+                    AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
-            ElseIf EditFileName = "" Then
-                AddMessage "File not loaded."
-            Else
-                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-            End If
-        Case "save"
-            If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
-                WriteFile AppPath & "Levels\" & EditFileName & ".vbx", EditFileData
-                AddMessage "Saved data file [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-            ElseIf EditFileName = "" Then
-                AddMessage "File not loaded."
-            Else
-                AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
-            End If
-        Case ""
-        Case Else
-            frmMain.ExecuteStatement inCmd & IIf(inArg <> "", " " & inArg, "")
-    End Select
-    Exit Sub
+            Case ""
+            Case Else
+                frmMain.ExecuteStatement inCmd & IIf(inArg <> "", " " & inArg, "")
+        End Select
+        Exit Sub
 ProcessError:
-
-    If Err.Number <> 0 And Err.Number <> 11 Then
-        Dim num As Long
-        Dim des As String
-        Dim src As String
-        num = Err.Number
-        src = Err.source
-        des = Err.Description
-        Err.Clear
-        On Error GoTo 0
-        '"An error occured while building a binding." & vbCrLf
-        Err.Raise num, src, "Console Input Error: " & des
+        'Debug.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
+        'frmMain.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
+        DoEvents
+    
+        If Not ConsoleVisible Then ConsoleToggle
+        ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.source & "\nError: " & Err.Description & "\n" & LastCall
+        'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source  & "\nError: " & Err.Description & "\n" & LastCall
+        
+        If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear
+        If Err.Number <> 0 Then Err.Clear
     End If
 End Sub
 

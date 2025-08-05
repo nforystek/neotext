@@ -49,7 +49,7 @@ player <player>
 
 element <pawn7>
 {
-	.visible=true
+	.visible=false
 	.origin=[4, 0, 0]
 	.scaled=[.50 ,.50, .50]
 	.rotate=[0, 0, 0]
@@ -439,7 +439,15 @@ light
 	.diffusemax=-30
 	.sunlight=true
 }
-
+board <mirror> {
+	.visible=true
+	.origin = [2,0,-1.5]
+	.Point1 = [2,0,-1.5]
+	.Point2 = [3,0,-1.5]
+	.Point3 = [3,3,-1.5]
+	.Point4 = [2,3,-1.5]
+	.filename = "pawn.bmp"
+}
 
 
 board <water>
@@ -554,7 +562,7 @@ board <dime>
 {
 	.filename="stonegray.bmp"
 }
-board
+board <bubbles1>
 {
 	.visible=true
 	.point1=[ 1.6, -1, -2]
@@ -574,7 +582,7 @@ board
 	.filename="bubbles8.bmp"
 
 }
-board
+board <bubbles2>
 {
 	.visible=true
 	.point1=[-0.6, -1, 2]
@@ -618,7 +626,7 @@ beacon <firegraphic>
 	.beaconlight=1
 	.verticalskew=true
 }
-beacon
+beacon <bubble1>
 {
 	.visible=true
 	.origin=[ -2.23, 0.33, -0.88]
@@ -628,7 +636,7 @@ beacon
 	.beaconlight=1
 	.verticallock=true
 }
-beacon
+beacon <bubble2>
 {
 	.visible=true
 	.origin=[ -0.90, -1.89, -407.10]
@@ -637,7 +645,7 @@ beacon
 	.beaconlight=1
 	.translucent=true
 }
-beacon
+beacon <smoke>
 {
 	.visible=true
 	.origin=[ -2.255, 0.27, 0.64]
@@ -671,7 +679,7 @@ beacon
 	.beaconlight=1
 	.roundingcut=45
 }
-beacon
+beacon <spring1>
 {
 	.visible=true
 	.origin=[ -2.75, 0.8, 16.75]
@@ -691,7 +699,7 @@ beacon
 	.filename="waterleak12.bmp"
 	.beaconlight=1
 }
-beacon
+beacon <spring2>
 {
 	.visible=true
 	.origin=[ -3.9, 1.7, 18.25]
@@ -711,7 +719,7 @@ beacon
 	.filename="waterleak12.bmp"
 	.beaconlight=1
 }
-beacon
+beacon <spring3>
 {
 	.visible=true
 	.origin=[ -3.09, 2.5, 19.97]
@@ -732,7 +740,7 @@ beacon
 	.beaconlight=1
 }
 
-beacon
+beacon <spring4>
 {
 	.visible=true
 	.origin=[ -1.45 ,3.55, 20.78]
@@ -752,7 +760,7 @@ beacon
 	.filename="waterleak12.bmp"
 	.beaconlight=1
 }
-beacon
+beacon <spring5>
 {
 	.visible=true
 	.origin=[ -0.64, 0.5, 15.5]
@@ -774,7 +782,7 @@ beacon
 }
 
 
-beacon
+beacon <spring6>
 {
 	.visible=true
 	.origin=[ 0.10, 0.5, 15.82]
@@ -797,7 +805,7 @@ beacon
 
 
 
-beacon
+beacon <spring7>
 {
 	.visible=true
 	.origin=[ 0.75 ,0.5 ,16.32]
@@ -820,7 +828,7 @@ beacon
 
 
 
-beacon
+beacon <spring8>
 {
 	.visible=true
 	.origin=[ 1.27 ,0.5 ,16.92]
@@ -842,7 +850,7 @@ beacon
 }
 
 
-beacon
+beacon <spring9>
 {
 	.visible=true
 	.origin=[1.59, 0.5, 17.68]
@@ -863,7 +871,7 @@ beacon
 	.beaconlight=1
 }
 
-beacon
+beacon <spring10>
 {
 	.visible=true
 	.origin=[ 1.65, 0.5 ,18.51]
@@ -884,7 +892,7 @@ beacon
 	.beaconlight=1
 }
 
-beacon
+beacon <spring11>
 {
 	.visible=true
 	.origin=[ 1.56 ,0.5, 19.35]
@@ -904,7 +912,7 @@ beacon
 	.filename="waterleak12.bmp"
 	.beaconlight=1
 }
-beacon
+beacon <spring12>
 {
 	.visible=true
 	.origin=[ 1.27, 0.5, 20.07]
@@ -924,7 +932,7 @@ beacon
 	.filename="waterleak12.bmp"
 	.beaconlight=1
 }
-beacon
+beacon <spring13>
 {
 	.visible=true
 	.origin=[ 0.76, 0.5, 20.71]
@@ -1621,17 +1629,17 @@ portal
 {
 	.location=[7.09, 1.35, 1.71]
 	.range=0.3
-	.clearmotions
+
 	motion <jump1> {
 		.action=1
 		.data=[0, 1, 0]
-		.emphasis=0.4
-		.friction=0.2
+		.emphasis=0.5
+		.friction=0.1
 	}
 	motion <move1> {
 		.action=1
 		.data=[0, 0, -1]
-		.emphasis=0.005
+		.emphasis=0.05
 		.friction=0.01
 	}
 
@@ -1917,19 +1925,40 @@ method <checkgame>
 			decals.visible=false
 			restrooms.visible=false
 			nautical.visible=false
-			posting.visible=false
 			pawn1.visible=false
 			pawn2.visible=false
+			pawn3.visible=false
+			pawn7.visible=false
+			spring1.visible=false
+			spring2.visible=false
+			spring3.visible=false
+			spring4.visible=false
+			spring5.visible=false
+			spring6.visible=false
+			spring7.visible=false
+			spring8.visible=false
+			spring9.visible=false
+			spring10.visible=false
+			spring11.visible=false
+			spring12.visible=false
+			spring13.visible=false
 			diamond1.visible=false
 			diamond2.visible=false
 			waters.visible=false
-			player.x=-45.898
-			player.y=8.533
-			player.z=19.434
+			bubbles1.visible=false
+			bubbles2.visible=false
+			firegraphic.visible=false
+			bubble1.visible=false
+			bubble2.visible=false
+			smoke.visible=false
+			player.origin.x=-45.898
+			player.origin.y=8.533
+			player.origin.z=19.434
 			player.angle=-0.57
 			player.pitch=1.327
+			
 
-			process "level level2"
+			'Console "level level2"
 		end if
 
 ]

@@ -1,12 +1,12 @@
 <?xml version="1.0"?><Serial>  <Variables>
-        <Player.Origin>[2.827151, -0.126, 0.018011]</Player.Origin>
+        <Player.Origin>[-6.296659, -1.799201, -12.48209]</Player.Origin>
         <orders>0</orders>
         <firevix1var>2</firevix1var>
-        <firevix2var>1</firevix2var>
-        <firevix3var>3</firevix3var>
+        <firevix2var>3</firevix2var>
+        <firevix3var>1</firevix3var>
         <windvix1var>2</windvix1var>
-        <windvix2var>1</windvix2var>
-        <windvix3var>3</windvix3var>
+        <windvix2var>3</windvix2var>
+        <windvix3var>1</windvix3var>
         <upriver>False</upriver>
         <hudwaterimg.visible>True</hudwaterimg.visible>
         <dudwaterimg.visible>False</dudwaterimg.visible>
@@ -24,11 +24,11 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.80626, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -704.703, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.80626, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.805873, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -2141.015, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.69763, -1.805873, -13.07035]</pawn3.origin>
   </Variables>
-<DateTime>7%2F31%2F2025+1%3A58%3A58+AM</DateTime>
+<DateTime>8%2F4%2F2025+8%3A55%3A50+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
 Bindings%2EMouseInput%3D2
 

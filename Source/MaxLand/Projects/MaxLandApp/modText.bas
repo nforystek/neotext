@@ -66,54 +66,81 @@ Public Sub CreateText()
     Set MainFontDesc = Fnt
     Set MainFont = D3DX.CreateFont(DDevice, MainFontDesc.hFont)
 
-    GenericMaterial.Ambient.a = 1
+    GenericMaterial.Ambient.A = 1
     GenericMaterial.Ambient.r = 1
     GenericMaterial.Ambient.g = 1
-    GenericMaterial.Ambient.b = 1
-    GenericMaterial.Diffuse.a = 1
+    GenericMaterial.Ambient.B = 1
+    GenericMaterial.Diffuse.A = 1
     GenericMaterial.Diffuse.r = 1
     GenericMaterial.Diffuse.g = 1
-    GenericMaterial.Diffuse.b = 1
-    GenericMaterial.power = 1
+    GenericMaterial.Diffuse.B = 1
+    GenericMaterial.Power = 1
 
-    LucentMaterial.Ambient.a = 1
+    LucentMaterial.Ambient.A = 1
     LucentMaterial.Ambient.r = 1
     LucentMaterial.Ambient.g = 1
-    LucentMaterial.Ambient.b = 1
-    LucentMaterial.Diffuse.a = 1
+    LucentMaterial.Ambient.B = 1
+    LucentMaterial.Diffuse.A = 1
     LucentMaterial.Diffuse.r = 0
     LucentMaterial.Diffuse.g = 0
-    LucentMaterial.Diffuse.b = 0
-    LucentMaterial.power = 1
+    LucentMaterial.Diffuse.B = 0
+    LucentMaterial.Power = 1
 
-    SpecialMaterial.Ambient.a = 0
+    SpecialMaterial.Ambient.A = 0
     SpecialMaterial.Ambient.r = 0.89
     SpecialMaterial.Ambient.g = 0.89
-    SpecialMaterial.Ambient.b = 0.89
-    SpecialMaterial.Diffuse.a = 0.4
+    SpecialMaterial.Ambient.B = 0.89
+    SpecialMaterial.Diffuse.A = 0.4
     SpecialMaterial.Diffuse.r = 0.01
     SpecialMaterial.Diffuse.g = 0.01
-    SpecialMaterial.Diffuse.b = 0.01
-    SpecialMaterial.Specular.a = 0
+    SpecialMaterial.Diffuse.B = 0.01
+    SpecialMaterial.Specular.A = 0
     SpecialMaterial.Specular.r = 0.5
     SpecialMaterial.Specular.g = 0.5
-    SpecialMaterial.Specular.b = 0.5
-    SpecialMaterial.emissive.a = 0.3
+    SpecialMaterial.Specular.B = 0.5
+    SpecialMaterial.emissive.A = 0.3
     SpecialMaterial.emissive.r = 0.21
     SpecialMaterial.emissive.g = 0.3
-    SpecialMaterial.emissive.b = 0.3
-    SpecialMaterial.power = 0
+    SpecialMaterial.emissive.B = 0.3
+    SpecialMaterial.Power = 0
 
     Set DefaultRenderTarget = DDevice.GetRenderTarget
     Set DefaultStencilDepth = DDevice.GetDepthStencilSurface
 
-'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-'    Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
-'    Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+    Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
+    Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+
+        
+
+'    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+'
+'
+' '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
+''
+''    DDevice.GetFrontBuffer ReflectFrontBuffer
+'
+'
+'
+'
+' '   DDevice.SetClipPlane
+'
+'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+'
+'    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+'
+' '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+
 
 End Sub
 
 Public Sub CleanupText()
+    Set DefaultRenderTarget = Nothing
+    Set DefaultStencilDepth = Nothing
+    Set BufferedTexture = Nothing
+    Set ReflectRenderTarget = Nothing
+    Set ReflectStencilDepth = Nothing
+    
     Set MainFont = Nothing
     Set MainFontDesc = Nothing
     Set Fnt = Nothing
