@@ -5,9 +5,6 @@ Option Explicit
 Option Compare Binary
 Option Private Module
 
-
-
-
 Public Type MyMesh
     Mesh As D3DXMesh
 
@@ -1162,10 +1159,6 @@ serialerror:
     frmMain.Reset
     
 
-    If Not All Is Nothing Then
-        All.Clear
-        Set All = Nothing
-    End If
 
 
     ShowCredits = False
@@ -1186,15 +1179,17 @@ serialerror:
         
         
     If Not Elements Is Nothing Then
-'        Dim e As Element
-'
-'        Do While Elements.Count > 0
-'            Set e = Elements(1)
-'            e.ClearMotions
-'            Elements.Remove 1
-'            Set e = Nothing
-'        Loop
-        Elements.Clear
+        Dim e As Element
+        o = 1
+        Do While o <= Elements.Count
+            Elements(o).AttachedTo = ""
+            Elements(o).ClearMotions
+            o = o + 1
+        Loop
+        
+        Do While Elements.Count > 0
+            Elements.Remove 1
+        Loop
         
         Set Elements = Nothing
     End If
@@ -1275,7 +1270,13 @@ serialerror:
         Erase Waves
         Set Sounds = Nothing
     End If
-    
+
+    If Not All Is Nothing Then
+        All.Clear
+        Set All = Nothing
+    End If
+
+
     CurrentLoadedLevel = ""
     
 End Sub

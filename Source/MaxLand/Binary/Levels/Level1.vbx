@@ -50,14 +50,14 @@ player <player>
 element <pawn7>
 {
 	.visible=false
-	.origin=[4, 0, 0]
+	.origin=[1, 0, 0]
 	.scaled=[.50 ,.50, .50]
 	.rotate=[0, 0, 0]
 	.offset=[0, 0, 0]
 	.boundsmodel="bounds-pawn.x"
 	.visualmodel="visual-pawn.x"
-	.gravitational=true
-	.attachedto = "player"
+	.gravitational=false
+	'.attachedto = "player"
 }
 
 
@@ -1957,7 +1957,7 @@ method <checkgame>
 			player.angle=-0.57
 			player.pitch=1.327
 			
-
+			
 			'Console "level level2"
 		end if
 
@@ -2270,6 +2270,12 @@ variable <data>=9
 
 serialize [
 	Player.Origin
+	Player.Rotate
+	Player.Angle
+	Player.Pitch
+	Player.Zoom
+	pawn7.Origin
+	pawn7.Rotate
 	orders
 	firevix1var
 	firevix2var

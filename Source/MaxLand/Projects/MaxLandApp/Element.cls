@@ -195,7 +195,15 @@ Public Property Get AttachedTo() As String
 End Property
 Public Property Let AttachedTo(ByVal RHS As String)
     If pAttachedTo <> "" Then
-        All(pAttachedTo).Attachments.Remove Me.Key
+        If All.Exists(pAttachedTo) Then
+            If All(pAttachedTo).Attachments.Exists(Me.Key) Then
+                All(pAttachedTo).Attachments.Remove Me.Key
+            End If
+            
+            Set Rotate = VectorMultiplyBy(AngleAxisDeduction(VectorMultiplyBy(Rotate, RADIAN), VectorMultiplyBy(All(pAttachedTo).Rotate, RADIAN)), DEGREE)
+            Set Origin = VectorDeduction(Origin, All(pAttachedTo).Origin)
+            
+        End If
     End If
     pAttachedTo = RHS
     If RHS <> "" Then
@@ -203,6 +211,10 @@ Public Property Let AttachedTo(ByVal RHS As String)
             Set All(pAttachedTo).Attachments = New NTNodes10.Collection
         End If
         All(pAttachedTo).Attachments.Add Me, RHS
+        Set Origin = VectorAddition(Origin, All(pAttachedTo).Origin)
+
+        Set Rotate = VectorMultiplyBy(AngleAxisAddition(VectorMultiplyBy(Rotate, RADIAN), VectorMultiplyBy(All(pAttachedTo).Rotate, RADIAN)), DEGREE)
+
     End If
     
 End Property
@@ -569,9 +581,12 @@ Public Property Let Gravitational(ByVal RHS As Boolean)
 End Property
 
 Friend Sub PrepairMatrix()
-                        
+
     D3DXMatrixIdentity Matrix
-    D3DXMatrixTranslation Matrix, pOffset.X, pOffset.Y, pOffset.Z
+    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+'    D3DXMatrixRotationX Matrix, 0
+'    D3DXMatrixRotationY Matrix, 0
+'    D3DXMatrixRotationZ Matrix, 0
     D3DXMatrixRotationX Matrix, pRotate.X * RADIAN
     D3DXMatrixRotationY Matrix, pRotate.Y * RADIAN
     D3DXMatrixRotationZ Matrix, pRotate.Z * RADIAN
@@ -609,10 +624,14 @@ Friend Sub ApplyMatrix()
     D3DXMatrixIdentity matWorld
     D3DXMatrixIdentity matMesh
 
-    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
-    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
-    D3DXMatrixMultiply Matrix, matMesh, Matrix
-    DDevice.SetTransform D3DTS_WORLD, Matrix
+   ' If (pAttachedTo = "") Then
+   
+        D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+        D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
+        D3DXMatrixMultiply Matrix, matMesh, Matrix
+        DDevice.SetTransform D3DTS_WORLD, Matrix
+    
+   ' End If
     
     D3DXMatrixRotationX matMesh, Rotate.X * (PI / 180)
     D3DXMatrixMultiply Matrix, matMesh, Matrix
@@ -622,11 +641,13 @@ Friend Sub ApplyMatrix()
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
 
-
-'    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
-'    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
-'    D3DXMatrixMultiply Matrix, matMesh, Matrix
-'    DDevice.SetTransform D3DTS_WORLD, Matrix
+   ' If (pAttachedTo <> "") Then
+    
+'        D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
+'        D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
+'        D3DXMatrixMultiply Matrix, matMesh, Matrix
+'        DDevice.SetTransform D3DTS_WORLD, Matrix
+   ' End If
     
     D3DXMatrixTranslation matMesh, Offset.X, Offset.Y, Offset.Z
     D3DXMatrixMultiply Matrix, matMesh, Matrix
@@ -738,9 +759,15 @@ Private Sub Class_Terminate()
         Set pMotions = Nothing
     End If
     
+    AttachedTo = "" 'relocalizes
+    
     If Not pAttachments Is Nothing Then
+        Dim e As Element
         Do Until pAttachments.Count = 0
+            Set e = pAttachments(1)
+            
             pAttachments.Remove 1
+            Set e = Nothing
         Loop
         Set pAttachments = Nothing
     End If

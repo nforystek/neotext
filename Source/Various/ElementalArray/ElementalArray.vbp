@@ -12,7 +12,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Apartments"
-CondComp="ElementalArray=-1:VBIDE=-1:modMain=-1"
+CondComp="ElementalArray = -1 : VBIDE = -1 : modMain = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

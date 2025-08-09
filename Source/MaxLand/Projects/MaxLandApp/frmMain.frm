@@ -142,3 +142,6 @@ Private Sub DebugPrint(ByVal txt As String)
     Debug.Print txt
 End Sub
 
+Private Sub Form_Resize()
+    MouseOverCanvas 0, 0
+End Sub

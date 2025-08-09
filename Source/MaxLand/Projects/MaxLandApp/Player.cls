@@ -72,7 +72,7 @@ Public Property Get Angle() As Single
 End Property
 Public Property Let Angle(ByVal RHS As Single)
     pAngle = RHS
-    Player.Twists.Y = ((pAngle * DEGREE) - Player.Rotate.Y)
+    Player.Twists.Y = (Player.Twists.Y + (pAngle * DEGREE)) - Player.Rotate.Y
 End Property
 
 Public Property Get Pitch() As Single
@@ -126,16 +126,16 @@ End Sub
 
 Public Sub LookLeft(Optional ByVal Measure As Single = 0.015)
 
-    If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - -Measure)
+    If Not Perspective = CameraMode Then Player.Angle = (Player.Angle + Measure)
     If Player.Angle < -(PI * 2) Then Player.Angle = (Player.Angle + (PI * 2))
-    Player.Twists.Y = 1
+    'Player.Twists.Y = 1
     
 End Sub
 Public Sub LookRight(Optional ByVal Measure As Single = 0.015)
 
     If Not Perspective = CameraMode Then Player.Angle = (Player.Angle - Measure)
     If Player.Angle > (PI * 2) Then Player.Angle = (Player.Angle - (PI * 2))
-    Player.Twists.Y = -1
+    'Player.Twists.Y = -1
     
 End Sub
 Public Sub LookUp(Optional ByVal Measure As Single = 0.015)
@@ -147,7 +147,7 @@ End Sub
 
 Public Sub LookDown(Optional ByVal Measure As Single = 0.015)
 
-    Player.Pitch = Player.Pitch - -Measure
+    Player.Pitch = Player.Pitch + Measure
     If Player.Pitch > 1.5 Then Player.Pitch = 1.5
 
 End Sub

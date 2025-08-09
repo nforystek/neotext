@@ -1,0 +1,43 @@
+Type=OleExe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{8F0D99A3-14DB-48B0-8674-12996627496E}#6.3#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\VBA\VBA6\APC63.dll#Microsoft APC 6.3 Object Library
+Reference=*\G{0002E157-0000-0000-C000-000000000046}#5.3#0#..\..\..\..\Program Files\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB#Microsoft Visual Basic for Applications Extensibility 5.3
+Reference=*\G{1A9C764D-90CE-47F5-A0DB-C2BBB9D863AB}#34.0#0#..\..\..\Projects\AddrPool\AddrPool.exe#A custom service for matters.
+Module=Module1; Module1.bas
+Class=Plane; Plane.cls
+Class=Plot; Plot.cls
+Class=Point; Point.cls
+Module=Module2; Module2.bas
+Startup="Sub Main"
+HelpFile=""
+Title="Project1"
+Command32=""
+Name="Project1"
+HelpContextID="0"
+CompatibleMode="1"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Neotext"
+CondComp="VBIDE = -1"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+DebugStartupOption=0
+
+[MS Transaction Server]
+AutoRefresh=1

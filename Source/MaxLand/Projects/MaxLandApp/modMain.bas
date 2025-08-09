@@ -22,14 +22,18 @@ Public DebugMode As Boolean
 
 Public Surface As Boolean
 Public AspectRatio As Single
+Public ScriptDebug As Boolean
 Public TrapMouse As Boolean
-Public PauseGame As Boolean
+
 Public StopGame As Boolean
+Public PauseGame As Boolean
+Public CameraClip As Boolean
+
 Public ShowHelp As Boolean
 Public ShowStat As Boolean
 Public ShowCredits As Boolean
-Public CameraClip As Boolean
-Public ScriptDebug As Boolean
+
+
 
 Public FPSTimer As Double
 Public FPSCount As Long
@@ -111,7 +115,7 @@ Public Sub Main()
         JumpGUID = Replace(modGuid.GUID, "-", "")
         
         SetMotion GlobalGravityDirect, Actions.Directing, MakePoint(0, -0.2, 0), 1
-        SetMotion GlobalGravityRotate, Actions.Rotating, MakePoint(0, 0, 0), 0
+        SetMotion GlobalGravityRotate, Actions.Rotating, MakePoint(0, 0.02, 0), 2
         SetMotion GlobalGravityScaled, Actions.Scaling, MakePoint(0, 0, 0), 0
         
         SetMotion LiquidGravityDirect, Actions.Directing, MakePoint(0, -0.005, 0), 2
@@ -173,89 +177,89 @@ Public Sub Main()
                                                    
                 DDevice.BeginScene
     
-                elapsed = Timer
+                'elapsed = Timer
                 SetupWorld
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderMotion
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderPlanes
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderPlanes: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlanes: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderWorld
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderPlayer
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderBoards
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderLucent
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderBeacons
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderPortals
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderCameras
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 RenderRoutine
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "RenderRoutine: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderRoutine: " & elapsed
                 
                 On Error GoTo 0
         
-                elapsed = Timer
+                'elapsed = Timer
                 InputMove
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "InputMove: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "InputMove: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 ResetMotion
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "ResetMotion: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ResetMotion: " & elapsed
                 
-                elapsed = Timer
+                'elapsed = Timer
                 InputScene
-                elapsed = (Timer - elapsed)
-                If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
                 
                 If Not PauseGame Then
                     
-                    elapsed = Timer
+                    'elapsed = Timer
                     RenderInfo
-                    elapsed = (Timer - elapsed)
-                    If elapsed > 0 Then Debug.Print "RenderInfo: " & elapsed
+                    'elapsed = (Timer - elapsed)
+                    'If elapsed > 0 Then Debug.Print "RenderInfo: " & elapsed
                     
-                    elapsed = Timer
+                    'elapsed = Timer
                     RenderCmds
-                    elapsed = (Timer - elapsed)
-                    If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
+                    'elapsed = (Timer - elapsed)
+                    'If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
       
                     DDevice.EndScene
 
@@ -271,7 +275,7 @@ Public Sub Main()
                     If Err.Number Then
                         Err.Clear
                         DoPauseGame
-                    End If
+                        End If
                     On Error GoTo 0
                 Else
                     DoTasks
@@ -591,8 +595,8 @@ Public Sub InitDirectX()
 
     InitialDevice frmMain.hwnd
     
-    Set DSound = dx.DirectSoundCreate("")
-    DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
+'    Set DSound = dx.DirectSoundCreate("")
+'    DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
         
 End Sub
 
@@ -712,11 +716,14 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     
         If frmMain.WindowState = vbMinimized Then frmMain.WindowState = IIf(FullScreen, vbMaximized, vbNormal)
 
-'        On Error Resume Next
-'        Set DSound = dx.DirectSoundCreate("")
-'        DSound.SetCooperativeLevel frmMain.hWnd, DSSCL_PRIORITY
-'        If Err.Number <> 0 Then Err.Clear
-'        On Error GoTo 0
+        On Error Resume Next
+        Set DSound = dx.DirectSoundCreate("")
+        DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
+        If Err.Number <> 0 Then
+            Err.Clear
+            DisableSound = True
+        End If
+        On Error GoTo 0
 
         Dim shArray() As Long
         Dim shLength As Long
@@ -751,146 +758,11 @@ Private Sub InitialDevice(ByVal hwnd As Long)
 End Sub
 
 
-'Public Sub InitDirectX()
-'
-'    Set dx = New DirectX8
-'    Set D3D = dx.Direct3DCreate
-'    Set D3DX = New D3DX8
-'
-'    D3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, Display
-'
-'    D3DWindow.BackBufferCount = 1
-'    D3DWindow.BackBufferWidth = CDbl(NextArg(Resolution, "x"))
-'    D3DWindow.BackBufferHeight = CDbl(RemoveArg(Resolution, "x"))
-'    D3DWindow.BackBufferFormat = Display.Format
-'
-'    If Not FullScreen Then
-'        D3DWindow.Windowed = 1
-'        D3DWindow.SwapEffect = D3DSWAPEFFECT_FLIP
-'    Else
-'        D3DWindow.SwapEffect = D3DSWAPEFFECT_COPY
-'        D3DWindow.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE
-'       ' D3DWindow.FullScreen_RefreshRateInHz = 0
-'    End If
-'
-'    D3DWindow.MultiSampleType = D3DMULTISAMPLE_NONE
-'
-''    If Not FullScreen Then
-''        D3DWindow.Windowed = 1
-''        D3DWindow.SwapEffect = D3DSWAPEFFECT_FLIP
-''    Else
-''        D3DWindow.SwapEffect = D3DSWAPEFFECT_COPY
-''        D3DWindow.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE
-''    End If
-'
-'    D3DWindow.hDeviceWindow = frmMain.hwnd
-'
-'    D3DWindow.AutoDepthStencilFormat = D3DFMT_D16
-'    D3DWindow.EnableAutoDepthStencil = True
-'
-'    On Error Resume Next
-'    Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, D3DWindow)
-'    If Err.Number <> 0 Then
-'        Err.Clear
-'        Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.hwnd, D3DCREATE_MIXED_VERTEXPROCESSING, D3DWindow)
-'        If Err.Number <> 0 Then
-'            Err.Clear
-'            Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, D3DWindow)
-'        End If
-'    End If
-'    On Error GoTo 0
-'
-'    If Not DDevice Is Nothing Then
-'
-'        DDevice.SetRenderState D3DRS_ZENABLE, 1
-'        DDevice.SetRenderState D3DRS_LIGHTING, 1
-'        DDevice.SetRenderState D3DRS_DITHERENABLE, False
-'        DDevice.SetRenderState D3DRS_EDGEANTIALIAS, False
-'
-'        DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
-'        DDevice.SetRenderState D3DRS_VERTEXBLEND, False
-'
-'        DDevice.SetRenderState D3DRS_CLIPPING, 1
-'
-'        DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-'        DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-'
-'        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
-'        DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-'
-'        DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
-'        DDevice.SetTextureStageState 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-'
-'        DDevice.SetTextureStageState 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
-'        DDevice.SetTextureStageState 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
-'        DDevice.SetTextureStageState 0, D3DTSS_MAXANISOTROPY, 16
-'        DDevice.SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
-'        DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-'
-'        DDevice.SetTextureStageState 1, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1
-'        DDevice.SetTextureStageState 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE
-'
-'        DDevice.SetTextureStageState 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP
-'        DDevice.SetTextureStageState 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP
-'        DDevice.SetTextureStageState 1, D3DTSS_MAXANISOTROPY, 16
-'        DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
-'        DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
-'
-'        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-'        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-'
-'        DDevice.SetRenderState D3DRS_ALPHAREF, Transparent
-'        DDevice.SetRenderState D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL
-'        DDevice.SetRenderState D3DRS_ZFUNC, D3DCMP_LESSEQUAL
-'
-'        DDevice.SetRenderState D3DRS_FOGENABLE, 1
-'        DDevice.SetRenderState D3DRS_FOGTABLEMODE, D3DFOG_LINEAR
-'        DDevice.SetRenderState D3DRS_FOGVERTEXMODE, D3DFOG_NONE
-'        DDevice.SetRenderState D3DRS_RANGEFOGENABLE, False
-'        DDevice.SetRenderState D3DRS_FOGSTART, FloatToDWord(FadeDistance / 4)
-'        DDevice.SetRenderState D3DRS_FOGEND, FloatToDWord(FadeDistance)
-'        DDevice.SetRenderState D3DRS_FOGCOLOR, D3DColorARGB(255, 184, 200, 225)
-'
-'        If frmMain.WindowState = vbMinimized Then frmMain.WindowState = IIf(FullScreen, vbMaximized, vbNormal)
-'
-'        On Error Resume Next
-'
-'        Set DSound = dx.DirectSoundCreate("")
-'        DSound.SetCooperativeLevel frmMain.hWnd, DSSCL_PRIORITY
-'        If Err.Number <> 0 Then
-'            Err.Clear
-'            DisableSound = True
-'        End If
-'        On Error GoTo 0
-'
-'        Dim shArray() As Long
-'        Dim shLength As Long
-'        Dim shCode As D3DXBuffer
-'
-'        Set shCode = D3DX.AssembleShader("ps.1.0" & vbCrLf & _
-'                                            "tex t0" & vbCrLf & _
-'                                            "mul r0, t0,v0" & vbCrLf, 0, Nothing)
-'        shLength = shCode.GetBufferSize() / 4
-'        ReDim shArray(shLength - 1) As Long
-'        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
-'        PixelShaderDefault = DDevice.CreatePixelShader(shArray(0))
-'        Set shCode = Nothing
-'
-'        Set shCode = D3DX.AssembleShader("ps.1.1" & vbCrLf & _
-'                                            "tex t0" & vbCrLf & _
-'                                            "mov r0,t0" & vbCrLf, 0, Nothing)
-'        shLength = shCode.GetBufferSize() / 4
-'        ReDim shArray(shLength - 1) As Long
-'        D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
-'        PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
-'        Set shCode = Nothing
-'    End If
-'End Sub
-
 Public Sub DoPauseGame()
     PauseGame = True
     TermGameData
     TermDirectX
+    frmMain.WindowState = 1
 End Sub
 
 

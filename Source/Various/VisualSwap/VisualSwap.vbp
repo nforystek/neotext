@@ -16,7 +16,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Computer Science"
-CondComp="VisualSwap=-1:VBIDE=-1:Project1=-1:modMain=-1:modCommon=-1"
+CondComp="VisualSwap = -1 : VBIDE = -1 : Project1 = -1 : modMain = -1 : modCommon = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
