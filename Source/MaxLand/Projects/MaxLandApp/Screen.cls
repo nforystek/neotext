@@ -23,7 +23,7 @@ Private pVerticies(0 To 4) As MyScreen
 
 Private pTranslucent As Boolean
 Private pAlphablend As Boolean
-Private pCoordinate As Coord
+Private pCoordinate As Plot
 Private pDimensions As ImageDimensions
 
 Private pPadding As Long
@@ -136,21 +136,21 @@ Public Property Let FileName(ByVal RHS As String)
     End If
 End Property
 
-Public Property Get Coordinate() As Coord
+Public Property Get Coordinate() As Plot
     Set Coordinate = pCoordinate
 End Property
-Public Property Set Coordinate(ByRef RHS As Coord)
+Public Property Set Coordinate(ByRef RHS As Plot)
     Set pCoordinate = RHS
     ResetVerticies
 End Property
 
-Public Property Get Dimensions() As Coord
-    Set Dimensions = New Coord
+Public Property Get Dimensions() As Plot
+    Set Dimensions = New Plot
     Dimensions.X = pDimensions.Width
     Dimensions.Y = pDimensions.Height
 End Property
 
-Public Property Set Dimensions(ByRef RHS As Coord)
+Public Property Set Dimensions(ByRef RHS As Plot)
     pDimensions.Width = RHS.X
     pDimensions.Height = RHS.Y
     ResetVerticies
@@ -206,7 +206,7 @@ End Sub
 
 Private Sub Class_Initialize()
     Stats_Image_Count = Stats_Image_Count + 1
-    Set pCoordinate = New Coord
+    Set pCoordinate = New Plot
     pVerticies(0) = MakeScreen(0, 0, -1, 0, 0)
     pVerticies(1) = MakeScreen(0, 0, -1, 1, 0)
     pVerticies(2) = MakeScreen(0, 0, -1, 0, 1)

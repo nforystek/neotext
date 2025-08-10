@@ -93,10 +93,10 @@ Public Property Set Point4(ByRef RHS As Point)
     RecreateSkins
 End Property
 
-Public Property Get Point1UV() As Coord
-    Set Point1UV = MakeCoord(pPoint1.tu, pPoint1.tv)
+Public Property Get Point1UV() As Plot
+    Set Point1UV = MakePlot(pPoint1.tu, pPoint1.tv)
 End Property
-Public Property Set Point1UV(ByRef RHS As Coord)
+Public Property Set Point1UV(ByRef RHS As Plot)
     With pPoint1
         .tu = RHS.X
         .tv = RHS.Y
@@ -105,10 +105,10 @@ Public Property Set Point1UV(ByRef RHS As Coord)
     RecreateSkins
 End Property
 
-Public Property Get Point2UV() As Coord
-    Set Point2UV = MakeCoord(pPoint2.tu, pPoint2.tv)
+Public Property Get Point2UV() As Plot
+    Set Point2UV = MakePlot(pPoint2.tu, pPoint2.tv)
 End Property
-Public Property Set Point2UV(ByRef RHS As Coord)
+Public Property Set Point2UV(ByRef RHS As Plot)
     With pPoint2
         .tu = RHS.X
         .tv = RHS.Y
@@ -117,10 +117,10 @@ Public Property Set Point2UV(ByRef RHS As Coord)
     RecreateSkins
 End Property
 
-Public Property Get Point3UV() As Coord
-    Set Point3UV = MakeCoord(pPoint3.tu, pPoint3.tv)
+Public Property Get Point3UV() As Plot
+    Set Point3UV = MakePlot(pPoint3.tu, pPoint3.tv)
 End Property
-Public Property Set Point3UV(ByRef RHS As Coord)
+Public Property Set Point3UV(ByRef RHS As Plot)
     With pPoint3
         .tu = RHS.X
         .tv = RHS.Y
@@ -129,10 +129,10 @@ Public Property Set Point3UV(ByRef RHS As Coord)
     RecreateSkins
 End Property
 
-Public Property Get Point4UV() As Coord
-    Set Point4UV = MakeCoord(pPoint4.tu, pPoint4.tv)
+Public Property Get Point4UV() As Plot
+    Set Point4UV = MakePlot(pPoint4.tu, pPoint4.tv)
 End Property
-Public Property Set Point4UV(ByRef RHS As Coord)
+Public Property Set Point4UV(ByRef RHS As Plot)
     With pPoint4
         .tu = RHS.X
         .tv = RHS.Y

@@ -464,6 +464,20 @@ Public Sub InputScene()
                 '############################################
 
             End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F7) Then
+            If (Not TogglePress1 = DIK_F7) Then
+                TogglePress1 = DIK_F7
+                Uses(DIK_F7) = True
+            
+                '############################################
+                '############### SHOW VBA IDE ###############
+                ResetIdle
+                frmMain.ShowVBE
+
+                '############################################
+                '############################################
+
+            End If
         ElseIf DIKEYBOARDSTATE.Key(DIK_F6) Then
             If (Not TogglePress1 = DIK_F6) Then
                 TogglePress1 = DIK_F6
@@ -492,7 +506,7 @@ Public Sub InputScene()
         
             If (Not TogglePress1 = DIK_TAB) Then ConsoleInput DIKEYBOARDSTATE
         
-            Dim rec  As rect
+            Dim rec  As RECT
             Dim mloc As modDecs.POINTAPI
             GetCursorPos mloc
             GetWindowRect frmMain.hwnd, rec
@@ -661,7 +675,7 @@ pausing:
 End Sub
 Public Function MouseOverCanvas(ByVal X As Single, ByVal Y As Single) As Boolean
     Static RunOnce As Boolean
-    Static winRec As rect
+    Static winRec As RECT
     Static TitleBar As Single
     Static BorderX2 As Single
     
@@ -1392,9 +1406,11 @@ Public Sub ConsoleProcess()
         If Left(inCmd, 1) = "/" Then inCmd = Mid(inCmd, 2)
         
         Select Case Trim(LCase(inCmd))
-
+            Case "showvbe", "showvba", "vba", "vbe"
+                frmMain.ShowVBE
+            Case "macro", "macros", "macrodialog"
+                frmMain.ShowMacroDialog
             Case "goto"
-                
                 
                 Player.Origin = inArg
             Case "parse"

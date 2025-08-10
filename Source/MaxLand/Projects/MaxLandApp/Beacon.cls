@@ -22,7 +22,7 @@ Private pBeaconVBuf As Direct3DVertexBuffer8
 Private pOrigins As VBA.Collection
 
 Private pDimensions As ImageDimensions
-Private pPercentXY As Coord
+Private pPercentXY As Plot
 
 Private pVisible As Boolean
 
@@ -107,11 +107,11 @@ Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As Stri
     End If
 End Property
 
-Public Property Get PercentXY() As Coord
+Public Property Get PercentXY() As Plot
     Set PercentXY = pPercentXY
 End Property
 
-Public Property Set PercentXY(ByRef RHS As Coord)
+Public Property Set PercentXY(ByRef RHS As Plot)
     Set pPercentXY = RHS
     Recreate
 End Property
@@ -132,13 +132,13 @@ Public Property Let PercentY(ByVal RHS As Single)
     Recreate
 End Property
 
-Public Property Get Dimensions() As Coord
-    Set Dimensions = New Coord
+Public Property Get Dimensions() As Plot
+    Set Dimensions = New Plot
     Dimensions.X = pDimensions.Width
     Dimensions.Y = pDimensions.Height
 End Property
 
-Public Property Set Dimensions(ByRef RHS As Coord)
+Public Property Set Dimensions(ByRef RHS As Plot)
     pDimensions.Width = RHS.X
     pDimensions.Height = RHS.Y
     Recreate
@@ -283,7 +283,7 @@ Private Sub Class_Initialize()
     Stats_Beacon_Count = Stats_Beacon_Count + 1
     Set pFileNames = New VBA.Collection
     Set pOrigins = New VBA.Collection
-    Set pPercentXY = New Coord
+    Set pPercentXY = New Plot
     
     Set pBeaconVBuf = DDevice.CreateVertexBuffer(Len(pBeaconPlaq(0)) * 6, 0, FVF_RENDER, D3DPOOL_DEFAULT)
     BeaconText = 1

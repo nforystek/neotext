@@ -69,9 +69,9 @@ End Property
 
 
 Private Sub Class_Initialize()
-    Stats_Coord_Count = Stats_Coord_Count + 1
+    Stats_Plot_Count = Stats_Plot_Count + 1
 End Sub
 
 Private Sub Class_Terminate()
-    Stats_Coord_Count = Stats_Coord_Count - 1
+    Stats_Plot_Count = Stats_Plot_Count - 1
 End Sub

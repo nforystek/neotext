@@ -22,7 +22,7 @@ Public Stats_Bindings_Count As Long
 Public Stats_Board_Count As Long
 Public Stats_Collection_Count As Long
 Public Stats_Color_Count As Long
-Public Stats_Coord_Count As Long
+Public Stats_Plot_Count As Long
 Public Stats_Database_Count As Long
 Public Stats_Image_Count As Long
 Public Stats_Include_Count As Long
@@ -36,7 +36,7 @@ Public Stats_Space_Count As Long
 Public Stats_Track_Count As Long
 Public Stats_Collision_Count As Long
 Public Stats_CollisionEx_Count As Long
-Public Stats_Range_Count As Long
+Public Stats_Plane_Count As Long
 
 
 Public Sub CreateInfo()
@@ -54,7 +54,7 @@ Public Sub CleanupInfo()
     Stats_Board_Count = 0
     Stats_Collection_Count = 0
     Stats_Color_Count = 0
-    Stats_Coord_Count = 0
+    Stats_Plot_Count = 0
     Stats_Database_Count = 0
     Stats_Image_Count = 0
     Stats_Include_Count = 0
@@ -68,7 +68,7 @@ Public Sub CleanupInfo()
     Stats_Track_Count = 0
     Stats_Collision_Count = 0
     Stats_CollisionEx_Count = 0
-    Stats_Range_Count = 0
+    Stats_Plane_Count = 0
 End Sub
 Public Sub FadeMessage(ByVal txt As String)
     FadeTime = Timer
@@ -128,13 +128,13 @@ Public Sub RenderInfo()
             txt = "Counts; Motion " & Stats_Motion_Count & " " & "Beacon " & Stats_Beacon_Count & " " & _
                 "Bindings " & Stats_Bindings_Count & " " & "Board " & Stats_Board_Count & " " & _
                 "Collection " & Stats_Collection_Count & " " & "Color " & Stats_Color_Count & " " & vbCrLf & _
-                "Coord " & Stats_Coord_Count & " " & "Database " & Stats_Database_Count & " " & _
+                "Plot " & Stats_Plot_Count & " " & "Database " & Stats_Database_Count & " " & _
                 "Image " & Stats_Image_Count & " " & "Include " & Stats_Include_Count & " " & _
                 "Light " & Stats_Light_Count & " " & "Element " & Stats_Element_Count & " " & vbCrLf & _
                 "Player " & Stats_Player_Count & " " & "Point " & Stats_Point_Count & " " & _
                 "Portal " & Stats_Portal_Count & " " & "Sound " & Stats_Sound_Count & " " & _
                 "Space " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
-                "Camera " & Stats_Camera_Count & " " & "Range " & Stats_Range_Count & " " & _
+                "Camera " & Stats_Camera_Count & " " & "Plane " & Stats_Plane_Count & " " & _
                 "Collision " & Stats_Collision_Count & " " & "CollisionEx " & Stats_CollisionEx_Count
                 
             DrawText txt, 2, Row(4)

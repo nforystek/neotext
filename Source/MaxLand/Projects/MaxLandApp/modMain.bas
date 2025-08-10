@@ -24,6 +24,7 @@ Public Surface As Boolean
 Public AspectRatio As Single
 Public ScriptDebug As Boolean
 Public TrapMouse As Boolean
+Public StartTime As String
 
 Public StopGame As Boolean
 Public PauseGame As Boolean
@@ -64,6 +65,7 @@ Public Declare Function GetTickCount Lib "kernel32" () As Long
 Public Sub Main()
 
     On Error GoTo fault:
+    StartTime = Now
     
     Dim inCmd As String
     inCmd = Command
@@ -324,13 +326,15 @@ Render:
 End Sub
 
 Public Sub WorkingScreen(ByVal Text As String)
-    frmMain.AutoRedraw = True
-    frmMain.Cls
-    frmMain.CurrentY = Screen.TwipsPerPixelY * 5
-    frmMain.CurrentX = Screen.TwipsPerPixelX * 5
-    frmMain.Print Text
-    frmMain.Show
-    DoEvents
+    If Not StopGame Then
+        frmMain.AutoRedraw = True
+        frmMain.Cls
+        frmMain.CurrentY = Screen.TwipsPerPixelY * 5
+        frmMain.CurrentX = Screen.TwipsPerPixelX * 5
+        frmMain.Print Text
+        frmMain.Show
+        DoEvents
+    End If
 End Sub
 Public Sub RenderRoutine()
 

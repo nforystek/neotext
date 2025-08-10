@@ -52,6 +52,33 @@ Option Explicit
 
 Option Compare Binary
 
+'--------------------------------------------------
+'**** VBA Integration code, begin insert
+Public m_apcInt As APCIntegration
+'**** VBA Integration code, end insert
+'--------------------------------------------------
+
+
+'--------------------------------------------------
+'**** VBA Integration code, begin insert
+Public Sub ShowVBE()
+    ' Show the VBE now
+    m_apcInt.ShowVBE
+End Sub
+'**** VBA Integration code, end insert
+'--------------------------------------------------
+
+
+
+'--------------------------------------------------
+'**** VBA Integration code, begin insert
+Public Sub ShowMacroDialog()
+    ' The macros dialog will only be viewable if you have a project loaded
+    m_apcInt.ShowMacroDialog
+End Sub
+'**** VBA Integration code, end insert
+'--------------------------------------------------
+
 
 Public Property Get ScriptControl() As ScriptControl
     Set ScriptControl = ScriptControl1
@@ -61,9 +88,33 @@ Private Sub Form_Click()
     TrapMouse = True
 End Sub
 
-Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-    StopGame = True
+Private Sub Form_Load()
+
+'--------------------------------------------------
+'**** VBA Integration code, begin insert
+    Dim appObj As Instance
+
+    Set m_apcInt = New APCIntegration
+    ' If you already have an existing application object in your
+    '  original source, replace "new Instance" here with a
+    '  reference to it.
+    Set appObj = New Instance
+    m_apcInt.Initialize appObj, Me.hwnd
+'**** VBA Integration code, end insert
+'--------------------------------------------------
+
 End Sub
+
+
+'--------------------------------------------------
+'**** VBA Integration code, begin insert
+Private Sub Form_QueryUnLoad(cancel As Integer, unloadmode As Integer)
+    m_apcInt.QueryUnload cancel, unloadmode
+    If Not cancel Then StopGame = True
+    If unloadmode = 0 Then cancel = True
+End Sub '**** VBA Integration code, end insert
+'--------------------------------------------------
+
 
 Public Sub Reset()
 
