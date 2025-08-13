@@ -1,9 +1,9 @@
 <?xml version="1.0"?><Serial>  <Variables>
-        <Player.Origin>[-7.6057, -1.8, -11.72147]</Player.Origin>
-        <Player.Rotate>[359.9938, 284.3727, 359.9938]</Player.Rotate>
-        <Player.Angle>-1.319944</Player.Angle>
-        <Player.Pitch>9.000019E-02</Player.Pitch>
-        <Player.Zoom>1</Player.Zoom>
+        <Player.Origin>[-6.627354, -0.128141, -5.956901]</Player.Origin>
+        <Player.Rotate>[359.9938, 121.4702, 359.9938]</Player.Rotate>
+        <Player.Angle>2.120056</Player.Angle>
+        <Player.Pitch>-0.3400001</Player.Pitch>
+        <Player.Zoom>3.4</Player.Zoom>
         <pawn7.Origin>[1, 0, 0]</pawn7.Origin>
         <pawn7.Rotate>[360, 360, 360]</pawn7.Rotate>
         <orders>0</orders>
@@ -30,9 +30,9 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.90902, -1.43055, -9.822289]</pawn1.origin>
-        <pawn2.origin>[-11.606, -917.6209, 26.708]</pawn2.origin>
-        <pawn3.origin>[-9.408057, -1.428564, -12.14583]</pawn3.origin>
+        <pawn1.origin>[-9.317136, -1.804266, -9.39858]</pawn1.origin>
+        <pawn2.origin>[-11.606, -1084.823, 26.708]</pawn2.origin>
+        <pawn3.origin>[-9.408057, -1.804446, -12.14583]</pawn3.origin>
   </Variables>
 <DateTime>8%2F8%2F2025+8%3A08%3A48+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>

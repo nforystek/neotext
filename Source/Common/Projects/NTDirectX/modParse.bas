@@ -50,7 +50,7 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
     'passing true for NextBlock removes and returns an entire next section identified by beginquote and endquote with text before the block as well
     'passing false for NextBlock removes and retruns what is only inbetween the beginquote and endquote, stripping it and leaving before text
     'concatenated to any text after whwer ethe block was
-    Dim retval As String
+    Dim retVal As String
     Dim Compare As VbCompareMethod
     Compare = VbCompareMethod.vbBinaryCompare
     Dim X As Long
@@ -74,17 +74,17 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
                 End If
             Loop
             If NextBlock Then
-                retval = Left(TheParams, X - 1) & Mid(TheParams, X)
-                TheParams = Mid(retval, (X - 1) + (Y - X) + Len(EndQuote) + Len(BeginQuote))
-                retval = Left(retval, (X - 1) + (Y - X) + Len(BeginQuote))
+                retVal = Left(TheParams, X - 1) & Mid(TheParams, X)
+                TheParams = Mid(retVal, (X - 1) + (Y - X) + Len(EndQuote) + Len(BeginQuote))
+                retVal = Left(retVal, (X - 1) + (Y - X) + Len(BeginQuote))
             Else
-                retval = Mid(TheParams, X + Len(BeginQuote))
-                TheParams = Left(TheParams, X - 1) & Mid(retval, (Y - X) + Len(EndQuote))
-                retval = Left(retval, (Y - X) - 1)
+                retVal = Mid(TheParams, X + Len(BeginQuote))
+                TheParams = Left(TheParams, X - 1) & Mid(retVal, (Y - X) + Len(EndQuote))
+                retVal = Left(retVal, (Y - X) - 1)
             End If
         End If
     End If
-    ParseQuotedArg = retval
+    ParseQuotedArg = retVal
 End Function
 
 Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj As String = "") As Integer
@@ -95,7 +95,7 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
         inLine = Mid(inLine, 2)
     Loop
     Select Case LCase(inWord)
-        Case "oninrange", "onoutrange", "onrange", "oncontact", "oncollide", "onevent", "range", "ranged", "contact"
+        Case "oninrange", "onoutrange", "onrange", "oncontact", "oncollide", "onevent", "plane", "palned", "contact"
             ParseReservedWord = 1
         Case "molecule", "method", "brilliant", "serialize", "deserialize", "motion", "billboard", "planet", "frame", "second", "millis", "motion"
             ParseReservedWord = 3
@@ -180,13 +180,13 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
     Dim xml As New MSXML.DOMDocument
     xml.async = "false"
     xml.loadXML nXML
-    Dim retval As String
+    Dim retVal As String
     Dim tmp As String
     Dim cnt As Long
     Dim cnt2 As Long
     Dim cnt3 As Long
     Dim inName As String
-    retval = "Sub Deserialize()" & vbCrLf
+    retVal = "Sub Deserialize()" & vbCrLf
     If xml.parseerror.errorCode = 0 Then
         Dim child As MSXML.IXMLDOMNode
         Dim serial As MSXML.IXMLDOMNode
@@ -204,15 +204,15 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
                                 For cnt = 0 To child.childNodes.Length - 1
                                     tmp = Replace(Replace(Include.URLDecode(child.childNodes(cnt).Text), """", """"""), vbCrLf, """ & vbCrLf & """)
                                     If IsNumeric(tmp) Or LCase(tmp) = "false" Or LCase(tmp) = "true" Then
-                                        retval = retval & child.childNodes(cnt).baseName & " = " & tmp & vbCrLf
+                                        retVal = retVal & child.childNodes(cnt).baseName & " = " & tmp & vbCrLf
                                     Else
-                                        retval = retval & child.childNodes(cnt).baseName & " = """ & tmp & """" & vbCrLf
+                                        retVal = retVal & child.childNodes(cnt).baseName & " = """ & tmp & """" & vbCrLf
                                     End If
                                 Next
                                 
                             Case "molecules", "brilliants", "planets", "camera", "bindings" ', "billboards"
                                 All.Add "<?xml version=""1.0""?>" & vbCrLf & "<Serial>" & vbCrLf & child.xml & vbCrLf & "</Serial>" & vbCrLf, Include.SafeKey(child.baseName)
-                                retval = retval & "Set Include.Serialize = " & Include.SafeKey(child.baseName) & vbCrLf
+                                retVal = retVal & "Set Include.Serialize = " & Include.SafeKey(child.baseName) & vbCrLf
 
                         End Select
                     Next
@@ -220,57 +220,57 @@ Private Function ParseDeserialize(ByRef nXML As String) As String
         Next
     End If
 exitout:
-    retval = retval & "End Sub" & vbCrLf
-    ParseDeserialize = retval
+    retVal = retVal & "End Sub" & vbCrLf
+    ParseDeserialize = retVal
     Set xml = Nothing
 End Function
 Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt As String) As String
     On Error Resume Next
-    Static retval As String
+    Static retVal As String
     Select Case inSection
         Case 1
-            retval = "Function Serialize()" & vbCrLf
-            retval = retval & "Serialize = ""<Serial>"" & vbCrLf" & vbCrLf
+            retVal = "Function Serialize()" & vbCrLf
+            retVal = retVal & "Serialize = ""<Serial>"" & vbCrLf" & vbCrLf
         Case 2
-            If retval <> "" Then
-                retval = retval & "Serialize = Serialize & ""  <Variables>"" & vbCrLf" & vbCrLf
+            If retVal <> "" Then
+                retVal = retVal & "Serialize = Serialize & ""  <Variables>"" & vbCrLf" & vbCrLf
                 txt = ParseWhiteSpace(txt)
                 Do Until txt = ""
-                    retval = retval & "Serialize = Serialize & ""        <" & NextArg(txt, vbCrLf) & ">"" & Include.URLEncode(" & NextArg(txt, vbCrLf) & ") & ""</" & NextArg(txt, vbCrLf) & ">"" & vbCrLf" & vbCrLf
+                    retVal = retVal & "Serialize = Serialize & ""        <" & NextArg(txt, vbCrLf) & ">"" & Include.URLEncode(" & NextArg(txt, vbCrLf) & ") & ""</" & NextArg(txt, vbCrLf) & ">"" & vbCrLf" & vbCrLf
                     RemoveNextArg txt, vbCrLf
                 Loop
-                retval = retval & "Serialize = Serialize & ""  </Variables>"" & vbCrLf" & vbCrLf
+                retVal = retVal & "Serialize = Serialize & ""  </Variables>"" & vbCrLf" & vbCrLf
             End If
         Case 3
-            If retval <> "" Then
-                retval = retval & "Serialize = Serialize & Include.Serialize & vbCrLf" & vbCrLf
+            If retVal <> "" Then
+                retVal = retVal & "Serialize = Serialize & Include.Serialize & vbCrLf" & vbCrLf
                 
-                retval = retval & "If Bindings.Serialize Then" & vbCrLf
-                retval = retval & "Serialize = Serialize & Bindings.ToString()" & vbCrLf
-                retval = retval & "End If" & vbCrLf
+                retVal = retVal & "If Bindings.Serialize Then" & vbCrLf
+                retVal = retVal & "Serialize = Serialize & Bindings.ToString()" & vbCrLf
+                retVal = retVal & "End If" & vbCrLf
     
-                retval = retval & "If Camera.Serialize Then" & vbCrLf
-                retval = retval & "Serialize = Serialize & Camera.ToString()" & vbCrLf
-                retval = retval & "End If" & vbCrLf
+                retVal = retVal & "If Camera.Serialize Then" & vbCrLf
+                retVal = retVal & "Serialize = Serialize & Camera.ToString()" & vbCrLf
+                retVal = retVal & "End If" & vbCrLf
     
-                retval = retval & "Serialize = Replace(Serialize,""  <Variables>"" & vbCrLf & ""  </Variables>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Bindings>"" & vbCrLf & "" </Bindings>"","""")" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Variables>"" & vbCrLf & ""  </Variables>"","""")" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Bindings>"" & vbCrLf & "" </Bindings>"","""")" & vbCrLf
                 'retval = retval & "Serialize = Replace(Serialize,""  <Billboards>"" & vbCrLf & ""  </Billboards>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Planets>"" & vbCrLf & ""  </Planets>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Brilliants>"" & vbCrLf & ""  </Brilliants>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Molecules>"" & vbCrLf & ""  </Molecules>"","""")" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize,""  <Camera>"" & vbCrLf & ""  </Camera>"","""")" & vbCrLf
-                retval = retval & "Do While Instr(Serialize,vbCrLf & vbCrLf)>0" & vbCrLf
-                retval = retval & "Serialize = Replace(Serialize, vbCrLf & vbCrLf, vbCrLf)" & vbCrLf
-                retval = retval & "Loop" & vbCrLf
-                retval = retval & "Serialize = Serialize & ""</Serial>""" & vbCrLf
-                retval = retval & "End Function" & vbCrLf
-                ParseSerialize = retval
-                retval = ""
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Planets>"" & vbCrLf & ""  </Planets>"","""")" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Brilliants>"" & vbCrLf & ""  </Brilliants>"","""")" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Molecules>"" & vbCrLf & ""  </Molecules>"","""")" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize,""  <Camera>"" & vbCrLf & ""  </Camera>"","""")" & vbCrLf
+                retVal = retVal & "Do While Instr(Serialize,vbCrLf & vbCrLf)>0" & vbCrLf
+                retVal = retVal & "Serialize = Replace(Serialize, vbCrLf & vbCrLf, vbCrLf)" & vbCrLf
+                retVal = retVal & "Loop" & vbCrLf
+                retVal = retVal & "Serialize = Serialize & ""</Serial>""" & vbCrLf
+                retVal = retVal & "End Function" & vbCrLf
+                ParseSerialize = retVal
+                retVal = ""
             End If
     End Select
     
-    If Err.number = 11 Then
+    If Err.Number = 11 Then
         Err.Clear
         On Error GoTo 0
         Err.Raise 453, "Serialize", "Unable to serialize."
@@ -322,7 +322,7 @@ Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String)
         Bindings(BindIndex) = bindCode
     End If
 
-    If Err.number = 11 Then
+    If Err.Number = 11 Then
         Err.Clear
         On Error GoTo 0
         Err.Raise 453, "Bindings", "The binding specified was not recognized."
@@ -355,12 +355,12 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
         Case "onevent"
             inLine = LCase(Trim(RemoveQuotedArg(inLine, "<", ">")))
             Select Case inLine
-                Case "range", "ranged", "onrange", "oninrange"
+                Case "plane", "planed", "onrange", "oninrange"
                     frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Ranged"
                 Case "collide", "contact", "oncontact"
                     frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Contact"
             End Select
-        Case "range", "ranged", "onrange", "oninrange"
+        Case "plane", "planed", "onrange", "oninrange"
             frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Ranged"
         Case "collide", "contact", "oncontact"
             frmMain.ExecuteStatement "OnEvents.Item(OnEvents.Count).EventType = Contact"
@@ -409,12 +409,12 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)"
     End If
 scripterror:
-        If Err.number <> 0 Then
+        If Err.Number <> 0 Then
             Dim num As Long
             Dim des As String
             Dim src As String
-            num = Err.number
-            src = Err.source
+            num = Err.Number
+            src = Err.Source
             des = Err.description
             Err.Clear
             On Error GoTo 0
@@ -455,11 +455,11 @@ Private Function ParseExecute(ByVal inLine As String, ByVal inWith As String) As
             ParseScript src, inWith
             modCommon.Swap src, ScriptRoot
 scripterror:
-            If Err.number <> 0 Then
+            If Err.Number <> 0 Then
                 Dim num As Long
                 Dim des As String
-                num = Err.number
-                src = Err.source
+                num = Err.Number
+                src = Err.Source
                 des = Err.description
                 Err.Clear
                 On Error GoTo 0
@@ -558,10 +558,10 @@ parseerror:
     If Not ConsoleVisible Then
         ConsoleToggle
     End If
-    Process "echo An error " & Err.number & " occurd in " & Err.source & " at line " & (atLine - 1) & "\n" & Err.description & "\n" & LastCall
+    Process "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.description & "\n" & LastCall
     
-    If frmMain.ScriptControl1.Error.number <> 0 Then frmMain.ScriptControl1.Error.Clear
-    If Err.number <> 0 Then Err.Clear
+    If frmMain.ScriptControl1.Error.Number <> 0 Then frmMain.ScriptControl1.Error.Clear
+    If Err.Number <> 0 Then Err.Clear
 
 End Function
 

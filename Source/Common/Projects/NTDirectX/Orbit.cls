@@ -17,7 +17,7 @@ Private pOrigin As Point
 Private pOffset As Point
 Private pRotate As Point
 Private pScaled As Point
-Private pRanges As Range
+Private pPlanes As Plane
 
 Public Visible As Boolean
 
@@ -56,8 +56,8 @@ Public Property Get Clone() As Orbit
         If Not Scaled Is Nothing Then
             Set .Scaled = Scaled.Clone
         End If
-        If Not Ranges Is Nothing Then
-            Set .Ranges = Ranges.Clone
+        If Not Planes Is Nothing Then
+            Set .Planes = Planes.Clone
         End If
         If Not Motions Is Nothing Then
             Set .Motions = Motions.Clone
@@ -111,7 +111,7 @@ Friend Property Get Absolute() As Orbit
             Set .Origin = pOrigin
             Set .Rotate = pRotate
             Set .Scaled = pScaled
-            Set .Ranges = pRanges
+            Set .Planes = pPlanes
         End With
     End If
     Set Absolute = pAbsolute
@@ -158,18 +158,18 @@ Public Property Set Scaled(ByRef RHS As Point)
     Set pScaled = RHS
 End Property
 
-Public Property Get Ranges() As Range
-    If pRanges Is Nothing Then Set pRanges = New Range
-    Set Ranges = pRanges
+Public Property Get Planes() As Plane
+    If pPlanes Is Nothing Then Set pPlanes = New Plane
+    Set Planes = pPlanes
 End Property
-Public Property Set Ranges(ByRef RHS As Range)
-    Set pRanges = RHS
+Public Property Set Planes(ByRef RHS As Plane)
+    Set pPlanes = RHS
 End Property
 
 Public Property Get ToString() As String
 Attribute ToString.VB_UserMemId = 0
 Attribute ToString.VB_MemberFlags = "640"
-    ToString = "[" & Origin & Offset & Rotate & Scaled & Ranges & "]"
+    ToString = "[" & Origin & Offset & Rotate & Scaled & Planes & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
 Attribute ToString.VB_UserMemId = 0
@@ -194,7 +194,7 @@ Attribute ToString.VB_MemberFlags = "240"
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
         If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-            Ranges = Left(RHS, InStr(RHS, "]"))
+            Planes = Left(RHS, InStr(RHS, "]"))
             RHS = Mid(RHS, InStr(RHS, "]") + 1)
         End If
     End If
@@ -204,7 +204,7 @@ Attribute ToString.VB_MemberFlags = "240"
         Set .Origin = pOrigin
         Set .Rotate = pRotate
         Set .Scaled = pScaled
-        Set .Ranges = pRanges
+        Set .Planes = pPlanes
     End With
 End Property
 
@@ -225,7 +225,7 @@ Friend Sub Class_Terminate()
     Set pOffset = Nothing
     Set pRotate = Nothing
     Set pScaled = Nothing
-    Set pRanges = Nothing
+    Set pPlanes = Nothing
     
     Set pParent = Nothing
     Set pRelative = Nothing

@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Range"
+Attribute VB_Name = "Plane"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -49,8 +49,8 @@ Public Property Let r(ByVal RHS As Single)
     pR = RHS
 End Property
 
-Public Function Equals(ByRef Range As Range) As Boolean
-    Equals = (Point.Equals(Range) And Range.r = r)
+Public Function Equals(ByRef Plane As Plane) As Boolean
+    Equals = (Point.Equals(Plane) And Plane.r = r)
 End Function
 
 Public Property Get ToString() As String
@@ -72,8 +72,8 @@ Attribute ToString.VB_MemberFlags = "240"
 End Property
 
 
-Public Property Get Clone() As Range
-    Set Clone = New Range
+Public Property Get Clone() As Plane
+    Set Clone = New Plane
     With Clone
         .X = X
         .Y = Y
@@ -83,13 +83,13 @@ Public Property Get Clone() As Range
 End Property
 
 Private Sub Class_Initialize()
-    Stats_Range_Count = Stats_Range_Count + 1
+    Stats_Plane_Count = Stats_Plane_Count + 1
     vbaObjSetAddref Point, ObjPtr(New Point)
     'Set Point = New Point
 End Sub
 
 Private Sub Class_Terminate()
-    Stats_Range_Count = Stats_Range_Count - 1
+    Stats_Plane_Count = Stats_Plane_Count - 1
    ' Set Point = Nothing
     vbaObjSet Point, ObjPtr(Nothing)
 End Sub

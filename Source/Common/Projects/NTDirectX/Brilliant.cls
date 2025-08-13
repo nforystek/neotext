@@ -129,11 +129,11 @@ Public Property Set Scaled(ByRef RHS As Point)
     Set Orbit.Scaled = RHS
 End Property
 
-Public Property Get Ranges() As Range
-    Set Ranges = Orbit.Ranges
+Public Property Get Planes() As Plane
+    Set Planes = Orbit.Planes
 End Property
-Public Property Set Ranges(ByRef RHS As Range)
-    Set Orbit.Ranges = RHS
+Public Property Set Planes(ByRef RHS As Plane)
+    Set Orbit.Planes = RHS
 End Property
 
 Public Property Get Visible() As Boolean
@@ -224,19 +224,19 @@ End Property
 
 Friend Sub UpdateValues()
     Lights(LightIndex).Diffuse.A = Diffuse.Alpha
-    Lights(LightIndex).Diffuse.r = Diffuse.red
-    Lights(LightIndex).Diffuse.g = Diffuse.green
-    Lights(LightIndex).Diffuse.b = Diffuse.blue
+    Lights(LightIndex).Diffuse.r = Diffuse.Red
+    Lights(LightIndex).Diffuse.g = Diffuse.Green
+    Lights(LightIndex).Diffuse.B = Diffuse.Blue
  
     Lights(LightIndex).Ambient.A = Ambience.Alpha
-    Lights(LightIndex).Ambient.r = Ambience.red
-    Lights(LightIndex).Ambient.g = Ambience.green
-    Lights(LightIndex).Ambient.b = Ambience.blue
+    Lights(LightIndex).Ambient.r = Ambience.Red
+    Lights(LightIndex).Ambient.g = Ambience.Green
+    Lights(LightIndex).Ambient.B = Ambience.Blue
  
     Lights(LightIndex).Specular.A = Specular.Alpha
-    Lights(LightIndex).Specular.r = Specular.red
-    Lights(LightIndex).Specular.g = Specular.green
-    Lights(LightIndex).Specular.b = Specular.blue
+    Lights(LightIndex).Specular.r = Specular.Red
+    Lights(LightIndex).Specular.g = Specular.Green
+    Lights(LightIndex).Specular.B = Specular.Blue
  
     Lights(LightIndex).Attenuation0 = Attenuation.X
     Lights(LightIndex).Attenuation1 = Attenuation.Y
@@ -351,12 +351,12 @@ Private Property Set Orbit_Origin(ByRef RHS As Point)
     Set Orbit.Origin = RHS
 End Property
 
-Private Property Get Orbit_Ranges() As Range
-    Set Orbit_Ranges = Orbit.Ranges
+Private Property Get Orbit_Planes() As Plane
+    Set Orbit_Planes = Orbit.Planes
 End Property
 
-Private Property Set Orbit_Ranges(ByRef RHS As Range)
-    Set Orbit.Ranges = RHS
+Private Property Set Orbit_Planes(ByRef RHS As Plane)
+    Set Orbit.Planes = RHS
 End Property
 
 Private Property Get Orbit_Rotate() As Point

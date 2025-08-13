@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Coord"
+Attribute VB_Name = "Plot"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -61,9 +61,9 @@ End Property
 
 
 Private Sub Class_Initialize()
-    Stats_Coord_Count = Stats_Coord_Count + 1
+    Stats_Plot_Count = Stats_Plot_Count + 1
 End Sub
 
 Friend Sub Class_Terminate()
-    Stats_Coord_Count = Stats_Coord_Count - 1
+    Stats_Plot_Count = Stats_Plot_Count - 1
 End Sub

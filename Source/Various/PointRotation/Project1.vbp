@@ -1,7 +1,14 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
 Form=Form1.frm
+Module=MiscGeometry; MiscGeometry.bas
+Module=PointAngles; PointAngles.bas
+Module=PointRotate; PointRotate.bas
+Module=Triganometry; Triganometry.bas
+Class=Plane; Plane.cls
+Class=Plot; Plot.cls
 Class=Point; Point.cls
+Module=MainModule; MainModule.bas
 Startup="Form1"
 Command32=""
 Name="Project1"
@@ -13,7 +20,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Computer Science"
-CondComp="Project1 = -1 : VBIDE = -1"
+CondComp="Project1=-1:VBIDE=-1:PointAngles=-1:PointRotate=-1:Triganometry=-1:MainModule=-1:MiscGeometry=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -30,8 +37,8 @@ Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
 
-[Neotext]
-CompCond=""
-
 [MS Transaction Server]
 AutoRefresh=1
+
+[Neotext]
+CompCond="MiscGeometry=-1:PointAngles=-1:PointRotate=-1:Triganometry=-1:MainModule=-1"

@@ -414,15 +414,15 @@ Private Function CombineOrbits(ByRef o1 As Orbit, ByRef o2 As Orbit) As Orbit
         .Offset = VectorDeduction(VectorDeduction(VectorAddition(o1.Origin, o1.Offset), VectorAddition(o2.Origin, o2.Offset)), .Origin)
         .Rotate = VectorAddition(o1.Rotate, o2.Rotate)
         .Scaled = VectorAddition(o1.Scaled, o2.Scaled)
-        .Ranges.X = o1.Ranges.X + o2.Ranges.X
-        .Ranges.Y = o1.Ranges.Y + o2.Ranges.Y
-        .Ranges.Z = o1.Ranges.Z + o2.Ranges.Z
-        If o1.Ranges.r = -1 Or o2.Ranges.r = -1 Then
-            .Ranges.r = -1
-        ElseIf o1.Ranges.r > o2.Ranges.r Then
-            .Ranges.r = o1.Ranges.r
+        .Planes.X = o1.Planes.X + o2.Planes.X
+        .Planes.Y = o1.Planes.Y + o2.Planes.Y
+        .Planes.Z = o1.Planes.Z + o2.Planes.Z
+        If o1.Planes.r = -1 Or o2.Planes.r = -1 Then
+            .Planes.r = -1
+        ElseIf o1.Planes.r > o2.Planes.r Then
+            .Planes.r = o1.Planes.r
         Else
-            .Ranges.r = o2.Ranges.r
+            .Planes.r = o2.Planes.r
         End If
     End With
 End Function

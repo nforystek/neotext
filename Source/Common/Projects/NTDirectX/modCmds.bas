@@ -823,8 +823,9 @@ Public Sub InputScene(ByRef UserControl As Macroscopic)
                     TrapMouse = False
 
                     If FullScreen Then
-                        UserControl.Parent.WindowState = 1
                         UserControl.PauseRendering
+                        UserControl.Parent.WindowState = 1
+
                     End If
                     
                 End If

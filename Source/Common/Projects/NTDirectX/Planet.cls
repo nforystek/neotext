@@ -186,10 +186,10 @@ Public Property Set Absolute(ByRef RHS As Orbit)
     Set Molecule.Absolute = RHS
 End Property
 
-Public Property Get Alphablend() As Boolean
-    Alphablend = pAlphablend
+Public Property Get AlphaBlend() As Boolean
+    AlphaBlend = pAlphablend
 End Property
-Public Property Let Alphablend(ByVal RHS As Boolean)
+Public Property Let AlphaBlend(ByVal RHS As Boolean)
     pAlphablend = RHS
 End Property
 Public Property Get Transparent() As Boolean
@@ -250,11 +250,11 @@ Public Property Set Scaled(ByRef RHS As Point)
     Set Molecule.Scaled = RHS
 End Property
 
-Public Property Get Ranges() As Range
-    Set Ranges = Molecule.Ranges
+Public Property Get Planes() As Plane
+    Set Planes = Molecule.Planes
 End Property
-Public Property Set Ranges(ByRef RHS As Range)
-    Set Molecule.Ranges = RHS
+Public Property Set Planes(ByRef RHS As Plane)
+    Set Molecule.Planes = RHS
 End Property
 
 
@@ -306,7 +306,7 @@ Public Property Get OuterEdge() As Single
 End Property
 Public Property Let OuterEdge(ByVal RHS As Single)
     pOuterEdge = RHS
-    Ranges.r = IIf(Field > -1, Field, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    Planes.r = IIf(Field > -1, Field, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
     If RHS > pInnerEdge Or RHS = -1 Then
         If (pFileIndex(0) > 0) Then RebuildPlanet
     End If
@@ -345,14 +345,14 @@ End Property
 
 Public Property Get Field() As Single
     If (pField = 0 And Length > 0 And Width > 0) Then
-        Field = Far '(Length * Width) ^ (1 / 2)
+        Field = FAR '(Length * Width) ^ (1 / 2)
     Else
         Field = pField
     End If
 End Property
 Public Property Let Field(ByVal RHS As Single)
     pField = RHS
-    Ranges.r = IIf(pField > -1, pField, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
+    Planes.r = IIf(pField > -1, pField, 0) + IIf(pOuterEdge > -1, pOuterEdge, 0)
 End Property
 
 Public Property Get Rows() As Single
@@ -403,12 +403,12 @@ Friend Property Get FileIndex(ByVal GridIndex As Long) As Long
     FileIndex = pFileIndex(GridIndex)
 End Property
 
-Public Property Get FileName(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0) As String
+Public Property Get Filename(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0) As String
     If (pFileIndex(Row * Column) > 0) Then
-        FileName = GetIndexFile(pFileIndex(Row * Column))
+        Filename = GetIndexFile(pFileIndex(Row * Column))
     End If
 End Property
-Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0, ByVal RHS As String)
+Public Property Let Filename(Optional ByVal Row As Long = 0, Optional ByVal Column As Long = 0, ByVal RHS As String)
     If RHS = "" And pFileIndex(Row * Column) > 0 Then
         pFileIndex(Row * Column) = 0
     ElseIf PathExists(RHS, True) Then
@@ -423,7 +423,7 @@ Public Property Let FileName(Optional ByVal Row As Long = 0, Optional ByVal Colu
 End Property
 
 Friend Property Get PlateauInfinite()
-    PlateauInfinite = ((pFileIndex(0) > 0) And ((((Form = Plateau) And ((Field = 0) Or (Field = Far))) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
+    PlateauInfinite = ((pFileIndex(0) > 0) And ((((Form = Plateau) And ((Field = 0) Or (Field = FAR))) Or PlateauHole) And (Not (PlateauIsland Or PlateauDoughnut))))
 End Property
 Friend Property Get PlateauIsland()
     PlateauIsland = ((pFileIndex(0) > 0) And ((OuterEdge > 0) And (InnerEdge = 0)))
@@ -647,7 +647,7 @@ Private Sub RebuildPlanet()
         
             Volume.Clear
 
-            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width, Size.Height)
+            Set m = CreateMoleculeLanding(tmp, FAR, Segments, 0, Size.Width, Size.Height)
 
             For Each v In m.Volume
                 Volume.Add v
@@ -655,7 +655,7 @@ Private Sub RebuildPlanet()
             m.Volume.Clear
             Set m = Nothing
             
-            Set m = CreateMoleculeLanding(tmp, Far, Segments, InnerEdge, Size.Width, Size.Height)
+            Set m = CreateMoleculeLanding(tmp, FAR, Segments, InnerEdge, Size.Width, Size.Height)
 
             For Each v In m.Volume
                 Volume.Add v
@@ -667,7 +667,7 @@ Private Sub RebuildPlanet()
 
             Volume.Clear
 
-            Set m = CreateMoleculeLanding(tmp, Far, Segments, 0, Size.Width * (Far / Size.Width), Size.Height * (Far / Size.Height))
+            Set m = CreateMoleculeLanding(tmp, FAR, Segments, 0, Size.Width * (FAR / Size.Width), Size.Height * (FAR / Size.Height))
 
             For Each v In m.Volume
                 Volume.Add v
@@ -726,11 +726,11 @@ Private Property Get Molecule_Motions() As Motions
 End Property
 
 Private Property Let Molecule_FileName(ByVal RHS As String)
-    Molecule.FileName = RHS
+    Molecule.Filename = RHS
 End Property
 
 Private Property Get Molecule_FileName() As String
-    Molecule_FileName = Molecule.FileName
+    Molecule_FileName = Molecule.Filename
 End Property
 
 Private Property Let Molecule_Key(ByVal RHS As String)
@@ -805,12 +805,12 @@ Private Property Get Molecule_Origin() As Point
     Set Molecule_Origin = Molecule.Origin
 End Property
 
-Private Property Set Molecule_Ranges(ByRef RHS As Range)
-    Set Molecule.Ranges = RHS
+Private Property Set Molecule_Planes(ByRef RHS As Plane)
+    Set Molecule.Planes = RHS
 End Property
 
-Private Property Get Molecule_Ranges() As Range
-    Set Molecule_Ranges = Molecule.Ranges
+Private Property Get Molecule_Planes() As Plane
+    Set Molecule_Planes = Molecule.Planes
 End Property
 
 Private Property Set Molecule_Rotate(ByRef RHS As Point)

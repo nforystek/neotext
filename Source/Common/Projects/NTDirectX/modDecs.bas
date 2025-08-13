@@ -149,7 +149,7 @@ Public Stats_Brilliant_Count As Long
 Public Stats_Brilliants_Count As Long
 Public Stats_Camera_Count As Long
 Public Stats_Color_Count As Long
-Public Stats_Coord_Count As Long
+Public Stats_Plot_Count As Long
 Public Stats_Include_Count As Long
 Public Stats_Matter_Count As Long
 Public Stats_Molecule_Count As Long
@@ -162,8 +162,8 @@ Public Stats_Planet_Count As Long
 Public Stats_Planets_Count As Long
 Public Stats_Point_Count As Long
 Public Stats_Points_Count As Long
-Public Stats_Range_Count As Long
-Public Stats_Ranges_Count As Long
+Public Stats_Plane_Count As Long
+Public Stats_Planes_Count As Long
 Public Stats_Volume_Count As Long
 Public Stats_OnEvent_Count As Long
 Public Stats_OnEvents_Count As Long
@@ -173,14 +173,14 @@ Public Function GetStats() As String
         "Object Counts: " & vbCrLf & "    Bindings: " & Stats_Bindings_Count & ", " & _
         "Brilliant: " & Stats_Brilliant_Count & ":" & Brilliants.Count & ", " & "Brilliants: " & Stats_Brilliants_Count & ", " & _
         "Camera: " & Stats_Camera_Count & ", " & "Color: " & Stats_Color_Count & ", " & _
-        "Coord: " & Stats_Coord_Count & vbCrLf & "    Include: " & Stats_Include_Count & ", " & _
+        "Plot: " & Stats_Plot_Count & vbCrLf & "    Include: " & Stats_Include_Count & ", " & _
         "Matter: " & Stats_Matter_Count & ", " & "Molecule: " & Stats_Molecule_Count & ":" & Molecules.Count & ", " & _
         "Molecules: " & Stats_Molecules_Count & ", " & "Motion: " & Stats_Motion_Count & ", " & _
         "Motions: " & Stats_Motions_Count & vbCrLf & "    Orbit: " & Stats_Orbit_Count & ", " & _
         "Orbits: " & Stats_Orbits_Count & ", " & "Planet: " & Stats_Planet_Count & ":" & Planets.Count & ", " & _
         "Planets: " & Stats_Planets_Count & ", " & "Point: " & Stats_Point_Count & ", " & _
-        "Points: " & Stats_Points_Count & vbCrLf & "    Range: " & Stats_Range_Count & ", " & _
-        "Ranges: " & Stats_Ranges_Count & ", " & "Volume: " & Stats_Volume_Count & ", " & _
+        "Points: " & Stats_Points_Count & vbCrLf & "    Plane: " & Stats_Plane_Count & ", " & _
+        "Planes: " & Stats_Planes_Count & ", " & "Volume: " & Stats_Volume_Count & ", " & _
         "OnEvent: " & Stats_OnEvent_Count & ", " & "OnEvents: " & Stats_OnEvents_Count & vbCrLf & _
         "Array Counts: " & vbCrLf & _
         "    TriangleCount: " & TriangleCount & ", ObjectCount: " & ObjectCount & vbCrLf & _
