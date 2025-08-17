@@ -1,5 +1,6 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{E1211242-8E94-11D1-8808-00C04FC2C603}#1.0#0#..\..\..\..\WINDOWS\system32\dx8vb.dll#DirectX 8 for Visual Basic Type Library
 Form=Form1.frm
 Module=MiscGeometry; MiscGeometry.bas
 Module=PointAngles; PointAngles.bas
@@ -9,7 +10,10 @@ Class=Plane; Plane.cls
 Class=Plot; Plot.cls
 Class=Point; Point.cls
 Module=MainModule; MainModule.bas
+IconForm="Form1"
 Startup="Form1"
+HelpFile=""
+Title="Project1"
 Command32=""
 Name="Project1"
 HelpContextID="0"
@@ -27,8 +31,8 @@ FavorPentiumPro(tm)=0
 CodeViewDebugInfo=0
 NoAliasing=0
 BoundsCheck=0
-OverflowCheck=0
-FlPointCheck=0
+OverflowCheck=-1
+FlPointCheck=-1
 FDIVCheck=0
 UnroundedFP=0
 StartMode=0
@@ -36,6 +40,7 @@ Unattended=0
 Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
+DebugStartupOption=0
 
 [MS Transaction Server]
 AutoRefresh=1

@@ -114,7 +114,7 @@ Private Property Let Point_Y(ByVal RHS As Double)
 End Property
 
 Private Property Get Point_Y() As Double
-    Point_X = Point.Y
+    Point_Y = Point.Y
 End Property
 
 Private Property Let Point_Z(ByVal RHS As Double)
@@ -122,6 +122,6 @@ Private Property Let Point_Z(ByVal RHS As Double)
 End Property
 
 Private Property Get Point_Z() As Double
-    Point_Z = Point.Y
+    Point_Z = Point.Z
 End Property
 

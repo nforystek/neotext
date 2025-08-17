@@ -1,10 +1,27 @@
 Attribute VB_Name = "MainModule"
 Option Explicit
 
+
+Public Vertex As New Collection
+Public Rotate As New Collection
+
 Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
 
+Public Function RandomPositive(ByVal LowerBound As Double, ByVal UpperBound As Double) As Double
+    Randomize
+    RandomPositive = Round((((UpperBound - LowerBound) * Rnd) + LowerBound), 0)
+End Function
 
+Public Function RandomPoint(ByRef Point As Point, Optional ByVal Min As Double = -1000, Optional ByVal Max As Double = 1000)
+    If Point Is Nothing Then Set Point = New Point
+    With Point
+        .X = CDbl(RandomPositive(Min, (Max / 2)))
+        .Y = CDbl(RandomPositive(Min, (Max / 2)))
+        .Z = CDbl(RandomPositive(Min, (Max / 2)))
+    End With
+    Set RandomPoint = Point
+End Function
 Public Function PaddingLeft(ByVal txt As String, ByVal nLen As Long, Optional ByVal TheChar As String = "0") As String
     If nLen - Len(Trim(txt)) > 0 Then
         PaddingLeft = String(nLen - Len(Trim(txt)), TheChar) & Trim(txt)
@@ -19,11 +36,6 @@ Public Function PaddingRight(ByVal txt As String, ByVal nLen As Long, Optional B
     Else
         PaddingRight = Trim(txt)
     End If
-End Function
-
-Public Function RandomPositive(ByVal LowerBound As Long, ByVal UpperBound As Long) As Double
-    Randomize
-    RandomPositive = CDbl((UpperBound - LowerBound) * Rnd + LowerBound)
 End Function
 
 Public Function NextArg(ByVal TheParams As String, ByVal TheSeperator As String, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare, Optional ByVal TrimResult As Boolean = True) As String

@@ -1,14 +1,6 @@
 Attribute VB_Name = "MiscGeometry"
 Option Explicit
 
-Public Vertex As New Point
-Public Angles As New Point
-
-Public Vector As New Point
-Public Rotate As New Point
-
-Public points As New Point
-Public twists As New Point
 
 Public Const PI As Single = 3.14159265358979
 Public Const DEGREE As Single = 180 / PI
@@ -279,38 +271,3 @@ Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal Z As Singl
     MakePoint.Z = Z
 End Function
 
-'Private Function Hypotenus(ByVal X As Double, ByVal Y As Double) As Double
-'    Hypotenus = ((X ^ 2) + (Y ^ 2)) ^ (1 / 2)
-'End Function
-'
-'Private Function Sine(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
-'    If Not H = 0 Then
-'        If X < Y Then
-'            Sine = X / H
-'        Else
-'            Sine = Y / H
-'        End If
-'    End If
-'End Function
-'
-'Private Function Cosine(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
-'    If Not H = 0 Then
-'        If X < Y Then
-'            Cosine = Y / H
-'        Else
-'            Cosine = X / H
-'        End If
-'    End If
-'End Function
-'
-'Private Function Tangent(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
-'    If X < Y Then
-'        If Not Y = 0 Then
-'            Tangent = X / Y
-'        End If
-'    Else
-'        If Not X = 0 Then
-'            Tangent = Y / X
-'        End If
-'    End If
-'End Function
