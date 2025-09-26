@@ -52,6 +52,8 @@ Option Explicit
 
 Option Compare Binary
 
+#If VBA = -1 Then
+
 '--------------------------------------------------
 '**** VBA Integration code, begin insert
 Public m_apcInt As APCIntegration
@@ -80,14 +82,6 @@ End Sub
 '--------------------------------------------------
 
 
-Public Property Get ScriptControl() As ScriptControl
-    Set ScriptControl = ScriptControl1
-End Property
-
-Private Sub Form_Click()
-    TrapMouse = True
-End Sub
-
 Private Sub Form_Load()
 
 '--------------------------------------------------
@@ -105,15 +99,28 @@ Private Sub Form_Load()
 
 End Sub
 
+#End If
 
 '--------------------------------------------------
 '**** VBA Integration code, begin insert
 Private Sub Form_QueryUnLoad(cancel As Integer, unloadmode As Integer)
+#If VBA = -1 Then
     m_apcInt.QueryUnload cancel, unloadmode
+#End If
     If Not cancel Then StopGame = True
     If unloadmode = 0 Then cancel = True
 End Sub '**** VBA Integration code, end insert
 '--------------------------------------------------
+
+
+Public Property Get ScriptControl() As ScriptControl
+    Set ScriptControl = ScriptControl1
+End Property
+
+Private Sub Form_Click()
+    MouseTrapped = True
+End Sub
+
 
 
 Public Sub Reset()
@@ -140,7 +147,7 @@ Public Sub Startup()
         .AddObject "Portals", modParse.Portals, False
         .AddObject "Screens", modParse.Screens, False
         .AddObject "Sounds", modParse.Sounds, False
-        .AddObject "Space", modParse.Space, False
+        .AddObject "Spaces", modParse.Spaces, False
         .AddObject "Tracks", modParse.Tracks, False
 
     End With
@@ -164,8 +171,10 @@ Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As S
 End Function
 
 Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As String = "ExecuteStatement", Optional ByVal LineNumber As Long = 0)
+
     frmMain.ScriptControl.ExecuteStatement Statement
     If ScriptDebug Then DebugPrint "Execute: " & Statement
+    
 End Sub
 
 

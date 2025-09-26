@@ -128,6 +128,11 @@ Public Sub Main()
     
     Dim comp1 As New Point
     
+    'if the angles are whole numbers 1 through 360 then
+    'four can be represented with one Point object, if
+    'they have decimals to the 0.00 precision then two
+    'can be represented into one Point object.
+    
     Debug.Print "BEGIN"
     
     'make four random 3 axis degree angles

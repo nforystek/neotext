@@ -8,54 +8,39 @@ Option Explicit
 '####################################################################################################
 '####################################################################################################
 
-'Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Dim tmp As New Point
-'    Set VectorAxisAngles = New Point
-'    With VectorAxisAngles
-'        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
-'            Set tmp = Point
-'            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.Z, tmp.X)))
-'            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
-'            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.Z, tmp.X, tmp.Y)))
-'            Set tmp = Nothing
-'        End If
-'    End With
-'End Function
-'
-'Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Dim tmp As Point
-'    Set VectorAxisAngles = New Point
-'    With VectorAxisAngles
-'        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
-'            Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-'            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.Z, tmp.X)))
-'            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
-'            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.Z, tmp.X, tmp.Y)))
-''            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Y))
-''            .Z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.Z)))
-''            Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Z))
-'            Set tmp = Nothing
-'        End If
-'    End With
-'End Function
+Public Function AnglesOfPoint4(ByRef Point As Point) As Point
+    Dim tmp As New Point
+    Set AnglesOfPoint4 = New Point
+    With AnglesOfPoint4
+        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
+            Set tmp = Point
+            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
+            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
+            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
+            Set tmp = Nothing
+        End If
+    End With
+End Function
 
-
-'Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Dim tmp As New Point
-'    Set VectorAxisAngles = New Point
-'    With VectorAxisAngles
-'        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
-'            Set tmp = Point
-'            .X = AngleRestrict(AngleOfCoord(MakePoint(tmp.Y, tmp.Z, tmp.X)))
-'            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
-'            .Y = AngleRestrict(AngleOfCoord(MakePoint(tmp.Z, tmp.X, tmp.Y)))
+Public Function AnglesOfPoint5(ByRef Point As Point) As Point
+    Dim tmp As Point
+    Set AnglesOfPoint5 = New Point
+    With AnglesOfPoint5
+        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
+            Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
+            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
+            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
+            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
 '            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Y))
-'            .Z = AngleRestrict(AngleOfCoord(MakePoint(tmp.X, tmp.Y, tmp.Z)))
+'            .Z = AngleRestrict(AngleOfCoord(tmp.X, tmp.Y))
 '            Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Z))
-'            Set tmp = Nothing
-'        End If
-'    End With
-'End Function
+            Set tmp = Nothing
+        End If
+    End With
+End Function
+
+
+
 
 
 Public Function AnglesOfPoint1(ByRef p As Point) As Point

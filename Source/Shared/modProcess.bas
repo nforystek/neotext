@@ -570,7 +570,99 @@ Public Function KillApp(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As 
     Call CloseHandle(hSnapshot)
 Finish:
 End Function
+Private Function ColExists(ByRef col As Collection, ByVal Val As String) As Boolean
+    If col.Count > 0 Then
+        Dim i As Long
+        For i = 1 To col.Count
+            If col(i) = Val Then
+                ColExists = True
+                Exit Function
+            End If
+        Next
+    End If
+End Function
+Public Function KillSubApps(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As Boolean = True) As Boolean
 
+    Const PROCESS_ALL_ACCESS = 0
+    Dim uProcess As PROCESSENTRY32
+    Dim rProcessFound As Long
+    Dim hSnapshot As Long
+    Dim szExename As String
+    Dim exitCode As Long
+    Dim myProcess As Long
+    Dim AppKill As Boolean
+    Dim appCount As Integer
+    Dim i As Integer
+    On Local Error GoTo Finish
+    appCount = 0
+    Dim col As New Collection
+    
+    Const TH32CS_SNAPPROCESS As Long = 2&
+    
+    Dim foundAdd As Boolean
+    
+    foundAdd = True
+    
+    Do While foundAdd
+        foundAdd = False
+        
+        uProcess.dwSize = Len(uProcess)
+        hSnapshot = CreateToolhelpSnapshot(TH32CS_SNAPPROCESS, 0&)
+        rProcessFound = ProcessFirst(hSnapshot, uProcess)
+    
+        Do While rProcessFound
+            i = InStr(1, uProcess.szexeFile, Chr(0))
+            szExename = LCase$(Left$(uProcess.szexeFile, i - 1))
+            If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
+                If Not ColExists(col, uProcess.th32ProcessID) Then
+                    col.Add CStr(uProcess.th32ProcessID), Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")
+                    foundAdd = True
+                End If
+            ElseIf IsNumeric(EXEorPID) Then
+                If (uProcess.th32ProcessID = CLng(EXEorPID)) Then
+                    If Not ColExists(col, uProcess.th32ProcessID) Then
+                        col.Add CStr(uProcess.th32ProcessID), Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")
+                        foundAdd = True
+                    End If
+                ElseIf (uProcess.th32ParentProcessID = CLng(EXEorPID)) Or _
+                    ColExists(col, uProcess.th32ParentProcessID) Then
+                    If Not ColExists(col, uProcess.th32ProcessID) Then
+                        col.Add CStr(uProcess.th32ProcessID)
+                        foundAdd = True
+                    End If
+                End If
+            ElseIf ColExists(col, uProcess.th32ParentProcessID) Then
+                If Not ColExists(col, uProcess.th32ProcessID) Then
+                    col.Add CStr(uProcess.th32ProcessID)
+                    foundAdd = True
+                End If
+            End If
+    
+            rProcessFound = ProcessNext(hSnapshot, uProcess)
+        Loop
+    
+        Call CloseHandle(hSnapshot)
+    
+    Loop
+
+    If col.Count > 0 Then
+        For i = 1 To col.Count
+                
+            If col(i) <> col(Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")) Then
+            
+                KillSubApps = True
+                appCount = appCount + 1
+                myProcess = OpenProcess(1, False, col(i))
+                AppKill = TerminateProcess(myProcess, exitCode)
+                Call CloseHandle(myProcess)
+
+            End If
+            
+        Next
+    End If
+    
+Finish:
+End Function
 
 
 Private Function ProcessCheck(ByVal szExename As String, ByVal EXEorPID As Variant, ByVal ExactMatch As Boolean) As Boolean

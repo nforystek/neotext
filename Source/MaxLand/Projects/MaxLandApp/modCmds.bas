@@ -6,8 +6,29 @@ Option Compare Binary
 Option Private Module
 
 
+Private Type KeyState
+    VKState As Integer
+    VKToggle As Boolean
+    VKPressed As Boolean
+    VKLatency As Single
+ End Type
+
+Private Enum ToggleIdents
+    MoveAuto = 0
+    MoveJump = 1
+    MoveForward = 2
+    MoveBackward = 3
+    MoveStepLeft = 4
+    MoveStepRight = 5
+End Enum
+
+
 Private Const MaxConsoleMsgs = 20
 Private Const MaxHistoryMsgs = 10
+
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
 
 Private ConsoleQueue As VBA.Collection
 Private ConsoleMsgs As VBA.Collection
@@ -26,15 +47,7 @@ Private TogglePress1 As Long
 Private TogglePress2 As Long
 Private TogglePress3 As Long
 
-Private Type KeyState
-    VKState As Integer
-    VKToggle As Boolean
-    VKPressed As Boolean
-    VKLatency As Single
- End Type
-
 Private IdleInput As Single
-
 
 Private CapsLock As Boolean
 Private KeyState(255) As KeyState
@@ -52,7 +65,6 @@ Private Vertex(0 To 4) As MyScreen
 Private EditFileName As String
 Private EditFileData As String
 
-
 Private State As Integer
 Private Shift As Integer
 Private Bottom As Long
@@ -60,25 +72,12 @@ Private Bottom As Long
 Public DrawCount As Long
 Public Draws() As Variant
 
-
-
-
 Private ToggleSound1 As Boolean
 Private ToggleSound2 As Boolean
 Private ToggleSound3 As Boolean
 
 Private ToggleMouse1 As Long
 Private ToggleMouse2 As Long
-
-
-Private Enum ToggleIdents
-    MoveAuto = 0
-    MoveJump = 1
-    MoveForward = 2
-    MoveBackward = 3
-    MoveStepLeft = 4
-    MoveStepRight = 5
-End Enum
 
 Private ToggleMotion(0 To 5) As Long
 Private Uses(0 To 255) As Boolean
@@ -145,19 +144,19 @@ End Property
 '    SurfaceCatch = True
 '    Select Case SurfaceHit(X / Screen.TwipsPerPixelX, Y / Screen.TwipsPerPixelY)
 '        Case MouseUp
-'            MouseLook 0, -20, 0
+'            MouseHandler 0, -20, 0
 '            ResetIdle
 '            ToggleJump = False
 '        Case MouseDown
-'            MouseLook 0, 20, 0
+'            MouseHandler 0, 20, 0
 '            ResetIdle
 '            ToggleJump = False
 '        Case MouseLeft
-'            MouseLook -20, 0, 0
+'            MouseHandler -20, 0, 0
 '            ResetIdle
 '            ToggleJump = False
 '        Case MouseRight
-'            MouseLook 20, 0, 0
+'            MouseHandler 20, 0, 0
 '            ResetIdle
 '            ToggleJump = False
 '        Case Forward
@@ -165,7 +164,7 @@ End Property
 '                vecDirect.X = Sin(D720 - Player.Twists.Y)
 '                vecDirect.z = Cos(D720 - Player.Twists.Y)
 '                If ((Perspective = Spectator) Or DebugMode) Or Player.InLiquid Then
-'                    vecDirect.Y = -(Tan(D720 - Player.Pitch))
+'                    vecDirect.Y = -(Tan(D720 - Player.Camera.Pitch))
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
 '                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
@@ -182,7 +181,7 @@ End Property
 '                vecDirect.X = -Sin(D720 - Player.Twists.Y)
 '                vecDirect.z = -Cos(D720 - Player.Twists.Y)
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = Tan(D720 - Player.Pitch)
+'                    vecDirect.Y = Tan(D720 - Player.Camera.Pitch)
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
 '                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
@@ -267,6 +266,8 @@ Public Sub InputScene()
 
     DIKeyBoardDevice.GetDeviceStateKeyboard DIKEYBOARDSTATE
 
+    Dim errline As Long
+    Dim errsource As String
     
     Dim cnt As Long
     
@@ -276,47 +277,14 @@ Public Sub InputScene()
     
     If ((GetActiveWindow = frmMain.hwnd)) Then
     
-        If (FullScreen And Not TrapMouse) Then TrapMouse = True And (Bindings.MouseInput = Trapping)
+        If (FullScreen And Not MouseTrapped) Then MouseTrapped = True And (Bindings.MouseInput = Trap)
 
-        If DIKEYBOARDSTATE.Key(DIK_ESCAPE) Then
-            If (Not TogglePress1 = DIK_ESCAPE) Then
-                TogglePress1 = DIK_ESCAPE
-                Uses(DIK_ESCAPE) = True
-                
 
-                '############################################
-                '############### UNTRAP/QUIT ################
-                ResetIdle
+        '########################################################################
+        '########## Keys that are available with or with out console ############
 
-'                If ((Not FullScreen) And TrapMouse) Then
-'                    TrapMouse = False
-'                ElseIf (FullScreen Or (Not FullScreen And Not TrapMouse)) And (Bindings.MouseInput = Trapping) Then
-'                    StopGame = True
-'                End If
 
-                If ((Not FullScreen) Or ConsoleVisible) And TrapMouse Then
-                    TrapMouse = False
-                ElseIf FullScreen Or (Not FullScreen And Not TrapMouse) Then
-                    StopGame = True
-                End If
-                '############################################
-                '############################################
-
-            End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_GRAVE) Then
-            If (Not TogglePress1 = DIK_GRAVE) Then
-                TogglePress1 = DIK_GRAVE
-                Uses(DIK_GRAVE) = True
-
-                '############################################
-                '############## TOGGLE CONSOLE ##############
-                ResetIdle
-                ConsoleToggle
-
-                '############################################
-                '############################################
-            End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_LCONTROL) Or DIKEYBOARDSTATE.Key(DIK_RCONTROL) Then
+        If DIKEYBOARDSTATE.Key(DIK_LCONTROL) Or DIKEYBOARDSTATE.Key(DIK_RCONTROL) Then
             If DIKEYBOARDSTATE.Key(DIK_V) Then
                 If (Not TogglePress1 = DIK_V) Then
                     TogglePress1 = DIK_V
@@ -327,9 +295,7 @@ Public Sub InputScene()
                     '############################################
                     '############### CTRL+V PASTE ###############
                     ResetIdle
-
                     If ConsoleVisible Then
-                    
                         Dim tmp As String
                         tmp = Left(Replace(Replace(Clipboard.GetText(ClipBoardConstants.vbCFText), vbCr, ""), vbLf, ""), 255)
                         If CommandLine = "" Then
@@ -342,9 +308,7 @@ Public Sub InputScene()
                             CommandLine = Left(CommandLine, CursorPos) & tmp & Right(CommandLine, Len(CommandLine) - CursorPos)
                         End If
                         CursorPos = CursorPos + Len(tmp)
-        
                     End If
-    
                     '############################################
                     '############################################
                     
@@ -358,21 +322,10 @@ Public Sub InputScene()
                     Uses(DIK_DELETE) = True
                     
                     '############################################
-                    '############### ALT+TAB SWAP ###############
+                    '############### CTRL+ALT+DEL ###############
                     ResetIdle
-
-                    TrapMouse = False
-
-                    If FullScreen Then
-                        '
-                        'frmMain.WindowState = 1
-                        DoPauseGame
-                        '
-                    End If
-
-'                    TrapMouse = False
-'                    frmMain.WindowState = 1
-    
+                    MouseTrapped = False
+                    If FullScreen Then DoPauseGame
                     '############################################
                     '############################################
                     
@@ -387,117 +340,132 @@ Public Sub InputScene()
                     '############################################
                     '############### ALT+TAB SWAP ###############
                     ResetIdle
-
-                    TrapMouse = False
-
-                    If FullScreen Then
-                        '
-                       ' frmMain.WindowState = 1
-                        DoPauseGame
-                        '
-                    End If
-
-'                    TrapMouse = False
-'                    frmMain.WindowState = 1
-    
+                    MouseTrapped = False
+                    If FullScreen Then DoPauseGame
                     '############################################
                     '############################################
                     
                 End If
             End If
 
+        ElseIf DIKEYBOARDSTATE.Key(DIK_ESCAPE) Then
+            If (Not TogglePress1 = DIK_ESCAPE) Then
+                TogglePress1 = DIK_ESCAPE
+                Uses(DIK_ESCAPE) = True
 
+                '############################################
+                '############### ALT+TAB SWAP ###############
+                ResetIdle
+                If ((Not FullScreen) And MouseTrapped) And (Not ConsoleVisible) Then
+                    MouseTrapped = False
+                ElseIf ((FullScreen Or (Not FullScreen And Not MouseTrapped)) And (Bindings.MouseInput = Trap)) Or ConsoleVisible Then
+                    StopGame = True
+                End If
+                '############################################
+                '############################################
 
+            End If
         ElseIf DIKEYBOARDSTATE.Key(DIK_F1) Then
             If (Not TogglePress1 = DIK_F1) Then
                 TogglePress1 = DIK_F1
                 Uses(DIK_F1) = True
 
                 '############################################
-                '################ SHOW HELP #################
+                '############### ALT+TAB SWAP ###############
                 ResetIdle
                 ShowHelp = Not ShowHelp
                 '############################################
                 '############################################
-
+                
             End If
         ElseIf DIKEYBOARDSTATE.Key(DIK_F2) Then
             If (Not TogglePress1 = DIK_F2) Then
                 TogglePress1 = DIK_F2
                 Uses(DIK_F2) = True
 
-                '############################################
-                '################ SHOW StATS ################
-                ResetIdle
-                ShowStat = Not ShowStat
-'                ShowStat = (Not ShowStat) Or (ShowStat And Not ShowHelp)
-'                If ShowStat Then ShowHelp = True
-                '############################################
-                '############################################
-
+                '##########################################
+                '################## Menu ##################
+                ConsoleCommand "menu"
+                '###########################################
+                '###########################################
+                
             End If
         ElseIf DIKEYBOARDSTATE.Key(DIK_F3) Then
             If (Not TogglePress1 = DIK_F3) Then
                 TogglePress1 = DIK_F3
                 Uses(DIK_F3) = True
 
-                '############################################
-                '############### RESET GAME #################
+                '###########################################
+                '################## Pause ##################
+                ConsoleCommand "pause"
+                '###########################################
+                '###########################################
                 
-                ResetIdle
-                ConsoleCommand "reload"
-
-                '############################################
-                '############################################
             End If
             
         ElseIf DIKEYBOARDSTATE.Key(DIK_F4) Then
             If (Not TogglePress1 = DIK_F4) Then
                 TogglePress1 = DIK_F4
                 Uses(DIK_F4) = True
-            
-                '############################################
-                '############### SHOW CREDITS ###############
-                ResetIdle
-                ShowCredits = Not ShowCredits
-                '############################################
-                '############################################
 
+                '##################################################
+                '################# Toggle Console #################
+                ConsoleToggle
+                '##################################################
+                '##################################################
+                
+            End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F5) Then
+            If (Not TogglePress1 = DIK_F5) Then
+                TogglePress1 = DIK_F5
+                Uses(DIK_F5) = True
+
+                '##########################################
+                '################# Reload #################
+                ConsoleCommand "reload"
+                '##########################################
+                '##########################################
+                
+            End If
+            
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F6) Then
+            If (Not TogglePress1 = DIK_F6) Then
+                TogglePress1 = DIK_F6
+                Uses(DIK_F6) = True
+
+
+                '#########################################
+                '################# Reset #################
+                ConsoleCommand "reset"
+                '#########################################
+                '#########################################
+                
             End If
         ElseIf DIKEYBOARDSTATE.Key(DIK_F7) Then
             If (Not TogglePress1 = DIK_F7) Then
                 TogglePress1 = DIK_F7
                 Uses(DIK_F7) = True
+
+                '#########################################
+                '################ Refresh ################
+                ConsoleCommand "refresh"
+                '#########################################
+                '#########################################
+
+            End If
+        ElseIf DIKEYBOARDSTATE.Key(DIK_F8) Then
+            If (Not TogglePress1 = DIK_F8) Then
+                TogglePress1 = DIK_F8
+                Uses(DIK_F8) = True
             
                 '############################################
-                '############### SHOW VBA IDE ###############
+                '################ SHOW StATS ################
                 ResetIdle
-                frmMain.ShowVBE
-
+                ShowStat = Not ShowStat
                 '############################################
                 '############################################
 
             End If
-        ElseIf DIKEYBOARDSTATE.Key(DIK_F6) Then
-            If (Not TogglePress1 = DIK_F6) Then
-                TogglePress1 = DIK_F6
-                Uses(DIK_F6) = True
-            
-                '############################################
-                '############ SWITCH PERSPECTIVE ############
-                ResetIdle
-                If Perspective = Playmode.ThirdPerson Then
-                    Perspective = Playmode.FirstPerson
-                ElseIf Perspective = Playmode.FirstPerson Then
-                    Perspective = IIf((Cameras.Count > 0), Playmode.CameraMode, Playmode.ThirdPerson)
-                ElseIf Perspective = Playmode.CameraMode Then
-                    Perspective = Playmode.ThirdPerson
-                End If
-                '############################################
-                '############################################
-
-            End If
-
         ElseIf Not (TogglePress1 = 0) Then
             TogglePress1 = 0
         End If
@@ -519,101 +487,216 @@ Public Sub InputScene()
             mY = DIMOUSESTATE.lY
             mZ = DIMOUSESTATE.lZ
                            
-            If ((TrapMouse Or FullScreen) And (Bindings.MouseInput = Trapping)) Or _
-                ((Bindings.MouseInput = Hidden) And MouseOverCanvas(mloc.X, mloc.Y)) Then
+            If ((MouseTrapped Or FullScreen) And (Bindings.MouseInput = Trap)) Or _
+                ((Bindings.MouseInput = Hide) And MouseOverCanvas(mloc.X, mloc.Y)) Then
                 'And ((mloc.X >= rec.Left) And (mloc.X <= rec.Right) And (mloc.Y >= rec.Top) And (mloc.Y <= rec.Bottom))) Then
                 If (Not (VB.Screen.MousePointer = 99)) Then
                     VB.Screen.MousePointer = 99
                     Set VB.Screen.MouseIcon = LoadPicture(AppPath & "mouse.cur")
                 End If
                 
-            ElseIf Not TrapMouse Then
+            ElseIf Not MouseTrapped Then
                 If (Not (VB.Screen.MousePointer = 0)) Then VB.Screen.MousePointer = 0
             End If
     
             If Player.Speed > MaxDisplacement Then Player.Speed = MaxDisplacement
             If Player.Speed < 0.01 Then Player.Speed = 0.01
-    
-    
-            If ((TrapMouse And (Not ConsoleVisible)) And (Bindings.MouseInput = Trapping)) Or _
-                (((Not TrapMouse) And (Not ConsoleVisible)) And (Bindings.MouseInput = Hidden)) Or _
-                ((Bindings.MouseInput = Visual) And MouseOverCanvas(mloc.X, mloc.Y)) Then
-                '((mloc.X >= rec.Left) And (mloc.X <= rec.Right) And (mloc.Y >= rec.Top) And (mloc.Y <= rec.Bottom))) Then
+
+        '########################################################################
+        '############## Keys that are available with out console ################
+        
+            If ((MouseTrapped And (Not ConsoleVisible)) And (Bindings.MouseInput = Trap)) Or _
+                (((Not MouseTrapped) And (Not ConsoleVisible)) And (Bindings.MouseInput = Hide)) Or _
+                ((Bindings.MouseInput = Icon) And MouseOverCanvas(mloc.X, mloc.Y)) Then
                 
-                MouseLook mX, mY, mZ
+                If mZ < 0 Then
+                    If (Bindings(DIK_PGDN) Is Nothing) And (Not Uses(DIK_PGDN)) Then
+                        Uses(DIK_PGDN) = True
+                        
+                        
+                        Player.ZoomOut ((-mZ * MouseSensitivity) / 100)
+                        
+                        
+                    End If
+                ElseIf mZ > 0 Then
+                    If (Bindings(DIK_PGUP) Is Nothing) And (Not Uses(DIK_PGUP)) Then
+                        Uses(DIK_PGUP) = True
+                        
+                        
+                        Player.ZoomIn ((mZ * MouseSensitivity) / 100)
+                        
+                        
+                    End If
+                End If
                 
-                If DIKEYBOARDSTATE.Key(DIK_E) And (Bindings(DIK_E) = "") And (Not Uses(DIK_E)) Then
+                
+                If Perspective = CameraMode Then
+                    If Player.CameraIndex > 0 Then
+                        Player.Element.Twists.Y = Cameras(Player.CameraIndex).Angle
+                    End If
+                Else
+                    If mX < 0 Then
+                        If (Bindings(DIK_LEFT) Is Nothing) And (Not Uses(DIK_LEFT)) Then
+                            Uses(DIK_LEFT) = True
+                            
+                            
+                            Player.LookLeft ((-mX * MouseSensitivity) / 100)
+                            
+                            
+                        End If
+                    ElseIf mX > 0 Then
+                        If (Bindings(DIK_RIGHT) Is Nothing) And (Not Uses(DIK_RIGHT)) Then
+                            Uses(DIK_RIGHT) = True
+                            
+                            
+                            Player.LookRight ((mX * MouseSensitivity) / 100)
+                            
+                            
+                        End If
+                    End If
+                End If
+            
+                If mY < 0 Then
+                    If (Bindings(DIK_DOWN) Is Nothing) And (Not Uses(DIK_DOWN)) Then
+                        Uses(DIK_DOWN) = True
+                        
+                        
+                        Player.LookDown ((-mY * MouseSensitivity) / 100)
+                        
+                        
+                    End If
+                ElseIf mY > 0 Then
+                    If (Bindings(DIK_UP) Is Nothing) And (Not Uses(DIK_UP)) Then
+                        Uses(DIK_UP) = True
+                        
+                        
+                        Player.LookUp ((mY * MouseSensitivity) / 100)
+                        
+                        
+                    End If
+                End If
+    
+                
+                For cnt = 0 To 255
+                    If DIKEYBOARDSTATE.Key(cnt) And (Not Bindings(cnt) Is Nothing) Then
+
+                        On Error GoTo scripterror
+                        
+                        If (((Bindings(cnt).EventFlags And 1) <> 1) And (Bindings(cnt).Behavior = Press)) Or (Bindings(cnt).Behavior = Rapid) Then
+                            If (((Bindings(cnt).EventFlags And 1) <> 1) And (Bindings(cnt).Behavior <> Rapid)) Then
+                                Bindings(cnt).EventFlags = Bindings(cnt).EventFlags + 1
+                                If (Bindings(cnt).Behavior = Locks) Then
+                                    If ((Bindings(cnt).EventFlags And 2) = 2) Then
+                                        Bindings(cnt).EventFlags = Bindings(cnt).EventFlags - 2
+                                    Else
+                                        Bindings(cnt).EventFlags = Bindings(cnt).EventFlags + 2
+                                    End If
+                                End If
+                            End If
+        
+                            If (Bindings(cnt).Behavior <> Locks) Or ((Bindings(cnt).Behavior = Locks) And ((Bindings(cnt).EventFlags And 2) = 2)) Then
+
+                                Uses(cnt) = True
+                                ResetIdle
+                                
+                                errsource = "Binding(" & GetBindingText(Bindings(cnt).AppliesTo) & ")"
+                                errline = CLng(Bindings(cnt).StartLine)
+                        
+                                frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+                                
+                            End If
+                        ElseIf (((Bindings(cnt).EventFlags And 1) = 1) And (Bindings(cnt).Behavior <> Rapid)) Then
+                            Bindings(cnt).EventFlags = Bindings(cnt).EventFlags - 1
+                        End If
+                        
+                        On Error GoTo pausing:
+                        
+                    End If
+                Next
+                
+                
+                If DIKEYBOARDSTATE.Key(DIK_E) And (Bindings(DIK_E) Is Nothing) And (Not Uses(DIK_E)) Then
                     Uses(DIK_E) = True
-                    ResetIdle
+                    
+                    
+                    
                     Player.MoveForward
-                ElseIf DIKEYBOARDSTATE.Key(DIK_D) And (Bindings(DIK_D) = "") And (Not Uses(DIK_D)) Then
+                    
+                    
+                ElseIf DIKEYBOARDSTATE.Key(DIK_D) And (Bindings(DIK_D) Is Nothing) And (Not Uses(DIK_D)) Then
                     Uses(DIK_D) = True
-                    ResetIdle
+                    
+                    
                     Player.MoveBackwards
+                    
+                    
                 End If
     
-                If DIKEYBOARDSTATE.Key(DIK_W) And (Bindings(DIK_W) = "") And (Not Uses(DIK_W)) Then
+                If DIKEYBOARDSTATE.Key(DIK_W) And (Bindings(DIK_W) Is Nothing) And (Not Uses(DIK_W)) Then
                     Uses(DIK_W) = True
-                    ResetIdle
+                    
+                    
                     Player.SlideLeft
-                ElseIf DIKEYBOARDSTATE.Key(DIK_R) And (Bindings(DIK_R) = "") And (Not Uses(DIK_R)) Then
+                    
+                    
+                ElseIf DIKEYBOARDSTATE.Key(DIK_R) And (Bindings(DIK_R) Is Nothing) And (Not Uses(DIK_R)) Then
                     Uses(DIK_R) = True
-                    ResetIdle
+                    
+                    
                     Player.SlideRight
+                    
+                    
                 End If
                 
-                If DIKEYBOARDSTATE.Key(DIK_SPACE) And (Bindings(DIK_SPACE) = "") And (Not Uses(DIK_SPACE)) Then
+                If DIKEYBOARDSTATE.Key(DIK_SPACE) And (Bindings(DIK_SPACE) Is Nothing) And (Not Uses(DIK_SPACE)) Then
                     Uses(DIK_SPACE) = True
-    
+        
                     If (ToggleMotion(ToggleIdents.MoveJump) <> DIK_SPACE) Then
                         ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE
                         
-                        ResetIdle
                         Player.Jump
                         
                     End If
+                    
+                    
                 ElseIf (ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE) Then
                     ToggleMotion(ToggleIdents.MoveJump) = 0
                 End If
-
     
-                If (DIMOUSESTATE.Buttons(0) And (Bindings(DIK_LCONTROL) <> "")) And (Not Uses(DIK_LCONTROL)) Then
-                    Uses(DIK_LCONTROL) = True
-                    frmMain.ExecuteStatement Bindings(DIK_LCONTROL)
-                ElseIf (DIMOUSESTATE.Buttons(2) And (Bindings(DIK_RCONTROL) <> "")) And (Not Uses(DIK_RCONTROL)) Then
-                    Uses(DIK_RCONTROL) = True
-                    frmMain.ExecuteStatement Bindings(DIK_RCONTROL)
-                End If
-                
-                If (DIMOUSESTATE.Buttons(1) And (Bindings(DIK_LALT) <> "")) And (Not Uses(DIK_LALT)) Then
-                    Uses(DIK_LALT) = True
-                    frmMain.ExecuteStatement Bindings(DIK_LALT)
-                End If
     
-                If (DIMOUSESTATE.Buttons(3) And (Bindings(DIK_RALT) <> "")) And (Not Uses(DIK_RALT)) Then
-                    Uses(DIK_RALT) = True
-                    frmMain.ExecuteStatement Bindings(DIK_RALT)
-                End If
     
-                If (Bindings.MouseInput = Trapping) Then
+    
+    
+    
+'                If (DIMOUSESTATE.Buttons(0) And (Not Bindings(DIK_LCONTROL) Is Nothing)) And (Not Uses(DIK_LCONTROL)) Then
+'                    Uses(DIK_LCONTROL) = True
+'                    frmMain.ExecuteStatement Bindings(DIK_LCONTROL)
+'                ElseIf (DIMOUSESTATE.Buttons(2) And (Not Bindings(DIK_RCONTROL) Is Nothing)) And (Not Uses(DIK_RCONTROL)) Then
+'                    Uses(DIK_RCONTROL) = True
+'                    frmMain.ExecuteStatement Bindings(DIK_RCONTROL)
+'                End If
+'
+'                If (DIMOUSESTATE.Buttons(1) And (Not Bindings(DIK_LALT) Is Nothing)) And (Not Uses(DIK_LALT)) Then
+'                    Uses(DIK_LALT) = True
+'                    frmMain.ExecuteStatement Bindings(DIK_LALT)
+'                End If
+'
+'                If (DIMOUSESTATE.Buttons(3) And (Not Bindings(DIK_RALT) Is Nothing)) And (Not Uses(DIK_RALT)) Then
+'                    Uses(DIK_RALT) = True
+'                    frmMain.ExecuteStatement Bindings(DIK_RALT)
+'                End If
+    
+                If (Bindings.MouseInput = Trap) Then
                     SetCursorPos (frmMain.Left / VB.Screen.TwipsPerPixelX) + (frmMain.Width / VB.Screen.TwipsPerPixelX / 2), (frmMain.Top / VB.Screen.TwipsPerPixelY) + (frmMain.Height / VB.Screen.TwipsPerPixelY / 2)
                 End If
-                
-                For cnt = 0 To 255
-                    If DIKEYBOARDSTATE.Key(cnt) Then
-                        If Not Bindings(cnt) = "" And Not Uses(cnt) Then
-                            Uses(cnt) = True
-                            frmMain.ExecuteStatement Bindings(cnt) & vbCrLf
-                        End If
-                    End If
-                Next
+
                 
             End If
         
             If MouseOverCanvas(mloc.X, mloc.Y) Then
             'If ((mloc.X > rec.Left) And (mloc.X < rec.Right)) And ((mloc.Y > rec.Top) And (mloc.Y < rec.Bottom)) Then
                 If DIMOUSESTATE.Buttons(0) Then
-                    TrapMouse = True And (Bindings.MouseInput = Trapping)
+                    MouseTrapped = True And (Bindings.MouseInput = Trap)
                 End If
             End If
                     
@@ -627,129 +710,54 @@ Public Sub InputScene()
     End If
     
     Exit Sub
+
+
+scripterror:
+    If Err.Number = 6 Or Err.Number = 11 Then Resume
+    If Err.Number <> 0 Then
+        DoEvents
+    
+        If Not ConsoleVisible Then
+            ConsoleToggle
+        End If
+        ConsoleCommand "echo An error " & Err.Number & " occurd in " & errsource & _
+        "\nIn the event starting at Line: " & errline & _
+        "\nError: " & Err.Description
+        'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
+        
+        If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear
+        If Err.Number <> 0 Then Err.Clear
+    End If
+    Exit Sub
+    
 pausing:
 
-'    'Debug.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
-'    'frmMain.Print "Error: "; Err.Number & " Line: " & (atLine - 1) & " Description: " & Err.Description
-'    DoEvents
-'
-'    If Not ConsoleVisible Then
-'        ConsoleToggle
-'    End If
-'
-'    Dim LastCall As String
-'    For cnt = 0 To 255
-'        If Uses(cnt) Then
-'            If LastCall <> "" Then
-'                LastCall = LastCall & "+" & GetBindingText(cnt)
-'            Else
-'                LastCall = GetBindingText(cnt)
-'            End If
-'        End If
-'    Next
-'
-'    ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.source & "\nError: " & Err.Description & "\nOn binding: " & LastCall
-'    'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
-    
     If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear
     If Err.Number <> 0 Then Err.Clear
     
-    
-'    Exit Sub
-'pausing:
-'
-'    If Err.Number <> 0 Then
-'        Dim num As Long
-'        Dim des As String
-'
-'        num = Err.Number
-'
-'        des = Err.Description
-'        Err.Clear
-'        On Error GoTo 0
-'        '"An error occured during serialization." & vbCrLf
-'        Err.Raise num, , "Error: " & des
-'    End If
-    
+
 
 End Sub
 Public Function MouseOverCanvas(ByVal X As Single, ByVal Y As Single) As Boolean
-    Static RunOnce As Boolean
+    Static runOnce As Boolean
     Static winRec As RECT
     Static TitleBar As Single
     Static BorderX2 As Single
     
-    If (Not RunOnce) Or (X = 0 And Y = 0) Then
+    If (Not runOnce) Or (X = 0 And Y = 0) Then
         BorderX2 = ((frmMain.Width - frmMain.ScaleWidth) / Screen.TwipsPerPixelY)
         TitleBar = (((frmMain.Height - frmMain.ScaleHeight) / Screen.TwipsPerPixelY) - BorderX2)
         
         GetWindowRect frmMain.hwnd, winRec
-        RunOnce = True
+        runOnce = True
     End If
     
     MouseOverCanvas = ((X >= (winRec.Left + (BorderX2 / 2))) And (X <= (winRec.Right + (BorderX2 / 2))) And (Y >= winRec.Top + ((BorderX2 / 2) + TitleBar)) And (Y <= (winRec.Bottom + (BorderX2 / 2))))
 
 End Function
-Public Sub MouseLook(ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer)
 
-    Dim cnt As Long
-    
-    If Z < 0 Then
-        If Bindings(DIK_PGDN) = "" Then
-            ResetIdle
-            'For cnt = 0 To -Z
-                Player.ZoomOut ((-Z * MouseSensitivity) / 100)
-            'Next
-        End If
-    ElseIf Z > 0 Then
-        If Bindings(DIK_PGUP) = "" Then
-            ResetIdle
-            'For cnt = 0 To Z
-                Player.ZoomIn ((Z * MouseSensitivity) / 100)
-            'Next
-        End If
-    End If
-    
-    
-    If Perspective = CameraMode Then
-        If Player.CameraIndex > 0 Then
-            Player.Twists.Y = Cameras(Player.CameraIndex).Angle
-        End If
-    Else
-        If X < 0 Then
-            If Bindings(DIK_LEFT) = "" Then
-                ResetIdle
-                'For cnt = 0 To (-X * MouseSensitivity)
-                    Player.LookLeft ((-X * MouseSensitivity) / 100)
-                'Next
-            End If
-        ElseIf X > 0 Then
-            If Bindings(DIK_RIGHT) = "" Then
-                ResetIdle
-                'For cnt = 0 To (X * MouseSensitivity)
-                    Player.LookRight ((X * MouseSensitivity) / 100)
-                'Next
-            End If
-        End If
-    End If
-
-    If Y < 0 Then
-        If Bindings(DIK_DOWN) = "" Then
-            ResetIdle
-            'For cnt = 0 To (-Y * MouseSensitivity)
-                Player.LookDown ((-Y * MouseSensitivity) / 100)
-            'Next
-        End If
-    ElseIf Y > 0 Then
-        If Bindings(DIK_UP) = "" Then
-            ResetIdle
-            'For cnt = 0 To (Y * MouseSensitivity)
-                Player.LookUp ((Y * MouseSensitivity) / 100)
-            'Next
-        End If
-    End If
-End Sub
 Public Sub ConsoleCommand(ByVal Text As String)
+    ResetIdle
     ConsoleQueue.Add Text
 End Sub
 Public Property Get ConsoleVisible() As Boolean
@@ -757,15 +765,38 @@ Public Property Get ConsoleVisible() As Boolean
 End Property
 
 Public Sub ConsoleToggle()
+    ResetIdle
+    Static elapse As Single
+
     If State = 1 Then
-        Shift = -Shift
+
+        If Timer - elapse > 0.5 Then
+            elapse = Timer
+            Shift = -Shift
+        End If
+        
     ElseIf State = 0 Then
-        Shift = 18
-        State = 1
+
+        If Timer - elapse > 0.5 Then
+            elapse = Timer
+
+            Shift = 18
+            State = 1
+
+        End If
+        
     ElseIf State = 2 Then
-        Shift = -18
-        State = 1
+
+        If Timer - elapse > 0.5 Then
+            elapse = Timer
+
+            Shift = -18
+            State = 1
+        End If
+        
     End If
+        
+
 End Sub
 
 Public Sub RenderCmds()
@@ -787,6 +818,7 @@ Public Sub RenderCmds()
             Else
                 Bottom = Bottom + Shift
             End If
+
     End Select
 
     Vertex(0).Y = Bottom - ConsoleHeight
@@ -1238,7 +1270,7 @@ End Function
 Public Sub CreateCmds()
     
     IdleInput = Timer - 4
-'    If Surface Then
+'    If Tablet Then
 '
 '        DPI = GetMonitorDPI
 '
@@ -1320,9 +1352,8 @@ Public Sub CleanupCmds()
     If Not Bindings Is Nothing Then
         Dim cnt As Integer
         For cnt = 0 To 255
-            Bindings(cnt) = ""
+            Set Bindings(cnt) = Nothing
         Next
-        Set Bindings = Nothing
     End If
     
     Erase Draws
@@ -1382,6 +1413,7 @@ Public Sub ConsoleProcess()
 
     On Error GoTo ProcessError
     
+    ResetIdle
     
     If ConsoleQueue.Count > 0 Then
         Dim LastCall As String
@@ -1406,14 +1438,19 @@ Public Sub ConsoleProcess()
         If Left(inCmd, 1) = "/" Then inCmd = Mid(inCmd, 2)
         
         Select Case Trim(LCase(inCmd))
+#If VBA = -1 Then
             Case "showvbe", "showvba", "vba", "vbe"
                 frmMain.ShowVBE
+
             Case "macro", "macros", "macrodialog"
                 frmMain.ShowMacroDialog
+#End If
+
             Case "goto"
-                
-                Player.Origin = inArg
+                ResetIdle
+                Player.Element.Origin = inArg
             Case "parse"
+                ResetIdle
                 If PathExists(inArg, True) Then
                     inTmp = ReadFile(inArg)
                     If inTmp <> "" Then
@@ -1427,9 +1464,23 @@ Public Sub ConsoleProcess()
                 Else
                     AddMessage "Nothing to parse."
                 End If
+                
+            
+            Case "untrapmouse"
+                ResetIdle
+                MouseTrapped = False
+            Case "trapmouse"
+                ResetIdle
+                MouseTrapped = True
+                
             Case "exit", "quit", "close"
+                ResetIdle
                 StopGame = True
+
+
+                
             Case "spectate"
+                ResetIdle
                 If Not (Perspective = Spectator) Then
                     Perspective = Spectator
                     AddMessage "Changed to spectate mode."
@@ -1437,6 +1488,7 @@ Public Sub ConsoleProcess()
                     AddMessage "Already in spectate mode."
                 End If
             Case "join"
+                ResetIdle
                 If (Perspective = Spectator) Then
                     Perspective = ThirdPerson
                     AddMessage "You've entered the game."
@@ -1444,25 +1496,34 @@ Public Sub ConsoleProcess()
                     AddMessage "Already joined the game."
                 End If
             Case "eval"
+                ResetIdle
                 ConsoleCommand "echo " & frmMain.Evaluate(inArg)
             Case "echo"
+                ResetIdle
                 inArg = Replace(inArg, "\n", vbCrLf)
                 Do Until inArg = ""
                     AddMessage RemoveNextArg(inArg, vbCrLf)
                 Loop
             Case "fade"
+                ResetIdle
                 FadeMessage inArg
             Case "clear"
+                ResetIdle
                 ClearText
             Case "draw"
+                ResetIdle
                 inX = RemoveNextArg(inArg, " ")
                 inY = RemoveNextArg(inArg, " ")
                 PrintText inArg, inX, inY
             Case "print"
+                ResetIdle
                 inX = RemoveNextArg(inArg, " ")
                 inY = RemoveNextArg(inArg, " ")
                 PrintText inArg, (((frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (TextSpace * 2)) / ColumnCount) * inX, Row(inY)
-            Case "help", "cmdlist", "?", "--?"
+
+                
+            Case "help", "commands", "cmdlist", "?", "--?"
+                ResetIdle
                 Select Case LCase(inArg)
                     Case "commands"
                         
@@ -1470,7 +1531,7 @@ Public Sub ConsoleProcess()
                         AddMessage "Console Commands:"
                         AddMessage "   EXIT (completely exit out of the game)"
                         AddMessage "   ECHO <Text> (Displays Text in the console)"
-                        AddMessage "   EVAL <Text> (Evalutes Text as a console command)"
+                        AddMessage "   EVAL <Text> (Evaluates Text as a console command)"
                         AddMessage "   FADE <Text> (Displays Text in the center of screen)"
                         AddMessage "   DRAW <X> <Y> <Text> (Draw Text on the screen at X,Y)"
                         AddMessage "   PRINT <Row> <Col> <Test> (Like DRAW but use row,col)"
@@ -1479,7 +1540,7 @@ Public Sub ConsoleProcess()
                         AddMessage "   LEVEL [<Title>] (Load a Title PX in the Levels Folder)"
                         AddMessage "   RESET (Resets the game reloading everything like new)"
                         AddMessage "   SPECTATE (Change in game involvement to a spectator)"
-                        AddMessage "   JOIN (Rejoins the game when yopur in spectator mode)"
+                        AddMessage "   JOIN (Rejoins the game when you're in spectator mode)"
                     Case "editing"
                         AddMessage ""
                         AddMessage "Editing Commands:"
@@ -1498,21 +1559,16 @@ Public Sub ConsoleProcess()
     
     
             Case "stat"
-                AddMessage ""
-                AddMessage "Origin X: " & Round(CSng(Player.Origin.X), 3)
-                AddMessage "Origin Y: " & Round(CSng(Player.Origin.Y), 3)
-                AddMessage "Origin Z: " & Round(CSng(Player.Origin.Z), 3)
-                AddMessage "Distance: " & Round(CSng(DistanceEx(Player.Origin, MakePoint(0, 0, 0))), 3)
-                AddMessage "Angle: " & Round(CSng(Player.Twists.Y), 3)
-                AddMessage "Pitch: " & Round(CSng(Player.Pitch), 3)
-    '        Case "credits"
-    '            ShowCredits = Not ShowCredits
-    '        Case "showcredits"
-    '            ShowCredits = True
-    '        Case "hidecredits"
-    '            ShowCredits = False
+                ResetIdle
+                ShowStat = Not ShowStat
+
+            Case "pause"
+                ResetIdle
+                MouseTrapped = False
+                If FullScreen Then DoPauseGame
             Case "reset"
-                'AddMessage "Resetting Game."
+                ResetIdle
+
                 WorkingScreen "Resetting..."
                 
                 CurrentLoadedLevel = ""
@@ -1530,38 +1586,44 @@ Public Sub ConsoleProcess()
                 AddMessage "Game Reset."
                 
             Case "refresh"
+                ResetIdle
+                
                 WorkingScreen "Refreshing..."
-    
-                inTmp = CurrentLoadedLevel
-                
-                CleanupLand True
-                CleanupMove
-    
-                CurrentLoadedLevel = inTmp
-                
-                CreateMove
-                CreateLand True
-                
-                frmMain.AutoRedraw = False
-                AddMessage "Game Refreshed."
-                
-            Case "reload"
-                WorkingScreen "Reloading..."
     
                 inTmp = CurrentLoadedLevel
                 
                 CleanupLand
                 CleanupMove
+    
+                CurrentLoadedLevel = inTmp
+                
+                CreateMove
+                CreateLand
+                
+                frmMain.AutoRedraw = False
+                AddMessage "Game Refreshed."
+                
+            Case "reload"
+                ResetIdle
+                
+                WorkingScreen "Reloading..."
+    
+                inTmp = CurrentLoadedLevel
+                
+                CleanupLand True
+                CleanupMove
                 
                 CurrentLoadedLevel = inTmp
      
                 CreateMove
-                CreateLand
+                CreateLand True
                 
                 frmMain.AutoRedraw = False
                 AddMessage "Game Reloaded."
                 
             Case "level"
+            
+                ResetIdle
                 
                 If PathExists(AppPath & "Levels\" & inArg & ".vbx", True) Then
     
@@ -1586,6 +1648,7 @@ Public Sub ConsoleProcess()
     
     
             Case "load"
+                ResetIdle
                 If inArg = "" Then
                     If EditFileName = "" Then
                         AddMessage "No file is loaded, use ""LOAD <name>"" to load one."
@@ -1602,6 +1665,7 @@ Public Sub ConsoleProcess()
                     End If
                 End If
             Case "view"
+                ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
     
                     If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
@@ -1638,6 +1702,7 @@ Public Sub ConsoleProcess()
                     AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
             Case "lines"
+                ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
                     If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
     
@@ -1673,6 +1738,7 @@ Public Sub ConsoleProcess()
                     AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
             Case "edit"
+                ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
                     If IsNumeric(NextArg(inArg, " ")) Then
                         l = RemoveNextArgNoTrim(inArg, " ")
@@ -1698,6 +1764,7 @@ Public Sub ConsoleProcess()
                     AddMessage "File not found [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"
                 End If
             Case "save"
+                ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
                     WriteFile AppPath & "Levels\" & EditFileName & ".vbx", EditFileData
                     AddMessage "Saved data file [" & AppPath & "Levels\" & EditFileName & ".vbx" & "]"

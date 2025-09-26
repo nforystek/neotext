@@ -1,18 +1,18 @@
 <?xml version="1.0"?><Serial>  <Variables>
-        <Player.Origin>[-6.627354, -0.128141, -5.956901]</Player.Origin>
-        <Player.Rotate>[359.9938, 121.4702, 359.9938]</Player.Rotate>
-        <Player.Angle>2.120056</Player.Angle>
-        <Player.Pitch>-0.3400001</Player.Pitch>
-        <Player.Zoom>3.4</Player.Zoom>
+        <Player.Element.Origin>[1.568358, -0.128374, -3.471863]</Player.Element.Origin>
+        <Player.Element.Rotate>[360, 360, 360]</Player.Element.Rotate>
+        <Player.Camera.Angle>-0.822684</Player.Camera.Angle>
+        <Player.Camera.Pitch>-1.05</Player.Camera.Pitch>
+        <Player.Camera.Zoom>2.6</Player.Camera.Zoom>
         <pawn7.Origin>[1, 0, 0]</pawn7.Origin>
         <pawn7.Rotate>[360, 360, 360]</pawn7.Rotate>
         <orders>0</orders>
-        <firevix1var>2</firevix1var>
-        <firevix2var>1</firevix2var>
-        <firevix3var>3</firevix3var>
-        <windvix1var>2</windvix1var>
+        <firevix1var>3</firevix1var>
+        <firevix2var>2</firevix2var>
+        <firevix3var>1</firevix3var>
+        <windvix1var>3</windvix1var>
         <windvix2var>1</windvix2var>
-        <windvix3var>3</windvix3var>
+        <windvix3var>2</windvix3var>
         <upriver>False</upriver>
         <hudwaterimg.visible>True</hudwaterimg.visible>
         <dudwaterimg.visible>False</dudwaterimg.visible>
@@ -30,27 +30,17 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-9.317136, -1.804266, -9.39858]</pawn1.origin>
-        <pawn2.origin>[-11.606, -1084.823, 26.708]</pawn2.origin>
-        <pawn3.origin>[-9.408057, -1.804446, -12.14583]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.806257, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -150, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.806257, -11.312]</pawn3.origin>
   </Variables>
-<DateTime>8%2F8%2F2025+8%3A08%3A48+PM</DateTime>
+<DateTime>9%2F24%2F2025+10%3A31%3A33+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
+Set+Bindings%2EItem%28%22ESCAPE%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
+Bindings%2EItem%28%22ESCAPE%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BIf%2B%2528%2528Not%2BFullScreen%2529%2BOr%2BConsoleVisible%2529%2BAnd%2BMouseTrapped%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522untrapmouse%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BElseIf%2BFullScreen%2BOr%2B%2528Not%2BFullScreen%2BAnd%2BNot%2BMouseTrapped%2529%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522quit%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BEnd%2BIf%250D%250A%2509%22%29
+Bindings%2EItem%28%22ESCAPE%22%29%2EAppliesTo+%3D+1
+Bindings%2EItem%28%22ESCAPE%22%29%2EBehavior+%3D+1
 Bindings%2EMouseInput%3D2
 
 </Bindings>
-  <Space>
-Space%2ESkyTop+%3D+%22sky%5Ftop%2Ebmp%22
-Space%2ESkyBottom+%3D+%22sky%5Fbottom%2Ebmp%22
-Space%2ESkyFront+%3D+%22sky%5Ffront%2Ebmp%22
-Space%2ESkyBack+%3D+%22sky%5Fback%2Ebmp%22
-Space%2ESkyRight+%3D+%22sky%5Fright%2Ebmp%22
-Space%2ESkyLeft+%3D+%22sky%5Fleft%2Ebmp%22
-Space%2EFogColor+%3D+%22%5B+1+%2C+1%2E385%2C+1%2E275%2C+1%2E133%5D%22
-Space%2EFogEnabled+%3D+False
-Space%2EFogDistance+%3D+800
-Space%2ESkyRotate+%3D+3%2E125
-Space%2EGravity+%3D+%2D0%2E2
-
-</Space>
 </Serial>

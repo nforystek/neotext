@@ -5,8 +5,6 @@ Option Explicit
 Option Compare Binary
 Option Private Module
 
-Public UC As NTNodes10.Collection
-
 Public Const GWL_WNDPROC = -4
 Public Const WS_DISABLED = &H8000000
 
@@ -17,6 +15,13 @@ Public Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExA" (ByV
 Public Declare Function DestroyWindow Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
+Public UC As NTNodes10.Collection
+
 
 Public Property Get ObjectByPtr(ByVal lPtr As Long) As Object
     Dim NewObj As Object

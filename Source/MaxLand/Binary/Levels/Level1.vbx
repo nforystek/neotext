@@ -22,26 +22,36 @@ bindings {
 	S=[]
 	F=[]
 
+	ESCAPE=[
+                If ((Not FullScreen) Or ConsoleVisible) And MouseTrapped Then
+                    Console "untrapmouse"
+                ElseIf FullScreen Or (Not FullScreen And Not MouseTrapped) Then
+                    Console "quit"
+                End If
+	]
 
-	.mouseinput=Trapping
+	.mouseinput=Trap
 	.serialize=true
 }
 
 
-player <player>
+player
 {
+	
 	.speed=0.01
 	.friction=0.05
-	.angle=1.5705
-	.pitch=-0.177
+ 
+	.camera.angle=1.5705
+	.camera.pitch=-0.177
 
-	.visible=true
-	.origin=[3, 0, 0]
-	.scaled=[.50, .50, .50]
-	.rotate=[0, 0, 0]
-	.boundsmodel="bounds-player.x"
-	.visualmodel="visual-player.x"
-	.gravitational=true
+	
+	.element.visible=true
+	.element.origin=[3, 0, 0]
+	.element.scaled=[.50, .50, .50]
+	.element.rotate=[0, 0, 0]
+	.element.boundsmodel="bounds-player.x"
+	.element.visualmodel="visual-player.x"
+	.element.gravitational=true
 
 
 }
@@ -74,16 +84,16 @@ variable <firevix3var>=3
 
 
 
-track <ambient1>
-{
-	.enabled=true
-	.filename="waterfall.mp3"
-	.origin=[-46.716, 1.356, 20.172]
-	.range=17
-	.loops=true
-	.volume=0
-}
-Tracks("ambient1").playTrack
+'track <ambient1>
+'{
+'	.enabled=true
+'	.filename="waterfall.mp3"
+'	.origin=[-46.716, 1.356, 20.172]
+'	.range=17
+'	.loops=true
+'	.volume=0
+'}
+'Tracks("ambient1").playTrack
 
 
 
@@ -1278,9 +1288,10 @@ portal
 }
 portal
 {
-	.location=[ -2.252, 1.201, -2.443]
-	.range=.6
+	.location=[ -2.270, 1.199, -2.382]
+	.range=.7
 	oninrange	[ <player,pawn1,pawn2>
+
 		smuther
 	]
 	motion <file1> {
@@ -1606,7 +1617,7 @@ portal
 }
 portal
 {
-	.location=[ -2.272, 1.2, 0.606]
+	.location=[ -2.272, 1, 0.606]
 	motion {
 		.action=1
 		.data=[ 0, 1, 0]
@@ -1618,7 +1629,7 @@ portal
 
 			if (orders=1) then
 				orders=2
-				'oneditorders
+				oneditorders
 			 end if
 
 
@@ -1633,13 +1644,13 @@ portal
 	motion <jump1> {
 		.action=1
 		.data=[0, 1, 0]
-		.emphasis=0.5
+		.emphasis=0.2
 		.friction=0.1
 	}
 	motion <move1> {
 		.action=1
 		.data=[0, 0, -1]
-		.emphasis=0.05
+		.emphasis=0.02
 		.friction=0.01
 	}
 
@@ -1916,7 +1927,7 @@ method <checkgame>
 		end if
 		if puzzlewon then
 			
-			player.visible=false
+			player.Element.visible=false
 			land.visible=false
 			palace.visible=false
 			blacklawn.visible=false
@@ -1951,11 +1962,11 @@ method <checkgame>
 			bubble1.visible=false
 			bubble2.visible=false
 			smoke.visible=false
-			player.origin.x=-45.898
-			player.origin.y=8.533
-			player.origin.z=19.434
-			player.angle=-0.57
-			player.pitch=1.327
+			player.Element.origin.x=-45.898
+			player.Element.origin.y=8.533
+			player.Element.origin.z=19.434
+			player.Camer.angle=-0.57
+			player.Camer.pitch=1.327
 			
 			
 			'Console "level level2"
@@ -2269,11 +2280,11 @@ variable <data>=9
 
 
 serialize [
-	Player.Origin
-	Player.Rotate
-	Player.Angle
-	Player.Pitch
-	Player.Zoom
+	Player.Element.Origin
+	Player.Element.Rotate
+	Player.Camera.Angle
+	Player.Camera.Pitch
+	Player.Camera.Zoom
 	pawn7.Origin
 	pawn7.Rotate
 	orders

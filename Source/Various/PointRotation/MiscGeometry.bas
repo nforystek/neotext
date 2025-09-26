@@ -33,12 +33,7 @@ End Function
 
 Public Function AngleRestrict(ByVal Angle1 As Single) As Single
     Angle1 = Angle1 * DEGREE
-    Do While Round(Angle1, 0) <= 0
-        Angle1 = Angle1 + 360
-    Loop
-    Do While Round(Angle1, 0) > 360
-        Angle1 = Angle1 - 360
-    Loop
+    Angle1 = RealDegreeAngle(Angle1)
     AngleRestrict = Round(Angle1 * RADIAN, 6)
     If AngleRestrict = PI Or AngleRestrict = PI * 2 Or AngleRestrict = 0 Then
         AngleRestrict = (-AngleRestrict + (PI * 2)) + -(PI * 4)
@@ -99,24 +94,26 @@ Public Function AngleAxisDeduction(ByRef p1 As Point, ByRef p2 As Point) As Poin
 
 End Function
 
-Public Function AbsoluteFactor(ByVal N As Single) As Single
-    'returns -1 if the n is below zero, returns 1 if n is above zero, and 0 if n is zero
-    AbsoluteFactor = ((-(AbsoluteValue(N - 1) - N) - (-AbsoluteValue(N + 1) + N)) * 0.5)
-End Function
+
 
 Public Function AbsoluteValue(ByVal N As Single) As Single
-    'same as abs(), returns a number as positive quantified
+    'returns the number in N as positive quantified (same as abs())
     AbsoluteValue = (-((-(N * -1) * N) ^ (1 / 2) * -1))
 End Function
 
+Public Function AbsoluteFactor(ByVal N As Single) As Single
+    'returns -1 if the N is below zero, returns 1 if N is above zero, and 0 if N is zero
+    AbsoluteFactor = ((-(AbsoluteValue(N - 1) - N) - (-AbsoluteValue(N + 1) + N)) * 0.5)
+End Function
+
 Public Function AbsoluteWhole(ByVal N As Single) As Single
-    'returns only the digits to the left of a decimal in any numerical
-    'AbsoluteWhole = (AbsoluteValue(n) - (AbsoluteValue(n) - (AbsoluteValue(n) Mod (AbsoluteValue(n) + 1)))) * AbsoluteFactor(n)
-    AbsoluteWhole = (N \ 1) 'is also correct
+    'returns only the digits to the left of the decimal point in N
+    AbsoluteWhole = (AbsoluteValue(N) - (AbsoluteValue(N) - (AbsoluteValue(N) Mod (AbsoluteValue(N) + 1)))) * AbsoluteFactor(N)
+    'AbsoluteWhole = (N \ 1) 'this line returns same whole value as well (but doesn't exist in math, only integral programming)
 End Function
 
 Public Function AbsoluteDecimal(ByVal N As Single) As Single
-    'returns only the digits to the right of a decimal in any numerical
+    'returns only the digits to the right of the decimal point in N
     AbsoluteDecimal = (AbsoluteValue(N) - AbsoluteValue(AbsoluteWhole(N))) * AbsoluteFactor(N)
 End Function
 

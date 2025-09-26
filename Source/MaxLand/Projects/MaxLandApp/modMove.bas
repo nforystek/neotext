@@ -6,29 +6,6 @@ Option Compare Binary
 
 Option Private Module
 
-'Collision Culling Flag Relation COnstraints
-'
-'Object
-'   Map
-'       Player
-'           Map
-'           Player
-'       Object
-'           Map
-'           Player
-'
-'   *Self
-'       Map
-'       Object
-'       Player
-'   Player
-'       Map
-'       Object
-'   Object
-'       Map
-'       Player
-
-
 Public Enum CameraCollision
     CameraTop = 0
     CameraBack = 1
@@ -37,6 +14,15 @@ Public Enum CameraCollision
     CameraRight = 4
     CameraBottom = 5
 End Enum
+
+
+Public Type MyCulling
+    Position As D3DVECTOR
+    Direction As D3DVECTOR
+    UpVector As D3DVECTOR
+    visType As Long
+End Type
+
 
 Public Const CULL0 = 0
 Public Const CULL1 = 1
@@ -77,7 +63,13 @@ Public Declare Function Collision Lib "MaxLandLib" (ByVal visType As Long, ByVal
 Public Declare Function Culling Lib "MaxLandLib" Alias "Forystek" (ByVal visType As Long, ByVal lngFaceCount As Long, _
                         ByRef sngCamera() As Single, ByRef sngFaceVis() As Single, ByRef sngVertexX() As Single, ByRef sngVertexY() As Single, ByRef sngVertexZ() As Single, _
                         ByRef sngScreenX() As Single, ByRef sngScreenY() As Single, ByRef sngScreenZ() As Single, ByRef sngZBuffer() As Single) As Long
-                        
+                  
+                  
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+                  
+                  
 '############################################################################################################
 'Variable Declare ###########################################################################################
 '############################################################################################################
@@ -120,57 +112,25 @@ Public sngScreenY() As Single
 Public sngScreenZ() As Single
 Public sngZBuffer() As Single
 
-Public DebugFace() As MyVertex
-Public DebugSkin(0 To 4) As Direct3DTexture8
-Public DebugVBuf As Direct3DVertexBuffer8
-
-Public Type MyCulling
-    Position As D3DVECTOR
-    Direction As D3DVECTOR
-    UpVector As D3DVECTOR
-    visType As Long
-End Type
+'Public DebugFace() As MyVertex
+'Public DebugSkin(0 To 4) As Direct3DTexture8
+'Public DebugVBuf As Direct3DVertexBuffer8
 
 Public CullingSetup As Integer
 Public CullingObject As MyCulling
 Public CullingCount As Long
 Public Cullings() As MyCulling
 
-'Private andCamera() As Single
-'
-'Private andFaceVis() As Single
-'Private andVertexX() As Single
-'Private andVertexY() As Single
-'Private andVertexZ() As Single
-'
-'Private andScreenX() As Single
-'Private andScreenY() As Single
-'Private andScreenZ() As Single
-'
-'Private andZBuffer() As Single
-'
-'Private notCamera() As Single
-'
-'Private notFaceVis() As Single
-'Private notVertexX() As Single
-'Private notVertexY() As Single
-'Private notVertexZ() As Single
-'
-'Private notScreenX() As Single
-'Private notScreenY() As Single
-'Private notScreenZ() As Single
-'
-'Private notZBuffer() As Single
 
 Public Sub CreateMove()
 
     ReDim sngCamera(0 To 2, 0 To 2) As Single
     
-    Set DebugSkin(0) = LoadTexture(AppPath & "Models\debug0.bmp")
-    Set DebugSkin(1) = LoadTexture(AppPath & "Models\debug1.bmp")
-    Set DebugSkin(2) = LoadTexture(AppPath & "Models\debug2.bmp")
-    Set DebugSkin(3) = LoadTexture(AppPath & "Models\debug4.bmp")
-    Set DebugSkin(4) = LoadTexture(AppPath & "Models\debug3.bmp")
+'    Set DebugSkin(0) = LoadTexture(AppPath & "Models\debug0.bmp")
+'    Set DebugSkin(1) = LoadTexture(AppPath & "Models\debug1.bmp")
+'    Set DebugSkin(2) = LoadTexture(AppPath & "Models\debug2.bmp")
+'    Set DebugSkin(3) = LoadTexture(AppPath & "Models\debug4.bmp")
+'    Set DebugSkin(4) = LoadTexture(AppPath & "Models\debug3.bmp")
     
 End Sub
 
@@ -202,7 +162,6 @@ End Sub
 Public Sub ComputeNormals()
     Dim cnt As Long
     Dim vn As D3DVECTOR
-    
     For cnt = 0 To lngFaceCount - 1
         vn = TriangleNormal(MakeVector(sngVertexX(0, cnt), sngVertexY(0, cnt), sngVertexZ(0, cnt)), _
                             MakeVector(sngVertexX(1, cnt), sngVertexY(1, cnt), sngVertexZ(1, cnt)), _
@@ -374,7 +333,7 @@ Private Sub ApplyMotion(ByRef Obj As Element, ByVal Action As Actions)
     Dim Offset As D3DVECTOR
     Dim vout As D3DVECTOR
     
-    If ((Not (Perspective = Spectator)) And (Obj.CollideObject = Player.CollideObject)) Or (Not (Obj.CollideObject = Player.CollideObject)) Then
+    If ((Not (Perspective = Spectator)) And (Obj.CollideObject = Player.Element.CollideObject)) Or (Not (Obj.CollideObject = Player.Element.CollideObject)) Then
         
         If Obj.Gravitational Then
             If Not Obj.OnLadder Then
@@ -433,7 +392,7 @@ End Sub
 Public Sub ResetMotion()
     Dim A As Long
     Dim o As Long
-    Set Player.Direct = MakePoint(0, 0, 0)
+    Set Player.Element.Direct = MakePoint(0, 0, 0)
     If Elements.Count > 0 Then
         For o = 1 To Elements.Count
            Set Elements(o).Direct = MakePoint(0, 0, 0)
@@ -444,7 +403,7 @@ End Sub
 Public Sub RenderMotion()
 On Error GoTo ObjectError
 
-    RenderMotion2 Player
+    RenderMotion2 Player.Element
     
     Dim cnt As Long
     cnt = 1
@@ -534,13 +493,13 @@ On Error GoTo ObjectError
     
     If ((Perspective = Spectator) Or DebugMode) Then
     
-        Player.Origin.X = Player.Origin.X + Player.Direct.X
-        Player.Origin.Y = Player.Origin.Y + Player.Direct.Y
-        Player.Origin.Z = Player.Origin.Z + Player.Direct.Z
+        Player.Element.Origin.X = Player.Element.Origin.X + Player.Element.Direct.X
+        Player.Element.Origin.Y = Player.Element.Origin.Y + Player.Element.Direct.Y
+        Player.Element.Origin.Z = Player.Element.Origin.Z + Player.Element.Direct.Z
                 
     Else
     
-        InputMove2 Player
+        InputMove2 Player.Element
 
     End If
 
@@ -700,9 +659,24 @@ Public Sub InputMove2(ByRef e1 As Element)
     End If
 
     'preform boundary restriction tests and adjust accordingly
-    If (e1.Origin.Y > SpaceBoundary) Or (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -e1.Origin.Y
-    If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
-    If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
+
+    Dim S As Space
+    For Each S In Spaces
+        If S.Boundary <> 0 Then
+            If S.InSpace(Player.Element.Origin) Then
+                If (e1.Origin.Y > SpaceBoundary) Then e1.Origin.Y = SpaceBoundary
+                If (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -SpaceBoundary
+                If (e1.Origin.X > SpaceBoundary) Then e1.Origin.X = SpaceBoundary
+                If (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -SpaceBoundary
+                If (e1.Origin.Z > SpaceBoundary) Then e1.Origin.Z = SpaceBoundary
+                If (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -SpaceBoundary
+            End If
+        End If
+    Next
+    
+'    If (e1.Origin.Y > SpaceBoundary) Or (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -e1.Origin.Y
+'    If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
+'    If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
     
 End Sub
 
@@ -849,7 +823,7 @@ On Error GoTo ObjectError
     Dim swapY As Single
 
     Static Rotator As Single
-    Rotator = Rotator + IIf(Player.Angle > 0, testNudgeAdjust, -testNudgeAdjust)
+    Rotator = Rotator + IIf(Player.Camera.Angle > 0, testNudgeAdjust, -testNudgeAdjust)
     Rotator = AngleRestrict(Rotator * RADIAN) * DEGREE
 
     swapY = Obj.Rotate.Y
@@ -1951,7 +1925,7 @@ End Sub
 '                sngCamera(0, 0) = Player.Origin.X
 '                sngCamera(0, 1) = Player.Origin.Y
 '                sngCamera(0, 2) = Player.Origin.Z
-'                Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Pitch), Player.Angle)
+'                Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Camera.Pitch), Player.Camera.Angle)
 '            Else
 '                sngCamera(0, 0) = 0
 '                sngCamera(0, 1) = 0
@@ -1969,7 +1943,7 @@ End Sub
 '            sngCamera(0, 0) = useObj.Origin.X
 '            sngCamera(0, 1) = useObj.Origin.Y
 '            sngCamera(0, 2) = useObj.Origin.Z
-'            Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Pitch), Player.Angle)
+'            Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Camera.Pitch), Player.Camera.Angle)
 '        Case "Nothing"
 '            sngCamera(0, 0) = 0
 '            sngCamera(0, 1) = 0
@@ -2042,7 +2016,7 @@ On Error GoTo ObjectError
 '        sngCamera(1, 2) = 0
 '
 '        Dim p As Point
-'        Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Pitch), Player.Angle)
+'        Set p = VectorRotateY(VectorRotateX(MakePoint(0, 0, 1), Player.Camera.Pitch), Player.Camera.Angle)
 '
 '        sngCamera(2, 0) = Round(p.X, 6)
 '        sngCamera(2, 1) = Round(p.Y, 6)
@@ -2221,10 +2195,16 @@ On Error GoTo ObjectError
     Dim Face As Long
     Dim Index As Long
     
-    If Obj.BoundsIndex > 0 Then
     
-        Index = Meshes(Obj.BoundsIndex).Mesh.GetNumFaces
-        If lngFaceCount - Index > 0 Then 'Obj.CollideIndex + Index < lngFaceCount Then
+    If Obj.BoundsIndex > 0 Then
+'        If Not Meshes Is Nothing Then
+'        If Obj.BoundsIndex <= UBound(Meshes()) Then
+'        If Not Meshes(Obj.BoundsIndex).Mesh Is Nothing Then
+            Index = Meshes(Obj.BoundsIndex).Mesh.GetNumFaces
+'        End If
+'        End If
+'        End If
+        If lngFaceCount - Index > 0 And Index >= UBound(Meshes()) Then 'Obj.CollideIndex + Index < lngFaceCount Then
     
             For Face = Obj.CollideIndex To lngFaceCount - Index - 1 'Obj.CollideIndex + Index - 1
                 sngFaceVis(0, Face) = sngFaceVis(0, Index + Face - 1)
@@ -2264,50 +2244,15 @@ On Error GoTo ObjectError
                 
             Next
             
-            Dim e1 As Element
-            
-            For Each e1 In Elements
-            'For cnt = 1 To Elements.count
-                If e1.CollideIndex > Obj.CollideIndex Then
-                    e1.CollideIndex = e1.CollideIndex - Index
-                End If
-            Next
-            
-    '        If Obj.CollideIndex + Index < lngFaceCount - 2 Then
-    '
-    '            For Face = Obj.CollideIndex + Index To lngFaceCount - 2
-    '                sngFaceVis(0, Face) = sngFaceVis(0, Face + 1)
-    '                sngFaceVis(1, Face) = sngFaceVis(1, Face + 1)
-    '                sngFaceVis(2, Face) = sngFaceVis(2, Face + 1)
-    '                sngFaceVis(3, Face) = sngFaceVis(3, Face + 1)
-    '                sngFaceVis(4, Face) = sngFaceVis(4, Face + 1)
-    '                sngFaceVis(5, Face) = sngFaceVis(5, Face + 1)
-    '                sngVertexX(0, Face) = sngVertexX(0, Face + 1)
-    '                sngVertexX(1, Face) = sngVertexX(1, Face + 1)
-    '                sngVertexX(2, Face) = sngVertexX(2, Face + 1)
-    '                sngVertexY(0, Face) = sngVertexY(0, Face + 1)
-    '                sngVertexY(1, Face) = sngVertexY(1, Face + 1)
-    '                sngVertexY(2, Face) = sngVertexY(2, Face + 1)
-    '                sngVertexZ(0, Face) = sngVertexZ(0, Face + 1)
-    '                sngVertexZ(1, Face) = sngVertexZ(1, Face + 1)
-    '                sngVertexZ(2, Face) = sngVertexZ(2, Face + 1)
-    '
-    '                sngScreenX(0, Face) = sngScreenX(0, Face + 1)
-    '                sngScreenX(1, Face) = sngScreenX(1, Face + 1)
-    '                sngScreenX(2, Face) = sngScreenX(2, Face + 1)
-    '                sngScreenY(0, Face) = sngScreenY(0, Face + 1)
-    '                sngScreenY(1, Face) = sngScreenY(1, Face + 1)
-    '                sngScreenY(2, Face) = sngScreenY(2, Face + 1)
-    '                sngScreenZ(0, Face) = sngScreenZ(0, Face + 1)
-    '                sngScreenZ(1, Face) = sngScreenZ(1, Face + 1)
-    '                sngScreenZ(2, Face) = sngScreenZ(2, Face + 1)
-    '
-    '                sngZBuffer(0, Face) = sngZBuffer(0, Face + 1)
-    '                sngZBuffer(1, Face) = sngZBuffer(1, Face + 1)
-    '                sngZBuffer(2, Face) = sngZBuffer(2, Face + 1)
-    '                sngZBuffer(3, Face) = sngZBuffer(3, Face + 1)
-    '            Next
-    '        End If
+            If Not Elements Is Nothing Then
+                Dim e1 As Element
+                For Each e1 In Elements
+                'For cnt = 1 To Elements.count
+                    If e1.CollideIndex > Obj.CollideIndex Then
+                        e1.CollideIndex = e1.CollideIndex - Index
+                    End If
+                Next
+            End If
             
         End If
         
@@ -2632,7 +2577,7 @@ Public Sub RenderPortals()
         
         If Portals(cnt).Enabled Then
         
-            RenderPortals2 Portals(cnt), Player
+            RenderPortals2 Portals(cnt), Player.Element
             
             cnt2 = 1
             Do While cnt2 <= Elements.Count And cnt <= Portals.Count
@@ -2651,7 +2596,6 @@ End Sub
 
 Private Sub RenderPortals2(ByRef t1 As Portal, ByRef e1 As Element)
 On Error GoTo scripterror
-
        
     Dim pos As D3DVECTOR
     
@@ -2667,22 +2611,22 @@ On Error GoTo scripterror
     Dim errline As Long
     Dim errsource As String
     Dim portalHit As Boolean
-    
 
     Dim e2 As Element
         
     portalHit = (DistanceEx(e1.Origin, t1.Location) <= t1.Range)
     
-    If (Not (e1.Folcrums Is Nothing)) And (Not portalHit) Then
-        For cnt = 1 To e1.Folcrums.Count
+    If (Not (e1.Fulcrums Is Nothing)) And (Not portalHit) Then
+        For cnt = 1 To e1.Fulcrums.Count
         
-            portalHit = (DistanceEx(VectorRotateAxis(e1.Folcrums(cnt), VectorMultiplyBy(e1.Rotate, RADIAN)), t1.Location) <= t1.Range)
+            'portalHit = (DistanceEx(VectorRotateAxis(e1.Fulcrums(cnt), VectorMultiplyBy(e1.Rotate, RADIAN)), t1.Location) <= t1.Range)
+            portalHit = (DistanceEx(e1.Fulcrums(cnt), t1.Location) <= t1.Range)
             If portalHit Then Exit For
         Next
     End If
     
     If portalHit Then
-        If Not ((t1.Teleport.X = 0) And (t1.Teleport.Y = 0) And (t1.Teleport.Z = 0)) Then
+        If Not t1.Teleport.Equals(NoPoint) Then
             pos = ToVector(e1.Origin)
             
             cnt = 1
@@ -2717,36 +2661,41 @@ On Error GoTo scripterror
                ' If TestCollision(e1, Actions.NotDefined, 2) Then
                 
                 If TestCollision(e1, Actions.NotDefined, 1) Then
+                     'revert if collision occurs after a teleport
                     Set e1.Origin = ToPoint(pos)
                 End If
             End If
         End If
         
-        
         If Not t1.OnInRange Is Nothing Then
         
-            If InStr(t1.OnInRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
+            If InStr(LCase(t1.OnInRange.AppliesTo) & ",", LCase(e1.Key) & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
             
-                If Not t1.OnInRange.RunFlag Then
+                If (((t1.OnInRange.EventFlags And 1) <> 1) And (t1.OnInRange.Behavior = Press)) Or (t1.OnInRange.Behavior = Rapid) Then
                 
                     If t1.DropsMotions Then
                         e1.ClearMotions
                     End If
-                    
-                    If Not t1.Motions Is Nothing Then
-                        If t1.Motions.Count > 0 Then
-                            For A = 1 To t1.Motions.Count
-                                Set act = t1.Motions(A)
-                                e1.AddMotion act.Action, act.Key, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
-                            Next
+                        
+                    If (((t1.OnInRange.EventFlags And 1) <> 1) And (t1.OnInRange.Behavior <> Rapid)) Then
+                        t1.OnInRange.EventFlags = t1.OnInRange.EventFlags + 1
+                        If (t1.OnInRange.Behavior = Locks) Then
+                            If ((t1.OnInRange.EventFlags And 2) = 2) Then
+                                t1.OnInRange.EventFlags = t1.OnInRange.EventFlags - 2
+                            Else
+                                t1.OnInRange.EventFlags = t1.OnInRange.EventFlags + 2
+                            End If
                         End If
                     End If
-                
-                    t1.OnInRange.RunFlag = True
-                    errsource = "OnInRange"
-                    errline = CLng(t1.OnInRange.StartLine)
-                    frmMain.Run t1.OnInRange.RunMethod, e1.Key, errline
-                    'Debug.Print "OnInRange " & t1.Key & " " & e1.Key
+                    
+                    
+                    If (t1.OnInRange.Behavior <> Locks) Or ((t1.OnInRange.Behavior = Locks) And ((t1.OnInRange.EventFlags And 2) = 2)) Then
+
+                        errsource = "OnInRange"
+                        errline = CLng(t1.OnInRange.StartLine)
+                        frmMain.Run t1.OnInRange.RunScript, e1.Key, errline
+                        'Debug.Print "OnInRange " & t1.Key & " " & e1.Key
+                    End If
                 End If
                 
             End If
@@ -2754,25 +2703,47 @@ On Error GoTo scripterror
         End If
         
         If Not t1.OnOutRange Is Nothing Then
-            If InStr(t1.OnOutRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnOutRange.AppliesTo = "" Then
-            
-            
-            
-                t1.OnOutRange.RunFlag = False
+            If InStr(LCase(t1.OnOutRange.AppliesTo) & ",", LCase(e1.Key) & ",") > 0 Or t1.OnOutRange.AppliesTo = "" Then
+                If (((t1.OnOutRange.EventFlags And 1) = 1) And (t1.OnOutRange.Behavior <> Rapid)) Then
+                    t1.OnOutRange.EventFlags = t1.OnOutRange.EventFlags - 1
+                End If
             End If
         End If
 
+        If Not t1.Motions Is Nothing Then
+            If t1.Motions.Count > 0 Then
+                For A = 1 To t1.Motions.Count
+                    Set act = t1.Motions(A)
+                    e1.AddMotion act.Action, act.Key, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
+                Next
+            End If
+        End If
+                    
     Else
         If Not t1.OnOutRange Is Nothing Then
         
-            If InStr(t1.OnOutRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnOutRange.AppliesTo = "" Then
+            If InStr(LCase(t1.OnOutRange.AppliesTo) & ",", LCase(e1.Key) & ",") > 0 Or t1.OnOutRange.AppliesTo = "" Then
 
-                If Not t1.OnOutRange.RunFlag Then
-                   t1.OnOutRange.RunFlag = True
-                    errsource = "OnOutRange"
-                    errline = CLng(t1.OnOutRange.StartLine)
-                    frmMain.Run t1.OnOutRange.RunMethod, e1.Key, errline
-                    'Debug.Print "OnOutRange " & t1.Key & " " & e1.Key
+                If (((t1.OnOutRange.EventFlags And 1) <> 1) And (t1.OnOutRange.Behavior = Press)) Or (t1.OnOutRange.Behavior = Rapid) Then
+                    
+                    If (((t1.OnOutRange.EventFlags And 1) <> 1) And (t1.OnOutRange.Behavior <> Rapid)) Then
+                        t1.OnOutRange.EventFlags = t1.OnOutRange.EventFlags + 1
+                        If (t1.OnOutRange.Behavior = Locks) Then
+                            If ((t1.OnOutRange.EventFlags And 2) = 2) Then
+                                t1.OnOutRange.EventFlags = t1.OnOutRange.EventFlags - 2
+                            Else
+                                t1.OnOutRange.EventFlags = t1.OnOutRange.EventFlags + 2
+                            End If
+                        End If
+                    End If
+                    
+                    If (t1.OnOutRange.Behavior <> Locks) Or ((t1.OnOutRange.Behavior = Locks) And ((t1.OnOutRange.EventFlags And 2) = 2)) Then
+                        errsource = "OnOutRange"
+                        errline = CLng(t1.OnOutRange.StartLine)
+                        frmMain.Run t1.OnOutRange.RunScript, e1.Key, errline
+                        'Debug.Print "OnOutRange " & t1.Key & " " & e1.Key
+                    End If
+                    
                 End If
 
             End If
@@ -2780,8 +2751,10 @@ On Error GoTo scripterror
         End If
         
         If Not t1.OnInRange Is Nothing Then
-            If InStr(t1.OnInRange.AppliesTo & ",", e1.Key & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
-                t1.OnInRange.RunFlag = False
+            If InStr(LCase(t1.OnInRange.AppliesTo) & ",", LCase(e1.Key) & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
+                If (((t1.OnInRange.EventFlags And 1) = 1) And (t1.OnInRange.Behavior <> Rapid)) Then
+                    t1.OnInRange.EventFlags = t1.OnInRange.EventFlags - 1
+                End If
             End If
         End If
 
@@ -2835,7 +2808,6 @@ Private Sub ExecuteScript(ByRef e1 As Element, ByVal EventText As String)
 
 End Sub
 
-
 Private Function GetClosestCamera(Optional ByVal Exclude As String = "") As Long
 
     Dim cnt As Long
@@ -2845,7 +2817,7 @@ Private Function GetClosestCamera(Optional ByVal Exclude As String = "") As Long
         Static toggle As Boolean
         toggle = Not toggle
         For cnt = IIf(toggle, 1, Cameras.Count) To IIf(toggle, Cameras.Count, 1) Step IIf(toggle, 1, -1)
-            Dist = DistanceEx(Player.Origin, Cameras(cnt).Origin)
+            Dist = DistanceEx(Player.Element.Origin, Cameras(cnt).Origin)
             If ((Dist <= past) Or (past = 0)) And (InStr(Exclude, cnt & ",") = 0) Then
                 GetClosestCamera = cnt
                 past = Dist
@@ -2916,15 +2888,15 @@ On Error GoTo CameraError
                 If (cnt > 0) Then
                     With Cameras(cnt)
                     
-                        verts(0) = ToVector(Player.Origin)
-                        verts(1) = VectorAdd(ToVector(Player.Origin), MakeVector(0, -0.01, 0))
+                        verts(0) = ToVector(Player.Element.Origin)
+                        verts(1) = VectorAdd(ToVector(Player.Element.Origin), MakeVector(0, -0.01, 0))
                         verts(2) = ToVector(.Origin)
     
                         Face = AddCollisionEx(verts, 1)
                         touched = TestCollisionEx(Face, 1)
                         DelCollisionEx Face, 1
     
-                        If (ClassifyPoint(V1, V1, V1, ToVector(Player.Origin)) = 1) Then touched = True
+                        If (ClassifyPoint(V1, V1, V1, ToVector(Player.Element.Origin)) = 1) Then touched = True
     
     
                         If Not touched Then
@@ -2935,9 +2907,9 @@ On Error GoTo CameraError
                                                                             .Origin.Z + Cos(D720 - .Angle)), _
                                                                             ToVector(.Origin))
                                                                             
-                            V2 = VectorSubtract(MakeVector(Player.Origin.X - Sin(D720 - .Angle), _
-                                                            Player.Origin.Y + Tan(D720 - .Pitch), _
-                                                            Player.Origin.Z - Cos(D720 - .Angle)), _
+                            V2 = VectorSubtract(MakeVector(Player.Element.Origin.X - Sin(D720 - .Angle), _
+                                                            Player.Element.Origin.Y + Tan(D720 - .Pitch), _
+                                                            Player.Element.Origin.Z - Cos(D720 - .Angle)), _
                                                             ToVector(.Origin))
                             
                             If ((V2.X > 0 And V1.X > 0) Or (V2.X < 0 And V1.X < 0)) And _
@@ -2946,9 +2918,9 @@ On Error GoTo CameraError
                                 touched = False
                                 
                                 If past <> 0 Then
-                                    If DistanceEx(.Origin, Player.Origin) > Dist Then
+                                    If DistanceEx(.Origin, Player.Element.Origin) > Dist Then
                                         cnt = past
-                                        Dist = DistanceEx(.Origin, Player.Origin)
+                                        Dist = DistanceEx(.Origin, Player.Element.Origin)
                                     End If
                                 End If
     
@@ -2963,9 +2935,9 @@ On Error GoTo CameraError
                         
                         If Not touched Then
                             If past <> 0 Then
-                                If DistanceEx(.Origin, Player.Origin) > Dist Then
+                                If DistanceEx(.Origin, Player.Element.Origin) > Dist Then
                                     cnt = past
-                                    Dist = DistanceEx(.Origin, Player.Origin)
+                                    Dist = DistanceEx(.Origin, Player.Element.Origin)
                                     ex = ex & cnt & ", "
                                 End If
                             End If
@@ -2973,7 +2945,7 @@ On Error GoTo CameraError
                             If cnt >= 0 And cnt <= Cameras.Count Then
                                 Player.CameraIndex = cnt
                                 past = cnt
-                                Dist = DistanceEx(.Origin, Player.Origin)
+                                Dist = DistanceEx(.Origin, Player.Element.Origin)
                             End If
                         Else
                             ex = ex & cnt & ", "

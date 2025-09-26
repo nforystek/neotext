@@ -24,7 +24,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Computer Science"
-CondComp="Project1=-1:VBIDE=-1:PointAngles=-1:PointRotate=-1:Triganometry=-1:MainModule=-1:MiscGeometry=-1"
+CondComp="Project1 = -1 : VBIDE = -1 : PointAngles = -1 : PointRotate = -1 : Triganometry = -1 : MainModule = -1 : MiscGeometry = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

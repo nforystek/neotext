@@ -12,6 +12,10 @@ Public Enum Playmode
     CameraMode = 3
 End Enum
 
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
 Public Perspective As Playmode
 Public Resolution As String
 Public FullScreen As Boolean
@@ -20,10 +24,10 @@ Public AmbientFX As Boolean
 
 Public DebugMode As Boolean
 
-Public Surface As Boolean
+Public Tablet As Boolean
 Public AspectRatio As Single
 Public ScriptDebug As Boolean
-Public TrapMouse As Boolean
+Public MouseTrapped As Boolean
 Public StartTime As String
 
 Public StopGame As Boolean
@@ -33,8 +37,6 @@ Public CameraClip As Boolean
 Public ShowHelp As Boolean
 Public ShowStat As Boolean
 Public ShowCredits As Boolean
-
-
 
 Public FPSTimer As Double
 Public FPSCount As Long
@@ -64,7 +66,7 @@ Public Declare Function GetTickCount Lib "kernel32" () As Long
 
 Public Sub Main()
 
-    On Error GoTo fault:
+    'On Error GoTo fault:
     StartTime = Now
     
     Dim inCmd As String
@@ -85,7 +87,7 @@ Public Sub Main()
     End Select
     
     Set db = New Database
-    db.rsQuery rs, "SELECT * FROM Settings WHERE Username = '" & Replace(GetUserLoginName, "'", "''") & "';"
+    db.rsQuery rs, "SELECT * FROM Users WHERE Username = '" & Replace(GetUserLoginName, "'", "''") & "';"
     If db.rsEnd(rs) Then inCmd = "setup"
     
     If Trim(LCase(inCmd)) = "setup" Then
@@ -98,19 +100,24 @@ Public Sub Main()
     End If
     
     If inCmd = "" Then
-        db.rsQuery rs, "SELECT * FROM Settings WHERE Username = '" & Replace(GetUserLoginName, "'", "''") & "';"
+        If db.rsEnd(rs) Then
+            
         
-        If Not db.rsEnd(rs) Then
-            Resolution = CStr(rs("Resolution"))
-            FullScreen = CBool(Not rs("Windowed"))
-            Perspective = CLng(rs("Perspective"))
-            Surface = CBool(rs("Surface"))
+        Else
+            db.rsQuery rs, "SELECT * FROM Profiles WHERE Profilename = '" & Replace(rs("Profilename"), "'", "''") & "';"
+        
+            If Not db.rsEnd(rs) Then
+                Resolution = CStr(rs("Resolution"))
+                FullScreen = CBool(Not rs("Windowed"))
+                Perspective = CLng(rs("Perspective"))
+                Tablet = CBool(rs("Tablet"))
+            End If
         End If
         
         db.rsClose rs
                 
         FPSCount = 36
-        TrapMouse = True
+        MouseTrapped = True
         ShowStat = False
         CameraClip = True
         
@@ -136,7 +143,7 @@ Public Sub Main()
     
         Dim Yield As Long
     
-        On Error GoTo fault
+        'On Error GoTo fault
         InitDirectX
         InitGameData
         On Error GoTo 0
@@ -285,10 +292,9 @@ Public Sub Main()
 
             End If
             
-            Yield = Yield + 1
-            If (D3DWindow.Windowed And Yield >= FPSRate / 3) Or PauseGame Then
+            Yield = Abs(Yield) + -1
+            If (D3DWindow.Windowed And Yield) Or PauseGame Then
                 DoTasks
-                Yield = 0
             End If
         
         Loop
@@ -398,20 +404,20 @@ On Error GoTo WorldError
 
         D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
         D3DXMatrixMultiply matLook, matPos, matLook
-        D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y + 0.2, -Player.Origin.Z
+        D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
         
     Else
     
-        D3DXMatrixRotationY matRotation, Player.Angle
-        D3DXMatrixRotationX matPitch, Player.Pitch
+        D3DXMatrixRotationY matRotation, Player.Camera.Angle
+        D3DXMatrixRotationX matPitch, Player.Camera.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.Pitch > 0 Then
+        If Player.Camera.Pitch > 0 Then
         
-            D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y, -Player.Origin.Z
+            D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         Else
-            D3DXMatrixTranslation matPos, -Player.Origin.X, -Player.Origin.Y + 0.2, -Player.Origin.Z
+            D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         
         End If
@@ -427,7 +433,7 @@ On Error GoTo WorldError
 
             If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0)) Then
 
-                Player.Twists.Y = 3
+                Player.Element.Twists.Y = 3
             
             End If
         
@@ -464,37 +470,37 @@ On Error GoTo WorldError
 
             Do
 
-                verts(0) = MakeVector(Player.Origin.X, _
-                                            Player.Origin.Y - 0.2, _
-                                            Player.Origin.Z)
+                verts(0) = MakeVector(Player.Element.Origin.X, _
+                                            Player.Element.Origin.Y - 0.2, _
+                                            Player.Element.Origin.Z)
 
-                verts(1) = MakeVector(Player.Origin.X - (Sin(D720 - Player.Angle) * (Zoom + factor)), _
-                                            Player.Origin.Y - 0.2 + (Tan(D720 - Player.Pitch) * (Zoom + factor)), _
-                                            Player.Origin.Z - (Cos(D720 - Player.Angle) * (Zoom + factor)))
+                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle) * (Zoom + factor)), _
+                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.Pitch) * (Zoom + factor)), _
+                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Origin.X - (Sin(D720 - Player.Angle)), _
-                                      Player.Origin.Y - 0.1 + (Tan(D720 - Player.Pitch) * Zoom), _
-                                      Player.Origin.Z - (Cos(D720 - Player.Angle)))
+                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle)), _
+                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.Pitch) * Zoom), _
+                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle)))
 
-'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Pitch), Player.Angle))
+'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Camera.Pitch), Player.Camera.Angle))
 '
 '                sngCamera(1, 0) = v.X
 '                sngCamera(1, 1) = v.Y
 '                sngCamera(1, 2) = v.Z
 '
-'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 1, 0), Player.Pitch), Player.Angle))
+'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 1, 0), Player.Camera.Pitch), Player.Camera.Angle))
 '
 '                sngCamera(2, 0) = v.X
 '                sngCamera(2, 1) = v.Y
 '                sngCamera(2, 2) = v.Z
 '
-'                sngCamera(0, 0) = Player.Origin.X
-'                sngCamera(0, 1) = Player.Origin.Y
-'                sngCamera(0, 2) = Player.Origin.Z
+'                sngCamera(0, 0) = Player.Element.Origin.X
+'                sngCamera(0, 1) = Player.Element.Origin.Y
+'                sngCamera(0, 2) = Player.Element.Origin.Z
 
-                sngCamera(0, 0) = Player.Origin.X
-                sngCamera(0, 1) = Player.Origin.Y
-                sngCamera(0, 2) = Player.Origin.Z
+                sngCamera(0, 0) = Player.Element.Origin.X
+                sngCamera(0, 1) = Player.Element.Origin.Y
+                sngCamera(0, 2) = Player.Element.Origin.Z
 
                 sngCamera(1, 0) = 1
                 sngCamera(1, 1) = -1
@@ -539,8 +545,8 @@ On Error GoTo WorldError
                         
                         Set e1 = Nothing
                     Next
-                    If (Player.CollideIndex > -1) And (Player.BoundsIndex > 0) And (Player.BoundsIndex > 0) Then
-                        For cnt2 = Player.CollideIndex To (Player.CollideIndex + Meshes(Player.BoundsIndex).Mesh.GetNumFaces) - 1
+                    If (Player.Element.CollideIndex > -1) And (Player.Element.BoundsIndex > 0) And (Player.Element.BoundsIndex > 0) Then
+                        For cnt2 = Player.Element.CollideIndex To (Player.Element.CollideIndex + Meshes(Player.Element.BoundsIndex).Mesh.GetNumFaces) - 1
                           '  On Error GoTo isdivcheck2
                                 sngFaceVis(3, cnt2) = 0
                                 'GoTo notdivcheck2
@@ -558,9 +564,9 @@ On Error GoTo WorldError
                 touched = TestCollisionEx(Face, 2)
                 DelCollisionEx Face, 1
 
-                If ((Not touched) And (Zoom < Player.Zoom)) Then Zoom = Zoom + factor
+                If ((Not touched) And (Zoom < Player.Camera.Zoom)) Then Zoom = Zoom + factor
 
-            Loop Until ((touched) Or (Zoom >= Player.Zoom))
+            Loop Until ((touched) Or (Zoom >= Player.Camera.Zoom))
 
             If (touched And (Zoom > 0.2)) Then Zoom = Zoom + -factor
 
@@ -569,11 +575,11 @@ On Error GoTo WorldError
 
             'all said and done, if the zoom is under a certian val the
             'toon is in the way, so change it to wireframe see through
-            Player.WireFrame = (Zoom < 0.8)
+            Player.Element.WireFrame = (Zoom < 0.8)
 
         Else
         
-            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.Zoom, 0)
+            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.Camera.Zoom, 0)
             D3DXMatrixMultiply matView, matLook, matTemp
         End If
         DDevice.SetTransform D3DTS_VIEW, matView

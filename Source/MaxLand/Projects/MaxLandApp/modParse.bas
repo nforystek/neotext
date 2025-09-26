@@ -2,33 +2,37 @@ Attribute VB_Name = "modParse"
 
 Option Explicit
 
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
 '#################################################################
 '### These objects made public are added to ScriptControl also ###
 '### are the only thing global exposed to modFactory.Execute   ###
 '#################################################################
 
-Global ScriptRoot As String
-Global Include As New Include
+Public ScriptRoot As String
+Public Include As New Include
 
-Global All As NTNodes10.Collection
-Global Beacons As NTNodes10.Collection
-Global Bindings As Bindings
-Global Boards As NTNodes10.Collection
-Global Cameras As NTNodes10.Collection
-Global Elements As NTNodes10.Collection
-Global Lights As NTNodes10.Collection
-Global Player As Player
-Global Portals As NTNodes10.Collection
-Global Screens As NTNodes10.Collection
-Global Sounds As NTNodes10.Collection
-Global Space As Space
-Global Tracks As NTNodes10.Collection
+Public All As NTNodes10.Collection
+Public Beacons As NTNodes10.Collection
+Public Boards As NTNodes10.Collection
+Public Cameras As NTNodes10.Collection
+Public Elements As NTNodes10.Collection
+Public Lights As NTNodes10.Collection
+Public Portals As NTNodes10.Collection
+Public Screens As NTNodes10.Collection
+Public Sounds As NTNodes10.Collection
+Public Spaces As NTNodes10.Collection
+Public Tracks As NTNodes10.Collection
+
+Public Bindings As Bindings
+Public Player As Player
 
 
-Global Frame As Boolean
-Global Second As Single
-Global Millis As Single
-
+Public Frame As Boolean
+Public Second As Single
+Public Millis As Single
 
 Private Sourcing As String
 Private LastCall As String
@@ -106,20 +110,20 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
     Select Case LCase(inWord)
         '#######################################################################################
         'event objects which have code brackets following the tag, which is to be executed later
-        Case "oninrange", "onoutrange", "method", "script"
+        Case "oninrange", "onoutrange", "oninrange@", "onoutrange@", "oninrange#", "onoutrange#", "oninrange%", "onoutrange%", "method", "script"
             ParseReservedWord = 1
         
         '#######################################################################################
         'objects whose tags repeat newly in creating, or special use case scenario functions
         
         Case "deserialize", "frame", "millis", "onidle", "second", "serialize", _
-            "beacon", "board", "camera", "element", "light", "motion", "portal", "screen", "sound", "track"
+            "beacon", "board", "camera", "element", "light", "motion", "portal", "screen", "sound", "space", "track"
 
             ParseReservedWord = 3
             
         '#######################################################################################
         'objects that are not to be new or multiple objects, they're singular already existing
-        Case "bindings", "space", "player"
+        Case "bindings", "player"
             ParseReservedWord = -3
         Case Else
             ParseReservedWord = IIf(GetBindingIndex(inWord) > -1, 2, 0)
@@ -304,7 +308,7 @@ Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt A
                 retVal = retVal & "Serialize = Serialize & ""</Code>""" & vbCrLf
                 
                 retVal = retVal & "Serialize = Serialize & Bindings.ToString()" & vbCrLf
-                retVal = retVal & "Serialize = Serialize & Space.ToString()" & vbCrLf
+                
                 retVal = retVal & "Serialize = Serialize & ""</Serial>""" & vbCrLf
 
                 retVal = retVal & "End Function" & vbCrLf
@@ -380,14 +384,39 @@ Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String, Optio
     inBind = ParseWhiteSpace(inBind)
     inBlock = ParseWhiteSpace(inBlock)
     
-    BindIndex = GetBindingIndex(RemoveNextArg(inBind, "="))
+    BindIndex = GetBindingIndex(Replace(Replace(Replace(RemoveNextArg(inBind, "="), "@", ""), "#", ""), "%", ""))
     If Left(inBlock, 1) = "[" And Right(inBlock, 1) = "]" Then
         bindCode = ParseQuotedArg(inBlock, "[", "]", False)
+    ElseIf Left(inBlock, 1) = "{" And Right(inBlock, 1) = "}" Then
+        bindCode = frmMain.Evaluate(ParseQuotedArg(inBlock, "{", "}", False))
     Else
         bindCode = inBlock
     End If
+    
     If BindIndex > -1 And bindCode <> "" Then
-        Bindings(BindIndex) = bindCode
+    
+        Dim onv As New OnEvent
+        If Not Bindings(BindIndex) Is Nothing Then
+            onv.AppliesTo = Bindings(BindIndex).AppliesTo
+            onv.Behavior = Bindings(BindIndex).Behavior
+            onv.RunScript = Bindings(BindIndex).RunScript
+        End If
+            
+        
+        
+        onv.RunScript = bindCode
+        onv.AppliesTo = BindIndex
+        If Right(inBind, 1) = "@" Then
+            onv.Behavior = Rapid
+        ElseIf Right(inBind, 1) = "#" Then
+            onv.Behavior = Press
+        ElseIf Right(inBind, 1) = "%" Then
+            onv.Behavior = Locks
+        End If
+        onv.StartLine = CStr((LineNum + 1))
+        
+        Set Bindings(BindIndex) = onv
+        
     End If
     LineNum = LineNum + CountWord(inBind & inBlock, vbCrLf)
     
@@ -440,27 +469,36 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
         inName = "m" & Replace(modGuid.GUID(), "-", "")
         frmMain.AddCode "Sub " & inName & "()" & vbCrLf & inBlock & vbCrLf & "End Sub" & vbCrLf, , LineNum
         
-
-        If LCase(inEvent) = "script" Then
-            frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
-        ElseIf LCase(inEvent) = "oninrange" Or LCase(inEvent) = "onoutrange" Then
-            Dim oev As OnEvent
-            Set oev = New OnEvent
-            oev.RunMethod = inName
-            oev.AppliesTo = inApplyTo
-            oev.StartLine = LineNum
-            inName = RemoveQuotedArg(inWith, """", """")
-            Dim p As Portal
-            Set p = Portals(inName)
-            Select Case LCase(inEvent)
-                Case "oninrange"
-                    Set p.OnInRange = oev
-                Case "onoutrange"
-                    Set p.OnOutRange = oev
-            End Select
-            Set p = Nothing
-            Set oev = Nothing
-        End If
+        Select Case Replace(Replace(Replace(LCase(inEvent), "@", ""), "#", ""), "%", "")
+            Case "script"
+                frmMain.ExecuteStatement inWith & "." & inEvent & " = """ & LineNum & ":" & inName & """"
+            Case "oninrange", "onoutrange"
+                Dim oev As OnEvent
+                Set oev = New OnEvent
+                oev.RunScript = inName
+                oev.AppliesTo = inApplyTo
+                oev.StartLine = LineNum
+                
+                If Right(inEvent, 1) = "@" Then
+                    oev.Behavior = Rapid
+                ElseIf Right(inEvent, 1) = "#" Then
+                    oev.Behavior = Press
+                ElseIf Right(inEvent, 1) = "%" Then
+                    oev.Behavior = Locks
+                End If
+                
+                inName = RemoveQuotedArg(inWith, """", """")
+                Dim p As Portal
+                Set p = Portals(inName)
+                Select Case LCase(inEvent)
+                    Case "oninrange"
+                        Set p.OnInRange = oev
+                    Case "onoutrange"
+                        Set p.OnOutRange = oev
+                End Select
+                Set p = Nothing
+                Set oev = Nothing
+        End Select
         
      
 
@@ -594,6 +632,7 @@ Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Op
 
     If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " Is Nothing", , LineNum) Then
         frmMain.ExecuteStatement "Set " & IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & " = NewObject(""" & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & """)", , LineNum
+    
     End If
 
     If frmMain.Evaluate(IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Exists(""" & inName & """)", , LineNum) Then
@@ -731,13 +770,13 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
 
                     ParseScript inBlock, inType, atLine
                     
-                    Select Case inType
-                        Case "player"
-                            If inName <> "" Then
-                                frmMain.ExecuteStatement inType & ".key=""" & inName & """"
-                                frmMain.ExecuteStatement "All.Add " & inName & ", """ & inName & """"
-                            End If
-                    End Select
+'                    Select Case inType
+'                        Case "player"
+'                            If inName <> "" Then
+'                                frmMain.ExecuteStatement inType & ".key=""" & inName & """"
+'                                frmMain.ExecuteStatement "All.Add " & inName & ", """ & inName & """"
+'                            End If
+'                    End Select
 
                 ElseIf Abs(reserve) > 2 Then
                     ParseObject inLine, inBlock, inWith, atLine
@@ -780,6 +819,7 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
         If Not NoDeserialize Then
             frmMain.Run "Deserialize" 'now run the deserialzation generated at the beginning
         End If
+        
     End If
     Exit Function
 parseerror:
@@ -791,7 +831,7 @@ parseerror:
     If Not ConsoleVisible Then
         ConsoleToggle
     End If
-    ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.sourc & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
+    ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.source & " at line " & (atLine) & "\n" & Err.Description & "\n" & LastCall
     'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
     
     If frmMain.ScriptControl.Error.Number <> 0 Then frmMain.ScriptControl.Error.Clear

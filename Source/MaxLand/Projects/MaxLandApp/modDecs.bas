@@ -89,8 +89,8 @@ Public Const MouseSensitivity As Long = 0.6
 Public Const MaxDisplacement As Single = 0.05
 Public Const BeaconSpacing As Single = 40
 Public Const BeaconRange As Single = 1000
-Public Const FadeDistance As Single = 800
-Public Const SpaceBoundary As Single = 3000
+Public Const FadeDistance As Single = 3000
+Public Const SpaceBoundary As Single = 150
 Public Const HoursInOneDay As Single = 24
 Public Const LetterPerInch As Single = 10
 
@@ -418,14 +418,14 @@ End Function
 
 Public Function AppPath() As String
 
-    Dim Ret As String
-    Ret = IIf((Right(App.Path, 1) = "\"), App.Path, App.Path & "\")
+    Dim ret As String
+    ret = IIf((Right(App.Path, 1) = "\"), App.Path, App.Path & "\")
 #If VBIDE = -1 Then
-    If Right(Ret, 9) = "Projects\" Then
-        Ret = Left(Ret, Len(Ret) - 9) & "Binary\"
+    If Right(ret, 9) = "Projects\" Then
+        ret = Left(ret, Len(ret) - 9) & "Binary\"
      End If
 #End If
-    AppPath = Ret
+    AppPath = ret
 End Function
 
 Public Function CountWord(ByVal Text As String, ByVal Word As String) As Long
@@ -1163,8 +1163,7 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
     avg.Y = avg.Y / i
     avg.Z = avg.Z / i
     Set Obj.Centoid = avg
-    
-    
+        
 
 End Function
 
@@ -1180,19 +1179,15 @@ Public Function GetTimer() As String
     
 End Function
 
-Public Sub SwapSingle(ByRef val1 As Single, ByRef val2 As Single)
-    Dim tmp As Single
-    tmp = val1
-    val1 = val2
-    val2 = tmp
-End Sub
 
 Public Function NoAngle() As Point
     Set NoAngle = MakePoint(360, 360, 360)
 End Function
+
 Public Function NoPoint() As Point
     Set NoPoint = MakePoint(0, 0, 0)
 End Function
+
 Public Function ClassifyPoint(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
     Dim dtp As Single
     Dim N As D3DVECTOR
@@ -1208,98 +1203,60 @@ Public Function ClassifyPoint(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRe
     End If
 End Function
 
+Public Sub JoinAngles(ByRef BeforeAngles As Point, ByRef AfterAngles As Point, ByRef JoinedAngles As Point)
+    'the inputs BeforeAngles, and AfterAngles must be in degrees with no
+    'more then 2 digits past decimal or the join/PartAngles() could fail
+    'the output is JoinedAngles
+    
+    AngleAxisRestrictDegree BeforeAngles
+    AngleAxisRestrictDegree AfterAngles
+    
+    If JoinedAngles Is Nothing Then Set JoinedAngles = New Point
+    
+    With JoinedAngles
+        .X = CDec(CStr(AfterAngles.X) & "." & PaddingLeft(CStr(BeforeAngles.X), 3))
+        .Y = CDec(CStr(AfterAngles.Y) & "." & PaddingLeft(CStr(BeforeAngles.Y), 3))
+        .Z = CDec(CStr(AfterAngles.Z) & "." & PaddingLeft(CStr(BeforeAngles.Z), 3))
+    End With
 
+End Sub
 
-'Public Function PointBehindtriangle(ByRef Point As D3DVECTOR, ByRef center As D3DVECTOR, ByRef Lengths As D3DVECTOR) As Boolean
-'
-'' (GreatestX(v1, v2, v3) - LeastX(v1, v2, v3)) / 2, _
-''                                (GreatestY(v1, v2, v3) - LeastY(v1, v2, v3)) / 2, _
-''                                (GreatestZ(v1, v2, v3) - LeastZ(v1, v2, v3)) / 2, _
-''                                Distance(v1, v2), Distance(v2, v3), Distance(v3, v1),
-'
-'    Dim v As D3DVECTOR
-'    Dim u As D3DVECTOR
-'    Dim n As D3DVECTOR
-'
-'    Dim d As Single
-'
-'    u = VectorCrossProduct(Point, center)
-'
-'    v = VectorSubtract(Point, center)
-'    v = VectorSubtract(v, center)
-'    v = VectorCrossProduct(v, center)
-'
-'    n.x = (((u.x + u.Y) * (Lengths.x + Lengths.Y + Lengths.z)) - ((v.x + v.Y) * (Lengths.x + Lengths.Y + Lengths.z)))
-'    n.Y = (((u.x + u.z) * (Lengths.x + Lengths.Y + Lengths.z)) - ((v.x + v.z) * (Lengths.x + Lengths.Y + Lengths.z)))
-'    n.x = (((u.Y + u.x) * (Lengths.x + Lengths.Y + Lengths.z)) - ((v.Y + v.x) * (Lengths.x + Lengths.Y + Lengths.z)))
-'
-'    d = Distance(u, v)
-'
-'    n.x = (n.x * u.x) / d
-'    n.Y = (n.Y * u.Y) / d
-'    n.z = (n.z * u.z) / d
-'
-'    'Debug.Print "n: " & n.x & "," & n.y & "," & n.z & "  u: " & u.x & "," & u.y & "," & u.z & "  v: " & v.x & "," & v.y & "," & v.z & "  d: " & d
-'
-'    PointBehindtriangle = n.x + n.Y + n.z > 0
-'End Function
-'
-'Public Function TriangleIntersect(ByRef O1 As D3DVECTOR, ByRef O2 As D3DVECTOR, ByRef O3 As D3DVECTOR, ByRef Q1 As D3DVECTOR, ByRef Q2 As D3DVECTOR, ByRef Q3 As D3DVECTOR) As Long
-'
-'    Dim No As D3DVECTOR
-'    Dim Nq As D3DVECTOR
-'    Dim Co As D3DVECTOR
-'    Dim Cq As D3DVECTOR
-'    Dim Lc As Single
-'    Dim Lo As Single
-'    Dim Lq As Single
-'    Dim Da As D3DVECTOR
-'    Dim Oi As Single
-'    Dim Qi As Single
-'    Dim Jo As D3DVECTOR
-'    Dim Jq As D3DVECTOR
-'    Dim K As Integer
-'
-'    No = TriangleNormal(O1, O2, O3)
-'    Nq = TriangleNormal(Q1, Q2, Q3)
-'    Co = TriangleCenter(O1, O2, O3)
-'    Cq = TriangleCenter(Q1, Q2, Q3)
-'    Lc = Distance(Co, Cq)
-'    Lo = Distance(O1, O2) + Distance(O2, O3) + Distance(O3, O1)
-'    Lq = Distance(Q1, Q2) + Distance(Q2, Q3) + Distance(Q3, Q1)
-'
-'    Da.x = Sqr((((Lo + Lq) * (No.x + Co.x)) + (((Q1.Y + Q2.Y + Q3.Y - O1.Y + O2.Y + O3.Y) + (Q1.z + Q2.z + Q3.z - O1.z + O2.z + O3.z)) * ((No.Y * No.z * Co.Y) + (O1.Y + O2.Y + O3.Y)))) ^ 2)
-'    Da.Y = Sqr((((Lo + Lq) * (No.Y + Co.Y)) + (((Q1.x + Q2.x + Q3.x - O1.x + O2.x + O3.x) + (Q1.z + Q2.z + Q3.z - O1.z + O2.z + O3.z)) * ((No.x * No.z * Co.x) + (O1.x + O2.x + O3.x)))) ^ 2)
-'    Da.z = Sqr((((Lo + Lq) * (No.z + Co.z)) + (((Q1.z + Q2.z + Q3.z - O1.z + O2.z + O3.z) + (Q1.x + Q2.x + Q3.x - O1.x + O2.x + O3.x)) * ((No.x * No.x * Co.z) + (O1.z + O2.z + O3.z)))) ^ 2)
-'
-'    Oi = Sqr(((Da.x * Da.Y * Da.z) ^ 3 + ((Da.x + Da.Y + Da.z) * (Da.x + Da.Y + Da.z))))
-'
-'    Jo.x = (((Q1.x + Q2.x + Q3.x) * (Q1.Y + Q2.Y + Q3.Y) * (Q1.z + Q2.z + Q3.z) * (Lc + Lc + Lo)) / Oi)
-'    Jo.Y = (((Q1.x + Q2.x + Q3.x) * (Q1.Y + Q2.Y + Q3.Y) * (Q1.z + Q2.z + Q3.z) * (Lc + Lc + Lo)) / Oi)
-'    Jo.z = (((Q1.x + Q2.x + Q3.x) * (Q1.Y + Q2.Y + Q3.Y) * (Q1.z + Q2.z + Q3.z) * (Lc + Lc + Lo)) / Oi)
-'
-'    'Debug.Print DebugPrint(Da.x) & " " & DebugPrint(Da.y) & " " & DebugPrint(Da.z) & " " & DebugPrint(Jo.x) & " " & DebugPrint(Jo.y) & " " & DebugPrint(Jo.z) & " " & DebugPrint(Lo, 10) & " " & DebugPrint(Oi)
-'
-'    Da.x = Sqr((((Lq + Lo) * (Nq.x + Cq.x)) + (((O1.Y + O2.Y + O3.Y - Q1.Y + Q2.Y + Q3.Y) + (O1.z + O2.z + O3.z - Q1.z + Q2.z + Q3.z)) * ((Nq.Y * Nq.z * Cq.Y) + (Q1.Y + Q2.Y + Q3.Y)))) ^ 2)
-'    Da.Y = Sqr((((Lq + Lo) * (Nq.Y + Cq.Y)) + (((O1.x + O2.x + O3.x - Q1.x + Q2.x + Q3.x) + (O1.z + O2.z + O3.z - Q1.z + Q2.z + Q3.z)) * ((Nq.x * Nq.z * Cq.x) + (Q1.x + Q2.x + Q3.x)))) ^ 2)
-'    Da.z = Sqr((((Lq + Lo) * (Nq.z + Cq.z)) + (((O1.z + O2.z + O3.z - Q1.z + Q2.z + Q3.z) + (O1.x + O2.x + O3.x - Q1.x + Q2.x + Q3.x)) * ((Nq.x * Nq.x * Cq.z) + (Q1.z + Q2.z + Q3.z)))) ^ 2)
-'
-'    Qi = Sqr(((Da.x * Da.Y * Da.z) ^ 3 + ((Da.x + Da.Y + Da.z) * (Da.x + Da.Y + Da.z))))
-'
-'    Jq.x = (((O1.x + O2.x + O3.x) * (O1.Y + O2.Y + O3.Y) * (O1.z + O2.z + O3.z) * (Lc + Lc + Lo)) / Qi)
-'    Jq.Y = (((O1.x + O2.x + O3.x) * (O1.Y + O2.Y + O3.Y) * (O1.z + O2.z + O3.z) * (Lc + Lc + Lo)) / Qi)
-'    Jq.z = (((O1.x + O2.x + O3.x) * (O1.Y + O2.Y + O3.Y) * (O1.z + O2.z + O3.z) * (Lc + Lc + Lo)) / Qi)
-'
-'    'Debug.Print DebugPrint(Da.x) & " " & DebugPrint(Da.y) & " " & DebugPrint(Da.z) & " " & DebugPrint(Jq.x) & " " & DebugPrint(Jq.y) & " " & DebugPrint(Jq.z) & " " & DebugPrint(Lq, 10) & " " & DebugPrint(Qi)
-'
-'    K = (Sqr(Distance(Jo, Jq) * Sqr(((Oi / 2) + (Qi / 2)))))
-'
-'    'Debug.Print "Sect: " & CStr(K)
-'
-'    TriangleIntersect = K
-'
-'End Function
-'
+Public Function PaddingLeft(ByVal txt As String, ByVal nLen As Long, Optional ByVal TheChar As String = "0") As String
+    If nLen - Len(Trim(txt)) > 0 Then
+        PaddingLeft = String(nLen - Len(Trim(txt)), TheChar) & Trim(txt)
+    Else
+        PaddingLeft = Trim(txt)
+    End If
+End Function
+
+Public Function PaddingRight(ByVal txt As String, ByVal nLen As Long, Optional ByVal TheChar As String = "0") As String
+    If nLen - Len(Trim(txt)) > 0 Then
+        PaddingRight = Trim(txt) & String(nLen - Len(Trim(txt)), TheChar)
+    Else
+        PaddingRight = Trim(txt)
+    End If
+End Function
+
+Public Sub PartAngles(ByRef JoinedAngles As Point, ByRef BeforeAngles As Point, ByRef AfterAngles As Point)
+    'the input JoinedAngles must be retruned from JoinAngles()
+    'the output is BeforeAngles and AfterAngles
+    
+    If BeforeAngles Is Nothing Then Set BeforeAngles = New Point
+    If AfterAngles Is Nothing Then Set AfterAngles = New Point
+
+    With BeforeAngles
+        .X = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.X), "."), 3))
+        .Y = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.Y), "."), 3))
+        .Z = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.Z), "."), 3))
+    End With
+    With AfterAngles
+        .X = CDec(NextArg(CStr(JoinedAngles.X), "."))
+        .Y = CDec(NextArg(CStr(JoinedAngles.Y), "."))
+        .Z = CDec(NextArg(CStr(JoinedAngles.Z), "."))
+    End With
+    
+End Sub
+
 
 
 
@@ -1382,6 +1339,7 @@ End Function
 ''
 ''    'ScreenX = (vert.X / vert.Z * 100) + (ScreenWidth / 2)  'Zoom + centre.X
 ''End Property
+''
 ''Public Property Get ScreenY(ByVal VertexIndex As Integer) As Single
 ''    On Error Resume Next
 ''

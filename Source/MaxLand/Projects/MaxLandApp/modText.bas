@@ -5,21 +5,21 @@ Option Explicit
 Option Compare Binary
 Option Private Module
 
-
-Public ColumnCount As Long
-Public RowCount As Long
-
-Public Fnt As StdFont
-Public MainFont As D3DXFont
-Public MainFontDesc As IFont
-
 Public DPI As ImageDimensions
-
-Public TextColor As Long
 
 Public SpecialMaterial As D3DMATERIAL8
 Public GenericMaterial As D3DMATERIAL8
 Public LucentMaterial As D3DMATERIAL8
+
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
+Public TextColor As Long
+
+Public Fnt As StdFont
+Public MainFont As D3DXFont
+Public MainFontDesc As IFont
 
 Public DefaultRenderTarget As Direct3DSurface8
 Public DefaultStencilDepth As Direct3DSurface8
@@ -27,6 +27,9 @@ Public DefaultStencilDepth As Direct3DSurface8
 Public BufferedTexture As Direct3DTexture8
 Public ReflectRenderTarget As Direct3DSurface8
 Public ReflectStencilDepth As Direct3DSurface8
+
+Public ColumnCount As Long
+Public RowCount As Long
 
 
 Public Sub CreateText()
@@ -167,16 +170,18 @@ End Function
 
 
 Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8
-    Dim Dimensions As ImageDimensions
     Dim e As String
     Dim t As Direct3DTexture8
+    Dim Dimensions As ImageDimensions
     
     If ImageDimensions(FileName, Dimensions, e) Then
         Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTexture = t
     End If
+    Set t = Nothing
 End Function
+
 
 Public Function LoadTextureEx(ByVal FileName As String, ByRef Dimensions As ImageDimensions) As Direct3DTexture8
     Dim e As String
@@ -187,5 +192,7 @@ Public Function LoadTextureEx(ByVal FileName As String, ByRef Dimensions As Imag
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTextureEx = t
     End If
+    Set t = Nothing
 End Function
+
 

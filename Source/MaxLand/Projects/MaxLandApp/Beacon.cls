@@ -290,8 +290,8 @@ Private Sub Class_Initialize()
     BeaconLight = -1
     Width = 1
     Height = 1
-    PercentX = 100
-    PercentY = 100
+    PercentX = 200
+    PercentY = 200
     Allowance = 1
 
     Key = "K" & ObjPtr(Me)
@@ -325,10 +325,12 @@ Attribute Render.VB_MemberFlags = "40"
     DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
 End Sub
 Private Sub Recreate()
+
     CreateSquare pBeaconPlaq, 0, _
         MakeVector(((1 * (PercentXY.X / 100)) / 2), 0, 0), _
         MakeVector(-((1 * (PercentXY.X / 100)) / 2), 0, 0), _
         MakeVector(-((1 * (PercentXY.X / 100)) / 2), (1 * (PercentXY.Y / 100)), 0), _
         MakeVector(((1 * (PercentXY.X / 100)) / 2), (1 * (PercentXY.Y / 100)), 0)
     D3DVertexBuffer8SetData pBeaconVBuf, 0, Len(pBeaconPlaq(0)) * 6, 0, pBeaconPlaq(0)
+
 End Sub

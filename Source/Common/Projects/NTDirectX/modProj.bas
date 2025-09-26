@@ -274,7 +274,7 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 
 
 
-
+'
 '    If p.Honing And Not Camera.Player Is Nothing Then
 '
 '        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(Camera.Player.Rotate.X)
@@ -286,7 +286,7 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 '        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(Camera.Player.Rotate.Z)
 '        D3DXMatrixMultiply matPlane, matRoll, matPlane
 '    Else
-
+'
 '        D3DXMatrixRotationX matPitch, AngleConvertWinToDX3DX(-p.Rotate.X)
 '        D3DXMatrixMultiply matPlane, matPitch, matPlane
 '
@@ -295,9 +295,9 @@ Private Sub SubRenderPlanetSetup(ByRef UserControl As Macroscopic, ByRef Camera 
 '
 '        D3DXMatrixRotationZ matRoll, AngleConvertWinToDX3DZ(-p.Rotate.Z)
 '        D3DXMatrixMultiply matPlane, matRoll, matPlane
-''    End If
-'
-'    DDevice.SetTransform D3DTS_WORLD, matPlane
+'    End If
+
+    DDevice.SetTransform D3DTS_WORLD, matPlane
         
 End Sub
 
@@ -956,15 +956,15 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '###### make it hone to the user #############
 '############################################################
 
-'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-'            Set p.Absolute.Rotate = p.Rotate
-'            Set p.Relative.Rotate = Nothing
-'            p.Moved = True
+            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+            Set p.Absolute.Rotate = p.Rotate
+            Set p.Relative.Rotate = Nothing
+            p.Moved = True
                         
             
-'            Set Camera.Player.Origin = VectorRotateAxis(VectorRotateAxis(Camera.Player.Origin, AngleAxisInvert(Camera.Player.Rotate)), AngleAxisAddition(Camera.Player.Rotate, tmp))
-'            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
-'            Set Camera.Player.Relative.Origin = Nothing
+            Set Camera.Player.Origin = VectorRotateAxis(VectorRotateAxis(Camera.Player.Origin, AngleAxisInvert(Camera.Player.Rotate)), AngleAxisAddition(Camera.Player.Rotate, tmp))
+            Set Camera.Player.Absolute.Origin = Camera.Player.Origin
+            Set Camera.Player.Relative.Origin = Nothing
 
 '############################################################
 '############################################################
@@ -972,10 +972,10 @@ Public Sub RenderPlanets(ByRef UserControl As Macroscopic, ByRef Camera As Camer
 '############################################################
 
 
-            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
-            Set p.Absolute.Rotate = p.Rotate
-            Set p.Relative.Rotate = Nothing
-            p.Moved = True
+'            Set p.Rotate = VectorAxisAngles(VectorDeduction(Camera.Player.Origin, p.Origin))
+'            Set p.Absolute.Rotate = p.Rotate
+'            Set p.Relative.Rotate = Nothing
+'            p.Moved = True
                                       
             SubRenderPlateau UserControl, Camera, p
 

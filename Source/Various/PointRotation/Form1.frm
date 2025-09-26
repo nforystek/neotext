@@ -142,10 +142,10 @@ Private Sub DrawPointRotation(ByRef PicBox As PictureBox, ByVal vX As Double, By
 
 End Sub
 
-Public Sub CornerPrint(ByRef PicBox As PictureBox, ByVal Txt As String)
-    PicBox.CurrentY = PicBox.ScaleHeight - PicBox.TextHeight(Txt)
-    PicBox.CurrentX = PicBox.ScaleWidth - PicBox.TextWidth(Txt)
-    PicBox.Print Txt
+Public Sub CornerPrint(ByRef PicBox As PictureBox, ByVal txt As String)
+    PicBox.CurrentY = PicBox.ScaleHeight - PicBox.TextHeight(txt)
+    PicBox.CurrentX = PicBox.ScaleWidth - PicBox.TextWidth(txt)
+    PicBox.Print txt
 End Sub
 
 Private Sub Picture1_KeyDown(KeyCode As Integer, Shift As Integer)
@@ -204,7 +204,7 @@ Private Sub MousePoint(Button As Integer, Optional ByRef X As Variant, Optional 
             End If
             
     
-            Set r = AnglesOfPoint2(v)
+            Set r = AnglesOfPoint1(v)
 
             If Button < Vertex.Count Then
                 Vertex.Remove Button
@@ -232,13 +232,13 @@ Public Function GetNewPoint(Optional ByRef v As Point, Optional ByRef X As Varia
         If Not IsMissing(X) Then v.X = X
         If Not IsMissing(Y) Then v.Y = Y
         If Not IsMissing(Z) Then v.Z = Z
-        Dim dist As Double
-        dist = DistanceEx(MakePoint(0, 0, 0), v)
-        If dist > 0 Then
-            Dim n As Point
-            Set n = PointNormalize(v)
-            Set v = DistanceSet(MakePoint(0, 0, 0), n, dist)
-            Set n = Nothing
+        Dim Dist As Double
+        Dist = DistanceEx(MakePoint(0, 0, 0), v)
+        If Dist > 0 Then
+            Dim N As Point
+            Set N = PointNormalize(v)
+            Set v = DistanceSet(MakePoint(0, 0, 0), N, Dist)
+            Set N = Nothing
         End If
 
     End If

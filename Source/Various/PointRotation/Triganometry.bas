@@ -33,6 +33,11 @@ Public Function AngleY(ByVal Angle As Double, ByVal Distance As Double) As Doubl
     AngleY = -(Cos(Angle) * Distance)
 End Function
 
+Public Function Hypotenuse(ByVal X As Double, ByVal Y As Double) As Double
+    'technically same as the 2D distance if from (0,0), or length X to Y
+    Hypotenuse = ((X ^ 2) + (Y ^ 2)) ^ (1 / 2)
+End Function
+
 Public Function Sine(ByVal pX As Variant, ByVal pY As Variant) As Variant
     'the same as built-in Sin(Angle) only X and Y are the arguments
     RotateXYQuad 1, pX, pY
@@ -87,7 +92,6 @@ Public Function Cosine(ByVal pX As Variant, ByVal pY As Variant) As Variant
     End If
 End Function
 
-
 Public Function Tangent(ByVal pX As Variant, ByVal pY As Variant) As Variant
     'the same as built-in Tan(Angle) only X and Y are the arguments
     RotateXYQuad 1, pX, pY
@@ -111,7 +115,6 @@ Public Function Tangent(ByVal pX As Variant, ByVal pY As Variant) As Variant
     End If
 End Function
 
-
 Public Function Secant(ByVal pX As Variant, ByVal pY As Variant) As Variant
     Secant = CDbl(Abs(Cosine(pX, pY)))
     If Secant <> 0 Then Secant = CDbl(1 / Secant)
@@ -127,6 +130,7 @@ Public Function Secant(ByVal pX As Variant, ByVal pY As Variant) As Variant
         If Secant > 0 Then Secant = CDbl(-Secant)
     End If
 End Function
+
 Public Function Cosecant(ByVal pX As Variant, ByVal pY As Variant) As Variant
     Cosecant = CDbl(Abs(Cosine(pX, pY)))
     If Cosecant <> 0 Then Cosecant = CDbl(1 / Cosecant)
@@ -157,11 +161,6 @@ Public Function Cotangent(ByVal pX As Variant, ByVal pY As Variant) As Variant
     End If
 End Function
 
-Public Function Hypotenuse(ByVal X As Double, ByVal Y As Double) As Double
-    'same as the 2D distance if from (0,0)
-    Hypotenuse = ((X ^ 2) + (Y ^ 2)) ^ (1 / 2)
-End Function
-
 Public Function PolarAxis(ByVal X As Double, ByVal Y As Double) As Double
     'returns a value if (x, y) falls on a pole that is vertical, horizontal,
     'or diagonal. the value is to the standard clock time format, 12=noon
@@ -177,7 +176,7 @@ Public Function PolarAxis(ByVal X As Double, ByVal Y As Double) As Double
         ElseIf X < 0 Then
             PolarAxis = 9
         End If
-    ElseIf X = Y Then
+    ElseIf Abs(X) = Abs(Y) Then
         If X > 0 And Y > 0 Then
             PolarAxis = 1.5
         ElseIf X > 0 And Y < 0 Then
@@ -189,9 +188,12 @@ Public Function PolarAxis(ByVal X As Double, ByVal Y As Double) As Double
         End If
     End If
 End Function
+
 Public Function OctentAxium(ByVal X As Double, ByVal Y As Double) As Double
     'returns the octent (every 45 degrees of angle) the point
     'falls within the format is the standard clock, 12=noon
+    X = Round(X, 2)
+    Y = Round(Y, 2)
     If X <> 0 Or Y <> 0 Then
         OctentAxium = PolarAxis(X, Y)
         If OctentAxium = 0 Then

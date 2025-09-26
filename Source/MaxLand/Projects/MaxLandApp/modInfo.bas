@@ -5,6 +5,11 @@ Option Explicit
 Option Compare Binary
 
 Option Private Module
+
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
 Private FadeTime As Long
 Private FadeText As String
 
@@ -133,7 +138,7 @@ Public Sub RenderInfo()
                 "Light " & Stats_Light_Count & " " & "Element " & Stats_Element_Count & " " & vbCrLf & _
                 "Player " & Stats_Player_Count & " " & "Point " & Stats_Point_Count & " " & _
                 "Portal " & Stats_Portal_Count & " " & "Sound " & Stats_Sound_Count & " " & _
-                "Space " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
+                "Spaces " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
                 "Camera " & Stats_Camera_Count & " " & "Plane " & Stats_Plane_Count & " " & _
                 "Collision " & Stats_Collision_Count & " " & "CollisionEx " & Stats_CollisionEx_Count
                 
@@ -153,22 +158,22 @@ Public Sub RenderInfo()
 '        End If
         
         If ShowHelp Then
-            txt = "TILDA=Console, ESC=" & IIf(TrapMouse, "Exit", "Close")
+            txt = "TILDA=Console, ESC=" & IIf(MouseTrapped, "Exit", "Close")
         Else
-            txt = "ESC=" & IIf(TrapMouse, "Exit", "Close")
+            txt = "ESC=" & IIf(MouseTrapped, "Exit", "Close")
         End If
         DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), 2
 
         If ShowStat Then
             txt = "Frames Per Second: " & FPSRate
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(2)
-            txt = "Origin.X = " & Player.Origin.X & vbCrLf & _
-                    "Origin.y = " & Player.Origin.Y & vbCrLf & _
-                    "Origin.z = " & Player.Origin.Z & vbCrLf & _
-                    "Distance = " & Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, 0, 0, 0) & vbCrLf & _
-                    "Angle = " & Player.Twists.Y & vbCrLf & _
-                    "Pitch = " & Player.Twists.Y & vbCrLf & _
-                    "Zoom = " & Player.Zoom & vbCrLf
+            txt = "Origin.X = " & Player.Element.Origin.X & vbCrLf & _
+                    "Origin.y = " & Player.Element.Origin.Y & vbCrLf & _
+                    "Origin.z = " & Player.Element.Origin.Z & vbCrLf & _
+                    "Distance = " & Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, 0, 0, 0) & vbCrLf & _
+                    "Angle = " & Player.Element.Twists.Y & vbCrLf & _
+                    "Pitch = " & Player.Element.Twists.Y & vbCrLf & _
+                    "Zoom = " & Player.Camera.Zoom & vbCrLf
                     
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(3)
             

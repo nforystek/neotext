@@ -45,6 +45,8 @@ Public Property Let Serialize(ByVal RHS As Boolean)
 End Property
 
 Public Property Get Key() As String
+Attribute Key.VB_UserMemId = 0
+Attribute Key.VB_MemberFlags = "200"
     Key = pKey
 End Property
 Public Property Let Key(ByVal RHS As String)
@@ -152,13 +154,13 @@ Public Property Get Diffuse() As Color
     Diffuse.Alpha = DXLights(LightIndex).Diffuse.A
     Diffuse.Red = DXLights(LightIndex).Diffuse.r
     Diffuse.Green = DXLights(LightIndex).Diffuse.g
-    Diffuse.Blue = DXLights(LightIndex).Diffuse.b
+    Diffuse.Blue = DXLights(LightIndex).Diffuse.B
 End Property
 Public Property Set Diffuse(ByRef RHS As Color)
     DXLights(LightIndex).Diffuse.A = RHS.Alpha
     DXLights(LightIndex).Diffuse.r = RHS.Red
     DXLights(LightIndex).Diffuse.g = RHS.Green
-    DXLights(LightIndex).Diffuse.b = RHS.Blue
+    DXLights(LightIndex).Diffuse.B = RHS.Blue
 End Property
 Public Property Let Diffuse(ByVal RHS)
     Dim nc As Color
@@ -168,7 +170,7 @@ Public Property Let Diffuse(ByVal RHS)
     DXLights(LightIndex).Diffuse.A = nc.Alpha
     DXLights(LightIndex).Diffuse.r = nc.Red
     DXLights(LightIndex).Diffuse.g = nc.Green
-    DXLights(LightIndex).Diffuse.b = nc.Blue
+    DXLights(LightIndex).Diffuse.B = nc.Blue
     
     Set nc = Nothing
 End Property
@@ -178,14 +180,14 @@ Public Property Get Specular() As Color
     Specular.Alpha = DXLights(LightIndex).Specular.A
     Specular.Red = DXLights(LightIndex).Specular.r
     Specular.Green = DXLights(LightIndex).Specular.g
-    Specular.Blue = DXLights(LightIndex).Specular.b
+    Specular.Blue = DXLights(LightIndex).Specular.B
 End Property
 Public Property Set Specular(ByRef RHS As Color)
    
     DXLights(LightIndex).Specular.A = RHS.Alpha
     DXLights(LightIndex).Specular.r = RHS.Red
     DXLights(LightIndex).Specular.g = RHS.Green
-    DXLights(LightIndex).Specular.b = RHS.Blue
+    DXLights(LightIndex).Specular.B = RHS.Blue
 End Property
 Public Property Let Specular(ByVal RHS)
     Dim nc As Color
@@ -195,7 +197,7 @@ Public Property Let Specular(ByVal RHS)
     DXLights(LightIndex).Specular.A = nc.Alpha
     DXLights(LightIndex).Specular.r = nc.Red
     DXLights(LightIndex).Specular.g = nc.Green
-    DXLights(LightIndex).Specular.b = nc.Blue
+    DXLights(LightIndex).Specular.B = nc.Blue
     
     Set nc = Nothing
 End Property
@@ -205,13 +207,13 @@ Public Property Get Ambient() As Color
     Ambient.Alpha = DXLights(LightIndex).Ambient.A
     Ambient.Red = DXLights(LightIndex).Ambient.r
     Ambient.Green = DXLights(LightIndex).Ambient.g
-    Ambient.Blue = DXLights(LightIndex).Ambient.b
+    Ambient.Blue = DXLights(LightIndex).Ambient.B
 End Property
 Public Property Set Ambient(ByRef RHS As Color)
     DXLights(LightIndex).Ambient.A = RHS.Alpha
     DXLights(LightIndex).Ambient.r = RHS.Red
     DXLights(LightIndex).Ambient.g = RHS.Green
-    DXLights(LightIndex).Ambient.b = RHS.Blue
+    DXLights(LightIndex).Ambient.B = RHS.Blue
 End Property
 Public Property Let Ambient(ByVal RHS)
     Dim nc As Color
@@ -221,7 +223,7 @@ Public Property Let Ambient(ByVal RHS)
     DXLights(LightIndex).Ambient.A = nc.Alpha
     DXLights(LightIndex).Ambient.r = nc.Red
     DXLights(LightIndex).Ambient.g = nc.Green
-    DXLights(LightIndex).Ambient.b = nc.Blue
+    DXLights(LightIndex).Ambient.B = nc.Blue
     
     Set nc = Nothing
 End Property

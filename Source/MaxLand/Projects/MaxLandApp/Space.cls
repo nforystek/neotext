@@ -14,13 +14,16 @@ Attribute VB_Exposed = True
 Option Explicit
 
     
-
 Private pSkyTop As String
 Private pSkyBottom As String
 Private pSkyFront As String
 Private pSkyBack As String
 Private pSkyRight As String
 Private pSkyLeft As String
+
+Private pOrigin As Point
+
+Private pRange As Single
 
 Private pGravity As Single
 
@@ -29,10 +32,113 @@ Private pFogDistance As Single
 Private pFogColor As New Color
 
 Private pSkyRotate As Single
+Private pSkyRotated As Single
+
 Private pBoundary As Single
+Private pVisible As Boolean
 
 Private pSerialize As Boolean
+Private pKey As String
 
+Private SkyPlaq() As MyVertex
+Private SkySkin() As Direct3DTexture8
+Private SkyVBuf As Direct3DVertexBuffer8
+
+Public Property Get Key() As String
+    Key = pKey
+End Property
+Public Property Let Key(ByVal RHS As String)
+    If RHS <> "" Then
+        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+        If All.Exists(RHS) Then
+            All.Remove RHS
+            All.Add Me, RHS
+        End If
+        pKey = RHS
+    End If
+End Property
+
+Friend Function InSpace(ByRef WayPoint As Point) As Boolean
+    InSpace = (Visible And (Range = -1) Or (DistanceEx(WayPoint, Origin) < Range))
+End Function
+
+Friend Sub RenderSpace()
+    If InSpace(Player.Element.Origin) Then
+    
+        Dim matProj As D3DMATRIX
+        Dim matView As D3DMATRIX, matViewSave As D3DMATRIX
+        DDevice.GetTransform D3DTS_VIEW, matViewSave
+        matView = matViewSave
+        matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
+    
+        DDevice.SetTransform D3DTS_VIEW, matView
+    
+        D3DXMatrixPerspectiveFovLH matProj, PI / 2.5, AspectRatio, 0.05, 50
+        DDevice.SetTransform D3DTS_PROJECTION, matProj
+    
+        If Not SkyRotated = 0 Then
+        
+            If (FPSRate > 0) And SkyRotate > 0 Then
+
+                SkyRotated = SkyRotated + (360 / (HoursInOneDay * SkyRotate)) * _
+                    (PI / (HoursInOneDay * FPSRate)) * (FPSRate / HoursInOneDay)
+            End If
+            
+            D3DXMatrixRotationY matWorld, SkyRotated * RADIAN
+        End If
+        DDevice.SetTransform D3DTS_WORLD, matWorld
+                        
+        DDevice.SetStreamSource 0, SkyVBuf, Len(SkyPlaq(0))
+    
+        DDevice.SetTexture 1, Nothing
+        
+        DDevice.SetTexture 0, SkySkin(0)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+        DDevice.SetTexture 0, SkySkin(1)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+        DDevice.SetTexture 0, SkySkin(2)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+        DDevice.SetTexture 0, SkySkin(3)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
+        DDevice.SetTexture 0, SkySkin(4)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
+        DDevice.SetTexture 0, SkySkin(5)
+        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
+        
+        D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.05, FadeDistance
+        DDevice.SetTransform D3DTS_PROJECTION, matProj
+    
+        DDevice.SetTransform D3DTS_VIEW, matViewSave
+    End If
+
+End Sub
+
+Friend Property Get SkyRotated() As Single
+    SkyRotated = pSkyRotated
+End Property
+Friend Property Let SkyRotated(ByVal RHS As Single)
+    pSkyRotated = RHS
+End Property
+Public Property Get Origin() As Point
+    Set Origin = pOrigin
+End Property
+Public Property Set Origin(ByRef RHS As Point)
+    Set pOrigin = RHS
+End Property
+
+Public Property Get Visible() As Boolean
+    Visible = pVisible
+End Property
+Public Property Let Visible(ByVal RHS As Boolean)
+    pVisible = RHS
+End Property
+
+Public Property Get Range() As Single
+    Range = pRange
+End Property
+Public Property Let Range(ByVal RHS As Single)
+    pRange = RHS
+End Property
 Public Property Get Serialize() As Boolean
     Serialize = pSerialize
 End Property
@@ -164,13 +270,22 @@ End Property
 
 Private Sub Class_Initialize()
     Stats_Space_Count = Stats_Space_Count + 1
+    Key = "K" & ObjPtr(Me)
+    
+    If Spaces.Count = 0 Then
+        pVisible = True
+    End If
     
     DebugMode = False
     Perspective = ThirdPerson
-
+    
+    Set pOrigin = New Point
+    
+    Range = -1
+    
     SkyRotated = 0
     
-    pBoundary = 90
+    Boundary = 0
     
     FogColor = "[1, 1.385, 1.275, 1.133]"
     
@@ -213,6 +328,9 @@ End Sub
 Private Sub Class_Terminate()
     
     On Error Resume Next
+
+    
+    Set pOrigin = Nothing
     
     Set SkyVBuf = Nothing
     

@@ -18,7 +18,7 @@ Option Explicit
 ''Public Const PI As Double = 3.14159265358979            '653589 '79 'leaving out 65358979
 '                    'because the planes mess up and wobble
 '
-'Public Const Epsilon As Double = 0.999999999999999 ' 0.0001 '
+'Public Const Epsilon As Double = 0.999999999999999 ' 0.0001 f'
 'Public Const DEGREE As Single = (180 / PI)
 'Public Const RADIAN As Single = (PI / 180)
 'Public Const FOOT As Single = 0.1
@@ -36,6 +36,20 @@ Option Explicit
 'Public Const D180 As Single = (PI / 2)
 'Public Const D360 As Single = PI
 'Public Const D720 As Single = (PI * 2)
+
+Public Property Get MouseTrapped() As Boolean
+    MouseTrapped = modMain.MouseTrapped
+End Property
+
+Public Property Get FullScreen() As Boolean
+    FullScreen = modMain.FullScreen
+End Property
+Public Property Get ConsoleVisible() As Boolean
+    ConsoleVisible = modCmds.ConsoleVisible
+End Property
+Public Sub ConsoleToggle()
+    modCmds.ConsoleToggle
+End Sub
 
 Public Property Get PI() As Single
     PI = modGeometry.PI
@@ -74,6 +88,7 @@ End Property
 '    Liquid = 3
 '    Ladder = 4
 'End Enum
+
 Public Function GetBindingText(ByVal BindIndex As Integer) As String
     GetBindingText = modCmds.GetBindingText(BindIndex)
 End Function
@@ -151,36 +166,36 @@ Public Function SafeKey(ByVal mKey As Variant) As Variant
     If IsNumeric(mKey) Then
         SafeKey = CLng(mKey)
     Else
-        Dim Ret As String
-        Ret = Trim(mKey)
-        Ret = Replace(Ret, "/", CStr(Asc("/")))
-        Ret = Replace(Ret, "\", CStr(Asc("\")))
-        Ret = Replace(Ret, "|", CStr(Asc("|")))
-        Ret = Replace(Ret, "[", CStr(Asc("[")))
-        Ret = Replace(Ret, "]", CStr(Asc("]")))
-        Ret = Replace(Ret, " ", CStr(Asc(" ")))
-        Ret = Replace(Ret, "&", CStr(Asc("&")))
-        Ret = Replace(Ret, "%", CStr(Asc("%")))
-        Ret = Replace(Ret, "$", CStr(Asc("$")))
-        Ret = Replace(Ret, ",", CStr(Asc(",")))
-        Ret = Replace(Ret, ".", CStr(Asc(".")))
-        Ret = Replace(Ret, "-", CStr(Asc("-")))
-        Ret = Replace(Ret, "_", CStr(Asc("_")))
-        Ret = Replace(Ret, "+", CStr(Asc("+")))
-        Ret = Replace(Ret, "=", CStr(Asc("=")))
-        Ret = Replace(Ret, "!", CStr(Asc("!")))
-        Ret = Replace(Ret, "@", CStr(Asc("@")))
-        Ret = Replace(Ret, "#", CStr(Asc("#")))
-        Ret = Replace(Ret, "^", CStr(Asc("^")))
-        Ret = Replace(Ret, "*", CStr(Asc("*")))
-        Ret = Replace(Ret, "(", CStr(Asc(")")))
-        Ret = Replace(Ret, "`", CStr(Asc("`")))
-        Ret = Replace(Ret, "~", CStr(Asc("~")))
-        Ret = Replace(Ret, "<", CStr(Asc("<")))
-        Ret = Replace(Ret, ">", CStr(Asc(">")))
-        Ret = Replace(Ret, "'", CStr(Asc("'")))
-        Ret = Replace(Ret, """", CStr(Asc("""")))
-        SafeKey = LCase(Ret)
+        Dim ret As String
+        ret = Trim(mKey)
+        ret = Replace(ret, "/", CStr(Asc("/")))
+        ret = Replace(ret, "\", CStr(Asc("\")))
+        ret = Replace(ret, "|", CStr(Asc("|")))
+        ret = Replace(ret, "[", CStr(Asc("[")))
+        ret = Replace(ret, "]", CStr(Asc("]")))
+        ret = Replace(ret, " ", CStr(Asc(" ")))
+        ret = Replace(ret, "&", CStr(Asc("&")))
+        ret = Replace(ret, "%", CStr(Asc("%")))
+        ret = Replace(ret, "$", CStr(Asc("$")))
+        ret = Replace(ret, ",", CStr(Asc(",")))
+        ret = Replace(ret, ".", CStr(Asc(".")))
+        ret = Replace(ret, "-", CStr(Asc("-")))
+        ret = Replace(ret, "_", CStr(Asc("_")))
+        ret = Replace(ret, "+", CStr(Asc("+")))
+        ret = Replace(ret, "=", CStr(Asc("=")))
+        ret = Replace(ret, "!", CStr(Asc("!")))
+        ret = Replace(ret, "@", CStr(Asc("@")))
+        ret = Replace(ret, "#", CStr(Asc("#")))
+        ret = Replace(ret, "^", CStr(Asc("^")))
+        ret = Replace(ret, "*", CStr(Asc("*")))
+        ret = Replace(ret, "(", CStr(Asc(")")))
+        ret = Replace(ret, "`", CStr(Asc("`")))
+        ret = Replace(ret, "~", CStr(Asc("~")))
+        ret = Replace(ret, "<", CStr(Asc("<")))
+        ret = Replace(ret, ">", CStr(Asc(">")))
+        ret = Replace(ret, "'", CStr(Asc("'")))
+        ret = Replace(ret, """", CStr(Asc("""")))
+        SafeKey = LCase(ret)
     End If
 End Function
 
@@ -293,21 +308,40 @@ End Property
 
 
 'Public Enum Controller
-'    Visual = 0 'no mouse conduct
-'    Hidden = 1 'hidden mouse upon mouse over with focus
-'    Trapping = 2 'hidden plus the mouse is trappable/untrappable with esc
+'    Icon = 0
+'    Hide = 1
+'    Trap = 2
 'End Enum
 
 
-Public Property Get Visual() As MouseControl
-    Visual = MouseControl.Visual
+Public Property Get Icon() As MouseControl
+    Icon = MouseControl.Icon
 End Property
-Public Property Get Hidden() As MouseControl
-    Hidden = MouseControl.Hidden
+Public Property Get Hide() As MouseControl
+    Hide = MouseControl.Hide
 End Property
-Public Property Get Trapping() As MouseControl
-    Trapping = MouseControl.Trapping
+Public Property Get Trap() As MouseControl
+    Trap = MouseControl.Trap
 End Property
+
+'Public Enum EventBehavior
+'    Rapid = 0
+'    Press = 1
+'    Locks = 2
+'End Enum
+
+Public Property Get Rapid() As EventBehavior
+    Rapid = EventBehavior.Rapid
+End Property
+
+Public Property Get Press() As EventBehavior
+    Press = EventBehavior.Press
+End Property
+
+Public Property Get Locks() As EventBehavior
+    Locks = EventBehavior.Locks
+End Property
+
 
 '###################################################
 '########## Functions ##############################
@@ -317,6 +351,49 @@ Public Function NewObject(ByVal Class As String)
     Select Case LCase(Class)
         Case "motions", "boards", "cameras", "elements", "lights", "portals", "screens", "sounds", "tracks"
             Set NewObject = New NTNodes10.Collection
+            
+        Case "bindings"
+            Err.Raise 8, , "Bindings object is not creatable."
+        Case "database"
+            Err.Raise 8, , "Database object is not creatable."
+        Case "include"
+            Err.Raise 8, , "Include object is not creatable."
+            
+        Case "beacon"
+            Set NewObject = New Beacon
+        Case "board"
+            Set NewObject = New Board
+        Case "camera"
+            Set NewObject = New Camera
+        Case "color"
+            Set NewObject = New Color
+       Case "element"
+            Set NewObject = New Element
+        Case "light"
+            Set NewObject = New Light
+        Case "motion"
+            Set NewObject = New Motion
+        Case "onevent"
+            Set NewObject = New OnEvent
+        Case "plane"
+            Set NewObject = New Plane
+        Case "player"
+            Set NewObject = New Player
+        Case "plot"
+            Set NewObject = New Plot
+        Case "point"
+            Set NewObject = New Point
+        Case "portal"
+            Set NewObject = New Portal
+        Case "screen"
+            Set NewObject = New Screen
+        Case "sound"
+            Set NewObject = New Sound
+        Case "space"
+            Set NewObject = New Space
+        Case "track"
+            Set NewObject = New Track
+            
         Case Else
             Set NewObject = modFactory.NewObject(Class)
     End Select

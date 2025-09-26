@@ -40,7 +40,7 @@ VersionComments="http://www.neotext.org"
 VersionCompanyName="Neotext"
 VersionFileDescription="HouseOfGlass"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
-CondComp="HouseOfGlass=-1:VBIDE=-1:modMain=-1:modText=-1:modDecs=-1:modInfo=-1:modCmds=-1:modLand=-1:modLawn=-1:modUser=-1:modTrack=-1:modDoTasks=-1:modFolders=-1"
+CondComp="HouseOfGlass = -1 : VBIDE = -1 : modMain = -1 : modText = -1 : modDecs = -1 : modInfo = -1 : modCmds = -1 : modLand = -1 : modLawn = -1 : modUser = -1 : modTrack = -1 : modDoTasks = -1 : modFolders = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

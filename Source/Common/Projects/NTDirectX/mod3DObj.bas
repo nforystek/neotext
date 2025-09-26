@@ -512,7 +512,10 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '    For Each p In Planets
 '        RenderOrbits p.Molecules, False
 '    Next
-    
+
+    Dim matMat As D3DMATRIX
+    D3DXMatrixIdentity matMat
+
     
 '    If Not Camera.Player Is Nothing Then
 '
@@ -531,9 +534,6 @@ Public Sub RenderMolecules(ByRef UserControl As Macroscopic, ByRef Camera As Cam
 '        D3DXMatrixMultiply matMat, matRoll, matMat
 '
 '   End If
-
-    Dim matMat As D3DMATRIX
-    D3DXMatrixIdentity matMat
 
 
     

@@ -81,6 +81,20 @@ Public Property Let Zoom(ByVal RHS As Single)
     pZoom = RHS
 End Property
 
+Public Property Get MinZoom() As Single
+    MinZoom = pMinZoom
+End Property
+Public Property Let MinZoom(ByVal RHS As Single)
+    pMinZoom = RHS
+End Property
+
+Public Property Get MaxZoom() As Single
+    MaxZoom = pMaxZoom
+End Property
+Public Property Let MaxZoom(ByVal RHS As Single)
+    pMaxZoom = RHS
+End Property
+
 Public Property Get ToString() As String
     ToString = "[" & pOrigin.X & ", " & pOrigin.Y & ", " & pOrigin.Z & ", " & pAngle & ", " & pPitch & ", " & pRoll & ", " & pZoom & ", " & pMinZoom & ", " & pMaxZoom & "]"
 End Property
@@ -106,9 +120,13 @@ Private Sub Class_Initialize()
     Stats_Camera_Count = Stats_Camera_Count + 1
     Set pOrigin = New Point
     Key = "K" & ObjPtr(Me)
+
     pMaxZoom = 10
     pMinZoom = 1
     pZoom = 5
+    pAngle = 0
+    pPitch = 0
+    
 End Sub
 
 Private Sub Class_Terminate()

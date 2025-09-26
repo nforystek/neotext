@@ -71,7 +71,7 @@ Attribute pReplacerKeys.VB_VarMemberFlags = "440"
 Private pAttachments As NTNodes10.Collection
 Private pAttachedTo As String
 
-Private pFolcrums As VBA.Collection
+Private pFulcrums As VBA.Collection
 
 Private Matrix As D3DMATRIX
 
@@ -91,38 +91,38 @@ Public Property Set Displace(ByRef RHS As Point)
     Set pDisplace = RHS
 End Property
 
-Public Property Get Folcrums() As VBA.Collection
-    Set Folcrums = pFolcrums
+Public Property Get Fulcrums() As VBA.Collection
+    Set Fulcrums = pFulcrums
 End Property
-Public Property Get Folcrum(Optional ByVal Index As Integer = 0) As Point
-    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
-        Set Folcrum = VectorRotateAxis(pFolcrums(Index), VectorMultiplyBy(pRotate, RADIAN))
-    ElseIf pFolcrums.Count > 0 Then
-        Set Folcrum = VectorRotateAxis(pFolcrums(1), VectorMultiplyBy(pRotate, RADIAN))
+Public Property Get Fulcrum(Optional ByVal Index As Integer = 0) As Point
+    If pFulcrums.Count > 0 And Index <= pFulcrums.Count And Index > 0 Then
+        Set Fulcrum = VectorRotateAxis(pFulcrums(Index), VectorMultiplyBy(pRotate, RADIAN))
+    ElseIf pFulcrums.Count > 0 Then
+        Set Fulcrum = VectorRotateAxis(pFulcrums(1), VectorMultiplyBy(pRotate, RADIAN))
     End If
 End Property
-Public Property Set Folcrum(Optional ByVal Index As Integer = 0, ByRef RHS As Point)
-    If pFolcrums Is Nothing Then Set pFolcrums = New VBA.Collection
-    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
-        pFolcrums.Add RHS, , , Index
-        pFolcrums.Remove Index
+Public Property Set Fulcrum(Optional ByVal Index As Integer = 0, ByRef RHS As Point)
+    If pFulcrums Is Nothing Then Set pFulcrums = New VBA.Collection
+    If pFulcrums.Count > 0 And Index <= pFulcrums.Count And Index > 0 Then
+        pFulcrums.Add RHS, , , Index
+        pFulcrums.Remove Index
     Else
-        pFolcrums.Add RHS
+        pFulcrums.Add RHS
     End If
 End Property
-Public Property Let Folcrum(Optional ByVal Index As Integer = 0, ByVal RHS)
-    If pFolcrums Is Nothing Then Set pFolcrums = New VBA.Collection
+Public Property Let Fulcrum(Optional ByVal Index As Integer = 0, ByVal RHS)
+    If pFulcrums Is Nothing Then Set pFulcrums = New VBA.Collection
     Dim o As New Point
     o = RHS
-    If pFolcrums.Count > 0 And Index <= pFolcrums.Count And Index > 0 Then
-        pFolcrums.Add o, , , Index
-        pFolcrums.Remove Index
+    If pFulcrums.Count > 0 And Index <= pFulcrums.Count And Index > 0 Then
+        pFulcrums.Add o, , , Index
+        pFulcrums.Remove Index
     Else
-        pFolcrums.Add o
+        pFulcrums.Add o
     End If
 End Property
 
-Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
+Public Sub AutoFulcrums(Optional ByVal Smart As Boolean = True)
     Dim useIndex As Long
     
     If BoundsIndex > 0 Then
@@ -133,12 +133,12 @@ Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
         End If
         
         Dim p As Point
-        If pFolcrums Is Nothing Then
-            Set pFolcrums = New VBA.Collection
+        If pFulcrums Is Nothing Then
+            Set pFulcrums = New VBA.Collection
         Else
-            Do Until pFolcrums.Count = 0
-                Set p = pFolcrums(1)
-                pFolcrums.Remove 1
+            Do Until pFulcrums.Count = 0
+                Set p = pFulcrums(1)
+                pFulcrums.Remove 1
                 Set p = Nothing
             Loop
         End If
@@ -147,7 +147,7 @@ Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
         If Not Smart Then
             For cnt = LBound(Meshes(useIndex).Verticies) To UBound(Meshes(useIndex).Verticies)
                 Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
-                pFolcrums.Add p
+                pFulcrums.Add p
                 Set p = Nothing
             Next
         Else
@@ -172,7 +172,7 @@ Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
                      (Meshes(useIndex).Verticies(cnt).Y >= avgHeight And Meshes(useIndex).Verticies(cnt).Z >= avgDepth) Or _
                       (Meshes(useIndex).Verticies(cnt).Z >= avgDepth And Meshes(useIndex).Verticies(cnt).X >= avgWidth) Then
                     Set p = MakePoint(Meshes(useIndex).Verticies(cnt).X, Meshes(useIndex).Verticies(cnt).Y, Meshes(useIndex).Verticies(cnt).Z)
-                    pFolcrums.Add p
+                    pFulcrums.Add p
                     Set p = Nothing
                 End If
 
@@ -180,7 +180,7 @@ Public Sub AutoFolcrums(Optional ByVal Smart As Boolean = True)
         
         End If
     Else
-        Err.Raise 8, , "AutoFolcrums requires a BoundsModel or VisualModel to be loaded."
+        Err.Raise 8, , "AutoFulcrums requires a BoundsModel or VisualModel to be loaded."
     End If
 End Sub
 Public Property Get Attachments() As NTNodes10.Collection
@@ -493,7 +493,6 @@ End Property
 
 Public Property Get Origin() As Point
     Set Origin = pOrigin
-
 End Property
 Public Property Set Origin(ByRef RHS As Point)
     Set pOrigin = RHS
@@ -522,7 +521,6 @@ End Property
 
 
 Public Property Get Direct() As Point
-Attribute Direct.VB_MemberFlags = "440"
     Set Direct = pDirect
 End Property
 Public Property Set Direct(ByRef RHS As Point)
@@ -530,7 +528,6 @@ Public Property Set Direct(ByRef RHS As Point)
 End Property
 
 Public Property Get Twists() As Point
-Attribute Twists.VB_MemberFlags = "440"
     Set Twists = pTwists
 End Property
 Public Property Set Twists(ByRef RHS As Point)
@@ -538,7 +535,6 @@ Public Property Set Twists(ByRef RHS As Point)
 End Property
 
 Public Property Get Scalar() As Point
-Attribute Scalar.VB_MemberFlags = "440"
     Set Scalar = pScalar
 End Property
 Public Property Set Scalar(ByRef RHS As Point)
@@ -665,7 +661,7 @@ Friend Sub PlayerMatrix()
     D3DXMatrixScaling Matrix, pScaled.X, pScaled.Y, pScaled.Z
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
-    D3DXMatrixRotationY Matrix, -Player.Angle
+    D3DXMatrixRotationY Matrix, -Player.Camera.Angle
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
     D3DXMatrixTranslation Matrix, pOrigin.X, pOrigin.Y, pOrigin.Z

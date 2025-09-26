@@ -126,8 +126,8 @@ End Property
 Public Property Let FileName(ByVal RHS As String)
     If PathExists(ScriptRoot & "Models\" & RHS, True) Then
         pFileName = RHS
-        Set pImage = LoadTexture(ScriptRoot & "\Models\" & RHS)
-        If Not ImageDimensions(ScriptRoot & "\Models\" & RHS, pDimensions) Then
+        Set pImage = LoadTextureEx(ScriptRoot & "\Models\" & RHS, pDimensions)
+        If pImage Is Nothing Then
             Debug.Print "Image Dimensions Error"
         End If
         ResetVerticies

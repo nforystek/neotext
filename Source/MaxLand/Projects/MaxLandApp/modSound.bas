@@ -5,9 +5,15 @@ Option Explicit
 Option Compare Binary
 
 Option Private Module
+
+'###########################################################################
+'###################### BEGIN UNIQUE NON GLOBALS ###########################
+'###########################################################################
+
 Public DisableSound As Boolean
 
 Public Waves() As DirectSoundSecondaryBuffer8
+
 
 Public Sub PlayWave(ByVal Index As Long, Optional ByVal Repeat As Boolean = False)
     If (Not DisableSound) Then

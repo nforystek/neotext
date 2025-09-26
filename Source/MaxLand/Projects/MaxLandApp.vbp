@@ -31,7 +31,6 @@ Module=modFactory; MaxLandApp\modFactory.bas
 Class=Include; MaxLandApp\Include.cls
 Class=Bindings; MaxLandApp\Bindings.cls
 Class=Color; MaxLandApp\Color.cls
-Class=Coord; MaxLandApp\Coord.cls
 Class=Point; MaxLandApp\Point.cls
 Module=modDoTasks; ..\..\Shared\modDoTasks.bas
 Class=Light; MaxLandApp\Light.cls
@@ -49,8 +48,8 @@ Class=OnEvent; MaxLandApp\OnEvent.cls
 Module=modCollision; MaxLandApp\modCollision.bas
 Class=Plot; MaxLandApp\Plot.cls
 Class=Plane; MaxLandApp\Plane.cls
-Class=APCIntegration; MaxLandApp\APCIntegration.cls
-Class=Instance; MaxLandApp\Instance.cls
+UserControl=MaxLandApp\RenderHost.ctl
+Class=Orient; MaxLandApp\Orient.cls
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""
@@ -71,7 +70,7 @@ VersionComments="http://www.neotext.org"
 VersionCompanyName="Neotext"
 VersionFileDescription="MaxLandApp"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
-CondComp="MaxLandApp=-1:VBIDE=-1:modMain=-1:modText=-1:modDecs=-1:modInfo=-1:modCmds=-1:modLand=-1:modMove=-1:modData=-1:modSound=-1:modTrack=-1:modDoTasks=-1:modGuid=-1:modFolders=-1:modMsgs=-1:modLists=-1:modParse=-1:modFactory=-1:modGraphics=-1:modGeometry=-1:modCollision=-1"
+CondComp="MaxLandApp = -1 : VBIDE = -1 : VBA = 0 : modMain = -1 : modText = -1 : modDecs = -1 : modInfo = -1 : modCmds = -1 : modLand = -1 : modMove = -1 : modData = -1 : modSound = -1 : modTrack = -1 : modDoTasks = -1 : modGuid = -1 : modFolders = -1 : modMsgs = -1 : modLists = -1 : modParse = -1 : modFactory = -1 : modGraphics = -1 : modGeometry = -1 : modCollision = -1"
 CompilationType=-1
 OptimizationType=0
 FavorPentiumPro(tm)=0
