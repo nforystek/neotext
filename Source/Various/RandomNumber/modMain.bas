@@ -89,6 +89,7 @@ Private Declare Function GetVolumeInformation& Lib "kernel32" _
 
 
 Private Function SerialNumber(Drive$) As Long
+    'I didn't write this portion of the code
     Dim No&, s As String * MAX_FILENAME_LEN
     Call GetVolumeInformation(Drive + ":\", s, MAX_FILENAME_LEN, _
     No, 0&, 0&, s, MAX_FILENAME_LEN)
@@ -96,18 +97,17 @@ Private Function SerialNumber(Drive$) As Long
 End Function
 
 Private Function HexEx(ByVal B As Long) As String
- 
-  Dim aa As String
-
+    'I didn't write this portion of the code
+    Dim aa As String
     aa = Hex$(B)
     If Len(aa) < 2 Then
         aa = "0" & aa
     End If
     HexEx = aa
-
 End Function
 
 Private Function MacAddress() As String
+    'I didn't write this portion of the code
     Dim bRet    As Byte
     Dim myNcb   As NCB
     Dim myASTAT As ASTAT
@@ -123,6 +123,9 @@ Private Function MacAddress() As String
     End With
     If pASTAT = 0 Then
         MacAddress = "00-00-00-00-00-00"
+        'this may exist a drawback, the network is required for this code
+        'to return a mac address, even if you have a network card and, a
+        'network mac address is used for a unique location distriubted
         Exit Function
     End If
     myNcb.ncb_buffer = pASTAT
@@ -133,96 +136,113 @@ Private Function MacAddress() As String
 End Function
 
 
-Private Function Modify(ByRef Data As String, ByVal CharNumber As Byte, ByVal Modby As String, ByRef Direction As Boolean)
-    Dim item As String
-    Dim l As String
-    Dim r As String
-    Dim change As Byte
-    If CharNumber > 1 Then
-        l = left(Data, CharNumber - 1)
-    End If
-    If CharNumber < Len(Data) Then
-        r = Mid(Data, CharNumber + 1)
-    End If
+Private Sub Modify(ByRef Data As String, ByVal CharNumber As Byte, ByVal Modby As String, ByRef Direction As Boolean)
+    'This sub accepts Data, and wil modify the character at CharNumber in Data, by a Modby, going in the Direction
+    'A Modby is another character whose Asc() value is used as a count by which CharNumber in Data is changed, and
+    'the Direction is whehter or not the change is Adding or Subtracting by Modby, when a char digit falls above 9
+    'or below 0 then direction is changed, and Direction should presist through subsequent calls from the Callee.
+    
+    Dim item As String 'the character digit at CharNumber's position in Data
     item = CByte(Mid(Data, CharNumber, 1))
+    
+    Dim l As String 'left portion of Data up to and excluding the character at CharNumber
+    If CharNumber > 1 Then l = Left(Data, CharNumber - 1)
+    
+    Dim r As String 'right portion of Data up to and excluding the character at CharNumber
+    If CharNumber < Len(Data) Then r = Mid(Data, CharNumber + 1)
+    
+    Dim change As Byte 'the amount of Asc(Modby) to 0, that must change the digit
     change = Asc(Modby)
 
-    Do While change > 0
+    Do While change > 0 'while we have change left
+    
+        'if item is at 0 or 9 and direction is such
+        'that it will be -1 or 10 next, then redirect
         If item = 0 And (Not Direction) Then
             Direction = Not Direction
         ElseIf item = 9 And Direction Then
             Direction = Not Direction
         End If
-        If Direction And item < 9 Then
+        
+        If Direction And item < 9 Then 'going up (true) and room to do so?
             item = item + 1
             change = change - 1
-        ElseIf Not Direction And item > 0 Then
+        ElseIf Not Direction And item > 0 Then 'going down (false) and room to do so?
             item = item - 1
             change = change - 1
-        Else
-            Direction = Not Direction
         End If
-        If change = 0 Then Direction = Not Direction
     Loop
-    Data = l & Trim(CStr(item)) & r
-End Function
+    
+    'per every call, direction swap
+    Direction = Not Direction
+    
+    Data = l & Trim(CStr(item)) & r 'reform the Data as teh return result
+End Sub
 
 Public Static Function Random() As Double
     Static toggleSet As Integer
     toggleSet = toggleSet + 1
-    Dim ID As String
-    Dim UN As String
-    Dim CN As String
-    Dim HD As String
-    Dim SR As String
-    Dim MA As String
+    
+    Dim ID As String 'Processor ID
+    Dim UN As String 'User Name
+    Dim CN As String 'Compuer Name
+    Dim HD As String 'Home Drive
+    Dim SR As String 'Drive Serial
+    Dim MA As String 'Mac Address
 
+    'gather elements that make a unique
+    'band of information per any user
+    'and computer location combination
     ID = (Environ("PROCESSOR_IDENTIFIER"))
     UN = (Environ("USERNAME"))
     CN = (Environ("COMPUTERNAME"))
     HD = (Environ("HOMEDRIVE"))
-    SR = SerialNumber(left(Environ("HOMEDRIVE"), 1))
+    SR = SerialNumber(Left(Environ("HOMEDRIVE"), 1))
     MA = MacAddress
     
-    Dim ran  As String
-    Select Case Abs(toggleSet)
-        Case 1
-            ran = ID & UN & CN & HD & SR & MA
-        Case 2
-            ran = UN & CN & HD & SR & MA & ID
-        Case 3
-            ran = CN & HD & SR & MA & ID & UN
-        Case 4
-            ran = HD & SR & MA & ID & UN & CN
-        Case 5
-            ran = SR & MA & ID & UN & CN & HD
-        Case 6
-            ran = MA & ID & UN & CN & HD & SR
+    'in subsequent calls to Random, we shift
+    'the order at which this band is formed
+    Dim UniqueBand  As String
+    Select Case toggleSet
+        Case 1, -2
+            UniqueBand = ID & UN & CN & HD & SR & MA
+        Case 2, -3
+            UniqueBand = UN & CN & HD & SR & MA & ID
+        Case 3, -4
+            UniqueBand = CN & HD & SR & MA & ID & UN
+        Case 4, -5
+            UniqueBand = HD & SR & MA & ID & UN & CN
+        Case 5, -6
+            UniqueBand = SR & MA & ID & UN & CN & HD
+        Case 6, -1
+            UniqueBand = MA & ID & UN & CN & HD & SR
     End Select
-    ran = Replace(ran, " ", "")
+    UniqueBand = Replace(UniqueBand, " ", "") 'probably not nessiary
     
-    If Abs(toggleSet) = 6 Then toggleSet = -toggleSet
+    'the toggleSet is staitc to ensure subsequent calls
+    'this next line resets it to come again backwards
+    If Abs(toggleSet) = 6 Or toggleSet = -1 Then toggleSet = -toggleSet
     
-    Dim out As String
-    out = Replace(CStr(Timer), ".", "")
+    Dim ReturnNum As String 'the secret data our band modifies
+    ReturnNum = Replace(CStr(Timer), ".", "") 'shhhhhhhhhhhhhh
     
-    Dim size As Byte
-    size = Len(out)
-
+    'now blend the UniqueBand into
+    'the value returned by Timer
+    Dim Location As Byte
     Dim Direction As Boolean
-    Dim loc As Byte
-    loc = 1
-    Do While ran <> ""
-    
-        Modify out, loc, left(ran, 1), Direction
-        ran = Mid(ran, 2)
-        loc = loc + 1
-        If loc > Len(out) Then loc = 1
+    Do While UniqueBand <> ""
+        Location = Location + 1
+        If Location > Len(ReturnNum) Then Location = 1
+        Modify ReturnNum, Location, Left(UniqueBand, 1), Direction
+        UniqueBand = Mid(UniqueBand, 2)
     Loop
     
-    If Len(Trim(out)) < size Then out = "0" & out
-    Random = CDbl("0." & Trim(CStr(out)))
-
+    'based on float precision of the timer
+    If Len(Trim(CStr(CDbl("0." & ReturnNum)))) < 9 Then
+        ReturnNum = String(9 - Len(Trim(CStr(CDbl("0." & ReturnNum)))), "0") & ReturnNum
+    End If
+    
+    Random = CDbl("0." & Trim(ReturnNum)) 'build the final number
 End Function
 
 Public Sub Main()
