@@ -12,7 +12,60 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
-
+'
+'
+'       Scenario:                           Qpaque:                     Gradient:
+'
+'       Range>0 And Boundary>Range          0-Range=100%-100%           Range-Boundary=100%-0%
+'       Range=-1                            *100%
+'       Range=0                             *0%                         0-Boundary=100%-0%
+'       Range>0 And Boundary=-1                                         0-Range=100%-0%
+'       Range>0 And Boundary=0                                          *100%
+'       Range<Boundary And Boundary>0       Boundary-Range=100%-100%    0-Boundry=0%-100%
+'
+'
+'
+'
+'Boundary is used to limit playing field to a fixed invisible fence, at Boundary (radius) away from origin.
+'Range is used to considerably determine the emersiveness of whether one is considered in the space or not.
+'Whereever boundaries overlap from one space to another, technically being in 2 the limitation doesn't exist
+'they both together act differently than their intended uses, with the following explained value scenarios:
+'
+'Where
+'   Boundary = *+# 'any positive number limits players to a distance from origin like being fenced
+'   Range = *+# 'any positive number to the origin is where you are as fully emmersed in the space
+'
+'Where
+'   Boundary = 0 'zero causes the origin of the space to remain centered on the expereince, /follow
+'   Range = 0 'zero disables any with-in range attributes of the space, the default values are zero
+'
+'Where
+'   Boundary = -1 'removes limitation on stopping the player no matter how far they are from origin
+'   Range = -1 'means you are considered with-in range no matter where you are, you're in the space
+'
+'Where
+'   only one of Boundary or Range are set, then that radius to the origin is part of rendering
+'   where, if a sky is set with an alphablend opacity it is opaque on orogin (or color is 100%
+'   intensity on origin) and the opaque gets gradually more see through until invisible at the
+'   Boundary or Range that is set (while color intensity becomes less, merging with black when
+'   however with multiple spaces this black could be another spaces color, making a transition)
+'
+'   both Boundary and Range are set as any positive number, and Range is smaller then boundary,
+'   then any alphablending of the sky opacity or any color intensity is at fully opaque when in
+'   the range, and while with-in the Boundary but not with-in range, the opacity and intensity
+'   will go from full opauqe or intense, and fade on to go fully invisisble at Boundaries end.
+'
+'   when both Boundary and Range are set as any positive number, and Range is greater then the
+'   Boundary, then the opposed opacity and intensity rules apply in inverse nature invisibily.
+'   therefore walking away from the origin would begin to turn up the opaque passing Boundary,
+'   until full opqaue is everything beyond the Range. Boundary wont limit, smaller then Range.
+'
+'   For instance in example:  Boundary and Range set to true, which are their defaults, yeilds
+'   a most "life-like" natrual sky rendering when provided with textures to build a cube sky of.
+'
+'   For instance in Example: Boundary set to zero, and Range set to -1, would cause the sky map
+'   to hone it's rotation to your own, making just a forward facing view that you never change.
+'
     
 Private pSkyTop As String
 Private pSkyBottom As String
@@ -20,6 +73,8 @@ Private pSkyFront As String
 Private pSkyBack As String
 Private pSkyRight As String
 Private pSkyLeft As String
+Private pSkyRotate As Single
+Private pSkyRotated As Single
 
 Private pOrigin As Point
 
@@ -31,8 +86,7 @@ Private pFogEnabled As Boolean
 Private pFogDistance As Single
 Private pFogColor As New Color
 
-Private pSkyRotate As Single
-Private pSkyRotated As Single
+Private pColor As New Color
 
 Private pBoundary As Single
 Private pVisible As Boolean
@@ -40,9 +94,26 @@ Private pVisible As Boolean
 Private pSerialize As Boolean
 Private pKey As String
 
+Private pTranslucent As Boolean
+Private pAlphablend As Boolean
+
 Private SkyPlaq() As MyVertex
 Private SkySkin() As Direct3DTexture8
 Private SkyVBuf As Direct3DVertexBuffer8
+
+Public Property Get Translucent() As Boolean
+    Translucent = pTranslucent
+End Property
+Public Property Let Translucent(ByVal RHS As Boolean)
+    pTranslucent = RHS
+End Property
+
+Public Property Get Alphablend() As Boolean
+    Alphablend = pAlphablend
+End Property
+Public Property Let Alphablend(ByVal RHS As Boolean)
+    pAlphablend = RHS
+End Property
 
 Public Property Get Key() As String
     Key = pKey
@@ -58,24 +129,31 @@ Public Property Let Key(ByVal RHS As String)
     End If
 End Property
 
-Friend Function InSpace(ByRef WayPoint As Point) As Boolean
-    InSpace = (Visible And (Range = -1) Or (DistanceEx(WayPoint, Origin) < Range))
+
+
+Friend Function InSpace(ByRef WayPoint As Point, Optional ByVal RestrictTo As Double = -2) As Boolean
+    If RestrictTo = -2 Then
+        If Range > 0 And Boundary < Range Then
+            RestrictTo = Range
+        ElseIf Boundary > 0 And Boundary > Range Then
+            RestrictTo = Range + Boundary
+        End If
+    End If
+    If (RestrictTo <> 0) Then
+        If (RestrictTo = -1) Then
+            InSpace = True
+        Else
+            InSpace = (DistanceEx(WayPoint, Origin) < RestrictTo)
+        End If
+    End If
 End Function
+
+
 
 Friend Sub RenderSpace()
     If InSpace(Player.Element.Origin) Then
-    
-        Dim matProj As D3DMATRIX
-        Dim matView As D3DMATRIX, matViewSave As D3DMATRIX
-        DDevice.GetTransform D3DTS_VIEW, matViewSave
-        matView = matViewSave
-        matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
-    
-        DDevice.SetTransform D3DTS_VIEW, matView
-    
-        D3DXMatrixPerspectiveFovLH matProj, PI / 2.5, AspectRatio, 0.05, 50
-        DDevice.SetTransform D3DTS_PROJECTION, matProj
-    
+
+        
         If Not SkyRotated = 0 Then
         
             If (FPSRate > 0) And SkyRotate > 0 Then
@@ -86,29 +164,89 @@ Friend Sub RenderSpace()
             
             D3DXMatrixRotationY matWorld, SkyRotated * RADIAN
         End If
-        DDevice.SetTransform D3DTS_WORLD, matWorld
+        
+        If Visible Then
                         
-        DDevice.SetStreamSource 0, SkyVBuf, Len(SkyPlaq(0))
-    
-        DDevice.SetTexture 1, Nothing
+            
+            DDevice.SetTransform D3DTS_WORLD, matWorld
+            DDevice.SetStreamSource 0, SkyVBuf, Len(SkyPlaq(0))
+            
+            
+            If Translucent Or Alphablend Then
+            
+
+                
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(0)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(0)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(1)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(1)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(2)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(2)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(3)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(3)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(4)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(4)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
+                DDevice.SetMaterial LucentMaterial
+                DDevice.SetTexture 0, SkySkin(5)
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 1, SkySkin(5)
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
+                
+                
+            Else
+               
+                
+            
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(0)
+                DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+                
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(1)
+                'DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+                
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(2)
+                'DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+                
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(3)
+                'DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
+                
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(4)
+                'DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
+                
+                DDevice.SetMaterial GenericMaterial
+                DDevice.SetTexture 0, SkySkin(5)
+                'DDevice.SetTexture 1, Nothing
+                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
+            
+            End If
+            
+            
+        End If
         
-        DDevice.SetTexture 0, SkySkin(0)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
-        DDevice.SetTexture 0, SkySkin(1)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
-        DDevice.SetTexture 0, SkySkin(2)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
-        DDevice.SetTexture 0, SkySkin(3)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
-        DDevice.SetTexture 0, SkySkin(4)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
-        DDevice.SetTexture 0, SkySkin(5)
-        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
-        
-        D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.05, FadeDistance
-        DDevice.SetTransform D3DTS_PROJECTION, matProj
-    
-        DDevice.SetTransform D3DTS_VIEW, matViewSave
     End If
 
 End Sub
@@ -139,6 +277,8 @@ End Property
 Public Property Let Range(ByVal RHS As Single)
     pRange = RHS
 End Property
+
+
 Public Property Get Serialize() As Boolean
     Serialize = pSerialize
 End Property
@@ -154,11 +294,20 @@ Public Function ToString() As String
     ToString = ToString & Include.URLEncode("Space.SkyBack = """ & pSkyBack & """") & vbCrLf
     ToString = ToString & Include.URLEncode("Space.SkyRight = """ & pSkyRight & """") & vbCrLf
     ToString = ToString & Include.URLEncode("Space.SkyLeft = """ & pSkyLeft & """") & vbCrLf
+    ToString = ToString & Include.URLEncode("Space.SkyRotate = " & pSkyRotate) & vbCrLf
+    
     ToString = ToString & Include.URLEncode("Space.FogColor = """ & pFogColor & """") & vbCrLf
     ToString = ToString & Include.URLEncode("Space.FogEnabled = " & pFogEnabled) & vbCrLf
     ToString = ToString & Include.URLEncode("Space.FogDistance = " & pFogDistance) & vbCrLf
-    ToString = ToString & Include.URLEncode("Space.SkyRotate = " & pSkyRotate) & vbCrLf
+    
     ToString = ToString & Include.URLEncode("Space.Gravity = " & pGravity) & vbCrLf
+    ToString = ToString & Include.URLEncode("Space.Range = " & pRange) & vbCrLf
+    ToString = ToString & Include.URLEncode("Space.Color = " & pRange) & vbCrLf
+    
+    ToString = ToString & Include.URLEncode("Space.Origin = """ & pOrigin & """") & vbCrLf
+
+    ToString = ToString & Include.URLEncode("Space.Boundary = " & pBoundary) & vbCrLf
+    ToString = ToString & Include.URLEncode("Space.Visible = " & pVisible) & vbCrLf
 
 
     ToString = "  <Space>" & vbCrLf & ToString & vbCrLf & "</Space>" & vbCrLf

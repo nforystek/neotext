@@ -35,6 +35,7 @@ Private Deserialize As String
 Public DXLights() As D3DLIGHT8
 
 
+Public BackgroundColor As Long
 
 Public GlobalGravityDirect As New Motion
 Public GlobalGravityRotate As New Motion
@@ -47,6 +48,27 @@ Public LiquidGravityScaled As New Motion
 
 
 Public matWorld As D3DMATRIX
+
+Private matProj As D3DMATRIX
+Private matView As D3DMATRIX
+Private matViewSave As D3DMATRIX
+
+
+Private Sub RenderSpacesSetup()
+    DDevice.GetTransform D3DTS_VIEW, matViewSave
+    matView = matViewSave
+    matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
+    DDevice.SetTransform D3DTS_VIEW, matView
+    D3DXMatrixPerspectiveFovLH matProj, PI / 2.5, AspectRatio, 0.05, 50
+    DDevice.SetTransform D3DTS_PROJECTION, matProj
+End Sub
+
+Private Sub RenderSpacesClose()
+        
+    D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.05, FadeDistance
+    DDevice.SetTransform D3DTS_PROJECTION, matProj
+    DDevice.SetTransform D3DTS_VIEW, matViewSave
+End Sub
 
 Public Function GetBoardKey(ByRef Obj As Element, ByVal TextName As String) As String
     If Not Obj.ReplacerKeys Is Nothing Then
@@ -996,7 +1018,7 @@ Public Sub RenderBeacons()
     
 End Sub
 
-Public Sub RenderPlanes()
+Public Sub RenderSpaces()
 
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
@@ -1042,14 +1064,39 @@ Public Sub RenderPlanes()
 
 
 
-
-    Dim s As Space
-    For Each s In Spaces
+    RenderSpacesSetup
     
-        s.RenderSpace
+    Dim S As Space
+    For Each S In Spaces
+    
+    
+        If S.Translucent Then
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+            DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+            DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+            
+        ElseIf S.Alphablend Then
+
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
+            DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+            DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+
+        Else
+            DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+            DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+            DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+            DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+                    
+        End If
+        
+        S.RenderSpace
+
     Next
     
-    
+        
+    RenderSpacesClose
     
     
     
@@ -1083,6 +1130,7 @@ Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
     Set Spaces = New NTNodes10.Collection
 
     Set Player = New Player
+    
     'Set Space = New Space
 
     
@@ -1138,13 +1186,16 @@ serialerror:
     frmMain.Reset
     
 
-
+    BackgroundColor = 0
 
     ShowCredits = False
 
-
+'    If Not Players Is Nothing Then
+'        Players.Clear
+'        Set Players = Nothing
+'    End If
     Set Player = Nothing
-    
+        
     
     If Not Spaces Is Nothing Then
         Spaces.Clear

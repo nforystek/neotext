@@ -769,14 +769,6 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
                     inType = ParseType(inLine)
 
                     ParseScript inBlock, inType, atLine
-                    
-'                    Select Case inType
-'                        Case "player"
-'                            If inName <> "" Then
-'                                frmMain.ExecuteStatement inType & ".key=""" & inName & """"
-'                                frmMain.ExecuteStatement "All.Add " & inName & ", """ & inName & """"
-'                            End If
-'                    End Select
 
                 ElseIf Abs(reserve) > 2 Then
                     ParseObject inLine, inBlock, inWith, atLine

@@ -66,8 +66,8 @@ Public Function Medium(ByVal Factor As Double) As Double
 '?Medium(30) = 20
 '?Medium(20) = 13.3333333333333
 '?Medium(10) = 6.66666666666667
-'?Medium(05) = 3.33333333333333
-'?Medium(.5) = 0.333333333333333
+'?Medium(5) = 3.33333333333333
+'?Medium(0.5) = 0.333333333333333
 End Function
 
 Private Function PrimeFactor(ByRef Factors As Collection) As Double
@@ -75,7 +75,9 @@ Private Function PrimeFactor(ByRef Factors As Collection) As Double
     'four quarters of a whole half
     'mid coupling the net result
 
-    Debug.Print
+    'Enable debugging here to see how the prime numbers are resulted:
+    
+    'Debug.Print
     PrimeFactor = ( _
                     ( _
                         Medium(Factors(10)) - Medium(Factors(1)) _
@@ -87,7 +89,7 @@ Private Function PrimeFactor(ByRef Factors As Collection) As Double
                         ) _
                     ) - Medium(Factors(9))) + Medium(Factors(2) _
                 )
-    Debug.Print "((" & Medium(Factors(10)) & "-" & Medium(Factors(1)) & ")+(" & Medium(Factors(3)) & "+" & Medium(Factors(4)) & "+" & Medium(Factors(5)) & "+" & Medium(Factors(6)) & "-( " & Medium(Factors(7)) & "+" & Medium(Factors(8)) & "))-" & Medium(Factors(9)) & ")+" & Medium(Factors(2)) & "=";
+    'Debug.Print "((" & Medium(Factors(10)) & "-" & Medium(Factors(1)) & ")+(" & Medium(Factors(3)) & "+" & Medium(Factors(4)) & "+" & Medium(Factors(5)) & "+" & Medium(Factors(6)) & "-( " & Medium(Factors(7)) & "+" & Medium(Factors(8)) & "))-" & Medium(Factors(9)) & ")+" & Medium(Factors(2)) & "=";
     
 End Function
 

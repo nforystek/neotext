@@ -1,0 +1,171 @@
+<HTML>
+ <HEAD>
+ <style>
+
+ a, a:link, a:visited, a:active
+{
+	color:#000000;
+	text-decoration:none;
+}
+a:hover
+{
+	color:#000000;
+	text-decoration:underline;
+}
+ </style>
+  <TITLE>Help - MaxLand - Console</TITLE></HEAD>
+  <BODY >
+
+  
+  <H3>
+   Console</H3>
+  <P>
+	To open the MaxLand console, run the game, and simply hit the tilda (~) key, hit it again to close the console.  The console is used to operate and change options of the game.
+	</P>
+
+
+  <H3>
+   HELP</H3>
+  <P>
+	Use HELP command gives information on using the console, the following text will display:
+	</P>
+	
+<table><tr><td style="text-align:left;">
+For detail help please type one of the following help commands:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#helpcommands">HELP COMMANDS</a> (Displays the help of basic console commands)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#helpediting">HELP EDITING</a> (Displays the help of editing files in console)<br>
+</td></tr></table>
+
+<a name="helpcommands"></a>
+  <H3>
+   HELP COMMANDS</H3>
+  <P>
+	Use HELP COMMANDS to view further informational help on the commands recognized by the console, the following text will display:
+	</P>
+
+	
+<table><tr><td style="text-align:left;">
+Console Commands:<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#exit">EXIT</a> (completely exit out of the game)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#echo">ECHO &lt;Text&gt;</a> (Displays Text in the console)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#eval">EVAL &lt;Text&gt;</a> (Evalutes Text as a console command)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#fade">FADE &lt;Text&gt;</a> (Displays Text in the center of screen)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#draw">DRAW &lt;X&gt; &lt;Y&gt; &lt;Text&gt;</a> (Draw Text on the screen at X,Y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#print">PRINT &lt;Row&gt; &lt;Col&gt; &lt;Test&gt;</a> (Like DRAW but use row,col)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#clear">CLEAR</a> (Clears all text being drawn by DRAW or PRINT)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#stat">STAT</a> (Displays XYZ, Distance, Camera Angle and Pitch)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#level">LEVEL [&lt;Title&gt;]</a> (Load a Title PX in the Levels Folder)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reset">RESET</a> (Resets the game reloading everything like new)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#spectate">SPECTATE</a> (Change in game involvement to a spectator)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#join">JOIN</a> (Rejoins the game when yopur in spectator mode)<br>
+
+</td></tr></table>
+
+<a name="helpediting"></a>
+  <H3>
+   HELP EDITING</H3>
+  <P>
+	Use HELP EDITING to view commands that allow live editing of game data files during play, the following text will display:
+	</P>
+	
+<table><tr><td style="text-align:left;">
+Editing Commands:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#refresh">REFRESH</a> (This command will cause the engine to reload the game files)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#load">LOAD &lt;file&gt;</a> (This command loads the specified file to be edited live)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#view">VIEW &lt;#[-#]&gt;</a> (This command displays the specified line numbers text)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lines">LINES &lt;#[-#]&gt;</a> (This command adds lines # to the current loaded file)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#edit">EDIT &lt;#&gt; &lt;text&gt;</a> (This command changes the specified line numbers text)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#save">SAVE</a> (This command saves any edited changes made with a loaded file)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(For information on object and identifier editing see documentation)<br>
+</td></tr></table>
+
+
+	
+	<a name="exit"></a><H3>EXIT</H3>
+  <P>
+	Exits the game, the ESC key will also exit the game (in windowed mode, hitting the ESC key twice exists the game, once frees the most from the game, if the mouse is freed and the console is open, the ESC key a second time will not close the program, while the movement controls are paused when the console is open, you may still type to the console).
+	</P>
+
+<a name="echo"></a><H3>ECHO &lt;Text&gt;</H3>
+  <P>
+	This command simply prints the supplied text to the console as the most recent message.  There is no evaluation of variables with the use of this command, to display variable values evaluated, use this command in conjunction with the eval command.  Example "eval echo $variable.value"
+	</P>
+
+<a name="eval"></a><H3>EVAL &lt;Text&gt;</H3>
+  <P>
+	This command will execute the supplied text and executes it as a command also evaluating any variable to its value before execution and not during.
+	</P><a name="fade"></a><H3>FADE &lt;Text&gt;</H3>
+  <P>
+	This command draws the supplied text on the gaming screen at the location X and Y based on pixels.  This command can be called multiple times and each time the text will remain on the screen until the clear command is used, reversing all calls to print and draw.
+	</P><a name="draw"></a><H3>DRAW &lt;X&gt; &lt;Y&gt; &lt;Text&gt;</H3>
+  <P>
+	This command draws the supplied text on the gaming screen at the location Row and Col based on rows and columns defined by the size of the screen font.  This command can be called multiple times and each time the text will remain on the screen until the clear command is used, reversing all calls to print and draw.	
+	</P><a name="print"></a><H3>PRINT &lt;Row&gt; &lt;Col&gt; &lt;Test&gt;</H3>
+  <P>
+	This command reverses all calls to print and draw clearing any text that is currently being drawn on the gaming screen.
+	</P><a name="clear"></a><H3>CLEAR</H3>
+  <P>
+	This command reveals your location (X, Y and Z coordinates), your distance to 0,0,0 (the start), the camera's angle, and the camera's pitch (when in third person mode).
+	</P><a name="stat"></a><H3>STAT</H3>
+  <P>
+	This command will load the PX file of the Title supplied which must be under the Levels directory which is located in the program files directory of the game installation.
+	</P><a name="level"></a><H3>LEVEL [&lt;Title&gt;]</H3>
+  <P>
+	This command resets the current level to the initial stat as if it were loaded for the first time, resetting any standing personal saved information.
+	</P><a name="reset"></a><H3>RESET</H3>
+  <P>
+	This command places you into a spectator mode of gaming which allows you to free-fly around but not interact with the level and game.  This mode is also used to debug and place cameras for the camera view perspective mode.
+	</P><a name="spectate"></a><H3>SPECTATE</H3>
+  <P>
+	This command places you back into the game as a player from spectate mode.	
+	</P><a name="join"></a><H3>JOIN</H3>
+  <P>
+	
+	</P>
+
+
+
+
+
+
+	<a name="refresh"></a>  <H3>
+   REFRESH</H3>
+  <P>
+	This command will refresh all the current game data from the game folder.
+	</P>
+
+
+	<a name="load"></a>  <H3>
+   LOAD &lt;file&gt;</H3>
+  <P>
+	The load command takes one parameter or none, specifying the filename of a file located under the game data folder to be loaded.  Once loaded the file can be viewed, edited and saved, if you type the command with out a parameter it shows the currently loaded file.
+	</P>
+
+
+	<a name="view"></a>  <H3>
+   VIEW &lt;#[-#]&gt;</H3>
+  <P>
+	This command takes one parameter, either a single line number to be displayed, or a line number range between two numbers specified seperate by a single dash.  The line numbers text of the current loaded file will print to the console.
+	</P>
+	<a name="lines"></a>  <H3>
+   LINES &lt;#[-#]&gt;</H3>
+  <P>
+	This command adds blank lines to the currently loaded file, it takes one parameter, either a single line number, or a line number range between two numbers specified seperate by a single dash.  Blank lines will be added at the line location with out overwriting the line.
+	</P>
+	<a name="edit"></a>  <H3>
+   EDIT &lt;#&gt; &lt;text&gt;</H3>
+  <P>
+	This command takes two parameters, a single line number, and any text after it.  The line number specified will be set to the text provided overwriting the line in the currently loaded file.
+	</P>
+	<a name="save"></a>  <H3>
+   SAVE</H3>
+  <P>
+	This command takes no parameters, it simply saves the currently loaded file which should exist as the loaded file.  To view the loaded filename you can use the load command with out any parameters.
+	</P>
+
+
+
+	
+ </BODY>
+</HTML>

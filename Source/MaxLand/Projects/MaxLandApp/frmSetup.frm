@@ -285,26 +285,28 @@ Private Sub Command3_Click(Index As Integer)
                 Combo1.SelLength = Len(Combo2.Text)
             End If
         Case 1
-            'Debug.Print "SELECT * FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
-            db.rsQuery rs, "SELECT * FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
-            If Not db.rsEnd(rs) Then
-                'Debug.Print "DELETE FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
-                db.dbQuery "DELETE FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
-                MsgBox "Profile " & Combo2.Text & " has been deleted.", vbExclamation
-                
-                Dim cnt As Long
-                Do While cnt <= Combo2.ListCount And cnt > -1
-                    If Combo2.List(cnt) = Combo2.Text Then
-                        Combo2.RemoveItem cnt
-                        cnt = cnt - 1
-                    Else
-                        cnt = cnt + 1
-                    End If
-                Loop
-                Combo2.Text = ""
-                If Combo2.ListCount > 0 Then Combo2.ListIndex = 0
-            Else
-                MsgBox "Profile not found!", vbExclamation
+            If MsgBox("Are you sure you want to delete the profile '" & Combo2.Text & "'?", vbYesNo + vbQuestion, "Delete?") = vbYes Then
+                'Debug.Print "SELECT * FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
+                db.rsQuery rs, "SELECT * FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
+                If Not db.rsEnd(rs) Then
+                    'Debug.Print "DELETE FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
+                    db.dbQuery "DELETE FROM Profiles WHERE Profilename='" & Replace(Combo2.Text, "'", "''") & "';"
+                    MsgBox "Profile " & Combo2.Text & " has been deleted.", vbExclamation
+                    
+                    Dim cnt As Long
+                    Do While cnt <= Combo2.ListCount And cnt > -1
+                        If Combo2.List(cnt) = Combo2.Text Then
+                            Combo2.RemoveItem cnt
+                            cnt = cnt - 1
+                        Else
+                            cnt = cnt + 1
+                        End If
+                    Loop
+                    Combo2.Text = ""
+                    If Combo2.ListCount > 0 Then Combo2.ListIndex = 0
+                Else
+                    MsgBox "Profile not found!", vbExclamation
+                End If
             End If
     End Select
 End Sub

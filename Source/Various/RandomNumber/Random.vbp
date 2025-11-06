@@ -1,13 +1,10 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
-Module=Module1; Module1.bas
-Class=Plane; Plane.cls
-Class=Plot; Plot.cls
-Class=Point; Point.cls
-Module=Module2; Module2.bas
+Module=modMain; modMain.bas
+Module=modMAc; ..\..\..\..\Documents and Settings\Nickels\Desktop\Projects\Random\modMAC.bas
 Startup="Sub Main"
 Command32=""
-Name="Project1"
+Name="Random"
 HelpContextID="0"
 CompatibleMode="0"
 MajorVer=1
@@ -31,6 +28,3 @@ Unattended=0
 Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
-
-[MS Transaction Server]
-AutoRefresh=1

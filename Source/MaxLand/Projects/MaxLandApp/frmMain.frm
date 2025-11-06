@@ -143,13 +143,13 @@ Public Sub Startup()
         .AddObject "Cameras", modParse.Cameras, False
         .AddObject "Elements", modParse.Elements, False
         .AddObject "Lights", modParse.Lights, False
-        .AddObject "Player", modParse.Player, False
         .AddObject "Portals", modParse.Portals, False
         .AddObject "Screens", modParse.Screens, False
         .AddObject "Sounds", modParse.Sounds, False
         .AddObject "Spaces", modParse.Spaces, False
         .AddObject "Tracks", modParse.Tracks, False
 
+        .AddObject "Player", modParse.Player, False
     End With
 End Sub
 

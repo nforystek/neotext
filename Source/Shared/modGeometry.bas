@@ -309,16 +309,16 @@ End Function
 
 Public Function LineIntersectLine2D(ByVal l1p1x As Double, ByVal l1p1y As Double, ByVal l1p2x As Double, ByVal l1p2y As Double, ByVal l2p1x As Double, ByVal l2p1y As Double, ByVal l2p2x As Double, ByVal l2p2y As Double) As Point
 
-    Dim B As Double
-    B = (((l2p2y - l2p1y) * (l1p2x - l1p1x)) - ((l2p2x - l2p1x) * (l1p2y - l1p1y)))
+    Dim b As Double
+    b = (((l2p2y - l2p1y) * (l1p2x - l1p1x)) - ((l2p2x - l2p1x) * (l1p2y - l1p1y)))
 
-    If B <> 0 Then
+    If b <> 0 Then
 
         Dim t As Double
         Dim u As Double
 
-        t = (((l2p2x - l2p1x) * (l1p1y - l2p1y)) - ((l2p2y - l2p1y) * (l1p1x - l2p1x))) / B
-        u = (((l2p1y - l1p1y) * (l1p1x - l1p2x)) - ((l2p1x - l1p1x) * (l1p1y - l1p2y))) / B
+        t = (((l2p2x - l2p1x) * (l1p1y - l2p1y)) - ((l2p2y - l2p1y) * (l1p1x - l2p1x))) / b
+        u = (((l2p1y - l1p1y) * (l1p1x - l1p2x)) - ((l2p1x - l1p1x) * (l1p1y - l1p2y))) / b
  
         If t >= 0 And t <= 1 And u >= 0 And u <= 1 Then
             Set LineIntersectLine2D = New Point
@@ -462,7 +462,7 @@ Public Function TrianglePerimeter(ByRef p1 As Point, ByRef p2 As Point, ByRef p3
     TrianglePerimeter = (DistanceEx(p1, p2) + DistanceEx(p2, p3) + DistanceEx(p3, p1))
 End Function
 
-Function TriangleArea1(ByVal A As Double, ByVal B As Double, ByVal C As Double) As Double
+Function TriangleArea1(ByVal A As Double, ByVal b As Double, ByVal C As Double) As Double
     'I'm not sure this is anything correct, it doesn't seem to be acurate the higher it is
     'but it was an attempt to develop it logically using the 1/2 base * height
     'I think the function just under this is more accurate perhaps not though.
@@ -483,14 +483,14 @@ Function TriangleArea1(ByVal A As Double, ByVal B As Double, ByVal C As Double) 
         A = C
         C = d
     End If
-    If B > C Then
+    If b > C Then
         'swap
-        d = B
-        B = C
+        d = b
+        b = C
         C = d
     End If
     
-    If A + B < C Then
+    If A + b < C Then
         'invalid triangle
         Exit Function
     End If
@@ -498,11 +498,11 @@ Function TriangleArea1(ByVal A As Double, ByVal B As Double, ByVal C As Double) 
     'now make c the odd side
     'if two sides are equal
     If A = C Then
-        d = B
-        B = C
+        d = b
+        b = C
         C = d
     End If
-    If B = C Then
+    If b = C Then
         d = A
         A = C
         C = d
@@ -527,12 +527,12 @@ Function TriangleArea1(ByVal A As Double, ByVal B As Double, ByVal C As Double) 
     'and are not larger then C, a percent
     'they may represent then if c is whole
     
-    d = (A + B) 'a total unit whole
+    d = (A + b) 'a total unit whole
     
     e = (A / d) 'a percent of the unit that a is
     e = (e * C) 'applied to c for where to split
     
-    F = (B / d) 'do it again, for b
+    F = (b / d) 'do it again, for b
     F = (C * F) 'proof rill be same as (c-f)
     
     'Debug.Print (Round(e, 6) = (c - Round(f, 6))) = True
@@ -543,13 +543,13 @@ Function TriangleArea1(ByVal A As Double, ByVal B As Double, ByVal C As Double) 
     'where a dn b are the hypotenuse
     
     g = (((A ^ 2) - (e ^ 2)) ^ (1 / 2))
-    H = (((B ^ 2) - (F ^ 2)) ^ (1 / 2))
+    H = (((b ^ 2) - (F ^ 2)) ^ (1 / 2))
     
     'now do the area formula for each
     'area = ((1/2) * B * H)
      
     d = ((1 / 2) * A * g)
-    e = ((1 / 2) * B * H)
+    e = ((1 / 2) * b * H)
     
     'finally add the two areas for the
     'original traingles total area
@@ -814,16 +814,36 @@ End Function
 '####################################################################################################
 
 Public Function VectorAxisAngles(ByRef p As Point) As Point
+'    Set VectorAxisAngles = New Point
+'    Dim tmp As New Point
+'    With VectorAxisAngles
+'        If Not (p.X = 0 And p.Y = 0 And p.Z = 0) Then
+'            Set tmp = p
+'            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
+'            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
+'            .Z = AngleRestrict(AngleOfPlot(tmp.X, tmp.Y))
+'            Set tmp = Nothing
+'        End If
+'    End With
+
+    Dim X As Double
+    Dim Y As Double
+    Dim Z As Double
+    Dim A As Double
+    Dim b As Double
+    Dim C As Double
+    
+    X = p.X
+    Y = p.Y
+    Z = p.Z
+    
+    sig_RotationMethod X, Y, Z, A, b, C
+    
     Set VectorAxisAngles = New Point
-    Dim tmp As New Point
     With VectorAxisAngles
-        If Not (p.X = 0 And p.Y = 0 And p.Z = 0) Then
-            Set tmp = p
-            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
-            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
-            .Z = AngleRestrict(AngleOfPlot(tmp.X, tmp.Y))
-            Set tmp = Nothing
-        End If
+        .X = Z
+        .Y = b
+        .Z = C
     End With
 End Function
 
@@ -897,35 +917,71 @@ End Function
 '####################################################################################################
 
 
-Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-    Set VectorRotateAxis = VectorRotateAxis5(Point, Angles)
-End Function
-
-Public Function VectorRotateAxis1(ByRef Point As Point, ByRef Angles As Point) As Point
-    Dim tmp As Point
-    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateX(MakePoint(tmp.Y, tmp.Z, tmp.X), Angles.X)
-        Set tmp = VectorRotateY(MakePoint(tmp.Z, tmp.X, tmp.Y), Angles.Y)
-    End If
-    Set VectorRotateAxis1 = tmp
-    Set tmp = Nothing
-End Function
-
 Public Function VectorRotateAxis2(ByRef Point As Point, ByRef Angles As Point) As Point
-    Dim tmp As Point
-    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-    End If
-    Set VectorRotateAxis2 = tmp
-    Set tmp = Nothing
+  '  Set VectorRotateAxis2 = VectorRotateAxis(Point, Angles)
+
+    
+    Dim X As Double
+    Dim Y As Double
+    Dim Z As Double
+    Dim A As Double
+    Dim b As Double
+    Dim C As Double
+    
+    X = Point.X
+    Y = Point.Y
+    Z = Point.Z
+    
+
+    
+        
+    sig_RotationMethod X, Y, Z, A, b, C
+
+    X = Point.X
+    Y = Point.Y
+    Z = Point.Z
+    
+    A = A + Angles.X
+    b = b + Angles.Y
+    C = C + Angles.Z
+
+    sig_RotationMethod X, Y, Z, A, b, C
+
+    Set VectorRotateAxis2 = New Point
+    With VectorRotateAxis2
+        .X = X
+        .Y = Y
+        .Z = Z
+    End With
+    
 End Function
+
+Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+    Set VectorRotateAxis = VectorRotateAxis2(Point, Angles)
+'    Dim tmp As Point
+'    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
+'    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
+'        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateX(MakePoint(tmp.Y, tmp.Z, tmp.X), Angles.X)
+'        Set tmp = VectorRotateY(MakePoint(tmp.Z, tmp.X, tmp.Y), Angles.Y)
+'    End If
+'    Set VectorRotateAxis = tmp
+'    Set tmp = Nothing
+End Function
+'
+'Public Function VectorRotateAxis2(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As Point
+'    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
+'    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
+'        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
+'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
+'    End If
+'    Set VectorRotateAxis2 = tmp
+'    Set tmp = Nothing
+'End Function
 
 
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
@@ -944,41 +1000,41 @@ End Function
 '        .Y = Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y
 '    End With
 'End Function
-
-Public Function VectorRotateAxis3(ByRef Point As Point, ByRef Angles As Point) As Point
-    Dim tmp As New Point
-    Set VectorRotateAxis3 = New Point
-    With VectorRotateAxis3
-        .Y = (Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.Z)
-        .Z = (Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.Z)
-        tmp.X = Point.X
-        tmp.Y = .Y
-        tmp.Z = .Z
-        .X = (Sin(Angles.Y) * tmp.Z + Cos(Angles.Y) * tmp.X)
-        .Z = (Cos(Angles.Y) * tmp.Z - Sin(Angles.Y) * tmp.X)
-        tmp.X = .X
-        .X = (Cos(Angles.Z) * tmp.X - Sin(Angles.Z) * tmp.Y)
-        .Y = (Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y)
-    End With
-End Function
-
-
-Public Function VectorRotateAxis4(ByRef Point As Point, ByRef Angles As Point) As Point
-    Dim tmp As Point
-    Set tmp = Point
-    If Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
-        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
-    ElseIf Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
-    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
-        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
-    End If
-    Set VectorRotateAxis4 = tmp
-    Set tmp = Nothing
-End Function
+'
+'Public Function VectorRotateAxis3(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As New Point
+'    Set VectorRotateAxis3 = New Point
+'    With VectorRotateAxis3
+'        .Y = (Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.Z)
+'        .Z = (Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.Z)
+'        tmp.X = Point.X
+'        tmp.Y = .Y
+'        tmp.Z = .Z
+'        .X = (Sin(Angles.Y) * tmp.Z + Cos(Angles.Y) * tmp.X)
+'        .Z = (Cos(Angles.Y) * tmp.Z - Sin(Angles.Y) * tmp.X)
+'        tmp.X = .X
+'        .X = (Cos(Angles.Z) * tmp.X - Sin(Angles.Z) * tmp.Y)
+'        .Y = (Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y)
+'    End With
+'End Function
+'
+'
+'Public Function VectorRotateAxis4(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As Point
+'    Set tmp = Point
+'    If Abs(Angles.Y) > Abs(Angles.X) And Abs(Angles.Y) > Abs(Angles.Z) And (Angles.Y <> 0) Then
+'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
+'        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, 0, Angles.Z))
+'    ElseIf Abs(Angles.X) > Abs(Angles.Y) And Abs(Angles.X) > Abs(Angles.Z) And (Angles.X <> 0) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
+'        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(0, Angles.Y, Angles.Z))
+'    ElseIf Abs(Angles.Z) > Abs(Angles.Y) And Abs(Angles.Z) > Abs(Angles.X) And (Angles.Z <> 0) Then
+'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
+'        Set tmp = VectorRotateAxis4(MakePoint(tmp.X, tmp.Y, tmp.Z), MakePoint(Angles.X, Angles.Y, 0))
+'    End If
+'    Set VectorRotateAxis4 = tmp
+'    Set tmp = Nothing
+'End Function
 
 
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
@@ -1041,6 +1097,9 @@ Public Function VectorRotateAxis5(ByRef Point As Point, ByRef Angles As Point) A
         .Y = vout.Y
         .Z = vout.Z
     End With
+    
+    sig_RotationMethod Point.X, Point.Y, Point.Z, Angles.X, Angles.Y, Angles.Z
+    
 End Function
 
 
@@ -1060,7 +1119,131 @@ End Function
 '    Set tmp = Nothing
 'End Function
 
+Private Function sig_Hypotenus(ByVal X As Double, ByVal Y As Double) As Double
+    sig_Hypotenus = ((X ^ 2) + (Y ^ 2)) ^ (1 / 2)
+End Function
 
+Private Function sig_Sine(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
+    If Not H = 0 Then
+        If X < Y Then
+            sig_Sine = X / H
+        Else
+            sig_Sine = Y / H
+        End If
+    End If
+End Function
+Private Function sig_Cosine(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
+    If Not H = 0 Then
+        If X < Y Then
+            sig_Cosine = Y / H
+        Else
+            sig_Cosine = X / H
+        End If
+    End If
+End Function
+Private Function sig_Tangent(ByVal X As Double, ByVal Y As Double, ByVal H As Double) As Double
+    If X < Y Then
+        If Not Y = 0 Then
+            sig_Tangent = X / Y
+        End If
+    Else
+        If Not X = 0 Then
+            sig_Tangent = Y / X
+        End If
+    End If
+End Function
+
+Public Function sig_AngleOfPlot(ByVal pX As Double, ByVal pY As Double) As Double
+    Dim X As Double
+    Dim Y As Double
+    X = Round(pX, 12)
+    Y = Round(pY, 12)
+    If (X = 0) Then
+        If (Y > 0) Then
+            sig_AngleOfPlot = 180
+        ElseIf (Y < 0) Then
+            sig_AngleOfPlot = 360
+        End If
+    ElseIf (Y = 0) Then
+        If (X > 0) Then
+            sig_AngleOfPlot = 90
+        ElseIf (X < 0) Then
+            sig_AngleOfPlot = 270
+        End If
+    Else
+        If ((X > 0) And (Y > 0)) Then
+            sig_AngleOfPlot = (90 * RADIAN)
+        ElseIf ((X < 0) And (Y > 0)) Then
+            sig_AngleOfPlot = (180 * RADIAN)
+        ElseIf ((X < 0) And (Y < 0)) Then
+            sig_AngleOfPlot = (270 * RADIAN)
+        ElseIf ((X > 0) And (Y < 0)) Then
+            sig_AngleOfPlot = (360 * RADIAN)
+        End If
+        Dim slope As Double
+        Dim Large As Double
+        Dim Least As Double
+        Dim Angle As Double
+        If Abs(pX) > Abs(pY) Then
+            Large = Abs(pX)
+            Least = Abs(pY)
+        Else
+            Least = Abs(pX)
+            Large = Abs(pY)
+        End If
+        slope = (Least / Large)
+        Angle = (((pX ^ 2) + (pY ^ 2)) ^ (1 / 2))
+        Large = (((Large ^ 2) - (Least ^ 2)) ^ (1 / 2))
+        Least = (((Angle ^ 2) - (Least ^ 2)) ^ (1 / 2))
+        Least = (((((((PI / 16) * DEGREE) + 2) * RADIAN) * slope) * (Large / Angle)) * (Least / Angle))
+        Large = (((((PI / 4) * DEGREE) - 1) * RADIAN) * slope)
+        Angle = Round(Large + Least, 12)
+        If Not ((((X > 0 And Y > 0) Or (X < 0 And Y < 0)) And (Abs(Y) < Abs(X))) Or _
+           (((X < 0 And Y > 0) Or (X > 0 And Y < 0)) And (Abs(Y) > Abs(X)))) Then
+            Angle = (PI / 4) - Angle
+            sig_AngleOfPlot = sig_AngleOfPlot + (PI / 4)
+        End If
+        sig_AngleOfPlot = ((sig_AngleOfPlot + Angle) * DEGREE)
+    End If
+End Function
+
+
+Private Sub sig_RotationMethod(ByRef X As Double, ByRef Y As Double, ByRef Z As Double, ByRef A As Double, ByRef b As Double, ByRef C As Double)
+
+    Dim H1 As Double
+    Dim H2 As Double
+    Dim H3 As Double
+    
+    Dim S As Double
+    Dim CS As Double
+    Dim CC As Double
+    Dim SC As Double
+    Dim CSC As Double
+    
+    H1 = sig_Hypotenus(X, Y)
+    H2 = sig_Hypotenus(Y, Z)
+    H3 = sig_Hypotenus(Z, X)
+
+    A = sig_AngleOfPlot(X, Y)
+    b = sig_AngleOfPlot(Y, Z)
+    C = sig_AngleOfPlot(Z, X)
+    
+    S = (X * sig_Sine(X, Y, H1))
+    CS = (Y * sig_Sine(X, Y, H1))
+    CC = (-(S / 2) + ((Y * sig_Cosine(Y, Z, H2)) + (X * sig_Cosine(Y, Z, H2))) - (S / 2))
+
+    X = ((-X + CS) + X)
+    Y = ((-Y + CC) + Y)
+    Z = ((-Z + S) + Z)
+
+    SC = -((sig_Tangent(X, Y, H1) / 2) - sig_Tangent(Y, Z, H3))
+    CSC = sig_Tangent(Z, Y, H3) - (sig_Tangent(Z, X, H2) / 2)
+
+    X = (X + (CSC * 2))
+    Y = (Y + (((SC / 2) + (CSC / 2)) * 2))
+    Z = ((((Z / 2) * 3) + (CSC - (SC / 2)) - (Z - (SC - (CSC / 2)))) * 2)
+    
+End Sub
 
 
 '####################################################################################################
@@ -2220,8 +2403,8 @@ Public Function AbsoluteInvert(ByVal Value As Long, Optional ByVal Whole As Long
     AbsoluteInvert = -(Whole / Unit) + -(Value / Unit) + ((Whole / Unit) * 2)
 End Function
 
-Public Function Lerp(ByVal A As Double, ByVal B As Double, ByVal t As Double) As Double
-    Lerp = A + (B - A) * t
+Public Function Lerp(ByVal A As Double, ByVal b As Double, ByVal t As Double) As Double
+    Lerp = A + (b - A) * t
 End Function
 
 Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant

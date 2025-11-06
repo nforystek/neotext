@@ -197,14 +197,14 @@ Public Sub Main()
                 'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
                 
                 'elapsed = Timer
-                RenderPlanes
+                RenderSpaces
                 'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderPlanes: " & elapsed
+                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
                 
                 'elapsed = Timer
                 RenderWorld
                 'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
                 
                 'elapsed = Timer
                 RenderPlayer

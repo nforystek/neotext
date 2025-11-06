@@ -1,0 +1,301 @@
+
+billboard
+{
+	identity plr
+	translucent
+	filename harddrive_player.bmp
+}
+
+
+billboard
+{
+	identity disc1
+	animated .01
+
+	filename harddisk_disc_1.bmp
+	filename harddisk_disc_2.bmp
+	filename harddisk_disc_3.bmp
+	filename harddisk_disc_4.bmp
+	filename harddisk_disc_5.bmp
+	filename harddisk_disc_6.bmp
+	filename harddisk_disc_7.bmp
+	filename harddisk_disc_8.bmp
+	filename harddisk_disc_9.bmp
+	filename harddisk_disc_10.bmp
+	filename harddisk_disc_11.bmp
+	filename harddisk_disc_12.bmp
+	filename harddisk_disc_13.bmp
+	filename harddisk_disc_14.bmp
+	filename harddisk_disc_15.bmp
+	filename harddisk_disc_16.bmp
+	filename harddisk_disc_17.bmp
+	filename harddisk_disc_18.bmp
+}
+
+
+billboard
+{
+	identity disc2
+	animated .02
+
+	filename harddisk_disc_1.bmp
+	filename harddisk_disc_1_2.bmp
+	filename harddisk_disc_2.bmp
+	filename harddisk_disc_2_2.bmp
+	filename harddisk_disc_3.bmp
+	filename harddisk_disc_3_2.bmp
+	filename harddisk_disc_4.bmp
+	filename harddisk_disc_4_2.bmp
+	filename harddisk_disc_5.bmp
+	filename harddisk_disc_5_2.bmp
+	filename harddisk_disc_6.bmp
+	filename harddisk_disc_6_2.bmp
+	filename harddisk_disc_7.bmp
+	filename harddisk_disc_7_2.bmp
+	filename harddisk_disc_8.bmp
+	filename harddisk_disc_8_2.bmp
+	filename harddisk_disc_9.bmp
+	filename harddisk_disc_9_2.bmp
+	filename harddisk_disc_10.bmp
+	filename harddisk_disc_10_2.bmp
+	filename harddisk_disc_11.bmp
+	filename harddisk_disc_11_2.bmp
+	filename harddisk_disc_12.bmp
+	filename harddisk_disc_12_2.bmp
+	filename harddisk_disc_13.bmp
+	filename harddisk_disc_13_2.bmp
+	filename harddisk_disc_14.bmp
+	filename harddisk_disc_14_2.bmp
+	filename harddisk_disc_15.bmp
+	filename harddisk_disc_15_2.bmp
+	filename harddisk_disc_16.bmp
+	filename harddisk_disc_16_2.bmp
+	filename harddisk_disc_17.bmp
+	filename harddisk_disc_17_2.bmp
+	filename harddisk_disc_18.bmp
+	filename harddisk_disc_18_2.bmp
+}
+
+
+plane
+{
+	fogcolor 1 1.385 1.275 1.133
+	skytop sky_top.bmp
+	skyleft sky_left.bmp
+	skyright sky_right.bmp
+	skyback sky_back.bmp
+	skyfront sky_front.bmp
+	skybottom sky_bottom.bmp
+	cloudrotate 31.25
+	maxzoom 90
+
+}
+
+
+
+
+ground
+{
+	identity nonmoving
+	visible true
+	origin 0 0 0
+	scale 1 1 1
+	groundcollide
+
+	filename non-moving.x
+
+}
+
+
+
+
+object
+{
+	identity arm
+	visible true
+	origin 0 0 0
+	scale 1 1 1
+	folcrum 2 0 2
+
+	filename arm.x
+
+
+	activity rotate armleft 0 -0.2 0 0 0.6 0 -1
+	activity rotate armright 0 0.2 0 0 0.6 0 -1
+
+}
+
+
+
+variable
+{
+	identity armdirection
+	value 0
+}
+
+;portal
+;{
+;	identity rightweight
+;	location 2 0 2
+;	range .5
+;	enable true
+;	;clearactivities
+;	oninrange [ <arm>
+;
+;	]
+;	onoutrange [ <arm>
+;
+;
+;	]
+;}
+
+
+portal
+{
+	identity leftedge
+	location 1 0 3
+	range .5
+	enable true
+	;clearactivities
+	oninrange [ <arm>
+
+		$arm.armleft.power 0
+		$arm.armright.power 0.4
+		$armdirection.value 1
+	]
+	onoutrange [ <arm>
+
+		$arm.armright.power 0
+	]
+}
+portal
+{
+	identity rightedge
+	location 3 0 1
+	range .5
+	enable true
+
+	oninrange [ <arm>
+
+		$arm.armright.power 0
+		$arm.armleft.power 0.4
+		$armdirection.value 0
+	]
+
+	onoutrange [ <arm>
+
+
+		$arm.armleft.power 0
+	]
+}
+
+
+object
+{
+	identity platetwo
+	visible true
+	origin 0 0 0
+	scale 1 1 1
+	nocollision
+	;groundcollide
+	replacer harddisk_disc.bmp disc2
+	filename disc.x
+
+}
+
+
+
+object
+{
+	identity plate1
+	visible true
+	origin 0 -0.4 0
+	scale 1 1 1
+	nocollision
+	;groundcollide
+	replacer harddisk_disc.bmp disc1
+	filename disc.x
+
+
+
+
+}
+
+
+light
+{
+	type 3
+	ambience 1 .6 .6 .6
+	diffuse 1 .3 .3 .3
+	direction 0 -1 0
+	range 1000
+	position 0 500 0
+	diffuseroll 50 -30
+	sunlight
+}
+
+
+player
+{
+	visible true
+	identity player
+	location 2 2 -2
+	movespeed 0.002
+	cameraangle 0
+	camerapitch 0
+	boundary 30
+	scale .3 .3 .3
+	rotate 0 0 0
+	boundsobj bounds-player.x
+	visualobj harddrive_player.x
+	replacer harddrive_player.bmp plr	
+	nocollision
+}
+method 
+{
+	identity doarmright
+	script [
+		$arm.armleft.power 0
+		$arm.armright.power 0.4
+	]
+}
+method 
+{
+	identity doarmleft
+	script [
+		$arm.armright.power 0
+		$arm.armleft.power 0.4
+	]
+}
+method
+{
+	identity test
+	script [
+		if ($armdirection.value) is (0) [
+
+				!echo "1"
+
+
+		] else [ 
+	
+				!echo "0"
+	
+
+		]
+	]
+}
+database
+{
+
+	bindings [
+
+		0=&doarmright
+		1=&doarmleft
+		T=&test
+
+	]
+	serialize [
+	]
+	deserialize [
+	]
+}

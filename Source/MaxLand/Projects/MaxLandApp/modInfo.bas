@@ -35,6 +35,7 @@ Public Stats_Light_Count As Long
 Public Stats_Element_Count As Long
 Public Stats_Player_Count As Long
 Public Stats_Point_Count As Long
+Public Stats_Orient_Count As Long
 Public Stats_Portal_Count As Long
 Public Stats_Sound_Count As Long
 Public Stats_Space_Count As Long
@@ -67,6 +68,7 @@ Public Sub CleanupInfo()
     Stats_Element_Count = 0
     Stats_Player_Count = 0
     Stats_Point_Count = 0
+    Stats_Orient_Count = 0
     Stats_Portal_Count = 0
     Stats_Sound_Count = 0
     Stats_Space_Count = 0
@@ -140,6 +142,7 @@ Public Sub RenderInfo()
                 "Portal " & Stats_Portal_Count & " " & "Sound " & Stats_Sound_Count & " " & _
                 "Spaces " & Stats_Space_Count & " " & "Track " & Stats_Track_Count & vbCrLf & _
                 "Camera " & Stats_Camera_Count & " " & "Plane " & Stats_Plane_Count & " " & _
+                "Orient " & Stats_Orient_Count & " " & _
                 "Collision " & Stats_Collision_Count & " " & "CollisionEx " & Stats_CollisionEx_Count
                 
             DrawText txt, 2, Row(4)

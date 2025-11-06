@@ -660,19 +660,31 @@ Public Sub InputMove2(ByRef e1 As Element)
 
     'preform boundary restriction tests and adjust accordingly
 
+    Dim inAmt As Integer
     Dim S As Space
     For Each S In Spaces
-        If S.Boundary <> 0 Then
+        If S.Boundary > 0 And S.Boundary > S.Range Then
             If S.InSpace(Player.Element.Origin) Then
-                If (e1.Origin.Y > SpaceBoundary) Then e1.Origin.Y = SpaceBoundary
-                If (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -SpaceBoundary
-                If (e1.Origin.X > SpaceBoundary) Then e1.Origin.X = SpaceBoundary
-                If (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -SpaceBoundary
-                If (e1.Origin.Z > SpaceBoundary) Then e1.Origin.Z = SpaceBoundary
-                If (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -SpaceBoundary
+                inAmt = inAmt + 1
+                If inAmt > 1 Then Exit For
             End If
         End If
     Next
+    If inAmt = 1 Then
+        For Each S In Spaces
+            If S.Boundary > 0 And S.Boundary > S.Range Then
+                If S.InSpace(Player.Element.Origin) Then
+                    If (e1.Origin.Y > S.Boundary) Then e1.Origin.Y = S.Boundary
+                    If (e1.Origin.Y < -S.Boundary) Then e1.Origin.Y = -S.Boundary
+                    If (e1.Origin.X > S.Boundary) Then e1.Origin.X = S.Boundary
+                    If (e1.Origin.X < -S.Boundary) Then e1.Origin.X = -S.Boundary
+                    If (e1.Origin.Z > S.Boundary) Then e1.Origin.Z = S.Boundary
+                    If (e1.Origin.Z < -S.Boundary) Then e1.Origin.Z = -S.Boundary
+                    Exit For
+                End If
+            End If
+        Next
+    End If
     
 '    If (e1.Origin.Y > SpaceBoundary) Or (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -e1.Origin.Y
 '    If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
@@ -2976,7 +2988,7 @@ End Sub
 
 Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As Long = 3)
     Dim A As D3DVECTOR
-    Dim B As D3DVECTOR
+    Dim b As D3DVECTOR
     Dim C As D3DVECTOR
     
     Dim p As D3DVECTOR
@@ -3014,9 +3026,9 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
         
         For m = N + 1 To 2
             If Not ClassifyPoint(v(N), C, VectorAdd(C, p), v(m)) = 2 Then 'not back
-                B = modDecs.VectorNormalize(modDecs.VectorSubtract(v(m), C))
+                b = modDecs.VectorNormalize(modDecs.VectorSubtract(v(m), C))
                 
-                Angle = modDecs.VectorDotProduct(A, B)
+                Angle = modDecs.VectorDotProduct(A, b)
                 
                 If Angle > smallestAngle Then
                     smallestAngle = Angle
@@ -3035,9 +3047,9 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
     Next
     
     A = GetPlaneNormal(v(0), v(1), v(2))
-    B = p
+    b = p
     
-    If modDecs.VectorDotProduct(A, B) < 0 Then
+    If modDecs.VectorDotProduct(A, b) < 0 Then
         ReverseFaceVertices FaceIndex, VertexCount
     End If
     

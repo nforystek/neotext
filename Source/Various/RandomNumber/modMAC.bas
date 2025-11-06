@@ -2,14 +2,10 @@ Attribute VB_Name = "modMAc"
 Option Explicit
 '(c) Copyright by CC
 '   Email: cyber_chris235@gmx.net
-'   Modified my RySoft Software
-'   http://www.rysoft.net
-'   This code is in general made by cyber_chris235@gmx.net
-'   Modified my Kjell Dirdal at RySoft Software AS, Norway
 '
-'   Please mail to cyber_chris235@gmx.net, when you want to use my code!
-
-Public CheckCode As Long
+'Please mail me, when you want to use my code!
+'
+'Formatted to fit this project by Nickels
 
 Private Const NCBASTAT                       As Long = &H33
 Private Const NCBNAMSZ                       As Integer = 16
@@ -83,69 +79,14 @@ Private Declare Function HeapFree Lib "kernel32" (ByVal hHeap As Long, _
                                                   ByVal dwFlags As Long, _
                                                   lpMem As Any) As Long
 
-
-
-Public Function GetMAC() As Integer
-
-  
-  Dim bRet    As Byte
-  Dim myNcb   As NCB
-  Dim myASTAT As ASTAT
-  Dim pASTAT  As Long
-  Dim intMAC As Integer
-  
-    myNcb.ncb_command = NCBRESET
-    bRet = Netbios(myNcb)
-    With myNcb
-        .ncb_command = NCBASTAT
-        .ncb_lana_num = 0
-        .ncb_callname = "* "
-        .ncb_length = Len(myASTAT)
-        pASTAT = HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS Or HEAP_ZERO_MEMORY, .ncb_length)
-    End With
-    If pASTAT = 0 Then
-        Exit Function
-    End If
-    myNcb.ncb_buffer = pASTAT
-    bRet = Netbios(myNcb)
-    CopyMemory myASTAT, myNcb.ncb_buffer, Len(myASTAT)
-    intMAC = myASTAT.adapt.adapter_address(0)
-    intMAC = intMAC + myASTAT.adapt.adapter_address(1)
-    intMAC = intMAC + myASTAT.adapt.adapter_address(2)
-    intMAC = intMAC + myASTAT.adapt.adapter_address(3)
-    intMAC = intMAC + myASTAT.adapt.adapter_address(4)
-    intMAC = intMAC + myASTAT.adapt.adapter_address(5)
-    GetMAC = intMAC
-    Call HeapFree(GetProcessHeap(), 0, pASTAT)
-
-End Function
-
-Public Function GetMACAddress() As String
-
-  
-  Dim bRet    As Byte
-  Dim myNcb   As NCB
-  Dim myASTAT As ASTAT
-  Dim pASTAT  As Long
-    myNcb.ncb_command = NCBRESET
-    bRet = Netbios(myNcb)
-    With myNcb
-        .ncb_command = NCBASTAT
-        .ncb_lana_num = 0
-        .ncb_callname = "* "
-        .ncb_length = Len(myASTAT)
-        pASTAT = HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS Or HEAP_ZERO_MEMORY, .ncb_length)
-    End With
-    If pASTAT = 0 Then
-        Exit Function
-    End If
-    myNcb.ncb_buffer = pASTAT
-    bRet = Netbios(myNcb)
-    CopyMemory myASTAT, myNcb.ncb_buffer, Len(myASTAT)
-    GetMACAddress = HexEx(myASTAT.adapt.adapter_address(0)) & "-" & HexEx(myASTAT.adapt.adapter_address(1)) & "-" & HexEx(myASTAT.adapt.adapter_address(2)) & "-" & HexEx(myASTAT.adapt.adapter_address(3)) & "-" & HexEx(myASTAT.adapt.adapter_address(4)) & "-" & HexEx(myASTAT.adapt.adapter_address(5))
-    Call HeapFree(GetProcessHeap(), 0, pASTAT)
-
-End Function
+Private Declare Function GetVolumeInformation& Lib "kernel32" _
+    Alias "GetVolumeInformationA" (ByVal lpRootPathName _
+    As String, ByVal pVolumeNameBuffer As String, ByVal _
+    nVolumeNameSize As Long, lpVolumeSerialNumber As Long, _
+    lpMaximumComponentLength As Long, lpFileSystemFlags As _
+    Long, ByVal lpFileSystemNameBuffer As String, ByVal _
+    nFileSystemNameSize As Long)
+    Const MAX_FILENAME_LEN = 256
 
 Private Function HexEx(ByVal B As Long) As String
  
@@ -159,3 +100,35 @@ Private Function HexEx(ByVal B As Long) As String
 
 End Function
 
+Public Function MacAddress() As String
+    Dim bRet    As Byte
+    Dim myNcb   As NCB
+    Dim myASTAT As ASTAT
+    Dim pASTAT  As Long
+    myNcb.ncb_command = NCBRESET
+    bRet = Netbios(myNcb)
+    With myNcb
+        .ncb_command = NCBASTAT
+        .ncb_lana_num = 0
+        .ncb_callname = "* "
+        .ncb_length = Len(myASTAT)
+        pASTAT = HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS Or HEAP_ZERO_MEMORY, .ncb_length)
+    End With
+    If pASTAT = 0 Then
+        MacAddress = "00-00-00-00-00-00"
+        Exit Function
+    End If
+    myNcb.ncb_buffer = pASTAT
+    bRet = Netbios(myNcb)
+    CopyMemory myASTAT, myNcb.ncb_buffer, Len(myASTAT)
+    MacAddress = HexEx(myASTAT.adapt.adapter_address(0)) & "-" & HexEx(myASTAT.adapt.adapter_address(1)) & "-" & HexEx(myASTAT.adapt.adapter_address(2)) & "-" & HexEx(myASTAT.adapt.adapter_address(3)) & "-" & HexEx(myASTAT.adapt.adapter_address(4)) & "-" & HexEx(myASTAT.adapt.adapter_address(5))
+    Call HeapFree(GetProcessHeap(), 0, pASTAT)
+End Function
+
+
+Public Function SerialNumber(Drive$) As Long
+    Dim No&, s As String * MAX_FILENAME_LEN
+    Call GetVolumeInformation(Drive + ":\", s, MAX_FILENAME_LEN, _
+    No, 0&, 0&, s, MAX_FILENAME_LEN)
+    SerialNumber = No
+End Function

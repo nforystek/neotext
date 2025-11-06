@@ -1,0 +1,2692 @@
+
+
+Analysis based on one sided notepad.exe printing:
+Margins: Top .25" Bottom .25" Left .25" Right .25"
+Print Font: Lucida Console, Regular, 10, Western
+of all files contained in "Copyright - Files.txt"
+Lines of text: 10755179, Pages Needed: 131161
+Excluding any non compiled binaries in the text:
+Lines of Source Code: 193733, Source Pages: 2363
+Complete file manifest of files recreatable by hand:
+
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Media\202.gif
+L:\Development\Neotext\BasicNeotext\Binary\Help\Overview_files\filelist.xml
+L:\Development\Neotext\BasicNeotext\Binary\Help\Overview_files\image002.jpg
+L:\Development\Neotext\BasicNeotext\Binary\Help\Overview_files\image002.png
+L:\Development\Neotext\BasicNeotext\Binary\Help\Overview_files\image004.jpg
+L:\Development\Neotext\BasicNeotext\Binary\Help\AdditionalAdd-Ins.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\BasicNeotextHelp.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\BitImbalances.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\CodeSigningBuilds.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\CommandLineSwitches.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\Contents.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\custom.js
+L:\Development\Neotext\BasicNeotext\Binary\Help\Enhancements.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\ExportLibrary.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\index.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\InstallandUninstall.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\NotableTextEditor.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\Overview.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\ProjectTemplates.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\ReadMe.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\ReleaseExecutables.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\SecurityFeatures.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\SettingsPreservation.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\tree.html
+L:\Development\Neotext\BasicNeotext\Binary\Help\vbblue.png
+L:\Development\Neotext\BasicNeotext\Binary\Help\VBMouseWheelFix.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\VisualBasic60.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\VisualBasicNeotext.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\Warning.htm
+L:\Development\Neotext\BasicNeotext\Binary\Help\WindowsService.htm
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Exports.TXT
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\README.TXT
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Service.TXT
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Exports.vbp
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Exports.vbw
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Library.vbp
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Library.vbw
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Service.vbp
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Service.vbw
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Exports.bas
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Exports.cls
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Module.bas
+L:\Development\Neotext\BasicNeotext\Binary\Template\Projects\Class.cls
+L:\Development\Neotext\BasicNeotext\Binary\Basics.asm
+L:\Development\Neotext\BasicNeotext\Binary\license.txt
+L:\Development\Neotext\BasicNeotext\Binary\README.TXT
+L:\Development\Neotext\BasicNeotext\Binary\VBN.exp
+L:\Development\Neotext\BasicNeotext\Binary\VBN.lib
+L:\Development\Neotext\BasicNeotext\Binary\warning.txt
+L:\Development\Neotext\BasicNeotext\Deploy\Compile.bat
+L:\Development\Neotext\BasicNeotext\Media\Media\BOOK01B.ICO
+L:\Development\Neotext\BasicNeotext\Media\Media\find.bmp
+L:\Development\Neotext\BasicNeotext\Media\Media\find2.ICO
+L:\Development\Neotext\BasicNeotext\Media\Media\Image1.jpg
+L:\Development\Neotext\BasicNeotext\Media\Media\Image2.jpg
+L:\Development\Neotext\BasicNeotext\Media\Media\Image3.jpg
+L:\Development\Neotext\BasicNeotext\Media\Media\Image4.bmp
+L:\Development\Neotext\BasicNeotext\Media\Media\Image4.jpg
+L:\Development\Neotext\BasicNeotext\Media\Media\Image5.jpg
+L:\Development\Neotext\BasicNeotext\Media\Media\LABELS.ICO
+L:\Development\Neotext\BasicNeotext\Media\Media\NEOTEXT.JPG
+L:\Development\Neotext\BasicNeotext\Media\Media\NeoTextLogo.gif.lnk
+L:\Development\Neotext\BasicNeotext\Media\Media\neotextlogo5.gif
+L:\Development\Neotext\BasicNeotext\Media\Media\notepad.bmp
+L:\Development\Neotext\BasicNeotext\Media\Media\notepad.ICO
+L:\Development\Neotext\BasicNeotext\Media\Media\RULERS.ICO
+L:\Development\Neotext\BasicNeotext\Media\Media\spellcheck.bmp
+L:\Development\Neotext\BasicNeotext\Media\Media\spellcheck.ICO
+L:\Development\Neotext\BasicNeotext\Media\Basic Neotext is an Add.doc
+L:\Development\Neotext\BasicNeotext\Media\Basic Neotext is an Add2.doc
+L:\Development\Neotext\BasicNeotext\Media\Basic Neotext is an Add2.rtf
+L:\Development\Neotext\BasicNeotext\Media\basicneotext.bmp
+L:\Development\Neotext\BasicNeotext\Media\build.ico
+L:\Development\Neotext\BasicNeotext\Media\checkboxes.bmp
+L:\Development\Neotext\BasicNeotext\Media\features.bmp
+L:\Development\Neotext\BasicNeotext\Media\Help.tree
+L:\Development\Neotext\BasicNeotext\Media\icons1-500[3].jpg
+L:\Development\Neotext\BasicNeotext\Media\intro.rtf
+L:\Development\Neotext\BasicNeotext\Media\modern.bmp
+L:\Development\Neotext\BasicNeotext\Media\MS VB.ico
+L:\Development\Neotext\BasicNeotext\Media\NOTE16.ICO
+L:\Development\Neotext\BasicNeotext\Media\NT VB.ico
+L:\Development\Neotext\BasicNeotext\Media\orange.bmp
+L:\Development\Neotext\BasicNeotext\Media\vb16x16.gif
+L:\Development\Neotext\BasicNeotext\Media\vb16x16.png
+L:\Development\Neotext\BasicNeotext\Media\vb16x16.psp
+L:\Development\Neotext\BasicNeotext\Media\vb24x24.psp
+L:\Development\Neotext\BasicNeotext\Media\vb32x32.gif
+L:\Development\Neotext\BasicNeotext\Media\vb32x32.png
+L:\Development\Neotext\BasicNeotext\Media\vb32x32.psp
+L:\Development\Neotext\BasicNeotext\Media\vb48x48.psp
+L:\Development\Neotext\BasicNeotext\Media\VBN.REG
+L:\Development\Neotext\BasicNeotext\Media\WARNING.rtf
+L:\Development\Neotext\BasicNeotext\Media\win-uninstall.ico
+L:\Development\Neotext\BasicNeotext\Media\WRENCH.ICO
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\OUTLINE.TXT
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Settings.dox
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\modMWheel.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Scroller.Dsr
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Scroller.dca
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\modMain.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\modParsing.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Settings.dob
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Settings.vbd
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\frmRestrict.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\frmRestrict.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Project.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\IConnect.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\ISettings.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\frmHelp.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\frmHelp.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\FormHWnd.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\VBI.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\modProjProp.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\modDescription.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Connect.Dsr
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext\Connect.dca
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmMain.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmMain.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmFind.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmFind.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmSpellCheck.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmSpellCheck.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmAbout.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmAbout.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\modMain.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmGoto.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmGoto.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmBatch.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\frmScriptColors.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\clsAssembly.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\clsASM.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable\modASM.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\Controller.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\LegacyOS.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\modService.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\FormHWnd.cls
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\modMain.bas
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\frmService.frm
+L:\Development\Neotext\BasicNeotext\Projects\BasicService\frmService.frx
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_DLL.vbp
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_DLL.vbw
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_EXE.vbp
+L:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_EXE.vbw
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable.vbp
+L:\Development\Neotext\BasicNeotext\Projects\BasicNotable.vbw
+L:\Development\Neotext\BasicNeotext\Projects\BasicService.vbp
+L:\Development\Neotext\BasicNeotext\Projects\BasicService.vbw
+L:\Development\Neotext\BasicNeotext\Groups\Group1.vbg
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\1symbol.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\2symbol.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\3symbol.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\4symbol.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\5symbol.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\bible.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\brick.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\building1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\building2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingdoor2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildinggarage1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildinggarage2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildinggarage4.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingrim1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingrim2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingtop1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingtop2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\buildingwall2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\city.px
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\city.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\columns.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\compass.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\constrp.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\construction.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\diamond.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\drawing1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\drawing4.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\explorer.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\fence.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\glass.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass10.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass11.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass4.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass5.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass6.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass7.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass8.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\grass9.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\gravel.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\hydrant.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\hydrant1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\hydrant2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\idols.px
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\kings.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\lawn.px
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\liberty.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\man.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\manhole.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\metal.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\metal1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\metal2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\n01.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\n02.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\n03.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\n04.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\news002.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\news003.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\news004.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\news3grn.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\news4blu.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\newsblkm.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\newsfrt.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\newsgrn.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\newspapers.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\newswhtm.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel01.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel02.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel03.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel04.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel05.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel06.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel07.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel08.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel09.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel10.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel11.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\nickel12.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\no trans.png
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\plant1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\pyramids.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\roar.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\roar.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\shimmerstar1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\shimmerstar2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\shimmerstar3.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\shimmerstar4.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\shimmerstar5.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\sidewalk.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\sidewalk2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\sky.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\street.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\street1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\street2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\street3.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\streetlamp.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\sundial.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\trafficlight.x
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\tree.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\trunk.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water0.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water1.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water2.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water3.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water4.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water5.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water6.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water7.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water8.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\water9.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Lawn\white.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\01.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\02.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\03.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\04.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\05.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\06.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\07.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\08.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\09.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\NN.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship0.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship1.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship2.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship3.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship4.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\ship5.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\shipN.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\shipP.sx
+L:\Development\Neotext\Blacklawn\Binary\Base\Player\UP.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\bang.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\boom.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\juice.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\launch.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\nickel.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\rollout.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\smack.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\Sound\toggle.wav
+L:\Development\Neotext\Blacklawn\Binary\Base\drop.bmp
+L:\Development\Neotext\Blacklawn\Binary\Base\mouse.cur
+L:\Development\Neotext\Blacklawn\Binary\Base\music1.mp3
+L:\Development\Neotext\Blacklawn\Binary\Base\music2.mp3
+L:\Development\Neotext\Blacklawn\Binary\Films\Nickels.blklwn
+L:\Development\Neotext\Blacklawn\Binary\Films\Spoiler1.blklwn
+L:\Development\Neotext\Blacklawn\Binary\Films\Spoiler2.blklwn
+L:\Development\Neotext\Blacklawn\Binary\Films\Spoiler3.blklwn
+L:\Development\Neotext\Blacklawn\Binary\Films\Spoiler4.blklwn
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\Media\202.gif
+L:\Development\Neotext\Blacklawn\Binary\Help\2dscreenshot.png
+L:\Development\Neotext\Blacklawn\Binary\Help\3DScreenshot.png
+L:\Development\Neotext\Blacklawn\Binary\Help\3DScreenshot2.png
+L:\Development\Neotext\Blacklawn\Binary\Help\3DScreenshot3.png
+L:\Development\Neotext\Blacklawn\Binary\Help\Console.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\controls.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\custom.js
+L:\Development\Neotext\Blacklawn\Binary\Help\datafiles.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\howtoplay.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\Index.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\Introduction.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\Multiplayer.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\thestory.htm
+L:\Development\Neotext\Blacklawn\Binary\Help\tree.html
+L:\Development\Neotext\Blacklawn\Binary\Blacklawn.mdb
+L:\Development\Neotext\Blacklawn\Binary\BlkLServer.ini
+L:\Development\Neotext\Blacklawn\Binary\Commands.ini
+L:\Development\Neotext\Blacklawn\Binary\license.txt
+L:\Development\Neotext\Blacklawn\Binary\Neotext.org.url
+L:\Development\Neotext\Blacklawn\Deploy\Compile.bat
+L:\Development\Neotext\Blacklawn\Deploy\Manifest.ini
+L:\Development\Neotext\Blacklawn\Media\Models\bible.skp
+L:\Development\Neotext\Blacklawn\Media\Models\kings.skp
+L:\Development\Neotext\Blacklawn\Media\Models\lego.skp
+L:\Development\Neotext\Blacklawn\Media\Models\no trans.png
+L:\Development\Neotext\Blacklawn\Media\Models\pillars.skp
+L:\Development\Neotext\Blacklawn\Media\Models\pyramids.skp
+L:\Development\Neotext\Blacklawn\Media\Models\roar.bmp
+L:\Development\Neotext\Blacklawn\Media\Models\roar.x
+L:\Development\Neotext\Blacklawn\Media\Models\StreetLamp.skp
+L:\Development\Neotext\Blacklawn\Media\Models\sundial.skp
+L:\Development\Neotext\Blacklawn\Media\Models\tmpd7593bf99f15b76aa90.skp
+L:\Development\Neotext\Blacklawn\Media\Models\TrafficSignals_Intersection.skp
+L:\Development\Neotext\Blacklawn\Media\betterscoring.txt
+L:\Development\Neotext\Blacklawn\Media\blacklawn truely.txt
+L:\Development\Neotext\Blacklawn\Media\graphic ambient.txt
+L:\Development\Neotext\Blacklawn\Media\Help.tree
+L:\Development\Neotext\Blacklawn\Media\icon1.ico
+L:\Development\Neotext\Blacklawn\Media\icon2.ico
+L:\Development\Neotext\Blacklawn\Media\inst-blacklawn.ico
+L:\Development\Neotext\Blacklawn\Media\intro story.txt
+L:\Development\Neotext\Blacklawn\Media\intro.bmp
+L:\Development\Neotext\Blacklawn\Media\mask.bmp
+L:\Development\Neotext\Blacklawn\Media\NETHOOD.ICO
+L:\Development\Neotext\Blacklawn\Media\splash.bmp
+L:\Development\Neotext\Blacklawn\Media\story.bmp
+L:\Development\Neotext\Blacklawn\Media\story.gif
+L:\Development\Neotext\Blacklawn\Media\story.png
+L:\Development\Neotext\Blacklawn\Media\win-blacklawn.bmp
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn.htm
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn.pad
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn.pml
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn.png
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn.xml
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn16.png
+L:\Development\Neotext\Blacklawn\PadXML\blacklawn32.png
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmMain.frm
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmMain.frx
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modMain.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\clsDatabase.cls
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modLawn.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmSetup.frm
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmSetup.frx
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modUser.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modText.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modDecs.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmLawn.frm
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmLawn.frx
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\clsAmbient.cls
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modTrack.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modShip.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modInfo.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modCmds.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modSound.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modFilm.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmEdit.frm
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmEdit.frx
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\clsShipEdit.cls
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmSplash.frm
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\frmSplash.frx
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modMove.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modWeb.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modBits.bas
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn\modDoTasks.bas
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer\modMain.bas
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer\clsServer.cls
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer\frmBlkLServer.frm
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer\frmBlkLServer.frx
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer\clsPattern.cls
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn.vbp
+L:\Development\Neotext\Blacklawn\Projects\Blacklawn.vbw
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer.vbp
+L:\Development\Neotext\Blacklawn\Projects\BlkLServer.vbw
+L:\Development\Neotext\Common\Binary\NTAdvFTP61.exp
+L:\Development\Neotext\Common\Binary\NTAdvFTP61.lib
+L:\Development\Neotext\Common\Binary\NTCipher10.exp
+L:\Development\Neotext\Common\Binary\NTCipher10.lib
+L:\Development\Neotext\Common\Binary\NTControls22.exp
+L:\Development\Neotext\Common\Binary\NTControls22.lib
+L:\Development\Neotext\Common\Binary\NTControls22.oca
+L:\Development\Neotext\Common\Binary\NTControls22.VBL
+L:\Development\Neotext\Common\Binary\NTControls30.exp
+L:\Development\Neotext\Common\Binary\NTControls30.lib
+L:\Development\Neotext\Common\Binary\NTControls30.oca
+L:\Development\Neotext\Common\Binary\NTControls30.VBL
+L:\Development\Neotext\Common\Binary\NTDirectX.oca
+L:\Development\Neotext\Common\Binary\NTPopup21.exp
+L:\Development\Neotext\Common\Binary\NTPopup21.lib
+L:\Development\Neotext\Common\Binary\NTSchedule20.exp
+L:\Development\Neotext\Common\Binary\NTSchedule20.lib
+L:\Development\Neotext\Common\Binary\NTService20.exp
+L:\Development\Neotext\Common\Binary\NTService20.lib
+L:\Development\Neotext\Common\Binary\NTShell22.exp
+L:\Development\Neotext\Common\Binary\NTShell22.lib
+L:\Development\Neotext\Common\Binary\NTSMTP23.exp
+L:\Development\Neotext\Common\Binary\NTSMTP23.lib
+L:\Development\Neotext\Common\Binary\NTSoSweet.exp
+L:\Development\Neotext\Common\Binary\NTSoSweet.lib
+L:\Development\Neotext\Common\Binary\NTSound20.exp
+L:\Development\Neotext\Common\Binary\NTSound20.lib
+L:\Development\Neotext\Common\Binary\NTDirectX.exp
+L:\Development\Neotext\Common\Binary\NTDirectX.lib
+L:\Development\Neotext\Common\Binary\NTNodes10.exp
+L:\Development\Neotext\Common\Binary\NTNodes10.lib
+L:\Development\Neotext\Common\Media\1.bmp
+L:\Development\Neotext\Common\Media\1.ico
+L:\Development\Neotext\Common\Media\2.bmp
+L:\Development\Neotext\Common\Media\2.ico
+L:\Development\Neotext\Common\Media\3.bmp
+L:\Development\Neotext\Common\Media\3.cur
+L:\Development\Neotext\Common\Media\4.bmp
+L:\Development\Neotext\Common\Media\4.cur
+L:\Development\Neotext\Common\Media\5.bmp
+L:\Development\Neotext\Common\Media\5.cur
+L:\Development\Neotext\Common\Media\back.bmp
+L:\Development\Neotext\Common\Media\bottom.bmp
+L:\Development\Neotext\Common\Media\drop.bmp
+L:\Development\Neotext\Common\Media\front.bmp
+L:\Development\Neotext\Common\Media\gdf.ico
+L:\Development\Neotext\Common\Media\Image1.bmp
+L:\Development\Neotext\Common\Media\Image2.bmp
+L:\Development\Neotext\Common\Media\Image2.gif
+L:\Development\Neotext\Common\Media\Image3.bmp
+L:\Development\Neotext\Common\Media\Image4.bmp
+L:\Development\Neotext\Common\Media\Image5.bmp
+L:\Development\Neotext\Common\Media\imagebackdrop.bmp
+L:\Development\Neotext\Common\Media\left.bmp
+L:\Development\Neotext\Common\Media\mouse.cur
+L:\Development\Neotext\Common\Media\NTNet.ICO
+L:\Development\Neotext\Common\Media\right.bmp
+L:\Development\Neotext\Common\Media\scrarchpad.gif
+L:\Development\Neotext\Common\Media\scrarchpad2.gif
+L:\Development\Neotext\Common\Media\ScrollBars.bmp
+L:\Development\Neotext\Common\Media\settings.ico
+L:\Development\Neotext\Common\Media\sky_back.bmp
+L:\Development\Neotext\Common\Media\sky_bottom.bmp
+L:\Development\Neotext\Common\Media\sky_front.bmp
+L:\Development\Neotext\Common\Media\sky_left.bmp
+L:\Development\Neotext\Common\Media\sky_right.bmp
+L:\Development\Neotext\Common\Media\sky_top.bmp
+L:\Development\Neotext\Common\Media\textbox.bmp
+L:\Development\Neotext\Common\Media\text_with_image_original.pdf
+L:\Development\Neotext\Common\Media\Top.bmp
+L:\Development\Neotext\Common\Media\watermark.bmp
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\PGPKeys.RES
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Project1.vbp
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Project1.vbw
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modMain.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modWinProc.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modWildCard.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\URL.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modFileSys.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Stream.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\frmThread.frm
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\frmThread.frx
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\ISocket.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Socket.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modStream.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Crypto.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\IStream.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\modCrypto.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Certificate.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\frmCert.frm
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\frmCert.frx
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Group.cls
+L:\Development\Neotext\Common\Projects\NTAdvFTP61\Client.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Box\Box.x
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Land\grass.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Land\moonrock.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Sky\asky5.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Sky\asky6.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke01.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke02.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke03.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke04.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke05.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke06.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke07.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke08.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke09.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke10.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke11.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke12.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke13.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke14.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke15.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke16.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke17.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke18.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke19.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke20.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke21.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke22.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke23.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke24.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Smoke\smoke25.bmp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Serial.xml
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\ToggleBox\Index.vbx
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\Group1.vbg
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\Project1.vbp
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\Form1.frx
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\Project1.vbw
+L:\Development\Neotext\Common\Projects\NTDirectX\Project\Form1.frm
+L:\Development\Neotext\Common\Projects\NTDirectX\Maxland Markup Language Syntax and Reference.doc
+L:\Development\Neotext\Common\Projects\NTDirectX\NTDirectX.RES
+L:\Development\Neotext\Common\Projects\NTDirectX\modTexts.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\frmSetup.frm
+L:\Development\Neotext\Common\Projects\NTDirectX\frmSetup.frx
+L:\Development\Neotext\Common\Projects\NTDirectX\modMaths.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\modColors.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\modCmds.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\modDecs.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\modMain.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\Macroscopic.ctl
+L:\Development\Neotext\Common\Projects\NTDirectX\Macroscopic.ctx
+L:\Development\Neotext\Common\Projects\NTDirectX\frmMain.frm
+L:\Development\Neotext\Common\Projects\NTDirectX\frmMain.frx
+L:\Development\Neotext\Common\Projects\NTDirectX\modFactory.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\modParse.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\Bindings.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Color.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\modProj.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\Camera.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Include.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Molecule.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Brilliant.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Billboards.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\mod3DObj.bas
+L:\Development\Neotext\Common\Projects\NTDirectX\Point.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Planet.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Range.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Orbit.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Molecules.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Matter.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Volume.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Points.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Ranges.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Orbits.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Billboard.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Motion.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Motions.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Brilliants.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Planets.cls
+L:\Development\Neotext\Common\Projects\NTDirectX\Coord.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\check.txt
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\License.txt
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Nodes.bin
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Temp.txt
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\VB6.idx
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Group1 - Strands.vbg
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Group2 - Collection.vbg
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Group6 - Stream.vbg
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Group7 - Serializer.vbg
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Group8 - Indexer.vbg
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project1.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project1.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project3.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project3.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project6.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project6.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project7.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project7.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project8.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Project8.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Module1.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Form1.frm
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Module3.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Module5.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Class1.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Module8.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Form3.frm
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Module9.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Class2.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Project\Class3.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\fragmem.txt
+L:\Development\Neotext\Common\Projects\NTNodes10\modStrands.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\Strands.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Item.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\FragMem.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Helper.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Stream.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\Collection.cls
+L:\Development\Neotext\Common\Projects\NTNodes10\modIndexer.bas
+L:\Development\Neotext\Common\Projects\NTNodes10\frmTemp.frm
+L:\Development\Neotext\Common\Projects\NTNodes10\Serializer.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\enum.txt
+L:\Development\Neotext\Common\Projects\NTSoSweet\SoSweet.doc
+L:\Development\Neotext\Common\Projects\NTSoSweet\ScriptHost.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Color.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Colors.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\modSweet.bas
+L:\Development\Neotext\Common\Projects\NTSoSweet\Wrap.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Rush.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Push.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Hoops.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Wraps.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Rushes.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Pushes.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Mush.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Mushes.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Word.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Words.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Rain.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Rains.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Digit.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Digits.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Reams.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Line.cls
+L:\Development\Neotext\Common\Projects\NTSoSweet\Lines.cls
+L:\Development\Neotext\Common\Projects\NTSMTP23\New Folder\Group1.vbg
+L:\Development\Neotext\Common\Projects\NTSMTP23\New Folder\Project1.vbp
+L:\Development\Neotext\Common\Projects\NTSMTP23\New Folder\Project1.vbw
+L:\Development\Neotext\Common\Projects\NTSMTP23\New Folder\Form1.frm
+L:\Development\Neotext\Common\Projects\NTSMTP23\New Folder\Module1.bas
+L:\Development\Neotext\Common\Projects\NTSMTP23\EMail.cls
+L:\Development\Neotext\Common\Projects\NTSMTP23\Enc64.bas
+L:\Development\Neotext\Common\Projects\NTCipher10\NCode.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\modMain.bas
+L:\Development\Neotext\Common\Projects\NTCipher10\UUCode.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\PoolID.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\GUID.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\Krimpt.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\frmTimeSync.frm
+L:\Development\Neotext\Common\Projects\NTCipher10\Tractor.cls
+L:\Development\Neotext\Common\Projects\NTCipher10\BWord.cls
+L:\Development\Neotext\Common\Projects\NTControls22\URLBox.ctl
+L:\Development\Neotext\Common\Projects\NTControls22\URLBox.ctx
+L:\Development\Neotext\Common\Projects\NTControls22\frmCombo.frm
+L:\Development\Neotext\Common\Projects\NTControls22\frmCombo.frx
+L:\Development\Neotext\Common\Projects\NTControls22\AutoType.ctl
+L:\Development\Neotext\Common\Projects\NTControls22\AutoType.ctx
+L:\Development\Neotext\Common\Projects\NTControls22\SiteInformation.ctl
+L:\Development\Neotext\Common\Projects\NTControls22\SiteInformation.ctx
+L:\Development\Neotext\Common\Projects\NTControls22\modWinProc.bas
+L:\Development\Neotext\Common\Projects\NTControls22\CodeEdit.ctl
+L:\Development\Neotext\Common\Projects\NTControls22\CodeEdit.ctx
+L:\Development\Neotext\Common\Projects\NTControls22\modEditor.bas
+L:\Development\Neotext\Common\Projects\NTControls22\BrowseButton.ctl
+L:\Development\Neotext\Common\Projects\NTControls22\BrowseButton.ctx
+L:\Development\Neotext\Common\Projects\NTControls22\NameInformation.ctl
+L:\Development\Neotext\Common\Projects\NTControls30\modEditor.bas
+L:\Development\Neotext\Common\Projects\NTControls30\IControl.cls
+L:\Development\Neotext\Common\Projects\NTControls30\Backbuffer.cls
+L:\Development\Neotext\Common\Projects\NTControls30\ScrollBar.ctl
+L:\Development\Neotext\Common\Projects\NTControls30\ScrollBar.ctx
+L:\Development\Neotext\Common\Projects\NTControls30\TextBox.ctl
+L:\Development\Neotext\Common\Projects\NTControls30\TextBox.ctx
+L:\Development\Neotext\Common\Projects\NTPopup21\Window.cls
+L:\Development\Neotext\Common\Projects\NTPopup21\frmPopup.frm
+L:\Development\Neotext\Common\Projects\NTPopup21\frmPopup.frx
+L:\Development\Neotext\Common\Projects\NTPopup21\modParentProc.bas
+L:\Development\Neotext\Common\Projects\NTPopup21\modMain.bas
+L:\Development\Neotext\Common\Projects\NTSchedule20\Schedule.cls
+L:\Development\Neotext\Common\Projects\NTSchedule20\modTimer.bas
+L:\Development\Neotext\Common\Projects\NTSchedule20\Timer.cls
+L:\Development\Neotext\Common\Projects\NTSchedule20\modMain.bas
+L:\Development\Neotext\Common\Projects\NTService20\Controller.cls
+L:\Development\Neotext\Common\Projects\NTService20\LegacyOS.cls
+L:\Development\Neotext\Common\Projects\NTService20\modCallbacks.bas
+L:\Development\Neotext\Common\Projects\NTService20\FormHWnd.cls
+L:\Development\Neotext\Common\Projects\NTService20\modMain.bas
+L:\Development\Neotext\Common\Projects\NTService20\frmService.frm
+L:\Development\Neotext\Common\Projects\NTService20\frmService.frx
+L:\Development\Neotext\Common\Projects\NTService20\CallBacks.cls
+L:\Development\Neotext\Common\Projects\NTShell22\Process.cls
+L:\Development\Neotext\Common\Projects\NTShell22\Program.cls
+L:\Development\Neotext\Common\Projects\NTShell22\Internet.cls
+L:\Development\Neotext\Common\Projects\NTShell22\modMain.bas
+L:\Development\Neotext\Common\Projects\NTShell22\Services.cls
+L:\Development\Neotext\Common\Projects\NTShell22\modResolve.bas
+L:\Development\Neotext\Common\Projects\NTSound20\Player.cls
+L:\Development\Neotext\Common\Projects\NTSound20\modWinProc.bas
+L:\Development\Neotext\Common\Projects\NTSound20\modMain.bas
+L:\Development\Neotext\Common\Projects\NTAdvFTP61.vbp
+L:\Development\Neotext\Common\Projects\NTAdvFTP61.vbw
+L:\Development\Neotext\Common\Projects\NTCipher10.vbp
+L:\Development\Neotext\Common\Projects\NTCipher10.vbw
+L:\Development\Neotext\Common\Projects\NTControls22.vbp
+L:\Development\Neotext\Common\Projects\NTControls22.vbw
+L:\Development\Neotext\Common\Projects\NTControls30.vbp
+L:\Development\Neotext\Common\Projects\NTNodes10.vbp
+L:\Development\Neotext\Common\Projects\NTPopup21.vbp
+L:\Development\Neotext\Common\Projects\NTPopup21.vbw
+L:\Development\Neotext\Common\Projects\NTSchedule20.vbp
+L:\Development\Neotext\Common\Projects\NTSchedule20.vbw
+L:\Development\Neotext\Common\Projects\NTService20.vbp
+L:\Development\Neotext\Common\Projects\NTService20.vbw
+L:\Development\Neotext\Common\Projects\NTShell22.vbp
+L:\Development\Neotext\Common\Projects\NTShell22.vbw
+L:\Development\Neotext\Common\Projects\NTSMTP23.vbp
+L:\Development\Neotext\Common\Projects\NTSMTP23.vbw
+L:\Development\Neotext\Common\Projects\NTSoSweet.vbp
+L:\Development\Neotext\Common\Projects\NTSound20.vbp
+L:\Development\Neotext\Common\Projects\NTSound20.vbw
+L:\Development\Neotext\Common\Projects\NTControls30.vbw
+L:\Development\Neotext\Common\Projects\NTDirectX.vbp
+L:\Development\Neotext\Common\Projects\NTDirectX.vbw
+L:\Development\Neotext\Common\Projects\NTNodes10.vbw
+L:\Development\Neotext\Common\Projects\NTSoSweet.vbw
+L:\Development\Neotext\Creata-Tree\Binary\Engine\About\About.html
+L:\Development\Neotext\Creata-Tree\Binary\Engine\About\aboutlogo.png
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Backgrounds\n7.bmp
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\app.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\bookclosed.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\bookClosed_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\bookopen.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\bookOpen_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\disk.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\folderClosed.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\folderopen.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\helpbook.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\macclosed.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\macopen.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\mailbox.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\overview_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\page.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\page_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\pencil.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\search.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\topic_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\tree.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\world.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Bullet Icons\world_blue.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\company.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\companyon.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\download.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\downloadon.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\email.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\emailon.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\products.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\productson.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\register.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\registeron.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\support.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Menu Pictures\supporton.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\black\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\black\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\blue\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\blue\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\gray\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\gray\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\green\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\green\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\orange\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\orange\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\purple\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\purple\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\red\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\red\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\white\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\white\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\yellow\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\PlusMinus\yellow\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\black\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\black\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\black\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\black\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\black\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\blue\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\blue\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\blue\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\blue\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\blue\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\gray\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\gray\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\gray\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\gray\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\gray\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\green\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\green\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\green\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\green\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\green\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\orange\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\orange\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\orange\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\orange\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\orange\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\purple\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\purple\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\purple\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\purple\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\purple\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\red\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\red\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\red\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\red\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\red\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\white\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\white\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\white\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\white\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\white\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\yellow\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\yellow\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\yellow\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\yellow\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\Treelines\yellow\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\202.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Media\404.gif
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Templates\Blank Tree.tree
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Templates\Blank.item
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Templates\Explorer Style Tree.tree
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Templates\Help Style Tree.tree
+L:\Development\Neotext\Creata-Tree\Binary\Engine\Templates\Macintosh Style Tree.tree
+L:\Development\Neotext\Creata-Tree\Binary\Engine\body.js
+L:\Development\Neotext\Creata-Tree\Binary\Engine\custom.js
+L:\Development\Neotext\Creata-Tree\Binary\Engine\head.js
+L:\Development\Neotext\Creata-Tree\Binary\Engine\tlst.mid
+L:\Development\Neotext\Creata-Tree\Binary\Engine\tree.html
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\Media\202.gif
+L:\Development\Neotext\Creata-Tree\Binary\Help\custom.js
+L:\Development\Neotext\Creata-Tree\Binary\Help\Donations.png
+L:\Development\Neotext\Creata-Tree\Binary\Help\ExportingTrees.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\ExportingTrees.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\FramingTrees.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\HelpMenu.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\HelpMenu.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\Index.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\Introduction.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\ItemMenu.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\ItemMenu.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\ItemProperties.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\ItemProperties.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\MainWindow.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\MediaLibrary.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\OptionsMenu.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\OptionsMenu.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\TheBrowser.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\tree.html
+L:\Development\Neotext\Creata-Tree\Binary\Help\TreeMenu.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\TreeMenu.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\TreeProperties.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\TreeProperties.PNG
+L:\Development\Neotext\Creata-Tree\Binary\Help\UsingMedia.htm
+L:\Development\Neotext\Creata-Tree\Binary\Help\UsingMedia.PNG
+L:\Development\Neotext\Creata-Tree\Binary\My Trees\Examples\Explorer Style.tree
+L:\Development\Neotext\Creata-Tree\Binary\My Trees\Examples\Help Style.tree
+L:\Development\Neotext\Creata-Tree\Binary\My Trees\Examples\Macintosh Style.tree
+L:\Development\Neotext\Creata-Tree\Binary\My Trees\Examples\Menu Style.tree
+L:\Development\Neotext\Creata-Tree\Binary\My Trees\Examples\Neotext Style.tree
+L:\Development\Neotext\Creata-Tree\Binary\CreataTree.ini
+L:\Development\Neotext\Creata-Tree\Binary\license.txt
+L:\Development\Neotext\Creata-Tree\Binary\Neotext.org.url
+L:\Development\Neotext\Creata-Tree\Deploy\Compile.bat
+L:\Development\Neotext\Creata-Tree\Deploy\Manifest.ini
+L:\Development\Neotext\Creata-Tree\Media\Help.tree
+L:\Development\Neotext\Creata-Tree\Media\inst-creatatree.ico
+L:\Development\Neotext\Creata-Tree\Media\win-creatatree.bmp
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree.htm
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree.pad
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree.pml
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree.png
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree.xml
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree16.png
+L:\Development\Neotext\Creata-Tree\PadXML\creatatree32.png
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmMain.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmMain.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\modMain.bas
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlNav.ctl
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlNav.ctx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\clsPropSet.cls
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\clsItem.cls
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\clsItemSet.cls
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\clsProp.cls
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmNew.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmNew.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmItem.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmItem.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmTree.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmTree.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\modInit.bas
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmMedia.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmMedia.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlMedia.ctl
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlMedia.ctx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmView.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmView.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlButton.ctl
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\ctlButton.ctx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\modJavaScript.bas
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\modTree.bas
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmExport.frm
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree\frmExport.frx
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree.vbp
+L:\Development\Neotext\Creata-Tree\Projects\CreataTree.vbw
+L:\Development\Neotext\HouseOfGlass\Binary\Base\base.px
+L:\Development\Neotext\HouseOfGlass\Binary\Base\bluewall.x
+L:\Development\Neotext\HouseOfGlass\Binary\Base\drop.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\entry.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\frame.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\glass.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\glass2.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\glasswall.x
+L:\Development\Neotext\HouseOfGlass\Binary\Base\grass.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\hollowwall.x
+L:\Development\Neotext\HouseOfGlass\Binary\Base\invisible.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\mouse.cur
+L:\Development\Neotext\HouseOfGlass\Binary\Base\Pennant0.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\Post01.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\Rope01.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\sky_back.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\sky_front.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\sky_left.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\sky_right.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\sky_top.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\Stake01.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\tent.x
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentRed2.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentRedA.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentRedB.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentWht2.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentWhtA.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TentWhtB.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\TntDoor2.jpg
+L:\Development\Neotext\HouseOfGlass\Binary\Base\white.bmp
+L:\Development\Neotext\HouseOfGlass\Binary\Base\whitewall.x
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Media\202.gif
+L:\Development\Neotext\HouseOfGlass\Binary\Help\controls.htm
+L:\Development\Neotext\HouseOfGlass\Binary\Help\custom.js
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Index.htm
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Introduction.htm
+L:\Development\Neotext\HouseOfGlass\Binary\Help\Screenshot.png
+L:\Development\Neotext\HouseOfGlass\Binary\Help\tree.html
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level1.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level10.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level2.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level3.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level4.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level5.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level6.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level7.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level8.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level9.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level_bak.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Levels\level_big.hog
+L:\Development\Neotext\HouseOfGlass\Binary\Music\music.mp3
+L:\Development\Neotext\HouseOfGlass\Binary\Music\start.mp3
+L:\Development\Neotext\HouseOfGlass\Binary\HouseOfGlass.mdb
+L:\Development\Neotext\HouseOfGlass\Binary\license.txt
+L:\Development\Neotext\HouseOfGlass\Binary\Neotext.org.url
+L:\Development\Neotext\HouseOfGlass\Deploy\Compile.bat
+L:\Development\Neotext\HouseOfGlass\Deploy\Manifest.ini
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-021-Venetian-Carnival-Drape-1.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-022-Venetian-Carnival-Drape-2.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-024-Venetian-Carnival-Drape-4.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-025-VC-Drape-Panel-1.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-026-VC-Drape-Panel-2.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-027-VC-Drape-Panel-3.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-028-VC-Drape-Panel-4.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-030-VC-Drape-Panel-6.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-032-VC-Drape-Panel-8.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-033-VC-Drape-Panel-9.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-034-VC-Drape-Panel-10.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-038-Venetian-Carnival-Drape-Panel-14.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-040-Venetian-Carnival-Drape-Panel-16.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-041-Venetian-Carnival-Drape-Header-1.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-042-Venetian-Carnival-Drape-Header-2.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-043-Venetian-Carnival-Drape-Header-3.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-044-Venetian-Carnival-Drape-Header-4.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-045-Venetian-Carnival-Drape-Header-5.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\backdrop_DR-046-Venetian-Carnival-Drape-Header-6.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\CH-010-AU-Dickens-Christmas-Street.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\EL-010-Lightening-Spirit.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\FA-005-Boardwalk-1.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\FA-005B-Boardwalk-1B.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\FA-006-Boardwalk-2.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\FA-007C-DP3-Boardwalk-3C.jpg
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\new houseofglass walls.txt
+L:\Development\Neotext\HouseOfGlass\Media\New Folder\ss005.jpg
+L:\Development\Neotext\HouseOfGlass\Media\bluewall.skp
+L:\Development\Neotext\HouseOfGlass\Media\brick.bmp
+L:\Development\Neotext\HouseOfGlass\Media\building2.bmp
+L:\Development\Neotext\HouseOfGlass\Media\buildinggarage2.bmp
+L:\Development\Neotext\HouseOfGlass\Media\buildinggarage3.bmp
+L:\Development\Neotext\HouseOfGlass\Media\buildinggarage4.bmp
+L:\Development\Neotext\HouseOfGlass\Media\celling.bmp
+L:\Development\Neotext\HouseOfGlass\Media\CH-010C-DP5-Dickens-Christmas-Street-1C.jpg
+L:\Development\Neotext\HouseOfGlass\Media\clowns.jpg
+L:\Development\Neotext\HouseOfGlass\Media\clowns2.bmp
+L:\Development\Neotext\HouseOfGlass\Media\clowns2.jpg
+L:\Development\Neotext\HouseOfGlass\Media\floor.bmp
+L:\Development\Neotext\HouseOfGlass\Media\floor1.bmp
+L:\Development\Neotext\HouseOfGlass\Media\glasswall.skp
+L:\Development\Neotext\HouseOfGlass\Media\Help.tree
+L:\Development\Neotext\HouseOfGlass\Media\hollowwall.skp
+L:\Development\Neotext\HouseOfGlass\Media\main.skp
+L:\Development\Neotext\HouseOfGlass\Media\main.x
+L:\Development\Neotext\HouseOfGlass\Media\money2.bmp
+L:\Development\Neotext\HouseOfGlass\Media\money3.bmp
+L:\Development\Neotext\HouseOfGlass\Media\money4.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_back.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_btm.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_front.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_left.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_right.bmp
+L:\Development\Neotext\HouseOfGlass\Media\sky_top.bmp
+L:\Development\Neotext\HouseOfGlass\Media\tent.ico
+L:\Development\Neotext\HouseOfGlass\Media\tent.skp
+L:\Development\Neotext\HouseOfGlass\Media\unnamed.jpg
+L:\Development\Neotext\HouseOfGlass\Media\whitewall.skp
+L:\Development\Neotext\HouseOfGlass\Media\win-houseofglass.bmp
+L:\Development\Neotext\HouseOfGlass\Media\wood3.bmp
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass.htm
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass.pad
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass.pml
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass.png
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass.xml
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass16.png
+L:\Development\Neotext\HouseOfGlass\PadXML\houseofglass32.png
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\vssver2.scc
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmMain.frm
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmMain.frx
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modMain.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmSetup.frm
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmSetup.frx
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modText.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modDecs.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modInfo.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modCmds.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modLand.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\clsDatabase.cls
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modLawn.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmEdit.frm
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\frmEdit.frx
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\clsWallEdit.cls
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modUser.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modTrack.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\clsAmbient.cls
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass\modDoTasks.bas
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass.vbp
+L:\Development\Neotext\HouseOfGlass\Projects\HouseOfGlass.vbw
+L:\Development\Neotext\IdentAuth\Binary\Ident.ini
+L:\Development\Neotext\IdentAuth\Binary\Ident.txt
+L:\Development\Neotext\IdentAuth\Binary\Install.bat
+L:\Development\Neotext\IdentAuth\Binary\license.txt
+L:\Development\Neotext\IdentAuth\Binary\Neotext.org.url
+L:\Development\Neotext\IdentAuth\Binary\Start.bat
+L:\Development\Neotext\IdentAuth\Binary\Stop.bat
+L:\Development\Neotext\IdentAuth\Binary\Uninstall.bat
+L:\Development\Neotext\IdentAuth\Deploy\Compile.bat
+L:\Development\Neotext\IdentAuth\Deploy\Manifest.ini
+L:\Development\Neotext\IdentAuth\Media\NETHOOD.ICO
+L:\Development\Neotext\IdentAuth\Media\orange.bmp
+L:\Development\Neotext\IdentAuth\Media\win-ident.bmp
+L:\Development\Neotext\IdentAuth\Media\win-uninstall.ico
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol.htm
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol.pad
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol.pml
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol.png
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol.xml
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol16.png
+L:\Development\Neotext\IdentAuth\PadXML\identprotocol32.png
+L:\Development\Neotext\IdentAuth\Projects\Ident\modMain.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\clsIdent.cls
+L:\Development\Neotext\IdentAuth\Projects\Ident\frmIdent.frm
+L:\Development\Neotext\IdentAuth\Projects\Ident\frmIdent.frx
+L:\Development\Neotext\IdentAuth\Projects\Ident\modSockets.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\modUserInfo.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\modPortInfo.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\frmService.frm
+L:\Development\Neotext\IdentAuth\Projects\Ident\frmService.frx
+L:\Development\Neotext\IdentAuth\Projects\Ident\modWin32Ver.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\FormHWnd.cls
+L:\Development\Neotext\IdentAuth\Projects\Ident\LegacyOS.cls
+L:\Development\Neotext\IdentAuth\Projects\Ident\Controller.cls
+L:\Development\Neotext\IdentAuth\Projects\Ident\modService.bas
+L:\Development\Neotext\IdentAuth\Projects\Ident\Application.cls
+L:\Development\Neotext\IdentAuth\Projects\Reload\modRestart.bas
+L:\Development\Neotext\IdentAuth\Projects\Reload\frmIcon.frm
+L:\Development\Neotext\IdentAuth\Projects\Reload\frmIcon.frx
+L:\Development\Neotext\IdentAuth\Projects\Ident.vbp
+L:\Development\Neotext\IdentAuth\Projects\Ident.vbw
+L:\Development\Neotext\IdentAuth\Projects\Ident_dll.vbp
+L:\Development\Neotext\IdentAuth\Projects\Ident_dll.vbw
+L:\Development\Neotext\IdentAuth\Projects\Reload.vbp
+L:\Development\Neotext\IdentAuth\Projects\Reload.vbw
+L:\Development\Neotext\InstallerStar\Binary\InstallStar.ico
+L:\Development\Neotext\InstallerStar\Media\another.bmp
+L:\Development\Neotext\InstallerStar\Media\backdrop.bmp
+L:\Development\Neotext\InstallerStar\Media\Image01.bmp
+L:\Development\Neotext\InstallerStar\Media\Image01.gif
+L:\Development\Neotext\InstallerStar\Media\Image02.bmp
+L:\Development\Neotext\InstallerStar\Media\Image02.gif
+L:\Development\Neotext\InstallerStar\Media\Image03.bmp
+L:\Development\Neotext\InstallerStar\Media\Image03.gif
+L:\Development\Neotext\InstallerStar\Media\Image04.bmp
+L:\Development\Neotext\InstallerStar\Media\Image04.gif
+L:\Development\Neotext\InstallerStar\Media\Image05.bmp
+L:\Development\Neotext\InstallerStar\Media\Image05.gif
+L:\Development\Neotext\InstallerStar\Media\Image06.bmp
+L:\Development\Neotext\InstallerStar\Media\Image06.gif
+L:\Development\Neotext\InstallerStar\Media\Image07.bmp
+L:\Development\Neotext\InstallerStar\Media\Image07.gif
+L:\Development\Neotext\InstallerStar\Media\Image08.bmp
+L:\Development\Neotext\InstallerStar\Media\Image08.gif
+L:\Development\Neotext\InstallerStar\Media\Image09.bmp
+L:\Development\Neotext\InstallerStar\Media\Image09.gif
+L:\Development\Neotext\InstallerStar\Media\Image1.psp
+L:\Development\Neotext\InstallerStar\Media\Image10.bmp
+L:\Development\Neotext\InstallerStar\Media\Image10.gif
+L:\Development\Neotext\InstallerStar\Media\Image12.bmp
+L:\Development\Neotext\InstallerStar\Media\Image12.gif
+L:\Development\Neotext\InstallerStar\Media\Image13.bmp
+L:\Development\Neotext\InstallerStar\Media\Image13.gif
+L:\Development\Neotext\InstallerStar\Media\Image14.bmp
+L:\Development\Neotext\InstallerStar\Media\Image14.gif
+L:\Development\Neotext\InstallerStar\Media\Image15.bmp
+L:\Development\Neotext\InstallerStar\Media\Image15.gif
+L:\Development\Neotext\InstallerStar\Media\Image16.bmp
+L:\Development\Neotext\InstallerStar\Media\Image16.gif
+L:\Development\Neotext\InstallerStar\Media\Image17.bmp
+L:\Development\Neotext\InstallerStar\Media\Image17.gif
+L:\Development\Neotext\InstallerStar\Media\Image18.bmp
+L:\Development\Neotext\InstallerStar\Media\Image18.gif
+L:\Development\Neotext\InstallerStar\Media\Image19.bmp
+L:\Development\Neotext\InstallerStar\Media\Image19.gif
+L:\Development\Neotext\InstallerStar\Media\Image20.bmp
+L:\Development\Neotext\InstallerStar\Media\Image20.gif
+L:\Development\Neotext\InstallerStar\Media\Image58.gif
+L:\Development\Neotext\InstallerStar\Media\Image60.gif
+L:\Development\Neotext\InstallerStar\Media\margin.bmp
+L:\Development\Neotext\InstallerStar\Media\margin2.bmp
+L:\Development\Neotext\InstallerStar\Media\margin3.bmp
+L:\Development\Neotext\InstallerStar\Media\other.bmp
+L:\Development\Neotext\InstallerStar\Media\other2.bmp
+L:\Development\Neotext\InstallerStar\Media\sheek.bmp
+L:\Development\Neotext\InstallerStar\Media\Untitled - 1.bmp
+L:\Development\Neotext\InstallerStar\Projects\CDROM\cdrom.txt
+L:\Development\Neotext\InstallerStar\Projects\CDROM\frmMain.frm
+L:\Development\Neotext\InstallerStar\Projects\CDROM\frmMain.frx
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Installer.SED
+L:\Development\Neotext\InstallerStar\Projects\Wizard\MAKECAB.DOC
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Manifest.ini
+L:\Development\Neotext\InstallerStar\Projects\Wizard\mov.txt
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Uninstall.SED
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Wizard.RES
+L:\Development\Neotext\InstallerStar\Projects\Wizard\frmMain.frm
+L:\Development\Neotext\InstallerStar\Projects\Wizard\frmMain.frx
+L:\Development\Neotext\InstallerStar\Projects\Wizard\modMain.bas
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Program.cls
+L:\Development\Neotext\InstallerStar\Projects\Wizard\Executes.cls
+L:\Development\Neotext\InstallerStar\Projects\Wizard\modFolders.bas
+L:\Development\Neotext\InstallerStar\Projects\Wizard\modGenerate.bas
+L:\Development\Neotext\InstallerStar\Projects\Wizard\modWildCard.bas
+L:\Development\Neotext\InstallerStar\Projects\Wizard\frmSlpash.frm
+L:\Development\Neotext\InstallerStar\Projects\Wizard\frmSlpash.frx
+L:\Development\Neotext\InstallerStar\Projects\Wizard\CabFile.cls
+L:\Development\Neotext\InstallerStar\Projects\Wizard\modCabFile.bas
+L:\Development\Neotext\InstallerStar\Projects\Remove\modRemove.bas
+L:\Development\Neotext\InstallerStar\Projects\Remove\frmRemove.frm
+L:\Development\Neotext\InstallerStar\Projects\Remove\frmRemove.frx
+L:\Development\Neotext\InstallerStar\Projects\CDROM.vbp
+L:\Development\Neotext\InstallerStar\Projects\CDROM.vbw
+L:\Development\Neotext\InstallerStar\Projects\Remove.vbp
+L:\Development\Neotext\InstallerStar\Projects\Remove.vbw
+L:\Development\Neotext\InstallerStar\Projects\Wizard.vbp
+L:\Development\Neotext\InstallerStar\Projects\Wizard.vbw
+L:\Development\Neotext\Max-FTP\ActiveX\SetService_Dev.bat
+L:\Development\Neotext\Max-FTP\ActiveX\SetService_Lend.bat
+L:\Development\Neotext\Max-FTP\ActiveX\Group1.vbg
+L:\Development\Neotext\Max-FTP\ActiveX\Project1.vbp
+L:\Development\Neotext\Max-FTP\ActiveX\Project1.vbw
+L:\Development\Neotext\Max-FTP\ActiveX\Form1.frm
+L:\Development\Neotext\Max-FTP\ActiveX\Form1.frx
+L:\Development\Neotext\Max-FTP\Binary\Favorites\ftp.ietf.org.mftp
+L:\Development\Neotext\Max-FTP\Binary\Favorites\ftp.neotext.org.mftp
+L:\Development\Neotext\Max-FTP\Binary\Favorites\Neotext Software.mftp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Collapse\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Collapse\uni.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\back_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\back_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\browse_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\browse_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\close_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\close_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\copy_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\copy_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\cut_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\cut_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\delete_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\delete_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\forward_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\forward_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\go_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\go_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\newfolder_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\newfolder_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\paste_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\paste_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\refresh_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\refresh_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\uplevel_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\client\uplevel_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\add_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\add_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\delete_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\delete_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\down_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\down_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\edit_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\edit_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\events_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\events_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\run_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\run_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\servicestart_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\servicestart_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\servicestop_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\servicestop_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\up_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\schedule\up_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\add_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\add_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\copy_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\copy_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\cut_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\cut_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\find_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\find_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\new_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\new_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\open_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\open_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\paste_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\paste_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\redo_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\redo_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\remove_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\remove_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\run_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\run_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\save_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\save_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\undo_out.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\Script\undo_over.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\list.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Galaxy\ivx.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Galaxy\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Neotext\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Nicholas\Nicholas.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Nicholas\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Six Star\ciz.bmp
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Six Star\skin.ini
+L:\Development\Neotext\Max-FTP\Binary\Graphics\Flatgrey.zip
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\bookClosed_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\bookOpen_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\overview_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\page_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\topic_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Bullet Icons\world_blue.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\Media\202.gif
+L:\Development\Neotext\Max-FTP\Binary\Help\abort.png
+L:\Development\Neotext\Max-FTP\Binary\Help\anon1.png
+L:\Development\Neotext\Max-FTP\Binary\Help\anon2.png
+L:\Development\Neotext\Max-FTP\Binary\Help\anon3.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Anonymous.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\autotype.png
+L:\Development\Neotext\Max-FTP\Binary\Help\AutoTypeControl.png
+L:\Development\Neotext\Max-FTP\Binary\Help\BrowseButtonControl.png
+L:\Development\Neotext\Max-FTP\Binary\Help\clientwin.png
+L:\Development\Neotext\Max-FTP\Binary\Help\CodeEditControl.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Contents.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Contents.png
+L:\Development\Neotext\Max-FTP\Binary\Help\custom.js
+L:\Development\Neotext\Max-FTP\Binary\Help\cutcopypaste.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Debugger.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\DebugWindow.png
+L:\Development\Neotext\Max-FTP\Binary\Help\delete.png
+L:\Development\Neotext\Max-FTP\Binary\Help\drivelist.png
+L:\Development\Neotext\Max-FTP\Binary\Help\EditMenu.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\EditMenu.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Example Projects.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Executing.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Explorer.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Favorite Sites.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\favorites.png
+L:\Development\Neotext\Max-FTP\Binary\Help\favsite.png
+L:\Development\Neotext\Max-FTP\Binary\Help\File Actions.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\File Associations.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\fileassoc.png
+L:\Development\Neotext\Max-FTP\Binary\Help\filemenu.png
+L:\Development\Neotext\Max-FTP\Binary\Help\folders.png
+L:\Development\Neotext\Max-FTP\Binary\Help\FTP URL Types.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Global Events.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\HelpMenu.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\HelpMenu.png
+L:\Development\Neotext\Max-FTP\Binary\Help\IDEModes.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Index.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Introduction.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ItemMenu.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Items.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\login.png
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxFTP.Application.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Collect.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Debug.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Events.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Generic.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Module.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxIDE.Project.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\MaxService.Application.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\navigate.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Navigation.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\neotextlogo5.png
+L:\Development\Neotext\Max-FTP\Binary\Help\netconnection.png
+L:\Development\Neotext\Max-FTP\Binary\Help\netdrives1.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Network Drives.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\newfolder.png
+L:\Development\Neotext\Max-FTP\Binary\Help\NewItem.png
+L:\Development\Neotext\Max-FTP\Binary\Help\NewProject.png
+L:\Development\Neotext\Max-FTP\Binary\Help\NTAdvFTP61.Client.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTAdvFTP61.Socket.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTAdvFTP61.URL.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTCipher10.Acolyte.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTCipher10.LUID.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTCipher10.Ncode.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTCipher10.UUCode.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTCipher10.Words.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTControls22.AutoType.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTControls22.BrowseButton.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTControls22.CodeEdit.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTControls22.URLBox.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTPopup21.Window.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTSchedule20.Schedule.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTSchedule20.Timer.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTService20.Controller.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTShell22.Internet.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTShell22.Process.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTShell22.Services.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\NTSound20.Player.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\Overview.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ProjectExplorer.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ProjectMenu.png
+L:\Development\Neotext\Max-FTP\Binary\Help\Projects.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\refresh.png
+L:\Development\Neotext\Max-FTP\Binary\Help\rename1.png
+L:\Development\Neotext\Max-FTP\Binary\Help\rename2.png
+L:\Development\Neotext\Max-FTP\Binary\Help\reports.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleMain.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleManager.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleOperations.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleOperations.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleProp.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleWin.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ScheduleWin.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ScriptingAbout.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ScriptingAbout1.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ScriptingAbout2.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\select.png
+L:\Development\Neotext\Max-FTP\Binary\Help\tree.html
+L:\Development\Neotext\Max-FTP\Binary\Help\URL Type-in.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\URLBoxControl.png
+L:\Development\Neotext\Max-FTP\Binary\Help\ViewMenu.htm
+L:\Development\Neotext\Max-FTP\Binary\Help\ViewMenu.png
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Adapters Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Adv FTP Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Adv FTP Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Adv FTP Example 3.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Debug Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Eval Exec Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Event Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Event Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Event Example 3.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Generic Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Internet Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\NCode Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Popup Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Popup Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Process Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\ProjectPath Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\RemoveParam Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Schedule Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\SetInterval Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\SetTimeout Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Socket Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Timer Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\Timer Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\JScript\URL Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Adapters Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Adv FTP Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Adv FTP Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Adv FTP Example 3.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Debug Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Eval Exec Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Event Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Event Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Event Example 3.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Generic Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Internet Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\NCode Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Popup Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Popup Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Process Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\ProjectPath Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\RemoveParam Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Schedule Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\SetInterval Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\SetTimeout Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Socket Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Timer Example 1.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\Timer Example 2.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Examples\VBScript\URL Example.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Experiment\Binary to Tape.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Experiment\Return of the MC.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Experiment\Rotating Degree.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Experiment\The Longest Time.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Experiment\Toggle Toboggle.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\MaxIDE.Collect.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\MaxIDE.Debug.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\MaxIDE.Events.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\MaxIDE.Generic.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\MaxIDE.Module.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NewJScriptProject.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NewScriptTemplate.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NewVBScriptProject.mprj
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTAdvFTP61.Client.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTAdvFTP61.Socket.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTAdvFTP61.URL.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.BWord.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.GUID.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.NCode.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.PoolID.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.UUCode.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTCipher10.Words.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTPopup21.Window.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTSchedule20.Schedule.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTSchedule20.Timer.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTShell22.Internet.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTShell22.Process.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTShell22.Services.mscr
+L:\Development\Neotext\Max-FTP\Binary\Projects\Templates\NTSound20.Player.mscr
+L:\Development\Neotext\Max-FTP\Binary\License.txt
+L:\Development\Neotext\Max-FTP\Binary\maxftp.mdb
+L:\Development\Neotext\Max-FTP\Binary\maxftp.pub
+L:\Development\Neotext\Max-FTP\Binary\MaxService.TLB
+L:\Development\Neotext\Max-FTP\Binary\MaxService.VBR
+L:\Development\Neotext\Max-FTP\Binary\Neotext.org.url
+L:\Development\Neotext\Max-FTP\Deploy\Compile.bat
+L:\Development\Neotext\Max-FTP\Deploy\Manifest.ini
+L:\Development\Neotext\Max-FTP\Deploy\Max-FTP v6.1.0.exe.uue
+L:\Development\Neotext\Max-FTP\Groups\MaxService.bat
+L:\Development\Neotext\Max-FTP\Groups\Group1.vbg
+L:\Development\Neotext\Max-FTP\Groups\Group2.vbg
+L:\Development\Neotext\Max-FTP\Groups\Max-FTP.vbg
+L:\Development\Neotext\Max-FTP\Groups\MaxIDE.vbg
+L:\Development\Neotext\Max-FTP\Groups\MaxService.vbg
+L:\Development\Neotext\Max-FTP\Groups\MaxService2.vbg
+L:\Development\Neotext\Max-FTP\Media\Themes\Collapse\skin.ini
+L:\Development\Neotext\Max-FTP\Media\Themes\Collapse\uni.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\back_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\back_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\browse_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\browse_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\close_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\close_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\copy_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\copy_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\cut_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\cut_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\delete_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\delete_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\forward_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\forward_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\go_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\go_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\newfolder_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\newfolder_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\paste_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\paste_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\refresh_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\refresh_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\uplevel_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\client\uplevel_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\add_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\add_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\delete_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\delete_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\down_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\down_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\edit_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\edit_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\events_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\events_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\run_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\run_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\servicestart_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\servicestart_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\servicestop_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\servicestop_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\up_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\schedule\up_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\add_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\add_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\copy_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\copy_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\cut_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\cut_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\find_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\find_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\new_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\new_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\open_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\open_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\paste_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\paste_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\redo_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\redo_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\remove_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\remove_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\run_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\run_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\save_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\save_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\stop_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\stop_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\undo_out.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\Script\undo_over.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\list.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Flatgrey\skin.ini
+L:\Development\Neotext\Max-FTP\Media\Themes\Galaxy\ivx.bmp
+L:\Development\Neotext\Max-FTP\Media\Themes\Galaxy\skin.ini
+L:\Development\Neotext\Max-FTP\Media\Themes\Neotext\skin.ini
+L:\Development\Neotext\Max-FTP\Media\00 - Max-FTP - Back Inside.png
+L:\Development\Neotext\Max-FTP\Media\00 - Max-FTP - Back Outside.png
+L:\Development\Neotext\Max-FTP\Media\00 - Max-FTP - CD-Rom.png
+L:\Development\Neotext\Max-FTP\Media\00 - Max-FTP - Front Inside.png
+L:\Development\Neotext\Max-FTP\Media\00 - Max-FTP - Front Outside.png
+L:\Development\Neotext\Max-FTP\Media\01 - Max-FTP - Inside Prints.png
+L:\Development\Neotext\Max-FTP\Media\01 - Max-FTP - Outside Prints.png
+L:\Development\Neotext\Max-FTP\Media\Certificate.bmp
+L:\Development\Neotext\Max-FTP\Media\Certificate.png
+L:\Development\Neotext\Max-FTP\Media\eval trap.txt
+L:\Development\Neotext\Max-FTP\Media\Help.tree
+L:\Development\Neotext\Max-FTP\Media\Image1.bmp
+L:\Development\Neotext\Max-FTP\Media\Image4.png
+L:\Development\Neotext\Max-FTP\Media\Image6.bmp
+L:\Development\Neotext\Max-FTP\Media\Image6.png
+L:\Development\Neotext\Max-FTP\Media\Image7.bmp
+L:\Development\Neotext\Max-FTP\Media\Image7.png
+L:\Development\Neotext\Max-FTP\Media\inst-maxftp.ico
+L:\Development\Neotext\Max-FTP\Media\win-maxftp.bmp
+L:\Development\Neotext\Max-FTP\PadXML\maxftp.htm
+L:\Development\Neotext\Max-FTP\PadXML\maxftp.pad
+L:\Development\Neotext\Max-FTP\PadXML\maxftp.pml
+L:\Development\Neotext\Max-FTP\PadXML\maxftp.png
+L:\Development\Neotext\Max-FTP\PadXML\maxftp.xml
+L:\Development\Neotext\Max-FTP\PadXML\maxftp16.png
+L:\Development\Neotext\Max-FTP\PadXML\maxftp32.png
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFTPClientGUI.frm7
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFTPClientGUI.frm8
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\MaxFTP.RES
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modMain.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modTrayIcon.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmMain.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmMain.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmDragOption.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmDragOption.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmAbout.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmAbout.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFavorites.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFavorites.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmNetConnection.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmNetConnection.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmNetDrives.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmNetDrives.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmOverwrite.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmOverwrite.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSetup.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSetup.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmPassword.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmPassword.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modClipBoard.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFavoriteSite.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFavoriteSite.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmEquipment.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmEquipment.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\clsNetwork.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmWildCards.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmWildCards.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modWildCard.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFileAssoc.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFileAssoc.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modAutoType.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchOperations.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchOperations.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchOpProperties.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchOpProperties.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchManager.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchManager.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchProperties.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmSchProperties.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\clsThreadManager.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFTPClientGUI.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmFTPClientGUI.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modFileAssoc.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\clsTransfer.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmTipOfDay.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmTipOfDay.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmActiveCache.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\frmActiveCache.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\modChildren.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP\Application.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\MaxIDE.RES
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmMainIDE.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmMainIDE.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmDialog.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmDialog.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\modMainIDE.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmProjectExplorer.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmProjectExplorer.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmDebug.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmDebug.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmScriptPage.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmScriptPage.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmProjectCompiler.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmProjectCompiler.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\clsItem.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\clsProject.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\modMenus.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objClient.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objTimer.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objSchedule.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objDebug.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objProject.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objSocket.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objNCode.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objCollect.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\clsCollect.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\modInclude.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuLogMessageTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuURLTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuScheduleTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuIncrementTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuBit.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuConnectionModes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuRateTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuListSystems.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuTransferModes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuErrorReturns.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuTransmission.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objPlayer.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objUUCode.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuDetailOptions.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmIEPage.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\frmIEPage.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objEvents.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuAllocateSides.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuFileProgressTypes.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuDirection.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuStates.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuConnectedStates.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objBWord.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objPoolID.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\enuCheckSums.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE\objGUID.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\clsArchive.pub
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\modMain.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\clsArchive.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\ctlOptions.ctl
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\ctlOptions.ctx
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\frmUtility.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\frmUtility.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\frmWarning.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility\frmWarning.frx
+L:\Development\Neotext\Max-FTP\Projects\Shared\clsDBConnection.pub
+L:\Development\Neotext\Max-FTP\Projects\Shared\clsDBSchedule.cls
+L:\Development\Neotext\Max-FTP\Projects\Shared\modGraphics.bas
+L:\Development\Neotext\Max-FTP\Projects\Shared\clsDBConnection.cls
+L:\Development\Neotext\Max-FTP\Projects\Shared\modDBSchedule.bas
+L:\Development\Neotext\Max-FTP\Projects\Shared\clsSettings.cls
+L:\Development\Neotext\Max-FTP\Projects\Shared\modUser.bas
+L:\Development\Neotext\Max-FTP\Projects\Shared\modMsgQueue.bas
+L:\Development\Neotext\Max-FTP\Projects\Shared\frmDBError.frm
+L:\Development\Neotext\Max-FTP\Projects\Shared\frmDBError.frx
+L:\Development\Neotext\Max-FTP\Projects\Shared\clsFileAssoc.cls
+L:\Development\Neotext\Max-FTP\Projects\Shared\EventLog.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxService\frmService.frm
+L:\Development\Neotext\Max-FTP\Projects\MaxService\frmService.frx
+L:\Development\Neotext\Max-FTP\Projects\MaxService\modService.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxService\clsSchedule.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxService\clsOperation.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxService\modWildCard.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxService\clsThreadManager.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxService\modSchedule.bas
+L:\Development\Neotext\Max-FTP\Projects\MaxService\Application.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxService\WindowsService.cls
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP.vbp
+L:\Development\Neotext\Max-FTP\Projects\MaxFTP.vbw
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE.vbp
+L:\Development\Neotext\Max-FTP\Projects\MaxIDE.vbw
+L:\Development\Neotext\Max-FTP\Projects\MaxService.vbp
+L:\Development\Neotext\Max-FTP\Projects\MaxService.vbw
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility.vbp
+L:\Development\Neotext\Max-FTP\Projects\MaxUtility.vbw
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Media\202.gif
+L:\Development\Neotext\MaxLand\Binary\Help\Console.htm
+L:\Development\Neotext\MaxLand\Binary\Help\controls.htm
+L:\Development\Neotext\MaxLand\Binary\Help\custom.js
+L:\Development\Neotext\MaxLand\Binary\Help\Index.htm
+L:\Development\Neotext\MaxLand\Binary\Help\Introduction.htm
+L:\Development\Neotext\MaxLand\Binary\Help\Maxland Markup Language Syntax and Reference.doc
+L:\Development\Neotext\MaxLand\Binary\Help\Screenshot.png
+L:\Development\Neotext\MaxLand\Binary\Help\Screenshot2.png
+L:\Development\Neotext\MaxLand\Binary\Help\Screenshot3.png
+L:\Development\Neotext\MaxLand\Binary\Help\tree.html
+L:\Development\Neotext\MaxLand\Binary\Help\whitepage.htm
+L:\Development\Neotext\MaxLand\Binary\Levels\Eagle.px
+L:\Development\Neotext\MaxLand\Binary\Levels\Harddrive.px
+L:\Development\Neotext\MaxLand\Binary\Levels\Level1.px
+L:\Development\Neotext\MaxLand\Binary\Levels\Level2.px
+L:\Development\Neotext\MaxLand\Binary\Models\arm.x
+L:\Development\Neotext\MaxLand\Binary\Models\backfaces.x
+L:\Development\Neotext\MaxLand\Binary\Models\blacklawn.x
+L:\Development\Neotext\MaxLand\Binary\Models\bounds-pawn.x
+L:\Development\Neotext\MaxLand\Binary\Models\bounds-player.x
+L:\Development\Neotext\MaxLand\Binary\Models\bubble.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubble2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubble3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubble4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubble5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles6.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles7.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\bubbles8.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\buildingtop1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\circle.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\cloud1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\cloud2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\cloud3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\cloud4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\cloud5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\courtyard.x
+L:\Development\Neotext\MaxLand\Binary\Models\debug.x
+L:\Development\Neotext\MaxLand\Binary\Models\debug0.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\debug1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\debug2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\debug3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\debug4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\decals.x
+L:\Development\Neotext\MaxLand\Binary\Models\diamond.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\diamond.x
+L:\Development\Neotext\MaxLand\Binary\Models\disc.x
+L:\Development\Neotext\MaxLand\Binary\Models\Eagle.x
+L:\Development\Neotext\MaxLand\Binary\Models\eagleisland.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\eagleocean.x
+L:\Development\Neotext\MaxLand\Binary\Models\embers.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy01.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy02.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy03.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy04.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy05.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy06.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy07.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy08.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy09.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\giphy13.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\golden.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\granit.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\gravel.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\greekfe.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\ground.x
+L:\Development\Neotext\MaxLand\Binary\Models\grounds.x
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_10_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_11_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_12_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_13.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_13_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_14.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_14_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_15.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_15_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_16.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_16_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_17.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_17_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_18.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_18_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_1_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_2_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_3_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_4_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_5_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_6.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_6_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_7.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_7_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_8.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_8_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_9.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddisk_disc_9_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddrive_player.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\harddrive_player.x
+L:\Development\Neotext\MaxLand\Binary\Models\hilltops.x
+L:\Development\Neotext\MaxLand\Binary\Models\horizon.x
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth_2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth_b.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth_k.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_earth_r.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_i1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_i2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_i3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_v1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_v2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_v3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_x1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_x2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_fire_x3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water_b.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water_f.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water_r.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_water_s.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_i1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_i2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_i3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_v1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_v2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_v3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_x1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_x2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\hud_wind_x3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\islandblend.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\islanddirt.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\islandfloral.x
+L:\Development\Neotext\MaxLand\Binary\Models\islandgrass.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\islandlanding.x
+L:\Development\Neotext\MaxLand\Binary\Models\king.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\ladder.x
+L:\Development\Neotext\MaxLand\Binary\Models\ladders.x
+L:\Development\Neotext\MaxLand\Binary\Models\lakewater.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\liquid.x
+L:\Development\Neotext\MaxLand\Binary\Models\liquids.x
+L:\Development\Neotext\MaxLand\Binary\Models\marble.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\marblewall.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\mountain.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\nautical.x
+L:\Development\Neotext\MaxLand\Binary\Models\nn.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\non-moving.x
+L:\Development\Neotext\MaxLand\Binary\Models\palace.x
+L:\Development\Neotext\MaxLand\Binary\Models\pawn.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\pawnaqua.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\pawnswap.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\platforms.x
+L:\Development\Neotext\MaxLand\Binary\Models\player.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\queen.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\restrooms.x
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_back.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_bottom.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_front.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_left.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_right.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky2_top.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_back.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_bottom.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_front.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_left.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_right.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sky_top.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke01.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke02.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke03.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke04.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke05.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke06.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke07.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke08.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke09.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke13.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke14.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke15.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke16.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke17.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke18.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke19.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke20.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke21.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke22.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke23.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke24.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\smoke25.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\spot.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\statues.x
+L:\Development\Neotext\MaxLand\Binary\Models\stonegray.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial01.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial02.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial03.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial04.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial05.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial06.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial07.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial08.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial09.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial13.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial14.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial15.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial16.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial17.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial18.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial19.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial20.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial21.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial22.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial23.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\sundial24.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree0.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree6.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree7.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree8.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\tree9.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\upfalls.x
+L:\Development\Neotext\MaxLand\Binary\Models\visual-pawn.x
+L:\Development\Neotext\MaxLand\Binary\Models\visual-player.x
+L:\Development\Neotext\MaxLand\Binary\Models\water.x
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall0.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall6.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall7.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterfall8.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak01.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak02.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak03.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak04.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak05.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak06.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak07.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak08.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak09.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterleak12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool0.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool1.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool2.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool3.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool4.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool5.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool6.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool7.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool8.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterpool9.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain01.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain02.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain03.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain04.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain05.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain06.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain07.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain08.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain09.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain10.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain11.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain12.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain13.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain14.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain15.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain16.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain17.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain18.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain19.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain20.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain21.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain22.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain23.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain24.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain25.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain26.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain27.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain28.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain29.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain30.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain31.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain32.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain33.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain34.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain35.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain36.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain37.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain38.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain39.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waterrain40.bmp
+L:\Development\Neotext\MaxLand\Binary\Models\waters.x
+L:\Development\Neotext\MaxLand\Binary\Models\watertank.bmp
+L:\Development\Neotext\MaxLand\Binary\Sounds\waterfall.mp3
+L:\Development\Neotext\MaxLand\Binary\Commands.ini
+L:\Development\Neotext\MaxLand\Binary\ctrls.bmp
+L:\Development\Neotext\MaxLand\Binary\drop.bmp
+L:\Development\Neotext\MaxLand\Binary\license.txt
+L:\Development\Neotext\MaxLand\Binary\mouse.cur
+L:\Development\Neotext\MaxLand\Binary\Neotext.org.url
+L:\Development\Neotext\MaxLand\Binary\MaxLandApp.mdb
+L:\Development\Neotext\MaxLand\Deploy\Compile.bat
+L:\Development\Neotext\MaxLand\Deploy\Manifest.ini
+L:\Development\Neotext\MaxLand\Media\Eagle Island\clearocean.skp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\Eagle.skp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\eagleocean.skp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islandblend.bmp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islanddirt.bmp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islandfloral.skp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islandgrass.bmp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islandlanding.skp
+L:\Development\Neotext\MaxLand\Media\Eagle Island\islandlanding.x
+L:\Development\Neotext\MaxLand\Media\Eagle Island\lakewater.bmp
+L:\Development\Neotext\MaxLand\Media\Harddrive\arm.skp
+L:\Development\Neotext\MaxLand\Media\Harddrive\disc.skp
+L:\Development\Neotext\MaxLand\Media\Harddrive\floor.skp
+L:\Development\Neotext\MaxLand\Media\Harddrive\harddriveplayer.skp
+L:\Development\Neotext\MaxLand\Media\Harddrive\non-moving.skp
+L:\Development\Neotext\MaxLand\Media\images\brown.psp
+L:\Development\Neotext\MaxLand\Media\images\dark2.psp
+L:\Development\Neotext\MaxLand\Media\images\darkl.psp
+L:\Development\Neotext\MaxLand\Media\images\evener.psp
+L:\Development\Neotext\MaxLand\Media\images\grey.psp
+L:\Development\Neotext\MaxLand\Media\images\light.psp
+L:\Development\Neotext\MaxLand\Media\images\light2.psp
+L:\Development\Neotext\MaxLand\Media\images\lightenings.psp
+L:\Development\Neotext\MaxLand\Media\images\marble2.psp
+L:\Development\Neotext\MaxLand\Media\images\marble3.psp
+L:\Development\Neotext\MaxLand\Media\images\marble4.psp
+L:\Development\Neotext\MaxLand\Media\images\marble5.psp
+L:\Development\Neotext\MaxLand\Media\images\marble6.psp
+L:\Development\Neotext\MaxLand\Media\images\marblesmudge.psp
+L:\Development\Neotext\MaxLand\Media\images\marbletype.psp
+L:\Development\Neotext\MaxLand\Media\images\stonebackdrop.psp
+L:\Development\Neotext\MaxLand\Media\images\stoneoverlay.psp
+L:\Development\Neotext\MaxLand\Media\images\stoneoverlay2.psp
+L:\Development\Neotext\MaxLand\Media\lalique\clearocean.x
+L:\Development\Neotext\MaxLand\Media\lalique\clockbase.x
+L:\Development\Neotext\MaxLand\Media\lalique\cnt0.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt1.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt2.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt3.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt4.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt5.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt6.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt7.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt8.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\cnt9.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\debug0.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\eagleisland_topo.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquebase.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquebase.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-bounds.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-bounds.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-handle.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-handle.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-visual.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart-visual.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquecart.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquedoor.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquedoor.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquehandle.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquehandle.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquelift-bounds.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquelift-bounds.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquelift-visual.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquelift-visual.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquepallet-bounds.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquepallet-bounds.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquepallet-visual.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquepallet-visual.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquerebar1.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquerebar1.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquerebar2.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquerebar2.x
+L:\Development\Neotext\MaxLand\Media\lalique\laliquewater.skp
+L:\Development\Neotext\MaxLand\Media\lalique\laliquewater.x
+L:\Development\Neotext\MaxLand\Media\lalique\Level3.px
+L:\Development\Neotext\MaxLand\Media\lalique\xiv1.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\xiv2.bmp
+L:\Development\Neotext\MaxLand\Media\lalique\xiv3.bmp
+L:\Development\Neotext\MaxLand\Media\level2\courtyard.skp
+L:\Development\Neotext\MaxLand\Media\level2\courtyard.x
+L:\Development\Neotext\MaxLand\Media\level2\embers.bmp
+L:\Development\Neotext\MaxLand\Media\level2\golden.bmp
+L:\Development\Neotext\MaxLand\Media\level2\granit.bmp
+L:\Development\Neotext\MaxLand\Media\level2\ground.skp
+L:\Development\Neotext\MaxLand\Media\level2\grounds.skp
+L:\Development\Neotext\MaxLand\Media\level2\grounds.x
+L:\Development\Neotext\MaxLand\Media\level2\horizon.skp
+L:\Development\Neotext\MaxLand\Media\level2\horizon.x
+L:\Development\Neotext\MaxLand\Media\level2\ladders.skp
+L:\Development\Neotext\MaxLand\Media\level2\ladders.x
+L:\Development\Neotext\MaxLand\Media\level2\liquids.skp
+L:\Development\Neotext\MaxLand\Media\level2\liquids.x
+L:\Development\Neotext\MaxLand\Media\level2\marble.bmp
+L:\Development\Neotext\MaxLand\Media\level2\marblewall.bmp
+L:\Development\Neotext\MaxLand\Media\level2\temp.skp
+L:\Development\Neotext\MaxLand\Media\level2\tmpd7593bf99f15b76aa90.skp
+L:\Development\Neotext\MaxLand\Media\level2\waterfall0.bmp
+L:\Development\Neotext\MaxLand\Media\level2\waterpool0.bmp
+L:\Development\Neotext\MaxLand\Media\level2\waters.skp
+L:\Development\Neotext\MaxLand\Media\level2\waters.x
+L:\Development\Neotext\MaxLand\Media\New Folder\back.bmp
+L:\Development\Neotext\MaxLand\Media\New Folder\bottom.bmp
+L:\Development\Neotext\MaxLand\Media\New Folder\front.bmp
+L:\Development\Neotext\MaxLand\Media\New Folder\left.bmp
+L:\Development\Neotext\MaxLand\Media\New Folder\right.bmp
+L:\Development\Neotext\MaxLand\Media\New Folder\top.bmp
+L:\Development\Neotext\MaxLand\Media\timetower\clearocean.skp
+L:\Development\Neotext\MaxLand\Media\timetower\clockbase.skp
+L:\Development\Neotext\MaxLand\Media\timetower\Level4.px
+L:\Development\Neotext\MaxLand\Media\backfaces.skp
+L:\Development\Neotext\MaxLand\Media\blacklawn.skp
+L:\Development\Neotext\MaxLand\Media\bounds-pawn.skp
+L:\Development\Neotext\MaxLand\Media\bounds-player.skp
+L:\Development\Neotext\MaxLand\Media\customarch.skp
+L:\Development\Neotext\MaxLand\Media\debug0.bmp
+L:\Development\Neotext\MaxLand\Media\decals.skp
+L:\Development\Neotext\MaxLand\Media\diamond.skp
+L:\Development\Neotext\MaxLand\Media\gravel.bmp
+L:\Development\Neotext\MaxLand\Media\ground.skp
+L:\Development\Neotext\MaxLand\Media\ground2.skp
+L:\Development\Neotext\MaxLand\Media\ground2.x
+L:\Development\Neotext\MaxLand\Media\heavenshelfskp.skp
+L:\Development\Neotext\MaxLand\Media\Help.tree
+L:\Development\Neotext\MaxLand\Media\hilltops.skp
+L:\Development\Neotext\MaxLand\Media\hilltops.x
+L:\Development\Neotext\MaxLand\Media\icon.ico
+L:\Development\Neotext\MaxLand\Media\Index.hhk
+L:\Development\Neotext\MaxLand\Media\ladder.skp
+L:\Development\Neotext\MaxLand\Media\liquid.skp
+L:\Development\Neotext\MaxLand\Media\MaxLandHelp.chm
+L:\Development\Neotext\MaxLand\Media\MaxLandHelp.hhp
+L:\Development\Neotext\MaxLand\Media\mountain.bmp
+L:\Development\Neotext\MaxLand\Media\nautical.skp
+L:\Development\Neotext\MaxLand\Media\overlay.skp
+L:\Development\Neotext\MaxLand\Media\palace.skp
+L:\Development\Neotext\MaxLand\Media\palacemaze.skp
+L:\Development\Neotext\MaxLand\Media\Portal.skp
+L:\Development\Neotext\MaxLand\Media\Portal2.skp
+L:\Development\Neotext\MaxLand\Media\portaldebug.skp
+L:\Development\Neotext\MaxLand\Media\README.txt
+L:\Development\Neotext\MaxLand\Media\restrooms.skp
+L:\Development\Neotext\MaxLand\Media\statues.skp
+L:\Development\Neotext\MaxLand\Media\Table of Contents.hhc
+L:\Development\Neotext\MaxLand\Media\tempstone.psp
+L:\Development\Neotext\MaxLand\Media\tmpd7593bf99f15b76aa90.skp
+L:\Development\Neotext\MaxLand\Media\tmpd7593bf99f15b76aa90.x
+L:\Development\Neotext\MaxLand\Media\upfalls.skp
+L:\Development\Neotext\MaxLand\Media\visual-pawn.skp
+L:\Development\Neotext\MaxLand\Media\visual-player.skp
+L:\Development\Neotext\MaxLand\Media\water.skp
+L:\Development\Neotext\MaxLand\Media\win-maxel.bmp
+L:\Development\Neotext\MaxLand\Media\win-uninstall.ico
+L:\Development\Neotext\MaxLand\PadXML\maxland.htm
+L:\Development\Neotext\MaxLand\PadXML\maxland.pad
+L:\Development\Neotext\MaxLand\PadXML\maxland.pml
+L:\Development\Neotext\MaxLand\PadXML\maxland.png
+L:\Development\Neotext\MaxLand\PadXML\maxland.xml
+L:\Development\Neotext\MaxLand\PadXML\maxland16.png
+L:\Development\Neotext\MaxLand\PadXML\maxland32.png
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\frmMain.frm
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\frmMain.frx
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modMain.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\frmSetup.frm
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\frmSetup.frx
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modText.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modDecs.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modInfo.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modCmds.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\clsDatabase.cls
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modLand.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modMove.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modData.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modSound.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modTrack.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\clsAmbient.cls
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp\modDoTasks.bas
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp.vbp
+L:\Development\Neotext\MaxLand\Projects\MaxLandApp.vbw
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\page.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\RemindMe\Binary\Help\Media\202.gif
+L:\Development\Neotext\RemindMe\Binary\Help\custom.js
+L:\Development\Neotext\RemindMe\Binary\Help\Donations.png
+L:\Development\Neotext\RemindMe\Binary\Help\EditMenu.htm
+L:\Development\Neotext\RemindMe\Binary\Help\EditMenu.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\HelpMenu.htm
+L:\Development\Neotext\RemindMe\Binary\Help\HelpMenu.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\Index.htm
+L:\Development\Neotext\RemindMe\Binary\Help\Integration.htm
+L:\Development\Neotext\RemindMe\Binary\Help\Introduction.htm
+L:\Development\Neotext\RemindMe\Binary\Help\JavaScript.htm
+L:\Development\Neotext\RemindMe\Binary\Help\MainWindow.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\OperationMenu.htm
+L:\Development\Neotext\RemindMe\Binary\Help\OperationMenu.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\ScriptMenu.htm
+L:\Development\Neotext\RemindMe\Binary\Help\ScriptMenu.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\ScriptOptions.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\tree.html
+L:\Development\Neotext\RemindMe\Binary\Help\VBScript.htm
+L:\Development\Neotext\RemindMe\Binary\Help\Wizard.htm
+L:\Development\Neotext\RemindMe\Binary\Help\Wizard1.PNG
+L:\Development\Neotext\RemindMe\Binary\Help\Wizard2.PNG
+L:\Development\Neotext\RemindMe\Binary\license.txt
+L:\Development\Neotext\RemindMe\Binary\Neotext.org.url
+L:\Development\Neotext\RemindMe\Binary\remindme.mdb
+L:\Development\Neotext\RemindMe\Binary\remindme.pub
+L:\Development\Neotext\RemindMe\Deploy\Compile.bat
+L:\Development\Neotext\RemindMe\Deploy\Manifest.ini
+L:\Development\Neotext\RemindMe\Media\Help.tree
+L:\Development\Neotext\RemindMe\Media\Image1.psp
+L:\Development\Neotext\RemindMe\Media\Image3.bmp
+L:\Development\Neotext\RemindMe\Media\inst-remindme.ico
+L:\Development\Neotext\RemindMe\Media\win-remindme.bmp
+L:\Development\Neotext\RemindMe\PadXML\remindme.htm
+L:\Development\Neotext\RemindMe\PadXML\remindme.pad
+L:\Development\Neotext\RemindMe\PadXML\remindme.pml
+L:\Development\Neotext\RemindMe\PadXML\remindme.png
+L:\Development\Neotext\RemindMe\PadXML\remindme.xml
+L:\Development\Neotext\RemindMe\PadXML\remindme16.png
+L:\Development\Neotext\RemindMe\PadXML\remindme32.png
+L:\Development\Neotext\RemindMe\Projects\Shared\clsDBConnection.pub
+L:\Development\Neotext\RemindMe\Projects\Shared\clsDBConnection.cls
+L:\Development\Neotext\RemindMe\Projects\Shared\clsDBSettings.cls
+L:\Development\Neotext\RemindMe\Projects\Shared\modShared.bas
+L:\Development\Neotext\RemindMe\Projects\Utility\clsArchive.pub
+L:\Development\Neotext\RemindMe\Projects\Utility\modMain.bas
+L:\Development\Neotext\RemindMe\Projects\Utility\frmMain.frm
+L:\Development\Neotext\RemindMe\Projects\Utility\frmMain.frx
+L:\Development\Neotext\RemindMe\Projects\Utility\clsArchive.cls
+L:\Development\Neotext\RemindMe\Projects\Utility\frmWarning.frm
+L:\Development\Neotext\RemindMe\Projects\Utility\frmWarning.frx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmMain.frm
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmMain.frx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmWizard.frm
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmWizard.frx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\usrWizTimer.ctl
+L:\Development\Neotext\RemindMe\Projects\RemindMe\usrWizTimer.ctx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\modMain.bas
+L:\Development\Neotext\RemindMe\Projects\RemindMe\usrWizOperation.ctl
+L:\Development\Neotext\RemindMe\Projects\RemindMe\usrWizOperation.ctx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmAbout.frm
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmAbout.frx
+L:\Development\Neotext\RemindMe\Projects\RemindMe\clsPostHTTP.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe\clsProcedure.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe\clsParameter.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe\modScript.bas
+L:\Development\Neotext\RemindMe\Projects\RemindMe\clsEnumerator.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe\clsEnumValue.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmEditParam.frm
+L:\Development\Neotext\RemindMe\Projects\RemindMe\frmEditParam.frx
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\frmService.frm
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\frmService.frx
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\modService.bas
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\clsOperation.cls
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\clsOperationList.cls
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv\WindowsService.cls
+L:\Development\Neotext\RemindMe\Projects\RemindMe.vbp
+L:\Development\Neotext\RemindMe\Projects\RemindMe.vbw
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv.vbp
+L:\Development\Neotext\RemindMe\Projects\RmdMeSrv.vbw
+L:\Development\Neotext\RemindMe\Projects\Utility.vbp
+L:\Development\Neotext\RemindMe\Projects\Utility.vbw
+L:\Development\Neotext\RemindMe\Groups\Group1.vbg
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Crash.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Double.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\HighTom.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Kick.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\LowTom.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Ride.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\RimShot.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Snare.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Old Drums\Step.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Crash.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Double.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\HighTom.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Kick.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\LowTom.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\MidTom.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Ride.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\RimShot.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Snare.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Drumkit\Step.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\Record\sosouixSeq_0x1.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Default.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Lazer.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Magma.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\PADDLE.WAV
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Ping.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Startsnd.wav
+L:\Development\Neotext\Sequencer\Binary\WAV\SoundFX\Wall.wav
+L:\Development\Neotext\Sequencer\Binary\check.pk
+L:\Development\Neotext\Sequencer\Binary\license.txt
+L:\Development\Neotext\Sequencer\Binary\Neotext.org.url
+L:\Development\Neotext\Sequencer\Binary\SoSouiX.net.url
+L:\Development\Neotext\Sequencer\Deploy\Compile.bat
+L:\Development\Neotext\Sequencer\Deploy\Manifest.ini
+L:\Development\Neotext\Sequencer\Media\Old Drums\Crash.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\Double.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\HighTom.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\Kick.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\LowTom.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\Ride.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\RimShot.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\Snare.wav
+L:\Development\Neotext\Sequencer\Media\Old Drums\Step.wav
+L:\Development\Neotext\Sequencer\Media\0002729.bmp
+L:\Development\Neotext\Sequencer\Media\0004076.gif
+L:\Development\Neotext\Sequencer\Media\Image1.gif
+L:\Development\Neotext\Sequencer\Media\untitled.ico
+L:\Development\Neotext\Sequencer\Media\win.bmp
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\frmMain.frm
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\frmMain.frx
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\modSound.bas
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\Mixer.ctl
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\Pattern.ctl
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq\frmMIDIProp.frm
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq.vbp
+L:\Development\Neotext\Sequencer\Projects\SoSouiXSeq.vbw
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Bullet Icons\bookClosed.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Bullet Icons\bookOpen.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Bullet Icons\overview.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Bullet Icons\topic.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Bullet Icons\world.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\PlusMinus\Black\minus.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\PlusMinus\Black\plus.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Treelines\Black\btm.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Treelines\Black\hline.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Treelines\Black\mid.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Treelines\Black\top.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\Treelines\Black\vline.gif
+L:\Development\Neotext\To-Doster\Binary\Help\Media\202.gif
+L:\Development\Neotext\To-Doster\Binary\Help\addentry.png
+L:\Development\Neotext\To-Doster\Binary\Help\adding.htm
+L:\Development\Neotext\To-Doster\Binary\Help\custom.js
+L:\Development\Neotext\To-Doster\Binary\Help\database.htm
+L:\Development\Neotext\To-Doster\Binary\Help\databasewin.png
+L:\Development\Neotext\To-Doster\Binary\Help\editentry.png
+L:\Development\Neotext\To-Doster\Binary\Help\editing.htm
+L:\Development\Neotext\To-Doster\Binary\Help\editproduct.png
+L:\Development\Neotext\To-Doster\Binary\Help\Index.htm
+L:\Development\Neotext\To-Doster\Binary\Help\Introduction.htm
+L:\Development\Neotext\To-Doster\Binary\Help\logo_1.png
+L:\Development\Neotext\To-Doster\Binary\Help\productedit.png
+L:\Development\Neotext\To-Doster\Binary\Help\products.htm
+L:\Development\Neotext\To-Doster\Binary\Help\runtodoster.png
+L:\Development\Neotext\To-Doster\Binary\Help\setdatabase.png
+L:\Development\Neotext\To-Doster\Binary\Help\todoster.png
+L:\Development\Neotext\To-Doster\Binary\Help\tree.html
+L:\Development\Neotext\To-Doster\Binary\Help\viewing.htm
+L:\Development\Neotext\To-Doster\Binary\license.txt
+L:\Development\Neotext\To-Doster\Binary\Neotext.org.url
+L:\Development\Neotext\To-Doster\Binary\todoster.asp
+L:\Development\Neotext\To-Doster\Binary\todoster.bin
+L:\Development\Neotext\To-Doster\Binary\todoster.mdb
+L:\Development\Neotext\To-Doster\Deploy\Compile.bat
+L:\Development\Neotext\To-Doster\Deploy\Manifest.ini
+L:\Development\Neotext\To-Doster\Media\Help.tree
+L:\Development\Neotext\To-Doster\Media\inst-todoster.ico
+L:\Development\Neotext\To-Doster\Media\logo_1.gif
+L:\Development\Neotext\To-Doster\Media\win.bmp
+L:\Development\Neotext\To-Doster\PadXML\todoster.htm
+L:\Development\Neotext\To-Doster\PadXML\todoster.pad
+L:\Development\Neotext\To-Doster\PadXML\todoster.pml
+L:\Development\Neotext\To-Doster\PadXML\todoster.png
+L:\Development\Neotext\To-Doster\PadXML\todoster.xml
+L:\Development\Neotext\To-Doster\PadXML\todoster16.png
+L:\Development\Neotext\To-Doster\PadXML\todoster32.png
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmMain.frm
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmMain.frx
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmEntry.frm
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmEntry.frx
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmData.frm
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmData.frx
+L:\Development\Neotext\To-Doster\Projects\ToDoster\modDatabase.bas
+L:\Development\Neotext\To-Doster\Projects\ToDoster\modCrypt.bas
+L:\Development\Neotext\To-Doster\Projects\ToDoster\modInterface.bas
+L:\Development\Neotext\To-Doster\Projects\ToDoster\modMain.bas
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmProds.frm
+L:\Development\Neotext\To-Doster\Projects\ToDoster\frmProds.frx
+L:\Development\Neotext\To-Doster\Projects\ToDoster\modSettings.bas
+L:\Development\Neotext\To-Doster\Projects\ToDoster.vbp
+L:\Development\Neotext\To-Doster\Projects\ToDoster.vbw
+L:\Development\Neotext\Various\Audioscopic\README.md
+L:\Development\Neotext\Various\Audioscopic\Audioscopic.vbp
+L:\Development\Neotext\Various\Audioscopic\Audioscopic.vbw
+L:\Development\Neotext\Various\Audioscopic\frmMain.frm
+L:\Development\Neotext\Various\Audioscopic\frmMain.frx
+L:\Development\Neotext\Various\Audioscopic\WaveView.ctl
+L:\Development\Neotext\Various\Audioscopic\WaveView.ctx
+L:\Development\Neotext\Various\Audioscopic\modAudio.bas
+L:\Development\Neotext\Various\Audioscopic\modColor.bas
+L:\Development\Neotext\Various\CloneObject\README.md
+L:\Development\Neotext\Various\CloneObject\Project1.vbp
+L:\Development\Neotext\Various\CloneObject\Project1.vbw
+L:\Development\Neotext\Various\CloneObject\Module1.bas
+L:\Development\Neotext\Various\CloneObject\Class1.cls
+L:\Development\Neotext\Various\CoCreateGuid\README.md
+L:\Development\Neotext\Various\CoCreateGuid\Project1.vbp
+L:\Development\Neotext\Various\CoCreateGuid\Project1.vbw
+L:\Development\Neotext\Various\CoCreateGuid\Module1.bas
+L:\Development\Neotext\Various\EasyHookForm\README.md
+L:\Development\Neotext\Various\EasyHookForm\Project1.vbp
+L:\Development\Neotext\Various\EasyHookForm\Project1.vbw
+L:\Development\Neotext\Various\EasyHookForm\Form1.frm
+L:\Development\Neotext\Various\EasyHookForm\Module1.bas
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project1.exp
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project1.lib
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Group1.vbg
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project1.vbp
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project1.vbw
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project2.vbp
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Project2.vbw
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Class1.cls
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Class0.cls
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Class2.cls
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Class3.cls
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Module0.bas
+L:\Development\Neotext\Various\ImplementsUses\Not So Bogus\Module1.bas
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Group1.vbg
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Project1.vbp
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Project1.vbw
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Project2.vbp
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Project2.vbw
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class1.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class5.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class6.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class7.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class4.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class3.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class2.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class8.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class9.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Class0.cls
+L:\Development\Neotext\Various\ImplementsUses\More Bogus\Module1.bas
+L:\Development\Neotext\Various\ImplementsUses\README.md
+L:\Development\Neotext\Various\OpticalIllusions\Project1.RES
+L:\Development\Neotext\Various\OpticalIllusions\README.md
+L:\Development\Neotext\Various\OpticalIllusions\Project1.vbp
+L:\Development\Neotext\Various\OpticalIllusions\Project1.vbw
+L:\Development\Neotext\Various\OpticalIllusions\frmMain.frm
+L:\Development\Neotext\Various\OpticalIllusions\frmMain.frx
+L:\Development\Neotext\Various\PoolingGUIDs\README.md
+L:\Development\Neotext\Various\PoolingGUIDs\Group1.vbg
+L:\Development\Neotext\Various\PoolingGUIDs\Project1.vbp
+L:\Development\Neotext\Various\PoolingGUIDs\Project1.vbw
+L:\Development\Neotext\Various\PoolingGUIDs\Project2.vbp
+L:\Development\Neotext\Various\PoolingGUIDs\Project2.vbw
+L:\Development\Neotext\Various\PoolingGUIDs\Module1.bas
+L:\Development\Neotext\Various\PoolingGUIDs\PoolID.cls
+L:\Development\Neotext\Various\SerialObject\README.md
+L:\Development\Neotext\Various\SerialObject\Project1.vbp
+L:\Development\Neotext\Various\SerialObject\Project1.vbw
+L:\Development\Neotext\Various\SerialObject\Module1.bas
+L:\Development\Neotext\Various\SerialObject\Class1.cls
+L:\Development\Neotext\Various\VisualSwap\pattern1.txt
+L:\Development\Neotext\Various\VisualSwap\pattern2.txt
+L:\Development\Neotext\Various\VisualSwap\pattern3.txt
+L:\Development\Neotext\Various\VisualSwap\pattern4.txt
+L:\Development\Neotext\Various\VisualSwap\pattern5.txt
+L:\Development\Neotext\Various\VisualSwap\pattern6.txt
+L:\Development\Neotext\Various\VisualSwap\VisualSwap.txt
+L:\Development\Neotext\Various\VisualSwap\Project1.vbw
+L:\Development\Neotext\Various\VisualSwap\VisualSwap.vbp
+L:\Development\Neotext\Various\VisualSwap\VisualSwap.vbw
+L:\Development\Neotext\Various\VisualSwap\frmSwap.frm
+L:\Development\Neotext\Various\VisualSwap\frmSwap.frx
+L:\Development\Neotext\Various\VisualSwap\modMain.bas
+L:\Development\Neotext\Various\VisualSwap\Swap.cls
+L:\Development\Neotext\Various\VisualSwap\Element.cls
+L:\Development\Neotext\Various\VisualSwap\Vector.cls
+L:\Development\Neotext\Various\ElementalArray\ElementalArray.vbp
+L:\Development\Neotext\Various\ElementalArray\ElementalArray.vbw
+L:\Development\Neotext\Various\ElementalArray\modMain.bas
+L:\Development\Neotext\Various\TransitingShake\Invisology.vbp
+L:\Development\Neotext\Various\TransitingShake\Invisology.vbw
+L:\Development\Neotext\Various\TransitingShake\modMain.bas
+L:\Development\Neotext\Various\TransitingShake\Handshake.cls
+L:\Development\Neotext\Various\TransitingShake\frmTimeSync.frm
+L:\Development\Neotext\Various\TransitingShake\modGUID.bas
+L:\Development\Neotext\Various\.gitattributes
+L:\Development\Neotext\Various\README.md
+L:\Development\Neotext\Windows\Normal\d3dxvb.tlb
+L:\Development\Neotext\Windows\Normal\dx9vb.tlb
+L:\Development\Neotext\Windows\Normal\stdole2.tlb
+L:\Development\Neotext\Windows\Runtime\stdole2.tlb
+L:\Development\Neotext\Windows\System\MaxLandLib.exp
+L:\Development\Neotext\Windows\System\MaxLandLib.lib
+L:\Development\Neotext\Shared\modCommon.bas
+L:\Development\Neotext\Shared\modProcess.bas
+L:\Development\Neotext\Shared\modFolders.bas
+L:\Development\Neotext\Shared\modUserInfo.bas
+L:\Development\Neotext\Shared\modNCode.bas
+L:\Development\Neotext\Shared\modGUID.bas
+L:\Development\Neotext\Shared\modRegistry.bas
+L:\Development\Neotext\Shared\modMemory.bas
+L:\Development\Neotext\Shared\modForms.bas
+L:\Development\Neotext\Shared\Registry.cls
+L:\Development\Neotext\Shared\modWindow.bas
+L:\Development\Neotext\Shared\modBitValue.bas
+L:\Development\Neotext\Shared\modDoTasks.bas
+L:\Development\Neotext\Shared\modSockets.bas
+L:\Development\Neotext\Shared\modHexStr.bas
+L:\Development\Neotext\Shared\Strand.cls
+L:\Development\Neotext\Shared\modGraphics.bas
+L:\Development\Neotext\Shared\modInput.bas
+L:\Development\Neotext\Shared\modFactory.bas
+L:\Development\Neotext\Shared\modInternet.bas
+L:\Development\Neotext\Shared\modNTServices.bas
+L:\Development\Neotext\Shared\clsFileForm.cls
+L:\Development\Neotext\Shared\modDialog.bas
+L:\Development\Neotext\Shared\modImage.bas
+L:\Development\Neotext\Shared\clsIniFile.cls
+L:\Development\Neotext\Shared\modFileInfo.bas
+L:\Development\Neotext\Shared\modSystem.bas
+L:\Development\Neotext\Shared\modWin32Ver.bas
+L:\Development\Neotext\Shared\modShared.bas
+L:\Development\Neotext\Shared\modLists.bas
+L:\Development\Neotext\Shared\frmDate.frm
+L:\Development\Neotext\Shared\frmDate.frx
+L:\Development\Neotext\Shared\modMenuUp.bas
+L:\Development\Neotext\Shared\ctlDragger.ctl
+L:\Development\Neotext\Shared\ctlDragger.ctx
+L:\Development\Neotext\Shared\modDockAPI.bas
+L:\Development\Neotext\Shared\frmFind.frm
+L:\Development\Neotext\Shared\frmFind.frx
+L:\Development\Neotext\Shared\modGeometry.bas
+L:\Development\Neotext\Certificates\Nicholas Forystek.cab
+L:\Development\Neotext\Certificates\Server.cer
+L:\Development\Neotext\Certificates\Client.cer
+L:\Development\Neotext\Certificates\Neotext Certificates.cab
+L:\Development\Neotext\compile.bat
+L:\Development\Neotext\license.txt
+L:\Development\Neotext\Neotext.org.url
+L:\Development\Neotext\pad4spec.xml
+
+
+
