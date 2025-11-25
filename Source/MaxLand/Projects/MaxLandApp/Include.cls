@@ -407,6 +407,18 @@ Public Sub Console(ByVal Text As String)
     ConsoleCommand Text
 End Sub
 
+Public Function Col(ByVal Num As Long) As Long
+    Col = modInfo.Col(Num)
+End Function
+Public Function Row(ByVal Num As Long) As Long
+    Row = modInfo.Row(Num)
+End Function
+
+Public Sub DrawText(ByVal Text As String, ByVal X As Single, ByVal Y As Single)
+    modInfo.DrawText Text, X, Y
+End Sub
+
+
 
 Private Sub Class_Initialize()
     Stats_Include_Count = Stats_Include_Count + 1

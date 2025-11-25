@@ -21,12 +21,18 @@ Public Fnt As StdFont
 Public MainFont As D3DXFont
 Public MainFontDesc As IFont
 
+
 Public DefaultRenderTarget As Direct3DSurface8
 Public DefaultStencilDepth As Direct3DSurface8
 
-Public BufferedTexture As Direct3DTexture8
+
+
 Public ReflectRenderTarget As Direct3DSurface8
+
+Public ReflectFrontBuffer As Direct3DSurface8
+
 Public ReflectStencilDepth As Direct3DSurface8
+Public BufferedTexture As Direct3DTexture8
 
 Public ColumnCount As Long
 Public RowCount As Long
@@ -110,29 +116,40 @@ Public Sub CreateText()
     Set DefaultRenderTarget = DDevice.GetRenderTarget
     Set DefaultStencilDepth = DDevice.GetDepthStencilSurface
 
-    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-    Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
+'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+'    Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
+
+
+    
     Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
 
-        
 
-'    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+
+    
+    If Not FullScreen Then
+        Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+    Else
+        Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+    End If
+
+
+
 '
 '
-' '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
-''
-''    DDevice.GetFrontBuffer ReflectFrontBuffer
+'    Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
+
+'    DDevice.GetFrontBuffer ReflectFrontBuffer
 '
 '
 '
 '
 ' '   DDevice.SetClipPlane
-'
+
+
+
 '    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-'
 '    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-'
-' '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+'    Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
 
 
 End Sub
@@ -140,33 +157,35 @@ End Sub
 Public Sub CleanupText()
     Set DefaultRenderTarget = Nothing
     Set DefaultStencilDepth = Nothing
-    Set BufferedTexture = Nothing
+
     Set ReflectRenderTarget = Nothing
     Set ReflectStencilDepth = Nothing
+    Set ReflectFrontBuffer = Nothing
+    Set BufferedTexture = Nothing
     
     Set MainFont = Nothing
     Set MainFontDesc = Nothing
     Set Fnt = Nothing
 End Sub
 
-Public Function DrawText(Text As String, X As Single, Y As Single)
-
-    Dim TextRect As RECT
-    Dim Allignment As CONST_DTFLAGS
-    Allignment = DT_TOP Or DT_LEFT
-
-    TextRect.Top = Y
-    TextRect.Left = X
-    TextRect.Bottom = Y + (frmMain.TextHeight(Text) / Screen.TwipsPerPixelY)
-    TextRect.Right = X + (frmMain.TextWidth(Text) / Screen.TwipsPerPixelX)
-
-    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
-    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
-    DDevice.SetPixelShader PixelShaderDefault
-    DDevice.SetVertexShader FVF_RENDER
-
-    D3DX.DrawText MainFont, TextColor, Text, TextRect, Allignment
-End Function
+'Public Function DrawText(Text As String, X As Single, Y As Single)
+'
+'    Dim TextRect As RECT
+'    Dim Allignment As CONST_DTFLAGS
+'    Allignment = DT_TOP Or DT_LEFT
+'
+'    TextRect.Top = Y
+'    TextRect.Left = X
+'    TextRect.Bottom = Y + (frmMain.TextHeight(Text) / Screen.TwipsPerPixelY)
+'    TextRect.Right = X + (frmMain.TextWidth(Text) / Screen.TwipsPerPixelX)
+'
+'    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
+'    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+'    DDevice.SetPixelShader PixelShaderDefault
+'    DDevice.SetVertexShader FVF_RENDER
+'
+'    D3DX.DrawText MainFont, TextColor, Text, TextRect, Allignment
+'End Function
 
 
 Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8

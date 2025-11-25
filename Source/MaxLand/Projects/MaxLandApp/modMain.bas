@@ -182,8 +182,11 @@ Public Sub Main()
             Else
                 On Error GoTo 0
                 On Error GoTo Render
+
+                BeginMirrors
+
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
-                                                   
+                         
                 DDevice.BeginScene
     
                 'elapsed = Timer
@@ -222,6 +225,11 @@ Public Sub Main()
                 'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
                 
                 'elapsed = Timer
+                RenderMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+                    
+                'elapsed = Timer
                 RenderBeacons
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
@@ -259,7 +267,7 @@ Public Sub Main()
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
                 
                 If Not PauseGame Then
-                    
+                
                     'elapsed = Timer
                     RenderInfo
                     'elapsed = (Timer - elapsed)
@@ -271,7 +279,7 @@ Public Sub Main()
                     'If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
       
                     DDevice.EndScene
-
+                    
                     On Error Resume Next
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
                     
@@ -320,6 +328,9 @@ fault:
 Exit Sub
 Render:
 
+    Stop
+    Resume
+    
     TermGameData
     TermDirectX
 
@@ -387,6 +398,7 @@ On Error GoTo WorldError
     Dim matTemp As D3DMATRIX
     
     D3DXMatrixIdentity matWorld
+
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
     D3DXMatrixMultiply matTemp, matWorld, matWorld
@@ -395,7 +407,7 @@ On Error GoTo WorldError
     D3DXMatrixIdentity matWorld
     D3DXMatrixMultiply matLook, matRotation, matPitch
     DDevice.SetTransform D3DTS_WORLD, matWorld
-  
+
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
         
         D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
@@ -587,6 +599,7 @@ On Error GoTo WorldError
         DDevice.SetTransform D3DTS_VIEW, matLook
     End If
 
+    
     D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.01, FadeDistance
     DDevice.SetTransform D3DTS_PROJECTION, matProj
     
@@ -757,12 +770,19 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
     
+    ', CONST_D3DFORMAT.D3DFMT_A8R8G8B8, ReflectStencilDepth, D3DFMT_D24S8
         If Not FullScreen Then
             Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
         Else
             Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
         End If
-    
+'        If Not FullScreen Then
+'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
+'        Else
+'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
+'        End If
+
+
     End If
     
 End Sub

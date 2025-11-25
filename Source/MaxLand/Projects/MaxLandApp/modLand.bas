@@ -54,7 +54,7 @@ Private matView As D3DMATRIX
 Private matViewSave As D3DMATRIX
 
 
-Private Sub RenderSpacesSetup()
+Public Sub RenderSpacesSetup()
     DDevice.GetTransform D3DTS_VIEW, matViewSave
     matView = matViewSave
     matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
@@ -63,7 +63,7 @@ Private Sub RenderSpacesSetup()
     DDevice.SetTransform D3DTS_PROJECTION, matProj
 End Sub
 
-Private Sub RenderSpacesClose()
+Public Sub RenderSpacesClose()
         
     D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.05, FadeDistance
     DDevice.SetTransform D3DTS_PROJECTION, matProj
@@ -1317,97 +1317,5 @@ Private Sub CleanUpAllCollection(ByRef SubCollection As NTNodes10.Collection)
     Loop
     Set SubCollection = Nothing
 End Sub
-
-
-Public Sub BeginMirrors()
-
-'    Dim e As Board
-'    Dim i As Long
-'    Dim l As Single
-'
-'    Dim dm As D3DDISPLAYMODE
-'    Dim pal As PALETTEENTRY
-'    Dim rct As RECT
-''
-''    If Not Mirrors Is Nothing Then Mirrors.Clear
-'    If Boards.Count > 0 Then
-'        For i = 1 To Boards.Count
-'            Set e = Boards(i)
-'
-'            If e.Visible And e.Mirror Then
-'
-'                l = Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
-'                If l <= FAR Then
-'
-'                    DViewPort.Width = 128
-'                    DViewPort.Height = 128
-'
-'                    DSurface.BeginScene DefaultRenderTarget, DViewPort
-'
-''                    BeginWorld UserControl, e.Transposing
-''
-''                    RenderPlanets UserControl, e.Transposing
-''                    RenderObject UserControl, e.Transposing
-'
-'                    DSurface.EndScene
-'
-'                    DDevice.GetDisplayMode dm
-'
-'                    rct.Top = 0
-'                    rct.Left = 0
-'
-'                    rct.Right = DViewPort.Width
-'                    rct.Bottom = DViewPort.Height
-'
-'                    D3DX.SaveSurfaceToFile GetTemporaryFolder & "\" & e.Key & ".bmp", D3DXIFF_BMP, DefaultRenderTarget, pal, rct
-'                    Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & e.Key & ".bmp", _
-'                        DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
-'                        D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), e.Key
-'                    Kill GetTemporaryFolder & "\" & e.Key & ".bmp"
-'
-'                End If
-'
-'            End If
-'            Set e = Nothing
-'        Next
-'''    End If
-End Sub
-
-
-Public Sub RenderMirror()
-
-'    Dim e As Billboard
-'    Dim i As Long
-'    Dim l As Single
-'
-'    If Boards.Count > 0 Then
-'        For i = 1 To Boards.Count
-'            Set e = Boards(i)
-'
-'            If e.Visible And ((e.Form And ThreeDimensions) = ThreeDimensions) Then
-'
-'                l = Distance(Player.Origin.X, Player.Origin.Y, Player.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
-'                If l <= FAR Then
-'
-''                    If Mirrors.Exists(Billboards.Key(i)) Then
-''                        DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-''                        DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-''                        DDevice.SetMaterial GenericMaterial
-''                        DDevice.SetTexture 0, Mirrors.Item(Boards.Key(i))
-''                        DDevice.SetTexture 1, Nothing
-''
-''                        DDevice.SetStreamSource 0, Faces(e.FaceIndex).VBuffer, Len(Faces(e.FaceIndex).Verticies(0))
-''                        DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
-''
-''                    End If
-'
-'                End If
-'
-'            End If
-'            Set e = Nothing
-'        Next
-'    End If
-End Sub
-
 
 

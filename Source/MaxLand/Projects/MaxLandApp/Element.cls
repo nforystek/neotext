@@ -207,6 +207,7 @@ Public Property Let AttachedTo(ByVal RHS As String)
     End If
     pAttachedTo = RHS
     If RHS <> "" Then
+        
         If All(pAttachedTo).Attachments Is Nothing Then
             Set All(pAttachedTo).Attachments = New NTNodes10.Collection
         End If
@@ -214,6 +215,7 @@ Public Property Let AttachedTo(ByVal RHS As String)
         Set Origin = VectorAddition(Origin, All(pAttachedTo).Origin)
 
         Set Rotate = VectorMultiplyBy(AngleAxisAddition(VectorMultiplyBy(Rotate, RADIAN), VectorMultiplyBy(All(pAttachedTo).Rotate, RADIAN)), DEGREE)
+
 
     End If
     

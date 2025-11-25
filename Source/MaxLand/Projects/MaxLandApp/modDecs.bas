@@ -604,40 +604,40 @@ Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant
 End Function
 
 Public Function ReadFile(ByVal Path As String) As String
-    Dim num As Long
+    Dim Num As Long
     Dim Text As String
     Dim timeout As Single
     
-    num = FreeFile
+    Num = FreeFile
     On Error Resume Next
     On Local Error Resume Next
     If PathExists(Path, True) Then
-        Open Path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
-        Close #num
+        Open Path For Append Shared As #Num Len = 1 ' LenB(Chr(CByte(0)))
+        Close #Num
         Select Case Err.Number
             Case 54, 70, 75
                 Err.Clear
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open Path For Binary Access Read Lock Write As num Len = 1
+                Open Path For Binary Access Read Lock Write As Num Len = 1
                 If timeout <> 0 Then
-                    Open Path For Binary Shared As #num Len = 1
+                    Open Path For Binary Shared As #Num Len = 1
                 End If
-                Text = String(LOF(num), " ")
-                Get #num, 1, Text
-                Close #num
+                Text = String(LOF(Num), " ")
+                Get #Num, 1, Text
+                Close #Num
             Case Else
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open Path For Binary Access Read As num Len = 1
+                Open Path For Binary Access Read As Num Len = 1
                 If timeout <> 0 Then
-                    Open Path For Binary Shared As num Len = 1
+                    Open Path For Binary Shared As Num Len = 1
                 End If
-                Text = String(LOF(num), " ")
-                Get #num, 1, Text
-                Close #num
+                Text = String(LOF(Num), " ")
+                Get #Num, 1, Text
+                Close #Num
         End Select
         If Err Then GoTo failit
         On Error GoTo 0
@@ -670,14 +670,14 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
     End If
     
     Dim timeout As Single
-    Dim num As Integer
+    Dim Num As Integer
     
     On Error Resume Next
     On Local Error Resume Next
     
-    num = FreeFile
-    Open Path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
-    Close #num
+    Num = FreeFile
+    Open Path For Output Shared As #Num Len = 1  'Len = LenB(Chr(CByte(0)))
+    Close #Num
     
     Select Case Err.Number
 
@@ -686,23 +686,23 @@ Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open Path For Binary Access Write Lock Read As #num Len = 1
+            Open Path For Binary Access Write Lock Read As #Num Len = 1
             If timeout <> 0 Then
-                Open Path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #Num Len = 1
             End If
-            Put #num, 1, Text
-            Close #num
+            Put #Num, 1, Text
+            Close #Num
             WriteFile = True
         Case 0
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open Path For Binary Access Write As #num Len = 1
+            Open Path For Binary Access Write As #Num Len = 1
             If timeout <> 0 Then
-                Open Path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #Num Len = 1
             End If
-            Put #num, 1, Text
-            Close #num
+            Put #Num, 1, Text
+            Close #Num
             WriteFile = True
     End Select
 

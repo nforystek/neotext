@@ -84,8 +84,31 @@ Public Sub FadeMessage(ByVal txt As String)
     AddMessage txt
 End Sub
 
-Public Function Row(ByVal num As Long) As Long
-    Row = ((TextHeight \ Screen.TwipsPerPixelY) * num) + (2 * num)
+Public Function Row(ByVal Num As Long) As Long
+    Row = ((TextHeight \ Screen.TwipsPerPixelY) * Num) + (2 * Num)
+End Function
+
+Public Function Col(ByVal Num As Long) As Long
+    Col = ((frmMain.TextWidth("0") \ Screen.TwipsPerPixelX) * Num) + (2 * Num)
+End Function
+
+Public Function DrawText(Text As String, X As Single, Y As Single)
+
+    Dim TextRect As RECT
+    Dim Allignment As CONST_DTFLAGS
+    Allignment = DT_TOP Or DT_LEFT
+
+    TextRect.Top = Y
+    TextRect.Left = X
+    TextRect.Bottom = Y + (frmMain.TextHeight(Text) / Screen.TwipsPerPixelY)
+    TextRect.Right = X + (frmMain.TextWidth(Text) / Screen.TwipsPerPixelX)
+
+    DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR
+    DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR
+    DDevice.SetPixelShader PixelShaderDefault
+    DDevice.SetVertexShader FVF_RENDER
+
+    D3DX.DrawText MainFont, TextColor, Text, TextRect, Allignment
 End Function
 
 Public Sub RenderInfo()
@@ -165,6 +188,7 @@ Public Sub RenderInfo()
         Else
             txt = "ESC=" & IIf(MouseTrapped, "Exit", "Close")
         End If
+        
         DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), 2
 
         If ShowStat Then

@@ -46,105 +46,108 @@ Public Declare Function Test2 Lib "..\Debug\maxland.dll" Alias "Test" _
                                     (ByVal n1 As Integer, ByVal n2 As Integer, ByVal n3 As Integer) As Boolean
 
                                     
-'using all the function above, we then know based on Test() two triangles are certinaly in collision and therefore are
-'allowed to be poassed to this next function which is only nessisary if oyu need the data precise segment of traingel
-'collision.  I understand that is confusinng because the name of the function matches another popular one that just
-'checks accident that I lost my code, otherwise I would edit this externals and tthe file DLL info
-Public Declare Function tri_tri_intersect Lib "..\Backup\MaxLandLib.dll" _
-                                    (ByVal v0_0 As Single, ByVal v0_1 As Single, ByVal v0_2 As Single, _
-                                    ByVal v1_0 As Single, ByVal v1_1 As Single, ByVal v1_2 As Single, _
-                                    ByVal v2_0 As Single, ByVal v2_1 As Single, ByVal v2_2 As Single, _
-                                    ByVal u0_0 As Single, ByVal u0_1 As Single, ByVal u0_2 As Single, _
-                                    ByVal u1_0 As Single, ByVal u1_1 As Single, ByVal u1_2 As Single, _
-                                    ByVal u2_0 As Single, ByVal u2_1 As Single, ByVal u2_2 As Single) As Integer
-                                    'THAT WAS FUN
-
-Public Declare Function tri_tri_intersect2 Lib "..\Backup\MaxLandLib.dll" Alias "tri_tri_intersect" _
-                                    (ByVal v0_0 As Single, ByVal v0_1 As Single, ByVal v0_2 As Single, _
-                                    ByVal v1_0 As Single, ByVal v1_1 As Single, ByVal v1_2 As Single, _
-                                    ByVal v2_0 As Single, ByVal v2_1 As Single, ByVal v2_2 As Single, _
-                                    ByVal u0_0 As Single, ByVal u0_1 As Single, ByVal u0_2 As Single, _
-                                    ByVal u1_0 As Single, ByVal u1_1 As Single, ByVal u1_2 As Single, _
-                                    ByVal u2_0 As Single, ByVal u2_1 As Single, ByVal u2_2 As Single) As Integer
-                                    'THAT WAS FUN
-
-'Forystek() 3 variants of culling, vistype painting the canvas was the direction of able to process multiple
-'views, at it's default I think is the most powerful (usually a check between two traingles of all) but it
-'fails with a % resulting no triangles check depending on the camera, the other two are more secure, and all.
-'and unfortunatly I had not got as far as I projected, so it only colors vistype once against all flags
-Public Declare Function Forystek Lib "MaxLandLib.dll" _
-                                    (ByVal visType As Long, _
-                                    ByVal lngFaceCount As Long, _
-                                    sngCamera() As Single, _
-                                    sngFaceVis() As Single, _
-                                    sngVertexX() As Single, _
-                                    sngVertexY() As Single, _
-                                    sngVertexZ() As Single, _
-                                    sngScreenX() As Single, _
-                                    sngScreenY() As Single, _
-                                    sngScreenZ() As Single, _
-                                    sngZBuffer() As Single) As Long
-                                    
-Public Declare Function Forystek2 Lib "MaxLandLib.dll" Alias "Forystek" _
-                                    (ByVal visType As Long, _
-                                    ByVal lngFaceCount As Long, _
-                                    sngCamera() As Single, _
-                                    sngFaceVis() As Single, _
-                                    sngVertexX() As Single, _
-                                    sngVertexY() As Single, _
-                                    sngVertexZ() As Single, _
-                                    sngScreenX() As Single, _
-                                    sngScreenY() As Single, _
-                                    sngScreenZ() As Single, _
-                                    sngZBuffer() As Single) As Long
-
-'this is the project purpose, the collision checker, I am certian when I did this one
-'it was object count * two at the least for checking and then the trainlges do so too
-'but the visType is a flag that only traingles with the flag are check for collision
-Public Declare Function Collision Lib "MaxLandLib.dll" _
-                                   (ByVal visType As Long, _
-                                    ByVal lngFaceCount As Long, _
-                                    sngFaceVis() As Single, _
-                                    sngVertexX() As Single, _
-                                    sngVertexY() As Single, _
-                                    sngVertexZ() As Single, _
-                                    ByVal lngFaceNum As Long, _
-                                    ByRef lngCollidedBrush As Long, _
-                                    ByRef lngCollidedFace As Long) As Boolean
-                                    
-Public Declare Function Collision2 Lib "MaxLandLib.dll" Alias "Collision" _
-                                   (ByVal visType As Long, _
-                                    ByVal lngFaceCount As Long, _
-                                    sngFaceVis() As Single, _
-                                    sngVertexX() As Single, _
-                                    sngVertexY() As Single, _
-                                    sngVertexZ() As Single, _
-                                    ByVal lngFaceNum As Long, _
-                                    ByRef lngCollidedBrush As Long, _
-                                    ByRef lngCollidedFace As Long) As Boolean
-
-
-'The following variables are needed for Forystek() and Collision() culling and collision
-'checking it is quite incompatable to prorietary needs (like doubling the data to use
-'the functions vs however one has their data stored already could use)
-Public lngTotalTriangles As Long
-Public sngTriangleFaceData() As Single
-'sngTriangleFaceData dimension (,n) where n=# is triangle/face index
-'sngTriangleFaceData dimension (n,) where n=0 is x of the face normal
-'sngTriangleFaceData dimension (n,) where n=1 is y of the face normal
-'sngTriangleFaceData dimension (n,) where n=2 is z of the face normal
-'sngTriangleFaceData dimension (n,) where n=3 is custom vistype flag
-'sngTriangleFaceData dimension (n,) where n=4 is the object index
-'sngTriangleFaceData dimension (n,) where n=4 is the face index
-
-Public sngVertexXAxisData() As Single
-Public sngVertexYAxisData() As Single
-Public sngVertexZAxisData() As Single
-'sngVertexXAxisData dimension (,n) where n=# is triangle/face index
-'sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
-'sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
-'sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
-'sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
+''using all the function above, we then know based on Test() two triangles are certinaly in collision and therefore are
+''allowed to be poassed to this next function which is only nessisary if oyu need the data precise segment of traingel
+''collision.  I understand that is confusinng because the name of the function matches another popular one that does
+''more so check for collision.  This one however assumes they are in collision and returns a defined % of integer.
+''I honestly can not get a call to it from VB6 with out crashing, but it is used in Collision() internally to C++
+''the tricky part is how the traingles are passed, you see logically what could be two sets of 3 vertext but isn't.
+''Values that you get intermediate to texture coordinates (distance to plane perhaps and lengths) are normalized in
+'Public Declare Function tri_tri_intersect Lib "..\Backup\MaxLandLib.dll" _
+'                                    (ByVal v0_0 As Single, ByVal v0_1 As Single, ByVal v0_2 As Single, _
+'                                    ByVal v1_0 As Single, ByVal v1_1 As Single, ByVal v1_2 As Single, _
+'                                    ByVal v2_0 As Single, ByVal v2_1 As Single, ByVal v2_2 As Single, _
+'                                    ByVal u0_0 As Single, ByVal u0_1 As Single, ByVal u0_2 As Single, _
+'                                    ByVal u1_0 As Single, ByVal u1_1 As Single, ByVal u1_2 As Single, _
+'                                    ByVal u2_0 As Single, ByVal u2_1 As Single, ByVal u2_2 As Single) As Integer
+'                                    'THAT WAS FUN
+'
+'Public Declare Function tri_tri_intersect2 Lib "..\Debug\maxland.dll" Alias "tri_tri_intersect" _
+'                                    (ByVal v0_0 As Single, ByVal v0_1 As Single, ByVal v0_2 As Single, _
+'                                    ByVal v1_0 As Single, ByVal v1_1 As Single, ByVal v1_2 As Single, _
+'                                    ByVal v2_0 As Single, ByVal v2_1 As Single, ByVal v2_2 As Single, _
+'                                    ByVal u0_0 As Single, ByVal u0_1 As Single, ByVal u0_2 As Single, _
+'                                    ByVal u1_0 As Single, ByVal u1_1 As Single, ByVal u1_2 As Single, _
+'                                    ByVal u2_0 As Single, ByVal u2_1 As Single, ByVal u2_2 As Single) As Integer
+'                                    'THAT WAS FUN
+'
+''Forystek() 3 variants of culling, vistype painting the canvas was the direction of able to process multiple
+''views, at it's default I think is the most powerful (usually a check between two traingles of all) but it
+''fails with a % resulting no triangles check depending on the camera, the other two are more secure, and all.
+''and unfortunatly I had not got as far as I projected, so it only colors vistype once against all flags
+'Public Declare Function Forystek Lib "MaxLandLib.dll" _
+'                                    (ByVal visType As Long, _
+'                                    ByVal lngFaceCount As Long, _
+'                                    sngCamera() As Single, _
+'                                    sngFaceVis() As Single, _
+'                                    sngVertexX() As Single, _
+'                                    sngVertexY() As Single, _
+'                                    sngVertexZ() As Single, _
+'                                    sngScreenX() As Single, _
+'                                    sngScreenY() As Single, _
+'                                    sngScreenZ() As Single, _
+'                                    sngZBuffer() As Single) As Long
+'
+'Public Declare Function Forystek2 Lib "..\Debug\maxland.dll" Alias "Forystek" _
+'                                    (ByVal visType As Long, _
+'                                    ByVal lngFaceCount As Long, _
+'                                    sngCamera() As Single, _
+'                                    sngFaceVis() As Single, _
+'                                    sngVertexX() As Single, _
+'                                    sngVertexY() As Single, _
+'                                    sngVertexZ() As Single, _
+'                                    sngScreenX() As Single, _
+'                                    sngScreenY() As Single, _
+'                                    sngScreenZ() As Single, _
+'                                    sngZBuffer() As Single) As Long
+'
+''this is the project purpose, the collision checker, I am certian when I did this one
+''it was object count * two at the least for checking and then the trainlges do so too
+''but the visType is a flag that only traingles with the flag are check for collision
+'Public Declare Function Collision Lib "MaxLandLib.dll" _
+'                                   (ByVal visType As Long, _
+'                                    ByVal lngFaceCount As Long, _
+'                                    sngFaceVis() As Single, _
+'                                    sngVertexX() As Single, _
+'                                    sngVertexY() As Single, _
+'                                    sngVertexZ() As Single, _
+'                                    ByVal lngFaceNum As Long, _
+'                                    ByRef lngCollidedBrush As Long, _
+'                                    ByRef lngCollidedFace As Long) As Boolean
+'
+'Public Declare Function Collision2 Lib "..\Debug\maxland.dll" Alias "Collision" _
+'                                   (ByVal visType As Long, _
+'                                    ByVal lngFaceCount As Long, _
+'                                    sngFaceVis() As Single, _
+'                                    sngVertexX() As Single, _
+'                                    sngVertexY() As Single, _
+'                                    sngVertexZ() As Single, _
+'                                    ByVal lngFaceNum As Long, _
+'                                    ByRef lngCollidedBrush As Long, _
+'                                    ByRef lngCollidedFace As Long) As Boolean
+'
+'
+''The following variables are needed for Forystek() and Collision() culling and collision
+''checking it is quite incompatable to prorietary needs (like doubling the data to use
+''the functions vs however one has their data stored already could use)
+'Public lngTotalTriangles As Long
+'Public sngTriangleFaceData() As Single
+''sngTriangleFaceData dimension (,n) where n=# is triangle/face index
+''sngTriangleFaceData dimension (n,) where n=0 is x of the face normal
+''sngTriangleFaceData dimension (n,) where n=1 is y of the face normal
+''sngTriangleFaceData dimension (n,) where n=2 is z of the face normal
+''sngTriangleFaceData dimension (n,) where n=3 is custom vistype flag
+''sngTriangleFaceData dimension (n,) where n=4 is the object index
+''sngTriangleFaceData dimension (n,) where n=4 is the face index
+'
+'Public sngVertexXAxisData() As Single
+'Public sngVertexYAxisData() As Single
+'Public sngVertexZAxisData() As Single
+''sngVertexXAxisData dimension (,n) where n=# is triangle/face index
+''sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
+''sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
+''sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
+''sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
 
 Public Type Point
     X As Single
@@ -248,9 +251,7 @@ Public Sub Main()
     PointListsX(2) = -4: PointListsY(2) = 4
     PointListsX(3) = -4: PointListsY(3) = -4
     PointListsX(4) = 4: PointListsY(4) = -4
-    
-    
-    
+        
     Do
 
         Randomize
@@ -273,9 +274,12 @@ Public Sub Main()
         End With
 
         Debug.Print "PointBehindPoly()=" & PointBehindPoly(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
-            " PointBehindPoly2()=" & PointBehindPoly2(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)
-        If Not (PointBehindPoly(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1) = _
-            PointBehindPoly2(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)) Then Stop
+            " PointBehindPoly2()=" & PointBehindPoly2(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
+            " PointBehindPoly3()=" & PointBehindPoly3(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)
+        If (Not (CVar(PointBehindPoly(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
+            CVar(PointBehindPoly2(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Or _
+            (Not (CVar(PointBehindPoly2(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
+            CVar(PointBehindPoly3(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Then Stop
         Debug.Print
 
         'the box is 8x8 centered on (0,0) so we'll use
@@ -288,24 +292,70 @@ Public Sub Main()
             "PointInPoly3()=" & PointInPoly3(pointX, pointY, PointListsX, PointListsY, 5)
         If (Not (PointInPoly(pointX, pointY, PointListsX, PointListsY, 5) = _
             PointInPoly2(pointX, pointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5))) Or _
-            (Not (PointInPoly(pointX, pointY, PointListsX, PointListsY, 5) = _
-            PointInPoly3(pointX, pointY, PointListsX, PointListsY, 5))) Then Stop
+             (Not (PointInPoly(pointX, pointY, PointListsX, PointListsY, 5) = PointInPoly3(pointX, pointY, PointListsX, PointListsY, 5))) Then Stop
         Debug.Print
-
+        
         'arbitrary arguments, unsigned short return values from PointInPoly that results a percentage with in the
         'scope of a integer max value from zero, indicating the point in the point list it falls inside the poly on
-        n1 = RndNum(0, 1)
-        n2 = RndNum(0, 1)
-        n3 = RndNum(0, 1)
+        n1 = Round(RndNum(0, 1), 0)
+        n2 = Round(RndNum(0, 1), 0)
+        n3 = Round(RndNum(0, 1), 0)
 
         Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3)
         If Not CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)) Then Stop
         Debug.Print
 
+'        Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3) & " Test3(n1, n2, n3)=" & Test3(n1, n2, n3)
+'        If (Not (CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)))) Or (Not (CVar(Test2(n1, n2, n3)) = CVar(Test3(n1, n2, n3)))) Then Stop
+'        Debug.Print
+
     Loop While True
     
     
 End Sub
+
+
+Public Function Test3(ByVal n1 As Single, ByVal n2 As Single, ByVal n3 As Single) As Boolean
+'I have been unsuccessful in the VB6 environment to get this one to act like Test() and Test2()
+    Test3 = ((((n1 And n2 + n3) Or (n1 + n2 And n3)) And ((n1 - n2 Or Not n3) - (Not n1 Or n2 - n3))) _
+        Or (((n1 - n2 Or n3) And (n1 - n2 Or n3)) + ((n1 Or n2 + Not n3) And (Not n1 + n2 And n3))))
+End Function
+
+Public Function PointBehindPoly3(ByVal pointX As Single, ByVal pointY As Single, ByVal pointZ As Single, _
+                                ByVal length1 As Single, ByVal length2 As Single, ByVal length3 As Single, _
+                                ByVal normalX As Single, ByVal normalY As Single, ByVal normalZ As Single) As Boolean
+
+    PointBehindPoly3 = ((pointZ * length3 + length2 * pointY + length1 * pointX) - (length3 * normalZ + length1 * normalX + length2 * normalY) <= 0)
+End Function
+
+Public Function PointInPoly3(ByVal pX As Single, ByVal pY As Single, polyx() As Single, polyy() As Single, ByVal polyn As Long) As Long
+
+    If (polyn > 2) Then
+        Dim ref As Single
+        Dim ret As Single
+        Dim result As Long
+
+        ref = ((pX - polyx(0)) * (polyy(1) - polyy(0)) - (pY - polyy(0)) * (polyx(1) - polyx(0)))
+        ret = ref
+        Dim i As Long
+        For i = 1 To polyn
+            ref = ((pX - polyx(i)) * (polyy(i) - polyy(i - 1)) - (pY - polyy(i)) * (polyx(i) - polyx(i - 1)))
+            If ((ret >= 0) And (ref < 0) And (result = 0)) Then
+                result = i
+            End If
+            ret = ref
+        Next
+        If ((result = 0) Or (result > polyn)) Then
+            PointInPoly3 = 1 '//todo: this is suppose to return a decimal percent
+                                  '                      //of the total polygon points where in is found inside
+        Else
+            PointInPoly3 = 0
+        End If
+    End If
+
+End Function
+
+
 
 
 Public Function Distance(ByRef p1 As Point, ByRef p2 As Point) As Single
@@ -414,118 +464,5 @@ Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V
         End If
     End If
 End Function
-'Public Sub RandomTriangle()
-'
-'    Dim pX As Single
-'    Dim pY As Single
-'    Dim pZ As Single
-'    Dim vX As Single
-'    Dim vY As Single
-'    Dim vZ As Single
-'    Dim nX As Single
-'    Dim nY As Single
-'    Dim nZ As Single
-'
-'    'to setup the sides, first
-'    'randomize three points
-'    With RandomPoint
-'        pX = .X
-'        pY = .Y
-'        pZ = .Z
-'    End With
-'
-'    With RandomPoint
-'        nX = .X
-'        nY = .Y
-'        nZ = .Z
-'    End With
-'
-'    With RandomPoint
-'        vX = .X
-'        vY = .Y
-'        vZ = .Z
-'    End With
-'
-'    'get the distances
-'    vX1 = (((pointX - nX) ^ 2) + ((pointY - nY) ^ 2) + ((pointZ - nZ) ^ 2))
-'    If vX1 <> 0 Then
-'        vX1 = vX1 ^ (1 / 2)
-'    Else
-'        vX1 = 0
-'    End If
-'    vY1 = (((nX - pX) ^ 2) + ((nY - pY) ^ 2) + ((nZ - pZ) ^ 2))
-'    If vY1 <> 0 Then
-'        vY1 = vY1 ^ (1 / 2)
-'    Else
-'        vY1 = 0
-'    End If
-'    vZ1 = (((pX - pointX) ^ 2) + ((pY - pointY) ^ 2) + ((pZ - pointZ) ^ 2))
-'    If vZ1 <> 0 Then
-'        vZ1 = vZ1 ^ (1 / 2)
-'    Else
-'        vZ1 = 0
-'    End If
-'
-'    'rerandomize a point
-'    pX1 = (RndNum(0, 200) - 100)
-'    pY1 = (RndNum(0, 200) - 100)
-'    pZ1 = (RndNum(0, 200) - 100)
-'
-'    'makeup a normal of the poly (n)
-'    nX1 = ((RndNum(0, 200) / 100) - 1)
-'    nY1 = ((RndNum(0, 200) / 100) - 1)
-'    nZ1 = ((RndNum(0, 200) / 100) - 1)
-'
-'End Sub
 
 
-'Public Function PointInPoly3(ByVal pX As Single, ByVal pY As Single, polyx() As Single, polyy() As Single, ByVal polyn As Long) As Long
-'    If polyn > 2 Then
-'        Dim ref As Single
-'        Dim ret As Single
-'        ref = (pX - polyx(0)) * (polyy(1) - polyy(0)) - (pY - polyy(0)) * (polyx(1) - polyx(0))
-'        ret = ref
-'        Dim i As Long
-'        For i = 1 To polyn
-'            ref = ((pX - polyx(i)) * (polyy(i) - polyy(i - 1)) - (pY - polyy(i)) * (polyx(i) - polyx(i - 1)))
-'            If ((ret > 0) And (ref < 0)) And PointInPoly3 = 0 Then
-'                PointInPoly3 = i
-'            End If
-'            ret = ref
-'        Next
-'        If ((PointInPoly3 > 0) Or (PointInPoly3 <= polyn)) Then
-'            PointInPoly3 = 1
-'        End If
-''        If PointInPoly3 <> 0 Then
-''            PointInPoly3 = -Int(((ret > 0) And (ref > 0)))
-''        Else
-''            PointInPoly3 = -Int(((ret > 0) Xor (ref < 0)))
-''        End If
-'    End If
-'End Function
-Public Function PointInPoly3(ByVal pX As Single, ByVal pY As Single, polyx() As Single, polyy() As Single, ByVal polyn As Long) As Long
-
-    If (polyn > 2) Then
-        Dim ref As Single
-        Dim ret As Single
-        Dim result As Long
-        
-        ref = ((pX - polyx(0)) * (polyy(1) - polyy(0)) - (pY - polyy(0)) * (polyx(1) - polyx(0)))
-        ret = ref
-        Dim i As Long
-        For i = 1 To polyn
-            ref = ((pX - polyx(i)) * (polyy(i) - polyy(i - 1)) - (pY - polyy(i)) * (polyx(i) - polyx(i - 1)))
-            If ((ret >= 0) And (ref < 0) And (result = 0)) Then
-                PointInPoly3 = i
-            End If
-            ret = ref
-        Next
-        If ((result = 0) Or (result > polyn)) Then
-            PointInPoly3 = 1 '//todo: this is suppose to return a decimal percent
-                                  '                      //of the total polygon points where in is found inside
-        Else
-            PointInPoly3 = 0
-        End If
-    End If
-   
-End Function

@@ -81,7 +81,20 @@ element <pawn7>
 	.boundsmodel="bounds-pawn.x"
 	.visualmodel="visual-pawn.x"
 	.gravitational=false
-	'.attachedto = "player"
+'	.attachedto = "player"
+}
+
+
+board <mirror> {
+
+	.origin = [2,0,-1.5]
+	.Point1 = [2,0,-1.5]
+	.Point2 = [3,0,-1.5]
+	.Point3 = [3,3,-1.5]
+	.Point4 = [2,3,-1.5]
+	.filename = "pawn.bmp"
+	.mirror = true
+	.visible=true
 }
 
 
@@ -462,15 +475,6 @@ light
 	.diffuseroll=50
 	.diffusemax=-30
 	.sunlight=true
-}
-board <mirror> {
-	.visible=true
-	.origin = [2,0,-1.5]
-	.Point1 = [2,0,-1.5]
-	.Point2 = [3,0,-1.5]
-	.Point3 = [3,3,-1.5]
-	.Point4 = [2,3,-1.5]
-	.filename = "pawn.bmp"
 }
 
 

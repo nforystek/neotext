@@ -1,9 +1,9 @@
 <?xml version="1.0"?><Serial>  <Variables>
-        <Player.Element.Origin>[3, -0.124, 0]</Player.Element.Origin>
+        <Player.Element.Origin>[3.712944, -0.473081, -4.351785]</Player.Element.Origin>
         <Player.Element.Rotate>[360, 360, 360]</Player.Element.Rotate>
-        <Player.Camera.Angle>-2.2495</Player.Camera.Angle>
-        <Player.Camera.Pitch>-0.157</Player.Camera.Pitch>
-        <Player.Camera.Zoom>5</Player.Camera.Zoom>
+        <Player.Camera.Angle>5.617315</Player.Camera.Angle>
+        <Player.Camera.Pitch>-8.999997E-02</Player.Camera.Pitch>
+        <Player.Camera.Zoom>1</Player.Camera.Zoom>
         <pawn7.Origin>[1, 0, 0]</pawn7.Origin>
         <pawn7.Rotate>[360, 360, 360]</pawn7.Rotate>
         <orders>0</orders>
@@ -30,11 +30,11 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.803621, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -22.29168, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.803621, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.804543, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -150, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.804543, -11.312]</pawn3.origin>
   </Variables>
-<DateTime>10%2F11%2F2025+9%3A34%3A21+PM</DateTime>
+<DateTime>1%2F7%2F2010+4%3A08%3A34+PM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
 Set+Bindings%2EItem%28%22ESCAPE%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
 Bindings%2EItem%28%22ESCAPE%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BIf%2B%2528%2528Not%2BFullScreen%2529%2BOr%2BConsoleVisible%2529%2BAnd%2BMouseTrapped%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522untrapmouse%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BElseIf%2BFullScreen%2BOr%2B%2528Not%2BFullScreen%2BAnd%2BNot%2BMouseTrapped%2529%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522quit%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BEnd%2BIf%250D%250A%2509%22%29

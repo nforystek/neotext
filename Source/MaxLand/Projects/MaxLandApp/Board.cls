@@ -146,6 +146,7 @@ Public Property Get Origin() As Point
 End Property
 Public Property Set Origin(ByRef RHS As Point)
     Set pOrigin = RHS
+    RecreateSkins
 End Property
 
 Public Property Get ScaleX() As Single
@@ -166,10 +167,11 @@ Public Property Let ScaleY(ByVal RHS As Single)
     RecreateSkins
 End Property
 Public Property Get Mirror() As Boolean
-    Mirror = pMirror
+    Mirror = pMirror And (Not (pVBuf Is Nothing))
 End Property
 Public Property Let Mirror(ByVal RHS As Boolean)
     pMirror = RHS
+    RecreateSkins
 End Property
 Public Property Get Translucent() As Boolean
     Translucent = pTranslucent
@@ -239,6 +241,7 @@ Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As Stri
             Err.Raise 8, App.EXEName, "File not found."
         End If
     End If
+    RecreateSkins
     
 End Property
 
