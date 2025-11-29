@@ -36,7 +36,7 @@ Public Declare Function EnumWindows Lib "user32" (ByVal lpEnumFunc As Long, ByVa
 
 Public Declare Function GetCurrentProcessId Lib "kernel32" () As Long
 Public Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hwnd As Long, lpdwProcessId As Long) As Long
-Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal path As String, ByVal cbBytes As Long) As Long
+Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal Path As String, ByVal cbBytes As Long) As Long
 Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameA" (ByVal hModule As Long, ByVal lpFileName As String, ByVal nSize As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetCurrentProcess Lib "kernel32" () As Long
@@ -588,7 +588,7 @@ Public Function FileSize(ByVal fname As String) As Double
     Set myFso = CreateObject("Scripting.FileSystemObject")
     Dim F As Object
     Set F = myFso.GetFile(fname)
-    FileSize = F.size
+    FileSize = F.Size
     Set F = Nothing
     Set myFso = Nothing
 End Function
@@ -681,7 +681,7 @@ Public Sub DebugClear()
 End Sub
 
 Public Sub DebugPrint(ByVal Msg As String)
-#If VBIDE = -1 Then
+#If VBIDE = 0 Then
     Dim FileNum As Integer
     FileNum = FreeFile
     Open AppPath & "debug.txt" For Append As #FileNum
@@ -710,7 +710,7 @@ Public Function AppPath(Optional ByVal RootEXEOf As Boolean = False) As String
         lpTemp = GetFilePath(Trim(Left(lpTemp, nLen)))
         If Right(lpTemp, 1) <> "\" Then lpTemp = lpTemp & "\"
     Else
-        lpTemp = IIf((Right(App.path, 1) = "\"), App.path, App.path & "\")
+        lpTemp = IIf((Right(App.Path, 1) = "\"), App.Path, App.Path & "\")
     End If
 #If VBIDE Then
     If LCase(Right(lpTemp, 10)) = "\projects\" Then
@@ -814,7 +814,7 @@ Public Function IsDebugger(Optional ByVal AppTitle As String = "") As Boolean
         lpTemp = Left(lpTemp, nLen)
         If (InStrRev(LCase(lpTemp), "vb6.exe") > 0) Then
             Ret = -2
-            If AppTitle = "" Then AppTitle = App.title
+            If AppTitle = "" Then AppTitle = App.Title
             If AppTitle <> "" Then
                 IsDebugState = AppTitle & " - Microsoft Visual Basic"
                 Dim TmpHwnds As String
@@ -1016,6 +1016,10 @@ Public Function IsAlphaNumeric(ByVal Text As String) As Boolean
 End Function
 
 Public Function PathExists(ByVal URL As String, Optional ByVal IsFile As Variant = Empty) As Boolean
+    'checks fot the existance of a path, if it is known checking for a file vs. a folder, set infile = true
+    'if folder infile = false, left empty it will attempt to check whichever exists and may false positive.
+    'it only checks local system and msn network uri loations, in any formatting, or type falgs possible
+    
     Dim Ret As Boolean
     
     If Left(URL, 2) = "\\" Then GoTo altcheck
@@ -1145,6 +1149,7 @@ altcheck:
         Case Else '53, 52
             Err.Clear
     End Select
+
 '55 File already open
 '58 File already exists
 '70 Permission denied
@@ -1190,7 +1195,10 @@ fixthis:
     End If
 End Function
 
-Public Function ReadFile(ByVal path As String) As String
+Public Function ReadFile(ByVal Path As String) As String
+    'a comprehensive ReadFile that is share/lock aware with network
+    'error proofing and a latent epalse attempt timing and timeout
+    
     Dim num As Long
     Dim Text As String
     Dim timeout As Single
@@ -1198,8 +1206,8 @@ Public Function ReadFile(ByVal path As String) As String
     num = FreeFile
     On Error Resume Next
     On Local Error Resume Next
-    If PathExists(path, True) Then
-        Open path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
+    If PathExists(Path, True) Then
+        Open Path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
         Close #num
         Select Case Err.Number
             Case 54, 70, 75
@@ -1207,9 +1215,9 @@ Public Function ReadFile(ByVal path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open path For Binary Access Read Lock Write As num Len = 1
+                Open Path For Binary Access Read Lock Write As num Len = 1
                 If timeout <> 0 Then
-                    Open path For Binary Shared As #num Len = 1
+                    Open Path For Binary Shared As #num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1218,9 +1226,9 @@ Public Function ReadFile(ByVal path As String) As String
                 On Error GoTo tryagain
                 On Local Error GoTo tryagain
                 
-                Open path For Binary Access Read As num Len = 1
+                Open Path For Binary Access Read As num Len = 1
                 If timeout <> 0 Then
-                    Open path For Binary Shared As num Len = 1
+                    Open Path For Binary Shared As num Len = 1
                 End If
                 Text = String(LOF(num), " ")
                 Get #num, 1, Text
@@ -1250,10 +1258,12 @@ failit:
     Err.Raise 75, "ReadFile"
 End Function
 
-Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
-
-    If PathExists(path, True) Then
-        If (GetAttr(path) And vbReadOnly) <> 0 Then Exit Function
+Public Function WriteFile(ByVal Path As String, ByRef Text As String) As Boolean
+    'a comprehensive WriteFile that is share/lock aware with network
+    'error proofing and a latent epalse attempt timing and timeout
+    
+    If PathExists(Path, True) Then
+        If (GetAttr(Path) And vbReadOnly) <> 0 Then Exit Function
     End If
     
     Dim timeout As Single
@@ -1263,7 +1273,7 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
     On Local Error Resume Next
     
     num = FreeFile
-    Open path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
+    Open Path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
     Close #num
     
     Select Case Err.Number
@@ -1273,9 +1283,9 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open path For Binary Access Write Lock Read As #num Len = 1
+            Open Path For Binary Access Write Lock Read As #num Len = 1
             If timeout <> 0 Then
-                Open path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num
@@ -1284,9 +1294,9 @@ Public Function WriteFile(ByVal path As String, ByRef Text As String) As Boolean
             On Error GoTo tryagain
             On Local Error GoTo tryagain
             
-            Open path For Binary Access Write As #num Len = 1
+            Open Path For Binary Access Write As #num Len = 1
             If timeout <> 0 Then
-                Open path For Binary Shared As #num Len = 1
+                Open Path For Binary Shared As #num Len = 1
             End If
             Put #num, 1, Text
             Close #num
@@ -1315,52 +1325,6 @@ failit:
     On Local Error GoTo 0
     Err.Raise 75, "WriteFile"
 End Function
-
-'Public Function ReadFile(ByVal path As String) As String
-'    Dim num As Long
-'    Dim Text As String
-'
-'    num = FreeFile
-'    On Error Resume Next
-'    If PathExists(path, True) Then
-'        Open path For Append Shared As #num Len = 1 ' LenB(Chr(CByte(0)))
-'        Close #num
-'
-'    End If
-'
-'    Select Case Err.Number
-'        Case 54, 70, 75
-'            Err.Clear
-'            On Error GoTo 0
-'            num = FreeFile
-'            Open path For Binary Access Read As #num Len = 1  'Access Read Lock Write As num Len = 1 'LenB(Chr(CByte(0)))
-'                Text = String(LOF(num), " ")
-'                Get #num, 1, Text
-'            Close #num
-'        Case Else
-'            On Error GoTo 0
-'            num = FreeFile
-'            Open path For Binary Shared As #num Len = 1 'Access Read Lock Write As num Len = 1 'LenB(Chr(CByte(0)))
-'                Text = String(LOF(num), " ")
-'                Get #num, 1, Text
-'            Close #num
-'    End Select
-'
-'
-'    ReadFile = Text
-'End Function
-'
-'Public Sub WriteFile(ByVal path As String, ByRef Text As String)
-'    If (GetAttr(path) And vbReadOnly) = 0 Then
-'        Dim num As Integer
-'        num = FreeFile
-'        Open path For Output Shared As #num Len = 1  'Len = LenB(Chr(CByte(0)))
-'        Close #num
-'        Open path For Binary Shared As #num Len = 1 'Access Write Lock Read As #num Len = 1  'Len = LenB(Chr(CByte(0)))
-'            Put #num, 1, Text
-'        Close #num
-'    End If
-'End Sub
 
 Public Function GetFilePath(ByVal URL As String) As String
     Dim nFolder As String
@@ -1415,18 +1379,18 @@ Public Function GetFileSize(ByVal URL As String) As Double
     GetFileSize = FileSize(URL)
 End Function
 
-Public Function IsFileNameValid(ByVal FileName As String) As Boolean
+Public Function IsFileNameValid(ByVal Filename As String) As Boolean
     Dim isValid As Boolean
     isValid = True
-    If InStr(FileName, "\") > 0 Then isValid = False
-    If InStr(FileName, "/") > 0 Then isValid = False
-    If InStr(FileName, ":") > 0 Then isValid = False
-    If InStr(FileName, "*") > 0 Then isValid = False
-    If InStr(FileName, "?") > 0 Then isValid = False
-    If InStr(FileName, """") > 0 Then isValid = False
-    If InStr(FileName, "<") > 0 Then isValid = False
-    If InStr(FileName, ">") > 0 Then isValid = False
-    If InStr(FileName, "|") > 0 Then isValid = False
+    If InStr(Filename, "\") > 0 Then isValid = False
+    If InStr(Filename, "/") > 0 Then isValid = False
+    If InStr(Filename, ":") > 0 Then isValid = False
+    If InStr(Filename, "*") > 0 Then isValid = False
+    If InStr(Filename, "?") > 0 Then isValid = False
+    If InStr(Filename, """") > 0 Then isValid = False
+    If InStr(Filename, "<") > 0 Then isValid = False
+    If InStr(Filename, ">") > 0 Then isValid = False
+    If InStr(Filename, "|") > 0 Then isValid = False
     IsFileNameValid = isValid
 End Function
 

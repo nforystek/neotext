@@ -71,31 +71,31 @@ player
 }
 
 
-element <pawn7>
-{
-	.visible=false
-	.origin=[1, 0, 0]
-	.scaled=[.50 ,.50, .50]
-	.rotate=[0, 0, 0]
-	.offset=[0, 0, 0]
-	.boundsmodel="bounds-pawn.x"
-	.visualmodel="visual-pawn.x"
-	.gravitational=false
+'element <pawn7>
+'{
+'	.visible=false
+'	.origin=[1, 0, 0]
+'	.scaled=[.50 ,.50, .50]
+'	.rotate=[0, 0, 0]
+'	.offset=[0, 0, 0]
+'	.boundsmodel="bounds-pawn.x"
+'	.visualmodel="visual-pawn.x"
+'	.gravitational=false
 '	.attachedto = "player"
-}
+'}
 
 
-board <mirror> {
-
-	.origin = [2,0,-1.5]
-	.Point1 = [2,0,-1.5]
-	.Point2 = [3,0,-1.5]
-	.Point3 = [3,3,-1.5]
-	.Point4 = [2,3,-1.5]
-	.filename = "pawn.bmp"
-	.mirror = true
-	.visible=true
-}
+'board <mirror> {
+'
+'	.visible=true
+'	.point1 = [2,0,-1.5]
+'	.point4 = [3,0,-1.5]
+'	.point3 = [3,3,-1.5]
+'	.point2 = [2,3,-1.5]
+'	.scalex=1
+'	.scaley=1
+'	.filename = "pawn.bmp"
+'}
 
 
 variable <tempswap1>=0
@@ -590,45 +590,7 @@ board <dime>
 {
 	.filename="stonegray.bmp"
 }
-board <bubbles1>
-{
-	.visible=true
-	.point1=[ 1.6, -1, -2]
-	.point2=[-1.6, -1, -2]
-	.point3=[-1.6, -1, 2]
-	.point4=[ 1.6, -1, 2]
-	.scalex=2
-	.scaley=2
-	.animated=0.090
-	.filename="bubbles1.bmp"
-	.filename="bubbles2.bmp"
-	.filename="bubbles3.bmp"
-	.filename="bubbles4.bmp"
-	.filename="bubbles5.bmp"
-	.filename="bubbles6.bmp"
-	.filename="bubbles7.bmp"
-	.filename="bubbles8.bmp"
 
-}
-board <bubbles2>
-{
-	.visible=true
-	.point1=[-0.6, -1, 2]
-	.point2=[0.6, -1, 2]
-	.point3=[0.6, -1, -2]
-	.point4=[-0.6, -1, -2]
-	.scalex=1
-	.scaley=2
-	.animated=0.083
-	.filename="bubbles1.bmp"
-	.filename="bubbles2.bmp"
-	.filename="bubbles3.bmp"
-	.filename="bubbles4.bmp"
-	.filename="bubbles5.bmp"
-	.filename="bubbles6.bmp"
-	.filename="bubbles7.bmp"
-	.filename="bubbles8.bmp"
-}
 
 
 
@@ -653,6 +615,45 @@ beacon <firegraphic>
 	.filename="giphy13.bmp"
 	.beaconlight=1
 	.verticalskew=true
+}
+board <bubbles1>
+{
+	.visible=true
+	.point1=[ 1.6, -1, -2]
+	.point2=[-1.6, -1, -2]
+	.point3=[-1.6, -1, 2]
+	.point4=[ 1.6, -1, 2]
+	.scalex=2
+	.scaley=2
+	.animated=0.090
+	.filename="bubbles1.bmp"
+	.filename="bubbles2.bmp"
+	.filename="bubbles3.bmp"
+	.filename="bubbles4.bmp"
+	.filename="bubbles5.bmp"
+	.filename="bubbles6.bmp"
+	.filename="bubbles7.bmp"
+	.filename="bubbles8.bmp"
+}
+
+board <bubbles2>
+{
+	.visible=true
+	.point1=[-0.6, -1, 2]
+	.point2=[0.6, -1, 2]
+	.point3=[0.6, -1, -2]
+	.point4=[-0.6, -1, -2]
+	.scalex=1
+	.scaley=2
+	.animated=0.083
+	.filename="bubbles1.bmp"
+	.filename="bubbles2.bmp"
+	.filename="bubbles3.bmp"
+	.filename="bubbles4.bmp"
+	.filename="bubbles5.bmp"
+	.filename="bubbles6.bmp"
+	.filename="bubbles7.bmp"
+	.filename="bubbles8.bmp"
 }
 beacon <bubble1>
 {
@@ -1977,8 +1978,8 @@ method <checkgame>
 			bubbles1.visible=false
 			bubbles2.visible=false
 			firegraphic.visible=false
-			bubble1.visible=false
-			bubble2.visible=false
+			'bubble1.visible=false
+			'bubble2.visible=false
 			smoke.visible=false
 			player.Element.origin.x=-45.898
 			player.Element.origin.y=8.533
@@ -2303,8 +2304,7 @@ serialize [
 	Player.Camera.Angle
 	Player.Camera.Pitch
 	Player.Camera.Zoom
-	pawn7.Origin
-	pawn7.Rotate
+
 	orders
 	firevix1var
 	firevix2var

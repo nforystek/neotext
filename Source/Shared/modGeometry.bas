@@ -94,6 +94,7 @@ Public Function ZeroRotation() As Point
     End With
     AngleAxisRestrict ZeroRotation
 End Function
+
 Public Function MakeVector(ByVal X As Double, ByVal Y As Double, ByVal Z As Double) As D3DVECTOR
     MakeVector.X = X
     MakeVector.Y = Y
@@ -132,15 +133,15 @@ Public Function ToPoint(ByRef Vector As D3DVECTOR) As Point
     ToPoint.Z = Vector.Z
 End Function
 
-Public Function ToPlane(ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Plane
+Public Function ToPlane(ByRef v1 As Point, ByRef v2 As Point, ByRef v3 As Point) As Plane
         
     Dim pNormal As Point
-    Set pNormal = VectorCrossProduct(VectorDeduction(V2, V1), VectorDeduction(V3, V1))
+    Set pNormal = VectorCrossProduct(VectorDeduction(v2, v1), VectorDeduction(v3, v1))
     Set pNormal = VectorNormalize(pNormal)
         
     Set ToPlane = New Plane
     With ToPlane
-        .W = VectorDotProduct(pNormal, V1) * -1
+        .W = VectorDotProduct(pNormal, v1) * -1
         .X = pNormal.X
         .Y = pNormal.Y
         .Z = pNormal.Z
@@ -212,23 +213,23 @@ Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal N As Dou
     End With
 End Function
 
-Public Function PointOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
+Public Function PointOnPlane(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Boolean
     Dim r As Plane
-    Set r = ToPlane(v0, V1, V2)
+    Set r = ToPlane(v0, v1, v2)
     PointOnPlane = ((r.X * (p.X - v0.X)) + (r.Y * (p.Y - v0.Y)) + (r.Z * (p.Z - v0.Z)) = 0)
 End Function
 
-Public Function PointSideOfPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
-    PointSideOfPlane = VectorDotProduct(PlaneNormal(v0, V1, V2), p) > 0
+Public Function PointSideOfPlane(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Boolean
+    PointSideOfPlane = VectorDotProduct(PlaneNormal(v0, v1, v2), p) > 0
 End Function
 
-Public Function PointNearOnPlane(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Point
+Public Function PointNearOnPlane(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Point
     Set PointNearOnPlane = New Point
     With PointNearOnPlane
         Dim r As Plane
-        Set r = ToPlane(v0, V1, V2)
+        Set r = ToPlane(v0, v1, v2)
         Dim N As Point
-        Set N = PlaneNormal(v0, V1, V2)
+        Set N = PlaneNormal(v0, v1, v2)
         Dim d As Double
         d = DistanceToPlane(p, r)
         .X = p.X - (d * N.X)
@@ -259,7 +260,7 @@ End Function
 
 Public Function LineIntersectPlane(ByRef Plane As Plane, PStart As Point, vDir As Point, ByRef VIntersectOut As Point) As Boolean
     Dim q As New Plane     'Start Point
-    Dim v As New Plane       'Vector Direction
+    Dim V As New Plane       'Vector Direction
 
     Dim planeQdot As Double 'Dot products
     Dim planeVdot As Double
@@ -271,14 +272,14 @@ Public Function LineIntersectPlane(ByRef Plane As Plane, PStart As Point, vDir A
     q.Z = PStart.Z
     q.W = 1
     
-    v.X = vDir.X            'V is a vector and therefore it's W value is zero
-    v.Y = vDir.Y
-    v.Z = vDir.Z
-    v.W = 0
+    V.X = vDir.X            'V is a vector and therefore it's W value is zero
+    V.Y = vDir.Y
+    V.Z = vDir.Z
+    V.W = 0
     
     '((Plane.X * V.X) + (Plane.Y * V.Y) + (Plane.z * V.z) + (Plane.R * V.R))
     
-    planeVdot = ((Plane.X * v.X) + (Plane.Y * v.Y) + (Plane.Z * v.Z) + (Plane.W * v.W)) 'D3DXVec4Dot(Plane, V)
+    planeVdot = ((Plane.X * V.X) + (Plane.Y * V.Y) + (Plane.Z * V.Z) + (Plane.W * V.W)) 'D3DXVec4Dot(Plane, V)
     planeQdot = ((Plane.X * q.X) + (Plane.Y * q.Y) + (Plane.Z * q.Z) + (Plane.W * q.W)) 'D3DXVec4Dot(Plane, Q)
             
     'If the dotproduct of plane and V = 0 then there is no intersection
@@ -288,9 +289,9 @@ Public Function LineIntersectPlane(ByRef Plane As Plane, PStart As Point, vDir A
         If VIntersectOut Is Nothing Then Set VIntersectOut = New Point
         
         'This is where the line intersects the plane
-        VIntersectOut.X = Round(q.X + (t * v.X), 5)
-        VIntersectOut.Y = Round(q.Y + (t * v.Y), 5)
-        VIntersectOut.Z = Round(q.Z + (t * v.Z), 5)
+        VIntersectOut.X = Round(q.X + (t * V.X), 5)
+        VIntersectOut.Y = Round(q.Y + (t * V.Y), 5)
+        VIntersectOut.Z = Round(q.Z + (t * V.Z), 5)
 
         LineIntersectPlane = True
     Else
@@ -315,12 +316,12 @@ Public Function LineIntersectLine2D(ByVal l1p1x As Double, ByVal l1p1y As Double
     If b <> 0 Then
 
         Dim t As Double
-        Dim u As Double
+        Dim U As Double
 
         t = (((l2p2x - l2p1x) * (l1p1y - l2p1y)) - ((l2p2y - l2p1y) * (l1p1x - l2p1x))) / b
-        u = (((l2p1y - l1p1y) * (l1p1x - l1p2x)) - ((l2p1x - l1p1x) * (l1p1y - l1p2y))) / b
+        U = (((l2p1y - l1p1y) * (l1p1x - l1p2x)) - ((l2p1x - l1p1x) * (l1p1y - l1p2y))) / b
  
-        If t >= 0 And t <= 1 And u >= 0 And u <= 1 Then
+        If t >= 0 And t <= 1 And U >= 0 And U <= 1 Then
             Set LineIntersectLine2D = New Point
             LineIntersectLine2D.X = Lerp(l1p1x, l1p2x, t)
             LineIntersectLine2D.Y = Lerp(l1p1y, l1p2y, t)
@@ -376,19 +377,19 @@ Public Function RandomPositive(ByVal LowerBound As Long, ByVal UpperBound As Lon
     RandomPositive = CSng((UpperBound - LowerBound + 1) * Rnd + LowerBound)
 End Function
 
-Public Function PlaneNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+Public Function PlaneNormal(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     'returns a vector perpendicular to a plane V, at 0,0,0, with out the local coordinates information
-    Set PlaneNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(v0, V1), VectorDeduction(V1, V2)))
+    Set PlaneNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(v0, v1), VectorDeduction(v1, v2)))
 End Function
 
-Public Function PointNormalize(ByRef v As Point) As Point
+Public Function PointNormalize(ByRef V As Point) As Point
     Set PointNormalize = New Point
     With PointNormalize
-        .Z = (v.X ^ 2 + v.Y ^ 2 + v.Z ^ 2) ^ (1 / 2)
+        .Z = (V.X ^ 2 + V.Y ^ 2 + V.Z ^ 2) ^ (1 / 2)
         If (.Z = 0) Then .Z = 1
-        .X = (v.X / .Z)
-        .Y = (v.Y / .Z)
-        .Z = (v.Z / .Z)
+        .X = (V.X / .Z)
+        .Y = (V.Y / .Z)
+        .Z = (V.Z / .Z)
     End With
 End Function
 Public Function Sign(ByVal N As Double) As Double
@@ -414,13 +415,13 @@ Public Function SphereToCubeRoot(ByVal Diameter As Double) As Double
     'surface area of a sphere is still only two dimensions, so we skip ahead cutting down
 End Function
 
-Public Function SquareCenter(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Point
+Public Function SquareCenter(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef v3 As Point) As Point
     Set SquareCenter = New Point
     With SquareCenter
         'center by adding onto the lowest value of axis with the the middle of the absolute difference of each of axis
-        .X = (Least(v0.X, V1.X, V2.X, V3.X) + ((Large(v0.X, V1.X, V2.X, V3.X) - Least(v0.X, V1.X, V2.X, V3.X)) / 2))
-        .Y = (Least(v0.Y, V1.Y, V2.Y, V3.Y) + ((Large(v0.Y, V1.Y, V2.Y, V3.Y) - Least(v0.Y, V1.Y, V2.Y, V3.Y)) / 2))
-        .Z = (Least(v0.Z, V1.Z, V2.Z, V3.Z) + ((Large(v0.Z, V1.Z, V2.Z, V3.Z) - Least(v0.Z, V1.Z, V2.Z, V3.Z)) / 2))
+        .X = (Least(v0.X, v1.X, v2.X, v3.X) + ((Large(v0.X, v1.X, v2.X, v3.X) - Least(v0.X, v1.X, v2.X, v3.X)) / 2))
+        .Y = (Least(v0.Y, v1.Y, v2.Y, v3.Y) + ((Large(v0.Y, v1.Y, v2.Y, v3.Y) - Least(v0.Y, v1.Y, v2.Y, v3.Y)) / 2))
+        .Z = (Least(v0.Z, v1.Z, v2.Z, v3.Z) + ((Large(v0.Z, v1.Z, v2.Z, v3.Z) - Least(v0.Z, v1.Z, v2.Z, v3.Z)) / 2))
     End With
 End Function
 
@@ -650,12 +651,12 @@ End Function
 '    End With
 'End Function
 
-Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+Public Function TriangleNormal(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     Set TriangleNormal = New Point
     Dim o As Point
     Dim d As Double
     With TriangleNormal
-        Set o = TriangleDisplace(v0, V1, V2)
+        Set o = TriangleDisplace(v0, v1, v2)
         d = (Abs(o.X) + Abs(o.Y) + Abs(o.Z))
         If (d <> 0) Then
             .Z = (((Abs(o.X) + Abs(o.Y)) - Abs(o.Z)) / d)
@@ -665,23 +666,25 @@ Public Function TriangleNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As
     End With
 End Function
 
+
+
 #End If
 
-Public Function TriangleAccordance(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+Public Function TriangleAccordance(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     Set TriangleAccordance = New Point
     With TriangleAccordance
-        .X = (((v0.X + V1.X) - V2.X) + ((V1.X + V2.X) - v0.X) - ((V2.X + v0.X) - V1.X))
-        .Y = (((v0.Y + V1.Y) - V2.Y) + ((V1.Y + V2.Y) - v0.Y) - ((V2.Y + v0.Y) - V1.Y))
-        .Z = (((v0.Z + V1.Z) - V2.Z) + ((V1.Z + V2.Z) - v0.Z) - ((V2.Z + v0.Z) - V1.Z))
+        .X = (((v0.X + v1.X) - v2.X) + ((v1.X + v2.X) - v0.X) - ((v2.X + v0.X) - v1.X))
+        .Y = (((v0.Y + v1.Y) - v2.Y) + ((v1.Y + v2.Y) - v0.Y) - ((v2.Y + v0.Y) - v1.Y))
+        .Z = (((v0.Z + v1.Z) - v2.Z) + ((v1.Z + v2.Z) - v0.Z) - ((v2.Z + v0.Z) - v1.Z))
     End With
 End Function
 
-Public Function TriangleDisplace(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+Public Function TriangleDisplace(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     Set TriangleDisplace = New Point
     With TriangleDisplace
-        .X = (Abs((Abs(v0.X) + Abs(V1.X)) - Abs(V2.X)) + Abs((Abs(V1.X) + Abs(V2.X)) - Abs(v0.X)) - Abs((Abs(V2.X) + Abs(v0.X)) - Abs(V1.X)))
-        .Y = (Abs((Abs(v0.Y) + Abs(V1.Y)) - Abs(V2.Y)) + Abs((Abs(V1.Y) + Abs(V2.Y)) - Abs(v0.Y)) - Abs((Abs(V2.Y) + Abs(v0.Y)) - Abs(V1.Y)))
-        .Z = (Abs((Abs(v0.Z) + Abs(V1.Z)) - Abs(V2.Z)) + Abs((Abs(V1.Z) + Abs(V2.Z)) - Abs(v0.Z)) - Abs((Abs(V2.Z) + Abs(v0.Z)) - Abs(V1.Z)))
+        .X = (Abs((Abs(v0.X) + Abs(v1.X)) - Abs(v2.X)) + Abs((Abs(v1.X) + Abs(v2.X)) - Abs(v0.X)) - Abs((Abs(v2.X) + Abs(v0.X)) - Abs(v1.X)))
+        .Y = (Abs((Abs(v0.Y) + Abs(v1.Y)) - Abs(v2.Y)) + Abs((Abs(v1.Y) + Abs(v2.Y)) - Abs(v0.Y)) - Abs((Abs(v2.Y) + Abs(v0.Y)) - Abs(v1.Y)))
+        .Z = (Abs((Abs(v0.Z) + Abs(v1.Z)) - Abs(v2.Z)) + Abs((Abs(v1.Z) + Abs(v2.Z)) - Abs(v0.Z)) - Abs((Abs(v2.Z) + Abs(v0.Z)) - Abs(v1.Z)))
     End With
 End Function
 
@@ -1615,16 +1618,16 @@ Public Function AngleAxisInvert(ByVal p As Point) As Point
 End Function
 Public Function AngleAxisAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim p3 As New Point
-    Dim P4 As New Point
+    Dim p4 As New Point
     Set p3 = AngleAxisRestrict(p1)
-    Set P4 = AngleAxisRestrict(p2)
+    Set p4 = AngleAxisRestrict(p2)
     
     Set AngleAxisAddition = New Point
     With AngleAxisAddition
     
-        .X = (p3.X * DEGREE + P4.X * DEGREE) * RADIAN
-        .Y = (p3.Y * DEGREE + P4.Y * DEGREE) * RADIAN
-        .Z = (p3.Z * DEGREE + P4.Z * DEGREE) * RADIAN
+        .X = (p3.X * DEGREE + p4.X * DEGREE) * RADIAN
+        .Y = (p3.Y * DEGREE + p4.Y * DEGREE) * RADIAN
+        .Z = (p3.Z * DEGREE + p4.Z * DEGREE) * RADIAN
         
         Set AngleAxisAddition = AngleAxisRestrict(MakePoint(.X, .Y, .Z))
     End With
@@ -1644,18 +1647,18 @@ End Function
 
 Public Function AngleAxisCombine(ByRef p1 As Point, ByRef p2 As Point) As Point
     Dim p3 As New Point
-    Dim P4 As New Point
+    Dim p4 As New Point
     Set p3 = AngleAxisRestrict(AngleAxisInvert(p1))
-    Set P4 = AngleAxisRestrict(AngleAxisInvert(p2))
+    Set p4 = AngleAxisRestrict(AngleAxisInvert(p2))
     
     Set AngleAxisCombine = New Point
     With AngleAxisCombine
     
         Set p3 = AngleAxisDeduction(p1, p2)
-        Set P4 = AngleAxisDifference(p1, p3)
-       .X = P4.X
-       .Y = P4.Y
-       .Z = -P4.Z
+        Set p4 = AngleAxisDifference(p1, p3)
+       .X = p4.X
+       .Y = p4.Y
+       .Z = -p4.Z
         
         
        ' .X = ((p1.X * p2.X + p3.X * P4.X + p1.X * p3.X + p2.X * P4.X) ^ (1 / 4))
@@ -2407,56 +2410,56 @@ Public Function Lerp(ByVal A As Double, ByVal b As Double, ByVal t As Double) As
     Lerp = A + (b - A) * t
 End Function
 
-Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(V3) Then
-        If (V1 >= V2) Then
-            Large = V1
+Public Function Large(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal v3 As Variant, Optional ByVal V4 As Variant) As Variant
+    If IsMissing(v3) Then
+        If (v1 >= v2) Then
+            Large = v1
         Else
-            Large = V2
+            Large = v2
         End If
     ElseIf IsMissing(V4) Then
-        If ((V2 >= V3) And (V2 >= V1)) Then
-            Large = V2
-        ElseIf ((V1 >= V3) And (V1 >= V2)) Then
-            Large = V1
+        If ((v2 >= v3) And (v2 >= v1)) Then
+            Large = v2
+        ElseIf ((v1 >= v3) And (v1 >= v2)) Then
+            Large = v1
         Else
-            Large = V3
+            Large = v3
         End If
     Else
-        If ((V2 >= V3) And (V2 >= V1) And (V2 >= V4)) Then
-            Large = V2
-        ElseIf ((V1 >= V3) And (V1 >= V2) And (V1 >= V4)) Then
-            Large = V1
-        ElseIf ((V3 >= V1) And (V3 >= V2) And (V3 >= V4)) Then
-            Large = V3
+        If ((v2 >= v3) And (v2 >= v1) And (v2 >= V4)) Then
+            Large = v2
+        ElseIf ((v1 >= v3) And (v1 >= v2) And (v1 >= V4)) Then
+            Large = v1
+        ElseIf ((v3 >= v1) And (v3 >= v2) And (v3 >= V4)) Then
+            Large = v3
         Else
             Large = V4
         End If
     End If
 End Function
 
-Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(V3) Then
-        If (V1 <= V2) Then
-            Least = V1
+Public Function Least(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal v3 As Variant, Optional ByVal V4 As Variant) As Variant
+    If IsMissing(v3) Then
+        If (v1 <= v2) Then
+            Least = v1
         Else
-            Least = V2
+            Least = v2
         End If
     ElseIf IsMissing(V4) Then
-        If ((V2 <= V3) And (V2 <= V1)) Then
-            Least = V2
-        ElseIf ((V1 <= V3) And (V1 <= V2)) Then
-            Least = V1
+        If ((v2 <= v3) And (v2 <= v1)) Then
+            Least = v2
+        ElseIf ((v1 <= v3) And (v1 <= v2)) Then
+            Least = v1
         Else
-            Least = V3
+            Least = v3
         End If
     Else
-        If ((V2 <= V3) And (V2 <= V1) And (V2 <= V4)) Then
-            Least = V2
-        ElseIf ((V1 <= V3) And (V1 <= V2) And (V1 <= V4)) Then
-            Least = V1
-        ElseIf ((V3 <= V1) And (V3 <= V2) And (V3 <= V4)) Then
-            Least = V3
+        If ((v2 <= v3) And (v2 <= v1) And (v2 <= V4)) Then
+            Least = v2
+        ElseIf ((v1 <= v3) And (v1 <= v2) And (v1 <= V4)) Then
+            Least = v1
+        ElseIf ((v3 <= v1) And (v3 <= v2) And (v3 <= V4)) Then
+            Least = v3
         Else
             Least = V4
         End If

@@ -25,12 +25,15 @@ Private Declare Function SHGetSpecialFolderLocation Lib "shell32" _
                               pIdl As ITEMIDLIST) As Long
 
 Private Const NOERROR = 0
+Private Const CSIDL_PERSONAL = &H5
+Private Const CSIDL_FAVORITES = &H6
+Private Const CSIDL_MYMUSIC = &HD  ' My Music folder
+
+
 Private Const CSIDL_DESKTOP = &H0
 Private Const CSIDL_PROGRAMS = &H2
 Private Const CSIDL_CONTROLS = &H3
 Private Const CSIDL_PRINTERS = &H4
-Private Const CSIDL_PERSONAL = &H5
-Private Const CSIDL_FAVORITES = &H6
 Private Const CSIDL_STARTUP = &H7
 Private Const CSIDL_RECENT = &H8
 Private Const CSIDL_SENDTO = &H9
@@ -42,6 +45,8 @@ Private Const CSIDL_NETWORK = &H12
 Private Const CSIDL_NETHOOD = &H13
 Private Const CSIDL_FONTS = &H14
 Private Const CSIDL_TEMPLATES = &H15
+
+
 Private Declare Sub CoTaskMemFree Lib "ole32" (ByVal pV As Long)
 Private Declare Function SHBrowseForFolder Lib "shell32" Alias "SHBrowseForFolderA" _
                               (lpBrowseInfo As BROWSEINFO) As Long
@@ -94,7 +99,11 @@ Private Type SHFILEINFO
 End Type
 
 Private Declare Function SHGetFileInfo Lib "shell32" Alias "SHGetFileInfoA" (ByVal pszPath As String, ByVal dwFileAttributes As Long, psfi As SHFILEINFO, ByVal cbSizeFileInfo As Long, ByVal uFlags As Long) As Long
-
+Private Declare Function SHGetFolderPath Lib "shell32.dll" _
+    Alias "SHGetFolderPathA" (ByVal hwndOwner As Long, _
+    ByVal nFolder As Long, ByVal hToken As Long, _
+    ByVal dwFlags As Long, ByVal pszPath As String) As Long
+    
 Private Declare Function GetUserName Lib "advapi32" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
 Private Declare Function GetCompName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
 Private Declare Function GetSystemDirectory Lib "kernel32" Alias "GetSystemDirectoryA" (ByVal Path As String, ByVal cbBytes As Long) As Long
@@ -106,6 +115,34 @@ Private Declare Function GetProfilesDirectory Lib "userenv" Alias "GetProfilesDi
 Private Declare Function GetUserProfileDirectory Lib "userenv" Alias "GetUserProfileDirectoryA" (ByVal hToken As Long, ByVal lpProfileDir As String, lpcchSize As Long) As Boolean
 Private Declare Function GetCurrentProcess Lib "kernel32" () As Long
 Private Declare Function OpenProcessToken Lib "advapi32" (ByVal ProcessHandle As Long, ByVal DesiredAccess As Long, ByRef TokenHandle As Long) As Long
+
+
+
+
+Public Function GetMyMusicFolder() As String
+    Dim BI As BROWSEINFO
+    Dim nFolder As Long
+    Dim IDL As ITEMIDLIST
+    Dim sPath As String
+    With BI
+        nFolder = CSIDL_MYMUSIC
+        If SHGetSpecialFolderLocation(ByVal 0&, ByVal nFolder, IDL) = NOERROR Then
+            .pidlRoot = IDL.mkid.cb
+        End If
+        .pszDisplayName = String$(MAX_PATH, 0)
+
+        .ulFlags = BIF_RETURNONLYFSDIRS
+
+    End With
+
+    sPath = String$(MAX_PATH, 0)
+    SHGetPathFromIDList ByVal IDL.mkid.cb, ByVal sPath
+
+    sPath = Left(sPath, InStr(sPath, vbNullChar) - 1)
+
+    GetMyMusicFolder = sPath
+End Function
+
 
 Private Function AllShort(ByVal CheckPath As String) As Boolean
     If Len(GetFileTitle(CheckPath)) <= 8 Then
@@ -188,54 +225,105 @@ Public Sub RemovePath(ByVal Path As String, Optional ByRef FolderList As String)
     Loop
     RmDir Path
 End Sub
+Public Function TempSearch() As String
+    Dim ret As String
+    ret = SearchPath("modMain.bas", -1, "C:\Development\*backups*\NTDirectX", FindAll)
+    Dim out As String
+    Dim line As String
+    
+    Do While ret <> ""
 
-Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal Flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
+        line = RemoveNextArg(ret, vbCrLf)
+        If line Like "*NTDirectX\modMain.bas" Then
+            Shell Environ("SystemRoot") & "\notepad.exe " & RemoveNextArg(ret, vbCrLf)
+        End If
+    Loop
+    TempSearch = out
+End Function
+Public Function SearchPath(ByRef FindText As String, Optional ByVal Recursive As Integer = -1, Optional ByVal RootPath As String, Optional ByVal MatchFlag As MatchFlags, Optional ByRef FolderList As String, Optional ByVal flags As Long = vbDirectory Or vbNormal Or vbSystem Or vbHidden) As String
     If RootPath = "" Then RootPath = Left(CurDir, 2) & "\"
    ' Debug.Print Replace(RootPath & "\", "\\", "\")
     
+    
     Dim nxt As String
-    nxt = FindText
-    If (nxt <> "") Then
-        Do Until (nxt = "")
-            If (MatchFlag And ExactMatch) = ExactMatch Then
-                If LCase(GetFileName(RootPath)) Like LCase(NextArg(nxt, vbCrLf)) Or LCase(GetFileName(RootPath)) = LCase(NextArg(nxt, vbCrLf)) Then
-                    SearchPath = SearchPath & RootPath & vbCrLf
-                    If (MatchFlag = FirstOnly) Then FindText = Replace(Replace(FindText, NextArg(nxt, vbCrLf) & vbCrLf, ""), NextArg(nxt, vbCrLf), "")
-                End If
-            Else
-                If InStr(1, LCase(RootPath), LCase(NextArg(nxt, vbCrLf)), vbTextCompare) > 0 Or LCase(RootPath) Like LCase(NextArg(nxt, vbCrLf)) Then
-                    SearchPath = SearchPath & RootPath & vbCrLf
-                    If (MatchFlag = FirstOnly) Then FindText = Replace(Replace(FindText, NextArg(nxt, vbCrLf) & vbCrLf, ""), NextArg(nxt, vbCrLf), "")
-                End If
-            End If
-            RemoveNextArg nxt, vbCrLf
-        Loop
-    End If
-    If (FindText <> "") Then
-        On Error Resume Next
-        'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
-
-            nxt = Dir(Replace(RootPath & "\", "\\", "\"), Flags)
-
-            If Err Then
-                Err.Clear
-            ElseIf Abs(Recursive) > 0 Then
-                If Recursive > 0 Then Recursive = Recursive - 1
-                Do Until nxt = ""
-                    If (Not (nxt = ".")) And (Not (nxt = "..")) Then
-                        FolderList = FolderList & RootPath & "\" & nxt & vbCrLf
-                    End If
-                    nxt = Dir
-                Loop
-            End If
-        'End If
+    If InStr(RootPath, "*") > 0 Then
+        Dim fldr As String
+        fldr = RootPath
+        Dim atend As String
+        Dim rec As Integer
+        rec = Recursive
         
-        Do Until (FolderList = "") Or (FindText = "")
-            nxt = RemoveNextArg(FolderList, vbCrLf)
-            SearchPath = SearchPath & SearchPath(FindText, Recursive, nxt, MatchFlag, , Flags)
+        nxt = GetFileName(fldr)
+        fldr = GetFilePath(fldr)
+        Do Until InStr(nxt, "*") > 0 Or fldr = "" Or rec = 0
+           atend = "\" & nxt & atend
+           nxt = GetFileName(fldr)
+           fldr = GetFilePath(fldr)
+           If rec > 0 Then rec = rec - 1
         Loop
-
+        
+        If rec Then
+            FolderList = SearchPath(nxt, rec, fldr, FindAll)
+            
+            
+            Do Until FolderList = ""
+                If LCase(NextArg(FolderList, vbCrLf)) Like LCase(fldr & "\" & nxt & atend) Then
+                    SearchPath = SearchPath & SearchPath(FindText, rec, NextArg(FolderList, vbCrLf), MatchFlag, , flags)
+                ElseIf LCase(NextArg(FolderList, vbCrLf)) Like LCase(fldr & "\" & nxt) Then
+                    SearchPath = SearchPath & SearchPath(FindText, rec, NextArg(FolderList, vbCrLf) & atend, FindAll, , flags)
+                End If
+                RemoveNextArg FolderList, vbCrLf
+            Loop
+        End If
+        If (MatchFlag = FirstOnly) Then
+            SearchPath = NextArg(SearchPath, vbCrLf)
+        End If
+                    
+    Else
+        nxt = FindText
+        If (nxt <> "") Then
+            Do Until (nxt = "")
+                If (MatchFlag And ExactMatch) = ExactMatch Then
+                    If LCase(GetFileName(RootPath)) Like LCase(NextArg(nxt, vbCrLf)) Or LCase(GetFileName(RootPath)) = LCase(NextArg(nxt, vbCrLf)) Then
+                        SearchPath = SearchPath & RootPath & vbCrLf
+                        If (MatchFlag = FirstOnly) Then FindText = Replace(Replace(FindText, NextArg(nxt, vbCrLf) & vbCrLf, ""), NextArg(nxt, vbCrLf), "")
+                    End If
+                Else
+                    If InStr(1, LCase(RootPath), LCase(NextArg(nxt, vbCrLf)), vbTextCompare) > 0 Or LCase(RootPath) Like LCase(NextArg(nxt, vbCrLf)) Then
+                        SearchPath = SearchPath & RootPath & vbCrLf
+                        If (MatchFlag = FirstOnly) Then FindText = Replace(Replace(FindText, NextArg(nxt, vbCrLf) & vbCrLf, ""), NextArg(nxt, vbCrLf), "")
+                    End If
+                End If
+                RemoveNextArg nxt, vbCrLf
+            Loop
+        End If
+        If (FindText <> "") Then
+            On Error Resume Next
+            'If Dir(RootPath, vbDirectory Or vbNormal Or vbSystem Or vbHidden) = "" Then
+    
+                nxt = Dir(Replace(RootPath & "\", "\\", "\"), flags)
+    
+                If Err Then
+                    Err.Clear
+                ElseIf Abs(Recursive) > 0 Then
+                    If Recursive > 0 Then Recursive = Recursive - 1
+                    Do Until nxt = ""
+                        If (Not (nxt = ".")) And (Not (nxt = "..")) Then
+                            FolderList = FolderList & RootPath & "\" & nxt & vbCrLf
+                        End If
+                        nxt = Dir
+                    Loop
+                End If
+            'End If
+            
+            Do Until (FolderList = "") Or (FindText = "")
+                nxt = RemoveNextArg(FolderList, vbCrLf)
+                SearchPath = SearchPath & SearchPath(FindText, Recursive, nxt, MatchFlag, , flags)
+            Loop
+    
+        End If
     End If
+    
     SearchPath = Replace(SearchPath, "\\", "\")
 End Function
 
@@ -286,9 +374,9 @@ End Function
 Public Function GetSystem32Folder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim Ret As Long
+        Dim ret As Long
         winDir = String(45, Chr(0))
-        Ret = GetSystemDirectory(winDir, 45)
+        ret = GetSystemDirectory(winDir, 45)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -298,9 +386,9 @@ End Function
 Public Function GetWindowsFolder() As String
     Static winDir As String
     If winDir = "" Then
-        Dim Ret As Long
+        Dim ret As Long
         winDir = String(260, Chr(0))
-        Ret = GetWindowsDirectory(winDir, 260)
+        ret = GetWindowsDirectory(winDir, 260)
         winDir = Trim(Replace(winDir, Chr(0), ""))
         If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     End If
@@ -310,16 +398,16 @@ End Function
 Public Function GetWindowsTempFolder(Optional ByVal UseWin As Boolean = False) As String
 
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(260, Chr(0))
-    Ret = GetTempPath(260, winDir)
-    If (Not ((Ret = 16) And UseWin)) And (Not ((Ret = 34) And Not UseWin)) Then
+    ret = GetTempPath(260, winDir)
+    If (Not ((ret = 16) And UseWin)) And (Not ((ret = 34) And Not UseWin)) Then
         If PathExists(GetWindowsFolder() + "TEMP") Then
             winDir = GetWindowsFolder() + "TEMP\"
         Else
             On Error Resume Next
             MkDir GetWindowsFolder() + "TEMP"
-            If Err.number <> 0 Then Err.Clear
+            If Err.Number <> 0 Then Err.Clear
             On Error GoTo 0
             
             If PathExists(GetWindowsFolder() + "TEMP") Then
@@ -656,7 +744,7 @@ Public Function MakeFolder(ByRef Path As String)
     On Error Resume Next
     If InStr(Path, "\") > 0 Then
         GetAttr Left(Path, InStrRev(Path, "\") - 1)
-        If Err.number = 76 Or Err.number = 53 Then
+        If Err.Number = 76 Or Err.Number = 53 Then
             Err.Clear
             MakeFolder = Path
             Path = MakeFolder(Left(Path, InStrRev(Path, "\") - 1))
@@ -664,9 +752,9 @@ Public Function MakeFolder(ByRef Path As String)
             MakeFolder = Path
         End If
     End If
-    If Err.number = 0 Then
+    If Err.Number = 0 Then
         GetAttr MakeFolder
-        If Err.number = 76 Or Err.number = 53 Then
+        If Err.Number = 76 Or Err.Number = 53 Then
             Err.Clear
             On Error GoTo -1
             MkDir MakeFolder

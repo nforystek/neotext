@@ -22,10 +22,20 @@ Private pVBuf As Direct3DVertexBuffer8
 
 Private pOrigin As Point
 
-Private pPoint1 As MyVertex
-Private pPoint2 As MyVertex
-Private pPoint3 As MyVertex
-Private pPoint4 As MyVertex
+Private pPoint1 As Point
+Private pPoint2 As Point
+Private pPoint3 As Point
+Private pPoint4 As Point
+
+Private pNormal1 As Point
+Private pNormal2 As Point
+Private pNormal3 As Point
+Private pNormal4 As Point
+
+Private pTexture1 As Coord
+Private pTexture2 As Coord
+Private pTexture3 As Coord
+Private pTexture4 As Coord
 
 Private pScaleX As Single
 Private pScaleY As Single
@@ -45,98 +55,106 @@ Private pSerialize As Boolean
 Private pAlign As Long
 
 Public Property Get Point1() As Point
-    Set Point1 = MakePoint(pPoint1.X, pPoint1.Y, pPoint1.Z)
+    Set Point1 = pPoint1
 End Property
 Public Property Set Point1(ByRef RHS As Point)
-    With pPoint1
-        .X = RHS.X
-        .Y = RHS.Y
-        .Z = RHS.Z
-    End With
+    Set pPoint1 = RHS
     If pAlign < 2 Then pAlign = 1
     RecreateSkins
 End Property
 Public Property Get Point2() As Point
-    Set Point2 = MakePoint(pPoint2.X, pPoint2.Y, pPoint2.Z)
+    Set Point2 = pPoint2
 End Property
 Public Property Set Point2(ByRef RHS As Point)
-    With pPoint2
-        .X = RHS.X
-        .Y = RHS.Y
-        .Z = RHS.Z
-    End With
+    Set pPoint2 = RHS
     If pAlign < 2 Then pAlign = 1
     RecreateSkins
 End Property
 Public Property Get Point3() As Point
-    Set Point3 = MakePoint(pPoint3.X, pPoint3.Y, pPoint3.Z)
+    Set Point3 = pPoint3
 End Property
 Public Property Set Point3(ByRef RHS As Point)
-    With pPoint3
-        .X = RHS.X
-        .Y = RHS.Y
-        .Z = RHS.Z
-    End With
+    Set pPoint3 = RHS
     If pAlign < 2 Then pAlign = 1
     RecreateSkins
 End Property
 Public Property Get Point4() As Point
-    Set Point4 = MakePoint(pPoint4.X, pPoint4.Y, pPoint4.Z)
+    Set Point4 = pPoint4
 End Property
 Public Property Set Point4(ByRef RHS As Point)
-    With pPoint4
-        .X = RHS.X
-        .Y = RHS.Y
-        .Z = RHS.Z
-    End With
+    Set pPoint4 = RHS
     If pAlign < 2 Then pAlign = 1
     RecreateSkins
 End Property
 
-Public Property Get Point1UV() As Plot
-    Set Point1UV = MakePlot(pPoint1.tu, pPoint1.tv)
+
+
+Public Property Get Normal1() As Point
+    Set Normal1 = pNormal1
 End Property
-Public Property Set Point1UV(ByRef RHS As Plot)
-    With pPoint1
-        .tu = RHS.X
-        .tv = RHS.Y
-    End With
+Public Property Set Normal1(ByRef RHS As Point)
+    Set pNormal1 = RHS
+    pAlign = 2
+    RecreateSkins
+End Property
+Public Property Get Normal2() As Point
+    Set Normal2 = pNormal2
+End Property
+Public Property Set Normal2(ByRef RHS As Point)
+    Set pNormal2 = RHS
+    pAlign = 2
+    RecreateSkins
+End Property
+Public Property Get Normal3() As Point
+    Set Normal3 = pNormal3
+End Property
+Public Property Set Normal3(ByRef RHS As Point)
+    Set pNormal3 = RHS
+    pAlign = 2
+    RecreateSkins
+End Property
+Public Property Get Normal4() As Point
+    Set Normal4 = pNormal4
+End Property
+Public Property Set Normal4(ByRef RHS As Point)
+    Set pNormal4 = RHS
     pAlign = 2
     RecreateSkins
 End Property
 
-Public Property Get Point2UV() As Plot
-    Set Point2UV = MakePlot(pPoint2.tu, pPoint2.tv)
+
+Public Property Get Texture1() As Coord
+    Set Texture1 = pTexture1
 End Property
-Public Property Set Point2UV(ByRef RHS As Plot)
-    With pPoint2
-        .tu = RHS.X
-        .tv = RHS.Y
-    End With
+Public Property Set Texture1(ByRef RHS As Coord)
+    Set pTexture1 = RHS
     pAlign = 2
     RecreateSkins
 End Property
 
-Public Property Get Point3UV() As Plot
-    Set Point3UV = MakePlot(pPoint3.tu, pPoint3.tv)
+Public Property Get Texture2() As Coord
+    Set Texture2 = pTexture2
 End Property
-Public Property Set Point3UV(ByRef RHS As Plot)
-    With pPoint3
-        .tu = RHS.X
-        .tv = RHS.Y
-    End With
+Public Property Set Texture2(ByRef RHS As Coord)
+    Set pTexture2 = RHS
     pAlign = 2
     RecreateSkins
 End Property
 
-Public Property Get Point4UV() As Plot
-    Set Point4UV = MakePlot(pPoint4.tu, pPoint4.tv)
+Public Property Get Texture3() As Coord
+    Set Texture3 = pTexture3
 End Property
-Public Property Set Point4UV(ByRef RHS As Plot)
-    With pPoint4
-        .tu = RHS.X
-        .tv = RHS.Y
-    End With
+Public Property Set Texture3(ByRef RHS As Coord)
+    Set pTexture3 = RHS
+    pAlign = 2
+    RecreateSkins
+End Property
+
+Public Property Get Texture4() As Coord
+    Set Texture4 = pTexture4
+End Property
+Public Property Set Texture4(ByRef RHS As Coord)
+    Set pTexture4 = RHS
     pAlign = 2
     RecreateSkins
 End Property
@@ -166,8 +184,9 @@ Public Property Let ScaleY(ByVal RHS As Single)
     pAlign = 1
     RecreateSkins
 End Property
+
 Public Property Get Mirror() As Boolean
-    Mirror = pMirror And (Not (pVBuf Is Nothing))
+    Mirror = pMirror
 End Property
 Public Property Let Mirror(ByVal RHS As Boolean)
     pMirror = RHS
@@ -224,24 +243,25 @@ Public Property Get FileName(Optional ByVal Index As Long = 0) As String
 End Property
 Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As String)
     If Index = 0 Then
-        If PathExists(ScriptRoot & "\Models\" & RHS, True) Then
+        If PathExists(ScriptRoot & "Models\" & RHS, True) Then
             pFileNames.Add RHS
             ReDim Preserve pSkin(1 To pFileNames.Count) As Direct3DTexture8
-            Set pSkin(pFileNames.Count) = LoadTexture(ScriptRoot & "\Models\" & RHS)
+            Set pSkin(pFileNames.Count) = LoadTexture(ScriptRoot & "Models\" & RHS)
+            RecreateSkins
         Else
             Err.Raise 8, App.EXEName, "File not found."
         End If
     ElseIf pFileNames.Count > 0 And Index <= pFileNames.Count And Index > 0 Then
-        If PathExists(ScriptRoot & "\Models\" & RHS, True) Then
+        If PathExists(ScriptRoot & "Models\" & RHS, True) Then
             Set pSkin(Index) = Nothing
-            Set pSkin(Index) = LoadTexture(ScriptRoot & "\Models\" & RHS)
+            Set pSkin(Index) = LoadTexture(ScriptRoot & "Models\" & RHS)
             pFileNames.Add RHS, , , Index
             pFileNames.Remove Index
+            RecreateSkins
         Else
             Err.Raise 8, App.EXEName, "File not found."
         End If
     End If
-    RecreateSkins
     
 End Property
 
@@ -267,34 +287,79 @@ Public Property Let Key(ByVal RHS As String)
 End Property
 
 Public Property Get Visible() As Boolean
-    Visible = pVisible And (Not (pVBuf Is Nothing))
+    Visible = pVisible And (Not pVBuf Is Nothing)
 End Property
 Public Property Let Visible(ByVal RHS As Boolean)
     pVisible = RHS
 End Property
 
-Friend Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
+Public Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
     If Index = -1 Then
         DDevice.SetTexture Stage, Nothing
     Else
         DDevice.SetTexture Stage, pSkin(Index)
     End If
 End Sub
-Friend Sub Render()
-    DDevice.SetStreamSource 0, pVBuf, Len(pPlaq(0))
+Public Sub Render()
+        
+    DDevice.SetStreamSource 0, pVBuf, LenB(pPlaq(0))
     DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+
 End Sub
 
+Private Function MakeMyVertex(ByRef Point As Point, ByRef Normal As Point, ByRef Texture As Coord) As MyVertex
+    With MakeMyVertex
+        .X = Point.X
+        .Y = Point.Y
+        .Z = Point.Z
+        .nx = Normal.X
+        .ny = Normal.Y
+        .nz = Normal.Z
+        .tu = Texture.U
+        .tv = Texture.V
+    End With
+End Function
+
+
 Private Sub RecreateSkins()
+
+
     If pAlign = 1 Then
         CreateSquare pPlaq, 0, MakeVector(pPoint1.X, pPoint1.Y, pPoint1.Z), _
                                         MakeVector(pPoint2.X, pPoint2.Y, pPoint2.Z), _
                                         MakeVector(pPoint3.X, pPoint3.Y, pPoint3.Z), _
                                         MakeVector(pPoint4.X, pPoint4.Y, pPoint4.Z), _
                                         pScaleX, pScaleY
-    ElseIf pAlign = 2 Then
-        CreateSquareEx pPlaq, 0, pPoint1, pPoint2, pPoint3, pPoint4
+        pNormal1.X = pPlaq(0).nx
+        pNormal1.Y = pPlaq(0).ny
+        pNormal1.Z = pPlaq(0).nz
+        pTexture1.U = 0
+        pTexture1.V = pPlaq(0).tv
 
+        pNormal2.X = pPlaq(1).nx
+        pNormal2.Y = pPlaq(1).ny
+        pNormal2.Z = pPlaq(1).nz
+        pTexture2.U = pPlaq(1).tu
+        pTexture2.V = pPlaq(1).tv
+        
+        pNormal3.X = pPlaq(4).nx
+        pNormal3.Y = pPlaq(4).ny
+        pNormal3.Z = pPlaq(4).nz
+        pTexture3.U = pPlaq(4).tu
+        pTexture3.V = 0
+        
+        pNormal4.X = pPlaq(5).nx
+        pNormal4.Y = pPlaq(5).ny
+        pNormal4.Z = pPlaq(5).nz
+        pTexture4.U = 0
+        pTexture4.V = 0
+        
+    ElseIf pAlign = 2 Then
+        CreateSquareEx pPlaq, 0, MakeMyVertex(Point1, Normal1, Texture1), _
+                                 MakeMyVertex(Point2, Normal2, Texture2), _
+                                 MakeMyVertex(Point3, Normal3, Texture3), _
+                                MakeMyVertex(Point4, Normal4, Texture4)
+    
     End If
 
     If pAlign = 1 Or pAlign = 2 Then
@@ -304,18 +369,39 @@ Private Sub RecreateSkins()
                                         MakePoint(pPoint4.X, pPoint4.Y, pPoint4.Z))
 
 
-        D3DVertexBuffer8SetData pVBuf, 0, Len(pPlaq(0)) * 6, 0, pPlaq(0)
+        
+        D3DVertexBuffer8SetData pVBuf, 0, LenB(pPlaq(0)) * (UBound(pPlaq) + 1), 0, pPlaq(0)
+
     End If
 End Sub
 
 Private Sub Class_Initialize()
     Set pOrigin = New Point
-    Stats_Board_Count = Stats_Board_Count + 1
 
+    Set pPoint1 = New Point
+    Set pPoint2 = New Point
+    Set pPoint3 = New Point
+    Set pPoint4 = New Point
+
+    Set pNormal1 = New Point
+    Set pNormal2 = New Point
+    Set pNormal3 = New Point
+    Set pNormal4 = New Point
+
+    Set pTexture1 = New Coord
+    Set pTexture2 = New Coord
+    Set pTexture3 = New Coord
+    Set pTexture4 = New Coord
+
+    Stats_Board_Count = Stats_Board_Count + 1
+    
+    pAlign = 1
+    
     ReDim pPlaq(0 To 5) As MyVertex
-    Set pVBuf = DDevice.CreateVertexBuffer(Len(pPlaq(0)) * 6, 0, FVF_RENDER, D3DPOOL_DEFAULT)
 
     Set pFileNames = New VBA.Collection
+    
+    Set pVBuf = DDevice.CreateVertexBuffer(LenB(pPlaq(0)) * (UBound(pPlaq) + 1), 0, FVF_RENDER, D3DPOOL_DEFAULT)
     
     Key = "K" & ObjPtr(Me)
 End Sub
@@ -335,6 +421,20 @@ Private Sub Class_Terminate()
     Erase pPlaq
     
     Set pVBuf = Nothing
+    Set pPoint1 = Nothing
+    Set pPoint2 = Nothing
+    Set pPoint3 = Nothing
+    Set pPoint4 = Nothing
+
+    Set pNormal1 = Nothing
+    Set pNormal2 = Nothing
+    Set pNormal3 = Nothing
+    Set pNormal4 = Nothing
+
+    Set pTexture1 = Nothing
+    Set pTexture2 = Nothing
+    Set pTexture3 = Nothing
+    Set pTexture4 = Nothing
     
     Set pOrigin = Nothing
     

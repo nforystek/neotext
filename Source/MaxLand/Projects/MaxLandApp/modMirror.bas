@@ -7,12 +7,23 @@ Public Sub BeginMirrors()
 
     Dim e As Board
     Dim i As Long
-    Dim l As Single
+    Dim L As Single
 
     Dim dm As D3DDISPLAYMODE
     Dim pal As PALETTEENTRY
     Dim rct As RECT
 
+    Dim matView As D3DMATRIX
+    Dim matLook As D3DMATRIX
+    Dim matProj As D3DMATRIX
+
+    Dim matRotation As D3DMATRIX
+    Dim matPitch As D3DMATRIX
+    Dim matWorld As D3DMATRIX
+
+    Dim matPos As D3DMATRIX
+    Dim matTemp As D3DMATRIX
+    
     If Not Mirrors Is Nothing Then Mirrors.Clear
     If Boards.Count > 0 Then
         For i = 1 To Boards.Count
@@ -21,55 +32,106 @@ Public Sub BeginMirrors()
             If e.Visible And e.Mirror Then
 
 
-                l = Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
-                If l <= FAR Then
+                L = Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+                If L <= FAR Then
 
                     If Mirrors Is Nothing Then Set Mirrors = New NTNodes10.Collection
 
                     DViewPort.Width = 128
                     DViewPort.Height = 128
 
-                    DSurface.BeginScene DefaultRenderTarget, DViewPort
+
+                    DSurface.BeginScene ReflectRenderTarget, DViewPort
 
 
 
-                    'elapsed = Timer
-                    SetupWorld
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
 
-                    'elapsed = Timer
-                    RenderSpaces
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+                    
+'                    D3DXMatrixIdentity matWorld
+'                    DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'                    D3DXMatrixMultiply matTemp, matWorld, matWorld
+'                    D3DXMatrixRotationY matRotation, AngleInvertRotation(0.5)
+'                    D3DXMatrixRotationX matPitch, 0.5
+'                    D3DXMatrixIdentity matWorld
+'                    D3DXMatrixMultiply matLook, matRotation, matPitch
+'                    DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'                    If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
+'
+'                        D3DXMatrixRotationY matRotation, AngleInvertRotation(Cameras(Player.CameraIndex).Angle)
+'                        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
+'                        D3DXMatrixMultiply matLook, matRotation, matPitch
+'
+'                        D3DXMatrixTranslation matPos, -e.Origin.X, -e.Origin.Y, -e.Origin.Z
+'                        D3DXMatrixMultiply matLook, matPos, matLook
+'                       ' D3DXMatrixTranslation matPos, e.Origin.X, e.Origin.Y + 0.2, e.Origin.Z
+'
+'                    Else
+'
+'                        D3DXMatrixRotationY matRotation, AngleInvertRotation(Player.Camera.Angle)
+'                        D3DXMatrixRotationX matPitch, Player.Camera.Pitch
+'                        D3DXMatrixMultiply matLook, matRotation, matPitch
+'
+'                        If Player.Camera.Pitch > 0 Then
+'
+'                            D3DXMatrixTranslation matPos, -e.Origin.X, -e.Origin.Y, -e.Origin.Z
+'                            D3DXMatrixMultiply matLook, matPos, matLook
+'                        Else
+'                            D3DXMatrixTranslation matPos, -e.Origin.X, -e.Origin.Y + 0.2, -e.Origin.Z
+'                            D3DXMatrixMultiply matLook, matPos, matLook
+'
+'                        End If
+'
+'                    End If
+'
+'
+'
+'                    DDevice.SetTransform D3DTS_VIEW, matLook
+'
+'
+'                    D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.01, FadeDistance
+'                    DDevice.SetTransform D3DTS_PROJECTION, matProj
+                
 
-                    'elapsed = Timer
-                    RenderWorld
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
-
-                    'elapsed = Timer
-                    RenderPlayer
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
-
-                    'elapsed = Timer
-                    RenderBoards
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
-
-                    'elapsed = Timer
-                    RenderLucent
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
-
-                    'elapsed = Timer
-                    RenderBeacons
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+'
+''                    'elapsed = Timer
+''                    SetupWorld
+''                    'elapsed = (Timer - elapsed)
+''                    'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderSpaces
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderWorld
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderPlayer
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderBoards
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderLucent
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+'
+'                    'elapsed = Timer
+'                    RenderBeacons
+'                    'elapsed = (Timer - elapsed)
+'                    'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                     
 
-                    DSurface.EndScene
+                   ' DSurface.EndScene
                     
 '                    RenderSpacesClose
 
@@ -81,7 +143,7 @@ Public Sub BeginMirrors()
                     rct.Right = DViewPort.Width
                     rct.Bottom = DViewPort.Height
 
-                    D3DX.SaveSurfaceToFile GetTemporaryFolder & "\" & Boards.Key(i) & ".bmp", D3DXIFF_BMP, DefaultRenderTarget, pal, rct
+                    D3DX.SaveSurfaceToFile GetTemporaryFolder & "\" & Boards.Key(i) & ".bmp", D3DXIFF_BMP, ReflectRenderTarget, pal, rct
                     Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & Boards.Key(i) & ".bmp", _
                         DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
                         D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), Boards.Key(i)
@@ -100,7 +162,7 @@ Public Sub RenderMirrors()
 
     Dim e As Board
     Dim i As Long
-    Dim l As Single
+    Dim L As Single
 
     If Boards.Count > 0 Then
         For i = 1 To Boards.Count
@@ -108,8 +170,8 @@ Public Sub RenderMirrors()
 
             If e.Visible And e.Mirror Then
             
-                l = Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
-                If l <= FAR Then
+                L = Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+                If L <= FAR Then
 
                     If Mirrors.Exists(Boards.Key(i)) Then
 
@@ -212,7 +274,7 @@ On Error GoTo WorldError
 
             Dim verts(0 To 2) As D3DVECTOR
             Dim touched As Boolean
-            Dim v As Point
+            Dim V As Point
             
             'initialie sngFaceVis for camera collision checking
             For cnt = 1 To lngFaceCount - 1

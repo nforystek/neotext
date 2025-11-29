@@ -183,7 +183,6 @@ Public Sub Main()
                 On Error GoTo 0
                 On Error GoTo Render
 
-                BeginMirrors
 
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
                          
@@ -193,78 +192,91 @@ Public Sub Main()
                 SetupWorld
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
-                
+
                 'elapsed = Timer
                 RenderMotion
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+
                 
                 'elapsed = Timer
                 RenderSpaces
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+
                 
                 'elapsed = Timer
                 RenderWorld
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
-                
+
                 'elapsed = Timer
                 RenderPlayer
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
-                
+
+      
+    
                 'elapsed = Timer
                 RenderBoards
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+                
                 
                 'elapsed = Timer
                 RenderLucent
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
                 
-                'elapsed = Timer
-                RenderMirrors
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                    
+
+               
                 'elapsed = Timer
                 RenderBeacons
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                
+                    
+                'BeginMirrors
+
+
+
                 'elapsed = Timer
                 RenderPortals
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
-                
+
                 'elapsed = Timer
                 RenderCameras
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
-                
+
                 'elapsed = Timer
                 RenderRoutine
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderRoutine: " & elapsed
+
                 
                 On Error GoTo 0
-        
+
                 'elapsed = Timer
                 InputMove
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputMove: " & elapsed
-                
+
                 'elapsed = Timer
                 ResetMotion
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ResetMotion: " & elapsed
-                
+
                 'elapsed = Timer
                 InputScene
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+      
+                
+                'elapsed = Timer
+                'RenderMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                 
                 If Not PauseGame Then
                 
@@ -383,6 +395,9 @@ Public Sub RenderRoutine()
     
 End Sub
 
+
+
+
 Public Sub SetupWorld()
 On Error GoTo WorldError
 
@@ -396,11 +411,12 @@ On Error GoTo WorldError
 
     Dim matPos As D3DMATRIX
     Dim matTemp As D3DMATRIX
-    
+
+
     D3DXMatrixIdentity matWorld
 
     DDevice.SetTransform D3DTS_WORLD, matWorld
-    
+
     D3DXMatrixMultiply matTemp, matWorld, matWorld
     D3DXMatrixRotationY matRotation, 0.5
     D3DXMatrixRotationX matPitch, 0.5
@@ -409,7 +425,7 @@ On Error GoTo WorldError
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
-        
+
         D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
         D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
@@ -417,38 +433,38 @@ On Error GoTo WorldError
         D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
         D3DXMatrixMultiply matLook, matPos, matLook
         D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
-        
+
     Else
-    
+
         D3DXMatrixRotationY matRotation, Player.Camera.Angle
         D3DXMatrixRotationX matPitch, Player.Camera.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
         If Player.Camera.Pitch > 0 Then
-        
+
             D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         Else
             D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
-        
+
         End If
-        
+
     End If
-    
+
     lCulledFaces = 0
     lCullCalls = 0
-    
+
     If ((Perspective = Playmode.ThirdPerson) Or ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0))) And (Not (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0))) Then
-    
+
         If (CameraClip Or ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0))) And (Not ((Perspective = Spectator) Or DebugMode)) Then
 
             If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0)) Then
 
                 Player.Element.Twists.Y = 3
-            
+
             End If
-        
+
             Dim cnt As Long
             Dim cnt2 As Long
 
@@ -459,8 +475,8 @@ On Error GoTo WorldError
 
             Dim verts(0 To 2) As D3DVECTOR
             Dim touched As Boolean
-            Dim v As Point
-            
+            Dim V As Point
+
             'initialie sngFaceVis for camera collision checking
             For cnt = 1 To lngFaceCount - 1
                            ' On Error GoTo isdivcheck0
@@ -471,12 +487,12 @@ On Error GoTo WorldError
 'notdivcheck0:
                                ' If Err Then Err.Clear
                               '  On Error GoTo 0
-                
+
             Next
 
             'commence the camera clip collision checking, this is what keeps
             'the camera from being inside of the level seeing out backfaces
-            
+
             Zoom = 0.2
             factor = 0.5
 
@@ -521,7 +537,7 @@ On Error GoTo WorldError
                 sngCamera(2, 0) = -1
                 sngCamera(2, 1) = 1
                 sngCamera(2, 2) = -1
-                
+
                 If lngFaceCount > 0 Then
                     lCulledFaces = lCulledFaces + Culling(2, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
                     lCullCalls = lCullCalls + 1
@@ -531,7 +547,7 @@ On Error GoTo WorldError
                     For cnt = 1 To Elements.Count
                         Set e1 = Elements(cnt)
                     'For Each e1 In Elements
-                    
+
                     'For cnt = 1 To Elements.Count
                         If ((Not (e1.Effect = Collides.Ground)) And (Not (e1.Effect = Collides.InDoor))) And (e1.CollideIndex > -1) And (e1.BoundsIndex > 0) Then
                             For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
@@ -543,7 +559,7 @@ On Error GoTo WorldError
 'notdivcheck1:
                             '    If Err Then Err.Clear
                            '     On Error GoTo 0
-                                
+
                             Next
                         ElseIf (e1.Effect = Collides.Ground) And (e1.CollideIndex > -1) And e1.Visible And (e1.BoundsIndex > 0) Then
                             For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
@@ -554,7 +570,7 @@ On Error GoTo WorldError
                                 End If
                             Next
                         End If
-                        
+
                         Set e1 = Nothing
                     Next
                     If (Player.Element.CollideIndex > -1) And (Player.Element.BoundsIndex > 0) And (Player.Element.BoundsIndex > 0) Then
@@ -590,7 +606,7 @@ On Error GoTo WorldError
             Player.Element.WireFrame = (Zoom < 0.8)
 
         Else
-        
+
             D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.Camera.Zoom, 0)
             D3DXMatrixMultiply matView, matLook, matTemp
         End If
@@ -599,10 +615,10 @@ On Error GoTo WorldError
         DDevice.SetTransform D3DTS_VIEW, matLook
     End If
 
-    
+
     D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.01, FadeDistance
     DDevice.SetTransform D3DTS_PROJECTION, matProj
-    
+
     Exit Sub
 WorldError:
     If Err.Number = 6 Then Resume
@@ -683,7 +699,7 @@ Private Sub InitialDevice(ByVal hwnd As Long)
             DViewPort.X = (((VB.Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
             DViewPort.Y = (((VB.Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
         End If
-        
+
         DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
         DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
          
@@ -693,8 +709,8 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_DITHERENABLE, False
         DDevice.SetRenderState D3DRS_EDGEANTIALIAS, False
     
-        DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
-        DDevice.SetRenderState D3DRS_VERTEXBLEND, False
+        'DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
+        'DDevice.SetRenderState D3DRS_VERTEXBLEND, False
     
         DDevice.SetRenderState D3DRS_CLIPPING, 1
     
@@ -771,16 +787,12 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         Set shCode = Nothing
     
     ', CONST_D3DFORMAT.D3DFMT_A8R8G8B8, ReflectStencilDepth, D3DFMT_D24S8
-        If Not FullScreen Then
-            Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
-        Else
-            Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
-        End If
 '        If Not FullScreen Then
-'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
+'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
 '        Else
-'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
+'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
 '        End If
+
 
 
     End If

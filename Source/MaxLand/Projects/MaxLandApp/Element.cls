@@ -296,7 +296,7 @@ Public Property Let VisualIndex(ByVal RHS As Long)
 End Property
 Public Property Get VisualModel() As String
     If pVisualIndex > 0 Then
-        VisualModel = Replace(Meshes(pVisualIndex).FileName, ScriptRoot & "\Models\", "")
+        VisualModel = Replace(Meshes(pVisualIndex).FileName, ScriptRoot & "Models\", "")
     End If
 End Property
 Public Property Let VisualModel(ByVal RHS As String)
@@ -316,8 +316,8 @@ Public Property Let VisualModel(ByVal RHS As String)
         ReDim Preserve Meshes(1 To MeshCount) As MyMesh
         pVisualIndex = MeshCount
         Meshes(pVisualIndex).FileName = LCase(RHS)
-        If PathExists(ScriptRoot & "\Models\" & Meshes(pVisualIndex).FileName, True) Then
-            CreateMesh Me, ScriptRoot & "\Models\" & Meshes(pVisualIndex).FileName, Meshes(pVisualIndex).Mesh, Meshes(pVisualIndex).MaterialBuffer, _
+        If PathExists(ScriptRoot & "Models\" & Meshes(pVisualIndex).FileName, True) Then
+            CreateMesh Me, ScriptRoot & "Models\" & Meshes(pVisualIndex).FileName, Meshes(pVisualIndex).Mesh, Meshes(pVisualIndex).MaterialBuffer, _
                      Meshes(pVisualIndex).Materials, Meshes(pVisualIndex).Textures, _
                     Meshes(pVisualIndex).Verticies, Meshes(pVisualIndex).Indicies, Meshes(pVisualIndex).MaterialCount
         Else
@@ -346,7 +346,7 @@ Public Property Let BoundsIndex(ByVal RHS As Long)
 End Property
 Public Property Get BoundsModel() As String
     If pBoundsIndex > 0 Then
-        BoundsModel = Replace(Meshes(pBoundsIndex).FileName, ScriptRoot & "\Models\", "")
+        BoundsModel = Replace(Meshes(pBoundsIndex).FileName, ScriptRoot & "Models\", "")
     End If
 End Property
 Public Property Let BoundsModel(ByVal RHS As String)
@@ -373,8 +373,8 @@ Public Property Let BoundsModel(ByVal RHS As String)
         ReDim Preserve Meshes(1 To MeshCount) As MyMesh
         pBoundsIndex = MeshCount
         Meshes(pBoundsIndex).FileName = LCase(RHS)
-        If PathExists(ScriptRoot & "\Models\" & Meshes(pBoundsIndex).FileName, True) Then
-            CreateMesh Me, ScriptRoot & "\Models\" & Meshes(pBoundsIndex).FileName, Meshes(pBoundsIndex).Mesh, Meshes(pBoundsIndex).MaterialBuffer, _
+        If PathExists(ScriptRoot & "Models\" & Meshes(pBoundsIndex).FileName, True) Then
+            CreateMesh Me, ScriptRoot & "Models\" & Meshes(pBoundsIndex).FileName, Meshes(pBoundsIndex).Mesh, Meshes(pBoundsIndex).MaterialBuffer, _
                      Meshes(pBoundsIndex).Materials, Meshes(pBoundsIndex).Textures, _
                     Meshes(pBoundsIndex).Verticies, Meshes(pBoundsIndex).Indicies, Meshes(pBoundsIndex).MaterialCount
         Else
@@ -671,6 +671,7 @@ Friend Sub PlayerMatrix()
     
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
+
 End Sub
 
 Friend Sub SetWorldMatrix()
@@ -679,10 +680,10 @@ End Sub
 
 
 Friend Function PointMatrix(ByRef p As Point) As Point
-    Dim v As D3DVECTOR
-    v = ToVector(p)
-    D3DXVec3TransformCoord v, v, Matrix
-    Set PointMatrix = ToPoint(v)
+    Dim V As D3DVECTOR
+    V = ToVector(p)
+    D3DXVec3TransformCoord V, V, Matrix
+    Set PointMatrix = ToPoint(V)
 End Function
 
 Friend Sub DefaultMatrix()

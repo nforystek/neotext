@@ -70,20 +70,20 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
     X = InStr(1, TheParams, BeginQuote, Compare)
     If (X > 0) And (X < Len(TheParams)) Then
         If (InStr(X + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
-            Dim l As Long
+            Dim L As Long
             Dim Y As Long
-            l = 1
+            L = 1
             Y = X
-            Do Until l = 0
+            Do Until L = 0
                 If (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) > 0) And (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) < InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare)) Then
-                    l = l + 1
+                    L = L + 1
                     Y = InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare)
                 ElseIf (InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
-                    l = l - 1
+                    L = L - 1
                     Y = InStr(Y + Len(EndQuote), TheParams, EndQuote, Compare)
                 Else
                     Y = Len(TheParams)
-                    l = 0
+                    L = 0
                 End If
             Loop
             If NextBlock Then
@@ -262,16 +262,16 @@ exitout:
     Set xml = Nothing
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured during serialization." & vbCrLf
-        Err.Raise num, src, "Line: " & (LineNum + 1) & " Error: " & des
+        Err.Raise Num, src, "Line: " & (LineNum + 1) & " Error: " & des
     End If
 End Function
 Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt As String, Optional ByRef LineNum As Long = 0) As String
@@ -322,16 +322,16 @@ Private Function ParseSerialize(ByVal inSection As Integer, Optional ByRef txt A
 
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured during serialization." & vbCrLf
-        Err.Raise num, src, "Line: " & (LineNum + 1) & " Error: " & des
+        Err.Raise Num, src, "Line: " & (LineNum + 1) & " Error: " & des
     End If
 End Function
 
@@ -362,16 +362,16 @@ Private Sub ParseSetting(ByVal inLine As String, ByVal inValue As String, ByVal 
 
 scripterror:
     If Err.Number <> 0 And Err.Number <> 11 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while building a binding." & vbCrLf
-        Err.Raise num, src, "Line: " & (LineNum + 1) & " Error: " & des
+        Err.Raise Num, src, "Line: " & (LineNum + 1) & " Error: " & des
     End If
 End Sub
 
@@ -422,16 +422,16 @@ Private Sub ParseBindings(ByVal inBind As String, ByVal inBlock As String, Optio
     
 scripterror:
     If Err.Number <> 0 And Err.Number <> 11 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while building a binding." & vbCrLf
-        Err.Raise num, src, "Line: " & (LineNum + 1) & " Error: " & des
+        Err.Raise Num, src, "Line: " & (LineNum + 1) & " Error: " & des
     End If
 End Sub
 
@@ -534,16 +534,16 @@ Private Sub ParseEvent(ByVal inLine As String, ByVal inBlock As String, ByVal in
     End If
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while building an event." & vbCrLf
-        Err.Raise num, src, "Line: " & LineNum & " Error: " & des
+        Err.Raise Num, src, "Line: " & LineNum & " Error: " & des
     End If
 End Sub
 
@@ -604,16 +604,16 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
     End If
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while building an object." & vbCrLf
-        Err.Raise num, src, "Line: " & LineNum & " Error: " & des
+        Err.Raise Num, src, "Line: " & LineNum & " Error: " & des
     End If
 End Function
 
@@ -647,16 +647,16 @@ Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Op
     
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
         Dim src As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while setting up an object." & vbCrLf
-        Err.Raise num, src, "Line: " & (LineNum + 1) & " Error: " & des
+        Err.Raise Num, src, "Line: " & (LineNum + 1) & " Error: " & des
     End If
 End Sub
 
@@ -681,15 +681,15 @@ Private Function ParseExecute(ByVal inLine As String, ByVal inWith As String, Op
     End If
 scripterror:
     If Err.Number <> 0 Then
-        Dim num As Long
+        Dim Num As Long
         Dim des As String
-        num = Err.Number
+        Num = Err.Number
         src = Err.source
         des = Err.Description
         Err.Clear
         On Error GoTo 0
         '"An error occured while executinng a statement." & vbCrLf
-        Err.Raise num, src, "Line: " & LineNum & " Error: " & des
+        Err.Raise Num, src, "Line: " & LineNum & " Error: " & des
     End If
             
 End Function
@@ -807,7 +807,9 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
         'that will be executed when the project is closing
         
         deSer = ParseSerialize(4) 'finalize adding with the footer
-        frmMain.AddCode deSer, , atLine  'add it to the code
+        atLine = ((atLine - CountWord(deSer, vbCrLf)) + 3)
+        frmMain.AddCode deSer, , atLine 'add it to the code
+
         If Not NoDeserialize Then
             frmMain.Run "Deserialize" 'now run the deserialzation generated at the beginning
         End If
@@ -823,6 +825,7 @@ parseerror:
     If Not ConsoleVisible Then
         ConsoleToggle
     End If
+    
     ConsoleCommand "echo An error " & Err.Number & " occurd in " & Err.source & " at line " & (atLine) & "\n" & Err.Description & "\n" & LastCall
     'frmMain.Print "echo An error " & Err.Number & " occurd in " & Err.Source & " at line " & (atLine - 1) & "\n" & Err.Description & "\n" & LastCall
     

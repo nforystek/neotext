@@ -86,18 +86,18 @@ Public Property Get FileName(Optional ByVal Index As Long = 0) As String
 End Property
 Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As String)
     If Index = 0 Then
-        If PathExists(ScriptRoot & "\Models\" & RHS, True) Then
+        If PathExists(ScriptRoot & "Models\" & RHS, True) Then
             pFileNames.Add RHS
             ReDim Preserve pBeaconSkin(1 To pFileNames.Count) As Direct3DTexture8
-            Set pBeaconSkin(pFileNames.Count) = LoadTexture(ScriptRoot & "\Models\" & RHS)
+            Set pBeaconSkin(pFileNames.Count) = LoadTexture(ScriptRoot & "Models\" & RHS)
             Recreate
         Else
             Err.Raise 8, App.EXEName, "File not found."
         End If
     ElseIf pFileNames.Count > 0 And Index <= pFileNames.Count And Index > 0 Then
-        If PathExists(ScriptRoot & "\Models\" & RHS, True) Then
+        If PathExists(ScriptRoot & "Models\" & RHS, True) Then
             Set pBeaconSkin(Index) = Nothing
-            Set pBeaconSkin(Index) = LoadTexture(ScriptRoot & "\Models\" & RHS)
+            Set pBeaconSkin(Index) = LoadTexture(ScriptRoot & "Models\" & RHS)
             pFileNames.Add RHS, , , Index
             pFileNames.Remove Index
             Recreate

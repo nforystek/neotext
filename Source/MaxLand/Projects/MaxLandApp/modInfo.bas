@@ -28,6 +28,7 @@ Public Stats_Board_Count As Long
 Public Stats_Collection_Count As Long
 Public Stats_Color_Count As Long
 Public Stats_Plot_Count As Long
+Public Stats_Coord_Count As Long
 Public Stats_Database_Count As Long
 Public Stats_Image_Count As Long
 Public Stats_Include_Count As Long
