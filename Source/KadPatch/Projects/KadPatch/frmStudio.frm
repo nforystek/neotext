@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#388.0#0"; "NTImaging10.ocx"
+Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#436.0#0"; "NTImaging10.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Begin VB.Form frmStudio 
@@ -469,7 +469,7 @@ Public Sub UpdateGallery()
     backSel = Gallery1.ListIndex
     
     Gallery1.Clear
-    Gallery1.Stretch = False
+    Gallery1.StretchImages = False
 
 
 startover:
@@ -485,7 +485,7 @@ startover:
             StringToSymbol rs("Symbol")
 
             Gallery1.AddImageByPicture SymbolBitmap, rs("ID")
-            Gallery1.BackgroundColors(Gallery1.count - 1) = rs("Color")
+            Gallery1.BackgroundColors(Gallery1.Count - 1) = rs("Color")
             
 
             If Not PathExists(GetSymbolFile(rs("ID")), True) Then
@@ -506,7 +506,7 @@ startover:
     End If
 
     db.rsClose rs
-    If backSel > -1 And backSel < Gallery1.count Then
+    If backSel > -1 And backSel < Gallery1.Count Then
         Gallery1.ListIndex = backSel
     End If
     
@@ -751,7 +751,7 @@ fault:
 
     TermDirectX
     
-    MsgBox "There was an error initializing the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
+    MsgBox "There was an error initializing the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
     Err.Clear
     End
 
@@ -802,9 +802,9 @@ Public Function SaveProject(Optional ByVal Prompt As Boolean = False) As Boolean
         CommonDialog1.DefaultExt = ".csp"
         CommonDialog1.DialogTitle = "Save Cross Stitch Project"
         CommonDialog1.Filter = "Cross Stitch Project (*.csp)|*.csp|All Files (*.*)|*.*"
-        If CommonDialog1.FileName <> "" Then CommonDialog1.FileName = Replace(CommonDialog1.FileName, ".pdf", ".csp", , , vbTextCompare)
+        If CommonDialog1.Filename <> "" Then CommonDialog1.Filename = Replace(CommonDialog1.Filename, ".pdf", ".csp", , , vbTextCompare)
         CommonDialog1.FilterIndex = 1
-        CommonDialog1.Flags = &H4 And &H200000 And &H8000 And &H2
+        CommonDialog1.flags = &H4 And &H200000 And &H8000 And &H2
         CommonDialog1.ShowSave
         If Err Then
             Err.Clear
@@ -819,7 +819,7 @@ Public Function SaveProject(Optional ByVal Prompt As Boolean = False) As Boolean
             TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
             TabStrip1_Click
             
-            ProjPath = CommonDialog1.FileName
+            ProjPath = CommonDialog1.Filename
             SaveProject = modProj.WriteToDisk
             modProj.Dirty = False
         End If
@@ -921,8 +921,8 @@ End Sub
 
 Public Function GetMaterialID(ByVal Color As Long) As String
     Dim cnt As Long
-    If Gallery1.count > 0 Then
-        For cnt = 0 To Gallery1.count - 1
+    If Gallery1.Count > 0 Then
+        For cnt = 0 To Gallery1.Count - 1
             If Gallery1.BackgroundColors(cnt) = Color Then
                 GetMaterialID = ColorToHex(frmStudio.Gallery1.Info(cnt))
             End If
@@ -940,7 +940,7 @@ End Function
 
 Private Function GetSymbolFile(Optional ByVal id As Long = -1) As String
     If id = -1 Then
-        If Gallery1.count > 0 Then
+        If Gallery1.Count > 0 Then
             GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(Gallery1.Info(Gallery1.ListIndex)) & ".bmp"
         End If
     Else
@@ -1005,7 +1005,7 @@ Private Sub mnuAdd_Click()
         UndoEnables
         
         UpdateGallery
-        Gallery1.ListIndex = Gallery1.count - 1
+        Gallery1.ListIndex = Gallery1.Count - 1
         Gallery1_Click
         
         modProj.CleanUpProj
@@ -1023,15 +1023,19 @@ Private Sub mnuExport_Click()
 '    frmThatch.Show 1
 '
 '    If frmThatch.Tag = "OK" Then
+
+    Dim doCenter As Integer
+    doCenter = MsgBox("Ensure the full thatch canvas is in view before continuing." & vbCrLf & "Is the thatch canvas fully with in the view?", vbQuestion + vbYesNoCancel)
+    If doCenter <> vbCancel Then
     
         On Error Resume Next
         CommonDialog1.CancelError = True
         CommonDialog1.DefaultExt = ".pdf"
         CommonDialog1.DialogTitle = "Export Cross Stitch Project View"
         CommonDialog1.Filter = "Windows Bitmap (*.bmp)|*.bmp|All Files (*.*)|*.*"
-        If CommonDialog1.FileName <> "" Then CommonDialog1.FileName = Replace(CommonDialog1.FileName, ".csp", ".pdf", , , vbTextCompare)
+        If CommonDialog1.Filename <> "" Then CommonDialog1.Filename = Replace(CommonDialog1.Filename, ".csp", ".pdf", , , vbTextCompare)
         CommonDialog1.FilterIndex = 1
-        CommonDialog1.Flags = &H4 And &H200000 And &H8000 And &H2
+        CommonDialog1.flags = &H4 And &H200000 And &H8000 And &H2
         CommonDialog1.ShowSave
         If Err Then
             Err.Clear
@@ -1057,21 +1061,25 @@ Private Sub mnuExport_Click()
 
             DDevice.GetViewport dViewPort
             
+
+            
             Set DSurface = D3DX.CreateRenderToSurface(DDevice, Screen.Width / Screen.TwipsPerPixelX, Screen.Height / Screen.TwipsPerPixelY, Display.Format, False, D3DFMT_D16)
 
-            Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-            Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-            Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+'            Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+'            Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+'            Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
 
+            If doCenter = vbNo Then GotoCenter
             
             dViewPort.Width = Screen.Width / Screen.TwipsPerPixelX
             dViewPort.Height = Screen.Height / Screen.TwipsPerPixelY
 
             DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, BackColor, 1, 0
+
             
             DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
             
-            SetupWorld
+            SetupWorld True
 
             RenderView False, True
         
@@ -1087,7 +1095,7 @@ Private Sub mnuExport_Click()
             rct.Bottom = dViewPort.Height
             
 
-            D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", " Display.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+            D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".bmp", " Display.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
        
             Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
             TabStrip1_Click
@@ -1097,7 +1105,7 @@ Private Sub mnuExport_Click()
             
             DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
             
-            SetupWorld
+            SetupWorld True
 
             RenderView False, True
         
@@ -1113,7 +1121,7 @@ Private Sub mnuExport_Click()
             rct.Bottom = dViewPort.Height
             
 
-            D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", " Pattern.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+            D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".bmp", " Pattern.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
             
 '            Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & Electrons.Key(i) & ".bmp", _
 '                DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
@@ -1126,6 +1134,7 @@ Private Sub mnuExport_Click()
           '  Set DSurface = Nothing
             
         End If
+    End If
     
 '    End If
 '    Unload frmThatch
@@ -1144,10 +1153,10 @@ Public Sub FinishCapture()
         rct.Left = 5
         rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
         rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
-        D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare))
-        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare), 100
-        Kill Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare)
+        D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare))
+        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare), 100
+        Kill Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare)
         frmMain.Picture1.Picture = LoadPicture("")
         Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
             
@@ -1160,10 +1169,10 @@ Public Sub FinishCapture()
         rct.Left = 5
         rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
         rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
-        D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare))
-        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare), 100
-        Kill Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare)
+        D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare))
+        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare), 100
+        Kill Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare)
         frmMain.Picture1.Picture = LoadPicture("")
         Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
             
@@ -1171,11 +1180,11 @@ Public Sub FinishCapture()
                 
         ExportCapture = 0
         
-        If PathExists(CommonDialog1.FileName, True) Then Kill CommonDialog1.FileName
+        If PathExists(CommonDialog1.Filename, True) Then Kill CommonDialog1.Filename
 
         Dim pdf As New NTImaging10.PDFCompiler
-        pdf.QueueFile Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare)
-        pdf.QueueFile Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare)
+        pdf.QueueFile Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare)
+        pdf.QueueFile Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare)
         pdf.FitImageTopage = False
         pdf.PageWidth = (((frmMain.Picture1.Width / Screen.TwipsPerPixelX) / PixelPerPoint) * (PixelPerPoint / GetMonitorDPI.Width)) + 4
 
@@ -1188,9 +1197,9 @@ Public Sub FinishCapture()
         pdf.PageFooter = False
         pdf.ChangeQuality = False
         pdf.Exhibit = False
-        pdf.CompilePDF CommonDialog1.FileName
-        Kill Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare)
-        Kill Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare)
+        pdf.CompilePDF CommonDialog1.Filename
+        Kill Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare)
+        Kill Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare)
         
         
         
@@ -1277,7 +1286,7 @@ Private Sub mnuOpen_Click()
         CommonDialog1.InitDir = CurDir
         CommonDialog1.Filter = "Cross Stitch Project (*.csp)|*.csp|All Files (*.*)|*.*"
         CommonDialog1.FilterIndex = 1
-        CommonDialog1.Flags = &H1000 And &H200000 And &H1000
+        CommonDialog1.flags = &H1000 And &H200000 And &H1000
         CommonDialog1.ShowOpen
         If Err Then
             Err.Clear
@@ -1289,7 +1298,7 @@ Private Sub mnuOpen_Click()
         
             TabStrip1_Click
     
-            ProjPath = CommonDialog1.FileName
+            ProjPath = CommonDialog1.Filename
             modProj.ReadFromDisk
             modProj.CleanUpProj
             modProj.CreateProj
@@ -1313,9 +1322,9 @@ End Sub
 
 Private Sub UndoCOmmit()
     If UndoAction <> "" Then
-        If UndoRecord < UndoBuffer.count And UndoBuffer.count > 0 Then
-            Do Until UndoRecord = UndoBuffer.count
-                UndoBuffer.Remove UndoBuffer.count
+        If UndoRecord < UndoBuffer.Count And UndoBuffer.Count > 0 Then
+            Do Until UndoRecord = UndoBuffer.Count
+                UndoBuffer.Remove UndoBuffer.Count
             Loop
         End If
         UndoBuffer.Add UndoAction
@@ -1326,8 +1335,8 @@ Private Sub UndoCOmmit()
 End Sub
 Private Sub SelectColor(ByVal Color As Long)
     Dim cnt As Long
-    If Gallery1.count > 0 Then
-        For cnt = 0 To Gallery1.count - 1
+    If Gallery1.Count > 0 Then
+        For cnt = 0 To Gallery1.Count - 1
             If Gallery1.BackgroundColors(cnt) = Color Then
                 Gallery1.ListIndex = cnt
                 Exit Sub
@@ -1338,7 +1347,7 @@ End Sub
 Public Sub mnuUndo_Click()
     UndoCOmmit
 
-    If (UndoRecord > 0 And UndoBuffer.count > 0) Then
+    If (UndoRecord > 0 And UndoBuffer.Count > 0) Then
 
         Dim undotext As String
         Dim undoline As String
@@ -1450,7 +1459,7 @@ End Sub
 
 Public Sub mnuRedo_Click()
 
-    If (UndoRecord < UndoBuffer.count And UndoBuffer.count > 0) And (UndoAction = "") Then
+    If (UndoRecord < UndoBuffer.Count And UndoBuffer.Count > 0) And (UndoAction = "") Then
     
         UndoRecord = UndoRecord + 1
         
@@ -1515,14 +1524,14 @@ Public Sub mnuRedo_Click()
                 UpdateSymbol
         End If
 
-        mnuRedo.Enabled = (UndoRecord < UndoBuffer.count And UndoBuffer.count > 0) And (UndoAction = "")
+        mnuRedo.Enabled = (UndoRecord < UndoBuffer.Count And UndoBuffer.Count > 0) And (UndoAction = "")
     End If
 
 End Sub
 
 Public Sub UndoEnables()
-    mnuUndo.Enabled = (UndoRecord > 0 And UndoBuffer.count > 0) Or (UndoAction <> "")
-    mnuRedo.Enabled = (UndoRecord <= UndoBuffer.count And UndoBuffer.count > 0) And (UndoAction = "")
+    mnuUndo.Enabled = (UndoRecord > 0 And UndoBuffer.Count > 0) Or (UndoAction <> "")
+    mnuRedo.Enabled = (UndoRecord <= UndoBuffer.Count And UndoBuffer.Count > 0) And (UndoAction = "")
 End Sub
 
 
@@ -1733,12 +1742,14 @@ Private Sub mnuNew_Click()
         Dim i As Byte
         For X = 1 To ThatchXUnits
             For Y = 1 To ThatchYUnits
-                If ProjGrid(X, Y).count > 0 Then
+                If ProjGrid(X, Y).Count > 0 Then
                     Erase ProjGrid(X, Y).Details
-                    ProjGrid(X, Y).count = 0
+                    ProjGrid(X, Y).Count = 0
                 End If
             Next
         Next
+        
+        GotoCenter
         
         UndoReset
         
@@ -1778,7 +1789,7 @@ Private Sub TabStrip1_Click()
     mnuClear.Enabled = TabStrip1.SelectedItem.Key = "symbols"
 
 
-    Symbols.Visible = (TabStrip1.SelectedItem.Key = "symbols") And (Gallery1.count > 0)
+    Symbols.Visible = (TabStrip1.SelectedItem.Key = "symbols") And (Gallery1.Count > 0)
     Designer.Visible = TabStrip1.SelectedItem.Key <> "symbols"
 
 

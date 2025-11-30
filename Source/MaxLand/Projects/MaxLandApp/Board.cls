@@ -287,7 +287,7 @@ Public Property Let Key(ByVal RHS As String)
 End Property
 
 Public Property Get Visible() As Boolean
-    Visible = pVisible And (Not pVBuf Is Nothing)
+    Visible = pVisible And ((Not pVBuf Is Nothing) Or pMirror)
 End Property
 Public Property Let Visible(ByVal RHS As Boolean)
     pVisible = RHS
@@ -297,7 +297,9 @@ Public Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
     If Index = -1 Then
         DDevice.SetTexture Stage, Nothing
     Else
-        DDevice.SetTexture Stage, pSkin(Index)
+        If FileNames.Count > 0 Then
+            DDevice.SetTexture Stage, pSkin(Index)
+        End If
     End If
 End Sub
 Public Sub Render()
@@ -324,7 +326,12 @@ End Function
 Private Sub RecreateSkins()
 
 
-    If pAlign = 1 Then
+    If pAlign = 2 Then
+        CreateSquareEx pPlaq, 0, MakeMyVertex(Point1, Normal1, Texture1), _
+                                 MakeMyVertex(Point2, Normal2, Texture2), _
+                                 MakeMyVertex(Point3, Normal3, Texture3), _
+                                MakeMyVertex(Point4, Normal4, Texture4)
+    Else 'If pAlign = 1 Then
         CreateSquare pPlaq, 0, MakeVector(pPoint1.X, pPoint1.Y, pPoint1.Z), _
                                         MakeVector(pPoint2.X, pPoint2.Y, pPoint2.Z), _
                                         MakeVector(pPoint3.X, pPoint3.Y, pPoint3.Z), _
@@ -354,15 +361,9 @@ Private Sub RecreateSkins()
         pTexture4.U = 0
         pTexture4.V = 0
         
-    ElseIf pAlign = 2 Then
-        CreateSquareEx pPlaq, 0, MakeMyVertex(Point1, Normal1, Texture1), _
-                                 MakeMyVertex(Point2, Normal2, Texture2), _
-                                 MakeMyVertex(Point3, Normal3, Texture3), _
-                                MakeMyVertex(Point4, Normal4, Texture4)
-    
     End If
 
-    If pAlign = 1 Or pAlign = 2 Then
+    'If pAlign = 1 Or pAlign = 2 Then
         Set pOrigin = SquareCenter(MakePoint(pPoint1.X, pPoint1.Y, pPoint1.Z), _
                                         MakePoint(pPoint2.X, pPoint2.Y, pPoint2.Z), _
                                         MakePoint(pPoint3.X, pPoint3.Y, pPoint3.Z), _
@@ -372,7 +373,7 @@ Private Sub RecreateSkins()
         
         D3DVertexBuffer8SetData pVBuf, 0, LenB(pPlaq(0)) * (UBound(pPlaq) + 1), 0, pPlaq(0)
 
-    End If
+    'End If
 End Sub
 
 Private Sub Class_Initialize()

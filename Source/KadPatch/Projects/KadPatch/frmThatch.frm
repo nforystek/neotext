@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#323.0#0"; "NTImaging10.ocx"
+Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#436.0#0"; "NTImaging10.ocx"
 Begin VB.Form frmThatch 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Project Matting Size"
@@ -79,7 +79,6 @@ Begin VB.Form frmThatch
       _ExtentX        =   3440
       _ExtentY        =   7461
       FilePath        =   ""
-      Stretch         =   -1  'True
    End
    Begin VB.Label Label7 
       Caption         =   "Label7"
@@ -219,7 +218,7 @@ Public Sub SetupThatch()
     Combo1.ListIndex = 0
     Approximate
 
-    Gallery1.Stretch = True
+    Gallery1.StretchImages = True
     Gallery1.FilePath = AppPath & "Base\Stitchings\Mattings"
     Gallery1.ListIndex = ThatchIndex - 1
 '        Gallery1.Orientation = 0
@@ -235,7 +234,7 @@ Public Sub SetupSymbols()
     Text1.Visible = False
     Text2.Visible = False
 
-    Gallery1.Stretch = True
+    Gallery1.StretchImages = True
     Gallery1.FilePath = AppPath & "Base\Stitchings\FlossThreads"
     'Gallery1.ListIndex = ColorIndex - 1
         
@@ -252,7 +251,7 @@ Public Sub SetupColors()
     Text2.Visible = False
 
 
-    Gallery1.Stretch = False
+    Gallery1.StretchImages = False
     Gallery1.FilePath = AppPath & "Base\Stitchings\LegendKeys"
         
 '        Gallery1.Orientation = 0

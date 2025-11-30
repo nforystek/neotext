@@ -59,11 +59,11 @@ Public Sub CreateText()
     TwipsRatioPerCharInch = Sqr(((LetterPerInch * Screen.TwipsPerPixelX) * TextHeight) / Screen.TwipsPerPixelY)
     DotsRatioPerCharInch = Sqr(LetterPerInch * (TextHeight / Screen.TwipsPerPixelY))
     PixelPerDotCharHeight = TwipsRatioPerCharInch / DotsRatioPerCharInch
-    PixelCubicCharInch = Sqr((DPI.Height * Screen.TwipsPerPixelY) * (DPI.Width * Screen.TwipsPerPixelX)) / (LetterPerInch ^ 2)
+    PixelCubicCharInch = Sqr((DPI.height * Screen.TwipsPerPixelY) * (DPI.width * Screen.TwipsPerPixelX)) / (LetterPerInch ^ 2)
     PixelPerDotCharWidth = Sqr((TwipsRatioPerCharInch + DotsRatioPerCharInch + PixelCubicCharInch) * 4) / PixelCubicCharInch
 
-    ColumnCount = ((Screen.Width / Screen.TwipsPerPixelX) / Round(DPI.Width * (LetterPerInch / 100), 0)) * ((frmMain.Width / Screen.TwipsPerPixelX) / (Screen.Width / Screen.TwipsPerPixelX))
-    frmMain.Font.Size = (frmMain.Width / (Screen.TwipsPerPixelX * PixelPerDotCharWidth)) / ColumnCount
+    ColumnCount = ((Screen.width / Screen.TwipsPerPixelX) / Round(DPI.width * (LetterPerInch / 100), 0)) * ((frmMain.width / Screen.TwipsPerPixelX) / (Screen.width / Screen.TwipsPerPixelX))
+    frmMain.Font.Size = (frmMain.width / (Screen.TwipsPerPixelX * PixelPerDotCharWidth)) / ColumnCount
 
     RowCount = 1
     Do Until ((((TextHeight / Screen.TwipsPerPixelY) + TextSpace) * RowCount) + 2) >= ((frmMain.ScaleHeight - TextHeight) / Screen.TwipsPerPixelY)
@@ -116,71 +116,57 @@ Public Sub CreateText()
     Set DefaultRenderTarget = DDevice.GetRenderTarget
     Set DefaultStencilDepth = DDevice.GetDepthStencilSurface
     
+
+    Dim width As Single
+    Dim height As Single
+    
     If Not FullScreen Then
-        Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-        Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
-        Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+        width = (frmMain.width / Screen.TwipsPerPixelX)
+        height = (frmMain.height / Screen.TwipsPerPixelY)
     Else
-        Set BufferedTexture = DDevice.CreateTexture((Screen.Width / Screen.TwipsPerPixelX), (Screen.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-        Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
-        Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((Screen.Width / Screen.TwipsPerPixelX), (Screen.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+        width = (Screen.width / Screen.TwipsPerPixelX)
+        height = (Screen.height / Screen.TwipsPerPixelY)
     End If
+
+    Set DSurface = D3DX.CreateRenderToSurface(DDevice, width, height, Display.Format, 1, D3DFMT_D16)
+
+
+        Set BufferedTexture = DDevice.CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+        Set ReflectRenderTarget = BufferedTexture.GetSurfaceLevel(0)
+        Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface(width, height, D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+
+    
+
+'    Set ReflectRenderTarget = DDevice.CreateImageSurface(width, height, Display.Format)
+'    Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE)
+
+
+'        Set DSurface = D3DX.CreateRenderToSurface(DDevice, width, height, D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
+'        Set ReflectRenderTarget = DDevice.CreateRenderTarget(width, height, D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+'        Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface(width, height, D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+
+
+'    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+'
+'
+' '   Set ReflectFrontBuffer = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
 ''
-''    If Not FullScreen Then
-''        Set DSurface = D3DX.CreateRenderToSurface(DDevice, (frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), Display.Format, D3DMULTISAMPLE_NONE, D3DFMT_D16)
-'
-''        Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-''        Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-''        Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-'
-'
-''    Else
-''        Set DSurface = D3DX.CreateRenderToSurface(DDevice, Screen.Width / Screen.TwipsPerPixelX, Screen.Height / Screen.TwipsPerPixelY, Display.Format, D3DMULTISAMPLE_NONE, D3DFMT_D16)
-''    End If
-'
-''    Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-''    Set BufferedTexture = DSurface.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-''    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+''    DDevice.GetFrontBuffer ReflectFrontBuffer
 '
 '
 '
-'        If Not FullScreen Then
-'            'Set DSurface = D3DX.CreateRenderToSurface(DDevice, (frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
-'            'Set DSurface = D3DX.CreateRenderToSurface(DDevice, (frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), Display.Format, 1, D3DFMT_D16)
-'            Set ReflectRenderTarget = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), Display.Format)
-'        Else
-'            'Set DSurface = D3DX.CreateRenderToSurface(DDevice, (VB.Screen.Width / VB.Screen.TwipsPerPixelX), (VB.Screen.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, 1, D3DFMT_D24S8)
-'            'Set DSurface = D3DX.CreateRenderToSurface(DDevice, (VB.Screen.Width / VB.Screen.TwipsPerPixelX), (VB.Screen.Height / VB.Screen.TwipsPerPixelY), Display.Format, 1, D3DFMT_D16)
-'            Set ReflectRenderTarget = DDevice.CreateImageSurface((VB.Screen.Width / VB.Screen.TwipsPerPixelX), (VB.Screen.Height / VB.Screen.TwipsPerPixelY), Display.Format)
 '
-'        End If
+' '   DDevice.SetClipPlane
 '
+'    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
 '
+'    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
 '
-'          '  Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-'          '  Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-'          '  Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-'
-''        Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-''        Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-''        Set ReflectRenderTarget = DDevice.CreateImageSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), D3DFMT_A8R8G8B8)
-''        Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
-'
-'
+' '   Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
+
+
 ''    DDevice.GetFrontBuffer ReflectFrontBuffer
 ''
-''
-''
-''
-'' '   DDevice.SetClipPlane
-'
-'
-'
-''    Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-''    Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-''    Set ReflectStencilDepth = DDevice.CreateDepthStencilSurface((frmMain.Width / VB.Screen.TwipsPerPixelX), (frmMain.Height / VB.Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_D16, D3DMULTISAMPLE_NONE) ' CONST_D3DFORMAT.D3DFMT_D24S8, D3DMULTISAMPLE_NONE)
-
-
 End Sub
 
 Public Sub CleanupText()
@@ -223,7 +209,7 @@ Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8
     Dim Dimensions As ImageDimensions
     
     If ImageDimensions(FileName, Dimensions, e) Then
-        Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
+        Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.width, Dimensions.height, D3DX_FILTER_NONE, 0, _
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTexture = t
 
@@ -237,7 +223,7 @@ Public Function LoadTextureEx(ByVal FileName As String, ByRef Dimensions As Imag
     Dim t As Direct3DTexture8
     
     If ImageDimensions(FileName, Dimensions, e) Then
-        Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
+        Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.width, Dimensions.height, D3DX_FILTER_NONE, 0, _
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTextureEx = t
 

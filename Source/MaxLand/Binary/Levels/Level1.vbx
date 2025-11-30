@@ -85,17 +85,19 @@ player
 '}
 
 
-'board <mirror> {
-'
-'	.visible=true
-'	.point1 = [2,0,-1.5]
-'	.point4 = [3,0,-1.5]
-'	.point3 = [3,3,-1.5]
-'	.point2 = [2,3,-1.5]
-'	.scalex=1
-'	.scaley=1
-'	.filename = "pawn.bmp"
-'}
+board <mirror> {
+
+	.visible=true
+	.mirror = true
+	.point3 = [-1,1,0]
+	.point4 = [0,1,0]
+	.point1 = [0,0,0] 
+	.point2 = [-1,0,0]
+
+	.scalex=1
+	.scaley=1
+	.filename = "pawn.bmp"
+}
 
 
 variable <tempswap1>=0

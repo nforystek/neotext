@@ -128,7 +128,7 @@ Public Sub Main()
 
         Dim chk As Boolean
         
-        Do Until Forms.count = 0
+        Do Until Forms.Count = 0
             RenderFrame
             DoTasks
 
@@ -177,7 +177,7 @@ Public Sub RenderFrame()
                 DDevice.BeginScene
                 DDevice.EndScene
                 DDevice.Present ByVal 0, ByVal 0, frmMain.Picture1.hwnd, ByVal 0
-                If (Err.number = 0) And (GetActiveWindow = frmStudio.hwnd Or GetActiveWindow = frmMain.hwnd) Then
+                If (Err.Number = 0) And (GetActiveWindow = frmStudio.hwnd Or GetActiveWindow = frmMain.hwnd) Then
                     NotFocused = False
 
                 Else
@@ -188,10 +188,10 @@ Public Sub RenderFrame()
 
             End If
             
-            If (Not NotFocused) And (Err.number = 0) Then
+            If (Not NotFocused) And (Err.Number = 0) Then
                 On Error Resume Next
                 InitGameData
-                If Err.number <> 0 Then
+                If Err.Number <> 0 Then
                     TermGameData
                 End If
             Else
@@ -255,7 +255,7 @@ Public Sub RenderFrame()
             FPSRate = FPSCount
             FPSCount = 0
         End If
-        If Err.number Then
+        If Err.Number Then
             Err.Clear
             DoNotFocused
         End If
@@ -276,12 +276,12 @@ Render:
 
     Unload frmMain
         
-    MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
+    MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
     Err.Clear
     End
 End Sub
 
-Public Sub SetupWorld()
+Public Sub SetupWorld(Optional ByVal Exporting As Boolean = False)
 
     Dim matView As D3DMATRIX
     Dim matLook As D3DMATRIX
@@ -299,12 +299,21 @@ Public Sub SetupWorld()
     
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
-     
-    D3DXMatrixRotationY matRotation, Player.CameraAngle
-    D3DXMatrixRotationX matPitch, Player.CameraPitch
-    D3DXMatrixMultiply matLook, matRotation, matPitch
     
-    D3DXMatrixTranslation matPos, -Player.Location.X, -Player.Location.Y, Player.CameraZoom
+    If Exporting Then
+        D3DXMatrixRotationY matRotation, 0
+        D3DXMatrixRotationX matPitch, 0
+    Else
+        D3DXMatrixRotationY matRotation, Player.CameraAngle
+        D3DXMatrixRotationX matPitch, Player.CameraPitch
+    End If
+    D3DXMatrixMultiply matLook, matRotation, matPitch
+    If Exporting Then
+    
+        D3DXMatrixTranslation matPos, -Player.Location.X, -Player.Location.Y, Player.CameraZoom
+    Else
+        D3DXMatrixTranslation matPos, -Player.Location.X, -Player.Location.Y, Player.CameraZoom
+    End If
     D3DXMatrixMultiply matView, matPos, matLook
     DDevice.SetTransform D3DTS_VIEW, matView
         
@@ -363,10 +372,10 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     
     On Error Resume Next
     Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, D3DWindow)
-    If Err.number <> 0 Then
+    If Err.Number <> 0 Then
         Err.Clear
         Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_MIXED_VERTEXPROCESSING, D3DWindow)
-        If Err.number <> 0 Then
+        If Err.Number <> 0 Then
             Err.Clear
             Set DDevice = D3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, D3DWindow)
         End If
@@ -429,7 +438,7 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         On Error Resume Next
         Set DSound = dx.DirectSoundCreate("")
         DSound.SetCooperativeLevel frmMain.hwnd, DSSCL_PRIORITY
-        If Err.number <> 0 Then Err.Clear
+        If Err.Number <> 0 Then Err.Clear
         On Error GoTo 0
 
         Dim shArray() As Long
@@ -505,8 +514,8 @@ Public Function TestDirectX() As Boolean
 
     On Error Resume Next
     InitDirectX
-    TestDirectX = (Err.number = 0)
-    If Err.number Then Err.Clear
+    TestDirectX = (Err.Number = 0)
+    If Err.Number Then Err.Clear
     On Error GoTo 0
 
 End Function

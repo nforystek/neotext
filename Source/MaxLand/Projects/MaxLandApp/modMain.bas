@@ -135,8 +135,8 @@ Public Sub Main()
                 
         frmMain.BackColor = &H323232
         
-        frmMain.Width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
-        frmMain.Height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
+        frmMain.width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
+        frmMain.height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
         AspectRatio = CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))
 
         WorkingScreen "Loading..."
@@ -182,28 +182,23 @@ Public Sub Main()
             Else
                 On Error GoTo 0
                 On Error GoTo Render
-
-
+                
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
-                         
-                DDevice.BeginScene
     
-                'elapsed = Timer
-                SetupWorld
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+'                'elapsed = Timer
+'                SetupWorld
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
 
                 'elapsed = Timer
                 RenderMotion
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
-
                 
                 'elapsed = Timer
                 RenderSpaces
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
-
                 
                 'elapsed = Timer
                 RenderWorld
@@ -214,31 +209,42 @@ Public Sub Main()
                 RenderPlayer
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
-
-      
-    
+          
                 'elapsed = Timer
                 RenderBoards
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
-                
-                
+
+                 'elapsed = Timer
+                RenderMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+
                 'elapsed = Timer
                 RenderLucent
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
-                
-
                
                 'elapsed = Timer
                 RenderBeacons
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                    
-                'BeginMirrors
+
+                'elapsed = Timer
+                BeginMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
 
 
 
+                
+                DDevice.BeginScene
+                
+                'elapsed = Timer
+                SetupWorld
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                
                 'elapsed = Timer
                 RenderPortals
                 'elapsed = (Timer - elapsed)
@@ -253,7 +259,6 @@ Public Sub Main()
                 RenderRoutine
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderRoutine: " & elapsed
-
                 
                 On Error GoTo 0
 
@@ -271,13 +276,7 @@ Public Sub Main()
                 InputScene
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
-      
-                
-                'elapsed = Timer
-                'RenderMirrors
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                
+                               
                 If Not PauseGame Then
                 
                     'elapsed = Timer
@@ -426,8 +425,8 @@ On Error GoTo WorldError
 
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
 
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
-        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
+        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
+        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
         D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
@@ -436,11 +435,11 @@ On Error GoTo WorldError
 
     Else
 
-        D3DXMatrixRotationY matRotation, Player.Camera.Angle
-        D3DXMatrixRotationX matPitch, Player.Camera.Pitch
+        D3DXMatrixRotationY matRotation, Player.Camera.angle
+        D3DXMatrixRotationX matPitch, Player.Camera.pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.Camera.Pitch > 0 Then
+        If Player.Camera.pitch > 0 Then
 
             D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
@@ -502,13 +501,13 @@ On Error GoTo WorldError
                                             Player.Element.Origin.Y - 0.2, _
                                             Player.Element.Origin.Z)
 
-                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle) * (Zoom + factor)), _
-                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.Pitch) * (Zoom + factor)), _
-                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle) * (Zoom + factor)))
+                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle) * (Zoom + factor)), _
+                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.pitch) * (Zoom + factor)), _
+                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle)), _
-                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.Pitch) * Zoom), _
-                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle)))
+                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle)), _
+                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.pitch) * Zoom), _
+                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle)))
 
 '                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Camera.Pitch), Player.Camera.Angle))
 '
@@ -671,11 +670,11 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     DViewPort.MaxZ = FAR
     DViewPort.MinZ = NEAR
     If Not FullScreen Then
-        DViewPort.Width = (frmMain.Width / VB.Screen.TwipsPerPixelX)
-        DViewPort.Height = (frmMain.Height / VB.Screen.TwipsPerPixelY)
+        DViewPort.width = (frmMain.width / VB.Screen.TwipsPerPixelX)
+        DViewPort.height = (frmMain.height / VB.Screen.TwipsPerPixelY)
     Else
-        DViewPort.Width = (VB.Screen.Width / VB.Screen.TwipsPerPixelX)
-        DViewPort.Height = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
+        DViewPort.width = (VB.Screen.width / VB.Screen.TwipsPerPixelX)
+        DViewPort.height = (VB.Screen.height / VB.Screen.TwipsPerPixelY)
     End If
         
     On Error Resume Next
@@ -693,15 +692,15 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     If Not DDevice Is Nothing Then
     
         If Not FullScreen Then
-            DViewPort.X = (((frmMain.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-            DViewPort.Y = (((frmMain.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+            DViewPort.X = (((frmMain.width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+            DViewPort.Y = (((frmMain.height / VB.Screen.TwipsPerPixelY) / 2) - 256)
         Else
-            DViewPort.X = (((VB.Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-            DViewPort.Y = (((VB.Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+            DViewPort.X = (((VB.Screen.width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+            DViewPort.Y = (((VB.Screen.height / VB.Screen.TwipsPerPixelY) / 2) - 256)
         End If
 
-        DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
-        DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
+        DViewPort.width = DViewPort.width - (DViewPort.X * 2)
+        DViewPort.height = DViewPort.height - (DViewPort.Y * 2)
          
             
         DDevice.SetRenderState D3DRS_ZENABLE, 1
@@ -709,8 +708,8 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_DITHERENABLE, False
         DDevice.SetRenderState D3DRS_EDGEANTIALIAS, False
     
-        'DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
-        'DDevice.SetRenderState D3DRS_VERTEXBLEND, False
+        DDevice.SetRenderState D3DRS_INDEXVERTEXBLENDENABLE, False
+        DDevice.SetRenderState D3DRS_VERTEXBLEND, False
     
         DDevice.SetRenderState D3DRS_CLIPPING, 1
     
@@ -785,13 +784,6 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         D3DX.BufferGetData shCode, 0, 4, shLength, shArray(0)
         PixelShaderDiffuse = DDevice.CreatePixelShader(shArray(0))
         Set shCode = Nothing
-    
-    ', CONST_D3DFORMAT.D3DFMT_A8R8G8B8, ReflectStencilDepth, D3DFMT_D24S8
-'        If Not FullScreen Then
-'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, frmMain.Width / VB.Screen.TwipsPerPixelX, frmMain.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
-'        Else
-'            Set DSurface = D3DX.CreateRenderToSurface(DDevice, VB.Screen.Width / VB.Screen.TwipsPerPixelX, VB.Screen.Height / VB.Screen.TwipsPerPixelY, Display.Format, 1, D3DFMT_D16)
-'        End If
 
 
 
