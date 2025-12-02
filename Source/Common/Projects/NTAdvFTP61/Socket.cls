@@ -26,7 +26,7 @@ Public Event Connected()
 Public Event Disconnected()
 Public Event DataArriving()
 Public Event SendComplete()
-Public Event Connection(ByRef Handle As Long)
+Public Event Connection(ByRef handle As Long)
 Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 
 Private CLIENT_RANDOM As String
@@ -38,7 +38,7 @@ Private RSA_KEY_128V3 As String
 Private RSA_KEY_LEN As Long
 Private PUBLIC_KEY As String
 Private PRE_MASTER_KEY As String
-Private MASTER_KEY As String
+
 
 Private Const VERSION_MAJOR As Byte = &H3
 Private Const VERSION_MINOR_0 As Byte = &H0
@@ -57,20 +57,20 @@ Private Const TLS1_MT_SERVER_DONE As Byte = &HE         '14
 Private Const TLS1_MT_CERTIFICATE_VERIFY As Byte = &HF  '15
 Private Const TLS1_MT_CLIENT_KEY_EXCHANGE As Byte = &H10 '16
 Private Const TLS1_MT_FINISHED As Byte = &H14           '20
+
 Private hSESSION_MD5 As Long  'Handle to MD5 Session Hash
 Private hSESSION_SHA1 As Long  'Handle to SHA1 Session Hash
 Private hCOPY_MD5 As Long  'Handle to Copy of MD5 Session Hash
 Private hCOPY_SHA1 As Long  'Handle to Copy of SHA1 Session Hash
 
-
 Private Layer As Long
 
-Private cert As Certificate
+Private myCert As Certificate
 
 Private Function AddRecHeader(strRecord As String) As String
     'Prepend record with record header
     Dim TLSHeader As String
-    TLSHeader = SecureSession.msgType & Chr$(Int(Len(strRecord) / 256)) & Chr$(Len(strRecord) Mod 256)
+    TLSHeader = SecureSession.msgType & SecureSession.LenToHexStr(Len(strRecord)) 'Chr$(Int(Len(strRecord) / 256)) & Chr$(Len(strRecord) Mod 256)
     AddRecHeader = TLSHeader & strRecord
 End Function
 
@@ -87,7 +87,7 @@ Private Function GetClientExchange() As String
     PRE_MASTER_KEY = Chr$(&H3) & Chr$(&H1) & SecureSession.RndBuffer
     SecureSession.InBuffer = PRE_MASTER_KEY
     'Set the server Public Key in Crypto
-    SecureSession.PubKey = Left(PUBLIC_KEY, RSA_KEY_LEN)
+    SecureSession.PubKey = PUBLIC_KEY
     Call SecureSession.SetPubKey
     Call SecureSession.ExportMasterKey
     'Encrypted Pre-Master Key is now resident in OutBuffer
@@ -97,9 +97,8 @@ Private Function GetClientExchange() As String
         & Chr$(&H1) & Chr$(&H0) & StrReverse(SecureSession.OutBuffer)
     sCipherSpec = Chr$(TLS1_RT_CHANGE_CIPHER_SPEC) & Chr$(VERSION_MAJOR) & Chr$(VERSION_MINOR_1) _
         & Chr$(&H0) & Chr$(&H1) & Chr$(&H1)
-
-    
- 
+        
+       SecureSession.IncSendSeqNum (True) 'Reset Send Sequence Number
     'Hash data (Change Cipher Spec not included)
     'Call DebugPrintHex("Client Key Exchange (Encrypted)", sKey)
     hSESSION_MD5 = SecureSession.MD5_AddToHash(sKey, hSESSION_MD5)
@@ -120,7 +119,7 @@ Private Function GetClientExchange() As String
     hSESSION_MD5 = SecureSession.MD5_AddToHash(sClientFinish, hSESSION_MD5)
     hSESSION_SHA1 = SecureSession.SHA1_AddToHash(sClientFinish, hSESSION_SHA1)
     GetClientExchange = AddRecHeader(sKey) & sCipherSpec & AddRecHeader(sClientFinishEnc)
-
+     
     ' Call DebugPrintHex("Signature", GetClientExchange)
  '   Debug.Print "Change Cipher Spec Sent!"
 End Function
@@ -140,7 +139,14 @@ Private Function GetClientHello() As String
         & Chr$(&H70) & Chr$(&H61) & Chr$(&H6C) & Chr$(&H2E) & Chr$(&H63) & Chr$(&H6F) & Chr$(&H6D) & Chr$(&H0) & Chr$(&HA) & Chr$(&H0) & Chr$(&H8) & Chr$(&H0) & Chr$(&H6) & Chr$(&H0) & Chr$(&H17) & Chr$(&H0) _
         & Chr$(&H18) & Chr$(&H0) & Chr$(&H19) & Chr$(&H0) & Chr$(&HB) & Chr$(&H0) & Chr$(&H2) & Chr$(&H1) & Chr$(&H0) & Chr$(&H0) & Chr$(&H23) & Chr$(&H0) & Chr$(&H0)
     'Both TLS_RSA_WITH_RC4_128_MD5 & TLS_RSA_WITH_RC4_128_SHA
-    GetClientHello = Chr$(&H1) & Chr$(&H0) & Chr$(&H0) & Chr$(&H0) & Chr$(VERSION_MAJOR) & Chr$(VERSION_MINOR_1) _
+    
+    
+    GetClientHello = Chr$(VERSION_MAJOR) & Chr$(VERSION_MINOR_1) & CLIENT_RANDOM _
+        & Chr$(&H0) & Chr$(&H0) & Chr$(&H4) & Chr$(&H0) & Chr$(&H4) & Chr$(&H0) & Chr$(&H5) _
+        & Chr$(&H1) & Chr$(&H0) & Chr$(&H0) & Chr$(&H0)
+    GetClientHello = Chr$(&H1) & Chr$(&H0) & SecureSession.LenToHexStr(Len(GetClientHello)) & GetClientHello
+    
+    'Chr$(&H0) & Chr$(&H0) & Chr$(VERSION_MAJOR) & Chr$(VERSION_MINOR_1) _
         & CLIENT_RANDOM _
         & Chr$(&H0) & Chr$(&H0) & Chr$(&H4) & Chr$(&H0) & Chr$(&H4) & Chr$(&H0) & Chr$(&H5) _
         & Chr$(&H1) & Chr$(&H0) & Chr$(&H0) & Chr$(&H0)
@@ -154,8 +160,6 @@ Private Function GetClientHello() As String
         & CLIENT_RANDOM _
         & Chr$(&H0) & Chr$(&H0) & Chr$(&H2) & Chr$(&H0) & Chr$(&H5) & Chr$(&H1) & Chr$(&H0) _
         & Chr$(&H0) & Chr$(Len(SNI)) & SNI
-    Mid$(GetClientHello, 3, 1) = Chr$(Int((Len(GetClientHello) - 4) / 256))
-    Mid$(GetClientHello, 4, 1) = Chr$((Len(GetClientHello) - 4) Mod 256)
 '    GetClientHello = AddRecHeader(GetClientHello)
 End Function
 'Private Function GetRequest() As String
@@ -190,117 +194,21 @@ Private Function GetUnixTime() As String
     Next N%
 End Function
 
-Private Function VerifySignature(sBuff As String) As Boolean
-    Dim CertData As String
-    Dim CertKey As String
-    Dim SigData As String
-    Dim sSearch As String
-    Dim lPntr1 As Long
-    Dim lPntr2 As Long
-    Dim lPntr3 As Long
-    Dim llen As Long
 
-    'This routine returns the first part of the certificate only (w/o signature)
-    lPntr1 = InStr(sBuff, Chr$(&H30) & Chr$(&H82)) + 4
-    If lPntr1 < 5 Then Exit Function
-    VerifySignature = True
-    lPntr2 = InStr(lPntr1, sBuff, Chr$(&H30) & Chr$(&H82))
-    llen = Asc(Mid$(sBuff, lPntr2 + 2, 1)) * 256 + Asc(Mid$(sBuff, lPntr2 + 3, 1)) + 4
-    CertData = Mid$(sBuff, lPntr2, llen)
-    lPntr2 = lPntr2 + llen
-    SecureSession.InBuffer = CertData
-    Dim slen As Long
-    
-    If lPntr1 > 0 Then
-
-        RSA_KEY_LEN = 256
-        sSearch = RSA_KEY_256V3
-        slen = 7
-
-    Else
-        lPntr1 = InStr(sBuff, RSA_KEY_128V3)
-        If lPntr1 > 0 Then
-            RSA_KEY_LEN = 128
-            sSearch = RSA_KEY_128V3
-            slen = 5
-        Else
-            VerifySignature = False
-            Exit Function
-        End If
-    End If
-    
-    'Save Server Public Key
-    Dim istart As Integer
-    istart = lPntr1
-    
-    lPntr1 = InStr(istart, sBuff, sSearch)
-
-
-    If lPntr1 > 0 Then
-        lPntr1 = lPntr1 + Len(sSearch) + slen
-        PUBLIC_KEY = StrReverse(Mid$(sBuff, lPntr1, RSA_KEY_LEN))
-   '     Call DebugPrintHex("Server Public Key", PUBLIC_KEY)
-        'Find next certificate Public Key
-        lPntr1 = InStr(lPntr1, sBuff, sSearch)
-        If lPntr1 > 0 Then 'Use key from next Cert in chain
-            CertKey = StrReverse(Mid$(sBuff, lPntr1 + Len(sSearch) + slen, RSA_KEY_LEN))
-        Else 'Use Server Public key
-            CertKey = PUBLIC_KEY
-        End If
-    Else
-        VerifySignature = False
-        Exit Function
-    End If
-'    Do Until lPntr1 = 0
-'        lPntr1 = lPntr1 + Len(sSearch)
-'        lPntr3 = lPntr1
-'        lPntr1 = InStr(lPntr1, sBuff, sSearch)
-'    Loop
-'    CertKey = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
-  '  Call DebugPrintHex("CA Public Key", CertKey)
-
-  
-    SecureSession.PubKey = CertKey
-    If Not SecureSession.SetPubKey Then
-        VerifySignature = False
-        Exit Function
-    End If
-    If RSA_KEY_LEN = 256 Then
-        sSearch = Chr$(&H3) & Chr$(&H82) '& Chr$(&H1) & Chr$(&H1) & Chr$(&H0)
-        slen = slen + 3
-    ElseIf RSA_KEY_LEN = 128 Then
-        sSearch = Chr$(&H3) & Chr$(&H81) '& Chr$(&H81) & Chr$(&H0)
-        slen = slen + 2
-    End If
-    lPntr3 = InStr(lPntr2, sBuff, sSearch)
-    If lPntr3 > 0 Then
-        lPntr3 = lPntr3 + Len(sSearch) + slen
-        SigData = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
-    Else
-        VerifySignature = False
-        Exit Function
-    End If
-  '  Call DebugPrintHex("Signature", SigData)
-    SecureSession.Signature = SigData
-    VerifySignature = SecureSession.VerifySig
-End Function
 Private Sub Class_Initialize()
-    
     Set wClient = New ISocket
-    Set ISocket = wClient
     ResetSSLVariables
-     
 End Sub
 
 Private Sub Class_Terminate()
-    Layer = -2
-    wClient_DataArriving
+
     Set SecureSession = Nothing
     Set wClient = Nothing
+    Set myCert = Nothing
 End Sub
 
-Private Function ISocket_Accept(Optional Handle As Long = 0&) As Boolean
-    ISocket_Accept = Me.Accept(Handle)
+Private Function ISocket_Accept(Optional handle As Long = 0&) As Boolean
+    ISocket_Accept = Me.Accept(handle)
 End Function
 
 Private Property Let ISocket_AutoRate(ByVal RHS As Boolean)
@@ -319,8 +227,8 @@ Private Property Get ISocket_Connected() As Boolean
     ISocket_Connected = Me.Connected
 End Property
 
-Private Function ISocket_Decline(Optional Handle As Long = 0&) As Boolean
-    ISocket_Decline = Me.Decline(Handle)
+Private Function ISocket_Decline(Optional handle As Long = 0&) As Boolean
+    ISocket_Decline = Me.Decline(handle)
 End Function
 
 Private Sub ISocket_Disconnect()
@@ -328,7 +236,7 @@ Private Sub ISocket_Disconnect()
 End Sub
 
 Private Property Get ISocket_Handle() As Long
-    ISocket_Handle = Me.Handle
+    ISocket_Handle = Me.handle
 End Property
 
 Private Property Let ISocket_host(ByVal RHS As String)
@@ -359,9 +267,10 @@ Private Function ISocket_LocalIP() As String
     ISocket_LocalIP = Me.LocalIP
 End Function
 
-Private Property Get ISocket_LocalIPs() As Collection
+Private Function ISocket_LocalIPs() As Collection
     Set ISocket_LocalIPs = Me.LocalIPs
-End Property
+End Function
+
 
 Private Property Let ISocket_Port(ByVal RHS As Long)
     Me.Port = RHS
@@ -375,16 +284,13 @@ Private Function ISocket_Read() As String
     ISocket_Read = Me.Read
 End Function
 
-Private Function ISocket_ReadBytes(Data() As Byte) As Boolean
-    ISocket_ReadBytes = Me.ReadBytes(Data)
+Private Function ISocket_ReadBytes(data() As Byte) As Boolean
+    ISocket_ReadBytes = Me.ReadBytes(data)
 End Function
 
-Private Function ISocket_ReadNextPart() As Long
-    ISocket_ReadNextPart = Me.ReadNextPart
-End Function
 
-Private Function ISocket_ReadString(Data As String) As Boolean
-    ISocket_ReadString = ISocket.ReadString(Data)
+Private Function ISocket_ReadString(data As String) As Boolean
+    ISocket_ReadString = ISocket.ReadString(data)
 End Function
 
 Private Function ISocket_Ready() As Boolean
@@ -407,16 +313,12 @@ Private Function ISocket_ResolveIP(ByVal Host As String) As String
     ISocket_ResolveIP = Me.ResolveIP(Host)
 End Function
 
-Private Sub ISocket_Send(ByVal Data As String)
-    Me.Send Data
+Private Sub ISocket_Send(ByVal data As String)
+    Me.Send data
 End Sub
 
-Private Function ISocket_SendBytes(Data() As Byte) As Boolean
-    ISocket_SendBytes = Me.SendBytes(Data)
-End Function
-
-Private Function ISocket_SendNextPart() As Long
-    ISocket_SendNextPart = Me.SendNextPart
+Private Function ISocket_SendBytes(data() As Byte) As Boolean
+    ISocket_SendBytes = Me.SendBytes(data)
 End Function
 
 Private Property Let ISocket_SendRate(ByVal RHS As Long)
@@ -427,8 +329,8 @@ Private Property Get ISocket_SendRate() As Long
     ISocket_SendRate = Me.SendRate
 End Property
 
-Private Function ISocket_SendString(Data As String) As Boolean
-    ISocket_SendString = Me.SendString(Data)
+Private Function ISocket_SendString(data As String) As Boolean
+    ISocket_SendString = Me.SendString(data)
 End Function
 
 Private Property Get ISocket_State(bBit As Byte) As Boolean
@@ -465,8 +367,6 @@ End Function
 
 
 Private Sub SecureSession_Error(ByVal Number As Long, Description As String, ByVal Source As String)
-    Debug.Print "Error: " & Number & " " & Description
-    
     RaiseEvent Error(Number, Source, Description)
 End Sub
 
@@ -476,20 +376,18 @@ Private Sub wClient_Connected()
         RaiseEvent Connected
 
     Else
-    Debug.Print "Connected"
-        'Send Client Hello (Unencrypted)
+
         Dim strSend As String
+       
         Layer = 0
+
         hSESSION_MD5 = 0
         hSESSION_SHA1 = 0
         strSend = GetClientHello
-        
         hSESSION_MD5 = SecureSession.MD5_AddToHash(strSend, hSESSION_MD5)
         hSESSION_SHA1 = SecureSession.SHA1_AddToHash(strSend, hSESSION_SHA1)
         SecureSession.msgType = Chr$(TLS1_RT_HANDSHAKE) & Chr$(VERSION_MAJOR) & Chr$(VERSION_MINOR_1)
-        
-        SecureSession.IncSendSeqNum (True)
-        
+                
         wClient.SendString AddRecHeader(strSend)
 
         RaiseEvent Connected
@@ -497,8 +395,189 @@ Private Sub wClient_Connected()
 
 End Sub
 
-Private Sub wClient_Connection(Handle As Long)
-    RaiseEvent Connection(Handle)
+Private Sub wClient_Connection(handle As Long)
+    RaiseEvent Connection(handle)
+End Sub
+
+'Private Function VerifySignature(sBuff As String) As Boolean
+'    Dim CertData As String
+'    Dim CertKey As String
+'    Dim SigData As String
+'    Dim sSearch As String
+'    Dim lPntr1 As Long
+'    Dim lPntr2 As Long
+'    Dim lPntr3 As Long
+'    Dim llen As Long
+'
+'    'This routine returns the first part of the certificate only (w/o signature)
+'    lPntr1 = InStr(sBuff, Chr$(&H30) & Chr$(&H82)) + 4
+'    If lPntr1 < 5 Then Exit Function
+'    VerifySignature = True
+'    lPntr2 = InStr(lPntr1, sBuff, Chr$(&H30) & Chr$(&H82))
+'    llen = Asc(Mid$(sBuff, lPntr2 + 2, 1)) * 256 + Asc(Mid$(sBuff, lPntr2 + 3, 1)) + 4
+'    CertData = Mid$(sBuff, lPntr2, llen)
+'    lPntr2 = lPntr2 + llen
+'    SecureSession.InBuffer = CertData
+'    If lPntr1 > 0 Then
+'        RSA_KEY_LEN = 256
+'        sSearch = RSA_KEY_256V3
+'    Else
+'        lPntr1 = InStr(sBuff, RSA_KEY_128V3)
+'        If lPntr1 > 0 Then
+'            RSA_KEY_LEN = 128
+'            sSearch = RSA_KEY_128V3
+'        Else
+'            VerifySignature = False
+'            Exit Function
+'        End If
+'    End If
+'    'Save Server Public Key
+'    lPntr1 = InStr(lPntr1, sBuff, sSearch)
+'    If lPntr1 > 0 Then
+'        lPntr1 = lPntr1 + Len(sSearch)
+'        PUBLIC_KEY = StrReverse(Mid$(sBuff, lPntr1, RSA_KEY_LEN))
+'   '     Call DebugPrintHex("Server Public Key", PUBLIC_KEY)
+'        'Find next certificate Public Key
+'        lPntr1 = InStr(lPntr1, sBuff, sSearch)
+'        If lPntr1 > 0 Then 'Use key from next Cert in chain
+'            CertKey = StrReverse(Mid$(sBuff, lPntr1 + Len(sSearch), RSA_KEY_LEN))
+'        Else 'Use Server Public key
+'            CertKey = PUBLIC_KEY
+'        End If
+'    Else
+'        VerifySignature = False
+'        Exit Function
+'    End If
+''    Do Until lPntr1 = 0
+''        lPntr1 = lPntr1 + Len(sSearch)
+''        lPntr3 = lPntr1
+''        lPntr1 = InStr(lPntr1, sBuff, sSearch)
+''    Loop
+''    CertKey = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
+'  '  Call DebugPrintHex("CA Public Key", CertKey)
+'    SecureSession.PubKey = CertKey
+'    If Not SecureSession.SetPubKey Then
+'        VerifySignature = False
+'        Exit Function
+'    End If
+'    If RSA_KEY_LEN = 256 Then
+'        sSearch = Chr$(&H3) & Chr$(&H82) & Chr$(&H1) & Chr$(&H1) & Chr$(&H0)
+'    ElseIf RSA_KEY_LEN = 128 Then
+'        sSearch = Chr$(&H3) & Chr$(&H81) & Chr$(&H81) & Chr$(&H0)
+'    End If
+'    lPntr3 = InStr(lPntr2, sBuff, sSearch)
+'    If lPntr3 > 0 Then
+'        lPntr3 = lPntr3 + Len(sSearch)
+'        SigData = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
+'    Else
+'        VerifySignature = False
+'        Exit Function
+'    End If
+'  '  Call DebugPrintHex("Signature", SigData)
+'    SecureSession.Signature = SigData
+'    VerifySignature = SecureSession.VerifySig
+'End Function
+
+Private Function VerifySignature(ByRef sBuff As Stream) As Boolean
+
+    Dim sSearch As New Stream
+
+    Dim lPntr1 As Long
+    Dim lPntr2 As Long
+    Dim lPntr3 As Long
+    Dim llen As Long
+
+    sSearch.Concat ToBytes(Chr$(&H30) & Chr$(&H82))
+    lPntr1 = InStream(sBuff, sSearch) + 4
+    'This routine returns the first part of the certificate only (w/o signature)
+
+    If lPntr1 < 5 Then GoTo fnishverify
+    VerifySignature = True
+
+    sSearch.Placeat ToBytes(Chr$(&H30) & Chr$(&H82))
+
+    lPntr2 = InStream(sBuff, sSearch, lPntr1 - 1)
+
+    llen = sBuff.Partial(lPntr2 + 1, 1)(1) * 256 + sBuff.Partial(lPntr2 + 2, 1)(1) + 4
+
+    lPntr2 = lPntr2 + llen
+    SecureSession.sInBuffer.Reset
+    SecureSession.sInBuffer.Concat sBuff.Partial(lPntr2 - 1, llen)
+    If lPntr1 > 0 Then
+        RSA_KEY_LEN = myCert.RSAKeySize
+        sSearch.Reset
+        sSearch.Concat ToBytes(RSA_KEY_256V3)
+    Else
+        sSearch.Reset
+        sSearch.Concat ToBytes(RSA_KEY_128V3)
+        lPntr1 = InStream(sBuff, sSearch)
+        If lPntr1 > 0 Then
+            RSA_KEY_LEN = myCert.RSAKeySize
+        Else
+            VerifySignature = False
+            GoTo fnishverify
+
+        End If
+    End If
+    'Save Server Public Key
+    lPntr1 = InStream(sBuff, sSearch, lPntr1 - 1)
+    If lPntr1 > 0 Then
+        lPntr1 = lPntr1 + sSearch.Length
+        PUBLIC_KEY = StrReverse(ToString(sBuff.Partial(lPntr1 - 1, RSA_KEY_LEN)))
+        lPntr1 = InStream(sBuff, sSearch, lPntr1 - 1)
+        If lPntr1 > 0 Then 'Use key from next Cert in chain
+            SecureSession.PubKey = StrReverse(ToString(sBuff.Partial(lPntr1 + sSearch.Length - 1, RSA_KEY_LEN)))
+        Else 'Use Server Public key
+            SecureSession.PubKey = PUBLIC_KEY
+        End If
+    Else
+        VerifySignature = False
+        GoTo fnishverify
+    End If
+
+    If Not SecureSession.SetPubKey Then
+        VerifySignature = False
+        GoTo fnishverify
+    End If
+
+    If RSA_KEY_LEN = 256 Then
+        sSearch.Reset
+        sSearch.Concat ToBytes(Chr$(&H3) & Chr$(&H82) & Chr$(&H1) & Chr$(&H1) & Chr$(&H0))
+    ElseIf RSA_KEY_LEN = 128 Then
+        sSearch.Reset
+        sSearch.Concat ToBytes(Chr$(&H3) & Chr$(&H81) & Chr$(&H81) & Chr$(&H0))
+    End If
+
+    lPntr3 = InStream(sBuff, sSearch, lPntr2 - 1)
+    If lPntr3 > 0 Then
+        lPntr3 = lPntr3 + sSearch.Length
+        SecureSession.Signature = StrReverse(ToString(sBuff.Partial(lPntr3 - 1, RSA_KEY_LEN)))
+    Else
+        VerifySignature = False
+        GoTo fnishverify
+    End If
+    VerifySignature = SecureSession.VerifySig
+fnishverify:
+    Set sSearch = Nothing
+End Function
+
+Private Sub SetupSignature(ByRef sTemp As Stream)
+  '  SecureSession.sInBuffer.Reset
+  '  SecureSession.sInBuffer.Concat myCert.Fields(CertificateInfoSequence)
+
+    PUBLIC_KEY = Left(Mid(StrReverse(ToString(myCert.Fields(PublicKey))), 6), myCert.RSAKeySize)
+    
+ '   SecureSession.Signature = ToString(myCert.Fields(Signature))
+    SecureSession.Signature = Left(StrReverse(Mid(SecureSession.Signature, 5)), myCert.RSAKeySize)
+
+    'SecureSession.SetPubKey
+
+   ' SecureSession.VerifySig
+    
+    If Not VerifySignature(sTemp) Then
+
+        Err.Raise 8, , "Unable to verify the connection signature!"
+    End If
 End Sub
 
 Private Sub wClient_DataArriving()
@@ -514,20 +593,15 @@ Private Sub wClient_DataArriving()
         Static InBuff As New Stream
         Static Header() As Byte
         Static SSLLength As Integer
+        Static SSLHandShakeLength As Integer
 
         If Layer = -2 Then
             Erase Header
             Set InBuff = Nothing
         Else
             Dim bData() As Byte
-
-            Dim SSLHandShakeLength As Integer
-
-            Dim SessionLen As Long
-            Dim sCipher As String
-
-            Dim strSHAMD5 As String
-
+            Dim sTemp As Stream
+            
             If wClient.ReadBytes(bData) Then
 
                 InBuff.Concat bData
@@ -556,8 +630,8 @@ Private Sub wClient_DataArriving()
                         'record complete - Process it
                         Select Case Layer
                             Case 0 'this layer processes the Server Hello
-                                Dim sTemp As New Stream
-
+                                Set sTemp = New Stream
+                                
                                 sTemp.Clone SecureSession.sInBuffer
 
                                 hSESSION_MD5 = SecureSession.MD5_AddToHash(SecureSession.InBuffer, hSESSION_MD5)
@@ -574,112 +648,114 @@ Private Sub wClient_DataArriving()
                                     Select Case sTemp.Partial(0, 1)(1)
                                         Case TLS1_MT_SERVER_HELLO '1
                                             SERVER_RANDOM = ToString(sTemp.Partial(6, 32))
-                                            SessionLen = sTemp.Partial(38, 1)(1)
-                                            SESSION_ID = ToString(sTemp.Partial(39, SessionLen))
-                                            SecureSession.CipherToUse = ToString(sTemp.Partial(39 + SessionLen, 2))
-
-                                            If sTemp.Length > SSLHandShakeLength Then
-                                                sTemp.Push SSLHandShakeLength
-                                                SSLHandShakeLength = 0
-                                            End If
+                                           ' Dim SessionLen As Long
+                                           ' SessionLen = sTemp.Partial(38, 1)(1)
+                                            SESSION_ID = ToString(sTemp.Partial(39, sTemp.Partial(38, 1)(1)))
+                                            SecureSession.CipherToUse = ToString(sTemp.Partial(39 + sTemp.Partial(38, 1)(1), 2))
 
                                         Case TLS1_MT_CERTIFICATE '2
-
-                                            
- 
-                                            
-                                            Dim certslen As Long
-                                            Dim certlen As Long
-                                            certslen = Val("&H" & Padding(2, Hex(sTemp.Partial(4, 1)(1)), "0") & _
-                                                                Padding(2, Hex(sTemp.Partial(5, 1)(1)), "0") & _
-                                                                Padding(2, Hex(sTemp.Partial(6, 1)(1)), "0")) - 3
-
-                                            certlen = Val("&H" & Padding(2, Hex(sTemp.Partial(7, 1)(1)), "0") & _
-                                                                Padding(2, Hex(sTemp.Partial(8, 1)(1)), "0") & _
-                                                                Padding(2, Hex(sTemp.Partial(9, 1)(1)), "0"))
+                                             
+'                                            Dim certslen As Long
+'                                            Dim certlen As Long
+'                                            certslen = Val("&H" & Padding(2, Hex(sTemp.Partial(4, 1)(1)), "0") & _
+'                                                                Padding(2, Hex(sTemp.Partial(5, 1)(1)), "0") & _
+'                                                                Padding(2, Hex(sTemp.Partial(6, 1)(1)), "0")) - 3
 '
-''                                            Debug.Print certslen; certlen
-''
-                                            '####### OPEN IN WINDOWS CERTIFICATAE VIEWER
-                                            'WriteFile AppPath & "cert.cer", ToString(sTemp.Partial(10, certslen))
-                                            'RunProcess "rundll32.exe", "cryptext.dll,CryptExtOpenCER " & AppPath & "cert.cer"
+'                                            certlen = Val("&H" & Padding(2, Hex(sTemp.Partial(7, 1)(1)), "0") & _
+'                                                                Padding(2, Hex(sTemp.Partial(8, 1)(1)), "0") & _
+'                                                                Padding(2, Hex(sTemp.Partial(9, 1)(1)), "0"))
 
-                                            '####### OPEN IN COMPONENT CERTIFICATE VIEWER
-                                            Set cert = New Certificate
-                                            cert.LoadCertificate Stream(sTemp.Partial(10, certslen))
-                                            cert.ViewCertificate
+'                                            Dim tmpfile As String
+'                                            tmpfile = GetTemporaryFile
+'                                            WriteFile tmpfile, ToString(sTemp.Partial(10, certslen))
+'
+'                                            RunProcess "rundll32.exe", "cryptext.dll,CryptExtOpenCER " & tmpfile, , True
                                             
-                                            '####### DIDPLAY ALL INFO FIELDS FROM THE CERTIFICATE
-'                                            Dim fields As NTNodes10.Collection
-'                                            Set fields = Cert.fields
+
+'                                            Set myCert = New Certificate
+                                           ' myCert.LoadCertificate (Stream(sTemp.Partial(10, certslen)))
+                                            'myCert.LoadCertificateFile "C:\Temp\Client.cer"
+                                            
+                                            Set myCert = New Certificate
+                                            
+                                            myCert.LoadCertificate Stream(sTemp.Partial(10, Val("&H" & _
+                                                                Padding(2, Hex(sTemp.Partial(4, 1)(1)), "0") & _
+                                                                Padding(2, Hex(sTemp.Partial(5, 1)(1)), "0") & _
+                                                                Padding(2, Hex(sTemp.Partial(6, 1)(1)), "0")) - 3))
+
+'                                            Dim Fields As NTNodes10.Collection
+'                                            Set Fields = myCert.Fields
 '                                            Dim num As Integer
-'                                            For num = 1 To fields.count
-'                                                Debug.Print fields.Key(num) & " " & Cert.Names(fields.Key(num)) & " " & Cert.Terms(fields.Key(num))
+'                                            For num = 1 To Fields.count
+'                                                Debug.Print myCert.Names(Fields.Key(num)) & " " & myCert.HexStream(myCert.Fields(Fields.Key(num)))
+'                                                Debug.Print Fields.Key(num) & " " & myCert.Terms(Fields.Key(num))
+'                                                Debug.Print
 '                                            Next
 
+                                            Dim sr As New Store
+                                            Dim certs As New Certificates
 
-                                            '####### DISPLAY ALL FIELDS PARSED FROM THE CERTIFICATE
-                                            Debug.Print "Version " & cert.HexStream(cert.Fields(Version))
-                                            Debug.Print
-                                            Debug.Print "SerialNumber " & cert.HexStream(cert.Fields(SerialNumber))
-                                            Debug.Print
-                                            Debug.Print "Algorithm " & cert.HexStream(cert.Fields(Algorithm))
-                                            Debug.Print
-                                            Debug.Print "Issuer " & cert.HexStream(cert.Fields(Issuer))
-                                            Debug.Print
-                                            Debug.Print "Validity " & cert.HexStream(cert.Fields(Validity))
-                                            Debug.Print
-                                            Debug.Print "Subject " & cert.HexStream(cert.Fields(Subject))
-                                            Debug.Print
-                                            Debug.Print "PublicKey " & cert.HexStream(cert.Fields(PublicKey))
-                                            Debug.Print
-                                            Debug.Print "Extensions " & cert.HexStream(cert.Fields(Extensions))
-                                            Debug.Print
-                                            Debug.Print "SignatureAlgorithm " & cert.HexStream(cert.Fields(SignatureAlgorithm))
-                                            Debug.Print
-                                            Debug.Print "Signature " & cert.HexStream(cert.Fields(Signature))
-                                            Debug.Print
-                                            
-'
-'                                           If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then   'If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then
-'                                                Debug.Print "Unable to verify signature!"
-'                                            End If
-
-                                            RSA_KEY_LEN = 256
-''
-                                            SecureSession.InBuffer = ToString(sTemp.Partial(10, certslen)) '
-                                          '  SecureSession.InBuffer = ToString(sTemp.Partial(certlen + 10, (certslen + 10) - (certlen + 10))) 'CertData
-
-
-                                            
-                                            PUBLIC_KEY = StrReverse(ToString(cert.Fields(PublicKeyBlock)))
-                                         '   PUBLIC_KEY = StrReverse(Mid$(sBuff, lPntr1)) ', RSA_KEY_LEN))
-                                          ' ' CertKey = PUBLIC_KEY
-                                          
-                                            SecureSession.PubKey = PUBLIC_KEY '
-                                           ' SecureSession.PubKey = ToString(sTemp.Partial(0, certlen))  'CertKey
-
-                                            'Debug.Print SecureSession.sInBuffer.Length
-
-                                          '  SecureSession.SetPubKey
-
-                                          '  SecureSession.Signature = StrReverse(ToString(cert.Fields(Signature)))
-                                            SecureSession.Signature = ToString(sTemp.Partial(10, certlen))
-                                            
-'
-'                                            If Not VerifySignature(StrReverse(ToString(cert.Fields(Signature)))) Then
-'                                                Debug.Print "Unable to verify signature!"
-'                                            End If
-
-                                           If Not VerifySignature(SecureSession.Signature) Then   'If Not VerifySignature(ToString(sTemp.Partial(10, certlen))) Then
-                                                Debug.Print "Unable to verify signature!"
+                                            If LCase(AppEXE(True, True)) = "maxservice" Then
+                                                sr.Open CAPICOM_LOCAL_MACHINE_STORE, "Root", CAPICOM_STORE_OPEN_EXISTING_ONLY
+                                            Else
+                                                sr.Open CAPICOM_CURRENT_USER_STORE, "My", CAPICOM_STORE_OPEN_EXISTING_ONLY
                                             End If
-
-
-                                            If sTemp.Length > SSLHandShakeLength Then
-                                                sTemp.Push SSLHandShakeLength
-                                                SSLHandShakeLength = 0
+                                            Set certs = sr.Certificates
+                                            Set certs = certs.Find(CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, myCert.SubjectName)
+                                            
+                                            If certs.Count > 0 Then
+                                                Set certs = certs.Find(CAPICOM_CERTIFICATE_FIND_ISSUER_NAME, myCert.IssuerName)
                                             End If
+                                            
+                                            If certs.Count = 0 Then
+    
+                                                If LCase(AppEXE(True, True)) = "maxservice" Then
+                                                    RaiseEvent Error(8, "SSL", "The server certificate was not accepted, for the reason: not present in the local machine root store.")
+                                                    Disconnect
+                                                Else
+                                                    If myCert.CheckCertificate() Then
+                                                    SetupSignature sTemp
+                                                        VerifySignature Stream(sTemp.Partial(7))
+                                                        
+                                                        'SetupSignature sTemp
+                                                        
+                                                    '    Debug.Print myCert.Terms(CertificateInfoSequence)
+        
+        '                                                Debug.Print "Version " & myCert.HexStream(myCert.Fields(Version))
+        '                                                Debug.Print
+        '                                                Debug.Print "SerialNumber " & myCert.HexStream(myCert.Fields(SerialNumber))
+        '                                                Debug.Print
+        '                                                Debug.Print "Algorithm " & myCert.HexStream(myCert.Fields(Algorithm))
+        '                                                Debug.Print
+        '                                                Debug.Print "Issuer " & myCert.HexStream(myCert.Fields(Issuer))
+        '                                                Debug.Print
+        '                                                Debug.Print "Validity " & myCert.HexStream(myCert.Fields(Validity))
+        '                                                Debug.Print
+        '                                                Debug.Print "Subject " & myCert.HexStream(myCert.Fields(Subject))
+        '                                                Debug.Print
+        '                                                Debug.Print "PublicKey " & myCert.HexStream(myCert.Fields(PublicKey))
+        '                                                Debug.Print
+        '                                                Debug.Print "Extensions " & myCert.HexStream(myCert.Fields(Extensions))
+        '                                                Debug.Print
+        '                                                Debug.Print "SignatureAlgorithm " & myCert.HexStream(myCert.Fields(SignatureAlgorithm))
+        '                                                Debug.Print
+        '                                                Debug.Print "Signature " & myCert.HexStream(myCert.Fields(Signature))
+        '                                                Debug.Print
+                                                    
+                                                    Else
+                                                        RaiseEvent Error(8, "SSL", "The server certificate was not accepted, for the reason: declined by user.")
+                                                        Disconnect
+                                                    End If
+                                                End If
+                                            Else
+                                                SetupSignature sTemp
+                                                 VerifySignature Stream(sTemp.Partial(7))
+                                                        
+                                            End If
+                                            
+                                            Set myCert = Nothing
+                                            Set sr = Nothing
+                                            Set certs = Nothing
 
                                         Case TLS1_MT_SERVER_DONE '14
 
@@ -692,13 +768,13 @@ Private Sub wClient_DataArriving()
                                            
                                             wClient.SendBytes strSend.Partial
 
-                                            If sTemp.Length > SSLHandShakeLength Then
-                                                sTemp.Push SSLHandShakeLength
-                                                SSLHandShakeLength = 0
-
-                                            End If
                                     End Select
-
+                                    
+                                    If sTemp.Length > SSLHandShakeLength Then
+                                        sTemp.Push SSLHandShakeLength
+                                        SSLHandShakeLength = 0
+                                    End If
+                                    
                                 Loop While ((sTemp.Length > 0) And (SSLHandShakeLength = 0)) And Connected And (Layer < 1)
 
                                 Set sTemp = Nothing
@@ -707,6 +783,7 @@ Private Sub wClient_DataArriving()
                                 Call SecureSession.TLSDecrypt
                                 SecureSession.IncRecvSeqNum
                                 'Save Decrypted Session Hash
+                                Dim strSHAMD5 As String
                                 strSHAMD5 = SecureSession.OutBuffer
 
                                 SecureSession.sInBuffer.Reset
@@ -728,8 +805,7 @@ Private Sub wClient_DataArriving()
                     ElseIf Header(1) = TLS1_RT_CHANGE_CIPHER_SPEC Then
 
                         'Cipher Change Spec; Do nothing
-                        Debug.Print "Change Cipher Spec Received!"
-                      '  SecureSession.IncSendSeqNum (True) 'Reset Send Sequence Number
+                        'Debug.Print "Change Cipher Spec Received!"
                         SecureSession.IncRecvSeqNum (True) 'Reset Recv Sequence Number
 
                     ElseIf Header(1) = TLS1_RT_ALERT Then 'Problem?
@@ -737,10 +813,12 @@ Private Sub wClient_DataArriving()
                         Select Case SecureSession.sInBuffer.Partial(0, 1)(1)
                             Case 1
                                 If SecureSession.sInBuffer.Partial(1, 1)(1) > 0 Then
-                                    Debug.Print "ALERT WARNING " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1))
+                                    'Debug.Print "ALERT WARNING " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1))
+                                    RaiseEvent Error(SecureSession.sInBuffer.Partial(1, 1)(1), "SSL", "Warning alert: " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1)))
                                 End If
                             Case 2
-                                Debug.Print "FATAL ALERT " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1))
+                                'Debug.Print "FATAL ALERT " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1))
+                                RaiseEvent Error(SecureSession.sInBuffer.Partial(1, 1)(1), "SSL", "Fatal error: " & SecureSession.ErrorCode(SecureSession.sInBuffer.Partial(1, 1)(1)))
                                 Call Disconnect
                         End Select
                     ElseIf Header(1) = TLS1_RT_APPLICATION_DATA Then
@@ -777,17 +855,14 @@ errcatch:
 End Sub
 
 Private Sub wClient_Disconnected()
-    Debug.Print "Disconnected"
     RaiseEvent Disconnected
 End Sub
 
 Private Sub wClient_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
-    Debug.Print "Error(" & Number & ", " & Description & ")"
     RaiseEvent Error(Number, Source, Description)
 End Sub
 
 Private Sub wClient_SendComplete()
-    Debug.Print "SendComplete"
     wClient.AutoRatedEvent AutoRated.SendEvent
     If SSL Then
         If Layer > 1 Then
@@ -798,147 +873,126 @@ Private Sub wClient_SendComplete()
     End If
 End Sub
 
-Public Function Accept(Optional Handle As Long = 0&) As Boolean
-    Accept = ISocket.Accept(Handle)
+Public Function Accept(Optional handle As Long = 0&) As Boolean
+    Accept = wClient.Accept(handle)
 End Function
 
 Public Property Let AutoRate(ByVal RHS As Boolean)
-    ISocket.AutoRate = RHS
+    wClient.AutoRate = RHS
 End Property
 
 Public Property Get AutoRate() As Boolean
-    AutoRate = ISocket.AutoRate
+    AutoRate = wClient.AutoRate
 End Property
 
 Public Function Connect(Optional ByVal nHost As String = "", Optional ByVal nPort As Long = 0&) As Boolean
-'    SSL = True
-'
-'    Dim txt As String
-'    txt = ReadFile("C:\Temp\Temp.cer")
-'
-'    Debug.Print VerifySignature(txt)
-'    Debug.Print HexStream(SecureSession.InBuffer)
-'    Debug.Print HexStream(SecureSession.Signature)
-
-    If ISocket.Connected Then ISocket.Disconnect
-    
-    Connect = ISocket.Connect(nHost, nPort)
+    Connect = wClient.Connect(nHost, nPort)
 End Function
 
 Public Property Get Connected() As Boolean
-    Connected = ISocket.Connected
+    Connected = wClient.Connected
 End Property
 
-Public Function Decline(Optional Handle As Long = 0&) As Boolean
-    Decline = ISocket.Decline(Handle)
+Public Function Decline(Optional handle As Long = 0&) As Boolean
+    Decline = wClient.Decline(handle)
 End Function
 
 Public Sub Disconnect()
-    ISocket.Disconnect
+    wClient.Disconnect
 End Sub
 
-Public Property Get Handle() As Long
-    Handle = ISocket.Handle
+Public Property Get handle() As Long
+    handle = wClient.handle
 End Property
 
 Public Property Let Host(ByVal RHS As String)
-    ISocket.Host = RHS
+    wClient.Host = RHS
 End Property
 
 Public Property Get Host() As String
-    Host = ISocket.Host
+    Host = wClient.Host
 End Property
 
 Public Function Listen(Optional ByVal nHost As String = "", Optional ByVal nPort As Long = 0&) As Boolean
-    Listen = ISocket.Listen(nHost, nPort)
+    Listen = wClient.Listen(nHost, nPort)
 End Function
 
 Public Property Get Listening() As Boolean
-    Listening = ISocket.Listening
+    Listening = wClient.Listening
 End Property
 
 Public Function LocalHost() As String
-    LocalHost = ISocket.LocalHost
+    LocalHost = wClient.LocalHost
 End Function
 
 Public Function LocalIP() As String
-    LocalIP = ISocket.LocalIP
+    LocalIP = wClient.LocalIP
 End Function
 
 Public Function LocalIPs() As Collection
-    Set LocalIPs = ISocket.LocalIPs
+    Set LocalIPs = wClient.LocalIPs
 End Function
 
 Public Property Let Port(ByVal RHS As Long)
-    ISocket.Port = RHS
+    wClient.Port = RHS
 End Property
 
 Public Property Get Port() As Long
-    Port = ISocket.Port
+    Port = wClient.Port
 End Property
 
 Public Function Read() As String
     If Not SSL Then
-        ISocket.ReadString Read
+        wClient.ReadString Read
     Else
 
-        wClient.AutoRatedEvent AutoRated.readCalls
-
+        wClient.AutoRatedEvent AutoRated.ReadCalls
         Read = SecureSession.OutBuffer
-
         wClient.AutoRatedEvent AutoRated.ReadWidth
 
     End If
 End Function
 
-Public Function ReadBytes(Data() As Byte) As Boolean
+Public Function ReadBytes(data() As Byte) As Boolean
     If Not SSL Then
-        ReadBytes = ISocket.ReadBytes(Data)
+        ReadBytes = wClient.ReadBytes(data)
     Else
-        wClient.AutoRatedEvent AutoRated.readCalls
-
-        Erase Data
-
-        Data = SecureSession.sOutBuffer.Partial
+        wClient.AutoRatedEvent AutoRated.ReadCalls
+        Erase data
+        data = SecureSession.sOutBuffer.Partial
         ReadBytes = (SecureSession.sOutBuffer.Length > 0)
-
         wClient.AutoRatedEvent AutoRated.ReadWidth
 
     End If
 End Function
 
-Public Function ReadNextPart() As Long
-    ReadNextPart = ISocket.ReadNextPart
-End Function
 
-Public Function ReadString(Data As String) As Boolean
+Public Function ReadString(data As String) As Boolean
     If Not SSL Then
-        ReadString = ISocket.ReadString(Data)
+        ReadString = wClient.ReadString(data)
     Else
 
-        wClient.AutoRatedEvent AutoRated.readCalls
-
-        Data = SecureSession.OutBuffer
+        wClient.AutoRatedEvent AutoRated.ReadCalls
+        data = SecureSession.OutBuffer
         ReadString = (SecureSession.sOutBuffer.Length > 0)
-
         wClient.AutoRatedEvent AutoRated.ReadWidth
     End If
 End Function
 
 Public Function Ready() As Boolean
-    Ready = ISocket.Ready
+    Ready = wClient.Ready
 End Function
 
 Public Property Let RecvRate(ByVal RHS As Long)
-    ISocket.RecvRate = RHS
+    wClient.RecvRate = RHS
 End Property
 
 Public Property Get RecvRate() As Long
-    RecvRate = ISocket.RecvRate
+    RecvRate = wClient.RecvRate
 End Property
 
 Public Function RemoteIP() As String
-    RemoteIP = ISocket.RemoteIP
+    RemoteIP = wClient.RemoteIP
 End Function
 
 Private Sub ResetSSLVariables()
@@ -948,125 +1002,120 @@ Private Sub ResetSSLVariables()
     SESSION_ID = ""
     SESSION_KEY = ""
     RSA_KEY_256V3 = ""
-    RSA_KEY_256V3 = Chr(&H30) + Chr(&H82) '+ Chr(&H1) + Chr(&HA) + Chr(&H2) + Chr(&H82) + Chr(&H1) + Chr(&H1) + Chr(&H0)
+    RSA_KEY_256V3 = Chr(&H30) + Chr(&H82) + Chr(&H1) + Chr(&HA) + Chr(&H2) + Chr(&H82) + Chr(&H1) + Chr(&H1) + Chr(&H0)
     RSA_KEY_128V3 = ""
-    RSA_KEY_128V3 = Chr(&H30) + Chr(&H81) '+ Chr(&H89) + Chr(&H2) + Chr(&H81) + Chr(&H81) + Chr(&H0)
+    RSA_KEY_128V3 = Chr(&H30) + Chr(&H81) + Chr(&H89) + Chr(&H2) + Chr(&H81) + Chr(&H81) + Chr(&H0)
     RSA_KEY_LEN = 0
     PUBLIC_KEY = ""
     PRE_MASTER_KEY = ""
-    MASTER_KEY = ""
-
+    
     hSESSION_MD5 = 0
     hSESSION_SHA1 = 0
     hCOPY_MD5 = 0
     hCOPY_SHA1 = 0
 
     Layer = 0
-
+    
     If SSL Then
         Set SecureSession = Nothing
         Set SecureSession = New Crypto
     Else
         Set SecureSession = Nothing
     End If
-    If Not cert Is Nothing Then Set cert = Nothing
 
 End Sub
 
 Public Function ResolveIP(ByVal Host As String) As String
-    ResolveIP = ISocket.ResolveIP(Host)
+    ResolveIP = wClient.ResolveIP(Host)
 End Function
 
-Public Sub Send(ByVal Data As String)
+Public Sub Send(ByVal data As String)
     If Not SSL Then
-        wClient.SendBytes modMemory.Convert(Data)
+        wClient.SendBytes modMemory.Convert(data)
     Else
         wClient.AutoRatedEvent AutoRated.SendCalls
-
-        SecureSession.InBuffer = Data
+       
+        SecureSession.InBuffer = data
         Call SecureSession.TLSEncrypt
-        Data = AddRecHeader(SecureSession.OutBuffer)
-        wClient.SendBytes modMemory.Convert(Data)
+        data = AddRecHeader(SecureSession.OutBuffer)
+        wClient.SendBytes modMemory.Convert(data)
         SecureSession.IncSendSeqNum
-
+       
         wClient.AutoRatedEvent AutoRated.SendWidth
     End If
 End Sub
 
-Public Function SendBytes(Data() As Byte) As Boolean
+Public Function SendBytes(data() As Byte) As Boolean
     If Not SSL Then
-        SendBytes = wClient.SendBytes(Data)
+        SendBytes = wClient.SendBytes(data)
     Else
         wClient.AutoRatedEvent AutoRated.SendCalls
-
-        SecureSession.InBuffer = modMemory.Convert(Data)
+       
+        SecureSession.InBuffer = modMemory.Convert(data)
         Call SecureSession.TLSEncrypt
-        Data = modMemory.Convert(AddRecHeader(SecureSession.OutBuffer))
-        SendBytes = wClient.SendBytes(Data)
+        data = modMemory.Convert(AddRecHeader(SecureSession.OutBuffer))
+        SendBytes = wClient.SendBytes(data)
         SecureSession.IncSendSeqNum
-
+       
         wClient.AutoRatedEvent AutoRated.SendWidth
     End If
 End Function
 
-Public Function SendNextPart() As Long
-    SendNextPart = ISocket.SendNextPart
-End Function
 
 Public Property Let SendRate(ByVal RHS As Long)
-    ISocket.SendRate = RHS
+    wClient.SendRate = RHS
 End Property
 
 Public Property Get SendRate() As Long
-    SendRate = ISocket.SendRate
+    SendRate = wClient.SendRate
 End Property
 
-Public Function SendString(Data As String) As Boolean
+Public Function SendString(data As String) As Boolean
     If Not SSL Then
-        SendString = wClient.SendBytes(modMemory.Convert(Data))
+        SendString = wClient.SendBytes(modMemory.Convert(data))
     Else
         wClient.AutoRatedEvent AutoRated.SendCalls
-
-        SecureSession.InBuffer = Data
+       
+       
+        SecureSession.InBuffer = data
         Call SecureSession.TLSEncrypt
-        Data = AddRecHeader(SecureSession.OutBuffer)
-        SendString = wClient.SendBytes(modMemory.Convert(Data))
+        data = AddRecHeader(SecureSession.OutBuffer)
+        SendString = wClient.SendBytes(modMemory.Convert(data))
         SecureSession.IncSendSeqNum
-
+        
         wClient.AutoRatedEvent AutoRated.SendWidth
-
+       
     End If
-
+    
 End Function
 
 Public Property Get State(bBit As Byte) As Boolean
-    State = ISocket.State(bBit)
+    State = wClient.State(bBit)
 End Property
 
 Public Property Let timeout(ByVal RHS As Long)
-    ISocket.timeout = RHS
+    wClient.timeout = RHS
 End Property
 
 Public Property Get timeout() As Long
-    timeout = ISocket.timeout
+    timeout = wClient.timeout
 End Property
 
 Public Property Let Transmission(ByVal RHS As Direction)
-    ISocket.Transmission = RHS
+    wClient.Transmission = RHS
 End Property
 
 Public Property Get Transmission() As Direction
-    Transmission = ISocket.Transmission
+    Transmission = wClient.Transmission
 End Property
 
 Public Function WhoAmI(ByVal sock As Long) As String
-    WhoAmI = ISocket.WhoAmI(sock)
+    WhoAmI = wClient.WhoAmI(sock)
 End Function
 
 Public Function WhosIs(ByVal sock As Long) As String
-    WhosIs = ISocket.WhosIs(sock)
+    WhosIs = wClient.WhosIs(sock)
 End Function
-
 
 Public Property Get SSL() As Boolean
     SSL = (Not (SecureSession Is Nothing))
@@ -1076,7 +1125,6 @@ Public Property Let SSL(ByVal RHS As Boolean)
     If RHS Then
         If (SecureSession Is Nothing) Then
             Set SecureSession = New Crypto
-
         End If
         ResetSSLVariables
     ElseIf (Not RHS) Then
@@ -1085,5 +1133,6 @@ Public Property Let SSL(ByVal RHS As Boolean)
         End If
     End If
 End Property
+
 
 

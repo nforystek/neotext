@@ -543,6 +543,73 @@ Private pWinsockControl As Long
 '
 'Public Const x_BOUNDARY = -7 Or 7
 
+Public Function WhoseIs(ByVal sock As Long) As String ' _
+Accepts a socket handle as parameter and returns the remote party's IP address to the handle, considerably, whom "I" connected to of two parties.
+On Error GoTo sockerror
+    Dim sck As sockaddr
+    If getpeername(sock, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPAddress(sck.sin_addr)
+        If col.Count > 0 Then
+            WhoseIs = col.Item(1)
+        Else
+            WhoseIs = "#INVALID#"
+        End If
+    Else
+        WhoseIs = "#INVALID#"
+    End If
+Exit Function
+sockerror:
+    Err.Clear
+    On Error GoTo 0
+    Err.Raise 8, "socket", "Error attempting to obtain host name."
+    
+
+End Function
+Public Function LocalIP(ByVal Handle As Long) As String ' _
+Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact.
+On Error GoTo sockerror
+    LocalIP = WhoAmI(Handle)
+    If LocalIP = "#INVALID#" Then
+        If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
+            LocalIP = LocalHost
+        Else
+            LocalIP = ResolveIP(LocalHost)
+        End If
+    End If
+
+    'LocalIP = modSockets.LocalIP(Me.Handle)
+Exit Function
+sockerror:
+    Err.Clear
+    On Error GoTo 0
+    Err.Raise 8, "socket", "Error attempting to obtain the local IP."
+    
+
+End Function
+Public Function WhoAmI(ByVal sock As Long) As String ' _
+Acccepts a socket handle as parameter and returns the local party's IP address to the handle, considerably, "I", or self, in a two party connection.
+On Error GoTo sockerror
+    Dim sck As sockaddr
+    If getsockname(sock, sck, LenB(sck)) = 0 Then
+        Dim col As VBA.Collection
+        Set col = IPAddress(sck.sin_addr)
+        If col.Count > 0 Then
+            WhoAmI = col.Item(1)
+        Else
+            WhoAmI = "#INVALID#"
+        End If
+    Else
+        WhoAmI = "#INVALID#"
+    End If
+Exit Function
+sockerror:
+    Err.Clear
+    On Error GoTo 0
+    Err.Raise 8, "socket", "Error attempting to obtain host name."
+    
+
+End Function
 
 
 Public Property Get WinsockControl() As Boolean
@@ -678,12 +745,12 @@ On Error GoTo catch
     Dim IPList As New Collection
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
             
         Dim phe As Long
         Dim heDestHost As hostent
@@ -700,13 +767,13 @@ On Error GoTo catch
         If Domain = "" Then
             HostName = Space(256)
             If gethostname(HostName, 256) = Socket_ERROR Then
-                retval = 1
+                retVal = 1
             Else
                 HostName = Trim$(HostName)
                 Hostent_addr = GetHostByName(HostName)
     
                 If Hostent_addr = 0 Then
-                    retval = 2
+                    retVal = 2
                 Else
                     
                     CopyMemoryHost Host, Hostent_addr, LenB(Host)
@@ -763,7 +830,7 @@ On Error GoTo catch
         End If
         
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -780,12 +847,12 @@ End Function
 Public Function ResolveIP(ByVal Host As String) As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         Dim phe As Long
         Dim heDestHost As hostent
@@ -826,7 +893,7 @@ Public Function ResolveIP(ByVal Host As String) As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
         Erase temp_ip_address
@@ -837,12 +904,12 @@ End Function
 Public Function Resolve(ByVal Host As String) As Long
    
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
         
         Dim phe As Long
         Dim heDestHost As hostent
@@ -866,7 +933,7 @@ Public Function Resolve(ByVal Host As String) As Long
         End If
             
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If
@@ -877,12 +944,12 @@ End Function
 Public Function LocalHost() As String
 
     Dim init As Boolean
-    Dim retval As Long
+    Dim retVal As Long
     If Not WinsockControl Then
         init = True
-        retval = SocketsInitialize()
+        retVal = SocketsInitialize()
     End If
-    If retval = 0 Then
+    If retVal = 0 Then
     
         
         Dim Buf As String
@@ -897,7 +964,7 @@ Public Function LocalHost() As String
         End If
     
         If init Then
-            retval = SocketsCleanUp()
+            retVal = SocketsCleanUp()
         End If
 
     End If
@@ -914,7 +981,7 @@ Public Function ipaddressByhost(ByVal sock As Long) As VBA.Collection
         If getsockname(sock, sck, LenB(sck)) = 0 Then
             Dim col As VBA.Collection
             Set col = IPAddress(sck.sin_addr)
-            If col.count > 0 Then
+            If col.Count > 0 Then
                 Set ipaddressByhost = col
          '   Else
         '        RemoteIP = "#INVALID#"

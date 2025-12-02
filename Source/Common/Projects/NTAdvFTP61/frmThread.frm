@@ -1,17 +1,18 @@
 VERSION 5.00
 Begin VB.Form frmThread 
    BorderStyle     =   1  'Fixed Single
-   Caption         =   "NTAdvFTP61.Socket.Form"
-   ClientHeight    =   540
+   Caption         =   "NTAdvFTP61.Socket"
+   ClientHeight    =   1755
    ClientLeft      =   30
    ClientTop       =   330
-   ClientWidth     =   2280
+   ClientWidth     =   4725
    ControlBox      =   0   'False
+   Icon            =   "frmThread.frx":0000
    MaxButton       =   0   'False
    MinButton       =   0   'False
    Moveable        =   0   'False
-   ScaleHeight     =   540
-   ScaleWidth      =   2280
+   ScaleHeight     =   1755
+   ScaleWidth      =   4725
    StartUpPosition =   3  'Windows Default
    Visible         =   0   'False
 End
@@ -23,6 +24,7 @@ Attribute VB_Exposed = False
 
 Private sck As ISocket
 
+
 Public Property Get Socket() As ISocket
     Set Socket = sck
 End Property
@@ -30,4 +32,3 @@ End Property
 Public Property Set Socket(ByRef RHS As ISocket)
     Set sck = RHS
 End Property
-

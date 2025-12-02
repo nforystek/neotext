@@ -22,7 +22,7 @@ space {
 	.skybottom="sky_bottom.bmp"
 	.skyrotate=3.125
 
-	.boundary=150
+	.boundary=50
 '	.gravity=-0.2
 }
 

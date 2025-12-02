@@ -453,14 +453,12 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
                 out.Prepend ToBytes(Chr(CERT_SEQUENCE))
                 Fields = out.Partial
             
-            Case Extensions, Subject, Issuer, SerialNumber ', Signature, Algorithm, SignatureAlgorithm
+            Case Extensions, Subject, Issuer, SerialNumber, Signature, Algorithm, SignatureAlgorithm
             
                 Set out = New Stream
-                If Exists("ID_" & Refer) Then
-                    out.Concat ToBytes(pFields("ID_" & Refer))
-                    AddLength out
-                    out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
-                End If
+                out.Concat ToBytes(pFields("ID_" & Refer))
+                AddLength out
+                out.Prepend ToBytes(IIf(Refer = Extensions, Chr(CERT_CONTEXT_EXTENSIONS), Chr(CERT_SEQUENCE)))
                 Fields = out.Partial
                 
             Case Is > SignatureAlgorithm
@@ -511,20 +509,18 @@ Attribute Fields.VB_Description = "Returns the specified Refer property of the c
             Set out = New Stream
             Set itm = New Stream
 
-            If Exists("ID_" & Refer) Then
-                Set itm = pFields("ID_" & Refer)
-                If inc = CERT_SETTINGS Then
-                    AddLength itm
-                    out.Concat ToBytes(Chr(inc))
-                ElseIf inc = CERT_TYPE_OIDS Then
-                    out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
-                End If
-                out.Concat itm.Partial
-                End If
-                
-                If inc = CERT_TYPE_OIDS Then
-                    out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
-                End If
+            Set itm = pFields("ID_" & Refer)
+            If inc = CERT_SETTINGS Then
+                AddLength itm
+                out.Concat ToBytes(Chr(inc))
+            ElseIf inc = CERT_TYPE_OIDS Then
+                out.Concat ToBytes(Chr(inc) & Chr(itm.Length))
+            End If
+            out.Concat itm.Partial
+
+            If inc = CERT_TYPE_OIDS Then
+                out.Concat ToBytes(Chr(CERT_TYPE_NULL) & Chr(0))
+            End If
             Fields = out.Partial
 
         End If
@@ -643,8 +639,6 @@ End Function
 Private Function GetSequence(ByRef FromData As Stream, Optional ByRef RunLen As Variant) As Stream
     If FromData.Length > 0 Then
         Dim ilng As Long
-doagain:
-        
         ilng = CLng(PeekByte(FromData))
         If ilng = CERT_SEQUENCE Or ilng = CERT_SETTINGS Or ilng = CERT_TYPE_OIDS Or _
             ilng = CERT_TYPE_UTCTIME Or ilng - pContextBit = CERT_TYPE_BITSET Or _
@@ -655,13 +649,10 @@ doagain:
             If Not IsMissing(RunLen) Then
                 If RunLen <= 0 Then Exit Function
             End If
-            If ilng = CERT_TYPE_OIDS Then
-                FromData.Push 1
-                ilng = CLng(NextByte(FromData))
-            Else
-                FromData.Push 1
-                ilng = CLng(NextByte(FromData))
-            End If
+
+            FromData.Push 1
+
+            ilng = CLng(NextByte(FromData))
 
             If ilng > (CERT_MAX_WORD \ CERT_LEN_WORD) And ilng < ((CERT_MAX_WORD \ CERT_LEN_WORD) + (CERT_LEN_WORD * CERT_HEX_UNIT)) Then
                 Dim ostr As String

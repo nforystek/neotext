@@ -133,7 +133,7 @@ End Property
 
 Friend Function InSpace(ByRef WayPoint As Point, Optional ByVal RestrictTo As Double = -2) As Boolean
     If RestrictTo = -2 Then
-        If Range > 0 And Boundary < Range Then
+        If Range > 0 And Boundary <= Range Then
             RestrictTo = Range
         ElseIf Boundary > 0 And Boundary > Range Then
             RestrictTo = Range + Boundary
@@ -143,7 +143,7 @@ Friend Function InSpace(ByRef WayPoint As Point, Optional ByVal RestrictTo As Do
         If (RestrictTo = -1) Then
             InSpace = True
         Else
-            InSpace = (DistanceEx(WayPoint, Origin) < RestrictTo)
+            InSpace = (DistanceEx(WayPoint, Origin) <= RestrictTo)
         End If
     End If
 End Function
@@ -151,6 +151,8 @@ End Function
 
 
 Friend Sub RenderSpace()
+
+
     If InSpace(Player.Element.Origin) Then
 
         

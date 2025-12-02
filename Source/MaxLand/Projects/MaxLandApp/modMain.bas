@@ -135,8 +135,8 @@ Public Sub Main()
                 
         frmMain.BackColor = &H323232
         
-        frmMain.width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
-        frmMain.height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
+        frmMain.Width = CSng(NextArg(Resolution, "x")) * Screen.TwipsPerPixelY
+        frmMain.Height = CSng(RemoveArg(Resolution, "x")) * Screen.TwipsPerPixelX
         AspectRatio = CSng(RemoveArg(Resolution, "x")) / CSng(NextArg(Resolution, "x"))
 
         WorkingScreen "Loading..."
@@ -183,78 +183,114 @@ Public Sub Main()
                 On Error GoTo 0
                 On Error GoTo Render
                 
+                
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
-    
-'                'elapsed = Timer
-'                SetupWorld
-'                'elapsed = (Timer - elapsed)
-'                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
-
-                'elapsed = Timer
-                RenderMotion
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
-                
-                'elapsed = Timer
-                RenderSpaces
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
-                
-                'elapsed = Timer
-                RenderWorld
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
-
-                'elapsed = Timer
-                RenderPlayer
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
-          
-                'elapsed = Timer
-                RenderBoards
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
-
-                 'elapsed = Timer
-                RenderMirrors
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-
-                'elapsed = Timer
-                RenderLucent
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
-               
-                'elapsed = Timer
-                RenderBeacons
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-
-                'elapsed = Timer
-                BeginMirrors
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-
-
-
                 
                 DDevice.BeginScene
                 
+                '#################################################################
+                '#### SetupWorld configures the matricies used for DirectX 3D ####
+                '#################################################################
                 'elapsed = Timer
                 SetupWorld
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
                 
+                
+                '##################################################################
+                '#### RenderMotion prepairs a subsets of preliminary movements ####
+                '##################################################################
+                'elapsed = Timer
+                RenderMotion
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+
+
+                '#########################################################
+                '#### RenderSpaces the skies/planes that may be setup ####
+                '#########################################################
+                'elapsed = Timer
+                RenderSpaces
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+                
+                
+                '########################################################
+                '#### RenderWorld renders all the mesh based objects ####
+                '########################################################
+                'elapsed = Timer
+                RenderWorld
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
+                
+
+                '##########################################################
+                '#### RenderPlayer renders the player's element object ####
+                '##########################################################
+                'elapsed = Timer
+                RenderPlayer
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+                
+
+                '##################################################################
+                '#### RenderBoards renders any visible texture boards or walls ####
+                '##################################################################
+                'elapsed = Timer
+                RenderBoards
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+                
+
+                '################################################################
+                '#### RenderMirrors renders mirrors collected by BeginMirros ####
+                '################################################################
+                 'elapsed = Timer
+                RenderMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+
+
+                '##################################################################
+                '#### RenderLucent renders alphablent and translucent textures ####
+                '##################################################################
+                'elapsed = Timer
+                RenderLucent
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+
+
+                '#############################################################
+                '#### RenderBeacons renders forward faced texture beacons ####
+                '#############################################################
+                'elapsed = Timer
+                RenderBeacons
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+
+                
+
+                '###########################################################
+                '#### RenderPortals handles all the Portal based events ####
+                '###########################################################
                 'elapsed = Timer
                 RenderPortals
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
 
+
+                '###############################################################
+                '#### RenderCameras moves the view camera if in camera mode ####
+                '###############################################################
                 'elapsed = Timer
                 RenderCameras
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
-
+                
+                
+                '#################################################################
+                '#### RenderRoutine handles named routine script based events ####
+                '#################################################################
                 'elapsed = Timer
                 RenderRoutine
                 'elapsed = (Timer - elapsed)
@@ -262,35 +298,66 @@ Public Sub Main()
                 
                 On Error GoTo 0
 
+                '#################################################################
+                '#### InputMove collision checks subset movements and applies ####
+                '#################################################################
                 'elapsed = Timer
                 InputMove
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputMove: " & elapsed
+                
 
+                '###################################################################
+                '#### ResetMotion resets the preliminary subsets to no movement ####
+                '###################################################################
                 'elapsed = Timer
                 ResetMotion
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ResetMotion: " & elapsed
+                
 
+                '###################################################################
+                '#### InputScene collects reaction to all player controls input ####
+                '###################################################################
                 'elapsed = Timer
                 InputScene
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+                
                                
                 If Not PauseGame Then
-                
+
+
+                    '##################################################################
+                    '#### RenderInfo draws screen text and other hub level imagary ####
+                    '##################################################################
                     'elapsed = Timer
                     RenderInfo
                     'elapsed = (Timer - elapsed)
                     'If elapsed > 0 Then Debug.Print "RenderInfo: " & elapsed
                     
+                    
+                    '###################################################################
+                    '#### RenderCmds draws the hud console texture if it's visible ####
+                    '###################################################################
                     'elapsed = Timer
                     RenderCmds
                     'elapsed = (Timer - elapsed)
                     'If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
+
       
                     DDevice.EndScene
+
+
+                    '#############################################################
+                    '#### BeginMirrors pre gathers mirror textures per mirror ####
+                    '#############################################################
+                    'elapsed = Timer
+                    BeginMirrors
+                    'elapsed = (Timer - elapsed)
+                    'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                     
+                
                     On Error Resume Next
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
                     
@@ -425,8 +492,8 @@ On Error GoTo WorldError
 
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
 
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
-        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).pitch
+        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
+        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
         D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
@@ -435,11 +502,11 @@ On Error GoTo WorldError
 
     Else
 
-        D3DXMatrixRotationY matRotation, Player.Camera.angle
-        D3DXMatrixRotationX matPitch, Player.Camera.pitch
+        D3DXMatrixRotationY matRotation, Player.Camera.Angle
+        D3DXMatrixRotationX matPitch, Player.Camera.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.Camera.pitch > 0 Then
+        If Player.Camera.Pitch > 0 Then
 
             D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
@@ -501,13 +568,13 @@ On Error GoTo WorldError
                                             Player.Element.Origin.Y - 0.2, _
                                             Player.Element.Origin.Z)
 
-                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle) * (Zoom + factor)), _
-                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.pitch) * (Zoom + factor)), _
-                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle) * (Zoom + factor)))
+                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle) * (Zoom + factor)), _
+                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.Pitch) * (Zoom + factor)), _
+                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle)), _
-                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.pitch) * Zoom), _
-                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle)))
+                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle)), _
+                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.Pitch) * Zoom), _
+                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle)))
 
 '                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Camera.Pitch), Player.Camera.Angle))
 '
@@ -670,11 +737,11 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     DViewPort.MaxZ = FAR
     DViewPort.MinZ = NEAR
     If Not FullScreen Then
-        DViewPort.width = (frmMain.width / VB.Screen.TwipsPerPixelX)
-        DViewPort.height = (frmMain.height / VB.Screen.TwipsPerPixelY)
+        DViewPort.Width = (frmMain.Width / VB.Screen.TwipsPerPixelX)
+        DViewPort.Height = (frmMain.Height / VB.Screen.TwipsPerPixelY)
     Else
-        DViewPort.width = (VB.Screen.width / VB.Screen.TwipsPerPixelX)
-        DViewPort.height = (VB.Screen.height / VB.Screen.TwipsPerPixelY)
+        DViewPort.Width = (VB.Screen.Width / VB.Screen.TwipsPerPixelX)
+        DViewPort.Height = (VB.Screen.Height / VB.Screen.TwipsPerPixelY)
     End If
         
     On Error Resume Next
@@ -692,15 +759,15 @@ Private Sub InitialDevice(ByVal hwnd As Long)
     If Not DDevice Is Nothing Then
     
         If Not FullScreen Then
-            DViewPort.X = (((frmMain.width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-            DViewPort.Y = (((frmMain.height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+            DViewPort.X = (((frmMain.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+            DViewPort.Y = (((frmMain.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
         Else
-            DViewPort.X = (((VB.Screen.width / VB.Screen.TwipsPerPixelX) / 2) - 256)
-            DViewPort.Y = (((VB.Screen.height / VB.Screen.TwipsPerPixelY) / 2) - 256)
+            DViewPort.X = (((VB.Screen.Width / VB.Screen.TwipsPerPixelX) / 2) - 256)
+            DViewPort.Y = (((VB.Screen.Height / VB.Screen.TwipsPerPixelY) / 2) - 256)
         End If
 
-        DViewPort.width = DViewPort.width - (DViewPort.X * 2)
-        DViewPort.height = DViewPort.height - (DViewPort.Y * 2)
+        DViewPort.Width = DViewPort.Width - (DViewPort.X * 2)
+        DViewPort.Height = DViewPort.Height - (DViewPort.Y * 2)
          
             
         DDevice.SetRenderState D3DRS_ZENABLE, 1

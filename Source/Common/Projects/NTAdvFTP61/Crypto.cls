@@ -11,6 +11,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Declare Function CryptAcquireContext Lib "advapi32.dll" Alias "CryptAcquireContextA" (phProv As Long, ByVal pszContainer As Long, ByVal pszProvider As Long, ByVal dwProvType As Long, ByVal dwFlags As Long) As Long
@@ -34,8 +35,6 @@ Private Declare Function CryptGenRandom Lib "advapi32.dll" (ByVal hProv As Long,
 Private Declare Function CryptGetProvParam Lib "advapi32.dll" (ByVal hProv As Long, ByVal dwParam As Long, pbData As Any, pdwDataLen As Long, ByVal dwFlags As Long) As Long
 Private Declare Function CryptGetUserKey Lib "advapi32.dll" (ByVal hProv As Long, ByVal dwKeySpec As Long, phUserKey As Long) As Long
 Private Declare Function CryptHashData Lib "advapi32.dll" (ByVal hHash As Long, ByVal pbData As String, ByVal dwDataLen As Long, ByVal dwFlags As Long) As Long
-Private Declare Function CryptHashDataAny Lib "advapi32.dll" Alias "CryptHashData" (ByVal hHash As Long, ByRef pbData As Any, ByVal dwDataLen As Long, ByVal dwFlags As Long) As Long
-Private Declare Function CryptHashDataPtr Lib "advapi32.dll" Alias "CryptHashData" (ByVal hHash As Long, ByVal pbData As Long, ByVal dwDataLen As Long, ByVal dwFlags As Long) As Long
 Private Declare Function CryptReleaseContext Lib "advapi32.dll" (ByVal hProv As Long, ByVal dwFlags As Long) As Long
 Private Declare Function CryptSetHashParam Lib "advapi32.dll" (ByVal hHash As Long, ByVal dwParam As Long, pbData As Any, ByVal dwFlags As Long) As Long
 Private Declare Function CryptSetKeyParam Lib "advapi32.dll" (ByVal hKey As Long, ByVal dwParam As Long, ByRef pbData As Any, ByVal dwFlags As Long) As Long
@@ -43,7 +42,6 @@ Private Declare Function CryptSignHash Lib "advapi32.dll" Alias "CryptSignHashA"
 'Private Declare Function CryptSignMessage Lib "Crypt32.dll" (pSignPara As CRYPT_SIGN_MESSAGE_PARA, ByVal fDetachedSignature As Long, ByVal cToBeSigned As Long, rgpbToBeSigned As String, rgcbToBeSigned As Long, ByVal pbSignedBlob As String, pcbSignedBlob As Long) As Long
 Private Declare Function CryptVerifySignature Lib "advapi32.dll" Alias "CryptVerifySignatureA" (ByVal hHash As Long, ByVal pbSignature As String, ByVal dwSigLen As Long, ByVal hPubKey As Long, ByVal sDescription As String, ByVal dwFlags As Long) As Long
 Private Declare Function CryptVerifySignaturePtr Lib "advapi32.dll" Alias "CryptVerifySignatureA" (ByVal hHash As Long, ByVal pbSignature As Long, ByVal dwSigLen As Long, ByVal hPubKey As Long, ByVal sDescription As Long, ByVal dwFlags As Long) As Long
-
 'Private Declare Function CryptAcquireCertificatePrivateKey Lib "crypt32.dll" (ByRef pCert As Long, ByVal dwFlags As Long, pvReserved As Any, ByRef phCryptProv As Long, ByRef pdwKeySpec As Long, ByRef pfCallerFreeProv As Long) As Long
 Private Declare Function CryptAcquireCertificatePrivateKey Lib "Crypt32.dll" (ByVal pCert As Long, ByVal dwFlags As Long, ByVal pvReserved As Long, ByVal phCryptProv As Long, ByVal pdwKeySpec As Long, ByVal pfCallerFreeProv As Long) As Long
 
@@ -596,7 +594,7 @@ Public Function ImportMasterKey() As String
     Dim llen As Long
     Dim TempBlob As T_SIMPLEKEYBLOB
     Dim MasterKeyBlob As T_EXP_SIMPLEKEYBLOB
-    Dim Data As CRYPT_DATA_BLOB
+    Dim data As CRYPT_DATA_BLOB
     Dim Algorithm As SCHANNEL_ALG
     Dim sTemp As String
     Dim bTemp() As Byte
@@ -650,16 +648,16 @@ Public Function ImportMasterKey() As String
         GoTo ReleaseHandles
     End If
     'Add CLIENT_RANDOM
-    Data.cbData = UBound(bClientRandom) + 1
-    Data.pbData = VarPtr(bClientRandom(0))
-    If CryptSetKeyParam(hMasterKey, KP_CLIENT_RANDOM, Data, 0) = 0 Then
+    data.cbData = UBound(bClientRandom) + 1
+    data.pbData = VarPtr(bClientRandom(0))
+    If CryptSetKeyParam(hMasterKey, KP_CLIENT_RANDOM, data, 0) = 0 Then
         RaiseEvent Error(Err.LastDllError, CSKP, Routine)
         GoTo ReleaseHandles
     End If
     'Add SERVER_RANDOM
-    Data.cbData = UBound(bServerRandom) + 1
-    Data.pbData = VarPtr(bServerRandom(0))
-    If CryptSetKeyParam(hMasterKey, KP_SERVER_RANDOM, Data, 0) = 0 Then
+    data.cbData = UBound(bServerRandom) + 1
+    data.pbData = VarPtr(bServerRandom(0))
+    If CryptSetKeyParam(hMasterKey, KP_SERVER_RANDOM, data, 0) = 0 Then
         RaiseEvent Error(Err.LastDllError, CSKP, Routine)
         GoTo ReleaseHandles
     End If
@@ -797,7 +795,7 @@ Public Function ExportMasterKey() As Boolean
     Dim TempBlob As T_SIMPLEKEYBLOB
     Dim MasterKeyBlob As T_EXP_SIMPLEKEYBLOB
     Dim Algorithm As SCHANNEL_ALG
-    Dim Data As CRYPT_DATA_BLOB
+    Dim data As CRYPT_DATA_BLOB
     Dim sTemp As String
     Dim bTemp() As Byte
     Dim sPreMaster As String
@@ -908,16 +906,16 @@ Public Function ExportMasterKey() As Boolean
         GoTo ReleaseHandles
     End If
     'Add CLIENT_RANDOM
-    Data.cbData = UBound(bClientRandom) + 1
-    Data.pbData = VarPtr(bClientRandom(0))
-    If CryptSetKeyParam(hMasterKey, KP_CLIENT_RANDOM, Data, 0) = 0 Then
+    data.cbData = UBound(bClientRandom) + 1
+    data.pbData = VarPtr(bClientRandom(0))
+    If CryptSetKeyParam(hMasterKey, KP_CLIENT_RANDOM, data, 0) = 0 Then
         RaiseEvent Error(Err.LastDllError, CSKP, Routine)
         GoTo ReleaseHandles
     End If
     'Add SERVER_RANDOM
-    Data.cbData = UBound(bServerRandom) + 1
-    Data.pbData = VarPtr(bServerRandom(0))
-    If CryptSetKeyParam(hMasterKey, KP_SERVER_RANDOM, Data, 0) = 0 Then
+    data.cbData = UBound(bServerRandom) + 1
+    data.pbData = VarPtr(bServerRandom(0))
+    If CryptSetKeyParam(hMasterKey, KP_SERVER_RANDOM, data, 0) = 0 Then
         RaiseEvent Error(Err.LastDllError, CSKP, Routine)
         GoTo ReleaseHandles
     End If
@@ -1106,56 +1104,7 @@ End Sub
 '    sMsgType = vNewValue
 'End Property
 
-Public Function RsaVerifySign(Data() As Byte, Signature() As Byte) As Boolean
-    Dim hHash As Long
-    Dim lSignLen As Long
-    Dim hRsaKeyPublic As Long
-    
-'    If Not IsDimensioned(Data) Then
-'        Err.Raise 513, , "Data is empty!"
-'    ElseIf Not IsDimensioned(Signature) Then
-'        Err.Raise 513, , "Signature is empty!"
-'    ElseIf Not IsDimensioned(PublicKeyData) Then
-'        Err.Raise 513, , "PublicKeyData is empty!"
-'    End If
-    
-    'public key des anderen Containers importieren:
-    If CryptImportKey(hCryptProv, PublicKey.bPublicKey(1), UBound(PublicKey.bPublicKey), 0, 0, hRsaKeyPublic) = 0 Then
-           Err.Raise Err.LastDllError, , "CryptImportKey Error"
-    End If
-
-    'Hash Objekt erstellen
-    If CryptCreateHash(hCryptProv, &H8000& Or 0 Or 4, 0, 0, hHash) = 0 Then
-        Err.Raise Err.LastDllError, , "CryptCreateHash Error"
-    'Daten in Hash Objekt schreiben
-    ElseIf CryptHashDataAny(hHash, Data(1), UBound(Data), 0) = 0 Then
-        Err.Raise Err.LastDllError, , "CryptHashData Error"
-    ElseIf CryptVerifySignaturePtr(hHash, ByVal VarPtr(Signature(1)), _
-            UBound(Signature), hRsaKeyPublic, 0, 0) <> 0 Then
-        RsaVerifySign = True
-    Else
-        If Err.LastDllError = &H80090006 Then
-            RsaVerifySign = False
-        Else
-            Err.Raise Err.LastDllError, , "CryptVerifySignature Error"
-        End If
-    End If
-
-   'Hash wieder zerstören:
-   If CryptDestroyHash(hHash) = 0 Then
-      Err.Raise Err.LastDllError, , "CryptDestroyHash Error"
-   End If
-    
-    'Public Key zerstören:
-    If CryptDestroyKey(hRsaKeyPublic) = 0 Then
-       Err.Raise Err.LastDllError, , "CryptDestroyKey Error"
-    End If
-    
-End Function
-
-
 Public Function VerifySig() As Boolean
-        
     Const Routine As String = "VerifySig"
     Dim hHash As Long
     Dim hPubCertKey As Long
@@ -1165,32 +1114,23 @@ Public Function VerifySig() As Boolean
         Err.Raise Err.LastDllError, cch, Routine
         GoTo ReleaseHandles:
     End If
-    
     'Hash the data
-    If CryptHashDataPtr(hHash, ByVal sInBuffer.Address, sInBuffer.Length, 0) = 0 Then
+    If CryptHashData(hHash, InBuffer, Len(InBuffer), 0) = 0 Then
         Err.Raise Err.LastDllError, CHD, Routine
         GoTo ReleaseHandles:
     End If
-    
     'Import Certificate Public Key as blob
     If CryptImportKey(hCryptProv, PublicKey, Len(PublicKey), 0, CRYPT_EXPORTABLE, hPubCertKey) = 0 Then
-
         Err.Raise Err.LastDllError, CIK, Routine
         GoTo ReleaseHandles
     End If
-    
+    sDescription = vbNullString
     If CryptVerifySignaturePtr(hHash, ByVal sSignature.Address, sSignature.Length, hPubCertKey, ByVal 0&, 0) = 0 Then
-
-    Debug.Print Err.LastDllError
-    
         VerifySig = False
     Else
         VerifySig = True
     End If
-    
-    
 ReleaseHandles:
-
     If hPubCertKey Then CryptDestroyKey hPubCertKey
     If hHash Then CryptDestroyHash hHash
 End Function
@@ -1485,7 +1425,7 @@ ReleaseHandles:
 End Function
 
 Private Function GetPubKeyBlob() As Boolean
-    If (ReadKeyFile(App.path & "\" & sKeyFile, PublicKey.bPublicKey)) Then
+    If (ReadKeyFile(App.Path & "\" & sKeyFile, PublicKey.bPublicKey)) Then
         GetPubKeyBlob = True
     Else
         GetPubKeyBlob = False
@@ -1500,7 +1440,7 @@ Public Function GetPriKey(Optional sRet As Boolean) As String
     PriFlg = True
 End Function
 Private Function GetPriKeyBlob() As Boolean
-    If (ReadKeyFile(App.path & "\" & sKeyFile, PrivateKey.bPrivateKey)) Then
+    If (ReadKeyFile(App.Path & "\" & sKeyFile, PrivateKey.bPrivateKey)) Then
         GetPriKeyBlob = True
     Else
         GetPriKeyBlob = False
@@ -1532,7 +1472,7 @@ Public Function SetPubKey() As Boolean
     NewPubKey.magic = &H31415352 '"RSA1"
     NewPubKey.bitlen = Len(sPublicKey) * 8
     NewPubKey.pubexp = 65537 '0x00010001
-    If Len(sPublicKey) > 0 Then CopyMemory NewPubKey.modulus(1), bNewKey(0), Len(sPublicKey)
+    CopyMemory NewPubKey.modulus(1), bNewKey(0), Len(sPublicKey)
     CopyMemory PublicKey.bPublicKey(1), NewPubKey, Len(sPublicKey) + 20
     SetPubKey = True
 End Function
@@ -1967,16 +1907,16 @@ Public Sub CreateKeyPair()
         GoTo ReleaseHandles
     End If
     ' See if either key already exists.
-    If Dir(App.path & "\" & sKeyFile & ".fpu") <> "" And _
-        Dir(App.path & "\" & sKeyFile & ".fpr") <> "" Then
+    If Dir(App.Path & "\" & sKeyFile & ".fpu") <> "" And _
+        Dir(App.Path & "\" & sKeyFile & ".fpr") <> "" Then
            ' If MsgBox("Key files already exist!" & vbCrLf & "Overwrite them?", _
            '     vbYesNo) = vbNo Then Exit Sub
     End If
     ' Create the key files.
-    If Not (WriteFile(App.path & "\" & sKeyFile & ".fpu", PublicKey.bPublicKey)) Then
+    If Not (WriteFile(App.Path & "\" & sKeyFile & ".fpu", PublicKey.bPublicKey)) Then
        ' MsgBox "Write file '" & sKeyFile & ".fpu' failed!", vbExclamation
     End If
-    If Not (WriteFile(App.path & "\" & sKeyFile & ".fpr", PrivateKey.bPrivateKey)) Then
+    If Not (WriteFile(App.Path & "\" & sKeyFile & ".fpr", PrivateKey.bPrivateKey)) Then
        ' MsgBox "Write file '" & sKeyFile & ".fpr' failed!", vbExclamation
     End If
 ReleaseHandles:
@@ -2106,12 +2046,13 @@ Private Function InitUser() As Long
     InitUser = True
 End Function
 Private Sub Class_Initialize()
-    sContainer.Concat modMemory.Convert("Metalica" & vbNullChar)
-    sProvider.Concat modMemory.Convert(MS_DEF_RSA_SCHANNEL_PROV)
+
+    sContainer.Concat StrConv(KeyContainer & vbNullChar, vbFromUnicode) 'modMemory.Convert(KeyContainer) '& vbNullChar)
+    sProvider.Concat StrConv(MS_DEF_RSA_SCHANNEL_PROV & vbNullChar, vbFromUnicode) 'modMemory.Convert(MS_DEF_RSA_SCHANNEL_PROV)
     sProvType = PROV_RSA_SCHANNEL
-    
+
     If Not InitUser = True Then
-      '  MsgBox ("InitUser failed")
+        Err.Raise 8, , "Failed to initialize the cryptology user context."
     End If
 End Sub
 'Public Property Get Password() As String
@@ -2295,6 +2236,4 @@ Public Function ErrorCode(ByVal Code As Byte) As String
 
 
 End Function
-
-
 

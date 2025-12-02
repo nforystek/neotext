@@ -31,6 +31,11 @@ End Enum
 Private ScopeAs As MemoryScopes
 Private Pointer As Long
 
+Public Function Address(Optional ByVal Offset As Long = 0) As Long ' _
+Returned the stream objects memory pointer, with any optional Offset specified added to it.
+    RtlMoveMemory ByVal VarPtr(Address), (Pointer + Offset), 4
+End Function
+
 Private Sub Class_Initialize()
     ScopeAs = MemoryScopes.Heap
 End Sub
@@ -96,11 +101,6 @@ Private Sub MemoryModify(Optional ByVal Size As Long = 0)
     End If
 End Sub
 
-Public Function Address(Optional ByVal Offset As Long = 0) As Long ' _
-Returned the stream objects memory pointer, with any optional Offset specified added to it.
-Attribute Address.VB_Description = "Returned the stream objects memory pointer, with any optional Offset specified added to it."
-    RtlMoveMemory ByVal VarPtr(Address), (Pointer + Offset), 4
-End Function
 
 Public Sub Clone(ByRef Origin As Stream, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
 Destroys the callie object to be exactly the same as the Origin specified, with optional Offset bytes left out to the left and only of Width numebr of bytes.
@@ -122,16 +122,6 @@ Attribute Concat.VB_Description = "Concatenation of byte array RHS to the end of
     End If
 End Sub
 
-Public Property Let Length(ByVal RHS As Long) ' _
-Gets or sets the length of the stream object, does not change the memory scope.
-Attribute Length.VB_Description = "Gets or sets the length of the stream object, does not change the memory scope."
-    If (RHS > 0) Then
-        MemoryModify RHS
-    ElseIf (RHS = 0) Then
-        Reset ScopeAs
-    End If
-End Property
-
 Public Property Get Length() As Long ' _
 Gets or sets the length of the stream object, does not change the memory scope.
 Attribute Length.VB_Description = "Gets or sets the length of the stream object, does not change the memory scope."
@@ -147,6 +137,30 @@ Attribute Length.VB_Description = "Gets or sets the length of the stream object,
         Length = 0
     End If
 End Property
+
+Public Property Let Length(ByVal RHS As Long) ' _
+Gets or sets the length of the stream object, does not change the memory scope.
+    If (RHS > 0) Then
+        MemoryModify RHS
+    ElseIf (RHS = 0) Then
+        Reset ScopeAs
+    End If
+End Property
+
+
+Public Sub Placeat(ByRef RHS() As Byte, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
+Places contents of memory byte array RHS into the stream excluding Offset number of bytes, and only up to Width but not over the total allotted.
+    Dim lSize As Long
+    lSize = Length
+    If Width = -1 Then Width = UBound(RHS) + -CInt(Not CBool(-LBound(RHS)))
+    If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
+    If (Width > 0) And (Pointer <> 0) Then
+        RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(RHS(LBound(RHS))), Width
+    ElseIf (Width > 0) Then
+        Concat RHS
+        Length = Width
+    End If
+End Sub
 
 Public Function Partial(Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) As Byte() ' _
 Returns a byte array of the contents exlcuded of OFfset number of bytes on the left and including of Width amount of bytes or max length.
@@ -164,21 +178,6 @@ Attribute Partial.VB_Description = "Returns a byte array of the contents exlcude
     Partial = ret
     Erase ret
 End Function
-
-Public Sub Placeat(ByRef RHS() As Byte, Optional ByVal Offset As Long = 0, Optional ByVal Width As Long = -1) ' _
-Places contents of memory byte array RHS into the stream excluding Offset number of bytes, and only up to Width but not over the total allotted.
-Attribute Placeat.VB_Description = "Places contents of memory byte array RHS into the stream excluding Offset number of bytes, and only up to Width but not over the total allotted."
-    Dim lSize As Long
-    lSize = Length
-    If Width = -1 Then Width = UBound(RHS) + -CInt(Not CBool(-LBound(RHS)))
-    If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    If (Width > 0) And (Pointer <> 0) Then
-        RtlMoveMemory ByVal Pointer + Offset, ByVal VarPtr(RHS(LBound(RHS))), Width
-    ElseIf (Width > 0) Then
-        Concat RHS
-        Length = Width
-    End If
-End Sub
 
 Public Sub Prepend(ByRef RHS() As Byte) ' _
 Places the byte array RHS to the left of the stream object, adding memory as nessisary ina left to right order.  Opposite of Concat()

@@ -657,6 +657,8 @@ Public Sub InputMove2(ByRef e1 As Element)
         End If
        ' e1.Scalar = NoPoint
     End If
+    
+    
 
     'preform boundary restriction tests and adjust accordingly
 
@@ -664,22 +666,19 @@ Public Sub InputMove2(ByRef e1 As Element)
     Dim S As Space
     For Each S In Spaces
         If S.Boundary > 0 And S.Boundary > S.Range Then
-            If S.InSpace(Player.Element.Origin) Then
+            If Not S.InSpace(Player.Element.Origin) Then
                 inAmt = inAmt + 1
                 If inAmt > 1 Then Exit For
             End If
         End If
     Next
-    If inAmt = 1 Then
+    If inAmt > 0 Then
         For Each S In Spaces
             If S.Boundary > 0 And S.Boundary > S.Range Then
-                If S.InSpace(Player.Element.Origin) Then
-                    If (e1.Origin.Y > S.Boundary) Then e1.Origin.Y = S.Boundary
-                    If (e1.Origin.Y < -S.Boundary) Then e1.Origin.Y = -S.Boundary
-                    If (e1.Origin.X > S.Boundary) Then e1.Origin.X = S.Boundary
-                    If (e1.Origin.X < -S.Boundary) Then e1.Origin.X = -S.Boundary
-                    If (e1.Origin.Z > S.Boundary) Then e1.Origin.Z = S.Boundary
-                    If (e1.Origin.Z < -S.Boundary) Then e1.Origin.Z = -S.Boundary
+                If Not S.InSpace(Player.Element.Origin) Then
+                    'If DistanceEx(S.Origin, Player.Element.Origin) >= S.Boundary  Then
+                        Player.Element.Origin = DistanceSet(S.Origin, Player.Element.Origin, S.Boundary)
+                   'End If
                     Exit For
                 End If
             End If
@@ -689,7 +688,6 @@ Public Sub InputMove2(ByRef e1 As Element)
 '    If (e1.Origin.Y > SpaceBoundary) Or (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -e1.Origin.Y
 '    If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
 '    If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
-    
 End Sub
 
 Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As Boolean
@@ -2062,7 +2060,7 @@ On Error GoTo ObjectError
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
-    Dim v(2) As D3DVECTOR
+    Dim V(2) As D3DVECTOR
     Dim N As D3DVECTOR
 
     Dim matScale As D3DMATRIX
@@ -2130,15 +2128,15 @@ On Error GoTo ObjectError
     
             For cnt = 0 To 2
                 
-                v(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).X
-                v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
-                v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
+                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).X
+                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
+                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
     
-                D3DXVec3TransformCoord v(cnt), v(cnt), matMesh
+                D3DXVec3TransformCoord V(cnt), V(cnt), matMesh
                 
-                sngVertexX(cnt, Face) = v(cnt).X
-                sngVertexY(cnt, Face) = v(cnt).Y
-                sngVertexZ(cnt, Face) = v(cnt).Z
+                sngVertexX(cnt, Face) = V(cnt).X
+                sngVertexY(cnt, Face) = V(cnt).Y
+                sngVertexZ(cnt, Face) = V(cnt).Z
 
             Next
             
@@ -2425,13 +2423,13 @@ On Error GoTo ObjectError
     Dim Face As Long
     Dim Index As Long
     
-    Dim v() As D3DVECTOR
+    Dim V() As D3DVECTOR
 
-    Dim V1 As D3DVECTOR
-    Dim V2 As D3DVECTOR
+    Dim v1 As D3DVECTOR
+    Dim v2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
-    ReDim v(0 To 3) As D3DVECTOR
+    ReDim V(0 To 3) As D3DVECTOR
 
     If Obj.BoundsIndex > 0 Then
         Obj.CollideIndex = lngFaceCount
@@ -2446,16 +2444,16 @@ On Error GoTo ObjectError
     
             For cnt = 0 To 2
     
-                v(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).X
-                v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
-                v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
+                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).X
+                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
+                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
     
                 'D3DXVec3TransformCoord vn, v(cnt), matObject
-                vn = ToVector(Obj.PointMatrix(ToPoint(v(cnt))))
+                vn = ToVector(Obj.PointMatrix(ToPoint(V(cnt))))
                 
-                v(cnt).X = vn.X
-                v(cnt).Y = vn.Y
-                v(cnt).Z = vn.Z
+                V(cnt).X = vn.X
+                V(cnt).Y = vn.Y
+                V(cnt).Z = vn.Z
             Next
     
             ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
@@ -2469,13 +2467,13 @@ On Error GoTo ObjectError
     
             ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
             
-            vn = TriangleNormal(v(0), v(1), v(2))
+            vn = TriangleNormal(V(0), V(1), V(2))
             
             For cnt = 0 To 2
     
-                sngVertexX(cnt, lngFaceCount) = v(cnt).X
-                sngVertexY(cnt, lngFaceCount) = v(cnt).Y
-                sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
+                sngVertexX(cnt, lngFaceCount) = V(cnt).X
+                sngVertexY(cnt, lngFaceCount) = V(cnt).Y
+                sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
     
             Next
     
@@ -2512,13 +2510,13 @@ On Error GoTo ObjectError
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
-    Dim v() As D3DVECTOR
+    Dim V() As D3DVECTOR
 
-    Dim V1 As D3DVECTOR
-    Dim V2 As D3DVECTOR
+    Dim v1 As D3DVECTOR
+    Dim v2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
-    ReDim v(0 To 3) As D3DVECTOR
+    ReDim V(0 To 3) As D3DVECTOR
 
     AddCollisionEx = lngFaceCount
 
@@ -2530,9 +2528,9 @@ On Error GoTo ObjectError
 
         For cnt = 0 To 2
             
-            v(cnt).X = Verticies(Index + cnt).X
-            v(cnt).Y = Verticies(Index + cnt).Y
-            v(cnt).Z = Verticies(Index + cnt).Z
+            V(cnt).X = Verticies(Index + cnt).X
+            V(cnt).Y = Verticies(Index + cnt).Y
+            V(cnt).Z = Verticies(Index + cnt).Z
                         
         Next
         
@@ -2547,13 +2545,13 @@ On Error GoTo ObjectError
     
         ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
         
-        vn = TriangleNormal(v(0), v(1), v(2))
+        vn = TriangleNormal(V(0), V(1), V(2))
 
         For cnt = 0 To 2
             
-            sngVertexX(cnt, lngFaceCount) = v(cnt).X
-            sngVertexY(cnt, lngFaceCount) = v(cnt).Y
-            sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
+            sngVertexX(cnt, lngFaceCount) = V(cnt).X
+            sngVertexY(cnt, lngFaceCount) = V(cnt).Y
+            sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
 
         Next
 
@@ -2845,8 +2843,8 @@ On Error GoTo CameraError
     Dim cnt2 As Long
     Dim Dist As Single
     Dim past As Long
-    Dim V1 As D3DVECTOR
-    Dim V2 As D3DVECTOR
+    Dim v1 As D3DVECTOR
+    Dim v2 As D3DVECTOR
     
     
     Dim pos As D3DVECTOR
@@ -2855,7 +2853,7 @@ On Error GoTo CameraError
     Dim ex As String
     
     Dim dot As Single
-    Dim v As D3DVECTOR
+    Dim V As D3DVECTOR
     Dim N As D3DVECTOR
     
     Dim verts(0 To 2) As D3DVECTOR
@@ -2908,25 +2906,25 @@ On Error GoTo CameraError
                         touched = TestCollisionEx(Face, 1)
                         DelCollisionEx Face, 1
     
-                        If (ClassifyPoint(V1, V1, V1, ToVector(Player.Element.Origin)) = 1) Then touched = True
+                        If (ClassifyPoint(v1, v1, v1, ToVector(Player.Element.Origin)) = 1) Then touched = True
     
     
                         If Not touched Then
                             
                             
-                            V1 = VectorSubtract(MakeVector(.Origin.X + Sin(D720 - .Angle), _
+                            v1 = VectorSubtract(MakeVector(.Origin.X + Sin(D720 - .Angle), _
                                                                             .Origin.Y - Tan(D720 - .Pitch), _
                                                                             .Origin.Z + Cos(D720 - .Angle)), _
                                                                             ToVector(.Origin))
                                                                             
-                            V2 = VectorSubtract(MakeVector(Player.Element.Origin.X - Sin(D720 - .Angle), _
+                            v2 = VectorSubtract(MakeVector(Player.Element.Origin.X - Sin(D720 - .Angle), _
                                                             Player.Element.Origin.Y + Tan(D720 - .Pitch), _
                                                             Player.Element.Origin.Z - Cos(D720 - .Angle)), _
                                                             ToVector(.Origin))
                             
-                            If ((V2.X > 0 And V1.X > 0) Or (V2.X < 0 And V1.X < 0)) And _
-                                ((V2.Y > 0 And V1.Y > 0) Or (V2.Y < 0 And V1.Y < 0)) And _
-                                ((V2.Z > 0 And V1.Z > 0) Or (V2.Z < 0 And V1.Z < 0)) Then
+                            If ((v2.X > 0 And v1.X > 0) Or (v2.X < 0 And v1.X < 0)) And _
+                                ((v2.Y > 0 And v1.Y > 0) Or (v2.Y < 0 And v1.Y < 0)) And _
+                                ((v2.Z > 0 And v1.Z > 0) Or (v2.Z < 0 And v1.Z < 0)) Then
                                 touched = False
                                 
                                 If past <> 0 Then
@@ -2941,7 +2939,7 @@ On Error GoTo CameraError
                             End If
                             If Not touched Then
     
-                                dot = modDecs.VectorDotProduct(V1, V2) / (modDecs.VectorDotProduct(V1, V1) * modDecs.VectorDotProduct(V2, V2))
+                                dot = modDecs.VectorDotProduct(v1, v2) / (modDecs.VectorDotProduct(v1, v1) * modDecs.VectorDotProduct(v2, v2))
                             End If
                         End If
                         
@@ -2998,35 +2996,35 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
     
     Dim smallest As Long
     Dim smallestAngle As Single
-    Dim v() As D3DVECTOR
-    ReDim v(0 To VertexCount - 1) As D3DVECTOR
+    Dim V() As D3DVECTOR
+    ReDim V(0 To VertexCount - 1) As D3DVECTOR
 
     For cnt = 0 To VertexCount - 1
-        v(cnt) = MakeVector(sngVertexX(cnt, FaceIndex), sngVertexY(cnt, FaceIndex), sngVertexZ(cnt, FaceIndex))
-        C.X = C.X + v(cnt).X
-        C.Y = C.Y + v(cnt).Y
-        C.Z = C.Z + v(cnt).Z
+        V(cnt) = MakeVector(sngVertexX(cnt, FaceIndex), sngVertexY(cnt, FaceIndex), sngVertexZ(cnt, FaceIndex))
+        C.X = C.X + V(cnt).X
+        C.Y = C.Y + V(cnt).Y
+        C.Z = C.Z + V(cnt).Z
     Next
     
     C.X = C.X / VertexCount
     C.Y = C.Y / VertexCount
     C.Z = C.Z / VertexCount
 
-    p = GetPlaneNormal(v(0), v(1), v(2))
+    p = GetPlaneNormal(V(0), V(1), V(2))
         
     Dim N As Long
     Dim m As Long
     
     For N = 0 To VertexCount - 1
         
-        A = modDecs.VectorNormalize(modDecs.VectorSubtract(v(N), C))
+        A = modDecs.VectorNormalize(modDecs.VectorSubtract(V(N), C))
         
         smallest = -1
         smallestAngle = -1
         
         For m = N + 1 To 2
-            If Not ClassifyPoint(v(N), C, VectorAdd(C, p), v(m)) = 2 Then 'not back
-                b = modDecs.VectorNormalize(modDecs.VectorSubtract(v(m), C))
+            If Not ClassifyPoint(V(N), C, VectorAdd(C, p), V(m)) = 2 Then 'not back
+                b = modDecs.VectorNormalize(modDecs.VectorSubtract(V(m), C))
                 
                 Angle = modDecs.VectorDotProduct(A, b)
                 
@@ -3046,7 +3044,7 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
     
     Next
     
-    A = GetPlaneNormal(v(0), v(1), v(2))
+    A = GetPlaneNormal(V(0), V(1), V(2))
     b = p
     
     If modDecs.VectorDotProduct(A, b) < 0 Then
@@ -3059,7 +3057,7 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
 
 End Sub
 
-Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR) As D3DVECTOR
+Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
 
     Dim vector1 As D3DVECTOR
     Dim vector2 As D3DVECTOR
@@ -3068,14 +3066,14 @@ Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByR
 
     '/*Calculate the Normal*/
     '/*Vector 1*/
-    vector1.X = (v0.X - V1.X)
-    vector1.Y = (v0.Y - V1.Y)
-    vector1.Z = (v0.Z - V1.Z)
+    vector1.X = (v0.X - v1.X)
+    vector1.Y = (v0.Y - v1.Y)
+    vector1.Z = (v0.Z - v1.Z)
 
     '/*Vector 2*/
-    vector2.X = (V1.X - V2.X)
-    vector2.Y = (V1.Y - V2.Y)
-    vector2.Z = (V1.Z - V2.Z)
+    vector2.X = (v1.X - v2.X)
+    vector2.Y = (v1.Y - v2.Y)
+    vector2.Z = (v1.Z - v2.Z)
 
     '/*Apply the Cross Product*/
     Normal.X = (vector1.Y * vector2.Z - vector1.Z * vector2.Y)
@@ -3105,18 +3103,18 @@ Public Function ReverseFaceVertices(ByVal FaceIndex As Long, ByVal VertexCount A
 End Function
 
 Public Sub SwapVector(ByVal FaceIndex As Long, ByVal FirstIndex As Long, ByVal SecondIndex As Long)
-    Dim v As D3DVECTOR
-    v.X = sngVertexX(FirstIndex, FaceIndex)
-    v.Y = sngVertexY(FirstIndex, FaceIndex)
-    v.Z = sngVertexZ(FirstIndex, FaceIndex)
+    Dim V As D3DVECTOR
+    V.X = sngVertexX(FirstIndex, FaceIndex)
+    V.Y = sngVertexY(FirstIndex, FaceIndex)
+    V.Z = sngVertexZ(FirstIndex, FaceIndex)
     
     sngVertexX(FirstIndex, FaceIndex) = sngVertexX(SecondIndex, FaceIndex)
     sngVertexY(FirstIndex, FaceIndex) = sngVertexY(SecondIndex, FaceIndex)
     sngVertexZ(FirstIndex, FaceIndex) = sngVertexZ(SecondIndex, FaceIndex)
 
-    sngVertexX(SecondIndex, FaceIndex) = v.X
-    sngVertexY(SecondIndex, FaceIndex) = v.Y
-    sngVertexZ(SecondIndex, FaceIndex) = v.Z
+    sngVertexX(SecondIndex, FaceIndex) = V.X
+    sngVertexY(SecondIndex, FaceIndex) = V.Y
+    sngVertexZ(SecondIndex, FaceIndex) = V.Z
 End Sub
 
 
