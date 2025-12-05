@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "richtx32.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1390.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1425.0#0"; "NTControls22.ocx"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
    Caption         =   "Max-FTP"
@@ -475,7 +475,6 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -957,7 +956,6 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -1397,7 +1395,7 @@ Public Property Get InRecursion(ByVal Index As Long) As Boolean
     InRecursion = InRecursiveAction(Index)
 End Property
 
-Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, ByVal Action As String, ByRef copyClient As NTAdvFTP61.Client, ByRef copyToClient As NTAdvFTP61.Client, ByVal FileName As String, ByVal FileSize As Double, Optional ByVal ResumeByte As Double = 0, Optional ByVal DestFileSize As Double = 0)
+Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, ByVal Action As String, ByRef copyClient As NTAdvFTP61.Client, ByRef copyToClient As NTAdvFTP61.Client, ByVal Filename As String, ByVal FileSize As Double, Optional ByVal ResumeByte As Double = 0, Optional ByVal DestFileSize As Double = 0)
    
     Dim newTransfer As clsTransfer
     Set newTransfer = New clsTransfer
@@ -1412,7 +1410,7 @@ Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, B
     newTransfer.sOwnerID = OwnerID
     newTransfer.SetSource copyClient.URL, copyClient.Port, copyClient.Username, copyClient.Password, copyClient.ImplicitSSL
     newTransfer.SetDestination copyToClient.URL, copyToClient.Port, copyToClient.Username, copyToClient.Password, copyToClient.ImplicitSSL
-    newTransfer.SetTransfer Action, copyClient.Folder, copyToClient.Folder, FileName, FileSize, ResumeByte, DestFileSize
+    newTransfer.SetTransfer Action, copyClient.Folder, copyToClient.Folder, Filename, FileSize, ResumeByte, DestFileSize
     newTransfer.ThreadOpen
     
     newTransfer.StartTransfer
@@ -1550,7 +1548,7 @@ Private Sub dContainer_Resize(Index As Integer)
 
     On Error Resume Next
     dContainerResize Me, Index
-    If Err.number <> 0 Then Err.Clear
+    If Err.Number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
@@ -1638,17 +1636,17 @@ Public Sub LoadClient(Optional ByVal ClientDescription As String = "")
     
 End Sub
  
-Public Sub SetCaption(Optional ByVal FileName As String = "", Optional ByVal percent As Integer = -1)
+Public Sub SetCaption(Optional ByVal Filename As String = "", Optional ByVal percent As Integer = -1)
     Dim newCap As String
     If MultiThread Then
         newCap = AppName & " [" & Trim(myTransferCount) & IIf(myTransferCount = 1, " Transfer", " Transfer(s)") & "]"
-    ElseIf (FileName = "") Then
+    ElseIf (Filename = "") Then
         newCap = AppName
     Else
         If (percent >= 0) And (percent <= 100) Then
-            newCap = AppName & " [" & Trim(CStr(percent)) & "% - " & FileName & "]"
+            newCap = AppName & " [" & Trim(CStr(percent)) & "% - " & Filename & "]"
         Else
-            newCap = AppName & " [" & FileName & "]"
+            newCap = AppName & " [" & Filename & "]"
         End If
     End If
     If Not (Me.Caption = newCap) Then Me.Caption = newCap
@@ -1809,7 +1807,7 @@ Private Sub Form_Resize()
         FormResize Me
     End If
 
-    If Err.number <> 0 Then Err.Clear
+    If Err.Number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
@@ -2373,9 +2371,9 @@ Private Sub myClient0_DataProgress(ByVal ProgressType As NTAdvFTP61.ProgressType
     
 End Sub
 
-Public Sub myClient0_Error(ByVal number As Long, ByVal Source As String, ByVal Description As String)
+Public Sub myClient0_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
     SetCaption
-    ClientError 0, number, Source, Description
+    ClientError 0, Number, Source, Description
 End Sub
 
 
@@ -2410,10 +2408,10 @@ Private Sub myClient1_DataProgress(ByVal ProgressType As NTAdvFTP61.ProgressType
     
 End Sub
 
-Public Sub myClient1_Error(ByVal number As Long, ByVal Source As String, ByVal Description As String)
+Public Sub myClient1_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
     SetCaption
     
-    ClientError 1, number, Source, Description
+    ClientError 1, Number, Source, Description
 
 End Sub
 
@@ -2434,7 +2432,7 @@ Private Sub pAddressBar_Resize(Index As Integer)
     setLocation(Index).Left = 15
     setLocation(Index).Width = pAddressBar(Index).Width - setLocation(Index).Left - UserGo(Index).Width
     UserGo(Index).Left = pAddressBar(Index).Width - UserGo(Index).Width
-    If Err.number <> 0 Then Err.Clear
+    If Err.Number <> 0 Then Err.Clear
     On Error GoTo 0
 End Sub
 
@@ -2569,7 +2567,7 @@ End Property
 
 Private Sub SetStatusTotals(ByVal Index As Integer)
     Dim tot As Long
-    tot = pView(Index).ListItems.count
+    tot = pView(Index).ListItems.Count
     If tot > 0 Then
         Dim cnt As Long
         Dim tmp As Long
@@ -2831,7 +2829,7 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
         
     If ListItems(0) <> "" Then
             
-        Dim FileName As String
+        Dim Filename As String
         Dim fileType As String
         Dim cnt As Integer
         Dim attr As Long
@@ -2839,20 +2837,20 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
         If Not Trim(ListItems(0)) = "" Then
             For cnt = 0 To UBound(ListItems)
                     
-                FileName = RemoveNextArg(ListItems(cnt), "|")
+                Filename = RemoveNextArg(ListItems(cnt), "|")
                 If Not (URLType(Index) = URLTypes.ftp) Then
                     On Error Resume Next
                     attr = 0
                     Select Case Index
                         Case 0
-                            If Not FileName = "pagefile.sys" Then
-                                attr = GetAttr(MapFolder(myClient0.Folder, FileName))
+                            If Not Filename = "pagefile.sys" Then
+                                attr = GetAttr(MapFolder(myClient0.Folder, Filename))
                             Else
                                 attr = vbSystem + vbReadOnly
                             End If
                         Case 1
-                            If Not FileName = "pagefile.sys" Then
-                                attr = GetAttr(MapFolder(myClient0.Folder, FileName))
+                            If Not Filename = "pagefile.sys" Then
+                                attr = GetAttr(MapFolder(myClient0.Folder, Filename))
                             Else
                                 attr = vbSystem + vbReadOnly
                             End If
@@ -2864,25 +2862,25 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
 
                 If (((attr And vbSystem) = vbSystem) And dbSettings.GetPublicSetting("ServiceSystem")) Or (Not ((attr And vbSystem) = vbSystem)) Then
                 
-                    If (Left(FileName, 1) = "/") Or ((attr And vbDirectory) = vbDirectory) Then
+                    If (Left(Filename, 1) = "/") Or ((attr And vbDirectory) = vbDirectory) Then
                         fileType = "folder"
                         
-                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, FileName), FileName, , "folder")
+                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, Filename), Filename, , "folder")
                     Else
 
-                        fileType = Trim(LCase(GetFileExt(FileName)))
+                        fileType = Trim(LCase(GetFileExt(Filename)))
                     
                         If Right(setLocation(Index).Text, 1) = "\" Then
-                            GetAssociation fileType, setLocation(Index).Text & FileName, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & Filename, pFileIcon(Index)
                         ElseIf Right(setLocation(Index).Text, 1) = "/" Then
-                            GetAssociation fileType, setLocation(Index).Text & FileName, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & Filename, pFileIcon(Index)
                         Else
-                            GetAssociation fileType, setLocation(Index).Text & "\" & FileName, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & "\" & Filename, pFileIcon(Index)
                         End If
                     
                         LoadAssociation pFileIcon(Index)
                     
-                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, FileName), FileName, , pFileIcon(Index).Tag)
+                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, Filename), Filename, , pFileIcon(Index).Tag)
                         
                     End If
                     
@@ -3230,7 +3228,7 @@ On Error GoTo catch
 Exit Sub
 catch:
     If FTPCommand(Index) <> "Stop" Then
-        'If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
+        If Me.Visible Then MsgBox Err.Description, vbCritical, AppName
         If Err.Description <> "" Then
             MaxEvents.AddEvent dbSettings, MyDescription, setLocation(Index).Text, "Error: " & Err.Description
         ElseIf myClient.GetLastError <> "" Then
@@ -3432,7 +3430,7 @@ Public Sub FTPAbort(ByVal Index As Integer)
 
 End Sub
 
-Private Sub ClientError(ByVal Index As Integer, ByVal number As Long, ByVal Source As String, ByVal Description As String)
+Private Sub ClientError(ByVal Index As Integer, ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 
     Dim myClient As NTAdvFTP61.Client
     Set myClient = SetMyClient(Index)
@@ -3885,7 +3883,7 @@ On Error GoTo catch
     Dim cnt As Integer
     cnt = 1
     
-    Do Until cnt > pView(Index).ListItems.count
+    Do Until cnt > pView(Index).ListItems.Count
         pView(Index).ListItems(cnt).Selected = False
         cnt = cnt + 1
     Loop
@@ -3946,7 +3944,7 @@ On Error GoTo catch
         Dim cnt As Integer
         
         cnt = 1
-        Do Until cnt > pView(Index).ListItems.count
+        Do Until cnt > pView(Index).ListItems.Count
 
             If pView(Index).ListItems(cnt).Selected Then
                 newList.Add pView(Index).ListItems(cnt).Text
@@ -3956,7 +3954,7 @@ On Error GoTo catch
         Loop
 
         cnt = 1
-        Do Until cnt > newList.count
+        Do Until cnt > newList.Count
 
             CancelStatusGUI(Index) = True
             RecursiveAction Index, myClient, "delete", newList(cnt)
@@ -4062,7 +4060,7 @@ On Error Resume Next
             
             Dim cnt As Integer
             cnt = 1
-            Do Until cnt > newList.count
+            Do Until cnt > newList.Count
                 
                 If copyToIndex = 0 Then
                     RecursiveAction Index, myClient, Action, newList(cnt), oOverwrite, copyToForm.myClient0, newToList
@@ -4246,7 +4244,7 @@ If FTPUnloading(Index) Then GoTo catch
 '        RecursiveResetArray Index
 
         cnt = 1
-        Do Until cnt > newList.count
+        Do Until cnt > newList.Count
 
             Select Case LCase(Trim(Action))
                 Case "delete"
@@ -4546,12 +4544,12 @@ catch:
     Set newToList = Nothing
  '   newList.Clear
     Set newList = Nothing
-    If Err.number <> 0 Then
+    If Err.Number <> 0 Then
         If oOverwrite = or_AutoAll Then
             Err.Clear
             InRecursiveAction(Index) = False
         Else
-            Err.Raise Err.number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
+            Err.Raise Err.Number, Err.Source, Err.Description, Err.HelpFile, Err.HelpContext
         End If
     End If
 End Sub
@@ -4563,7 +4561,7 @@ Private Function IsFileOnCollection(ByRef tList As NTNodes10.Collection, ByVal I
     Dim ItemData As String
     cnt = 1
     ItemFound = -1
-    Do Until cnt > tList.count Or ItemFound > -1
+    Do Until cnt > tList.Count Or ItemFound > -1
         ItemData = tList(cnt)
     
         If LCase(Trim(RemoveNextArg(ItemData, "|"))) = LCase(Trim(Item)) Then
@@ -4624,7 +4622,7 @@ Private Sub RefreshThreadMenu()
     Dim myTransfer As clsTransfer
     Dim cnt As Long
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         
         Set myTransfer = GetTransferThread(cnt)
         If Not (myTransfer Is Nothing) Then
@@ -4659,7 +4657,7 @@ Private Sub CancelAllTransfers()
 
     Dim cnt As Integer
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             GetTransferThread(cnt).CancelFileTransfer
             DestroyTransferThread cnt
@@ -4671,7 +4669,7 @@ End Sub
 Private Sub mnuClearFinished_Click()
     Dim cnt As Integer
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = st_Finished Then
                 If GetTransferThread(cnt).GUICancel Then
@@ -4692,7 +4690,7 @@ End Sub
 Private Sub mnuClearStopped_Click()
     Dim cnt As Integer
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = st_Stopped Then
                 If GetTransferThread(cnt).GUICancel Then
@@ -4715,7 +4713,7 @@ End Sub
 Private Sub mnuCancelTransfer_Click()
     Dim cnt As Integer
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = st_Transfering And ListView1.ListItems(cnt).Selected Then
                 GetTransferThread(cnt).GUICancel
@@ -4727,7 +4725,7 @@ End Sub
 Private Sub mnuRetryTransfer_Click()
     Dim cnt As Integer
     cnt = 1
-    Do Until cnt > ListView1.ListItems.count
+    Do Until cnt > ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = st_Stopped And ListView1.ListItems(cnt).Selected Then
                 GetTransferThread(cnt).StartTransfer
@@ -4740,16 +4738,16 @@ End Sub
 
 Private Function ThreadStateCount(ByVal tState As Integer) As Integer
     Dim cnt As Integer
-    Dim retval As Integer
-    retval = 0
-    For cnt = 1 To ListView1.ListItems.count
+    Dim retVal As Integer
+    retVal = 0
+    For cnt = 1 To ListView1.ListItems.Count
         If Not (GetTransferThread(cnt) Is Nothing) Then
             If GetTransferThread(cnt).ThreadState = tState Then
-                retval = retval + 1
+                retVal = retVal + 1
             End If
         End If
     Next
-    ThreadStateCount = retval
+    ThreadStateCount = retVal
 End Function
 Private Function MessageFormal(ByVal Text As String) As String
     Dim cnt As Long
@@ -5208,31 +5206,31 @@ End Sub
 
 Public Function GetContainerIndex(ByVal ConNum As Integer, GUIIndex As Integer) As Integer
 
-    Dim retval As Integer
+    Dim retVal As Integer
     Select Case ConNum
         Case 0
         Select Case GUIIndex
             Case 0
-                retval = 0
+                retVal = 0
             Case 1
-                retval = 3
+                retVal = 3
         End Select
         Case 1
         Select Case GUIIndex
             Case 0
-                retval = 1
+                retVal = 1
             Case 1
-                retval = 4
+                retVal = 4
         End Select
         Case 2
         Select Case GUIIndex
             Case 0
-                retval = 2
+                retVal = 2
             Case 1
-                retval = 5
+                retVal = 5
         End Select
     End Select
-    GetContainerIndex = retval
+    GetContainerIndex = retVal
     
 End Function
 
@@ -5387,7 +5385,7 @@ Public Sub FormResize(ByRef myForm)
             PaintClientGUI Me, 0
         End If
 
-        If Err.number <> 0 Then Err.Clear
+        If Err.Number <> 0 Then Err.Clear
         On Error GoTo 0
         
     End With

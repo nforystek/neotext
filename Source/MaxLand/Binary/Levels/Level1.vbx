@@ -22,7 +22,7 @@ space {
 	.skybottom="sky_bottom.bmp"
 	.skyrotate=3.125
 
-	.boundary=50
+	.boundary=40
 '	.gravity=-0.2
 }
 
@@ -85,19 +85,19 @@ player
 '}
 
 
-board <mirror> {
-
-	.visible=true
-	.mirror = true
-	.point3 = [-1,1,0]
-	.point4 = [0,1,0]
-	.point1 = [0,0,0] 
-	.point2 = [-1,0,0]
-
-	.scalex=1
-	.scaley=1
-	.filename = "pawn.bmp"
-}
+'board <mirror> {
+'
+'	.visible=true
+'	.mirror = true
+'	.point3 = [-1,1,0]
+'	.point4 = [0,1,0]
+'	.point1 = [0,0,0] 
+'	.point2 = [-1,0,0]
+'
+'	.scalex=1
+'	.scaley=1
+'	.filename = "pawn.bmp"
+'}
 
 
 variable <tempswap1>=0

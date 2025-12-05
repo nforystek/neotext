@@ -163,10 +163,10 @@ Public Sub ComputeNormals()
     Dim cnt As Long
     Dim vn As D3DVECTOR
     For cnt = 0 To lngFaceCount - 1
-        vn = TriangleNormal(MakeVector(sngVertexX(0, cnt), sngVertexY(0, cnt), sngVertexZ(0, cnt)), _
+        vn = modDecs.TriangleNormal(MakeVector(sngVertexX(0, cnt), sngVertexY(0, cnt), sngVertexZ(0, cnt)), _
                             MakeVector(sngVertexX(1, cnt), sngVertexY(1, cnt), sngVertexZ(1, cnt)), _
                             MakeVector(sngVertexX(2, cnt), sngVertexY(2, cnt), sngVertexZ(2, cnt)))
-        sngFaceVis(0, cnt) = vn.X
+        sngFaceVis(0, cnt) = vn.x
         sngFaceVis(1, cnt) = vn.Y
         sngFaceVis(2, cnt) = vn.Z
     Next
@@ -316,7 +316,7 @@ Public Function CalculateMotion(ByRef Motion As Motion, ByRef Action As Actions)
         End If
 
         If (Motion.Emphasis > 0.001) Or (Motion.Emphasis < -0.001) Then
-            CalculateMotion.X = Motion.Data.X * Motion.Emphasis
+            CalculateMotion.x = Motion.Data.x * Motion.Emphasis
             CalculateMotion.Y = Motion.Data.Y * Motion.Emphasis
             CalculateMotion.Z = Motion.Data.Z * Motion.Emphasis
         Else
@@ -493,7 +493,7 @@ On Error GoTo ObjectError
     
     If ((Perspective = Spectator) Or DebugMode) Then
     
-        Player.Element.Origin.X = Player.Element.Origin.X + Player.Element.Direct.X
+        Player.Element.Origin.x = Player.Element.Origin.x + Player.Element.Direct.x
         Player.Element.Origin.Y = Player.Element.Origin.Y + Player.Element.Direct.Y
         Player.Element.Origin.Z = Player.Element.Origin.Z + Player.Element.Direct.Z
                 
@@ -522,7 +522,7 @@ ObjectError:
 End Sub
 
 Public Sub InputMove2(ByRef e1 As Element)
-            
+
     If ((e1.CollideIndex > -1) And e1.BoundsIndex > 0 And (e1.Effect = Collides.Normal)) Then
    ' If (e1.CollideIndex > -1) And (e1.Effect = 0) Then
     
@@ -609,7 +609,7 @@ Public Sub InputMove2(ByRef e1 As Element)
                 'to e2's origin berfore e1 had modifications.
                 Set e2.Origin = VectorDeduction(e2.Origin, oOrigin)
                 'if the rotation is not blank
-                If Not ((Round(oRotate.X, 0) = 360) And (Round(oRotate.Y, 0) = 358) And (Round(oRotate.Z, 0) = 360)) Then
+                If Not ((Round(oRotate.x, 0) = 360) And (Round(oRotate.Y, 0) = 358) And (Round(oRotate.Z, 0) = 360)) Then
                     'revert the old rotation
                     Set e2.Origin = VectorRotateAxis(e2.Origin, VectorMultiplyBy(oRotate, RADIAN))
                     'rotate to the new rotation
@@ -638,20 +638,20 @@ Public Sub InputMove2(ByRef e1 As Element)
 
     If (Not ((e1.CollideIndex > -1) And e1.BoundsIndex > 0 And (e1.Effect = Collides.Normal))) Then
         'the freespace changes similar to the functions above with no restrictions
-        If (e1.Direct.X <> 0) Or (e1.Direct.Y <> 0) Or (e1.Direct.Z <> 0) Then
-            e1.Origin.X = e1.Origin.X + e1.Direct.X
+        If (e1.Direct.x <> 0) Or (e1.Direct.Y <> 0) Or (e1.Direct.Z <> 0) Then
+            e1.Origin.x = e1.Origin.x + e1.Direct.x
             e1.Origin.Y = e1.Origin.Y + e1.Direct.Y
             e1.Origin.Z = e1.Origin.Z + e1.Direct.Z
         End If
        ' e1.Direct = NoPoint
-        If (e1.Twists.X <> 0) Or (e1.Twists.Y <> 0) Or (e1.Twists.Z <> 0) Then
-            e1.Rotate.X = e1.Rotate.X + e1.Twists.X
+        If (e1.Twists.x <> 0) Or (e1.Twists.Y <> 0) Or (e1.Twists.Z <> 0) Then
+            e1.Rotate.x = e1.Rotate.x + e1.Twists.x
             e1.Rotate.Y = e1.Rotate.Y + e1.Twists.Y
             e1.Rotate.Z = e1.Rotate.Z + e1.Twists.Z
         End If
         'e1.Twists = NoAngle
-        If (e1.Scalar.X <> 0) Or (e1.Scalar.Y <> 0) Or (e1.Scalar.Z <> 0) Then
-            e1.Scaled.X = e1.Scaled.X + e1.Scalar.X
+        If (e1.Scalar.x <> 0) Or (e1.Scalar.Y <> 0) Or (e1.Scalar.Z <> 0) Then
+            e1.Scaled.x = e1.Scaled.x + e1.Scalar.x
             e1.Scaled.Y = e1.Scaled.Y + e1.Scalar.Y
             e1.Scaled.Z = e1.Scaled.Z + e1.Scalar.Z
         End If
@@ -662,28 +662,6 @@ Public Sub InputMove2(ByRef e1 As Element)
 
     'preform boundary restriction tests and adjust accordingly
 
-    Dim inAmt As Integer
-    Dim S As Space
-    For Each S In Spaces
-        If S.Boundary > 0 And S.Boundary > S.Range Then
-            If Not S.InSpace(Player.Element.Origin) Then
-                inAmt = inAmt + 1
-                If inAmt > 1 Then Exit For
-            End If
-        End If
-    Next
-    If inAmt > 0 Then
-        For Each S In Spaces
-            If S.Boundary > 0 And S.Boundary > S.Range Then
-                If Not S.InSpace(Player.Element.Origin) Then
-                    'If DistanceEx(S.Origin, Player.Element.Origin) >= S.Boundary  Then
-                        Player.Element.Origin = DistanceSet(S.Origin, Player.Element.Origin, S.Boundary)
-                   'End If
-                    Exit For
-                End If
-            End If
-        Next
-    End If
     
 '    If (e1.Origin.Y > SpaceBoundary) Or (e1.Origin.Y < -SpaceBoundary) Then e1.Origin.Y = -e1.Origin.Y
 '    If (e1.Origin.X > SpaceBoundary) Or (e1.Origin.X < -SpaceBoundary) Then e1.Origin.X = -e1.Origin.X
@@ -791,7 +769,39 @@ End Function
 Private Sub MoveObject(ByRef Obj As Element)
 
     If Obj.Direct.Equals(NoPoint) Then Exit Sub
+   
+    Dim inAmt As Integer
+    Dim s As Space
+'    For Each S In Spaces
+'        If S.Boundary > 0 And S.Boundary > S.Range Then
+'            If S.InSpace(Obj.Origin) Then
+'                If Not S.InSpace(VectorAddition(Obj.Direct, Obj.Origin)) Then
+'                    inAmt = inAmt + 1
+'                    If inAmt > 1 Then Exit For
+'                End If
+'            End If
+'        End If
+'    Next
+'    If inAmt > 0 Then
+        For Each s In Spaces
+            If s.Boundary > 0 And s.Boundary > s.Range Then
+                If s.InSpace(Obj.Origin) Then
+                    If Not s.InSpace(VectorAddition(Obj.Direct, Obj.Origin)) Then
 
+                        Set Obj.Direct = NoPoint
+                        
+                     'If DistanceEx(S.Origin, Player.Element.Origin) >= S.Boundary  Then
+'                         Obj.Origin = DistanceSet(S.Origin, Obj.Origin, S.Boundary)
+                    'End If
+                        Exit Sub
+                    
+                    End If
+                End If
+            End If
+        Next
+'    End If
+    
+    
 On Error GoTo ObjectError
 
     Dim objCollision As Long
@@ -833,7 +843,7 @@ On Error GoTo ObjectError
     Dim swapY As Single
 
     Static Rotator As Single
-    Rotator = Rotator + IIf(Player.Camera.Angle > 0, testNudgeAdjust, -testNudgeAdjust)
+    Rotator = Rotator + IIf(Player.Camera.angle > 0, testNudgeAdjust, -testNudgeAdjust)
     Rotator = AngleRestrict(Rotator * RADIAN) * DEGREE
 
     swapY = Obj.Rotate.Y
@@ -921,7 +931,7 @@ On Error GoTo ObjectError
     'it's an eye, up and direction vector whose information is relevant to culling
 
 
-    sngCamera(0, 0) = Obj.Origin.X
+    sngCamera(0, 0) = Obj.Origin.x
     sngCamera(0, 1) = Obj.Origin.Y + 1
     sngCamera(0, 2) = Obj.Origin.Z
 
@@ -981,7 +991,7 @@ On Error GoTo ObjectError
     'only going to be about the Y axis
     backup = ToVector(Obj.Direct)
     Obj.Direct.Y = backup.Y
-    Obj.Direct.X = 0
+    Obj.Direct.x = 0
     Obj.Direct.Z = 0
 
     'all the collision tests use motion data to modify values of a subset of object change
@@ -1061,44 +1071,44 @@ On Error GoTo ObjectError
     
     
     Obj.Direct.Y = 0
-    Obj.Direct.X = backup.X
+    Obj.Direct.x = backup.x
 
     'very similar recent code above on the Y axis, we will be doing it
-    If (Obj.Direct.X <> 0) Then 'on the X (here) and later on the Z axis
+    If (Obj.Direct.x <> 0) Then 'on the X (here) and later on the Z axis
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then 'make the change
-            Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
+            Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust the flags
             If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-            If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+            If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                 If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
             End If
-            newset.X = Obj.Direct.X
-        ElseIf (Obj.Direct.X < 0) Then
+            newset.x = Obj.Direct.x
+        ElseIf (Obj.Direct.x < 0) Then
             Do
-                Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                If (Obj.Direct.X >= 0) Then Exit Do
+                Obj.Direct.x = Obj.Direct.x + testNudgeAdjust
+                If (Obj.Direct.x >= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.X < 0) Then 'make the change
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
+            If (Obj.Direct.x < 0) Then 'make the change
+                Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust the flags
                 If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+                If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                     If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
-                newset.X = Obj.Direct.X
+                newset.x = Obj.Direct.x
             End If
-        ElseIf (Obj.Direct.X > 0) Then
+        ElseIf (Obj.Direct.x > 0) Then
             Do
-                Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                If (Obj.Direct.X <= 0) Then Exit Do
+                Obj.Direct.x = Obj.Direct.x - testNudgeAdjust
+                If (Obj.Direct.x <= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.X > 0) Then 'make the change
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
+            If (Obj.Direct.x > 0) Then 'make the change
+                Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust the flags
                 If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+                If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                     If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
-                newset.X = Obj.Direct.X
+                newset.x = Obj.Direct.x
             End If
         End If
     End If
@@ -1107,7 +1117,7 @@ On Error GoTo ObjectError
 '############# predict the Z movements of objects in motion ##########################
 '#####################################################################################
     
-    Obj.Direct.X = 0
+    Obj.Direct.x = 0
     Obj.Direct.Z = backup.Z
 
     'very similar recent code above on the X and Y axis, we will
@@ -1115,7 +1125,7 @@ On Error GoTo ObjectError
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then 'make the change
             Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
             If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level 'adjust
-            If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+            If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                 If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
             End If
             newset.Z = Obj.Direct.Z
@@ -1128,7 +1138,7 @@ On Error GoTo ObjectError
             If (Obj.Direct.Z < 0) Then 'make the change
                 Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
                 If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+                If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                     If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
                 newset.Z = Obj.Direct.Z
@@ -1142,7 +1152,7 @@ On Error GoTo ObjectError
             If (Obj.Direct.Z > 0) Then 'make the change
                 Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
                 If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
+                If (backup.x <> newset.x) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
                     If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
                 End If
                 newset.Z = Obj.Direct.Z
@@ -1181,7 +1191,7 @@ On Error GoTo ObjectError
     'a vertical wall height the object can automatically drive over, i.e. it's stairs.
     
     If (Not Obj.IsMoving = Moving.None) And _
-        (backup.X <> newset.X Or backup.Z <> newset.Z) And _
+        (backup.x <> newset.x Or backup.Z <> newset.Z) And _
         (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
         (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
         'falling and flying flags are too also check befire here.
@@ -1189,7 +1199,7 @@ On Error GoTo ObjectError
         Obj.Origin.Y = Obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
 
         Obj.Direct.Y = 0
-        Obj.Direct.X = backup.X
+        Obj.Direct.x = backup.x
         Obj.Direct.Z = backup.Z
 
         'the following two flags are the difference
@@ -1197,15 +1207,15 @@ On Error GoTo ObjectError
         push = True 'one none effect object pushing another
         pull = False 'an object falling diagnal on a slope
 
-        If (Obj.Direct.X <> 0) Or (Obj.Direct.Z <> 0) Then
+        If (Obj.Direct.x <> 0) Or (Obj.Direct.Z <> 0) Then
             'first check for collision and if non exists
             'add them to the actual information data
             If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
                 'we need a change of X or Z to consider it a pull, already
                 'graivty will take effect to any free falling down objects.
-                If Obj.Direct.X <> 0 Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    newset.X = Obj.Direct.X
+                If Obj.Direct.x <> 0 Then
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x
+                    newset.x = Obj.Direct.x
                     pull = True
                 End If
                 If Obj.Direct.Z <> 0 Then
@@ -1213,68 +1223,68 @@ On Error GoTo ObjectError
                     newset.Z = Obj.Direct.Z
                     pull = True
                 End If
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
+            ElseIf (Obj.Direct.x < 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
+                    Obj.Direct.x = Obj.Direct.x + testNudgeAdjust
                     Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
+                    If ((Obj.Direct.x >= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
                 'slow down the change prediction and check until no collision is found
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then
+                If (Obj.Direct.x < 0) And (Obj.Direct.Z < 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x
                     Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     newset.Z = Obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
+            ElseIf (Obj.Direct.x > 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
+                    Obj.Direct.x = Obj.Direct.x - testNudgeAdjust
                     Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
+                    If ((Obj.Direct.x <= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
                 'slow down the change prediction and check until no collision is found
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then
+                If (Obj.Direct.x > 0) And (Obj.Direct.Z > 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x
                     Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     newset.Z = Obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
+            ElseIf (Obj.Direct.x < 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
+                    Obj.Direct.x = Obj.Direct.x + testNudgeAdjust
                     Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
+                    If ((Obj.Direct.x >= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
                 'slow down the change prediction and check until
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then
+                If (Obj.Direct.x < 0) And (Obj.Direct.Z > 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x
                     Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     newset.Z = Obj.Direct.Z
                     pull = True
                 End If
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
+            ElseIf (Obj.Direct.x > 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
+                    Obj.Direct.x = Obj.Direct.x - testNudgeAdjust
                     Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
+                    If ((Obj.Direct.x <= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
                     'slow down the change prediction and check until
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
+                If (Obj.Direct.x > 0) And (Obj.Direct.Z < 0) Then
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x
                     Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     newset.Z = Obj.Direct.Z
                     pull = True
                 End If
@@ -1303,7 +1313,7 @@ On Error GoTo ObjectError
 
 
     If push And (Not Obj.IsMoving = Moving.None) And _
-        (backup.X <> newset.X Or backup.Z <> newset.Z) And _
+        (backup.x <> newset.x Or backup.Z <> newset.Z) And _
         (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
         (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
 
@@ -1315,40 +1325,40 @@ On Error GoTo ObjectError
         Obj.Origin.Y = Obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
 
         Obj.Direct.Y = 0
-        Obj.Direct.X = backup.X
+        Obj.Direct.x = backup.x
         Obj.Direct.Z = backup.Z
 
         push = False
 
-        If (Obj.Direct.X <> 0) Then 'first comes the X axis
+        If (Obj.Direct.x <> 0) Then 'first comes the X axis
             If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
+                Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust change and flags to reflect happened
                 If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                newset.X = Obj.Direct.X
+                newset.x = Obj.Direct.x
                 push = True
-            ElseIf (Obj.Direct.X < 0) Then
+            ElseIf (Obj.Direct.x < 0) Then
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                    If (Obj.Direct.X >= 0) Then Exit Do
+                    Obj.Direct.x = Obj.Direct.x + testNudgeAdjust
+                    If (Obj.Direct.x >= 0) Then Exit Do
                 'slow down the change prediction and check until
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
+                If (Obj.Direct.x < 0) Then
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust change and flags to reflect happened
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     push = True
                 End If
 
-            ElseIf (Obj.Direct.X > 0) Then
+            ElseIf (Obj.Direct.x > 0) Then
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                    If (Obj.Direct.X <= 0) Then Exit Do
+                    Obj.Direct.x = Obj.Direct.x - testNudgeAdjust
+                    If (Obj.Direct.x <= 0) Then Exit Do
                 'slow down the change prediction and check until
                 Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
+                If (Obj.Direct.x > 0) Then
+                    Obj.Origin.x = Obj.Origin.x + Obj.Direct.x 'adjust change and flags to reflect happened
                     If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                    newset.x = Obj.Direct.x
                     push = True
                 End If
             End If
@@ -1409,7 +1419,7 @@ On Error GoTo ObjectError
         ((Obj.IsMoving And Moving.Level) = Moving.Level) Then
         
         Obj.Direct.Y = 0
-        Obj.Direct.X = 0
+        Obj.Direct.x = 0
         Obj.Direct.Z = 0
 
         'slow down the change prediction and check until
@@ -1424,19 +1434,19 @@ On Error GoTo ObjectError
             newset.Y = Obj.Direct.Y
         End If
 
-    ElseIf ((Obj.IsMoving = Moving.None) And ((backup.X = 0 And backup.Z = 0) And (newset.X = 0 And newset.Z = 0))) Then
+    ElseIf ((Obj.IsMoving = Moving.None) And ((backup.x = 0 And backup.Z = 0) And (newset.x = 0 And newset.Z = 0))) Then
 
         push = False
         pull = False
         
         Obj.Direct.Y = -testNudgeAdjust
-        If Not push Then Obj.Direct.X = testNudgeAdjust
+        If Not push Then Obj.Direct.x = testNudgeAdjust
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             pull = True
         Else
             pull = False
             Obj.Direct.Y = 0
-            Obj.Direct.X = 0
+            Obj.Direct.x = 0
         End If
 
         If Not pull Then Obj.Direct.Y = -testNudgeAdjust
@@ -1450,12 +1460,12 @@ On Error GoTo ObjectError
         End If
 
         If Not pull And Not push Then Obj.Direct.Y = -testNudgeAdjust
-        Obj.Direct.X = -testNudgeAdjust
+        Obj.Direct.x = -testNudgeAdjust
         If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
             pull = (push And Not pull) Or (Not push And Not pull)
         Else
             Obj.Direct.Y = 0
-            Obj.Direct.X = 0
+            Obj.Direct.x = 0
         End If
 
         If Not push And Not pull Then Obj.Direct.Y = -testNudgeAdjust
@@ -1481,24 +1491,24 @@ On Error GoTo ObjectError
             Do
                 Obj.Origin.Y = Obj.Origin.Y - testNudgeAdjust
                 If pull Then
-                    Obj.Origin.X = Obj.Origin.X + testNudgeAdjust
+                    Obj.Origin.x = Obj.Origin.x + testNudgeAdjust
                     If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                        Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust * 2)
+                        Obj.Origin.x = Obj.Origin.x - (testNudgeAdjust * 2)
                         If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
                             Obj.Origin.Y = Obj.Origin.Y + (testNudgeAdjust / 3)
                         Else
                             Do
-                                If Obj.Origin.X + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                                Obj.Origin.X = Obj.Origin.X + (testNudgeAdjust / 3)
+                                If Obj.Origin.x + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                                Obj.Origin.x = Obj.Origin.x + (testNudgeAdjust / 3)
                             Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                            Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust / 3)
+                            Obj.Origin.x = Obj.Origin.x - (testNudgeAdjust / 3)
                         End If
                     Else
                         Do
-                            If Obj.Origin.X - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                            Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust / 3)
+                            If Obj.Origin.x - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                            Obj.Origin.x = Obj.Origin.x - (testNudgeAdjust / 3)
                         Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                        Obj.Origin.X = Obj.Origin.X + (testNudgeAdjust / 3)
+                        Obj.Origin.x = Obj.Origin.x + (testNudgeAdjust / 3)
                     End If
                 ElseIf push Then
 
@@ -1593,7 +1603,7 @@ On Error GoTo ObjectError
             backup = Obj.Rotate
 
 
-            Obj.Rotate.X = Obj.Rotate.X + Obj.Twists.X
+            Obj.Rotate.x = Obj.Rotate.x + Obj.Twists.x
             Obj.Rotate.Y = Obj.Rotate.Y + Obj.Twists.Y
             Obj.Rotate.Z = Obj.Rotate.Z + Obj.Twists.Z
             
@@ -1642,8 +1652,8 @@ On Error GoTo ObjectError
             
         Else
         
-            If (((Obj.Direct.Y = 0) And (Obj.Direct.X = 0) And (Obj.Direct.Z = 0)) Or _
-                ((Obj.Direct.Y < 0) And (Obj.Direct.X = 0) And (Obj.Direct.Z = 0))) And Obj.Gravitational Then
+            If (((Obj.Direct.Y = 0) And (Obj.Direct.x = 0) And (Obj.Direct.Z = 0)) Or _
+                ((Obj.Direct.Y < 0) And (Obj.Direct.x = 0) And (Obj.Direct.Z = 0))) And Obj.Gravitational Then
                 'only if no other force is applied or only down force
         
                 'Dim backupOrigin As New Point
@@ -1909,7 +1919,7 @@ On Error GoTo ObjectError
     
         If Not TestCollision(Obj, Scaling, 2) Then
         
-            Obj.Scaled.X = Obj.Scaled.X + Obj.Scalar.X
+            Obj.Scaled.x = Obj.Scaled.x + Obj.Scalar.x
             Obj.Scaled.Y = Obj.Scaled.Y + Obj.Scalar.Y
             Obj.Scaled.Z = Obj.Scaled.Z + Obj.Scalar.Z
             
@@ -2033,7 +2043,7 @@ On Error GoTo ObjectError
 '        sngCamera(2, 2) = Round(p.Z, 6)
 
 
-        sngCamera(0, 0) = Obj.Origin.X
+        sngCamera(0, 0) = Obj.Origin.x
         sngCamera(0, 1) = Obj.Origin.Y + 1
         sngCamera(0, 2) = Obj.Origin.Z
 
@@ -2060,7 +2070,7 @@ On Error GoTo ObjectError
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
-    Dim V(2) As D3DVECTOR
+    Dim v(2) As D3DVECTOR
     Dim N As D3DVECTOR
 
     Dim matScale As D3DMATRIX
@@ -2073,23 +2083,23 @@ On Error GoTo ObjectError
 
     
     If (Action And Scaling) = Scaling Then
-        D3DXMatrixScaling matScale, (Obj.Scaled.X + Obj.Scalar.X), (Obj.Scaled.Y + Obj.Scalar.Y), (Obj.Scaled.Z + Obj.Scalar.Z)
+        D3DXMatrixScaling matScale, (Obj.Scaled.x + Obj.Scalar.x), (Obj.Scaled.Y + Obj.Scalar.Y), (Obj.Scaled.Z + Obj.Scalar.Z)
     Else
-        D3DXMatrixScaling matScale, Obj.Scaled.X, Obj.Scaled.Y, Obj.Scaled.Z
+        D3DXMatrixScaling matScale, Obj.Scaled.x, Obj.Scaled.Y, Obj.Scaled.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
 
 
     If (Action And Directing) = Directing Then
-        D3DXMatrixTranslation matScale, (Obj.Origin.X + Obj.Direct.X), (Obj.Origin.Y + Obj.Direct.Y), (Obj.Origin.Z + Obj.Direct.Z)
+        D3DXMatrixTranslation matScale, (Obj.Origin.x + Obj.Direct.x), (Obj.Origin.Y + Obj.Direct.Y), (Obj.Origin.Z + Obj.Direct.Z)
     Else
-        D3DXMatrixTranslation matScale, Obj.Origin.X, Obj.Origin.Y, Obj.Origin.Z
+        D3DXMatrixTranslation matScale, Obj.Origin.x, Obj.Origin.Y, Obj.Origin.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
     
     If (Action And Rotating) = Rotating Then
 
-        D3DXMatrixRotationX matRot, ((Obj.Rotate.X + Obj.Twists.X) * RADIAN)
+        D3DXMatrixRotationX matRot, ((Obj.Rotate.x + Obj.Twists.x) * RADIAN)
         'D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
@@ -2102,7 +2112,7 @@ On Error GoTo ObjectError
         D3DXMatrixMultiply matMesh, matRot, matMesh
     Else
 
-        D3DXMatrixRotationX matRot, (Obj.Rotate.X * RADIAN)
+        D3DXMatrixRotationX matRot, (Obj.Rotate.x * RADIAN)
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
         D3DXMatrixRotationY matRot, (Obj.Rotate.Y * RADIAN)
@@ -2128,15 +2138,15 @@ On Error GoTo ObjectError
     
             For cnt = 0 To 2
                 
-                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).X
-                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
-                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
+                v(cnt).x = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).x
+                v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
+                v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
     
-                D3DXVec3TransformCoord V(cnt), V(cnt), matMesh
+                D3DXVec3TransformCoord v(cnt), v(cnt), matMesh
                 
-                sngVertexX(cnt, Face) = V(cnt).X
-                sngVertexY(cnt, Face) = V(cnt).Y
-                sngVertexZ(cnt, Face) = V(cnt).Z
+                sngVertexX(cnt, Face) = v(cnt).x
+                sngVertexY(cnt, Face) = v(cnt).Y
+                sngVertexZ(cnt, Face) = v(cnt).Z
 
             Next
             
@@ -2423,13 +2433,13 @@ On Error GoTo ObjectError
     Dim Face As Long
     Dim Index As Long
     
-    Dim V() As D3DVECTOR
+    Dim v() As D3DVECTOR
 
     Dim v1 As D3DVECTOR
     Dim v2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
-    ReDim V(0 To 3) As D3DVECTOR
+    ReDim v(0 To 3) As D3DVECTOR
 
     If Obj.BoundsIndex > 0 Then
         Obj.CollideIndex = lngFaceCount
@@ -2444,16 +2454,16 @@ On Error GoTo ObjectError
     
             For cnt = 0 To 2
     
-                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).X
-                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
-                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
+                v(cnt).x = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).x
+                v(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
+                v(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
     
                 'D3DXVec3TransformCoord vn, v(cnt), matObject
-                vn = ToVector(Obj.PointMatrix(ToPoint(V(cnt))))
+                vn = ToVector(Obj.PointMatrix(ToPoint(v(cnt))))
                 
-                V(cnt).X = vn.X
-                V(cnt).Y = vn.Y
-                V(cnt).Z = vn.Z
+                v(cnt).x = vn.x
+                v(cnt).Y = vn.Y
+                v(cnt).Z = vn.Z
             Next
     
             ReDim Preserve sngFaceVis(0 To 5, 0 To lngFaceCount) As Single
@@ -2467,17 +2477,17 @@ On Error GoTo ObjectError
     
             ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
             
-            vn = TriangleNormal(V(0), V(1), V(2))
+            vn = modDecs.TriangleNormal(v(0), v(1), v(2))
             
             For cnt = 0 To 2
     
-                sngVertexX(cnt, lngFaceCount) = V(cnt).X
-                sngVertexY(cnt, lngFaceCount) = V(cnt).Y
-                sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
+                sngVertexX(cnt, lngFaceCount) = v(cnt).x
+                sngVertexY(cnt, lngFaceCount) = v(cnt).Y
+                sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
     
             Next
     
-            sngFaceVis(0, lngFaceCount) = vn.X
+            sngFaceVis(0, lngFaceCount) = vn.x
             sngFaceVis(1, lngFaceCount) = vn.Y
             sngFaceVis(2, lngFaceCount) = vn.Z
             sngFaceVis(3, lngFaceCount) = visType
@@ -2510,13 +2520,13 @@ On Error GoTo ObjectError
     Dim cnt As Long
     Dim Face As Long
     Dim Index As Long
-    Dim V() As D3DVECTOR
+    Dim v() As D3DVECTOR
 
     Dim v1 As D3DVECTOR
     Dim v2 As D3DVECTOR
     Dim vn As D3DVECTOR
 
-    ReDim V(0 To 3) As D3DVECTOR
+    ReDim v(0 To 3) As D3DVECTOR
 
     AddCollisionEx = lngFaceCount
 
@@ -2528,9 +2538,9 @@ On Error GoTo ObjectError
 
         For cnt = 0 To 2
             
-            V(cnt).X = Verticies(Index + cnt).X
-            V(cnt).Y = Verticies(Index + cnt).Y
-            V(cnt).Z = Verticies(Index + cnt).Z
+            v(cnt).x = Verticies(Index + cnt).x
+            v(cnt).Y = Verticies(Index + cnt).Y
+            v(cnt).Z = Verticies(Index + cnt).Z
                         
         Next
         
@@ -2545,17 +2555,17 @@ On Error GoTo ObjectError
     
         ReDim Preserve sngZBuffer(0 To 3, 0 To lngFaceCount) As Single
         
-        vn = TriangleNormal(V(0), V(1), V(2))
+        vn = modDecs.TriangleNormal(v(0), v(1), v(2))
 
         For cnt = 0 To 2
             
-            sngVertexX(cnt, lngFaceCount) = V(cnt).X
-            sngVertexY(cnt, lngFaceCount) = V(cnt).Y
-            sngVertexZ(cnt, lngFaceCount) = V(cnt).Z
+            sngVertexX(cnt, lngFaceCount) = v(cnt).x
+            sngVertexY(cnt, lngFaceCount) = v(cnt).Y
+            sngVertexZ(cnt, lngFaceCount) = v(cnt).Z
 
         Next
 
-        sngFaceVis(0, lngFaceCount) = vn.X
+        sngFaceVis(0, lngFaceCount) = vn.x
         sngFaceVis(1, lngFaceCount) = vn.Y
         sngFaceVis(2, lngFaceCount) = vn.Z
         sngFaceVis(3, lngFaceCount) = visType
@@ -2853,7 +2863,7 @@ On Error GoTo CameraError
     Dim ex As String
     
     Dim dot As Single
-    Dim V As D3DVECTOR
+    Dim v As D3DVECTOR
     Dim N As D3DVECTOR
     
     Dim verts(0 To 2) As D3DVECTOR
@@ -2912,17 +2922,17 @@ On Error GoTo CameraError
                         If Not touched Then
                             
                             
-                            v1 = VectorSubtract(MakeVector(.Origin.X + Sin(D720 - .Angle), _
-                                                                            .Origin.Y - Tan(D720 - .Pitch), _
-                                                                            .Origin.Z + Cos(D720 - .Angle)), _
+                            v1 = VectorSubtract(MakeVector(.Origin.x + Sin(D720 - .angle), _
+                                                                            .Origin.Y - Tan(D720 - .pitch), _
+                                                                            .Origin.Z + Cos(D720 - .angle)), _
                                                                             ToVector(.Origin))
                                                                             
-                            v2 = VectorSubtract(MakeVector(Player.Element.Origin.X - Sin(D720 - .Angle), _
-                                                            Player.Element.Origin.Y + Tan(D720 - .Pitch), _
-                                                            Player.Element.Origin.Z - Cos(D720 - .Angle)), _
+                            v2 = VectorSubtract(MakeVector(Player.Element.Origin.x - Sin(D720 - .angle), _
+                                                            Player.Element.Origin.Y + Tan(D720 - .pitch), _
+                                                            Player.Element.Origin.Z - Cos(D720 - .angle)), _
                                                             ToVector(.Origin))
                             
-                            If ((v2.X > 0 And v1.X > 0) Or (v2.X < 0 And v1.X < 0)) And _
+                            If ((v2.x > 0 And v1.x > 0) Or (v2.x < 0 And v1.x < 0)) And _
                                 ((v2.Y > 0 And v1.Y > 0) Or (v2.Y < 0 And v1.Y < 0)) And _
                                 ((v2.Z > 0 And v1.Z > 0) Or (v2.Z < 0 And v1.Z < 0)) Then
                                 touched = False
@@ -2986,50 +2996,50 @@ End Sub
 
 Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As Long = 3)
     Dim A As D3DVECTOR
-    Dim b As D3DVECTOR
+    Dim B As D3DVECTOR
     Dim C As D3DVECTOR
     
     Dim p As D3DVECTOR
     
     Dim cnt As Long
-    Dim Angle As Single
+    Dim angle As Single
     
     Dim smallest As Long
     Dim smallestAngle As Single
-    Dim V() As D3DVECTOR
-    ReDim V(0 To VertexCount - 1) As D3DVECTOR
+    Dim v() As D3DVECTOR
+    ReDim v(0 To VertexCount - 1) As D3DVECTOR
 
     For cnt = 0 To VertexCount - 1
-        V(cnt) = MakeVector(sngVertexX(cnt, FaceIndex), sngVertexY(cnt, FaceIndex), sngVertexZ(cnt, FaceIndex))
-        C.X = C.X + V(cnt).X
-        C.Y = C.Y + V(cnt).Y
-        C.Z = C.Z + V(cnt).Z
+        v(cnt) = MakeVector(sngVertexX(cnt, FaceIndex), sngVertexY(cnt, FaceIndex), sngVertexZ(cnt, FaceIndex))
+        C.x = C.x + v(cnt).x
+        C.Y = C.Y + v(cnt).Y
+        C.Z = C.Z + v(cnt).Z
     Next
     
-    C.X = C.X / VertexCount
+    C.x = C.x / VertexCount
     C.Y = C.Y / VertexCount
     C.Z = C.Z / VertexCount
 
-    p = GetPlaneNormal(V(0), V(1), V(2))
+    p = GetPlaneNormal(v(0), v(1), v(2))
         
     Dim N As Long
     Dim m As Long
     
     For N = 0 To VertexCount - 1
         
-        A = modDecs.VectorNormalize(modDecs.VectorSubtract(V(N), C))
+        A = modDecs.TriangleNormal(modDecs.VectorSubtract(v(N), C))
         
         smallest = -1
         smallestAngle = -1
         
         For m = N + 1 To 2
-            If Not ClassifyPoint(V(N), C, VectorAdd(C, p), V(m)) = 2 Then 'not back
-                b = modDecs.VectorNormalize(modDecs.VectorSubtract(V(m), C))
+            If Not ClassifyPoint(v(N), C, VectorAdd(C, p), v(m)) = 2 Then 'not back
+                B = modDecs.TriangleNormal(modDecs.VectorSubtract(v(m), C))
                 
-                Angle = modDecs.VectorDotProduct(A, b)
+                angle = modDecs.VectorDotProduct(A, B)
                 
-                If Angle > smallestAngle Then
-                    smallestAngle = Angle
+                If angle > smallestAngle Then
+                    smallestAngle = angle
                     smallest = m
         
                 End If
@@ -3044,20 +3054,20 @@ Public Sub SortVerticies(ByVal FaceIndex As Long, Optional ByVal VertexCount As 
     
     Next
     
-    A = GetPlaneNormal(V(0), V(1), V(2))
-    b = p
+    A = GetPlaneNormal(v(0), v(1), v(2))
+    B = p
     
-    If modDecs.VectorDotProduct(A, b) < 0 Then
+    If modDecs.VectorDotProduct(A, B) < 0 Then
         ReverseFaceVertices FaceIndex, VertexCount
     End If
     
-    sngFaceVis(0, FaceIndex) = A.X
+    sngFaceVis(0, FaceIndex) = A.x
     sngFaceVis(1, FaceIndex) = A.Y
     sngFaceVis(2, FaceIndex) = A.Z
 
 End Sub
 
-Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
+Public Function GetPlaneNormal(ByRef V0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
 
     Dim vector1 As D3DVECTOR
     Dim vector2 As D3DVECTOR
@@ -3066,26 +3076,26 @@ Public Function GetPlaneNormal(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByR
 
     '/*Calculate the Normal*/
     '/*Vector 1*/
-    vector1.X = (v0.X - v1.X)
-    vector1.Y = (v0.Y - v1.Y)
-    vector1.Z = (v0.Z - v1.Z)
+    vector1.x = (V0.x - v1.x)
+    vector1.Y = (V0.Y - v1.Y)
+    vector1.Z = (V0.Z - v1.Z)
 
     '/*Vector 2*/
-    vector2.X = (v1.X - v2.X)
+    vector2.x = (v1.x - v2.x)
     vector2.Y = (v1.Y - v2.Y)
     vector2.Z = (v1.Z - v2.Z)
 
     '/*Apply the Cross Product*/
-    Normal.X = (vector1.Y * vector2.Z - vector1.Z * vector2.Y)
-    Normal.Y = (vector1.Z * vector2.X - vector1.X * vector2.Z)
-    Normal.Z = (vector1.X * vector2.Y - vector1.Y * vector2.X)
+    Normal.x = (vector1.Y * vector2.Z - vector1.Z * vector2.Y)
+    Normal.Y = (vector1.Z * vector2.x - vector1.x * vector2.Z)
+    Normal.Z = (vector1.x * vector2.Y - vector1.Y * vector2.x)
 
     '/*Normalize to a unit vector*/
-    Length = Sqr(Normal.X * Normal.X + Normal.Y * Normal.Y + Normal.Z * Normal.Z)
+    Length = Sqr(Normal.x * Normal.x + Normal.Y * Normal.Y + Normal.Z * Normal.Z)
 
     If Length = 0 Then Length = 1
 
-    Normal.X = (Normal.X / Length)
+    Normal.x = (Normal.x / Length)
     Normal.Y = (Normal.Y / Length)
     Normal.Z = (Normal.Z / Length)
 
@@ -3103,18 +3113,18 @@ Public Function ReverseFaceVertices(ByVal FaceIndex As Long, ByVal VertexCount A
 End Function
 
 Public Sub SwapVector(ByVal FaceIndex As Long, ByVal FirstIndex As Long, ByVal SecondIndex As Long)
-    Dim V As D3DVECTOR
-    V.X = sngVertexX(FirstIndex, FaceIndex)
-    V.Y = sngVertexY(FirstIndex, FaceIndex)
-    V.Z = sngVertexZ(FirstIndex, FaceIndex)
+    Dim v As D3DVECTOR
+    v.x = sngVertexX(FirstIndex, FaceIndex)
+    v.Y = sngVertexY(FirstIndex, FaceIndex)
+    v.Z = sngVertexZ(FirstIndex, FaceIndex)
     
     sngVertexX(FirstIndex, FaceIndex) = sngVertexX(SecondIndex, FaceIndex)
     sngVertexY(FirstIndex, FaceIndex) = sngVertexY(SecondIndex, FaceIndex)
     sngVertexZ(FirstIndex, FaceIndex) = sngVertexZ(SecondIndex, FaceIndex)
 
-    sngVertexX(SecondIndex, FaceIndex) = V.X
-    sngVertexY(SecondIndex, FaceIndex) = V.Y
-    sngVertexZ(SecondIndex, FaceIndex) = V.Z
+    sngVertexX(SecondIndex, FaceIndex) = v.x
+    sngVertexY(SecondIndex, FaceIndex) = v.Y
+    sngVertexZ(SecondIndex, FaceIndex) = v.Z
 End Sub
 
 

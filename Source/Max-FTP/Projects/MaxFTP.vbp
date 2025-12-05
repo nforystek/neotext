@@ -1,8 +1,8 @@
 Type=OleExe
 Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\WINDOWS\system32\msado15.dll#Microsoft ActiveX Data Objects 2.8 Library
 Reference=*\G{420B2830-E718-11CF-893D-00A0C9054228}#1.0#0#..\..\..\..\WINDOWS\system32\scrrun.dll#Microsoft Scripting Runtime
-Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#410.0#0#..\..\..\..\WINDOWS\system32\NTSchedule20.dll#Neotext Schedule Object 2.0
-Reference=*\G{E6BA22CF-86D6-47DE-912D-0F4958156152}#358.0#0#..\..\..\..\WINDOWS\system32\NTCipher10.dll#Neotext Cipher Object 1.0
+Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#410.0#0#..\..\Common\Binary\NTSchedule20.dll#Neotext Schedule Object 2.0
+Reference=*\G{E6BA22CF-86D6-47DE-912D-0F4958156152}#358.0#0#..\..\Common\Binary\NTCipher10.dll#Neotext Cipher Object 1.0
 Reference=*\G{133D2769-1F54-417C-887A-F796487C154E}#31d.0#0#..\..\Common\Binary\NTAdvFTP61.dll#Neotext Advanced FTP Object 6.1
 Reference=*\G{ECC0A67D-648F-4AE0-9373-ECC8B3608D95}#35e.0#0#..\..\..\..\WINDOWS\system32\NTPopup21.dll#Neotext Popup Window Object 2.1
 Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#155.0#0#..\..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0

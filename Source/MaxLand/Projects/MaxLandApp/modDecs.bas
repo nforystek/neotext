@@ -5,12 +5,12 @@ Option Explicit
 
 
 Public Type POINTAPI
-    X As Long
+    x As Long
     Y As Long
 End Type
 
 Public Type MyScreen
-    X As Single
+    x As Single
     Y As Single
     Z As Single
     rhw As Single
@@ -20,7 +20,7 @@ Public Type MyScreen
 End Type
 
 Public Type MyVertex
-    X As Single
+    x As Single
     Y As Single
     Z As Single
     nx As Single
@@ -114,7 +114,7 @@ Public Declare Function timeGetTime Lib "winmm" () As Long
 Public Declare Function GetActiveWindow Lib "user32" () As Long
 
 Public Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
-Public Declare Function SetCursorPos Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal Y As Long) As Long
 Public Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 Public Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
 Public Declare Function GetUserName Lib "advapi32" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
@@ -522,19 +522,19 @@ End Function
 
 Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """", Optional ByVal Embeded As Boolean = False, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare) As String
     Dim retVal As String
-    Dim X As Long
-    X = InStr(1, TheParams, BeginQuote, Compare)
-    If (X > 0) And (X < Len(TheParams)) Then
-        If (InStr(X + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
+    Dim x As Long
+    x = InStr(1, TheParams, BeginQuote, Compare)
+    If (x > 0) And (x < Len(TheParams)) Then
+        If (InStr(x + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
             If (Not Embeded) Or (EndQuote = BeginQuote) Then
-                retVal = Mid(TheParams, X + Len(BeginQuote))
-                TheParams = Left(TheParams, X - 1) & Mid(retVal, InStr(1, retVal, EndQuote, Compare) + Len(EndQuote))
+                retVal = Mid(TheParams, x + Len(BeginQuote))
+                TheParams = Left(TheParams, x - 1) & Mid(retVal, InStr(1, retVal, EndQuote, Compare) + Len(EndQuote))
                 retVal = Left(retVal, InStr(1, retVal, EndQuote, Compare) - 1)
             Else
                 Dim L As Long
                 Dim Y As Long
                 L = 1
-                Y = X
+                Y = x
                 Do Until L = 0
                     If (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) > 0) And (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) < InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare)) Then
                         L = L + 1
@@ -547,9 +547,9 @@ Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQ
                         L = 0
                     End If
                 Loop
-                retVal = Mid(TheParams, X + Len(BeginQuote))
-                TheParams = Left(TheParams, X - 1) & Mid(retVal, (Y - X) + Len(EndQuote))
-                retVal = Left(retVal, (Y - X) - 1)
+                retVal = Mid(TheParams, x + Len(BeginQuote))
+                TheParams = Left(TheParams, x - 1) & Mid(retVal, (Y - x) + Len(EndQuote))
+                retVal = Left(retVal, (Y - x) - 1)
             End If
         End If
     End If
@@ -862,8 +862,8 @@ End Function
 '    Randomize
 '    RandomPositive = CSng((UpperBound - LowerBound + 1) * Rnd + LowerBound)
 'End Function
-Function MakeScreen(ByVal X As Single, ByVal Y As Single, ByVal Z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
-    MakeScreen.X = X
+Function MakeScreen(ByVal x As Single, ByVal Y As Single, ByVal Z As Single, Optional ByVal tu As Single = 0, Optional ByVal tv As Single = 0) As MyScreen
+    MakeScreen.x = x
     MakeScreen.Y = Y
     MakeScreen.Z = Z
     MakeScreen.rhw = 1
@@ -944,58 +944,55 @@ End Function
 '
 '
 'End Function
-Public Function CreateVertex(X As Single, Y As Single, Z As Single, nx As Single, ny As Single, nz As Single, tu As Single, tv As Single) As MyVertex
+Public Function CreateVertex(x As Single, Y As Single, Z As Single, nx As Single, ny As Single, nz As Single, tu As Single, tv As Single) As MyVertex
     
     With CreateVertex
-        .X = X: .Y = Y: .Z = Z
+        .x = x: .Y = Y: .Z = Z
         .nx = nx: .ny = ny: .nz = nz
         .tu = tu: .tv = tv
     End With
     
 End Function
-Public Function ConvertVertexToVector(ByRef V As D3DVERTEX) As D3DVECTOR
-    ConvertVertexToVector.X = V.X
-    ConvertVertexToVector.Y = V.Y
-    ConvertVertexToVector.Z = V.Z
+Public Function ConvertVertexToVector(ByRef v As D3DVERTEX) As D3DVECTOR
+    ConvertVertexToVector.x = v.x
+    ConvertVertexToVector.Y = v.Y
+    ConvertVertexToVector.Z = v.Z
 End Function
 
-Public Function VectorNormalize(ByRef V As D3DVECTOR) As D3DVECTOR
+Public Function VectorNormalize(ByRef v As D3DVECTOR) As D3DVECTOR
     Dim L As Single
-    L = Sqr(V.X * V.X + V.Y * V.Y + V.Z * V.Z)
+    L = Sqr(v.x * v.x + v.Y * v.Y + v.Z * v.Z)
     If L = 0 Then L = 1
-    VectorNormalize.X = (V.X / L)
-    VectorNormalize.Y = (V.Y / L)
-    VectorNormalize.Z = (V.Z / L)
+    VectorNormalize.x = (v.x / L)
+    VectorNormalize.Y = (v.Y / L)
+    VectorNormalize.Z = (v.Z / L)
 End Function
 
-Public Function VectorDotProduct(ByRef V As D3DVECTOR, ByRef u As D3DVECTOR) As Single
-    VectorDotProduct = (u.X * V.X + u.Y * V.Y + u.Z * V.Z)
+Public Function VectorDotProduct(ByRef v As D3DVECTOR, ByRef u As D3DVECTOR) As Single
+    VectorDotProduct = (u.x * v.x + u.Y * v.Y + u.Z * v.Z)
 End Function
 
-
-
-
-Public Function VectorCrossProduct(ByRef V As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
-    VectorCrossProduct.X = V.Y * u.Z - V.Z * u.Y
-    VectorCrossProduct.Y = V.Z * u.X - V.X * u.Z
-    VectorCrossProduct.Z = V.X * u.Y - V.Y * u.X
+Public Function VectorCrossProduct(ByRef v As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
+    VectorCrossProduct.x = v.Y * u.Z - v.Z * u.Y
+    VectorCrossProduct.Y = v.Z * u.x - v.x * u.Z
+    VectorCrossProduct.Z = v.x * u.Y - v.Y * u.x
 End Function
 
 
-Public Function VectorSubtract(ByRef V As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
-    VectorSubtract.X = V.X - u.X
-    VectorSubtract.Y = V.Y - u.Y
-    VectorSubtract.Z = V.Z - u.Z
+Public Function VectorSubtract(ByRef v As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
+    VectorSubtract.x = v.x - u.x
+    VectorSubtract.Y = v.Y - u.Y
+    VectorSubtract.Z = v.Z - u.Z
 End Function
-Public Function VectorAdd(ByRef V As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
-    VectorAdd.X = V.X + u.X
-    VectorAdd.Y = V.Y + u.Y
-    VectorAdd.Z = V.Z + u.Z
+Public Function VectorAdd(ByRef v As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
+    VectorAdd.x = v.x + u.x
+    VectorAdd.Y = v.Y + u.Y
+    VectorAdd.Z = v.Z + u.Z
 End Function
-Public Function VectorMultiply(ByRef V As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
-    VectorMultiply.X = V.X * u.X
-    VectorMultiply.Y = V.Y * u.Y
-    VectorMultiply.Z = V.Z * u.Z
+Public Function VectorMultiply(ByRef v As D3DVECTOR, ByRef u As D3DVECTOR) As D3DVECTOR
+    VectorMultiply.x = v.x * u.x
+    VectorMultiply.Y = v.Y * u.Y
+    VectorMultiply.Z = v.Z * u.Z
 End Function
 
 Public Function PointToPlane(ByRef p1 As D3DVECTOR, ByRef p2 As D3DVECTOR) As Single
@@ -1016,19 +1013,19 @@ Public Function TriangleNormal(p0 As D3DVECTOR, p1 As D3DVECTOR, p2 As D3DVECTOR
 
     D3DXVec3Cross vNorm, v01, v02
 
-    D3DXVec3Normalize vNorm, vNorm
+  '  D3DXVec3Normalize vNorm, vNorm
 
     TriangleNormal = vNorm
 
 End Function
 
-Public Function TriangleCenter(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
+Public Function TriangleCenter(ByRef V0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
 
     Dim vR As D3DVECTOR
  
-    vR.X = (v0.X + v1.X + v2.X) / 3
-    vR.Y = (v0.Y + v1.Y + v2.Y) / 3
-    vR.Z = (v0.Z + v1.Z + v2.Z) / 3
+    vR.x = (V0.x + v1.x + v2.x) / 3
+    vR.Y = (V0.Y + v1.Y + v2.Y) / 3
+    vR.Z = (V0.Z + v1.Z + v2.Z) / 3
     
     TriangleCenter = vR
 
@@ -1041,7 +1038,7 @@ End Function
 '    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
 '    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
-'    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+'    vn = moddecs.TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 '                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 '                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 '    Data(Index + 0).nx = vn.X: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
@@ -1051,7 +1048,7 @@ End Function
 '    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
 '    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
 '    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, 0, 0)
-'    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+'    vn = moddecs.TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 '                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 '                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 '    Data(Index + 3).nx = vn.X: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
@@ -1067,7 +1064,7 @@ End Function
 '    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
 '    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, p2.tu, p2.tv)
 '    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
-'    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
+'    vn = moddecs.TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
 '                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
 '                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
 '    Data(Index + 0).nx = vn.X: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
@@ -1077,7 +1074,7 @@ End Function
 '    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
 '    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
 '    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, p4.tu, p4.tv)
-'    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
+'    vn = moddecs.TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
 '                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
 '                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
 '    Data(Index + 3).nx = vn.X: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
@@ -1090,30 +1087,30 @@ Private Sub SwapVec3(ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR)
     v3 = v1
     v1 = v2
     v2 = v3
-End Sub
+    End Sub
 Public Sub CreateSquare(ByRef Data() As MyVertex, ByVal Index As Long, ByRef p1 As D3DVECTOR, ByRef p2 As D3DVECTOR, ByRef p3 As D3DVECTOR, ByRef p4 As D3DVECTOR, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1)
 
     Dim vn As D3DVECTOR
 
-    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
-    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
-    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
-    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
-                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
-                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
-    Data(Index + 0).nx = vn.X: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
-    Data(Index + 1).nx = vn.X: Data(Index + 1).ny = vn.Y: Data(Index + 1).nz = vn.Z
-    Data(Index + 2).nx = vn.X: Data(Index + 2).ny = vn.Y: Data(Index + 2).nz = vn.Z
+    Data(Index + 0) = CreateVertex(p1.x, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
+    Data(Index + 1) = CreateVertex(p2.x, p2.Y, p2.Z, 0, 0, 0, ScaleX, ScaleY)
+    Data(Index + 2) = CreateVertex(p3.x, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
+    vn = modDecs.TriangleNormal(MakeVector(Data(Index + 0).x, Data(Index + 0).Y, Data(Index + 0).Z), _
+                            MakeVector(Data(Index + 1).x, Data(Index + 1).Y, Data(Index + 1).Z), _
+                            MakeVector(Data(Index + 2).x, Data(Index + 2).Y, Data(Index + 2).Z))
+    Data(Index + 0).nx = vn.x: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
+    Data(Index + 1).nx = vn.x: Data(Index + 1).ny = vn.Y: Data(Index + 1).nz = vn.Z
+    Data(Index + 2).nx = vn.x: Data(Index + 2).ny = vn.Y: Data(Index + 2).nz = vn.Z
     
-    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
-    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
-    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, 0, 0)
-    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
-                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
-                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
-    Data(Index + 3).nx = vn.X: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
-    Data(Index + 4).nx = vn.X: Data(Index + 4).ny = vn.Y: Data(Index + 4).nz = vn.Z
-    Data(Index + 5).nx = vn.X: Data(Index + 5).ny = vn.Y: Data(Index + 5).nz = vn.Z
+    Data(Index + 3) = CreateVertex(p1.x, p1.Y, p1.Z, 0, 0, 0, 0, ScaleY)
+    Data(Index + 4) = CreateVertex(p3.x, p3.Y, p3.Z, 0, 0, 0, ScaleX, 0)
+    Data(Index + 5) = CreateVertex(p4.x, p4.Y, p4.Z, 0, 0, 0, 0, 0)
+    vn = modDecs.TriangleNormal(MakeVector(Data(Index + 3).x, Data(Index + 3).Y, Data(Index + 3).Z), _
+                            MakeVector(Data(Index + 4).x, Data(Index + 4).Y, Data(Index + 4).Z), _
+                            MakeVector(Data(Index + 5).x, Data(Index + 5).Y, Data(Index + 5).Z))
+    Data(Index + 3).nx = vn.x: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
+    Data(Index + 4).nx = vn.x: Data(Index + 4).ny = vn.Y: Data(Index + 4).nz = vn.Z
+    Data(Index + 5).nx = vn.x: Data(Index + 5).ny = vn.Y: Data(Index + 5).nz = vn.Z
     
 End Sub
 
@@ -1121,25 +1118,25 @@ Public Sub CreateSquareEx(ByRef Data() As MyVertex, ByVal Index As Long, ByRef p
 
     Dim vn As D3DVECTOR
 
-    Data(Index + 0) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
-    Data(Index + 1) = CreateVertex(p2.X, p2.Y, p2.Z, 0, 0, 0, p2.tu, p2.tv)
-    Data(Index + 2) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
-    vn = TriangleNormal(MakeVector(Data(Index + 0).X, Data(Index + 0).Y, Data(Index + 0).Z), _
-                            MakeVector(Data(Index + 1).X, Data(Index + 1).Y, Data(Index + 1).Z), _
-                            MakeVector(Data(Index + 2).X, Data(Index + 2).Y, Data(Index + 2).Z))
-    Data(Index + 0).nx = vn.X: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
-    Data(Index + 1).nx = vn.X: Data(Index + 1).ny = vn.Y: Data(Index + 1).nz = vn.Z
-    Data(Index + 2).nx = vn.X: Data(Index + 2).ny = vn.Y: Data(Index + 2).nz = vn.Z
+    Data(Index + 0) = CreateVertex(p1.x, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
+    Data(Index + 1) = CreateVertex(p2.x, p2.Y, p2.Z, 0, 0, 0, p2.tu, p2.tv)
+    Data(Index + 2) = CreateVertex(p3.x, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
+    vn = modDecs.TriangleNormal(MakeVector(Data(Index + 0).x, Data(Index + 0).Y, Data(Index + 0).Z), _
+                            MakeVector(Data(Index + 1).x, Data(Index + 1).Y, Data(Index + 1).Z), _
+                            MakeVector(Data(Index + 2).x, Data(Index + 2).Y, Data(Index + 2).Z))
+    Data(Index + 0).nx = vn.x: Data(Index + 0).ny = vn.Y: Data(Index + 0).nz = vn.Z
+    Data(Index + 1).nx = vn.x: Data(Index + 1).ny = vn.Y: Data(Index + 1).nz = vn.Z
+    Data(Index + 2).nx = vn.x: Data(Index + 2).ny = vn.Y: Data(Index + 2).nz = vn.Z
     
-    Data(Index + 3) = CreateVertex(p1.X, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
-    Data(Index + 4) = CreateVertex(p3.X, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
-    Data(Index + 5) = CreateVertex(p4.X, p4.Y, p4.Z, 0, 0, 0, p4.tu, p4.tv)
-    vn = TriangleNormal(MakeVector(Data(Index + 3).X, Data(Index + 3).Y, Data(Index + 3).Z), _
-                            MakeVector(Data(Index + 4).X, Data(Index + 4).Y, Data(Index + 4).Z), _
-                            MakeVector(Data(Index + 5).X, Data(Index + 5).Y, Data(Index + 5).Z))
-    Data(Index + 3).nx = vn.X: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
-    Data(Index + 4).nx = vn.X: Data(Index + 4).ny = vn.Y: Data(Index + 4).nz = vn.Z
-    Data(Index + 5).nx = vn.X: Data(Index + 5).ny = vn.Y: Data(Index + 5).nz = vn.Z
+    Data(Index + 3) = CreateVertex(p1.x, p1.Y, p1.Z, 0, 0, 0, p1.tu, p1.tv)
+    Data(Index + 4) = CreateVertex(p3.x, p3.Y, p3.Z, 0, 0, 0, p3.tu, p3.tv)
+    Data(Index + 5) = CreateVertex(p4.x, p4.Y, p4.Z, 0, 0, 0, p4.tu, p4.tv)
+    vn = modDecs.TriangleNormal(MakeVector(Data(Index + 3).x, Data(Index + 3).Y, Data(Index + 3).Z), _
+                            MakeVector(Data(Index + 4).x, Data(Index + 4).Y, Data(Index + 4).Z), _
+                            MakeVector(Data(Index + 5).x, Data(Index + 5).Y, Data(Index + 5).Z))
+    Data(Index + 3).nx = vn.x: Data(Index + 3).ny = vn.Y: Data(Index + 3).nz = vn.Z
+    Data(Index + 4).nx = vn.x: Data(Index + 4).ny = vn.Y: Data(Index + 4).nz = vn.Z
+    Data(Index + 5).nx = vn.x: Data(Index + 5).ny = vn.Y: Data(Index + 5).nz = vn.Z
     
 End Sub
 
@@ -1156,15 +1153,15 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
     
         Dim d As ImageDimensions
         
-        Dim q As Integer
-        For q = 0 To nMaterials - 1
+        Dim Q As Integer
+        For Q = 0 To nMaterials - 1
     
-            D3DX.BufferGetMaterial Buffer, q, MeshMaterials(q)
+            D3DX.BufferGetMaterial Buffer, Q, MeshMaterials(Q)
        
-            TextureName = D3DX.BufferGetTextureName(Buffer, q)
+            TextureName = D3DX.BufferGetTextureName(Buffer, Q)
             If (TextureName <> "") Then
                 If ImageDimensions(AppPath & "Models\" & TextureName, d) Then
-                    Set MeshTextures(q) = D3DX.CreateTextureFromFileEx(DDevice, AppPath & "Models\" & TextureName, d.Width, d.Height, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE, Transparent, ByVal 0, ByVal 0)
+                    Set MeshTextures(Q) = D3DX.CreateTextureFromFileEx(DDevice, AppPath & "Models\" & TextureName, d.Width, d.Height, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE, Transparent, ByVal 0, ByVal 0)
                 Else
                     Debug.Print "IMAGE ERROR: ImageDimensions - " & AppPath & "Models\" & TextureName
                 End If
@@ -1192,7 +1189,7 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
 
     Dim i As Long
     
-    Dim V As Long
+    Dim v As Long
     
     Dim avg As New Point
     If Obj.Displace Is Nothing Then Set Obj.Displace = New Point
@@ -1200,23 +1197,23 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
     
     
     For i = 0 To ((id.Size \ 2) - 1)
-        V = MeshIndicies(i)
+        v = MeshIndicies(i)
             
-        avg.X = avg.X + MeshVerticies(V).X
-        avg.Y = avg.Y + MeshVerticies(V).Y
-        avg.Z = avg.Z + MeshVerticies(V).Z
-        If Abs(MeshVerticies(V).X - Obj.Origin.X) > Obj.Displace.X Then
-            Obj.Displace.X = Abs(MeshVerticies(V).X - Obj.Origin.X)
+        avg.x = avg.x + MeshVerticies(v).x
+        avg.Y = avg.Y + MeshVerticies(v).Y
+        avg.Z = avg.Z + MeshVerticies(v).Z
+        If Abs(MeshVerticies(v).x - Obj.Origin.x) > Obj.Displace.x Then
+            Obj.Displace.x = Abs(MeshVerticies(v).x - Obj.Origin.x)
         End If
-        If Abs(MeshVerticies(V).Y - Obj.Origin.Y) > Obj.Displace.Y Then
-            Obj.Displace.Y = Abs(MeshVerticies(V).Y - Obj.Origin.Y)
+        If Abs(MeshVerticies(v).Y - Obj.Origin.Y) > Obj.Displace.Y Then
+            Obj.Displace.Y = Abs(MeshVerticies(v).Y - Obj.Origin.Y)
         End If
-        If Abs(MeshVerticies(V).Z - Obj.Origin.Z) > Obj.Displace.Z Then
-            Obj.Displace.Z = Abs(MeshVerticies(V).Z - Obj.Origin.Z)
+        If Abs(MeshVerticies(v).Z - Obj.Origin.Z) > Obj.Displace.Z Then
+            Obj.Displace.Z = Abs(MeshVerticies(v).Z - Obj.Origin.Z)
         End If
     Next
     i = ((id.Size \ 2) - 1)
-    avg.X = avg.X / i
+    avg.x = avg.x / i
     avg.Y = avg.Y / i
     avg.Z = avg.Z / i
     Set Obj.Centoid = avg
@@ -1245,11 +1242,11 @@ Public Function NoPoint() As Point
     Set NoPoint = MakePoint(0, 0, 0)
 End Function
 
-Public Function ClassifyPoint(ByRef v0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
+Public Function ClassifyPoint(ByRef V0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
     Dim dtp As Single
     Dim N As D3DVECTOR
-    N = GetPlaneNormal(v0, v1, v2)
-    dtp = VectorDotProduct(N, p) + -VectorDotProduct(N, v0)
+    N = GetPlaneNormal(V0, v1, v2)
+    dtp = VectorDotProduct(N, p) + -VectorDotProduct(N, V0)
     
     If dtp > Epsilon Then
         ClassifyPoint = 1 'front
@@ -1271,7 +1268,7 @@ Public Sub JoinAngles(ByRef BeforeAngles As Point, ByRef AfterAngles As Point, B
     If JoinedAngles Is Nothing Then Set JoinedAngles = New Point
     
     With JoinedAngles
-        .X = CDec(CStr(AfterAngles.X) & "." & PaddingLeft(CStr(BeforeAngles.X), 3))
+        .x = CDec(CStr(AfterAngles.x) & "." & PaddingLeft(CStr(BeforeAngles.x), 3))
         .Y = CDec(CStr(AfterAngles.Y) & "." & PaddingLeft(CStr(BeforeAngles.Y), 3))
         .Z = CDec(CStr(AfterAngles.Z) & "." & PaddingLeft(CStr(BeforeAngles.Z), 3))
     End With
@@ -1302,12 +1299,12 @@ Public Sub PartAngles(ByRef JoinedAngles As Point, ByRef BeforeAngles As Point, 
     If AfterAngles Is Nothing Then Set AfterAngles = New Point
 
     With BeforeAngles
-        .X = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.X), "."), 3))
+        .x = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.x), "."), 3))
         .Y = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.Y), "."), 3))
         .Z = CDec(PaddingRight(RemoveArg(CStr(JoinedAngles.Z), "."), 3))
     End With
     With AfterAngles
-        .X = CDec(NextArg(CStr(JoinedAngles.X), "."))
+        .x = CDec(NextArg(CStr(JoinedAngles.x), "."))
         .Y = CDec(NextArg(CStr(JoinedAngles.Y), "."))
         .Z = CDec(NextArg(CStr(JoinedAngles.Z), "."))
     End With

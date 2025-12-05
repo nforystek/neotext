@@ -182,8 +182,17 @@ Public Sub Main()
             Else
                 On Error GoTo 0
                 On Error GoTo Render
+
+    
+                '#############################################################
+                '#### BeginMirrors pre gathers mirror textures per mirror ####
+                '#############################################################
+                'elapsed = Timer
+                BeginMirrors
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                 
-                
+                    
                 DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
                 
                 DDevice.BeginScene
@@ -268,7 +277,6 @@ Public Sub Main()
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
 
-                
 
                 '###########################################################
                 '#### RenderPortals handles all the Portal based events ####
@@ -347,16 +355,6 @@ Public Sub Main()
 
       
                     DDevice.EndScene
-
-
-                    '#############################################################
-                    '#### BeginMirrors pre gathers mirror textures per mirror ####
-                    '#############################################################
-                    'elapsed = Timer
-                    BeginMirrors
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                    
                 
                     On Error Resume Next
                     DDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
@@ -492,8 +490,8 @@ On Error GoTo WorldError
 
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
 
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).Angle
-        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).Pitch
+        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
+        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
         D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
@@ -502,11 +500,11 @@ On Error GoTo WorldError
 
     Else
 
-        D3DXMatrixRotationY matRotation, Player.Camera.Angle
-        D3DXMatrixRotationX matPitch, Player.Camera.Pitch
+        D3DXMatrixRotationY matRotation, Player.Camera.angle
+        D3DXMatrixRotationX matPitch, Player.Camera.pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.Camera.Pitch > 0 Then
+        If Player.Camera.pitch > 0 Then
 
             D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
@@ -568,13 +566,13 @@ On Error GoTo WorldError
                                             Player.Element.Origin.Y - 0.2, _
                                             Player.Element.Origin.Z)
 
-                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle) * (Zoom + factor)), _
-                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.Pitch) * (Zoom + factor)), _
-                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle) * (Zoom + factor)))
+                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle) * (Zoom + factor)), _
+                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.pitch) * (Zoom + factor)), _
+                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.Angle)), _
-                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.Pitch) * Zoom), _
-                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.Angle)))
+                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle)), _
+                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.pitch) * Zoom), _
+                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle)))
 
 '                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Camera.Pitch), Player.Camera.Angle))
 '
