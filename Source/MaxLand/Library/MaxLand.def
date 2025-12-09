@@ -1,6 +1,10 @@
 EXPORTS
 	Test
-	tri_tri_intersect
-	Forystek
+	Culling
 	PointBehindPoly
 	PointInPoly
+	EncodeTriangle
+	TriTriSegmentEncoded
+	TriTriSegmentEncodedLen
+	TriTriSegmentFast
+	TriTriSegmentFastLen

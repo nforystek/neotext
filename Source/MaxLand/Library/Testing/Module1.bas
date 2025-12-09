@@ -158,9 +158,9 @@ Public Type Triangle
     p1 As Point
     p2 As Point
     p3 As Point
-    a As Point
+    A As Point
     n As Point
-    l As Point
+    L As Point
 End Type
 
 Public Function RndNum(ByVal LowerBound As Single, ByVal UpperBound As Single) As Single
@@ -185,11 +185,11 @@ Public Function RandomTriangle() As Triangle
         .p2 = RandomPoint
         .p3 = RandomPoint
         
-        .a = TriangleAxii(.p1, .p2, .p3)
+        .A = TriangleAxii(.p1, .p2, .p3)
         
-        .l.X = Distance(.p1, .p2)
-        .l.Y = Distance(.p2, .p3)
-        .l.Z = Distance(.p3, .p1)
+        .L.X = Distance(.p1, .p2)
+        .L.Y = Distance(.p2, .p3)
+        .L.Z = Distance(.p3, .p1)
 
         .n = PlaneNormal(.p1, .p2, .p3)
         
@@ -245,6 +245,9 @@ Public Sub Main()
     Dim t1 As Triangle
     Dim t2 As Triangle
     
+    Dim o1 As Point
+    Dim o2 As Point
+       
     
     PointListsX(0) = 4: PointListsY(0) = -4
     PointListsX(1) = 4: PointListsY(1) = 4
@@ -268,9 +271,9 @@ Public Sub Main()
             nX1 = .n.X
             nY1 = .n.Y
             nZ1 = .n.Z
-            vX1 = .a.X
-            vY1 = .a.Y
-            vZ1 = .a.Z
+            vX1 = .A.X
+            vY1 = .A.Y
+            vZ1 = .A.Z
         End With
 
         Debug.Print "PointBehindPoly()=" & PointBehindPoly(pX1, pY1, pZ1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
@@ -286,7 +289,9 @@ Public Sub Main()
         'twice it's size and generate random within -8,8
         pointX = (RndNum(0, 16) - 8)
         pointY = (RndNum(0, 16) - 8)
+        pointZ = (RndNum(0, 16) - 8)
 
+        
         Debug.Print "PointInPoly()=" & PointInPoly(pointX, pointY, PointListsX, PointListsY, 5) & "  " & _
             "PointInPoly2()=" & PointInPoly2(pointX, pointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5) & " " & _
             "PointInPoly3()=" & PointInPoly3(pointX, pointY, PointListsX, PointListsY, 5)
@@ -301,9 +306,15 @@ Public Sub Main()
         n2 = Round(RndNum(0, 1), 0)
         n3 = Round(RndNum(0, 1), 0)
 
+
+        'use the same square as if it is a cube in 3d,
+        'and check each 2D axis for collision using test
+
+        
         Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3)
         If Not CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)) Then Stop
         Debug.Print
+
 
 '        Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3) & " Test3(n1, n2, n3)=" & Test3(n1, n2, n3)
 '        If (Not (CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)))) Or (Not (CVar(Test2(n1, n2, n3)) = CVar(Test3(n1, n2, n3)))) Then Stop
@@ -363,21 +374,26 @@ Public Function Distance(ByRef p1 As Point, ByRef p2 As Point) As Single
     If Distance <> 0 Then Distance = Distance ^ (1 / 2)
 End Function
 
-Public Function PlaneNormal(ByRef v0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
+Public Function PlaneNormal(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     'returns a vector perpendicular to a plane V, at 0,0,0, with out the local coordinates information
-    PlaneNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(v0, V1), VectorDeduction(V1, V2)))
+    PlaneNormal = VectorCrossProduct(VectorDeduction(V0, v1), VectorDeduction(v1, v2))
 End Function
-Public Function VectorNormalize(ByRef p1 As Point) As Point
-    With VectorNormalize
-        .Z = (Abs(p1.X) + Abs(p1.Y) + Abs(p1.Z))
-        If (Round(.Z, 6) > 0) Then
-            .Z = (1 / .Z)
-            .X = (p1.X * .Z)
-            .Y = (p1.Y * .Z)
-            .Z = (p1.Z * .Z)
-        End If
+Public Function MakePoint(ByVal X As Double, ByVal Y As Double, ByVal Z As Double) As Point
+    With MakePoint
+        .X = X
+        .Y = Y
+        .Z = Z
     End With
 End Function
+Private Function VectorNormalize(A As Point) As Point
+    Dim L As Double: L = DistanceEx(MakePoint(0, 0, 0), A)
+    If L = 0 Then
+        VectorNormalize = MakePoint(0, 0, 0)
+    Else
+        VectorNormalize = MakePoint(A.X / L, A.Y / L, A.Z / L)
+    End If
+End Function
+
 Public Function VectorDeduction(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorDeduction
         .X = (p1.X - p2.X)
@@ -392,6 +408,22 @@ Public Function VectorCrossProduct(ByRef p1 As Point, ByRef p2 As Point) As Poin
         .Y = ((p1.Z * p2.X) - (p1.X * p2.Z))
         .Z = ((p1.X * p2.Y) - (p1.Y * p2.X))
     End With
+End Function
+Public Function VectorDotProduct(A As Point, B As Point) As Double
+    VectorDotProduct = A.X * B.X + A.Y * B.Y + A.Z * B.Z
+End Function
+Public Function VectorAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
+    With VectorAddition
+        .X = (p1.X + p2.X)
+        .Y = (p1.Y + p2.Y)
+        .Z = (p1.Z + p2.Z)
+    End With
+End Function
+Private Function TriangleNormal(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
+    Dim v1 As Point, v2 As Point
+    v1 = VectorDeduction(p1, p2)
+    v2 = VectorDeduction(p1, p3)
+    TriangleNormal = VectorCrossProduct(v1, v2)
 End Function
 Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     With TriangleAxii
@@ -409,27 +441,31 @@ Public Function TriangleOffset(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As
         .Z = (Large(p1.Z, p2.Z, p3.Z) - Least(p1.Z, p2.Z, p3.Z))
     End With
 End Function
-Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+Public Function DistanceEx(ByRef p1 As Point, ByRef p2 As Point) As Double
+    DistanceEx = (((p1.X - p2.X) ^ 2) + ((p1.Y - p2.Y) ^ 2) + ((p1.Z - p2.Z) ^ 2))
+    If DistanceEx <> 0 Then DistanceEx = DistanceEx ^ (1 / 2)
+End Function
+Public Function Large(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
     If IsMissing(V3) Then
-        If (V1 >= V2) Then
-            Large = V1
+        If (v1 >= v2) Then
+            Large = v1
         Else
-            Large = V2
+            Large = v2
         End If
     ElseIf IsMissing(V4) Then
-        If ((V2 >= V3) And (V2 >= V1)) Then
-            Large = V2
-        ElseIf ((V1 >= V3) And (V1 >= V2)) Then
-            Large = V1
+        If ((v2 >= V3) And (v2 >= v1)) Then
+            Large = v2
+        ElseIf ((v1 >= V3) And (v1 >= v2)) Then
+            Large = v1
         Else
             Large = V3
         End If
     Else
-        If ((V2 >= V3) And (V2 >= V1) And (V2 >= V4)) Then
-            Large = V2
-        ElseIf ((V1 >= V3) And (V1 >= V2) And (V1 >= V4)) Then
-            Large = V1
-        ElseIf ((V3 >= V1) And (V3 >= V2) And (V3 >= V4)) Then
+        If ((v2 >= V3) And (v2 >= v1) And (v2 >= V4)) Then
+            Large = v2
+        ElseIf ((v1 >= V3) And (v1 >= v2) And (v1 >= V4)) Then
+            Large = v1
+        ElseIf ((V3 >= v1) And (V3 >= v2) And (V3 >= V4)) Then
             Large = V3
         Else
             Large = V4
@@ -437,27 +473,27 @@ Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V
     End If
 End Function
 
-Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+Public Function Least(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
     If IsMissing(V3) Then
-        If (V1 <= V2) Then
-            Least = V1
+        If (v1 <= v2) Then
+            Least = v1
         Else
-            Least = V2
+            Least = v2
         End If
     ElseIf IsMissing(V4) Then
-        If ((V2 <= V3) And (V2 <= V1)) Then
-            Least = V2
-        ElseIf ((V1 <= V3) And (V1 <= V2)) Then
-            Least = V1
+        If ((v2 <= V3) And (v2 <= v1)) Then
+            Least = v2
+        ElseIf ((v1 <= V3) And (v1 <= v2)) Then
+            Least = v1
         Else
             Least = V3
         End If
     Else
-        If ((V2 <= V3) And (V2 <= V1) And (V2 <= V4)) Then
-            Least = V2
-        ElseIf ((V1 <= V3) And (V1 <= V2) And (V1 <= V4)) Then
-            Least = V1
-        ElseIf ((V3 <= V1) And (V3 <= V2) And (V3 <= V4)) Then
+        If ((v2 <= V3) And (v2 <= v1) And (v2 <= V4)) Then
+            Least = v2
+        ElseIf ((v1 <= V3) And (v1 <= v2) And (v1 <= V4)) Then
+            Least = v1
+        ElseIf ((V3 <= v1) And (V3 <= v2) And (V3 <= V4)) Then
             Least = V3
         Else
             Least = V4
@@ -465,4 +501,176 @@ Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V
     End If
 End Function
 
+
+Public Function AreParallel(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As Point, t2p2 As Point, t2p3 As Point) As Boolean
+    Dim n1 As Point, n2 As Point, cross As Point
+    n1 = TriangleNormal(t1p1, t1p2, t1p3)
+    n2 = TriangleNormal(t2p1, t2p2, t2p3)
+    cross = VectorCrossProduct(n1, n2)
+    AreParallel = (Abs(cross.X) < 0.0001 And Abs(cross.Y) < 0.0001 And Abs(cross.Z) < 0.0001)
+End Function
+
+Public Function AreCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As Point, t2p2 As Point, t2p3 As Point) As Boolean
+    If Not AreParallel(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3) Then
+        AreCoplanar = False
+        Exit Function
+    End If
+    
+    Dim n1 As Point, d As Double
+    n1 = TriangleNormal(t1p1, t1p2, t1p3)
+    d = -(n1.X * t1p1.X + n1.Y * t1p1.Y + n1.Z * t1p1.Z)
+    
+    AreCoplanar = Abs(n1.X * t2p1.X + n1.Y * t2p1.Y + n1.Z * t2p1.Z + d) < 0.0001
+End Function
+
+Public Function AreParallelCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As Point, t2p2 As Point, t2p3 As Point) As Boolean
+    Dim n1 As Point, n2 As Point, cross As Point
+    Dim d As Double, p As Point
+    
+    ' Normals
+    n1 = TriangleNormal(t1)
+    n2 = TriangleNormal(t2)
+    
+    ' Cross product of normals
+    cross = VectorCrossProduct(n1, n2)
+    
+    ' Plane constant from triangle 1
+    d = -(n1.X * t1p1.X + n1.Y * t1p1.Y + n1.Z * t1p1.Z)
+    
+    ' Test point from triangle 2
+    p = t2p1
+    
+    ' Single algebraic condition: parallel AND coplanar
+    AreParallelCoplanar = _
+        (Abs(cross.X) < 0.0001 And Abs(cross.Y) < 0.0001 And Abs(cross.Z) < 0.0001) _
+        And (Abs(n1.X * p.X + n1.Y * p.Y + n1.Z * p.Z + d) < 0.0001)
+End Function
+
+
+
+' ===== Point-in-triangle test (barycentric) =====
+Private Function PointInTriangle(p As Point, V0 As Point, v1 As Point, v2 As Point) As Boolean
+    Dim u As Point, v As Point, w As Point
+    u = VectorDeduction(v1, V0)
+    v = VectorDeduction(v2, V0)
+    w = VectorDeduction(p, V0)
+
+    Dim uu As Double, vv As Double, uv As Double
+    Dim wu As Double, wv As Double, d As Double
+
+    uu = VectorDotProduct(u, u)
+    vv = VectorDotProduct(v, v)
+    uv = VectorDotProduct(u, v)
+    wu = VectorDotProduct(w, u)
+    wv = VectorDotProduct(w, v)
+
+    d = uv * uv - uu * vv
+    If Abs(d) < 0.000000001 Then
+        PointInTriangle = False
+        Exit Function
+    End If
+
+    Dim s As Double, t As Double
+    s = (uv * wv - vv * wu) / d
+    t = (uv * wu - uu * wv) / d
+
+    PointInTriangle = (s >= -0.000000001 And t >= -0.000000001 And (s + t) <= 1 + 0.000000001)
+End Function
+
+' ===== Edge-plane intersection =====
+Private Function EdgePlaneIntersect(p As Point, Q As Point, planePoint As Point, PlaneNormal As Point, X As Point) As Boolean
+    Dim dir As Point: dir = VectorDeduction(Q, p)
+    Dim denom As Double: denom = VectorDotProduct(PlaneNormal, dir)
+    If Abs(denom) < 0.000000001 Then
+        EdgePlaneIntersect = False
+        Exit Function
+    End If
+
+    Dim t As Double
+    t = VectorDotProduct(PlaneNormal, VectorDeduction(planePoint, p)) / denom
+    If t < -0.000000001 Or t > 1 + 0.000000001 Then
+        EdgePlaneIntersect = False
+        Exit Function
+    End If
+
+    X = VectorAddition(p, MakePoint(dir.X * t, dir.Y * t, dir.Z * t))
+    EdgePlaneIntersect = True
+End Function
+
+'##########################################################################
+'##########################################################################
+'##########################################################################
+
+
+' ===== Main intersection routine =====
+Public Function TriangleIntersection(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef t1p3 As Point, ByRef t2p1 As Point, ByRef t2p2 As Point, ByRef t2p3 As Point, ByRef OutP0 As Point, ByRef OutP1 As Point) As Double
+    Dim ap As Boolean
+    Dim ac As Boolean
+    ap = AreParallel(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
+    ac = AreCoplanar(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
+    Dim l1 As Double
+    Dim l2 As Double
+
+        
+    If ap And Not ac Then
+        TriangleIntersection = 0 'parallel triangles but not on the same plane and/or overlapping
+    ElseIf ac Then
+        'potentially parallel, but on the same plane at any rate, return the overlapping difference from a edge view of the mboth
+        'because colliding triangles below are in the positive specture of a integers max value, this will be in the negative spec
+        l1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
+        l2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
+            
+        TriangleIntersection = (Least(l1, l2) / Large(l1, l2)) * -32768
+    Else
+        'the triangles are certianly colliding, and must be caught
+        'before two edges have penetrated the other, or vice versa
+        'and that before this function is called so by time now is
+        
+        Dim nA As Point, nB As Point
+        nA = VectorCrossProduct(VectorDeduction(t1p2, t1p1), VectorDeduction(t1p3, t1p1))
+        nB = VectorCrossProduct(VectorDeduction(t2p2, t2p1), VectorDeduction(t2p3, t2p1))
+    
+        Dim pts(0 To 5) As Point
+        Dim C As Integer: C = 0
+        Dim X As Point
+    
+        ' Intersect edges of A with plane of B
+        If EdgePlaneIntersect(t1p1, t1p2, t2p1, nB, X) Then If PointInTriangle(X, t2p1, t2p2, t2p3) Then pts(C) = X: C = C + 1
+        If EdgePlaneIntersect(t1p2, t1p3, t2p1, nB, X) Then If PointInTriangle(X, t2p1, t2p2, t2p3) Then pts(C) = X: C = C + 1
+        If EdgePlaneIntersect(t1p3, t1p1, t2p1, nB, X) Then If PointInTriangle(X, t2p1, t2p2, t2p3) Then pts(C) = X: C = C + 1
+    
+        ' Intersect edges of B with plane of A
+        If EdgePlaneIntersect(t2p1, t2p2, t1p1, nA, X) Then If PointInTriangle(X, t1p1, t1p2, t1p3) Then pts(C) = X: C = C + 1
+        If EdgePlaneIntersect(t2p2, t2p3, t1p1, nA, X) Then If PointInTriangle(X, t1p1, t1p2, t1p3) Then pts(C) = X: C = C + 1
+        If EdgePlaneIntersect(t2p3, t2p1, t1p1, nA, X) Then If PointInTriangle(X, t1p1, t1p2, t1p3) Then pts(C) = X: C = C + 1
+    
+        If C < 2 Then
+            'this shouldn't happen by prequisit input args as being in collision determined by three 2D views using PointInPoly
+            TriangleIntersection = 0
+            Exit Function
+        End If
+    
+        ' Choose two extreme points along intersection line direction
+        Dim dir As Point: dir = VectorNormalize(VectorCrossProduct(nA, nB))
+        Dim minProj As Double, maxProj As Double
+        Dim minIdx As Integer, maxIdx As Integer
+        minProj = VectorDotProduct(dir, pts(0)): maxProj = minProj
+        minIdx = 0: maxIdx = 0
+    
+        Dim i As Integer
+        For i = 1 To C - 1
+            Dim p As Double: p = VectorDotProduct(dir, pts(i))
+            If p < minProj Then minProj = p: minIdx = i
+            If p > maxProj Then maxProj = p: maxIdx = i
+        Next i
+    
+        OutP0 = pts(minIdx)
+        OutP1 = pts(maxIdx)
+        
+        l1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
+        l2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
+           
+        TriangleIntersection = ((DistanceEx(OutP0, OutP1) / (l1 + l2)) * 32767)
+    End If
+End Function
 

@@ -14,7 +14,7 @@ RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
 VersionCompanyName="Neotext.org/SoSouiX.net"
-CondComp="Project1=-1:VBIDE=-1:Module1=-1"
+CondComp="Project1 = -1 : VBIDE = -1 : Module1 = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
