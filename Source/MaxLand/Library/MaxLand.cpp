@@ -8,6 +8,8 @@ struct Point {
     float Z;
 };
 
+const double epsilon = 1e-9;
+
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
 /* Accepts inputs n1 and n3 from PointInsidePointList() (two 2D views of one 3D set of data) and n2 from TriangleCrossSegment() (a bridge to skip a third 2D view) */
 
@@ -76,12 +78,13 @@ extern bool Collision (int visType, int lngFaceCount, unsigned short *sngFaceVis
 
 
 // ===== Helpers =====
+
 Point MakePoint(float x, float y, float z) {
     Point p; p.X = x; p.Y = y; p.Z = z; return p;
 }
 
 Point VectorAddition(Point a, Point b) {
-    Point r; r.X = a.X + b.X; r.Y = a.Y + b.Y; r.Z = a.Z + b.Z; return r;
+    Point r; r.X = b.X + a.X; r.Y = b.Y +  a.Y; r.Z = b.Z + a.Z; return r;
 }
 
 Point VectorDeduction(Point a, Point b) {
@@ -100,13 +103,14 @@ Point VectorCrossProduct(Point a, Point b) {
     return r;
 }
 
-float DistanceEx(Point p1, Point p2) {
+float Distance(Point p1, Point p2) {
     float dx = p1.X - p2.X;
     float dy = p1.Y - p2.Y;
     float dz = p1.Z - p2.Z;
     float sumSq = dx*dx + dy*dy + dz*dz;
     return (sumSq != 0.0) ? sqrtf(sumSq) : 0;
 }
+
 
 Point TriangleNormal(Point p1, Point p2, Point p3) {
     Point v1 = VectorDeduction(p2, p1);
@@ -125,32 +129,34 @@ Point VectorNormalize(Point p) {
 }
 
 float Least(float a, float b) { return (a < b) ? a : b; }
+float Least(float a, float b, float c) { return (a < b) ? (a < c) ? a : c : (b < c) ? b : c; }
 float Large(float a, float b) { return (a > b) ? a : b; }
+float Large(float a, float b, float c) { return (a > b) ? (a > c) ? a : c : (b > c) ? b : c; }
 
 // ===== Geometry checks =====
 int AreParallel(Point t1p1, Point t1p2, Point t1p3,
                 Point t2p1, Point t2p2, Point t2p3) {
-    const double EPS = 1e-9;
+    //const double EPS = 1e-9;
     Point n1 = TriangleNormal(t1p1, t1p2, t1p3);
     Point n2 = TriangleNormal(t2p1, t2p2, t2p3);
     Point cross = VectorCrossProduct(n1, n2);
-    return (fabsf(cross.X) < EPS &&
-            fabsf(cross.Y) < EPS &&
-            fabsf(cross.Z) < EPS);
+    return (fabsf(cross.X) < epsilon &&
+            fabsf(cross.Y) < epsilon &&
+            fabsf(cross.Z) < epsilon);
 }
 
 int AreCoplanar(Point t1p1, Point t1p2, Point t1p3,
                 Point t2p1, Point t2p2, Point t2p3) {
-    const double EPS = 1e-9;
+    
     if (!AreParallel(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)) return 0;
     Point n1 = TriangleNormal(t1p1, t1p2, t1p3);
     float d = -(n1.X*t1p1.X + n1.Y*t1p1.Y + n1.Z*t1p1.Z);
     float planeEq = n1.X*t2p1.X + n1.Y*t2p1.Y + n1.Z*t2p1.Z + d;
-    return (fabsf(planeEq) < EPS);
+    return (fabsf(planeEq) < epsilon);
 }
 
 int PointInTriangle(Point p, Point V0, Point v1, Point v2) {
-    const double EPS = 1e-9;
+    //const double EPS = 1e-9;
     Point u = VectorDeduction(v1, V0);
     Point v = VectorDeduction(v2, V0);
     Point w = VectorDeduction(p, V0);
@@ -162,22 +168,22 @@ int PointInTriangle(Point p, Point V0, Point v1, Point v2) {
     float wv = VectorDotProduct(w,v);
 
     float d = uv*uv - uu*vv;
-    if (fabs(d) < EPS) return 0;
+    if (fabs(d) < epsilon) return 0;
 
     float s = (uv*wv - vv*wu) / d;
     float t = (uv*wu - uu*wv) / d;
 
-    return (s >= -EPS && t >= -EPS && (s+t) <= 1.0+EPS);
+    return (s >= -epsilon && t >= -epsilon && (s+t) <= 1.0+epsilon);
 }
 
 int EdgePlaneIntersect(Point p, Point Q, Point planePoint, Point PlaneNormal, Point &X) {
-    const double EPS = 1e-9;
+    //const double EPS = 1e-9;
     Point dir = VectorDeduction(Q, p);
     float denom = VectorDotProduct(PlaneNormal, dir);
-    if (fabs(denom) < EPS) return 0;
+    if (fabs(denom) < epsilon) return 0;
 
     float t = VectorDotProduct(PlaneNormal, VectorDeduction(planePoint, p)) / denom;
-    if (t < -EPS || t > 1.0+EPS) return 0;
+    if (t < -epsilon || t > 1.0+epsilon) return 0;
 
     X = VectorAddition(p, MakePoint(dir.X*t, dir.Y*t, dir.Z*t));
     return 1;
@@ -217,9 +223,9 @@ extern float TriangleCrossSegmentEx(float Ax1, float Ay1, float Az1, float Ax2, 
         return 0.0;
     } else if (ac) {
         // Coplanar case
-        l1 = DistanceEx(t1p1,t1p2) + DistanceEx(t1p2,t1p3) + DistanceEx(t1p3,t1p1);
-        l2 = DistanceEx(t2p1,t2p2) + DistanceEx(t2p2,t2p3) + DistanceEx(t2p3,t2p1);
-        return Least(l1,l2);
+        l1 = Distance(t1p1,t1p2) + Distance(t1p2,t1p3) + Distance(t1p3,t1p1);
+        l2 = Distance(t2p1,t2p2) + Distance(t2p2,t2p3) + Distance(t2p3,t2p1);
+        return Least(l1,l2);//the smallest is the whole overlap all the wasy around
     } else {
         // Intersecting, non-coplanar triangles
         Point nA = VectorCrossProduct(VectorDeduction(t1p2,t1p1), VectorDeduction(t1p3,t1p1));
@@ -265,8 +271,10 @@ extern float TriangleCrossSegmentEx(float Ax1, float Ay1, float Az1, float Ax2, 
 			*Py1 = pts[maxIdx].Y;
 			*Pz1 = pts[maxIdx].Z;
 
-			return DistanceEx(MakePoint(*Px0,*Py0,*Pz0),MakePoint(*Px1,*Py1,*Pz1));
+			return Distance(MakePoint(*Px0,*Py0,*Pz0),MakePoint(*Px1,*Py1,*Pz1));
 		}
 	}
 
 }
+
+ 

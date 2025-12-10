@@ -133,6 +133,9 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
 ''sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
 ''sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
 
+Public Declare Function GetTickCount Lib "kernel32" () As Long
+
+
 Public Type Point
     X As Single
     Y As Single
@@ -142,38 +145,36 @@ Public Type Triangle
     P1 As Point
     P2 As Point
     p3 As Point
-    A As Point
+    a As Point
     n As Point
     L As Point
 End Type
+
+Public Const Epsilon = 0.000001
+
+Public Const Repeats = 3000
 
 Public Sub Main()
     Main1
     Main2
 End Sub
 
-Private Sub ConvertTriangle2(ByRef t1 As Triangle, ByRef c1 As Point, ByRef n1 As Point, ByRef l1 As Point)
-    c1.X = (t1.P1.X + t1.P2.X + t1.p3.X) / 3
-    c1.Y = (t1.P1.Y + t1.P2.Y + t1.p3.Y) / 3
-    c1.Z = (t1.P1.Z + t1.P2.Z + t1.p3.Z) / 3
-    n1 = VectorNormalize(TriangleNormal(t1.P1, t1.P2, t1.p3))
-    l1.X = Distance(t1.P1, t1.P2)
-    l1.Y = Distance(t1.P2, t1.p3)
-    l1.Z = Distance(t1.p3, t1.P1)
-End Sub
 Public Sub Main2()
-
+    
+    Dim i As Long
+    
+    
     Dim t1 As Triangle
     Dim t2 As Triangle
     Dim P1 As Point
     Dim P2 As Point
-    Dim Ret As Double
+    Dim Ret As Single
     Dim c1 As Point
     Dim c2 As Point
     Dim n1 As Point
     Dim n2 As Point
-    Dim l1 As Point
-    Dim l2 As Point
+    Dim L1 As Point
+    Dim L2 As Point
     
     t1.p3 = MakePoint(0, 8, 0)
     t1.P2 = MakePoint(15, 7, 6)
@@ -181,10 +182,32 @@ Public Sub Main2()
     t2.p3 = MakePoint(14, 0, -3)
     t2.P2 = MakePoint(6, 12, 1)
     t2.P1 = MakePoint(4, 12, 14)
-        
-    Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
-                        t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
-                        P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+    
+    Dim elapse As Single
+    
+    elapse = Timer
+    For i = 1 To Repeats
+        Ret = TriTriSegmentEx(t1.P1, t1.P2, t1.p3, t2.P1, t2.P2, t2.p3, P1, P2)
+    Next
+    Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
+
+    If Ret Then
+        Debug.Print "Intersection segment: " & Ret
+        Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
+        Debug.Print "I=(0,5,0)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+    Else
+        Debug.Print "No intersection."
+    End If
+
+
+    elapse = Timer
+    For i = 1 To Repeats
+        Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+                                t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
+                                P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+    Next
+    Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
+
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
         Debug.Print "H=(8,7,3)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
@@ -200,10 +223,16 @@ Public Sub Main2()
     t2.P1 = MakePoint(-10, 5, 0)
     t2.P2 = MakePoint(10, 5, 10)
     t2.p3 = MakePoint(10, 5, -10)
+
     
-    Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
-                        t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
-                        P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+
+    
+    elapse = Timer
+    For i = 1 To Repeats
+        Ret = TriTriSegmentEx(t1.P1, t1.P2, t1.p3, t2.P1, t2.P2, t2.p3, P1, P2)
+    Next
+    Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
+ 
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
         Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
@@ -211,8 +240,23 @@ Public Sub Main2()
     Else
         Debug.Print "No intersection."
     End If
-    
-    
+ 
+ 
+    elapse = Timer
+    For i = 1 To Repeats
+        Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+                                t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
+                                P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+    Next
+    Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
+
+    If Ret Then
+        Debug.Print "Intersection segment: " & Ret
+        Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
+        Debug.Print "I=(0,5,0)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+    Else
+        Debug.Print "No intersection."
+    End If
 
 End Sub
 
@@ -292,19 +336,19 @@ Public Sub Main1()
             nX1 = .n.X
             nY1 = .n.Y
             nZ1 = .n.Z
-            vX1 = .A.X
-            vY1 = .A.Y
-            vZ1 = .A.Z
+            vX1 = .a.X
+            vY1 = .a.Y
+            vZ1 = .a.Z
         End With
 
-        Debug.Print "PointBehindPoly()=" & PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
-            " PointTouchesTriangle()=" & PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
-            " PointBehindPoly3()=" & PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)
+'        Debug.Print "PointBehindPoly()=" & PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
+'            " PointTouchesTriangle()=" & PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
+'            " PointBehindPoly3()=" & PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)
         If (Not (CVar(PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
             CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Or _
             (Not (CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
             CVar(PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Then testCount = -Abs(testCount)
-        Debug.Print
+        'Debug.Print
 
         'the box is 8x8 centered on (0,0) so we'll use
         'twice it's size and generate random within -8,8
@@ -313,13 +357,13 @@ Public Sub Main1()
         PointZ = (RndNum(0, 16) - 8)
 
         
-        Debug.Print "PointInPoly()=" & PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) & "  " & _
-            "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5) & " " & _
-            "PointInPoly3()=" & PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5)
+'        Debug.Print "PointInPoly()=" & PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) & "  " & _
+'            "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5) & " " & _
+'            "PointInPoly3()=" & PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5)
         If (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = _
             PointInsidePointList(PointX, PointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5))) Or _
              (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5))) Then testCount = -Abs(testCount)
-        Debug.Print
+        'Debug.Print
         
         'arbitrary arguments, unsigned short return values from PointInPoly that results a percentage with in the
         'scope of a integer max value from zero, indicating the point in the point list it falls inside the poly on
@@ -332,16 +376,16 @@ Public Sub Main1()
         'and check each 2D axis for collision using test
 
         
-        Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3)
+        'Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3)
         If Not CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)) Then testCount = -Abs(testCount)
-        Debug.Print
+        'Debug.Print
 
 
 '        Debug.Print "Test(n1, n2, n3)=" & Test(n1, n2, n3) & " Test2(n1, n2, n3)=" & Test2(n1, n2, n3) & " Test3(n1, n2, n3)=" & Test3(n1, n2, n3)
 '        If (Not (CVar(Test(n1, n2, n3)) = CVar(Test2(n1, n2, n3)))) Or (Not (CVar(Test2(n1, n2, n3)) = CVar(Test3(n1, n2, n3)))) Then Stop
 '        Debug.Print
 
-    Loop Until testCount > 1000 Or testCount < 0
+    Loop Until testCount > Repeats Or testCount < 0
     
     If testCount < 0 Then
         Debug.Print "Opps!  Discrepencies found!"
@@ -375,7 +419,7 @@ Public Function RandomTriangle() As Triangle
         .P2 = RandomPoint
         .p3 = RandomPoint
         
-        .A = TriangleAxii(.P1, .P2, .p3)
+        .a = TriangleAxii(.P1, .P2, .p3)
         
         .L.X = Distance(.P1, .P2)
         .L.Y = Distance(.P2, .p3)
@@ -401,18 +445,18 @@ Public Function PointBehindPoly3(ByVal PointX As Single, ByVal PointY As Single,
     PointBehindPoly3 = ((PointZ * Length3 + Length2 * PointY + Length1 * PointX) - (Length3 * NormalZ + Length1 * NormalX + Length2 * NormalY) <= 0)
 End Function
 
-Public Function PointInPoly3(ByVal pX As Single, ByVal pY As Single, polyx() As Single, polyy() As Single, ByVal polyn As Long) As Long
+Public Function PointInPoly3(ByVal Px As Single, ByVal Py As Single, polyx() As Single, polyy() As Single, ByVal polyn As Long) As Long
 
     If (polyn > 2) Then
         Dim ref As Single
         Dim Ret As Single
         Dim result As Long
 
-        ref = ((pX - polyx(0)) * (polyy(1) - polyy(0)) - (pY - polyy(0)) * (polyx(1) - polyx(0)))
+        ref = ((Px - polyx(0)) * (polyy(1) - polyy(0)) - (Py - polyy(0)) * (polyx(1) - polyx(0)))
         Ret = ref
         Dim i As Long
         For i = 1 To polyn
-            ref = ((pX - polyx(i)) * (polyy(i) - polyy(i - 1)) - (pY - polyy(i)) * (polyx(i) - polyx(i - 1)))
+            ref = ((Px - polyx(i)) * (polyy(i) - polyy(i - 1)) - (Py - polyy(i)) * (polyx(i) - polyx(i - 1)))
             If ((Ret >= 0) And (ref < 0) And (result = 0)) Then
                 result = i
             End If
@@ -440,19 +484,19 @@ Public Function PlaneNormal(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Po
     'returns a vector perpendicular to a plane V, at 0,0,0, with out the local coordinates information
     PlaneNormal = VectorCrossProduct(VectorDeduction(V0, v1), VectorDeduction(v1, v2))
 End Function
-Public Function MakePoint(ByVal X As Double, ByVal Y As Double, ByVal Z As Double) As Point
+Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
     With MakePoint
         .X = X
         .Y = Y
         .Z = Z
     End With
 End Function
-Private Function VectorNormalize(A As Point) As Point
-    Dim L As Double: L = DistanceEx(MakePoint(0, 0, 0), A)
+Private Function VectorNormalize(a As Point) As Point
+    Dim L As Single: L = DistanceEx(MakePoint(0, 0, 0), a)
     If L = 0 Then
         VectorNormalize = MakePoint(0, 0, 0)
     Else
-        VectorNormalize = MakePoint(A.X / L, A.Y / L, A.Z / L)
+        VectorNormalize = MakePoint(a.X / L, a.Y / L, a.Z / L)
     End If
 End Function
 
@@ -471,8 +515,8 @@ Public Function VectorCrossProduct(ByRef P1 As Point, ByRef P2 As Point) As Poin
         .Z = ((P1.X * P2.Y) - (P1.Y * P2.X))
     End With
 End Function
-Public Function VectorDotProduct(A As Point, B As Point) As Double
-    VectorDotProduct = A.X * B.X + A.Y * B.Y + A.Z * B.Z
+Public Function VectorDotProduct(a As Point, B As Point) As Single
+    VectorDotProduct = a.X * B.X + a.Y * B.Y + a.Z * B.Z
 End Function
 Public Function VectorAddition(ByRef P1 As Point, ByRef P2 As Point) As Point
     With VectorAddition
@@ -503,7 +547,7 @@ Public Function TriangleOffset(ByRef P1 As Point, ByRef P2 As Point, ByRef p3 As
         .Z = (Large(P1.Z, P2.Z, p3.Z) - Least(P1.Z, P2.Z, p3.Z))
     End With
 End Function
-Public Function DistanceEx(ByRef P1 As Point, ByRef P2 As Point) As Double
+Public Function DistanceEx(ByRef P1 As Point, ByRef P2 As Point) As Single
     DistanceEx = (((P1.X - P2.X) ^ 2) + ((P1.Y - P2.Y) ^ 2) + ((P1.Z - P2.Z) ^ 2))
     If DistanceEx <> 0 Then DistanceEx = DistanceEx ^ (1 / 2)
 End Function
@@ -569,7 +613,7 @@ Public Function AreParallel(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As
     n1 = TriangleNormal(t1p1, t1p2, t1p3)
     n2 = TriangleNormal(t2p1, t2p2, t2p3)
     cross = VectorCrossProduct(n1, n2)
-    AreParallel = (Abs(cross.X) < 0.0001 And Abs(cross.Y) < 0.0001 And Abs(cross.Z) < 0.0001)
+    AreParallel = (Abs(cross.X) < Epsilon And Abs(cross.Y) < Epsilon And Abs(cross.Z) < Epsilon)
 End Function
 
 Public Function AreCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As Point, t2p2 As Point, t2p3 As Point) As Boolean
@@ -578,16 +622,16 @@ Public Function AreCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As
         Exit Function
     End If
     
-    Dim n1 As Point, d As Double
+    Dim n1 As Point, d As Single
     n1 = TriangleNormal(t1p1, t1p2, t1p3)
     d = -(n1.X * t1p1.X + n1.Y * t1p1.Y + n1.Z * t1p1.Z)
     
-    AreCoplanar = Abs(n1.X * t2p1.X + n1.Y * t2p1.Y + n1.Z * t2p1.Z + d) < 0.0001
+    AreCoplanar = Abs(n1.X * t2p1.X + n1.Y * t2p1.Y + n1.Z * t2p1.Z + d) < Epsilon
 End Function
 
 Public Function AreParallelCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point, t2p1 As Point, t2p2 As Point, t2p3 As Point) As Boolean
     Dim n1 As Point, n2 As Point, cross As Point
-    Dim d As Double, p As Point
+    Dim d As Single, P As Point
     
     ' Normals
     n1 = TriangleNormal(t1)
@@ -600,62 +644,62 @@ Public Function AreParallelCoplanar(t1p1 As Point, t1p2 As Point, t1p3 As Point,
     d = -(n1.X * t1p1.X + n1.Y * t1p1.Y + n1.Z * t1p1.Z)
     
     ' Test point from triangle 2
-    p = t2p1
+    P = t2p1
     
     ' Single algebraic condition: parallel AND coplanar
     AreParallelCoplanar = _
-        (Abs(cross.X) < 0.0001 And Abs(cross.Y) < 0.0001 And Abs(cross.Z) < 0.0001) _
-        And (Abs(n1.X * p.X + n1.Y * p.Y + n1.Z * p.Z + d) < 0.0001)
+        (Abs(cross.X) < Epsilon And Abs(cross.Y) < Epsilon And Abs(cross.Z) < Epsilon) _
+        And (Abs(n1.X * P.X + n1.Y * P.Y + n1.Z * P.Z + d) < Epsilon)
 End Function
 
 
 
 ' ===== Point-in-triangle test (barycentric) =====
-Private Function PointInTriangle(p As Point, V0 As Point, v1 As Point, v2 As Point) As Boolean
-    Dim u As Point, v As Point, w As Point
+Private Function PointInTriangle(P As Point, V0 As Point, v1 As Point, v2 As Point) As Boolean
+    Dim u As Point, V As Point, w As Point
     u = VectorDeduction(v1, V0)
-    v = VectorDeduction(v2, V0)
-    w = VectorDeduction(p, V0)
+    V = VectorDeduction(v2, V0)
+    w = VectorDeduction(P, V0)
 
-    Dim uu As Double, vv As Double, uv As Double
-    Dim wu As Double, wv As Double, d As Double
+    Dim uu As Single, vv As Single, uv As Single
+    Dim wu As Single, wv As Single, d As Single
 
     uu = VectorDotProduct(u, u)
-    vv = VectorDotProduct(v, v)
-    uv = VectorDotProduct(u, v)
+    vv = VectorDotProduct(V, V)
+    uv = VectorDotProduct(u, V)
     wu = VectorDotProduct(w, u)
-    wv = VectorDotProduct(w, v)
+    wv = VectorDotProduct(w, V)
 
     d = uv * uv - uu * vv
-    If Abs(d) < 0.000000001 Then
+    If Abs(d) < Epsilon Then
         PointInTriangle = False
         Exit Function
     End If
 
-    Dim s As Double, t As Double
+    Dim s As Single, t As Single
     s = (uv * wv - vv * wu) / d
     t = (uv * wu - uu * wv) / d
 
-    PointInTriangle = (s >= -0.000000001 And t >= -0.000000001 And (s + t) <= 1 + 0.000000001)
+    PointInTriangle = (s >= -Epsilon And t >= -Epsilon And (s + t) <= 1 + Epsilon)
 End Function
 
 ' ===== Edge-plane intersection =====
-Private Function EdgePlaneIntersect(p As Point, Q As Point, planePoint As Point, PlaneNormal As Point, X As Point) As Boolean
-    Dim dir As Point: dir = VectorDeduction(Q, p)
-    Dim denom As Double: denom = VectorDotProduct(PlaneNormal, dir)
-    If Abs(denom) < 0.000000001 Then
+Private Function EdgePlaneIntersect(P As Point, Q As Point, planePoint As Point, PlaneNormal As Point, X As Point) As Boolean
+    Dim dir As Point: dir = VectorDeduction(Q, P)
+    Dim denom As Single: denom = VectorDotProduct(PlaneNormal, dir)
+    If Abs(denom) < Epsilon Then
         EdgePlaneIntersect = False
         Exit Function
     End If
 
-    Dim t As Double
-    t = VectorDotProduct(PlaneNormal, VectorDeduction(planePoint, p)) / denom
-    If t < -0.000000001 Or t > 1 + 0.000000001 Then
+    Dim t As Single
+    t = VectorDotProduct(PlaneNormal, VectorDeduction(planePoint, P)) / denom
+    If t < -Epsilon Or t > 1 + Epsilon Then
         EdgePlaneIntersect = False
         Exit Function
     End If
 
-    X = VectorAddition(p, MakePoint(dir.X * t, dir.Y * t, dir.Z * t))
+    X = VectorAddition(P, MakePoint(dir.X * t, dir.Y * t, dir.Z * t))
     EdgePlaneIntersect = True
 End Function
 
@@ -664,25 +708,24 @@ End Function
 '##########################################################################
 
 
-' ===== Main intersection routine =====
-Public Function TriTriSegmentEx(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef t1p3 As Point, ByRef t2p1 As Point, ByRef t2p2 As Point, ByRef t2p3 As Point, ByRef OutP0 As Point, ByRef OutP1 As Point) As Double
+
+Public Function TriTriSegmentEx(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef t1p3 As Point, ByRef t2p1 As Point, ByRef t2p2 As Point, ByRef t2p3 As Point, ByRef OutP0 As Point, ByRef OutP1 As Point) As Single
     Dim ap As Boolean
     Dim ac As Boolean
     ap = AreParallel(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
     ac = AreCoplanar(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
-    Dim l1 As Double
-    Dim l2 As Double
+    Dim L1 As Single
+    Dim L2 As Single
 
-        
     If ap And Not ac Then
         TriTriSegmentEx = 0 'parallel triangles but not on the same plane and/or overlapping
     ElseIf ac Then
         'potentially parallel, but on the same plane at any rate, return the overlapping difference from a edge view of the mboth
         'because colliding triangles below are in the positive specture of a integers max value, this will be in the negative spec
-        l1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
-        l2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
-            
-        TriTriSegmentEx = (Least(l1, l2) / Large(l1, l2)) * -32768
+        L1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
+        L2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
+
+        TriTriSegmentEx = (Least(L1, L2) / Large(L1, L2)) * -32768
     Else
         'the triangles are certianly colliding, and must be caught
         'before two edges have penetrated the other, or vice versa
@@ -714,25 +757,23 @@ Public Function TriTriSegmentEx(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef 
     
         ' Choose two extreme points along intersection line direction
         Dim dir As Point: dir = VectorNormalize(VectorCrossProduct(nA, nB))
-        Dim minProj As Double, maxProj As Double
+        Dim minProj As Single, maxProj As Single
         Dim minIdx As Integer, maxIdx As Integer
         minProj = VectorDotProduct(dir, pts(0)): maxProj = minProj
         minIdx = 0: maxIdx = 0
     
         Dim i As Integer
         For i = 1 To C - 1
-            Dim p As Double: p = VectorDotProduct(dir, pts(i))
-            If p < minProj Then minProj = p: minIdx = i
-            If p > maxProj Then maxProj = p: maxIdx = i
+            Dim P As Single: P = VectorDotProduct(dir, pts(i))
+            If P < minProj Then minProj = P: minIdx = i
+            If P > maxProj Then maxProj = P: maxIdx = i
         Next i
     
         OutP0 = pts(minIdx)
         OutP1 = pts(maxIdx)
         
-        l1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
-        l2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
-           
-        TriTriSegmentEx = ((DistanceEx(OutP0, OutP1) / (l1 + l2)) * 32767)
+        TriTriSegmentEx = DistanceEx(OutP0, OutP1)
+
     End If
 End Function
 
