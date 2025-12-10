@@ -1,10 +1,9 @@
 EXPORTS
 	Test
 	Culling
-	PointBehindPoly
-	PointInPoly
-	EncodeTriangle
-	TriTriSegmentEncoded
-	TriTriSegmentEncodedLen
-	TriTriSegmentFast
-	TriTriSegmentFastLen
+	PointTouchesTriangle
+	PointInsidePointList
+	TriangleCrossSegment
+	TriangleCrossSegmentEx
+
+
