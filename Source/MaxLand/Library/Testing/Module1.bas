@@ -109,29 +109,44 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
 '                                    ByVal lngFaceNum As Long, _
 '                                    ByRef lngCollidedBrush As Long, _
 '                                    ByRef lngCollidedFace As Long) As Boolean
-'
-'
-''The following variables are needed for Forystek() and Collision() culling and collision
-''checking it is quite incompatable to prorietary needs (like doubling the data to use
-''the functions vs however one has their data stored already could use)
-'Public lngTotalTriangles As Long
-'Public sngTriangleFaceData() As Single
-''sngTriangleFaceData dimension (,n) where n=# is triangle/face index
-''sngTriangleFaceData dimension (n,) where n=0 is x of the face normal
-''sngTriangleFaceData dimension (n,) where n=1 is y of the face normal
-''sngTriangleFaceData dimension (n,) where n=2 is z of the face normal
-''sngTriangleFaceData dimension (n,) where n=3 is custom vistype flag
-''sngTriangleFaceData dimension (n,) where n=4 is the object index
-''sngTriangleFaceData dimension (n,) where n=4 is the face index
-'
-'Public sngVertexXAxisData() As Single
-'Public sngVertexYAxisData() As Single
-'Public sngVertexZAxisData() As Single
-''sngVertexXAxisData dimension (,n) where n=# is triangle/face index
-''sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
-''sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
-''sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
-''sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
+
+Public Declare Function CollisionChecking Lib "..\Debug\maxland.dll" _
+                                   (ByVal visType As Long, _
+                                    ByVal lngFaceCount As Long, _
+                                    sngFaceVis() As Single, _
+                                    sngVertexX() As Single, _
+                                    sngVertexY() As Single, _
+                                    sngVertexZ() As Single, _
+                                    ByVal lngFaceNum As Long, _
+                                    ByRef lngCollidedBrush As Long, _
+                                    ByRef lngCollidedFace As Long) As Boolean
+
+
+
+
+'The following variables are needed for Forystek() and Collision() culling and collision
+'checking it is quite incompatable to prorietary needs (like doubling the data to use
+'the functions vs however one has their data stored already could use)
+Public lngTotalObjects As Long
+Public lngTotalFaces As Long
+Public lngTotalTriangles As Long
+Public sngTriangleSetData() As Single
+'sngTriangleFaceData dimension (,n) where n=# is triangle index
+'sngTriangleFaceData dimension (n,) where n=0 is x of the face normal
+'sngTriangleFaceData dimension (n,) where n=1 is y of the face normal
+'sngTriangleFaceData dimension (n,) where n=2 is z of the face normal
+'sngTriangleFaceData dimension (n,) where n=3 is custom vistype flag
+'sngTriangleFaceData dimension (n,) where n=4 is the object index
+'sngTriangleFaceData dimension (n,) where n=5 is the face index
+
+Public sngVertexXAxisData() As Single
+Public sngVertexYAxisData() As Single
+Public sngVertexZAxisData() As Single
+'sngVertexXAxisData dimension (,n) where n=# is triangle index
+'sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
+'sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
+'sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
+'sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
 
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
@@ -142,8 +157,8 @@ Public Type Point
     Z As Single
 End Type
 Public Type Triangle
-    P1 As Point
-    P2 As Point
+    p1 As Point
+    p2 As Point
     p3 As Point
     a As Point
     n As Point
@@ -155,8 +170,91 @@ Public Const Epsilon = 0.000001
 Public Const Repeats = 3000
 
 Public Sub Main()
+    MakeTestData
+    
     Main1
     Main2
+End Sub
+
+Public Sub AddTriangleToCollision(ByVal ObjectIndex As Long, ByVal FaceIndex As Long, ByRef pN As Point, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, Optional ByVal Flag As Long = 0)
+
+    ReDim Preserve sngTriangleSetData(0 To 5, 0 To lngTotalTriangles) As Single
+    ReDim Preserve sngVertexXAxisData(0 To 2, 0 To lngTotalTriangles) As Single
+    ReDim Preserve sngVertexYAxisData(0 To 2, 0 To lngTotalTriangles) As Single
+    ReDim Preserve sngVertexZAxisData(0 To 2, 0 To lngTotalTriangles) As Single
+    
+    sngVertexXAxisData(0, lngTotalTriangles) = p1.X
+    sngVertexYAxisData(0, lngTotalTriangles) = p1.Y
+    sngVertexZAxisData(0, lngTotalTriangles) = p1.Z
+
+    sngVertexXAxisData(1, lngTotalTriangles) = p2.X
+    sngVertexYAxisData(1, lngTotalTriangles) = p2.Y
+    sngVertexZAxisData(1, lngTotalTriangles) = p2.Z
+
+    sngVertexXAxisData(2, lngTotalTriangles) = p3.X
+    sngVertexYAxisData(2, lngTotalTriangles) = p3.Y
+    sngVertexZAxisData(2, lngTotalTriangles) = p3.Z
+
+    sngVertexXAxisData(0, lngTotalTriangles) = pN.X
+    sngVertexYAxisData(1, lngTotalTriangles) = pN.Y
+    sngVertexZAxisData(2, lngTotalTriangles) = pN.Z
+    
+    sngTriangleSetData(3, lngTotalTriangles) = Flag
+    sngTriangleSetData(4, lngTotalTriangles) = ObjectIndex
+    sngTriangleSetData(5, lngTotalTriangles) = FaceIndex
+
+    lngTotalTriangles = lngTotalTriangles + 1
+
+End Sub
+Private Sub AddSquareToCollision(ByVal ObjectIndex As Long, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef p4 As Point, Optional ByVal Flag As Long = 0)
+
+    AddTriangleToCollision ObjectIndex, lngTotalFaces, TriangleNormal(p1, p2, p3), p1, p2, p3, Flag
+                                            
+    AddTriangleToCollision ObjectIndex, lngTotalFaces, TriangleNormal(p2, p3, p4), p2, p3, p4, Flag
+    
+    lngTotalFaces = lngTotalFaces + 1
+End Sub
+Private Sub AddCubeToCollision(ByVal Location As Point, ByVal WallSize As Single, Optional ByVal Flag As Long = 0)
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), Flag
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), Flag
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), Flag
+    AddSquareToCollision lngTotalObjects, _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.X + (WallSize / 2), Location.Z + (WallSize / 2)), _
+                        MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
+                        MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
+                            
+    lngTotalObjects = lngTotalObjects + 1
+End Sub
+Public Sub MakeTestData()
+    
+    AddCubeToCollision MakePoint(0, 0, 0), 20, 0
+    
+    AddCubeToCollision MakePoint(, 0, 0), 20, 0
+
+
 End Sub
 
 Public Sub Main2()
@@ -166,8 +264,8 @@ Public Sub Main2()
     
     Dim t1 As Triangle
     Dim t2 As Triangle
-    Dim P1 As Point
-    Dim P2 As Point
+    Dim p1 As Point
+    Dim p2 As Point
     Dim Ret As Single
     Dim c1 As Point
     Dim c2 As Point
@@ -177,24 +275,24 @@ Public Sub Main2()
     Dim L2 As Point
     
     t1.p3 = MakePoint(0, 8, 0)
-    t1.P2 = MakePoint(15, 7, 6)
-    t1.P1 = MakePoint(4, 0, 14)
+    t1.p2 = MakePoint(15, 7, 6)
+    t1.p1 = MakePoint(4, 0, 14)
     t2.p3 = MakePoint(14, 0, -3)
-    t2.P2 = MakePoint(6, 12, 1)
-    t2.P1 = MakePoint(4, 12, 14)
+    t2.p2 = MakePoint(6, 12, 1)
+    t2.p1 = MakePoint(4, 12, 14)
     
     Dim elapse As Single
     
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriTriSegmentEx(t1.P1, t1.P2, t1.p3, t2.P1, t2.P2, t2.p3, P1, P2)
+        Ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
     Next
     Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
 
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
-        Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
-        Debug.Print "I=(0,5,0)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+        Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
+        Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
         Debug.Print "No intersection."
     End If
@@ -202,26 +300,26 @@ Public Sub Main2()
 
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
-                                t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
-                                P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+        Ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+                                t2.p1.X, t2.p1.Y, t2.p1.Z, t2.p2.X, t2.p2.Y, t2.p2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
+                                p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z)
     Next
     Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
 
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
-        Debug.Print "H=(8,7,3)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
-        Debug.Print "I=(9,6,6)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+        Debug.Print "H=(8,7,3)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
+        Debug.Print "I=(9,6,6)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
         Debug.Print "No intersection."
     End If
     
 
-    t1.P1 = MakePoint(0, 0, 0)
-    t1.P2 = MakePoint(20, 0, 0)
+    t1.p1 = MakePoint(0, 0, 0)
+    t1.p2 = MakePoint(20, 0, 0)
     t1.p3 = MakePoint(0, 20, 0)
-    t2.P1 = MakePoint(-10, 5, 0)
-    t2.P2 = MakePoint(10, 5, 10)
+    t2.p1 = MakePoint(-10, 5, 0)
+    t2.p2 = MakePoint(10, 5, 10)
     t2.p3 = MakePoint(10, 5, -10)
 
     
@@ -229,14 +327,14 @@ Public Sub Main2()
     
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriTriSegmentEx(t1.P1, t1.P2, t1.p3, t2.P1, t2.P2, t2.p3, P1, P2)
+        Ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
     Next
     Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
  
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
-        Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
-        Debug.Print "I=(0,5,0)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+        Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
+        Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
         Debug.Print "No intersection."
     End If
@@ -244,16 +342,16 @@ Public Sub Main2()
  
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriangleCrossSegmentEx(t1.P1.X, t1.P1.Y, t1.P1.Z, t1.P2.X, t1.P2.Y, t1.P2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
-                                t2.P1.X, t2.P1.Y, t2.P1.Z, t2.P2.X, t2.P2.Y, t2.P2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
-                                P1.X, P1.Y, P1.Z, P2.X, P2.Y, P2.Z)
+        Ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+                                t2.p1.X, t2.p1.Y, t2.p1.Z, t2.p2.X, t2.p2.Y, t2.p2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
+                                p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z)
     Next
     Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
 
     If Ret Then
         Debug.Print "Intersection segment: " & Ret
-        Debug.Print "H=(10,5,0)=(" & Round(P1.X, 0) & "," & Round(P1.Y, 0) & "," & Round(P1.Z, 0) & ")"
-        Debug.Print "I=(0,5,0)=(" & Round(P2.X, 0) & "," & Round(P2.Y, 0) & "," & Round(P2.Z, 0) & ")"
+        Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
+        Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
         Debug.Print "No intersection."
     End If
@@ -415,17 +513,17 @@ Public Function RandomTriangle() As Triangle
 
     With RandomTriangle
 
-        .P1 = RandomPoint
-        .P2 = RandomPoint
+        .p1 = RandomPoint
+        .p2 = RandomPoint
         .p3 = RandomPoint
         
-        .a = TriangleAxii(.P1, .P2, .p3)
+        .a = TriangleAxii(.p1, .p2, .p3)
         
-        .L.X = Distance(.P1, .P2)
-        .L.Y = Distance(.P2, .p3)
-        .L.Z = Distance(.p3, .P1)
+        .L.X = Distance(.p1, .p2)
+        .L.Y = Distance(.p2, .p3)
+        .L.Z = Distance(.p3, .p1)
 
-        .n = PlaneNormal(.P1, .P2, .p3)
+        .n = PlaneNormal(.p1, .p2, .p3)
         
     End With
 
@@ -475,14 +573,14 @@ End Function
 
 
 
-Public Function Distance(ByRef P1 As Point, ByRef P2 As Point) As Single
-    Distance = (((P1.X - P2.X) ^ 2) + ((P1.Y - P2.Y) ^ 2) + ((P1.Z - P2.Z) ^ 2))
+Public Function Distance(ByRef p1 As Point, ByRef p2 As Point) As Single
+    Distance = (((p1.X - p2.X) ^ 2) + ((p1.Y - p2.Y) ^ 2) + ((p1.Z - p2.Z) ^ 2))
     If Distance <> 0 Then Distance = Distance ^ (1 / 2)
 End Function
 
-Public Function PlaneNormal(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
+Public Function PlaneNormal(ByRef v0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
     'returns a vector perpendicular to a plane V, at 0,0,0, with out the local coordinates information
-    PlaneNormal = VectorCrossProduct(VectorDeduction(V0, v1), VectorDeduction(v1, v2))
+    PlaneNormal = VectorCrossProduct(VectorDeduction(v0, v1), VectorDeduction(v1, v2))
 End Function
 Public Function MakePoint(ByVal X As Single, ByVal Y As Single, ByVal Z As Single) As Point
     With MakePoint
@@ -500,55 +598,55 @@ Private Function VectorNormalize(a As Point) As Point
     End If
 End Function
 
-Public Function VectorDeduction(ByRef P1 As Point, ByRef P2 As Point) As Point
+Public Function VectorDeduction(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorDeduction
-        .X = (P1.X - P2.X)
-        .Y = (P1.Y - P2.Y)
-        .Z = (P1.Z - P2.Z)
+        .X = (p1.X - p2.X)
+        .Y = (p1.Y - p2.Y)
+        .Z = (p1.Z - p2.Z)
     End With
 End Function
 
-Public Function VectorCrossProduct(ByRef P1 As Point, ByRef P2 As Point) As Point
+Public Function VectorCrossProduct(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorCrossProduct
-        .X = ((P1.Y * P2.Z) - (P1.Z * P2.Y))
-        .Y = ((P1.Z * P2.X) - (P1.X * P2.Z))
-        .Z = ((P1.X * P2.Y) - (P1.Y * P2.X))
+        .X = ((p1.Y * p2.Z) - (p1.Z * p2.Y))
+        .Y = ((p1.Z * p2.X) - (p1.X * p2.Z))
+        .Z = ((p1.X * p2.Y) - (p1.Y * p2.X))
     End With
 End Function
 Public Function VectorDotProduct(a As Point, B As Point) As Single
     VectorDotProduct = a.X * B.X + a.Y * B.Y + a.Z * B.Z
 End Function
-Public Function VectorAddition(ByRef P1 As Point, ByRef P2 As Point) As Point
+Public Function VectorAddition(ByRef p1 As Point, ByRef p2 As Point) As Point
     With VectorAddition
-        .X = (P1.X + P2.X)
-        .Y = (P1.Y + P2.Y)
-        .Z = (P1.Z + P2.Z)
+        .X = (p1.X + p2.X)
+        .Y = (p1.Y + p2.Y)
+        .Z = (p1.Z + p2.Z)
     End With
 End Function
-Private Function TriangleNormal(ByRef P1 As Point, ByRef P2 As Point, ByRef p3 As Point) As Point
+Private Function TriangleNormal(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     Dim v1 As Point, v2 As Point
-    v1 = VectorDeduction(P1, P2)
-    v2 = VectorDeduction(P1, p3)
+    v1 = VectorDeduction(p1, p2)
+    v2 = VectorDeduction(p1, p3)
     TriangleNormal = VectorCrossProduct(v1, v2)
 End Function
-Public Function TriangleAxii(ByRef P1 As Point, ByRef P2 As Point, ByRef p3 As Point) As Point
+Public Function TriangleAxii(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     With TriangleAxii
         Dim o As Point
-        o = TriangleOffset(P1, P2, p3)
-        .X = (Least(P1.X, P2.X, p3.X) + (o.X / 2))
-        .Y = (Least(P1.Y, P2.Y, p3.Y) + (o.Y / 2))
-        .Z = (Least(P1.Z, P2.Z, p3.Z) + (o.Z / 2))
+        o = TriangleOffset(p1, p2, p3)
+        .X = (Least(p1.X, p2.X, p3.X) + (o.X / 2))
+        .Y = (Least(p1.Y, p2.Y, p3.Y) + (o.Y / 2))
+        .Z = (Least(p1.Z, p2.Z, p3.Z) + (o.Z / 2))
     End With
 End Function
-Public Function TriangleOffset(ByRef P1 As Point, ByRef P2 As Point, ByRef p3 As Point) As Point
+Public Function TriangleOffset(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point) As Point
     With TriangleOffset
-        .X = (Large(P1.X, P2.X, p3.X) - Least(P1.X, P2.X, p3.X))
-        .Y = (Large(P1.Y, P2.Y, p3.Y) - Least(P1.Y, P2.Y, p3.Y))
-        .Z = (Large(P1.Z, P2.Z, p3.Z) - Least(P1.Z, P2.Z, p3.Z))
+        .X = (Large(p1.X, p2.X, p3.X) - Least(p1.X, p2.X, p3.X))
+        .Y = (Large(p1.Y, p2.Y, p3.Y) - Least(p1.Y, p2.Y, p3.Y))
+        .Z = (Large(p1.Z, p2.Z, p3.Z) - Least(p1.Z, p2.Z, p3.Z))
     End With
 End Function
-Public Function DistanceEx(ByRef P1 As Point, ByRef P2 As Point) As Single
-    DistanceEx = (((P1.X - P2.X) ^ 2) + ((P1.Y - P2.Y) ^ 2) + ((P1.Z - P2.Z) ^ 2))
+Public Function DistanceEx(ByRef p1 As Point, ByRef p2 As Point) As Single
+    DistanceEx = (((p1.X - p2.X) ^ 2) + ((p1.Y - p2.Y) ^ 2) + ((p1.Z - p2.Z) ^ 2))
     If DistanceEx <> 0 Then DistanceEx = DistanceEx ^ (1 / 2)
 End Function
 Public Function Large(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
@@ -655,11 +753,11 @@ End Function
 
 
 ' ===== Point-in-triangle test (barycentric) =====
-Private Function PointInTriangle(P As Point, V0 As Point, v1 As Point, v2 As Point) As Boolean
+Private Function PointInTriangle(P As Point, v0 As Point, v1 As Point, v2 As Point) As Boolean
     Dim u As Point, V As Point, w As Point
-    u = VectorDeduction(v1, V0)
-    V = VectorDeduction(v2, V0)
-    w = VectorDeduction(P, V0)
+    u = VectorDeduction(v1, v0)
+    V = VectorDeduction(v2, v0)
+    w = VectorDeduction(P, v0)
 
     Dim uu As Single, vv As Single, uv As Single
     Dim wu As Single, wv As Single, d As Single

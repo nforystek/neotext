@@ -1,6 +1,13 @@
 EXPORTS
-	Test
-	Culling
+	CollisionClearFlag
+	CollisionObjectFlag
+	CollisionTriangleFlag
+	CollisionResetFlag
+	CollisionObjectCulling
+	CollisionTriangleCulling
+	CollisionFlagCulling
+	CollisionCulling
+	CollisionChecking
 	PointTouchesTriangle
 	PointInsidePointList
 	TriangleCrossSegment

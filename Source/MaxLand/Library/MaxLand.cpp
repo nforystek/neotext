@@ -14,23 +14,55 @@ extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
 /* Accepts inputs n1 and n3 from PointInsidePointList() (two 2D views of one 3D set of data) and n2 from TriangleCrossSegment() (a bridge to skip a third 2D view) */
 
 extern bool PointTouchesTriangle(float pointX, float pointY, float pointZ, float normalX, float normalY, float normalZ, float centerX, float centerY, float centerZ);
-/* Checks for the presence of a point possibly behind a triangle, the first three inputs are the point to test with the triangles center removed, the next three are the triangles normal, the last three are tthe triangles center. */
+/* Checks for the presence of a point possibly behind a triangle, the first three inputs are the point to test with
+the triangles center removed, the next three are the triangles normal, the last three are tthe triangles center. */
 
 extern int PointInsidePointList(float pointX, float pointY,float *pointListX, float *pointListY, int pointListCount);
-/* Tests for the presence of a 2D point pointX,pointY anywhere within a 2D shape defined with a list of points pointListX,pointListY that has pointListCount number of coordinates, returning the the unsigned percentage of maximum datatype numerical relation to percentage of total coordinates, or zero if the point does not occur within the shapes defined boundaries. */
-
-extern int Culling (int visType, int lngFaceCount, unsigned short *sngCamera[], unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], unsigned short *sngScreenX[], unsigned short *sngScreenY[], unsigned short *sngScreenZ[], unsigned short *sngZBuffer[]);
-/* Culling function with three expirimental ways to cull, defined by visType, 0 to 2, returns the difference of input triangles. lngFaceCount, sngCamera[3 x 3], sngFaceVis[6 x lngFaceCount], sngVertexX[3 x lngFaceCount]..Y..Z, sngScreenX[3 x lngFaceCount]..Y..Z, sngZBuffer[4 x lngFaceCount].
-The camera is defined by position [0,0]=X, [0,1]=Y, [0,2]=Z, direction [1,0]=X, [1,1]=Y, [1,2]=Z, and upvector [2,0]=X, [2,1]=Y, [2,2]=Z.  sngFaceVis should be initialized to zero, and sngVertex arrays are 3D coordinate equivelent to sngScreen with a screenZ buffer, and Zbuffer for the verticies. */
-
-extern bool Collision (int visType, int lngFaceCount, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngFaceNum, int *lngCollidedBrush, int *lngCollidedFace);
-/* Tests collision of a lngFaceNum against a number of visible faces, lngFaceCount, whose sngFaceVis has been defined with visType as culled with the Culling function, and returns whether or not a collision occurs also populating the lngCollidedBrush and lngCollidedFace indicating the exact object number (brush) and face number (triangle) that has the collision impact. */
-
+/* Tests for the presence of a 2D point pointX,pointY anywhere within a 2D shape defined with a list of points pointListX,pointListY that has pointListCount number of coordinates,
+returning the the unsigned percentage of maximum datatype numerical relation to percentage of total coordinates, or zero if the point does not occur within the shapes defined boundaries. */
 
 extern float TriangleCrossSegment(float Ax1, float Ay1, float Az1, float Ax2, float Ay2, float Az2, float Ax3, float Ay3, float Az3, float Bx1, float By1, float Bz1, float Bx2, float By2, float Bz2, float Bx3, float By3, float Bz3);
 extern float TriangleCrossSegmentEx(float Ax1, float Ay1, float Az1, float Ax2, float Ay2, float Az2, float Ax3, float Ay3, float Az3, float Bx1, float By1, float Bz1, float Bx2, float By2, float Bz2, float Bx3, float By3, float Bz3, float *Px0, float *Py0, float *Pz0, float *Px1, float *Py1, float *Pz1);
-/* Accepts two trianlges, A, and B, by 3 verticies each, and returns the length of the overlapping segment line formed from their collision, as well the points of the line segment if the extended version */
+/* Accepts two trianlges, A, and B, by 3 verticies each, and returns the length of the overlapping segment
+line formed from their collision, as well the points of the line segment if the extended version */
 
+
+
+
+
+
+extern void CollisionClearFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[]);
+/* Resets all flags to Flag of Triangle data, */
+
+
+
+
+extern int CollisionObjectFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngObjectIndex);
+/* Resets flags of Traingle data flags to Flag whose object matches lngObjectIndex, returns the number of triangles changed */
+
+extern void CollisionTriangleFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngTriangleIndex, int lngTriangleCount);
+/* Resets lngTriangleCount number of Traingle data flags to Flag, starting at lngTriangleIndex */
+
+extern int CollisionResetFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngNewFlag);
+/* Resets all flags to lngNewFlag of Triangle data whose flags matches Flag exactly, returns the number of triangles changed */
+
+
+
+
+extern int CollisionObjectCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngObjectIndex, int lngCullingMethod);
+/* Culling function that sets Triangle data whose object index is lngObjectIndex to Flag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles, retruns the number of traingles reduced by */
+
+extern int CollisionTriangleCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngTriangleIndex, int lngTriangleCount, int lngCullingMethod);
+/* Culling function that sets lngTraingleCOunt number of Triangle data sarting with lngTriangleIndex to Flag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles, retruns the number of traingles reduced by */
+
+extern int CollisionFlagCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngNewFlag, int lngCullingMethod);
+/* Culling function that sets Triangle data whose flag matches Flag to lngNewFlag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles, retruns the number of traingles reduced by */
+
+
+
+
+extern bool CollisionChecking (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngTriangleIndex, int *lngCollidedObject, int *lngCollidedTriangle);
+/* Tests collision of a the Trianlge data at lngTriangleIndex to all Traingle data whose flags match Flag returning the first instance of collision by setting lngCollidedTriangle of lngCollidedObject,returns true if a collision occurs  */
 
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 {
@@ -60,16 +92,72 @@ extern int PointInsidePointList(float pointX, float pointY, float pointListX[], 
 	return 0;
 }
 
-extern int Culling /* was Forystek */ (int visType, int lngFaceCount, unsigned short *sngCamera[], unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], unsigned short *sngScreenX[], unsigned short *sngScreenY[], unsigned short *sngScreenZ[], unsigned short *sngZBuffer[])
+extern void CollisionClearFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[]) {
+/* Resets all flags to Flag of Triangle data, */
+	for (int i=0; i<lngTriangleTotal; i++) {
+		sngFaceVis[3][i] = 0;
+	}
+}
+
+extern int CollisionObjectFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngObjectIndex) {
+/* Resets flags of Traingle data flags to Flag whose object matches lngObjectIndex */
+	int cnt;
+	for (int i=0; i<lngTriangleTotal; i++) {
+		if (sngFaceVis[4][i]==lngObjectIndex) {
+			sngFaceVis[3][i] = Flag;
+			cnt++;			
+		}
+	}
+	return cnt;
+}
+
+extern void CollisionTriangleFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngTriangleIndex, int lngTriangleCount) {
+/* Resets lngTriangleCount number of Traingle data flags to Flag, starting at lngTriangleIndex */
+	for (int i=lngTriangleIndex; i<(lngTriangleIndex+lngTriangleCount); i++) {
+		sngFaceVis[3][i] = Flag;
+	}
+}
+extern int CollisionResetFlag (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngNewFlag) {
+/* Resets all flags to lngNewFlag of Triangle data whose flags matches Flag exactly, */
+	int cnt;
+	for (int i=0; i<lngTriangleTotal; i++) {
+		if (sngFaceVis[3][i] == Flag) {
+			sngFaceVis[3][i]=lngNewFlag;
+			cnt++;
+		}
+	}
+	return cnt;
+}
+
+
+extern int CollisionObjectCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngObjectIndex, int lngCullingMethod) {
+/* Culling function that sets Triangle data whose object index is lngObjectIndex to Flag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles */
+
+	return 0;
+}
+extern int CollisionTriangleCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngTriangleIndex, int lngTriangleCount, int lngCullingMethod) {
+/* Culling function that sets lngTraingleCOunt number of Triangle data sarting with lngTriangleIndex to Flag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles */
+
+	return 0;
+}
+extern int CollisionFlagCulling (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngNewFlag, int lngCullingMethod) {
+/* Culling function that sets Triangle data whose flag matches Flag to lngNewFlag based on a method lngCullingMethod of selecting and/or eleminating non near collision traingles */
+	return 0;
+}
+
+extern int CollisionCulling /* was Forystek */ (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[])
 {
 	//todo, any awesomer culling that can be done which only applies if falls in a options flag manor defined by the user so multiple calls can paint the canvas of 
 	//from single player with their bullets to online load balancing in systems processing potentially quicker when objects and their counter parts hit the scenery.
 	//this function crashed at vistype>3 and it also didn't only flag the applied, it reset every flag on every call so collective map flagging was not poossible.
 	return 0;
 }
-extern bool Collision (int visType, int lngFaceCount, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngFaceNum, int *lngCollidedBrush, int *lngCollidedFace)
+extern bool CollisionChecking (int Flag, int lngTriangleTotal, unsigned short *sngFaceVis[], unsigned short *sngVertexX[], unsigned short *sngVertexY[], unsigned short *sngVertexZ[], int lngFaceNum, int *lngCollidedBrush, int *lngCollidedFace)
 {
-	//todo recreate as best as possible the collision functionality that the original DLL preformed quite nicely, and hope to improve of course from there on.
+
+					 
+
+
 	return 0;
 }
 
