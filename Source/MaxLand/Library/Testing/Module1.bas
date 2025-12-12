@@ -172,8 +172,8 @@ Public Const Repeats = 3000
 Public Sub Main()
     MakeTestData
     
-    Main1
-    Main2
+    'Main1
+    'Main2
 End Sub
 
 Public Sub AddTriangleToCollision(ByVal ObjectIndex As Long, ByVal FaceIndex As Long, ByRef pN As Point, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, Optional ByVal Flag As Long = 0)
@@ -214,7 +214,7 @@ Private Sub AddSquareToCollision(ByVal ObjectIndex As Long, ByRef p1 As Point, B
     
     lngTotalFaces = lngTotalFaces + 1
 End Sub
-Private Sub AddCubeToCollision(ByVal Location As Point, ByVal WallSize As Single, Optional ByVal Flag As Long = 0)
+Private Sub AddCubeToCollision(ByRef Location As Point, ByVal WallSize As Single, Optional ByVal Flag As Long = 0)
     AddSquareToCollision lngTotalObjects, _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
@@ -252,7 +252,7 @@ Public Sub MakeTestData()
     
     AddCubeToCollision MakePoint(0, 0, 0), 20, 0
     
-    AddCubeToCollision MakePoint(, 0, 0), 20, 0
+    AddCubeToCollision MakePoint(0, 0, 0), 20, 0
 
 
 End Sub
@@ -271,8 +271,8 @@ Public Sub Main2()
     Dim c2 As Point
     Dim n1 As Point
     Dim n2 As Point
-    Dim L1 As Point
-    Dim L2 As Point
+    Dim l1 As Point
+    Dim l2 As Point
     
     t1.p3 = MakePoint(0, 8, 0)
     t1.p2 = MakePoint(15, 7, 6)
@@ -357,6 +357,7 @@ Public Sub Main2()
     End If
 
 End Sub
+
 
 Public Sub Main1()
           
@@ -812,18 +813,18 @@ Public Function TriTriSegmentEx(ByRef t1p1 As Point, ByRef t1p2 As Point, ByRef 
     Dim ac As Boolean
     ap = AreParallel(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
     ac = AreCoplanar(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3)
-    Dim L1 As Single
-    Dim L2 As Single
+    Dim l1 As Single
+    Dim l2 As Single
 
     If ap And Not ac Then
         TriTriSegmentEx = 0 'parallel triangles but not on the same plane and/or overlapping
     ElseIf ac Then
         'potentially parallel, but on the same plane at any rate, return the overlapping difference from a edge view of the mboth
         'because colliding triangles below are in the positive specture of a integers max value, this will be in the negative spec
-        L1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
-        L2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
+        l1 = (DistanceEx(t1p1, t1p2) + DistanceEx(t1p2, t1p3) + DistanceEx(t1p3, t1p1))
+        l2 = (DistanceEx(t2p1, t2p2) + DistanceEx(t2p2, t2p3) + DistanceEx(t2p3, t2p1))
 
-        TriTriSegmentEx = (Least(L1, L2) / Large(L1, L2)) * -32768
+        TriTriSegmentEx = (Least(l1, l2) / Large(l1, l2)) * -32768
     Else
         'the triangles are certianly colliding, and must be caught
         'before two edges have penetrated the other, or vice versa

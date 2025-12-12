@@ -3,11 +3,8 @@ EXPORTS
 	CollisionObjectFlag
 	CollisionTriangleFlag
 	CollisionResetFlag
-	CollisionObjectCulling
-	CollisionTriangleCulling
-	CollisionFlagCulling
-	CollisionCulling
-	CollisionChecking
+	CollisionCull
+	CollisionCheck
 	PointTouchesTriangle
 	PointInsidePointList
 	TriangleCrossSegment
