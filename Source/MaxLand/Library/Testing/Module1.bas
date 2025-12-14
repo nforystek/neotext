@@ -21,7 +21,7 @@ Public Declare Function PointInPoly Lib "..\Backup\MaxLandLib.dll" _
                                     
 Public Declare Function PointInsidePointList Lib "..\Debug\maxland.dll" _
                                     (ByVal PointX As Single, ByVal PointY As Single, _
-                                    ByVal polyListX As Long, ByVal polyListY As Long, ByVal polyListaCount As Long) As Long
+                                    ByRef polyListX As Single, ByRef polyListY As Single, ByVal polyListaCount As Long) As Long
                                    ' polyDataX As Any, polyDataY As Any, ByVal polyDataCount As Long) As Long
 
 'Test() depends on the functions results above, two views of 3d, x/y and y/z, are called for pointinpoly when
@@ -84,21 +84,21 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
 '                                    sngScreenY() As Single, _
 '                                    sngScreenZ() As Single, _
 '                                    sngZBuffer() As Single) As Long
-'
-''this is the project purpose, the collision checker, I am certian when I did this one
-''it was object count * two at the least for checking and then the trainlges do so too
-''but the visType is a flag that only traingles with the flag are check for collision
-'Public Declare Function Collision Lib "MaxLandLib.dll" _
-'                                   (ByVal visType As Long, _
-'                                    ByVal lngFaceCount As Long, _
-'                                    sngFaceVis() As Single, _
-'                                    sngVertexX() As Single, _
-'                                    sngVertexY() As Single, _
-'                                    sngVertexZ() As Single, _
-'                                    ByVal lngFaceNum As Long, _
-'                                    ByRef lngCollidedBrush As Long, _
-'                                    ByRef lngCollidedFace As Long) As Boolean
-'
+
+'this is the project purpose, the collision checker, I am certian when I did this one
+'it was object count * two at the least for checking and then the trainlges do so too
+'but the visType is a flag that only traingles with the flag are check for collision
+Public Declare Function Collision Lib "MaxLandLib.dll" _
+                                   (ByVal visType As Long, _
+                                    ByVal lngFaceCount As Long, _
+                                    sngFaceVis() As Single, _
+                                    sngVertexX() As Single, _
+                                    sngVertexY() As Single, _
+                                    sngVertexZ() As Single, _
+                                    ByVal lngFaceNum As Long, _
+                                    ByRef lngCollidedBrush As Long, _
+                                    ByRef lngCollidedFace As Long) As Boolean
+
 'Public Declare Function Collision2 Lib "..\Debug\maxland.dll" Alias "Collision" _
 '                                   (ByVal visType As Long, _
 '                                    ByVal lngFaceCount As Long, _
@@ -110,16 +110,52 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
 '                                    ByRef lngCollidedBrush As Long, _
 '                                    ByRef lngCollidedFace As Long) As Boolean
 
-Public Declare Function CollisionChecking Lib "..\Debug\maxland.dll" _
-                                   (ByVal visType As Long, _
-                                    ByVal lngFaceCount As Long, _
-                                    sngFaceVis() As Single, _
-                                    sngVertexX() As Single, _
-                                    sngVertexY() As Single, _
-                                    sngVertexZ() As Single, _
-                                    ByVal lngFaceNum As Long, _
-                                    ByRef lngCollidedBrush As Long, _
-                                    ByRef lngCollidedFace As Long) As Boolean
+Public Declare Function CollisionObjectFlag Lib "..\Debug\maxland.dll" _
+                                   (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single, _
+                                    ByVal ObjectIndex As Long) As Long
+                                    
+Public Declare Function CollisionTriangleFlag Lib "..\Debug\maxland.dll" _
+                                   (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single, _
+                                    ByVal TriangleIndex As Long, _
+                                    ByVal TriangleCount As Long) As Long
+                                    
+Public Declare Function CollisionResetFlag Lib "..\Debug\maxland.dll" _
+                                   (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single, _
+                                    ByVal NewFlag As Long) As Long
+                                    
+Public Declare Sub CollisionClearFlag Lib "..\Debug\maxland.dll" _
+                                   (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single)
+                                    
+Public Declare Function CollisionCheck Lib "..\Debug\maxland.dll" _
+                                   (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single, _
+                                    ByVal TriangleIndex As Long, _
+                                    ByRef CollidedObjectIndex As Long, _
+                                    ByRef CollidedTriangleIndex As Long) As Boolean
 
 
 
@@ -127,17 +163,17 @@ Public Declare Function CollisionChecking Lib "..\Debug\maxland.dll" _
 'The following variables are needed for Forystek() and Collision() culling and collision
 'checking it is quite incompatable to prorietary needs (like doubling the data to use
 'the functions vs however one has their data stored already could use)
-Public lngTotalObjects As Long
-Public lngTotalFaces As Long
-Public lngTotalTriangles As Long
+Public TotalObjects As Long
+Public TotalFaces As Long
+Public TotalTriangles As Long
 Public sngTriangleSetData() As Single
 'sngTriangleFaceData dimension (,n) where n=# is triangle index
-'sngTriangleFaceData dimension (n,) where n=0 is x of the face normal
-'sngTriangleFaceData dimension (n,) where n=1 is y of the face normal
-'sngTriangleFaceData dimension (n,) where n=2 is z of the face normal
-'sngTriangleFaceData dimension (n,) where n=3 is custom vistype flag
-'sngTriangleFaceData dimension (n,) where n=4 is the object index
-'sngTriangleFaceData dimension (n,) where n=5 is the face index
+'sngTriangleFaceData dimension (n,) where n=0 is x of the triangle normal
+'sngTriangleFaceData dimension (n,) where n=1 is y of the triangle normal
+'sngTriangleFaceData dimension (n,) where n=2 is z of the triangle normal
+'sngTriangleFaceData dimension (n,) where n=3 custom flag for segragation
+'sngTriangleFaceData dimension (n,) where n=4 a object organization index
+'sngTriangleFaceData dimension (n,) where n=5 is reserved for flag states
 
 Public sngVertexXAxisData() As Single
 Public sngVertexYAxisData() As Single
@@ -145,8 +181,7 @@ Public sngVertexZAxisData() As Single
 'sngVertexXAxisData dimension (,n) where n=# is triangle index
 'sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
 'sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
-'sngVertexXAxisData dimension (n,) where n=2 is X of the fourth vertex
-'sngVertexXAxisData dimension (n,) where n=3 is X of the fith an so on
+'sngVertexXAxisData dimension (n,) where n=2 is X of the third vertex
 
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
@@ -167,93 +202,154 @@ End Type
 
 Public Const Epsilon = 0.000001
 
-Public Const Repeats = 3000
+Public Const Repeats = 5000
 
 Public Sub Main()
     MakeTestData
     
-    'Main1
-    'Main2
+    Main0
+    
+    Main1
+    Main2
 End Sub
 
-Public Sub AddTriangleToCollision(ByVal ObjectIndex As Long, ByVal FaceIndex As Long, ByRef pN As Point, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, Optional ByVal Flag As Long = 0)
+Public Sub AddTriangleToCollision(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, Optional ByVal Flag As Long = 0)
 
-    ReDim Preserve sngTriangleSetData(0 To 5, 0 To lngTotalTriangles) As Single
-    ReDim Preserve sngVertexXAxisData(0 To 2, 0 To lngTotalTriangles) As Single
-    ReDim Preserve sngVertexYAxisData(0 To 2, 0 To lngTotalTriangles) As Single
-    ReDim Preserve sngVertexZAxisData(0 To 2, 0 To lngTotalTriangles) As Single
+    ReDim Preserve sngTriangleSetData(0 To 5, 0 To TotalTriangles) As Single
+    ReDim Preserve sngVertexXAxisData(0 To 2, 0 To TotalTriangles) As Single
+    ReDim Preserve sngVertexYAxisData(0 To 2, 0 To TotalTriangles) As Single
+    ReDim Preserve sngVertexZAxisData(0 To 2, 0 To TotalTriangles) As Single
     
-    sngVertexXAxisData(0, lngTotalTriangles) = p1.X
-    sngVertexYAxisData(0, lngTotalTriangles) = p1.Y
-    sngVertexZAxisData(0, lngTotalTriangles) = p1.Z
+    sngVertexXAxisData(0, TotalTriangles) = p1.X
+    sngVertexYAxisData(0, TotalTriangles) = p1.Y
+    sngVertexZAxisData(0, TotalTriangles) = p1.Z
 
-    sngVertexXAxisData(1, lngTotalTriangles) = p2.X
-    sngVertexYAxisData(1, lngTotalTriangles) = p2.Y
-    sngVertexZAxisData(1, lngTotalTriangles) = p2.Z
+    sngVertexXAxisData(1, TotalTriangles) = p2.X
+    sngVertexYAxisData(1, TotalTriangles) = p2.Y
+    sngVertexZAxisData(1, TotalTriangles) = p2.Z
 
-    sngVertexXAxisData(2, lngTotalTriangles) = p3.X
-    sngVertexYAxisData(2, lngTotalTriangles) = p3.Y
-    sngVertexZAxisData(2, lngTotalTriangles) = p3.Z
+    sngVertexXAxisData(2, TotalTriangles) = p3.X
+    sngVertexYAxisData(2, TotalTriangles) = p3.Y
+    sngVertexZAxisData(2, TotalTriangles) = p3.Z
 
-    sngVertexXAxisData(0, lngTotalTriangles) = pN.X
-    sngVertexYAxisData(1, lngTotalTriangles) = pN.Y
-    sngVertexZAxisData(2, lngTotalTriangles) = pN.Z
+    Dim pn As Point
+    pn = TriangleNormal(p1, p2, p3)
     
-    sngTriangleSetData(3, lngTotalTriangles) = Flag
-    sngTriangleSetData(4, lngTotalTriangles) = ObjectIndex
-    sngTriangleSetData(5, lngTotalTriangles) = FaceIndex
+    sngTriangleSetData(0, TotalTriangles) = pn.X
+    sngTriangleSetData(1, TotalTriangles) = pn.Y
+    sngTriangleSetData(2, TotalTriangles) = pn.Z
+    
+    sngTriangleSetData(3, TotalTriangles) = Flag
+    sngTriangleSetData(4, TotalTriangles) = TotalObjects
+    sngTriangleSetData(5, TotalTriangles) = TotalFaces
 
-    lngTotalTriangles = lngTotalTriangles + 1
+    TotalTriangles = TotalTriangles + 1
 
 End Sub
-Private Sub AddSquareToCollision(ByVal ObjectIndex As Long, ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef p4 As Point, Optional ByVal Flag As Long = 0)
+Private Sub AddSquareToCollision(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, ByRef p4 As Point, Optional ByVal Flag As Long = 0)
 
-    AddTriangleToCollision ObjectIndex, lngTotalFaces, TriangleNormal(p1, p2, p3), p1, p2, p3, Flag
+    AddTriangleToCollision p1, p2, p3, Flag
                                             
-    AddTriangleToCollision ObjectIndex, lngTotalFaces, TriangleNormal(p2, p3, p4), p2, p3, p4, Flag
+    AddTriangleToCollision p2, p3, p4, Flag
     
-    lngTotalFaces = lngTotalFaces + 1
+    TotalFaces = TotalFaces + 1
 End Sub
 Private Sub AddCubeToCollision(ByRef Location As Point, ByVal WallSize As Single, Optional ByVal Flag As Long = 0)
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), Flag
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), Flag
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + -(WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), Flag
-    AddSquareToCollision lngTotalObjects, _
+    AddSquareToCollision _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.X + (WallSize / 2), Location.Z + (WallSize / 2)), _
                         MakePoint(Location.X + -(WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), _
                         MakePoint(Location.X + (WallSize / 2), Location.Y + (WallSize / 2), Location.Z + -(WallSize / 2)), Flag
                             
-    lngTotalObjects = lngTotalObjects + 1
+    TotalObjects = TotalObjects + 1
 End Sub
 Public Sub MakeTestData()
     
-    AddCubeToCollision MakePoint(0, 0, 0), 20, 0
-    
-    AddCubeToCollision MakePoint(0, 0, 0), 20, 0
+    AddCubeToCollision MakePoint(0, 0, 0), 20, 1
 
+    
+    AddTriangleToCollision MakePoint(0, 0, 0), MakePoint(-20, 10, 0), MakePoint(0, 5, 0), 0
+    
+    'AddCubeToCollision MakePoint(5, 5, 5), 20, 0
+
+    
+   ' AddCubeToCollision MakePoint(-40, 0, 0), 20, 0
+
+End Sub
+Private Sub PrintFlags()
+    Dim cnt As Long
+    Dim out As String
+    
+    For cnt = 0 To TotalTriangles - 1
+        out = out & Trim(CStr(sngTriangleSetData(3, cnt)))
+    Next
+    Debug.Print TotalTriangles & " " & out
+    Debug.Print
+End Sub
+
+Public Sub Main0()
+    Dim CollidedObjectIndex As Long
+    Dim CollidedTriangleIndex As Long
+    
+    CollisionClearFlag 1, TotalTriangles, sngTriangleSetData(0, 0), sngVertexXAxisData(0, 0), sngVertexYAxisData(0, 0), sngVertexZAxisData(0, 0)
+
+
+    Dim elapse As Single
+    Dim i As Long
+    Dim ret As Boolean
+    
+    
+    elapse = Timer
+    For i = 1 To Repeats
+        ret = CollisionCheck(1, TotalTriangles, sngTriangleSetData(0, 0), sngVertexXAxisData(0, 0), sngVertexYAxisData(0, 0), sngVertexZAxisData(0, 0), 12, CollidedObjectIndex, CollidedTriangleIndex)
+    Next
+    Debug.Print CollidedObjectIndex; CollidedTriangleIndex
+    Debug.Print "CollisionCheck: " & (Timer - elapse)
+
+    If ret Then
+        Debug.Print "Collision Occurs: " & ret
+    Else
+        Debug.Print "No Collision."
+    End If
+
+
+    elapse = Timer
+    For i = 1 To Repeats
+        ret = Collision(1, TotalTriangles, sngTriangleSetData, sngVertexXAxisData, sngVertexYAxisData, sngVertexZAxisData, 12, CollidedObjectIndex, CollidedTriangleIndex)
+    Next
+    Debug.Print CollidedObjectIndex; CollidedTriangleIndex
+    Debug.Print "Collision: " & (Timer - elapse)
+
+    If ret Then
+        Debug.Print "Collision Occurs: " & ret
+    Else
+        Debug.Print "No Collision."
+    End If
 
 End Sub
 
@@ -266,7 +362,7 @@ Public Sub Main2()
     Dim t2 As Triangle
     Dim p1 As Point
     Dim p2 As Point
-    Dim Ret As Single
+    Dim ret As Single
     Dim c1 As Point
     Dim c2 As Point
     Dim n1 As Point
@@ -285,12 +381,12 @@ Public Sub Main2()
     
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
+        ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
     Next
     Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
 
-    If Ret Then
-        Debug.Print "Intersection segment: " & Ret
+    If ret Then
+        Debug.Print "Intersection segment: " & ret
         Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
         Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
@@ -300,14 +396,14 @@ Public Sub Main2()
 
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+        ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
                                 t2.p1.X, t2.p1.Y, t2.p1.Z, t2.p2.X, t2.p2.Y, t2.p2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
                                 p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z)
     Next
     Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
 
-    If Ret Then
-        Debug.Print "Intersection segment: " & Ret
+    If ret Then
+        Debug.Print "Intersection segment: " & ret
         Debug.Print "H=(8,7,3)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
         Debug.Print "I=(9,6,6)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
@@ -327,12 +423,12 @@ Public Sub Main2()
     
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
+        ret = TriTriSegmentEx(t1.p1, t1.p2, t1.p3, t2.p1, t2.p2, t2.p3, p1, p2)
     Next
     Debug.Print "TriTriSegmentEx: " & (Timer - elapse)
  
-    If Ret Then
-        Debug.Print "Intersection segment: " & Ret
+    If ret Then
+        Debug.Print "Intersection segment: " & ret
         Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
         Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
@@ -342,14 +438,14 @@ Public Sub Main2()
  
     elapse = Timer
     For i = 1 To Repeats
-        Ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
+        ret = TriangleCrossSegmentEx(t1.p1.X, t1.p1.Y, t1.p1.Z, t1.p2.X, t1.p2.Y, t1.p2.Z, t1.p3.X, t1.p3.Y, t1.p3.Z, _
                                 t2.p1.X, t2.p1.Y, t2.p1.Z, t2.p2.X, t2.p2.Y, t2.p2.Z, t2.p3.X, t2.p3.Y, t2.p3.Z, _
                                 p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z)
     Next
     Debug.Print "TriangleCrossSegmentEx: " & (Timer - elapse)
 
-    If Ret Then
-        Debug.Print "Intersection segment: " & Ret
+    If ret Then
+        Debug.Print "Intersection segment: " & ret
         Debug.Print "H=(10,5,0)=(" & Round(p1.X, 0) & "," & Round(p1.Y, 0) & "," & Round(p1.Z, 0) & ")"
         Debug.Print "I=(0,5,0)=(" & Round(p2.X, 0) & "," & Round(p2.Y, 0) & "," & Round(p2.Z, 0) & ")"
     Else
@@ -395,9 +491,9 @@ Public Sub Main1()
     Dim PointY As Single
     Dim PointZ As Single
 
-    Dim PointListsX(0 To 5) As Single
-    Dim PointListsY(0 To 5) As Single
-    Dim PointListsZ(0 To 5) As Single
+    Dim PointListsX(0 To 4) As Single
+    Dim PointListsY(0 To 4) As Single
+    Dim PointListsZ(0 To 4) As Single
     
     'make an 8x8 square whose center is (0,0)
     'going in the counter-clockwise direction
@@ -457,11 +553,11 @@ Public Sub Main1()
 
         
 '        Debug.Print "PointInPoly()=" & PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) & "  " & _
-'            "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5) & " " & _
+'            "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, PointListsX(0), PointListsY(0), 5) & " " & _
 '            "PointInPoly3()=" & PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5)
         If (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = _
-            PointInsidePointList(PointX, PointY, ByVal VarPtr(PointListsX(0)), ByVal VarPtr(PointListsY(0)), 5))) Or _
-             (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5))) Then testCount = -Abs(testCount)
+            PointInsidePointList(PointX, PointY, PointListsX(0), PointListsY(0), 5))) Or _
+             (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5))) Then testCount = Abs(testCount)
         'Debug.Print
         
         'arbitrary arguments, unsigned short return values from PointInPoly that results a percentage with in the
@@ -548,22 +644,21 @@ Public Function PointInPoly3(ByVal Px As Single, ByVal Py As Single, polyx() As 
 
     If (polyn > 2) Then
         Dim ref As Single
-        Dim Ret As Single
+        Dim ret As Single
         Dim result As Long
 
         ref = ((Px - polyx(0)) * (polyy(1) - polyy(0)) - (Py - polyy(0)) * (polyx(1) - polyx(0)))
-        Ret = ref
+        ret = ref
         Dim i As Long
-        For i = 1 To polyn
+        For i = 1 To polyn - 1
             ref = ((Px - polyx(i)) * (polyy(i) - polyy(i - 1)) - (Py - polyy(i)) * (polyx(i) - polyx(i - 1)))
-            If ((Ret >= 0) And (ref < 0) And (result = 0)) Then
+            If ((ret >= 0) And (ref < 0) And (result = 0)) Then
                 result = i
             End If
-            Ret = ref
+            ret = ref
         Next
         If ((result = 0) Or (result > polyn)) Then
-            PointInPoly3 = 1 '//todo: this is suppose to return a decimal percent
-                                  '                      //of the total polygon points where in is found inside
+            PointInPoly3 = 1
         Else
             PointInPoly3 = 0
         End If
