@@ -2,25 +2,55 @@
 #include <stdio.h> 
 
 /*
-//the higher the fulling method the more inclusive the triangles are vs apply all culling in potential defaults simply
-#define UseAllCulling 0  //apply all the blow methods, culling for collision is the art of painting and weaning flags
-#define CullByFlagSet 1  //if culling or flags are used, this is automatic, or else csonder using flag 0 every call
-#define CullBySquares 2  //a laments term version of ByCameras, this defined rectangles for three axis that encumbant the triangle and eliminates all trainalges not found with-in the rectangles entirety, has near issues
-#define CullByRanging 4  //this finds front faced traingles in it's range and the range is defined by a maximum permiter a traianlge could relate in all three edge lengths, and a spherical "with-in" test to it's center
-#define CullByClosest 8  //this is a more refined version of Ranging, simply put, exact cull to one, the closest triangle, after ranging is applied, very effective when scaled down the test by Ranging
-#define CullByCameras 16  //a very strong control to approch of culling effective in multiple call projections, applying a Up/Eye/Dir anything with in view, like a rectangle only not so horizontal and vertical locked, becomes included and not culled
-#define CullByBehinds 32  //by defualt culling does not include backfacings, unless you include it with this flag, making any triangle having both sides in the matter of culling definition to collision
+float TriangleSetData[6][#];
+TriangleFaceData dimension [][n] where n=# is triangle index
+TriangleFaceData dimension [n][] where n=0 is x of the triangle normal
+TriangleFaceData dimension [n][] where n=1 is y of the triangle normal
+TriangleFaceData dimension [n][] where n=2 is z of the triangle normal
+TriangleFaceData dimension [n][] where n=3 custom flag for segragation
+TriangleFaceData dimension [n][] where n=4 a object organization index
+TriangleFaceData dimension [n][] where n=5 network load balance states
+float VertexXAxisData[3][#];
+VertexXAxisData dimension [][n] where n=# is triangle index
+VertexXAxisData dimension [n][] where n=0 is X of the first vertex
+VertexXAxisData dimension [n][] where n=1 is X of the second vertex
+VertexXAxisData dimension [n][] where n=2 is X of the third vertex
+float VertexYAxisData[3][#];
+VertexYAxisData dimension [][n] where n=# is triangle index
+VertexYAxisData dimension [n][] where n=0 is Y of the first vertex
+VertexYAxisData dimension [n][] where n=1 is Y of the second vertex
+VertexYAxisData dimension [n][] where n=2 is Y of the third vertex
+float VertexZAxisData[3][#];
+VertexZAxisData dimension [][n] where n=# is triangle index
+VertexZAxisData dimension [n][] where n=0 is Z of the first vertex
+VertexZAxisData dimension [n][] where n=1 is Z of the second vertex
+VertexZAxisData dimension [n][] where n=2 is Z of the third vertex
+
+ */
+
+
+/*
+//the higher the culling method the more inclusive the triangles are vs apply all culling in potential defaults simply
+#define CullByFlagSet 0  //if culling or flags are used, this is automatic, or else csonder using flag 0 every call
+#define CullBySquares 1  //a laments term version of ByCameras, this defined rectangles for three axis that encumbant the triangle and eliminates all trainalges not found with-in the rectangles entirety, has near issues, it can be a fast elimination processes
+#define CullByInsides 2  //similar to squares but defined by a 2D complex shape view of the scene, points are tested per 3 axis whether or not they are inside any complex 2D shape determined by Flag, where it is not, are elminated from from the check
+#define CullByRanging 3  //this eliminates triangles by a range factor from the center of the test triangle to it's potential rnage, all three lengths added up, as max permititer of a spherical catch for other traingles centers and lengths robustly eliminating
+#define CullByClosest 4  //this is a more refined version of Ranging, it attempts to determine the closest traingle to the test traingle by points, more effective with other culliing preformed first to wean down its wean it checks point for point via distance
+#define CullByCameras 5  //a very strong control to approch of culling effective in multiple call projections, applying a Up/Eye/Dir anything with in view, like a rectangle projection only customized and not so horizontal and vertical locked, repeatable
+#define CullByBehinds 6  //by defualt culling does not include backfacings, unless you include it with this flag, this will attempt to see all trinalges tested under 45 degrees of similarity as eliminated, and those facing each other as the only in determination
+#define UseAllCulling 7  //apply all the culling methods above that are possible with the input given in a probable best case scenario and not perfect
 */
 
-enum CullingMethod {
-	 UseAllCulling =0,
-	 CullByFlagSet =1,
-	 CullBySquares =2,
-	 CullByRanging =4,
-	 CullByClosest =8,
-	 CullByCameras =16,
-	 CullByBehinds =32
-};
+
+#define CullByFlagSet 0
+#define CullBySquares 1
+#define CullByInsides 2
+#define CullByRanging 3
+#define CullByClosest 4
+#define CullByCameras 5
+#define CullByBehinds 6
+#define UseAllCulling 7
+
 
 struct Point {
     float X;
@@ -62,11 +92,96 @@ extern int CollisionResetFlag (int Flag, int TriangleTotal, float *FaceVis, floa
 /* Resets all flags to NewFlag of Triangle data whose flags matches Flag exactly, returns the number of triangles changed */
 
 
-extern int CollisionCull(int Flag, int TriangleTotal, float *FaceVis, float *VertexX, float *VertexY, float *VertexZ, CullingMethod ApplyCulling);
-/* Culls all positive of Flag triangles (eliminates them from being check in collision by turning them negative) with ways specified in CullingMethods applied */
+extern int CollisionCull(int Flag, int TriangleTotal, float *FaceVis, float *VertexX, float *VertexY, float *VertexZ, int TriangleIndex, int ApplyCulling);
+/* Culls triangles (eliminates them from being checked CollisionCheck) weaning by Flag first, before the CullingMethods applied, and can be sequentally called to refinement or all/partial includive in one call */
 
-extern bool CollisionCheck(int Flag, int TriangleTotal, float *FaceVis, float *VertexX, float *VertexY, float *VertexZ, int TrianlgeIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex);
-/* Tests collision of a the Trianlge data at TriangleIndex to all Traingle data whose flags match Flag returning the first instance of collision by setting CollidedTriangle of CollidedObject,returns true if a collision occurs  */
+extern bool CollisionCheck(int Flag, int TriangleTotal, float *FaceVis, float *VertexX, float *VertexY, float *VertexZ, int TriangleIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex);
+/* Tests collision of a the Trianlge data at TriangleIndex to all Traingle data whose flags match Flag returning true if a collision occurs setting CollidedTriangle of CollidedObject*/
+
+// ===== Helpers =====
+bool checkbit(int bits, int num) {
+	return ((bits & (1 << num))>0);
+}
+
+void setbit(int bits, int num) {
+	bits |= (1 << num);
+}
+void clearbit(int bits, int num) {
+	bits &= ~(1 << num);
+}
+void togglebit(int bits, int num) {
+	bits ^= (1 << num);
+}
+
+Point MakePoint(float x, float y, float z) {
+    Point p; p.X = x; p.Y = y; p.Z = z; return p;
+}
+
+Point VectorAddition(Point a, Point b) {
+    Point r; r.X = b.X + a.X; r.Y = b.Y +  a.Y; r.Z = b.Z + a.Z; return r;
+}
+
+Point VectorDeduction(Point a, Point b) {
+    Point r; r.X = a.X - b.X; r.Y = a.Y - b.Y; r.Z = a.Z - b.Z; return r;
+}
+
+float VectorDotProduct(Point a, Point b) {
+    return a.X*b.X + a.Y*b.Y + a.Z*b.Z;
+}
+
+Point VectorCrossProduct(Point a, Point b) {
+    Point r;
+    r.X = a.Y*b.Z - a.Z*b.Y;
+    r.Y = a.Z*b.X - a.X*b.Z;
+    r.Z = a.X*b.Y - a.Y*b.X;
+    return r;
+}
+
+float Distance(Point p1, Point p2) {
+    float dx = p1.X - p2.X;
+    float dy = p1.Y - p2.Y;
+    float dz = p1.Z - p2.Z;
+    float sumSq = dx*dx + dy*dy + dz*dz;
+    return (sumSq != 0.0) ? sqrtf(sumSq) : 0;
+}
+
+
+Point TriangleNormal(Point p1, Point p2, Point p3) {
+    Point v1 = VectorDeduction(p2, p1);
+    Point v2 = VectorDeduction(p3, p1);
+    return VectorCrossProduct(v1, v2);
+}
+
+float Length(Point p) {
+    return sqrtf(p.X*p.X + p.Y*p.Y + p.Z*p.Z);
+}
+
+
+Point VectorNormalize(Point p) {
+    float len = Length(p);
+    if (len == 0.0) return MakePoint(0,0,0);
+    return MakePoint(p.X/len, p.Y/len, p.Z/len);
+}
+
+Point FacePlaneNormal(Point Up, Point Direction) {
+    // Compute Right vector
+    Point Right = VectorCrossProduct(Direction, Up);
+
+    // Plane normal is perpendicular to Right and Up
+    Point Normal = VectorCrossProduct(Right, Up);
+
+    return VectorNormalize(Normal);
+}
+
+
+Point PlaneNormal(Point p1, Point p2, Point p3) {
+    return VectorNormalize(TriangleNormal(p1, p2, p3));
+}
+
+float Least(float a, float b) { return (a < b) ? a : b; }
+float Least(float a, float b, float c) { return (a < b) ? (a < c) ? a : c : (b < c) ? b : c; }
+float Large(float a, float b) { return (a > b) ? a : b; }
+float Large(float a, float b, float c) { return (a > b) ? (a > c) ? a : c : (b > c) ? b : c; }
 
 
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
@@ -136,29 +251,18 @@ extern int CollisionResetFlag (int Flag, int TriangleTotal, float FaceVis[], flo
 }
 
 
-extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], CullingMethod ApplyCulling)
+extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int ApplyCulling)
 {
+	/*int start=0, stop=0, count=0, i=0, ret=0;
 
-
-
-	return 0;
-}
-
-extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex)
-{
-
-	int start=0;
-	int stop=0;
-	int count=0;
-	int i=0;
-	int ret=0;
-	float x=0,y=0,z=0;
-	float nx=0,ny=0,nz=0;
 	while  (i<TriangleTotal) {
-		
-		if ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])) {
-			
-			start=i;
+
+		if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+3]==Flag;
+
+		if ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]=Flag)) {
+			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
+
+			start=i;//iterate ahead and get the start and stop index (and then count) which is for sending to PointInsidePointList
 			stop=i;
 			while ((FaceVis[(stop*6)+3]==Flag)&&(FaceVis[(stop*6)+4]!=FaceVis[(TriangleIndex*6)+4])) {
 				stop++;
@@ -166,20 +270,62 @@ extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float V
 			}
 			stop=(stop-1);
 
+			if (stop>start) {
+				count = (stop-start); //create a count
+				if ((start+(count-1)<TriangleIndex)&&(start<stop)) {
+
+					for (int j=0;j<3;j++) {			
+
+						//for (int j=0;j<3;j++) {	
+						//	ret=PointInsidePointList(VertexX[(3*TriangleIndex)+j], VertexY[(3*TriangleIndex)+j], &(VertexX[(3*start)]), &(VertexY[(3*start)]), count)+
+						//		PointInsidePointList(VertexY[(3*TriangleIndex)+j], VertexZ[(3*TriangleIndex)+j], &(VertexY[(3*start)]), &(VertexZ[(3*start)]), count)+
+						//		PointInsidePointList(VertexZ[(3*TriangleIndex)+j], VertexX[(3*TriangleIndex)+j], &(VertexZ[(3*start)]), &(VertexX[(3*start)]), count);
+						//}
+
+					}
+
+				}				
+			}			
+		}
+		i=i+3;				
+	}
+	return false;
+
+	*/
+
+
+	return checkbit(ApplyCulling,CullByBehinds);
+
+}
+
+extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex)
+{
+
+	int start=0, stop=0, count=0, i=0, ret=0;
+	float x=0,y=0,z=0, nx=0,ny=0,nz=0;
+
+	while  (i<TriangleTotal) {
+
+		if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+3]=(float)Flag;
+
+		if ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]==Flag)) {
+			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
+
+			start=i;
+			stop=i;
+			while ((FaceVis[(stop*6)+3]==Flag)&&(FaceVis[(stop*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]==Flag)) {
+				stop++;
+				if(stop>=TriangleTotal) break;
+			}
+			stop=(stop-1);
 
 			if (stop>start) {
-				count = (stop-start);
+				count = (stop-start); //create a count
 				if ((start+(count-1)<TriangleIndex)&&(start<stop)) {
-											
-
-					//	for (int j=0;j<3;j++) {	
-							//ret=PointInsidePointList(VertexX[(3*TriangleIndex)+j], VertexY[(3*TriangleIndex)+j], &(VertexX[(3*start)]), &(VertexY[(3*start)]), count)+
-							//	PointInsidePointList(VertexY[(3*TriangleIndex)+j], VertexZ[(3*TriangleIndex)+j], &(VertexY[(3*start)]), &(VertexZ[(3*start)]), count)+
-							//	PointInsidePointList(VertexZ[(3*TriangleIndex)+j], VertexX[(3*TriangleIndex)+j], &(VertexZ[(3*start)]), &(VertexX[(3*start)]), count);
-					//	}
 				
 					while (i<=((start+count)-1)) {
-						
+						//check every point of the triangle being tested against
+						//triangles fitting criteria of the start and stop or count
 						x=(VertexX[(3*i)],VertexX[(3*i)+1],VertexX[(3*i)+2])/3;
 						y=(VertexY[(3*i)],VertexY[(3*i)+1],VertexY[(3*i)+2])/3;
 						z=(VertexZ[(3*i)],VertexZ[(3*i)+1],VertexZ[(3*i)+2])/3;
@@ -209,61 +355,6 @@ extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float V
 }
 
 
-// ===== Helpers =====
-
-Point MakePoint(float x, float y, float z) {
-    Point p; p.X = x; p.Y = y; p.Z = z; return p;
-}
-
-Point VectorAddition(Point a, Point b) {
-    Point r; r.X = b.X + a.X; r.Y = b.Y +  a.Y; r.Z = b.Z + a.Z; return r;
-}
-
-Point VectorDeduction(Point a, Point b) {
-    Point r; r.X = a.X - b.X; r.Y = a.Y - b.Y; r.Z = a.Z - b.Z; return r;
-}
-
-float VectorDotProduct(Point a, Point b) {
-    return a.X*b.X + a.Y*b.Y + a.Z*b.Z;
-}
-
-Point VectorCrossProduct(Point a, Point b) {
-    Point r;
-    r.X = a.Y*b.Z - a.Z*b.Y;
-    r.Y = a.Z*b.X - a.X*b.Z;
-    r.Z = a.X*b.Y - a.Y*b.X;
-    return r;
-}
-
-float Distance(Point p1, Point p2) {
-    float dx = p1.X - p2.X;
-    float dy = p1.Y - p2.Y;
-    float dz = p1.Z - p2.Z;
-    float sumSq = dx*dx + dy*dy + dz*dz;
-    return (sumSq != 0.0) ? sqrtf(sumSq) : 0;
-}
-
-
-Point TriangleNormal(Point p1, Point p2, Point p3) {
-    Point v1 = VectorDeduction(p2, p1);
-    Point v2 = VectorDeduction(p3, p1);
-    return VectorCrossProduct(v1, v2);
-}
-
-float Length(Point p) {
-    return sqrtf(p.X*p.X + p.Y*p.Y + p.Z*p.Z);
-}
-
-Point VectorNormalize(Point p) {
-    float len = Length(p);
-    if (len == 0.0) return MakePoint(0,0,0);
-    return MakePoint(p.X/len, p.Y/len, p.Z/len);
-}
-
-float Least(float a, float b) { return (a < b) ? a : b; }
-float Least(float a, float b, float c) { return (a < b) ? (a < c) ? a : c : (b < c) ? b : c; }
-float Large(float a, float b) { return (a > b) ? a : b; }
-float Large(float a, float b, float c) { return (a > b) ? (a > c) ? a : c : (b > c) ? b : c; }
 
 // ===== Geometry checks =====
 int AreParallel(Point t1p1, Point t1p2, Point t1p3,
@@ -320,6 +411,32 @@ int EdgePlaneIntersect(Point p, Point Q, Point planePoint, Point PlaneNormal, Po
     X = VectorAddition(p, MakePoint(dir.X*t, dir.Y*t, dir.Z*t));
     return 1;
 }
+
+float PlaneAngleToPlane(float nx1, float ny1, float nz1,
+						float nx2, float ny2, float nz2)
+{
+    // Dot product
+    float dot = nx1*nx2 + ny1*ny2 + nz1*nz2;
+
+    // Magnitudes
+    float mag1 = sqrtf(nx1*nx1 + ny1*ny1 + nz1*nz1);
+    float mag2 = sqrtf(nx2*nx2 + ny2*ny2 + nz2*nz2);
+
+    if (mag1 == 0 || mag2 == 0) return 0.0f; // avoid divide by zero
+
+    // Cosine of angle
+    float cosTheta = dot / (mag1 * mag2);
+
+    // Clamp to [-1, 1] to avoid floating point errors
+    if (cosTheta > 1.0f) cosTheta = 1.0f;
+    if (cosTheta < -1.0f) cosTheta = -1.0f;
+
+    // Convert to degrees
+    float angle = acosf(cosTheta) * 180.0f / 3.14159265f;
+
+    return angle;
+}
+
 
 
 //inputs: verticies for two triangles in collision (defined by two or more axis of PointInPoly 2D collision tests)

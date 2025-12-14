@@ -2,6 +2,18 @@ Attribute VB_Name = "Module1"
 
 Option Explicit
 
+
+Public Enum CullingMethod
+     CullByFlagSet = 0
+     CullBySquares = 1
+     CullByInsides = 2
+     CullByRanging = 3
+     CullByClosest = 4
+     CullByCameras = 5
+     CullByBehinds = 6
+     UseAllCulling = 7
+End Enum
+
 'the first three parameters are (X,Y,Z) of the point to be checked against a traingle defined by its normal and center
 Public Declare Function PointBehindPoly Lib "..\Backup\MaxLandLib.dll" _
                                     (ByVal PointX As Single, ByVal PointY As Single, ByVal PointZ As Single, _
@@ -71,19 +83,15 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
 '                                    sngScreenY() As Single, _
 '                                    sngScreenZ() As Single, _
 '                                    sngZBuffer() As Single) As Long
-'
-'Public Declare Function Culling Lib "..\Debug\maxland.dll" _
-'                                    (ByVal visType As Long, _
-'                                    ByVal lngFaceCount As Long, _
-'                                    sngCamera() As Single, _
-'                                    sngFaceVis() As Single, _
-'                                    sngVertexX() As Single, _
-'                                    sngVertexY() As Single, _
-'                                    sngVertexZ() As Single, _
-'                                    sngScreenX() As Single, _
-'                                    sngScreenY() As Single, _
-'                                    sngScreenZ() As Single, _
-'                                    sngZBuffer() As Single) As Long
+
+Public Declare Function CollisionCull Lib "..\Debug\maxland.dll" _
+                                    (ByVal Flag As Long, _
+                                    ByVal TriangleTotal As Long, _
+                                    ByRef FaceVis As Single, _
+                                    ByRef VertexX As Single, _
+                                    ByRef VertexY As Single, _
+                                    ByRef VertexZ As Single, _
+                                    ByRef ApplyCulling As Any) As Long
 
 'this is the project purpose, the collision checker, I am certian when I did this one
 'it was object count * two at the least for checking and then the trainlges do so too
@@ -176,12 +184,21 @@ Public sngTriangleSetData() As Single
 'sngTriangleFaceData dimension (n,) where n=5 is reserved for flag states
 
 Public sngVertexXAxisData() As Single
-Public sngVertexYAxisData() As Single
-Public sngVertexZAxisData() As Single
 'sngVertexXAxisData dimension (,n) where n=# is triangle index
 'sngVertexXAxisData dimension (n,) where n=0 is X of the first vertex
 'sngVertexXAxisData dimension (n,) where n=1 is X of the second vertex
 'sngVertexXAxisData dimension (n,) where n=2 is X of the third vertex
+Public sngVertexYAxisData() As Single
+'sngVertexYAxisData dimension (,n) where n=# is triangle index
+'sngVertexYAxisData dimension (n,) where n=0 is Y of the first vertex
+'sngVertexYAxisData dimension (n,) where n=1 is Y of the second vertex
+'sngVertexYAxisData dimension (n,) where n=2 is Y of the third vertex
+Public sngVertexZAxisData() As Single
+'sngVertexZAxisData dimension (,n) where n=# is triangle index
+'sngVertexZAxisData dimension (n,) where n=0 is Z of the first vertex
+'sngVertexZAxisData dimension (n,) where n=1 is Z of the second vertex
+'sngVertexZAxisData dimension (n,) where n=2 is Z of the third vertex
+
 
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
@@ -207,10 +224,37 @@ Public Const Repeats = 5000
 Public Sub Main()
     MakeTestData
     
-    Main0
+    'Main0
     
-    Main1
-    Main2
+    'Main1
+    'Main2
+    
+    Main3
+End Sub
+
+Public Sub Main3()
+    ResetCollisionTestData
+    
+    
+    AddCubeToCollision MakePoint(0, 0, 0), 20, 0
+    
+    AddTriangleToCollision MakePoint(-15, 0, 0), MakePoint(-15, 10, 0), MakePoint(-15, 0, 10), 0
+    
+    Debug.Print CollisionCull(1, TotalTriangles, sngTriangleSetData(0, 0), sngVertexXAxisData(0, 0), sngVertexYAxisData(0, 0), sngVertexZAxisData(0, 0), 6)
+    Debug.Print CollisionCull(1, TotalTriangles, sngTriangleSetData(0, 0), sngVertexXAxisData(0, 0), sngVertexYAxisData(0, 0), sngVertexZAxisData(0, 0), UseAllCulling)
+    Debug.Print CollisionCull(1, TotalTriangles, sngTriangleSetData(0, 0), sngVertexXAxisData(0, 0), sngVertexYAxisData(0, 0), sngVertexZAxisData(0, 0), CullByClosest)
+
+End Sub
+
+Public Sub MakeTestData()
+    
+
+    
+    'AddCubeToCollision MakePoint(5, 5, 5), 20, 0
+
+    
+   ' AddCubeToCollision MakePoint(-40, 0, 0), 20, 0
+
 End Sub
 
 Public Sub AddTriangleToCollision(ByRef p1 As Point, ByRef p2 As Point, ByRef p3 As Point, Optional ByVal Flag As Long = 0)
@@ -288,19 +332,7 @@ Private Sub AddCubeToCollision(ByRef Location As Point, ByVal WallSize As Single
                             
     TotalObjects = TotalObjects + 1
 End Sub
-Public Sub MakeTestData()
-    
-    AddCubeToCollision MakePoint(0, 0, 0), 20, 1
 
-    
-    AddTriangleToCollision MakePoint(0, 0, 0), MakePoint(-20, 10, 0), MakePoint(0, 5, 0), 0
-    
-    'AddCubeToCollision MakePoint(5, 5, 5), 20, 0
-
-    
-   ' AddCubeToCollision MakePoint(-40, 0, 0), 20, 0
-
-End Sub
 Private Sub PrintFlags()
     Dim cnt As Long
     Dim out As String
@@ -311,8 +343,24 @@ Private Sub PrintFlags()
     Debug.Print TotalTriangles & " " & out
     Debug.Print
 End Sub
-
+Public Sub ResetCollisionTestData()
+    TotalObjects = 0
+    TotalFaces = 0
+    TotalTriangles = 0
+    Erase sngTriangleSetData
+    Erase sngVertexXAxisData
+    Erase sngVertexYAxisData
+    Erase sngVertexZAxisData
+End Sub
 Public Sub Main0()
+    ResetCollisionTestData
+
+    AddCubeToCollision MakePoint(0, 0, 0), 20, 1
+
+    
+    AddTriangleToCollision MakePoint(0, 0, 0), MakePoint(-20, 10, 0), MakePoint(0, 5, 0), 0
+    
+    
     Dim CollidedObjectIndex As Long
     Dim CollidedTriangleIndex As Long
     
