@@ -9,7 +9,7 @@ TriangleFaceData dimension [n][] where n=1 is y of the triangle normal
 TriangleFaceData dimension [n][] where n=2 is z of the triangle normal
 TriangleFaceData dimension [n][] where n=3 custom flag for segragation
 TriangleFaceData dimension [n][] where n=4 a object organization index
-TriangleFaceData dimension [n][] where n=5 network load balance states
+TriangleFaceData dimension [n][] where n=5 network balance flag states
 float VertexXAxisData[3][#];
 VertexXAxisData dimension [][n] where n=# is triangle index
 VertexXAxisData dimension [n][] where n=0 is X of the first vertex
@@ -64,7 +64,10 @@ const double epsilon = 1e-9;
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
 /* Accepts inputs n1 and n3 from PointInsidePointList() (two 2D views of one 3D set of data) and n2 from TriangleCrossSegment() (a bridge to skip a third 2D view) */
 
-extern bool PointTouchesTriangle(float PointX, float PointY, float PointZ, float NormalX, float NormalY, float NormalZ, float CenterX, float CenterY, float CenterZ);
+extern float Sign(float n);
+
+
+extern int PointTouchesTriangle(float PointX, float PointY, float PointZ, float NormalX, float NormalY, float NormalZ, float CenterX, float CenterY, float CenterZ);
 /* Checks for the presence of a point possibly behind a triangle, the first three inputs are the point to test with
 the triangles center removed, the next three are the triangles normal, the last three are tthe triangles center. */
 
@@ -99,6 +102,13 @@ extern bool CollisionCheck(int Flag, int TriangleTotal, float *FaceVis, float *V
 /* Tests collision of a the Trianlge data at TriangleIndex to all Traingle data whose flags match Flag returning true if a collision occurs setting CollidedTriangle of CollidedObject*/
 
 // ===== Helpers =====
+float RoundN(float value, int n)
+{
+    float factor = powf(10.0f, (float)n);
+    return floorf(value * factor + 0.5f) / factor;
+}
+
+
 bool checkbit(int bits, int num) {
 	return ((bits & (1 << num))>0);
 }
@@ -129,6 +139,12 @@ float VectorDotProduct(Point a, Point b) {
     return a.X*b.X + a.Y*b.Y + a.Z*b.Z;
 }
 
+float Least(float a, float b) { return ((a < b) ? a : b); }
+float Least(float a, float b, float c) { return ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c)); }
+float Large(float a, float b) { return ((a > b) ? a : b); }
+float Large(float a, float b, float c) { return ((a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c)); }
+
+
 Point VectorCrossProduct(Point a, Point b) {
     Point r;
     r.X = a.Y*b.Z - a.Z*b.Y;
@@ -145,6 +161,16 @@ float Distance(Point p1, Point p2) {
     return (sumSq != 0.0) ? sqrtf(sumSq) : 0;
 }
 
+Point TriangleAxii(Point p1, Point p2, Point p3) {
+	return MakePoint((Least(p1.X, p2.X, p3.X) + ((Large(p1.X, p2.X, p3.X) - Least(p1.X, p2.X, p3.X)) / 2)),
+					 (Least(p1.Y, p2.Y, p3.Y) + ((Large(p1.Y, p2.Y, p3.Y) - Least(p1.Y, p2.Y, p3.Y)) / 2)),
+			   	 	 (Least(p1.Z, p2.Z, p3.Z) + ((Large(p1.Z, p2.Z, p3.Z) - Least(p1.Z, p2.Z, p3.Z)) / 2)));
+}
+Point TriangleOffset(Point p1, Point p2, Point p3) {
+    return MakePoint((Large(p1.X, p2.X, p3.X) - Least(p1.X, p2.X, p3.X)),
+				 	 (Large(p1.Y, p2.Y, p3.Y) - Least(p1.Y, p2.Y, p3.Y)),
+					 (Large(p1.Z, p2.Z, p3.Z) - Least(p1.Z, p2.Z, p3.Z)));
+}
 
 Point TriangleNormal(Point p1, Point p2, Point p3) {
     Point v1 = VectorDeduction(p2, p1);
@@ -178,12 +204,6 @@ Point PlaneNormal(Point p1, Point p2, Point p3) {
     return VectorNormalize(TriangleNormal(p1, p2, p3));
 }
 
-float Least(float a, float b) { return (a < b) ? a : b; }
-float Least(float a, float b, float c) { return (a < b) ? (a < c) ? a : c : (b < c) ? b : c; }
-float Large(float a, float b) { return (a > b) ? a : b; }
-float Large(float a, float b, float c) { return (a > b) ? (a > c) ? a : c : (b > c) ? b : c; }
-
-
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 {
 	
@@ -191,9 +211,14 @@ extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 				 || (((n1 - n2 || n3) && (n1 - n2 || n3)) + ((n1 || n2 + !n3) && (!n1 + n2 && n3))));
 }
 
-extern bool PointTouchesTriangle (float PointX, float PointY, float PointZ, float NormalX, float NormalY, float NormalZ, float CenterX, float CenterY, float CenterZ) 
+extern float Sign(float n) {
+	return RoundN(((-(fabsf((n*99)-1) - (n*99)) - (-fabsf((n*99)+1) + (n*99)))* 0.5f),0);
+}
+extern int PointTouchesTriangle(float PointX, float PointY, float PointZ, float Length1, float Length2, float Length3, float NormalX, float NormalY, float NormalZ) 
 {
-	return ((((NormalX * PointX) + (NormalY * PointY) + (NormalZ * PointZ)) - ((NormalX * CenterX) + (NormalY * CenterY) + (NormalZ * CenterZ))) <= 0.0);
+	return (( (Length(MakePoint(PointX, PointY, PointZ)) <=
+			( ( ((Length1+Length2)/2.0f)+((Length1+Length3)/2.0f)+((Length2+Length3)/2.0f)  ) /3.0f )) &&	
+			( (Sign(PointX)>=Sign(NormalX)) && (Sign(PointY)>=Sign(NormalY)) && (Sign(PointZ)>=Sign(NormalZ)) )) ) ? -1 :0;
 }
 extern int PointInsidePointList(float PointX, float PointY, float PointListX[], float PointListY[], int PointListCount)
 {
@@ -218,7 +243,7 @@ extern int PointInsidePointList(float PointX, float PointY, float PointListX[], 
 
 extern int CollisionObjectFlag (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int ObjectIndex) {
 /* Resets flags of Traingle data to Flag whose object matches ObjectIndex */
-	int cnt;
+	int cnt=0;
 	for (int i=0; i<TriangleTotal; i++) {
 		if (FaceVis[(i*6)+4]==(float)ObjectIndex) {
 			FaceVis[(i*6)+3]=(float)Flag;
@@ -229,7 +254,7 @@ extern int CollisionObjectFlag (int Flag, int TriangleTotal, float FaceVis[], fl
 }
 extern void CollisionTriangleFlag (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int TriangleCount) {
 /* Resets TriangleCount number of Traingle data flags starting at TriangleIndex to Flag. */
-	for (int i=(TriangleIndex+1); i<=(TriangleIndex+TriangleCount); i++) {FaceVis[3*i] = (float)Flag;}
+	for (int i=(TriangleIndex+1); i<=(TriangleIndex+TriangleCount); i++) {FaceVis[(i*6)+3] = (float)Flag;}
 }
 
 extern void CollisionClearFlag (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[]) {
@@ -240,9 +265,9 @@ extern void CollisionClearFlag (int Flag, int TriangleTotal, float FaceVis[], fl
 }
 extern int CollisionResetFlag (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int NewFlag) {
 /* Resets all flags to NewFlag of Triangle data whose flags matches Flag, */
-	int cnt;
+	int cnt=0;
 	for (int i=0; i<TriangleTotal; i++) {
-		if (FaceVis[(i*6)+3] == Flag) {
+		if (fabsf(FaceVis[(i*6)+3]) == Flag) {
 			FaceVis[(i*6)+3]= (float)NewFlag;
 			cnt++;
 		}
@@ -250,49 +275,111 @@ extern int CollisionResetFlag (int Flag, int TriangleTotal, float FaceVis[], flo
 	return cnt;
 }
 
-
-extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int ApplyCulling)
-{
-	/*int start=0, stop=0, count=0, i=0, ret=0;
-
-	while  (i<TriangleTotal) {
-
-		if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+3]==Flag;
-
-		if ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]=Flag)) {
-			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
-
-			start=i;//iterate ahead and get the start and stop index (and then count) which is for sending to PointInsidePointList
-			stop=i;
-			while ((FaceVis[(stop*6)+3]==Flag)&&(FaceVis[(stop*6)+4]!=FaceVis[(TriangleIndex*6)+4])) {
-				stop++;
-				if(stop>=TriangleTotal) break;
+extern void CullingReset (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[]) {
+/* Resets all temporary culling flags of Triangle data whose flag matches Flag, if Flag is zero all culled triangles are reset */
+	if (Flag==0) {
+		for (int i=0; i<TriangleTotal; i++) {
+			FaceVis[(i*6)+5] = fabsf((float)Flag);
+		}
+	} else {
+		for (int i=0; i<TriangleTotal; i++) {
+			if (fabsf(FaceVis[(i*6)+3])==(float)Flag) {
+				FaceVis[(i*6)+5] = fabsf((float)Flag);
 			}
-			stop=(stop-1);
+		}	
+	}
+}
 
-			if (stop>start) {
-				count = (stop-start); //create a count
-				if ((start+(count-1)<TriangleIndex)&&(start<stop)) {
+bool SkipCollisionCheck(int Flag, float FaceVis[], int TriangleIndex, int i) {
+	//a very basic simply avoidance check for the collision function to ignore by flag and the triangle checked
+	return ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]==Flag));
+}
 
-					for (int j=0;j<3;j++) {			
+bool SkipCullingCheck(int Flag, float FaceVis[], int TriangleIndex, int i, int ApplyCulling) {
+	bool ret=true;
 
-						//for (int j=0;j<3;j++) {	
-						//	ret=PointInsidePointList(VertexX[(3*TriangleIndex)+j], VertexY[(3*TriangleIndex)+j], &(VertexX[(3*start)]), &(VertexY[(3*start)]), count)+
-						//		PointInsidePointList(VertexY[(3*TriangleIndex)+j], VertexZ[(3*TriangleIndex)+j], &(VertexY[(3*start)]), &(VertexZ[(3*start)]), count)+
-						//		PointInsidePointList(VertexZ[(3*TriangleIndex)+j], VertexX[(3*TriangleIndex)+j], &(VertexZ[(3*start)]), &(VertexX[(3*start)]), count);
-						//}
+	//if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+5]=(float)Flag;//init the flag's modifier
+	ret =  SkipCollisionCheck(Flag,FaceVis,TriangleIndex,i);
+	if  (ret) {
+		if (checkbit(ApplyCulling,CullByBehinds)) {
+			//backfacing should maybe be done at this level similarly low level as the flagging
+		}
+	}
+	return ret;
+}
+
+extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int ApplyCulling)
+{
+	int start=0, sstop=0, count=0,i=0;
+
+	while (i<TriangleTotal) {
+
+		if (SkipCullingCheck(Flag,FaceVis,TriangleIndex,i,ApplyCulling)) {
+			start = i;
+			sstop = i;
+
+			while ( SkipCullingCheck(Flag,FaceVis,TriangleIndex,sstop,ApplyCulling)) {
+				sstop++;
+				if (sstop>=TriangleTotal) break;
+			}
+
+			if (sstop>start) {
+				sstop = (sstop-1);
+				count = (sstop - (start-1));
+				if ( ((start + (count -1)) <= TriangleTotal) && (start <=sstop)) {
+
+					//start, sstop and count are properly set by here
+					//todo: object based iteration of the triangle list
+
+/*
+					
+#define CullByFlagSet 0
+#define CullBySquares 1
+#define CullByInsides 2
+#define CullByRanging 3
+#define CullByClosest 4
+#define CullByBehinds 6
+#define UseAllCulling 7
+					  */
+
+					if (checkbit(ApplyCulling,CullBySquares)) {
+						//this one is going to fastly cut anthing done below down
+						//quicker and may render CullByInsides obsolete due to that
+
+
+
+					}
+					if (checkbit(ApplyCulling,CullByInsides)) {
+
+
+
 
 					}
 
-				}				
-			}			
+					if (checkbit(ApplyCulling,CullByRanging)) {
+						//should go before CullByClosest, if both are in one call
+						//due to the exacting preformance in large traingle mapping
+						//this is far more robust then CullByClosest
+
+
+
+
+					}
+					if (checkbit(ApplyCulling,CullByClosest)) {
+
+
+
+
+					}
+
+
+				}
+				i = sstop;
+			}
 		}
-		i=i+3;				
+		i++;	
 	}
-	return false;
-
-	*/
-
+	
 
 	return checkbit(ApplyCulling,CullByBehinds);
 
@@ -300,58 +387,50 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex)
 {
-
-	int start=0, stop=0, count=0, i=0, ret=0;
-	float x=0,y=0,z=0, nx=0,ny=0,nz=0;
+	int i=0;
+	float lx=0,ly=0,lz=0,nx=0,ny=0,nz=0,cx=0,cy=0,cz=0;
+	Point p1,p2,p3;
 
 	while  (i<TriangleTotal) {
 
-		if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+3]=(float)Flag;
+		
 
-		if ((FaceVis[(i*6)+3]==Flag)&&(FaceVis[(i*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]==Flag)) {
+		if (SkipCollisionCheck(Flag,FaceVis,TriangleIndex,i)) {
 			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
 
-			start=i;
-			stop=i;
-			while ((FaceVis[(stop*6)+3]==Flag)&&(FaceVis[(stop*6)+4]!=FaceVis[(TriangleIndex*6)+4])&&(FaceVis[(i*6)+5]==Flag)) {
-				stop++;
-				if(stop>=TriangleTotal) break;
+			p1=MakePoint(VertexX[(3*i)],VertexY[(3*i)],VertexZ[(3*i)]);
+			p2=MakePoint(VertexX[(3*i)+1],VertexY[(3*i)+1],VertexZ[(3*i)+1]);
+			p3=MakePoint(VertexX[(3*i)+2],VertexY[(3*i)+2],VertexZ[(3*i)+2]);
+
+			lx=Distance(p1,p2);
+			ly=Distance(p2,p3);
+			lz=Distance(p3,p1);
+
+			cx=Least(p1.X, p2.X, p3.X);
+			cy=Least(p1.Y, p2.Y, p3.Y);
+			cz=Least(p1.Z, p2.Z, p3.Z);
+			cx=(cx + ((Large(p1.X, p2.X, p3.X) - cx) / 2));
+			cy=(cy + ((Large(p1.Y, p2.Y, p3.Y) - cy) / 2));
+			cz=(cz + ((Large(p1.Z, p2.Z, p3.Z) - cz) / 2));
+
+			nx=FaceVis[(6*i)];
+			ny=FaceVis[(6*i)+1];
+			nz=FaceVis[(6*i)+2];
+
+			for (int j=0;j<3;j++) {
+
+				if (PointTouchesTriangle(VertexX[(3*TriangleIndex)+j]-cx,VertexY[(3*TriangleIndex)+j]-cy,VertexZ[(3*TriangleIndex)+j]-cz,lx,ly,lz,nx,ny,nz)) {
+					*CollidedObjectIndex=(int)FaceVis[(i*6)+4];
+					*CollidedTriangleIndex=i;
+					return true;
+				}	
 			}
-			stop=(stop-1);
-
-			if (stop>start) {
-				count = (stop-start); //create a count
-				if ((start+(count-1)<TriangleIndex)&&(start<stop)) {
-				
-					while (i<=((start+count)-1)) {
-						//check every point of the triangle being tested against
-						//triangles fitting criteria of the start and stop or count
-						x=(VertexX[(3*i)],VertexX[(3*i)+1],VertexX[(3*i)+2])/3;
-						y=(VertexY[(3*i)],VertexY[(3*i)+1],VertexY[(3*i)+2])/3;
-						z=(VertexZ[(3*i)],VertexZ[(3*i)+1],VertexZ[(3*i)+2])/3;
-						nx=FaceVis[(6*i)];
-						ny=FaceVis[(6*i)+1];
-						nz=FaceVis[(6*i)+2];
-						
-						for (int j=0;j<3;j++) {			
-
-							ret=ret=+(PointTouchesTriangle(VertexX[(3*TriangleIndex)+j],VertexY[(3*TriangleIndex)+j],VertexZ[(3*TriangleIndex)+j],nx,ny,nz,x,y,z));												
-
-							if (ret>=1) {
-								*CollidedObjectIndex=(int)FaceVis[(start*6)+4];
-								*CollidedTriangleIndex=start;
-								return true;
-							}	
-						}
-						i=i+3;	
-					}
-					i=i-3;
-				}				
-			}			
+			
 		}
 		i=i+3;				
 	}
 	return false;
+	
 }
 
 

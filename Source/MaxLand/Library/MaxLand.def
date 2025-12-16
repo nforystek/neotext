@@ -6,6 +6,7 @@ EXPORTS
 	CollisionResetFlag
 	CollisionCull
 	CollisionCheck
+	Sign
 	PointTouchesTriangle
 	PointInsidePointList
 	TriangleCrossSegment
