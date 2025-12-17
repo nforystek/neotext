@@ -223,6 +223,13 @@ Point PlaneNormal(Point p1, Point p2, Point p3) {
     return VectorNormalize(TriangleNormal(p1, p2, p3));
 }
 
+bool PlaneBackfaceToPlane(float nx1, float ny1, float nz1,
+						  float nx2, float ny2, float nz2) {
+	return (!((((nx1+nx2) > -0.50f) && ((nx1+nx2) < 0.50f)) &&
+			(((ny1+ny2) > -0.50f) && ((ny1+ny2) < 0.50f)) && 
+			(((nz1+nz2) > -0.50f) && ((nz1+nz2) < 0.50f))));
+}
+
 extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 {
 	
@@ -320,20 +327,48 @@ bool SkipCullingCheck(int Flag, float FaceVis[], int TriangleIndex, int i, int A
 	//if (fabsf(FaceVis[(i*6)+5])!=Flag) FaceVis[(i*6)+5]=(float)Flag;//init the flag's modifier
 	ret =  SkipCollisionCheck(Flag,FaceVis,TriangleIndex,i);
 	if  (!ret) {
-		if (checkbit(ApplyCulling,CullByBackfaceExclusion)) {
-			//backfacing should maybe be done at this level similarly low level as the flagging
+		if (FaceVis[(6*i)+CULLED_FLAG]>0) { //ignore those already culled
 
+			if (checkbit(ApplyCulling,CullByBackfaceExclusion)) {
+				//backfacing should maybe be done at this level similarly low level as the flagging
+				if (PlaneBackfaceToPlane(FaceVis[(6*TriangleIndex)+NORMAL_X],FaceVis[(6*TriangleIndex)+NORMAL_Y],FaceVis[(6*TriangleIndex)+NORMAL_Z],
+					FaceVis[(6*i)+NORMAL_X],FaceVis[(6*i)+NORMAL_Y],FaceVis[(6*i)+NORMAL_Z])) FaceVis[(6*i)+CULLED_FLAG] = -FaceVis[(6*i)+CULLED_FLAG]; //flag it off
 
-
+			}
 		}
 	}
 	return ret;
 }
+void Get2Dfrom3Dpoints(float vertexList[],int start, int count,float *pointListOut, int *size) {
+	
+	float *temp=new float[count*3];
+
+	int i=0;
+	while (i<(count*3))  {
+		temp[i+VERTEX1] = vertexList[(3*(start+i))+VERTEX1];
+		temp[i+VERTEX2] = vertexList[(3*(start+i))+VERTEX1];
+		temp[i+VERTEX3] = vertexList[(3*(start+i))+VERTEX1];
+		i=i+3;
+		
+	}
+
+	*size = i;
+	delete[] pointListOut;
+	*pointListOut = *temp;
+
+}
 
 extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int ApplyCulling)
 {
-	int start=0, sstop=0, count=0,i=0, culled=0;
-	float minX=0, maxX=0, minY=0, maxY=0, minZ=0, maxZ=0, test=0, inc=0, dist=0, prox=0;
+	int start=0, sstop=0, count=0,i=0, culled=0, inc=0;
+	float minX=0, maxX=0, minY=0, maxY=0, minZ=0, maxZ=0;
+	float test=0, dist=0;
+	float prox=0;
+	int *size=0;
+	float *pointListX=new float[];
+	float *pointListY=new float[];
+	float *pointListZ=new float[];
+
 	Point p1,p2,p3,c1,c2;
 
 	while (i<TriangleTotal) {
@@ -351,9 +386,6 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 				sstop = (sstop-1);
 				count = (sstop - (start-1));
 				if ( ((start + (count -1)) <= TriangleTotal) && (start <=sstop)) {
-
-					//start, sstop and count are properly set by here
-					//todo: object based iteration of the triangle list
 
 					/*
 					#define CullByFlagElimination 0
@@ -399,8 +431,9 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 					}
 					if (checkbit(ApplyCulling,CullByInside2DShape)) {
 
-
-
+						Get2Dfrom3Dpoints(VertexX, start, count, pointListX, size);
+						Get2Dfrom3Dpoints(VertexY, start, count, pointListY, size);
+						Get2Dfrom3Dpoints(VertexZ, start, count, pointListZ, size);
 
 					}
 
@@ -416,7 +449,6 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 						c1=TriangleAxii(p1,p2,p3);
 
 						prox = DistanceEx(p1,p2) + DistanceEx(p2,p3) + DistanceEx(p3,p1);
-
 
 					}
 					if (checkbit(ApplyCulling,CullByClosestDistance)) {
@@ -461,8 +493,21 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 						}
 						if (checkbit(ApplyCulling,CullByInside2DShape)) {
 
-
-
+							if (FaceVis[(6*t)+CULLED_FLAG]>0) {//still part of the collisioncheck
+								inc=0;
+								for (int j=0;j<3;j++) {
+									if (PointInsidePointList(VertexX[(3*t)+j],VertexY[(3*t)+j],pointListX,pointListY,count)) {
+										inc++;
+										if (PointInsidePointList(VertexY[(3*t)+j],VertexZ[(3*t)+j],pointListY,pointListZ,count)) {
+											inc++;
+											if (PointInsidePointList(VertexZ[(3*t)+j],VertexX[(3*t)+j],pointListZ,pointListX,count)) {
+												inc++;
+											}
+										}
+									}
+								}
+								if (inc<3) FaceVis[(6*t)+CULLED_FLAG] = -FaceVis[(6*t)+CULLED_FLAG]; //flag it off
+							}
 
 						}
 
@@ -521,9 +566,7 @@ extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float V
 	float lx=0,ly=0,lz=0,nx=0,ny=0,nz=0,cx=0,cy=0,cz=0;
 	Point p1,p2,p3;
 
-	while  (i<TriangleTotal) {
-
-		
+	while  (i<TriangleTotal) {		
 
 		if (!SkipCollisionCheck(Flag,FaceVis,TriangleIndex,i)) {
 			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
@@ -621,6 +664,7 @@ int EdgePlaneIntersect(Point p, Point Q, Point planePoint, Point PlaneNormal, Po
     return 1;
 }
 
+
 float PlaneAngleToPlane(float nx1, float ny1, float nz1,
 						float nx2, float ny2, float nz2)
 {
@@ -645,7 +689,6 @@ float PlaneAngleToPlane(float nx1, float ny1, float nz1,
 
     return angle;
 }
-
 
 
 //inputs: verticies for two triangles in collision (defined by two or more axis of PointInPoly 2D collision tests)

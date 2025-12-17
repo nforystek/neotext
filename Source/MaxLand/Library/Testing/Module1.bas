@@ -227,13 +227,36 @@ Public Sub Main()
 
     MakeTestData
     
-    Main0
+    'Main0
     
    ' Main1
     'Main2
     
    ' Main3
+   Main4
 End Sub
+
+Public Sub Main4()
+
+    Dim angle As Single
+    
+    ' Plane normals
+    angle = PlaneAngleToPlane(MakePoint(0, 0, 1), MakePoint(0, 0, 1))   ' Same direction ? 0 degrees
+    Debug.Print "Angle = "; angle
+    
+    angle = PlaneAngleToPlane(MakePoint(0, 0, 1), MakePoint(0, 0, -1))  ' Opposite direction ? 180 degrees
+    Debug.Print "Angle = "; angle
+    
+    angle = PlaneAngleToPlane(MakePoint(1, 0, 0), MakePoint(0, 1, 0))   ' Perpendicular ? 90 degrees
+    Debug.Print "Angle = "; angle
+
+    
+End Sub
+Public Function PlaneToPlaneBackface(ByRef n1 As Point, ByRef n2 As Point) As Boolean
+    Dim b1 As Point
+    b1 = MakePoint(n1.x + n2.x, n1.y + n2.y, n1.z + n2.z)
+    PlaneNormalToPlaneTest = ((b1.x < 0.5 And b1.x > -0.5) And (b1.y < 0.5 And b1.y > -0.5) And (b1.z < 0.5 And b1.z > -0.5))
+End Function
 
 Public Sub Main3()
     ResetCollisionTestData
@@ -1067,6 +1090,50 @@ Private Function EdgePlaneIntersect(p As Point, Q As Point, planePoint As Point,
     x = VectorAddition(p, MakePoint(dir.x * t, dir.y * t, dir.z * t))
     EdgePlaneIntersect = True
 End Function
+
+Public Function Acos(ByVal x As Double) As Double
+    ' Clamp input to valid domain [-1, 1]
+    If x < -1# Then x = -1#
+    If x > 1# Then x = 1#
+
+    ' acos(x) = atan2( sqrt(1 - x^2), x )
+    Acos = Atn2(Sqr(1# - x * x), x)
+End Function
+
+Public Function PlaneAngleToPlane(ByRef n1 As Point, ByRef n2 As Point) As Single
+    Dim dot As Single
+    dot = n1.x * n2.x + n1.y * n2.y + n1.z * n2.z
+    Dim mag1 As Single
+    Dim mag2 As Single
+    mag1 = (n1.x * n1.x + n1.y * n1.y + n1.z * n1.z) ^ (1 / 2)
+    mag2 = (n2.x * n2.x + n2.y * n2.y + n2.z * n2.z) ^ (1 / 2)
+    If (mag1 = 0 Or mag2 = 0) Then PlaneAngleToPlane = 0
+    
+    Dim cosTheta As Single
+    cosTheta = dot / (mag1 * mag2)
+    
+    If (cosTheta > 1) Then cosTheta = 1
+    If (cosTheta < -1) Then cosTheta = -1
+    
+    Dim angle As Single
+    angle = Acos(cosTheta) * 180 / 3.14159265
+    
+    PlaneAngleToPlane = angle
+End Function
+
+
+
+Public Function Atn2(ByVal y As Double, ByVal x As Double) As Double
+    If x > 0 Then
+        Atn2 = Atn(y / x)
+    ElseIf x < 0 Then
+        Atn2 = Atn(y / x) + Sgn(y) * 3.14159265358979
+    Else
+        Atn2 = Sgn(y) * 3.14159265358979 / 2
+    End If
+End Function
+
+
 
 '##########################################################################
 '##########################################################################
