@@ -1,9 +1,10 @@
 EXPORTS
 	Test
-	CollisionClearFlag
-	CollisionObjectFlag
-	CollisionTriangleFlag
-	CollisionResetFlag
+	FlagClear
+	FlagObject
+	FlagTriangle
+	FlagModify
+	ResetCulling
 	CollisionCull
 	CollisionCheck
 	Sign

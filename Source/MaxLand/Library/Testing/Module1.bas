@@ -511,6 +511,7 @@ End Function
 
 
 Public Function Sign(ByVal n As Double) As Double
+    'returns the sign of any number which is the multiplication facttr of it's negative (*-1), zero(*0) or positive (*1)
     Sign = ((-(Abs((n * 99.99) - 1) - (n * 99.99)) - (-Abs((n * 99.99) + 1) + (n * 99.99))) * 0.5)
 End Function
 
