@@ -20,7 +20,7 @@ Public Declare Function PointBehindPoly Lib "..\Backup\MaxLandLib.dll" _
                                     ByVal NormalX As Single, ByVal NormalY As Single, ByVal NormalZ As Single, _
                                     ByVal CenterX As Single, ByVal CenterY As Single, ByVal CenterZ As Single) As Boolean
 
-Public Declare Function PointTouchesTriangle Lib "..\Release\maxland.dll" _
+Public Declare Function PointTouchesTriangle Lib "..\Debug\maxland.dll" _
                                     (ByVal PointX As Single, ByVal PointY As Single, ByVal PointZ As Single, _
                                     ByVal NormalX As Single, ByVal NormalY As Single, ByVal NormalZ As Single, _
                                     ByVal CenterX As Single, ByVal CenterY As Single, ByVal CenterZ As Single) As Long
@@ -31,11 +31,12 @@ Public Declare Function PointInPoly Lib "..\Backup\MaxLandLib.dll" _
                                     (ByVal PointX As Single, ByVal PointY As Single, _
                                      polyDataX() As Single, polyDataY() As Single, ByVal polyDataCount As Long) As Long
                                     
-Public Declare Function PointInsidePointList Lib "..\Release\maxland.dll" _
+Public Declare Function PointInsidePointList Lib "..\Debug\maxland.dll" _
                                     (ByVal PointX As Single, ByVal PointY As Single, _
                                     ByRef polyListX As Single, ByRef polyListY As Single, ByVal polyListaCount As Long) As Long
                                    ' polyDataX As Any, polyDataY As Any, ByVal polyDataCount As Long) As Long
 
+                                    
 'Test() depends on the functions results above, two views of 3d, x/y and y/z, are called for pointinpoly when
 'satisfactionis returned, it is a single point nearest the point checked, then combined with point behindpoly
 'and passed to test() the determination is complete by Test() results, as of now PointInPoly2 fails to inform
@@ -43,7 +44,7 @@ Public Declare Function PointInsidePointList Lib "..\Release\maxland.dll" _
 Public Declare Function Test Lib "..\Backup\MaxLandLib.dll" _
                                     (ByVal n1 As Single, ByVal n2 As Single, ByVal n3 As Single) As Boolean
 
-Public Declare Function Test2 Lib "..\Release\maxland.dll" Alias "Test" _
+Public Declare Function Test2 Lib "..\Debug\maxland.dll" Alias "Test" _
                                     (ByVal n1 As Integer, ByVal n2 As Integer, ByVal n3 As Integer) As Boolean
                                 
      
@@ -57,7 +58,7 @@ Public Declare Function Test2 Lib "..\Release\maxland.dll" Alias "Test" _
 '                                    ByVal u2_0 As Single, ByVal u2_1 As Single, ByVal u2_2 As Single) As Integer
 '                                    'THAT WAS FUN
 
-Public Declare Function TriangleCrossSegmentEx Lib "..\Release\maxland.dll" _
+Public Declare Function TriangleCrossSegmentEx Lib "..\Debug\maxland.dll" _
                                    (ByVal Ax1 As Single, ByVal Ay1 As Single, ByVal Az1 As Single, _
                                     ByVal Ax2 As Single, ByVal Ay2 As Single, ByVal Az2 As Single, _
                                     ByVal Ax3 As Single, ByVal Ay3 As Single, ByVal Az3 As Single, _
@@ -84,7 +85,7 @@ Public Declare Function TriangleCrossSegmentEx Lib "..\Release\maxland.dll" _
 '                                    sngScreenZ() As Single, _
 '                                    sngZBuffer() As Single) As Long
 
-Public Declare Function CollisionCull Lib "..\Release\maxland.dll" _
+Public Declare Function CollisionCull Lib "..\Debug\maxland.dll" _
                                     (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -107,7 +108,7 @@ Public Declare Function Collision Lib "MaxLandLib.dll" _
                                     ByRef lngCollidedBrush As Long, _
                                     ByRef lngCollidedFace As Long) As Boolean
 
-'Public Declare Function Collision2 Lib "..\Release\maxland.dll" Alias "Collision" _
+'Public Declare Function Collision2 Lib "..\Debug\maxland.dll" Alias "Collision" _
 '                                   (ByVal visType As Long, _
 '                                    ByVal lngFaceCount As Long, _
 '                                    sngFaceVis() As Single, _
@@ -118,7 +119,7 @@ Public Declare Function Collision Lib "MaxLandLib.dll" _
 '                                    ByRef lngCollidedBrush As Long, _
 '                                    ByRef lngCollidedFace As Long) As Boolean
 
-Public Declare Function CollisionObjectFlag Lib "..\Release\maxland.dll" _
+Public Declare Function CollisionObjectFlag Lib "..\Debug\maxland.dll" _
                                    (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -127,7 +128,7 @@ Public Declare Function CollisionObjectFlag Lib "..\Release\maxland.dll" _
                                     ByRef VertexZ As Single, _
                                     ByVal ObjectIndex As Long) As Long
                                     
-Public Declare Function CollisionTriangleFlag Lib "..\Release\maxland.dll" _
+Public Declare Function CollisionTriangleFlag Lib "..\Debug\maxland.dll" _
                                    (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -137,7 +138,7 @@ Public Declare Function CollisionTriangleFlag Lib "..\Release\maxland.dll" _
                                     ByVal TriangleIndex As Long, _
                                     ByVal TriangleCount As Long) As Long
                                     
-Public Declare Function CollisionResetFlag Lib "..\Release\maxland.dll" _
+Public Declare Function CollisionResetFlag Lib "..\Debug\maxland.dll" _
                                    (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -146,7 +147,7 @@ Public Declare Function CollisionResetFlag Lib "..\Release\maxland.dll" _
                                     ByRef VertexZ As Single, _
                                     ByVal NewFlag As Long) As Long
                                     
-Public Declare Sub CollisionClearFlag Lib "..\Release\maxland.dll" _
+Public Declare Sub CollisionClearFlag Lib "..\Debug\maxland.dll" _
                                    (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -154,7 +155,7 @@ Public Declare Sub CollisionClearFlag Lib "..\Release\maxland.dll" _
                                     ByRef VertexY As Single, _
                                     ByRef VertexZ As Single)
                                     
-Public Declare Function CollisionCheck Lib "..\Release\maxland.dll" _
+Public Declare Function CollisionCheck Lib "..\Debug\maxland.dll" _
                                    (ByVal Flag As Long, _
                                     ByVal TriangleTotal As Long, _
                                     ByRef FaceVis As Single, _
@@ -166,7 +167,7 @@ Public Declare Function CollisionCheck Lib "..\Release\maxland.dll" _
                                     ByRef CollidedTriangleIndex As Long) As Boolean
 
 
-Public Declare Function Sign2 Lib "..\Release\maxland.dll" Alias "Sign" (ByVal n As Single) As Single
+Public Declare Function Sign2 Lib "..\Debug\maxland.dll" Alias "Sign" (ByVal n As Single) As Single
 
 
 'The following variables are needed for Forystek() and Collision() culling and collision
@@ -233,7 +234,7 @@ Public Sub Main()
     'Main2
     
    ' Main3
-   Main4
+  ' Main4
 End Sub
 
 Public Sub Main4()
@@ -735,13 +736,13 @@ Public Sub Main1()
             vZ1 = .a.z
         End With
 
-        Debug.Print "PointBehindPoly()=" & PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
-            " PointTouchesTriangle()=" & PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
-            " PointBehindPoly3()=" & PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)
-        If (Not (CVar(PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
-            CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Or _
-            (Not (CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
-            CVar(PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Then testCount = -Abs(testCount)
+'        Debug.Print "PointBehindPoly()=" & PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
+'            " PointTouchesTriangle()=" & PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1) & _
+'            " PointBehindPoly3()=" & PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)
+'        If (Not (CVar(PointBehindPoly(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
+'            CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Or _
+'            (Not (CVar(PointTouchesTriangle(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)) = _
+'            CVar(PointBehindPoly3(Px1, Py1, Pz1, nX1, nY1, nZ1, vX1, vY1, vZ1)))) Then testCount = -Abs(testCount)
         'Debug.Print
 
         'the box is 8x8 centered on (0,0) so we'll use
@@ -750,13 +751,15 @@ Public Sub Main1()
         PointY = (RndNum(0, 16) - 8)
         PointZ = (RndNum(0, 16) - 8)
 
+        Debug.Print "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, PointListsX(0), PointListsY(0), 5) & " " & _
+            "PointInPoly()=" & PointInsidePointList2(PointX, PointY, PointListsX(0), PointListsY(0), 5)
         
 '        Debug.Print "PointInPoly()=" & PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) & "  " & _
 '            "PointInsidePointList()=" & PointInsidePointList(PointX, PointY, PointListsX(0), PointListsY(0), 5) & " " & _
-'            "PointInPoly3()=" & PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5)
+'            "PointInPoly()=" & PointInsidePointList2(PointX, PointY, PointListsX(0), PointListsY(0), 5)
         If (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = _
             PointInsidePointList(PointX, PointY, PointListsX(0), PointListsY(0), 5))) Or _
-             (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = PointInPoly3(PointX, PointY, PointListsX, PointListsY, 5))) Then testCount = Abs(testCount)
+             (Not (PointInPoly(PointX, PointY, PointListsX, PointListsY, 5) = PointInsidePointList2(PointX, PointY, PointListsX(0), PointListsY(0), 5))) Then testCount = Abs(testCount)
         'Debug.Print
         
         'arbitrary arguments, unsigned short return values from PointInPoly that results a percentage with in the

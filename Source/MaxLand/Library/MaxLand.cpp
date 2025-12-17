@@ -72,12 +72,6 @@ struct Point {
 const double epsilon = 1e-9;
 
 
-extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3);
-/* Accepts inputs n1 and n3 from PointInsidePointList() (two 2D views of one 3D set of data) and n2 from TriangleCrossSegment() (a bridge to skip a third 2D view) */
-
-extern float Sign(float n);
-
-
 extern int PointTouchesTriangle(float PointX, float PointY, float PointZ, float NormalX, float NormalY, float NormalZ, float CenterX, float CenterY, float CenterZ);
 /* Checks for the presence of a point possibly behind a triangle, the first three inputs are the point to test with
 the triangles center removed, the next three are the triangles normal, the last three are tthe triangles center. */
@@ -230,41 +224,74 @@ bool PlaneBackfaceToPlane(float nx1, float ny1, float nz1,
 			(((nz1+nz2) > -0.50f) && ((nz1+nz2) < 0.50f))));
 }
 
-extern bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
+bool Test (unsigned short n1, unsigned short n2, unsigned short n3)
 {
 	
 	return  (bool) ((((n1 & n2 + n3) || (n1 + n2 && n3)) && ((n1 - n2 || !n3) - (!n1 || n2 - n3)))
 				 || (((n1 - n2 || n3) && (n1 - n2 || n3)) + ((n1 || n2 + !n3) && (!n1 + n2 && n3))));
 }
 
-extern float Sign(float n) {
+float Sign(float n) {
 	//returns the sign of any number which is the multiplication facttr of it's negative (*-1), zero(*0) or positive (*1)
 	return RoundN(((-(fabsf((n*99.99f)-1) - (n*99.99f)) - (-fabsf((n*99.99f)+1) + (n*99.99f)))* 0.5f),0);
 }
+
+/*
+extern bool PointBehindPoly (float pointX, float pointY, float pointZ, float length1, float length2, float length3, float normalX, float normalY, float normalZ) 
+{
+	return (pointZ * length3 + length2 * pointY + length1 * pointX) - (length3 * normalZ + length1 * normalX + length2 * normalY) <= 0.0;
+}*/
+
+
 extern int PointTouchesTriangle(float PointX, float PointY, float PointZ, float Length1, float Length2, float Length3, float NormalX, float NormalY, float NormalZ) 
 {
 	return (( (Length(MakePoint(PointX, PointY, PointZ)) <=
 			( ( ((Length1+Length2)/2.0f)+((Length1+Length3)/2.0f)+((Length2+Length3)/2.0f)  ) /3.0f )) &&	
 			( (Sign(PointX)>=Sign(NormalX)) && (Sign(PointY)>=Sign(NormalY)) && (Sign(PointZ)>=Sign(NormalZ)) )) ) ? -1 :0;
 }
-extern int PointInsidePointList(float PointX, float PointY, float PointListX[], float PointListY[], int PointListCount)
+
+extern int PointInsidePointList ( float pointX, float pointY, float polyDataX[], float polyDataY[], int polyDataCount)
 {
-	if (PointListCount>2) {
-		float ref=((PointX - PointListX[0]) * (PointListY[1] - PointListY[0]) - (PointY - PointListY[0]) * (PointListX[1] - PointListX[0]));
+	if (polyDataCount>2) {
+		float ref=((pointX - polyDataX[0]) * (polyDataY[1] - polyDataY[0]) - (pointY - polyDataY[0]) * (polyDataX[1] - polyDataX[0]));
 		float ret=ref;
 		int result=0;
-		for (int i=1;i<PointListCount;i++) {
-			ref = ((PointX - PointListX[i-1]) * (PointListY[i] - PointListY[i-1]) - (PointY - PointListY[i-1]) * (PointListX[i] - PointListX[i-1]));
-			if (((ret >= 0) && (ref < 0) )&&(result==0)) {
-				result = i;				
-			}
+		for (int i=1;i<=polyDataCount;i++) {
+			ref = ((pointX - polyDataX[i]) * (polyDataY[i] - polyDataY[i-1]) - (pointY - polyDataY[i]) * (polyDataX[i] - polyDataX[i-1]));
+			if ((ret > 0) && (ref < 0) && (result==0)) result = i;
 			ret=ref;
 		}
-		if ((result==0)||(result>PointListCount)) return 1;
-		
+		if ((result==0)||(result>polyDataCount)) {
+			return -1;
+		} else {
+			return result;
+		}
 	}
 	return 0;
 }
+
+/*
+extern bool PointInsidePointList(float PointX, float PointY, float *PointListX, float *PointListY, int PointListCount)
+{
+    bool inside = false;
+
+    for (int i = 0, j = PointListCount - 1; i < PointListCount; j = i++)
+    {
+        float xi = PointListX[i], yi = PointListY[i];
+        float xj = PointListX[j], yj = PointListY[j];
+
+        // Check if the edge crosses the horizontal ray to the right of (px, py)
+        bool intersect =
+            ((yi > PointY) != (yj > PointY)) &&
+            (PointX < (xj - xi) * (PointY - yi) / (yj - yi + 1e-15) + xi);
+
+        if (intersect)
+            inside = !inside;
+    }
+
+    return inside;
+}
+*/
 
 extern void FlagClear (int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[]) {
 /* Resets all flags of Triangle data to Flag, */
@@ -329,7 +356,7 @@ bool SkipCullingCheck(int Flag, float FaceVis[], int TriangleIndex, int i, int A
 	if  (!ret) {
 		if (FaceVis[(6*i)+CULLED_FLAG]>0) { //ignore those already culled
 
-			if (checkbit(ApplyCulling,CullByBackfaceExclusion)) {
+			if (checkbit(ApplyCulling,CullByBackfaceExclusion)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 				//backfacing should maybe be done at this level similarly low level as the flagging
 				if (PlaneBackfaceToPlane(FaceVis[(6*TriangleIndex)+NORMAL_X],FaceVis[(6*TriangleIndex)+NORMAL_Y],FaceVis[(6*TriangleIndex)+NORMAL_Z],
 					FaceVis[(6*i)+NORMAL_X],FaceVis[(6*i)+NORMAL_Y],FaceVis[(6*i)+NORMAL_Z])) FaceVis[(6*i)+CULLED_FLAG] = -FaceVis[(6*i)+CULLED_FLAG]; //flag it off
@@ -400,7 +427,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 					//############################ PREP
 
-					if (checkbit(ApplyCulling,CullBySquareBoundary)) {
+					if (checkbit(ApplyCulling,CullBySquareBoundary)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 						//gather a min and max with anything not culled
 						//abvoe zero is not culled
 						for (int j = 0; j<3; j++) {
@@ -429,7 +456,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 						}
 						
 					}
-					if (checkbit(ApplyCulling,CullByInside2DShape)) {
+					if (checkbit(ApplyCulling,CullByInside2DShape)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 
 						Get2Dfrom3Dpoints(VertexX, start, count, pointListX, size);
 						Get2Dfrom3Dpoints(VertexY, start, count, pointListY, size);
@@ -437,7 +464,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 					}
 
-					if (checkbit(ApplyCulling,CullByProximityRange)) {
+					if (checkbit(ApplyCulling,CullByProximityRange)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 						//should go before CullByClosestDistance, if both are in one call
 						//due to the exacting preformance in large traingle mapping
 						//this is far more robust then CullByClosestDistance
@@ -451,7 +478,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 						prox = DistanceEx(p1,p2) + DistanceEx(p2,p3) + DistanceEx(p3,p1);
 
 					}
-					if (checkbit(ApplyCulling,CullByClosestDistance)) {
+					if (checkbit(ApplyCulling,CullByClosestDistance)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 						//gather the shortest distance of any point to any the test triangle
 						//abvoe zero is not culled
 						for (int j = 0; j<3; j++) {
@@ -474,7 +501,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 					for (int t = start; t < count; t++)
 					{//object iteration
 
-						if (checkbit(ApplyCulling,CullBySquareBoundary)) {
+						if (checkbit(ApplyCulling,CullBySquareBoundary)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 							//this one is going to fastly cut anthing done below down
 							//quicker and may render CullByInside2DShape obsolete due to that
 							if (FaceVis[(6*t)+CULLED_FLAG]>0) {//still part of the collisioncheck
@@ -491,17 +518,20 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 							}
 
 						}
-						if (checkbit(ApplyCulling,CullByInside2DShape)) {
+						if (checkbit(ApplyCulling,CullByInside2DShape)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 
 							if (FaceVis[(6*t)+CULLED_FLAG]>0) {//still part of the collisioncheck
 								inc=0;
 								for (int j=0;j<3;j++) {
 									if (PointInsidePointList(VertexX[(3*t)+j],VertexY[(3*t)+j],pointListX,pointListY,count)) {
 										inc++;
+										if (inc>2) break;
 										if (PointInsidePointList(VertexY[(3*t)+j],VertexZ[(3*t)+j],pointListY,pointListZ,count)) {
 											inc++;
+											if (inc>2) break;
 											if (PointInsidePointList(VertexZ[(3*t)+j],VertexX[(3*t)+j],pointListZ,pointListX,count)) {
 												inc++;
+												if (inc>2) break;
 											}
 										}
 									}
@@ -511,7 +541,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 						}
 
-						if (checkbit(ApplyCulling,CullByProximityRange)) {
+						if (checkbit(ApplyCulling,CullByProximityRange)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 							//should go before CullByClosestDistance, if both are in one call
 							//due to the exacting preformance in large traingle mapping
 							//this is far more robust then CullByClosestDistance
@@ -528,7 +558,7 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 
 						}
-						if (checkbit(ApplyCulling,CullByClosestDistance)) {
+						if (checkbit(ApplyCulling,CullByClosestDistance)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 							inc=9;
 							for (int j = 0; j<3; j++) {								
 								for (int jj = 0; jj<3; jj++) {

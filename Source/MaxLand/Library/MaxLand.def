@@ -1,5 +1,4 @@
 EXPORTS
-	Test
 	FlagClear
 	FlagObject
 	FlagTriangle
@@ -7,7 +6,6 @@ EXPORTS
 	ResetCulling
 	CollisionCull
 	CollisionCheck
-	Sign
 	PointTouchesTriangle
 	PointInsidePointList
 	TriangleCrossSegment
