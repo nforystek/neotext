@@ -37,6 +37,9 @@ Option Explicit
 'Public Const D360 As Single = PI
 'Public Const D720 As Single = (PI * 2)
 
+Public Property Get Player()
+
+End Property
 Public Property Get MouseTrapped() As Boolean
     MouseTrapped = modMain.MouseTrapped
 End Property
@@ -349,7 +352,7 @@ End Property
 
 Public Function NewObject(ByVal Class As String)
     Select Case LCase(Class)
-        Case "motions", "boards", "cameras", "elements", "lights", "portals", "screens", "sounds", "tracks"
+        Case "motions", "boards", "cameras", "elements", "lights", "portals", "screens", "sounds", "tracks", "players"
             Set NewObject = New NTNodes10.Collection
             
         Case "bindings"
@@ -358,6 +361,8 @@ Public Function NewObject(ByVal Class As String)
             Err.Raise 8, , "Database object is not creatable."
         Case "include"
             Err.Raise 8, , "Include object is not creatable."
+        Case "orient"
+            Err.Raise 8, , "Orient object is not creatable."
             
         Case "beacon"
             Set NewObject = New Beacon

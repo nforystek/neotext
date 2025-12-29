@@ -27,11 +27,11 @@ Public Sub BackupDB()
     Dim txt As String
     
     Set db = New Database
-    db.rsQuery rs, "SELECT * FROM Settings;"
+    db.rsQuery rs, "SELECT * FROM Profiles;"
     If Not db.rsEnd(rs) Then
         rs.MoveFirst
         Do
-            txt = txt & "INSERT INTO Settings (Username, Resolution, Windowed) VALUES ('" & Replace(rs("Username"), "'", "''") & "', '" & rs("Resolution") & "', " & rs("Windowed") & ");"
+            txt = txt & "INSERT INTO Profiles (Profilename, Resolution, Windowed, Perspective, SoundFX, Ambient, Tablet) VALUES ('" & Replace(rs("Profilename"), "'", "''") & "', '" & rs("Resolution") & "', " & rs("Windowed") & ", " & rs("Perspective") & ", " & rs("SoundFX") & ", " & rs("Ambient") & ", " & rs("Tablet") & ");"
             rs.MoveNext
         Loop Until db.rsEnd(rs)
     End If
@@ -41,6 +41,16 @@ Public Sub BackupDB()
         rs.MoveFirst
         Do
             txt = txt & "INSERT INTO Serials (Username, PXFile, Script) VALUES ('" & Replace(rs("Username"), "'", "''") & "', '" & Replace(rs("PXFile"), "'", "''") & "', '" & Replace(rs("Script"), "'", "''") & "');"
+            rs.MoveNext
+        Loop Until db.rsEnd(rs)
+    End If
+
+    
+    db.rsQuery rs, "SELECT * FROM Users;"
+    If Not db.rsEnd(rs) Then
+        rs.MoveFirst
+        Do
+            txt = txt & "INSERT INTO Users (Username, Profilename) VALUES ('" & Replace(rs("Username"), "'", "''") & "', '" & Replace(rs("Profilename"), "'", "''") & "');"
             rs.MoveNext
         Loop Until db.rsEnd(rs)
     End If
@@ -66,8 +76,9 @@ Public Sub RestoreDB()
 End Sub
 Public Sub ResetDB()
     Set db = New Database
+    db.dbQuery "DELETE * FROM Profiles;"
     db.dbQuery "DELETE * FROM Serials;"
-    db.dbQuery "DELETE * FROM Settings;"
+    db.dbQuery "DELETE * FROM Users;"
     Set db = Nothing
 End Sub
 

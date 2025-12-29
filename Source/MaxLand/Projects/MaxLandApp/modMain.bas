@@ -52,9 +52,8 @@ Public DDevice As Direct3DDevice8
 Public D3DWindow As D3DPRESENT_PARAMETERS
 Public Display As D3DDISPLAYMODE
 Public DSound As DirectSound8
-
 Public DViewPort As D3DVIEWPORT8
-Public DSurface As D3DXRenderToSurface
+
 
 Public CurrentLoadedLevel As String
 Public PixelShaderDefault As Long
@@ -146,6 +145,7 @@ Public Sub Main()
         'On Error GoTo fault
         InitDirectX
         InitGameData
+        
         On Error GoTo 0
         frmMain.AutoRedraw = False
 
@@ -182,8 +182,11 @@ Public Sub Main()
             Else
                 On Error GoTo 0
                 On Error GoTo Render
+                
+                    
+                DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
+   
 
-    
                 '#############################################################
                 '#### BeginMirrors pre gathers mirror textures per mirror ####
                 '#############################################################
@@ -192,10 +195,9 @@ Public Sub Main()
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
                 
-                    
-                DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, vbBlack, 1, 0
                 
                 DDevice.BeginScene
+
                 
                 '#################################################################
                 '#### SetupWorld configures the matricies used for DirectX 3D ####
@@ -213,7 +215,8 @@ Public Sub Main()
                 RenderMotion
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
-
+                                
+            
 
                 '#########################################################
                 '#### RenderSpaces the skies/planes that may be setup ####
@@ -331,8 +334,8 @@ Public Sub Main()
                 InputScene
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+
                 
-                               
                 If Not PauseGame Then
 
 
@@ -353,7 +356,8 @@ Public Sub Main()
                     'elapsed = (Timer - elapsed)
                     'If elapsed > 0 Then Debug.Print "RenderCmds: " & elapsed
 
-      
+                    On Error GoTo Render
+                      
                     DDevice.EndScene
                 
                     On Error Resume Next
@@ -375,7 +379,10 @@ Public Sub Main()
                 End If
 
             End If
-            
+
+                
+                
+                
             Yield = Abs(Yield) + -1
             If (D3DWindow.Windowed And Yield) Or PauseGame Then
                 DoTasks
@@ -404,8 +411,6 @@ fault:
 Exit Sub
 Render:
 
-    Stop
-    Resume
     
     TermGameData
     TermDirectX
@@ -460,9 +465,7 @@ Public Sub RenderRoutine()
 End Sub
 
 
-
-
-Public Sub SetupWorld()
+Public Sub SetupWorld(Optional ByRef Mirror As Board = Nothing)
 On Error GoTo WorldError
 
     Dim matView As D3DMATRIX
@@ -478,7 +481,6 @@ On Error GoTo WorldError
 
 
     D3DXMatrixIdentity matWorld
-
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
     D3DXMatrixMultiply matTemp, matWorld, matWorld
@@ -487,29 +489,32 @@ On Error GoTo WorldError
     D3DXMatrixIdentity matWorld
     D3DXMatrixMultiply matLook, matRotation, matPitch
     DDevice.SetTransform D3DTS_WORLD, matWorld
+    
+    
+    If modParse.Player.Element Is Nothing Then Exit Sub
 
-    If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
+    If ((Perspective = Playmode.CameraMode) And (modParse.Player.CameraIndex > 0 And modParse.Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (modParse.Player.CameraIndex > 0)) Then
 
-        D3DXMatrixRotationY matRotation, Cameras(Player.CameraIndex).angle
-        D3DXMatrixRotationX matPitch, Cameras(Player.CameraIndex).pitch
+        D3DXMatrixRotationY matRotation, Cameras(modParse.Player.CameraIndex).Angle
+        D3DXMatrixRotationX matPitch, Cameras(modParse.Player.CameraIndex).Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        D3DXMatrixTranslation matPos, -Cameras(Player.CameraIndex).Origin.X, -Cameras(Player.CameraIndex).Origin.Y, -Cameras(Player.CameraIndex).Origin.Z
+        D3DXMatrixTranslation matPos, -Cameras(modParse.Player.CameraIndex).Origin.X, -Cameras(modParse.Player.CameraIndex).Origin.Y, -Cameras(modParse.Player.CameraIndex).Origin.Z
         D3DXMatrixMultiply matLook, matPos, matLook
-        D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
+        D3DXMatrixTranslation matPos, -modParse.Player.Element.Origin.X, -modParse.Player.Element.Origin.Y + 0.2, -modParse.Player.Element.Origin.Z
 
     Else
 
-        D3DXMatrixRotationY matRotation, Player.Camera.angle
-        D3DXMatrixRotationX matPitch, Player.Camera.pitch
+        D3DXMatrixRotationY matRotation, modParse.Player.Camera.Angle
+        D3DXMatrixRotationX matPitch, modParse.Player.Camera.Pitch
         D3DXMatrixMultiply matLook, matRotation, matPitch
 
-        If Player.Camera.pitch > 0 Then
+        If modParse.Player.Camera.Pitch > 0 Then
 
-            D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y, -Player.Element.Origin.Z
+            D3DXMatrixTranslation matPos, -modParse.Player.Element.Origin.X, -modParse.Player.Element.Origin.Y, -modParse.Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         Else
-            D3DXMatrixTranslation matPos, -Player.Element.Origin.X, -Player.Element.Origin.Y + 0.2, -Player.Element.Origin.Z
+            D3DXMatrixTranslation matPos, -modParse.Player.Element.Origin.X, -modParse.Player.Element.Origin.Y + 0.2, -modParse.Player.Element.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
 
         End If
@@ -519,13 +524,13 @@ On Error GoTo WorldError
     lCulledFaces = 0
     lCullCalls = 0
 
-    If ((Perspective = Playmode.ThirdPerson) Or ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0))) And (Not (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0))) Then
+    If ((Perspective = Playmode.ThirdPerson) Or ((Perspective = Playmode.CameraMode) And (modParse.Player.CameraIndex = 0))) And (Not (((Perspective = Spectator) Or DebugMode) And (modParse.Player.CameraIndex > 0))) Then
 
-        If (CameraClip Or ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0))) And (Not ((Perspective = Spectator) Or DebugMode)) Then
+        If (CameraClip Or ((Perspective = Playmode.CameraMode) And (modParse.Player.CameraIndex = 0))) And (Not ((Perspective = Spectator) Or DebugMode)) Then
 
-            If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex = 0)) Then
+            If ((Perspective = Playmode.CameraMode) And (modParse.Player.CameraIndex = 0)) Then
 
-                Player.Element.Twists.Y = 3
+                modParse.Player.Element.Twists.Y = 3
 
             End If
 
@@ -562,37 +567,37 @@ On Error GoTo WorldError
 
             Do
 
-                verts(0) = MakeVector(Player.Element.Origin.X, _
-                                            Player.Element.Origin.Y - 0.2, _
-                                            Player.Element.Origin.Z)
+                verts(0) = MakeVector(modParse.Player.Element.Origin.X, _
+                                            modParse.Player.Element.Origin.Y - 0.2, _
+                                            modParse.Player.Element.Origin.Z)
 
-                verts(1) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle) * (Zoom + factor)), _
-                                            Player.Element.Origin.Y - 0.2 + (Tan(D720 - Player.Camera.pitch) * (Zoom + factor)), _
-                                            Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle) * (Zoom + factor)))
+                verts(1) = MakeVector(modParse.Player.Element.Origin.X - (Sin(D720 - modParse.Player.Camera.Angle) * (Zoom + factor)), _
+                                            modParse.Player.Element.Origin.Y - 0.2 + (Tan(D720 - modParse.Player.Camera.Pitch) * (Zoom + factor)), _
+                                            modParse.Player.Element.Origin.Z - (Cos(D720 - modParse.Player.Camera.Angle) * (Zoom + factor)))
 
-                verts(2) = MakeVector(Player.Element.Origin.X - (Sin(D720 - Player.Camera.angle)), _
-                                      Player.Element.Origin.Y - 0.1 + (Tan(D720 - Player.Camera.pitch) * Zoom), _
-                                      Player.Element.Origin.Z - (Cos(D720 - Player.Camera.angle)))
+                verts(2) = MakeVector(modParse.Player.Element.Origin.X - (Sin(D720 - modParse.Player.Camera.Angle)), _
+                                      modParse.Player.Element.Origin.Y - 0.1 + (Tan(D720 - modParse.Player.Camera.Pitch) * Zoom), _
+                                      modParse.Player.Element.Origin.Z - (Cos(D720 - modParse.Player.Camera.Angle)))
 
-'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), Player.Camera.Pitch), Player.Camera.Angle))
+'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 0, -1), modParse.Player.Camera.Pitch), modParse.Player.Camera.Angle))
 '
 '                sngCamera(1, 0) = v.X
 '                sngCamera(1, 1) = v.Y
 '                sngCamera(1, 2) = v.Z
 '
-'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 1, 0), Player.Camera.Pitch), Player.Camera.Angle))
+'                Set v = VectorNegative(VectorRotateY(VectorRotateX(MakePoint(0, 1, 0), modParse.Player.Camera.Pitch), modParse.Player.Camera.Angle))
 '
 '                sngCamera(2, 0) = v.X
 '                sngCamera(2, 1) = v.Y
 '                sngCamera(2, 2) = v.Z
 '
-'                sngCamera(0, 0) = Player.Element.Origin.X
-'                sngCamera(0, 1) = Player.Element.Origin.Y
-'                sngCamera(0, 2) = Player.Element.Origin.Z
+'                sngCamera(0, 0) = modParse.Player.Element.Origin.X
+'                sngCamera(0, 1) = modParse.Player.Element.Origin.Y
+'                sngCamera(0, 2) = modParse.Player.Element.Origin.Z
 
-                sngCamera(0, 0) = Player.Element.Origin.X
-                sngCamera(0, 1) = Player.Element.Origin.Y
-                sngCamera(0, 2) = Player.Element.Origin.Z
+                sngCamera(0, 0) = modParse.Player.Element.Origin.X
+                sngCamera(0, 1) = modParse.Player.Element.Origin.Y
+                sngCamera(0, 2) = modParse.Player.Element.Origin.Z
 
                 sngCamera(1, 0) = 1
                 sngCamera(1, 1) = -1
@@ -637,8 +642,8 @@ On Error GoTo WorldError
 
                         Set e1 = Nothing
                     Next
-                    If (Player.Element.CollideIndex > -1) And (Player.Element.BoundsIndex > 0) And (Player.Element.BoundsIndex > 0) Then
-                        For cnt2 = Player.Element.CollideIndex To (Player.Element.CollideIndex + Meshes(Player.Element.BoundsIndex).Mesh.GetNumFaces) - 1
+                    If (modParse.Player.Element.CollideIndex > -1) And (modParse.Player.Element.BoundsIndex > 0) And (modParse.Player.Element.BoundsIndex > 0) Then
+                        For cnt2 = modParse.Player.Element.CollideIndex To (modParse.Player.Element.CollideIndex + Meshes(modParse.Player.Element.BoundsIndex).Mesh.GetNumFaces) - 1
                           '  On Error GoTo isdivcheck2
                                 sngFaceVis(3, cnt2) = 0
                                 'GoTo notdivcheck2
@@ -656,9 +661,9 @@ On Error GoTo WorldError
                 touched = TestCollisionEx(Face, 2)
                 DelCollisionEx Face, 1
 
-                If ((Not touched) And (Zoom < Player.Camera.Zoom)) Then Zoom = Zoom + factor
+                If ((Not touched) And (Zoom < modParse.Player.Camera.Zoom)) Then Zoom = Zoom + factor
 
-            Loop Until ((touched) Or (Zoom >= Player.Camera.Zoom))
+            Loop Until ((touched) Or (Zoom >= modParse.Player.Camera.Zoom))
 
             If (touched And (Zoom > 0.2)) Then Zoom = Zoom + -factor
 
@@ -667,11 +672,11 @@ On Error GoTo WorldError
 
             'all said and done, if the zoom is under a certian val the
             'toon is in the way, so change it to wireframe see through
-            Player.Element.WireFrame = (Zoom < 0.8)
+            modParse.Player.Element.WireFrame = (Zoom < 0.8)
 
         Else
 
-            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), Player.Camera.Zoom, 0)
+            D3DXMatrixTranslation matTemp, 0, 0, IIf(Not ((Perspective = Spectator) Or DebugMode), modParse.Player.Camera.Zoom, 0)
             D3DXMatrixMultiply matView, matLook, matTemp
         End If
         DDevice.SetTransform D3DTS_VIEW, matView
@@ -781,7 +786,7 @@ Private Sub InitialDevice(ByVal hwnd As Long)
         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
     
-        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
+        DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     
         DDevice.SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1

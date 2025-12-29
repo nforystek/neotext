@@ -160,60 +160,60 @@ End Property
 '            ResetIdle
 '            ToggleJump = False
 '        Case Forward
-'            If Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin(D720 - Player.Twists.Y)
-'                vecDirect.z = Cos(D720 - Player.Twists.Y)
-'                If ((Perspective = Spectator) Or DebugMode) Or Player.InLiquid Then
-'                    vecDirect.Y = -(Tan(D720 - Player.Camera.Pitch))
+'            If modParse.Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin(D720 - modParse.Player.Twists.Y)
+'                vecDirect.z = Cos(D720 - modParse.Player.Twists.Y)
+'                If ((Perspective = Spectator) Or DebugMode) Or modParse.Player.InLiquid Then
+'                    vecDirect.Y = -(Tan(D720 - modParse.Player.Camera.Pitch))
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
+'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case Backward
 '
-'            If Player.Direct.Y = 0 Then
-'                vecDirect.X = -Sin(D720 - Player.Twists.Y)
-'                vecDirect.z = -Cos(D720 - Player.Twists.Y)
+'            If modParse.Player.Direct.Y = 0 Then
+'                vecDirect.X = -Sin(D720 - modParse.Player.Twists.Y)
+'                vecDirect.z = -Cos(D720 - modParse.Player.Twists.Y)
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = Tan(D720 - Player.Camera.Pitch)
+'                    vecDirect.Y = Tan(D720 - modParse.Player.Camera.Pitch)
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
+'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case LeftStep
-'            If Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - Player.Twists.Y) - D180)
-'                vecDirect.z = Cos((D720 - Player.Twists.Y) - D180)
+'            If modParse.Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - modParse.Player.Twists.Y) - D180)
+'                vecDirect.z = Cos((D720 - modParse.Player.Twists.Y) - D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
+'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case RightStep
-'            If Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - Player.Twists.Y) + D180)
-'                vecDirect.z = Cos((D720 - Player.Twists.Y) + D180)
+'            If modParse.Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - modParse.Player.Twists.Y) + D180)
+'                vecDirect.z = Cos((D720 - modParse.Player.Twists.Y) + D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
+'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
@@ -224,23 +224,23 @@ End Property
 '                ToggleJump = True
 '
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
+'                    vecDirect.Y = vecDirect.Y + IIf(modParse.Player.Speed < 1, 1, modParse.Player.Speed)
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
 '                Else
 '
-'                    If Player.Activities.Exists(JumpGUID) Then
-'                        If (Not ((Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
-'                                ((Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
-'                            'If Player.Activities.Exists(JumpGUID) Then
-'                                Do Until Not Player.MotionExists(JumpGUID)
+'                    If modParse.Player.Activities.Exists(JumpGUID) Then
+'                        If (Not ((modParse.Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
+'                                ((modParse.Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
+'                            'If modParse.Player.Activities.Exists(JumpGUID) Then
+'                                Do Until Not modParse.Player.MotionExists(JumpGUID)
 '                                    DeleteMotion Player, JumpGUID
 '                                Loop
 '                            'End If
 '                        End If
 '                    End If
-'                    If Not Player.Activities.Exists(JumpGUID) Then
-'                        vecDirect.Y = IIf(Player.InLiquid, 5, 9)
-'                        JumpGUID = AddMotion(Player, Actions.Directing, JumpGUID, vecDirect, (Player.Speed * 4), Friction)
+'                    If Not modParse.Player.Activities.Exists(JumpGUID) Then
+'                        vecDirect.Y = IIf(modParse.Player.InLiquid, 5, 9)
+'                        JumpGUID = AddMotion(Player, Actions.Directing, JumpGUID, vecDirect, (modParse.Player.Speed * 4), Friction)
 '                    End If
 '                End If
 '            Else
@@ -499,8 +499,8 @@ Public Sub InputScene()
                 If (Not (VB.Screen.MousePointer = 0)) Then VB.Screen.MousePointer = 0
             End If
     
-            If Player.Speed > MaxDisplacement Then Player.Speed = MaxDisplacement
-            If Player.Speed < 0.01 Then Player.Speed = 0.01
+            If modParse.Player.Speed > MaxDisplacement Then modParse.Player.Speed = MaxDisplacement
+            If modParse.Player.Speed < 0.01 Then modParse.Player.Speed = 0.01
 
         '########################################################################
         '############## Keys that are available with out console ################
@@ -514,7 +514,7 @@ Public Sub InputScene()
                         Uses(DIK_PGDN) = True
                         
                         
-                        Player.ZoomOut ((-mZ * MouseSensitivity) / 100)
+                        modParse.Player.ZoomOut ((-mZ * MouseSensitivity) / 100)
                         
                         
                     End If
@@ -523,7 +523,7 @@ Public Sub InputScene()
                         Uses(DIK_PGUP) = True
                         
                         
-                        Player.ZoomIn ((mZ * MouseSensitivity) / 100)
+                        modParse.Player.ZoomIn ((mZ * MouseSensitivity) / 100)
                         
                         
                     End If
@@ -531,16 +531,16 @@ Public Sub InputScene()
                 
                 
                 If Perspective = CameraMode Then
-                    If Player.CameraIndex > 0 Then
-                        Player.Element.Twists.Y = Cameras(Player.CameraIndex).Angle
-                    End If
+'                    If modParse.Player.CameraIndex > 0 Then
+'                        modParse.Player.Element.Twists.Y = Cameras(modParse.Player.CameraIndex).Angle
+'                    End If
                 Else
                     If mX < 0 Then
                         If (Bindings(DIK_LEFT) Is Nothing) And (Not Uses(DIK_LEFT)) Then
                             Uses(DIK_LEFT) = True
                             
                             
-                            Player.LookLeft ((-mX * MouseSensitivity) / 100)
+                            modParse.Player.LookLeft ((-mX * MouseSensitivity) / 100)
                             
                             
                         End If
@@ -549,7 +549,7 @@ Public Sub InputScene()
                             Uses(DIK_RIGHT) = True
                             
                             
-                            Player.LookRight ((mX * MouseSensitivity) / 100)
+                            modParse.Player.LookRight ((mX * MouseSensitivity) / 100)
                             
                             
                         End If
@@ -561,7 +561,7 @@ Public Sub InputScene()
                         Uses(DIK_DOWN) = True
                         
                         
-                        Player.LookDown ((-mY * MouseSensitivity) / 100)
+                        modParse.Player.LookDown ((-mY * MouseSensitivity) / 100)
                         
                         
                     End If
@@ -570,7 +570,7 @@ Public Sub InputScene()
                         Uses(DIK_UP) = True
                         
                         
-                        Player.LookUp ((mY * MouseSensitivity) / 100)
+                        modParse.Player.LookUp ((mY * MouseSensitivity) / 100)
                         
                         
                     End If
@@ -620,14 +620,14 @@ Public Sub InputScene()
                     
                     
                     
-                    Player.MoveForward
+                    modParse.Player.MoveForward
                     
                     
                 ElseIf DIKEYBOARDSTATE.Key(DIK_D) And (Bindings(DIK_D) Is Nothing) And (Not Uses(DIK_D)) Then
                     Uses(DIK_D) = True
                     
                     
-                    Player.MoveBackwards
+                    modParse.Player.MoveBackwards
                     
                     
                 End If
@@ -636,14 +636,14 @@ Public Sub InputScene()
                     Uses(DIK_W) = True
                     
                     
-                    Player.SlideLeft
+                    modParse.Player.SlideLeft
                     
                     
                 ElseIf DIKEYBOARDSTATE.Key(DIK_R) And (Bindings(DIK_R) Is Nothing) And (Not Uses(DIK_R)) Then
                     Uses(DIK_R) = True
                     
                     
-                    Player.SlideRight
+                    modParse.Player.SlideRight
                     
                     
                 End If
@@ -654,7 +654,7 @@ Public Sub InputScene()
                     If (ToggleMotion(ToggleIdents.MoveJump) <> DIK_SPACE) Then
                         ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE
                         
-                        Player.Jump
+                        modParse.Player.Jump
                         
                     End If
                     
@@ -862,6 +862,9 @@ Public Sub RenderCmds()
         DDevice.SetRenderState D3DRS_ZENABLE, False
         DDevice.SetRenderState D3DRS_LIGHTING, False
         DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+        
+        Dim CullMode As Long
+        CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
 
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
@@ -907,6 +910,8 @@ Public Sub RenderCmds()
         DDevice.SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 1, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC
         DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC
+
+        DDevice.SetRenderState D3DRS_CULLMODE, CullMode
         
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_LIGHTING, 1
@@ -1425,7 +1430,7 @@ Public Sub ConsoleProcess()
         ConsoleQueue.Remove 1
         
         Dim o As Long
-        Dim l As Long
+        Dim L As Long
         Dim cnt As Long
         Dim inNew As String
         Dim inTmp As String
@@ -1448,7 +1453,9 @@ Public Sub ConsoleProcess()
 
             Case "goto"
                 ResetIdle
-                Player.Element.Origin = inArg
+                If Not modParse.Player.Element Is Nothing Then
+                    modParse.Player.Element.Origin = inArg
+                End If
             Case "parse"
                 ResetIdle
                 If PathExists(inArg, True) Then
@@ -1671,18 +1678,18 @@ Public Sub ConsoleProcess()
                     If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
     
                         If Not IsNumeric(NextArg(inArg, " ")) Then
-                            l = NextArg(NextArg(inArg, " "), "-")
+                            L = NextArg(NextArg(inArg, " "), "-")
                             o = RemoveArg(NextArg(inArg, " "), "-")
                         Else
-                            l = NextArg(inArg, " ")
-                            o = l
+                            L = NextArg(inArg, " ")
+                            o = L
                         End If
-                        If l <= o Then
+                        If L <= o Then
                             AddMessage "Begin View"
                             inTmp = EditFileData
                             cnt = 1
                             Do Until inTmp = ""
-                                If cnt >= l And cnt <= o Then
+                                If cnt >= L And cnt <= o Then
                                     AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
                                 Else
                                     RemoveNextArg inTmp, vbCrLf
@@ -1707,17 +1714,17 @@ Public Sub ConsoleProcess()
                     If (IsNumeric(NextArg(NextArg(inArg, " "), "-")) And IsNumeric(RemoveArg(NextArg(inArg, " "), "-"))) Or IsNumeric(NextArg(inArg, " ")) Then
     
                         If Not IsNumeric(NextArg(inArg, " ")) Then
-                            l = NextArg(NextArg(inArg, " "), "-")
+                            L = NextArg(NextArg(inArg, " "), "-")
                             o = RemoveArg(NextArg(inArg, " "), "-")
                         Else
-                            l = NextArg(inArg, " ")
-                            o = l
+                            L = NextArg(inArg, " ")
+                            o = L
                         End If
-                        If l <= o Then
+                        If L <= o Then
                             inTmp = EditFileData
                             cnt = 1
                             Do Until inTmp = ""
-                                If cnt >= l And cnt <= o Then
+                                If cnt >= L And cnt <= o Then
                                     inNew = inNew & vbCrLf
                                 Else
                                     inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
@@ -1725,7 +1732,7 @@ Public Sub ConsoleProcess()
                                 cnt = cnt + 1
                             Loop
                             EditFileData = inNew
-                            AddMessage "Blank line" & IIf(l = o, " ", "s ") & inArg & " added."
+                            AddMessage "Blank line" & IIf(L = o, " ", "s ") & inArg & " added."
                         Else
                             AddMessage "Invalid line number(s) specified."
                         End If
@@ -1741,11 +1748,11 @@ Public Sub ConsoleProcess()
                 ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
                     If IsNumeric(NextArg(inArg, " ")) Then
-                        l = RemoveNextArgNoTrim(inArg, " ")
+                        L = RemoveNextArgNoTrim(inArg, " ")
                         inTmp = EditFileData
                         cnt = 1
                         Do Until inTmp = ""
-                            If cnt = l Then
+                            If cnt = L Then
                                 inNew = inNew & inArg & vbCrLf
                                 RemoveNextArg inTmp, vbCrLf
                             Else
@@ -1754,7 +1761,7 @@ Public Sub ConsoleProcess()
                             cnt = cnt + 1
                         Loop
                         EditFileData = inNew
-                        AddMessage "Edited " & l & ": " & Replace(inArg, vbTab, "     ")
+                        AddMessage "Edited " & L & ": " & Replace(inArg, vbTab, "     ")
                     Else
                         AddMessage "Invalid line number(s) specified."
                     End If

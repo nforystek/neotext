@@ -34,8 +34,8 @@ Private Deserialize As String
 
 Public DXLights() As D3DLIGHT8
 
-
 Public BackgroundColor As Long
+
 
 Public GlobalGravityDirect As New Motion
 Public GlobalGravityRotate As New Motion
@@ -47,36 +47,41 @@ Public LiquidGravityScaled As New Motion
 
 
 
-Public matWorld As D3DMATRIX
-
-Private matProj As D3DMATRIX
-Private matView As D3DMATRIX
+'Public matWorld As D3DMATRIX
+'Private matProj As D3DMATRIX
+'Private matView As D3DMATRIX
 Private matViewSave As D3DMATRIX
 
 
-Public Sub RenderSpacesSetup()
+Public Sub RenderSpacesSetup(Optional ByRef Mirror As Board = Nothing)
     DDevice.GetTransform D3DTS_VIEW, matViewSave
+    
+    Dim matView As D3DMATRIX
     matView = matViewSave
     matView.m41 = 0: matView.m42 = 0: matView.m43 = 0
     DDevice.SetTransform D3DTS_VIEW, matView
+    
+    Dim matProj As D3DMATRIX
     D3DXMatrixPerspectiveFovLH matProj, PI / 2.5, AspectRatio, 0.05, 50
     DDevice.SetTransform D3DTS_PROJECTION, matProj
 End Sub
 
-Public Sub RenderSpacesClose()
+Public Sub RenderSpacesClose(Optional ByRef Mirror As Board = Nothing)
         
+    Dim matProj As D3DMATRIX
     D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.05, FadeDistance
     DDevice.SetTransform D3DTS_PROJECTION, matProj
+    
     DDevice.SetTransform D3DTS_VIEW, matViewSave
 End Sub
 
-Public Function GetBoardKey(ByRef Obj As Element, ByVal TextName As String) As String
-    If Not Obj.ReplacerKeys Is Nothing Then
-        If Obj.ReplacerKeys.Count > 0 Then
+Public Function GetBoardKey(ByRef obj As Element, ByVal TextName As String) As String
+    If Not obj.ReplacerKeys Is Nothing Then
+        If obj.ReplacerKeys.Count > 0 Then
             Dim i As Long
-            For i = 1 To Obj.ReplacerKeys.Count
-                If Obj.ReplacerKeys(i) = Obj.Key & "_" & Replace(TextName, ".", "") Then
-                    GetBoardKey = Obj.ReplacerVals(Obj.Key & "_" & Replace(TextName, ".", ""))
+            For i = 1 To obj.ReplacerKeys.Count
+                If obj.ReplacerKeys(i) = obj.Key & "_" & Replace(TextName, ".", "") Then
+                    GetBoardKey = obj.ReplacerVals(obj.Key & "_" & Replace(TextName, ".", ""))
                     Exit Function
                 End If
             Next
@@ -84,62 +89,73 @@ Public Function GetBoardKey(ByRef Obj As Element, ByVal TextName As String) As S
     End If
 End Function
 
-Public Sub RenderPlayer()
+Public Sub RenderPlayer(Optional ByRef Mirror As Board = Nothing)
+
+    modParse.Player.Element.PlayerMatrix
 
     If ((Perspective = Playmode.ThirdPerson) Or (Perspective = Playmode.CameraMode)) And (Not DebugMode) Then
         
         DDevice.SetRenderState D3DRS_ZENABLE, 1
         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        
+        Dim CullMode As Long
+        CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         
         DDevice.SetVertexShader FVF_RENDER
         
-        Player.Element.PlayerMatrix
+        If modParse.Player.Element Is Nothing Then Exit Sub
         
-        If Player.Element.Visible Then
-            DDevice.SetRenderState D3DRS_FILLMODE, IIf(Player.Element.WireFrame, D3DFILL_WIREFRAME, D3DFILL_SOLID)
-            
-            Dim i As Long
-            If Player.Element.VisualIndex > 0 Then
-                With Meshes(Player.Element.VisualIndex)
-                    If .MaterialCount > 0 Then
-                        For i = 0 To .MaterialCount - 1
-            
-                            If .Textures(i) Is Nothing Then
-                                DDevice.SetPixelShader PixelShaderDefault
-                                DDevice.SetMaterial .Materials(i)
-                                DDevice.SetTexture 0, Nothing
-                                DDevice.SetMaterial GenericMaterial
-                                DDevice.SetTexture 1, Nothing
-                                .Mesh.DrawSubset i
-                            Else
-            
-                                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-                                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-                                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
-                                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
-            
-                                DDevice.SetPixelShader PixelShaderDefault
-                                DDevice.SetMaterial .Materials(i)
-                                DDevice.SetTexture 0, .Textures(i)
-                                DDevice.SetMaterial GenericMaterial
-                                DDevice.SetTexture 1, .Textures(i)
-                                .Mesh.DrawSubset i
-            
-                            End If
-            
-                        Next
-                    End If
-                End With
-            End If
-            DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-        End If
+        modParse.Player.Element.PlayerMatrix
+        
+        
+        
+'        If modParse.Player.Element.Visible Then
+'            DDevice.SetRenderState D3DRS_FILLMODE, IIf(modParse.Player.Element.WireFrame, D3DFILL_WIREFRAME, D3DFILL_SOLID)
+'
+'            Dim i As Long
+'            If modParse.Player.Element.VisualIndex > 0 Then
+'                With Meshes(modParse.Player.Element.VisualIndex)
+'                    If .MaterialCount > 0 Then
+'                        For i = 0 To .MaterialCount - 1
+'
+'                            If .Textures(i) Is Nothing Then
+'                                DDevice.SetPixelShader PixelShaderDefault
+'                                DDevice.SetMaterial .Materials(i)
+'                                DDevice.SetTexture 0, Nothing
+'                                DDevice.SetMaterial GenericMaterial
+'                                DDevice.SetTexture 1, Nothing
+'                                .Mesh.DrawSubset i
+'                            Else
+'
+'                                DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+'                                DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+'                                DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
+'                                DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
+'
+'                                DDevice.SetPixelShader PixelShaderDefault
+'                                DDevice.SetMaterial .Materials(i)
+'                                DDevice.SetTexture 0, .Textures(i)
+'                                DDevice.SetMaterial GenericMaterial
+'                                DDevice.SetTexture 1, .Textures(i)
+'                                .Mesh.DrawSubset i
+'
+'                            End If
+'
+'                        Next
+'                    End If
+'                End With
+'            End If
+'            DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+'        End If
+        
+        DDevice.SetRenderState D3DRS_CULLMODE, CullMode
     End If
     
 End Sub
 
-Public Sub RenderWorld()
+Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
     Dim Dist As Long
     Dim fogVal As Long
     Dim t As Boolean
@@ -153,18 +169,20 @@ Public Sub RenderWorld()
     Dim vv(0 To 2) As D3DVECTOR
     Dim r As Single
     Dim bkey As String
-
-    
+        
+        
     DDevice.SetRenderState D3DRS_ZENABLE, 1
     DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
-    
+        
     DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDefault
     
+    Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
+    
+    If modParse.Player.Element Is Nothing Then Exit Sub
                         
     If Lights.Count > 0 Then
         Dim l1 As Light
@@ -173,7 +191,7 @@ Public Sub RenderWorld()
 
 
             If l1.LightType = Lighting.Directed Or (l1.Enabled And _
-                DistanceEx(Player.Element.Origin, l1.Origin) <= (FadeDistance - l1.Range)) Then
+                DistanceEx(modParse.Player.Element.Origin, l1.Origin) <= (FadeDistance - l1.Range)) Then
                 
                 If (l1.LightBlink > 0) Or (l1.DiffuseRoll <> 0) Then
                     If (l1.LightBlink > 0) Then
@@ -227,7 +245,7 @@ Public Sub RenderWorld()
         Dim s1 As Sound
         For Each s1 In Sounds
             If s1.Range > 0 And s1.Enabled Then
-                r = DistanceEx(Player.Element.Origin, s1.Origin)
+                r = DistanceEx(modParse.Player.Element.Origin, s1.Origin)
                 If r < s1.Range Then
                     
                     r = Round(CSng(s1.Range - Dist), 3)
@@ -248,7 +266,7 @@ Public Sub RenderWorld()
         Dim t1 As Track
         For Each t1 In Tracks
             If t1.Range > 0 And t1.Enabled Then
-                r = DistanceEx(Player.Element.Origin, t1.Origin)
+                r = DistanceEx(modParse.Player.Element.Origin, t1.Origin)
                 If r < t1.Range Then
                 
                     r = Round(CSng(t1.Range - r), 3)
@@ -261,6 +279,7 @@ Public Sub RenderWorld()
             End If
         Next
     End If
+
     
     If Elements.Count > 0 Then
         Dim e1 As Element
@@ -272,7 +291,7 @@ Public Sub RenderWorld()
 
             If e1.Visible And (Not (e1.Effect = Collides.Ladder Or e1.Effect = Collides.Liquid)) Then
             
-                If ((e1.BoundsIndex >= 0) And DistanceEx(Player.Element.Origin, e1.Origin) <= FadeDistance) Then
+                If ((e1.BoundsIndex >= 0) And DistanceEx(modParse.Player.Element.Origin, e1.Origin) <= FadeDistance) Then
                     
                     If e1.VisualIndex > 0 Then
                         V = e1.VisualIndex
@@ -285,7 +304,7 @@ Public Sub RenderWorld()
                         'If DebugMode Or Meshes(e1.BoundsIndex).MaterialCount > 0 Then
 
                              e1.ApplyMatrix
-    
+
                         'End If
                     End If
                         
@@ -300,9 +319,10 @@ Public Sub RenderWorld()
                                 For i = 0 To .MaterialCount - 1
                                          
                                     If e1.Alphablend Then
-                                                
+
                                         DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_DESTALPHA
                                         DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_SRCALPHA
+
                                         DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
                                         DDevice.SetRenderState D3DRS_ALPHATESTENABLE, 1
                                             
@@ -382,12 +402,11 @@ Public Sub RenderWorld()
     End If
 End Sub
 
-Public Sub RenderBoards()
+Public Sub RenderBoards(Optional ByRef Mirror As Board = Nothing)
 
     Dim o As Long
                                     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
 
     DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
@@ -399,17 +418,19 @@ Public Sub RenderBoards()
 
     Dim start As Single
     Dim chop As Single
-    Dim matBoard As D3DMATRIX
         
+    Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
+    
+    If modParse.Player.Element Is Nothing Then Exit Sub
 
     If Boards.Count > 0 Then
         Dim b1 As Board
         For Each b1 In Boards
         
             If b1.Visible Then
-                If DistanceEx(Player.Element.Origin, b1.Origin) <= FadeDistance Then
+                If DistanceEx(modParse.Player.Element.Origin, b1.Origin) <= FadeDistance Then
                     If Not b1.Translucent Then
 
                         If (b1.Animated > 0) Then
@@ -439,13 +460,12 @@ Public Sub RenderBoards()
     
 End Sub
 
-Public Sub RenderLucent()
+Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
     
     DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDiffuse
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
                        
     Dim p As D3DVECTOR
     Dim o As Long
@@ -458,8 +478,11 @@ Public Sub RenderLucent()
     
     'Dim matLucent As D3DMATRIX
     
+    Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
+    
+    If modParse.Player.Element Is Nothing Then Exit Sub
         
     Dim b1 As Board
     If Elements.Count > 0 Then
@@ -471,7 +494,7 @@ Public Sub RenderLucent()
         'For o = 1 To Elements.count
             If e1.Visible And (Not DebugMode) Then
             
-                If (e1.BoundsIndex > 0) And DistanceEx(Player.Element.Origin, e1.Origin) <= FadeDistance Then
+                If (e1.BoundsIndex > 0) And DistanceEx(modParse.Player.Element.Origin, e1.Origin) <= FadeDistance Then
                     With Meshes(e1.BoundsIndex)
                     
                         For i = 0 To .MaterialCount - 1
@@ -485,7 +508,7 @@ Public Sub RenderLucent()
                                     Set b1 = Boards(bkey)
                                     
                                     
-                                    e1.SetWorldMatrix
+                                    'e1.SetWorldMatrix
                                     
                                     'D3DXMatrixIdentity matLucent
                                     'DDevice.SetTransform D3DTS_WORLD, matLucent
@@ -570,7 +593,6 @@ Public Sub RenderLucent()
     End If
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
                                     
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
@@ -581,7 +603,7 @@ Public Sub RenderLucent()
         'For o = 1 To Boards.count
             If b1.Visible Then
 
-                    If DistanceEx(Player.Element.Origin, b1.Origin) <= FadeDistance Then
+                    If DistanceEx(modParse.Player.Element.Origin, b1.Origin) <= FadeDistance Then
                         If b1.Translucent Then
             
                             If (b1.Animated > 0) Then
@@ -619,7 +641,7 @@ Public Sub RenderLucent()
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
 
 End Sub
-Public Sub RenderBeacons()
+Public Sub RenderBeacons(Optional ByRef Mirror As Board = Nothing)
 
     Dim L As Long
     
@@ -637,14 +659,15 @@ Public Sub RenderBeacons()
     Dim o As Long
     Dim d As Single
     Dim p As Point
+    Dim CullMode As Long
     
     Dim matScale As D3DMATRIX
     Dim matPos As D3DMATRIX
-    
-    D3DXMatrixIdentity matWorld
-   ' DDevice.SetTransform D3DTS_WORLD, matWorld
-    
     Dim matBeacon As D3DMATRIX
+    
+    Dim matWorld As D3DMATRIX
+    D3DXMatrixIdentity matWorld
+    DDevice.SetTransform D3DTS_WORLD, matWorld
     
     Dim a1 As Beacon
     
@@ -676,11 +699,11 @@ Public Sub RenderBeacons()
                     ok = False
                 End If
                 
-                If a1.Origins.Count > 0 Then
+                If a1.Origins.Count > 0 And (Not modParse.Player.Element Is Nothing) Then
                     L = 1
     
                     Do While L <= a1.Origins.Count
-                        d = DistanceEx(a1.Origin(L), Player.Element.Origin)
+                        d = DistanceEx(a1.Origin(L), modParse.Player.Element.Origin)
                         If ok Then ok = ok And (DistanceEx(a1.Origin(L), MakePoint(X, 0, Z)) > BeaconSpacing)
 
                         If d <= FadeDistance Then
@@ -699,9 +722,9 @@ Public Sub RenderBeacons()
                                         
                                     If a1.VerticalLock Then
                                         
-                                        If (Perspective = CameraMode) And (Player.CameraIndex > 0) Then
-                                            A = Cameras(Player.CameraIndex).Angle
-                                            D3DXMatrixRotationYawPitchRoll matBeacon, -A, -Cameras(Player.CameraIndex).Pitch, 0
+                                        If (Perspective = CameraMode) And (modParse.Player.CameraIndex > 0) Then
+                                            A = Cameras(modParse.Player.CameraIndex).Angle
+                                            D3DXMatrixRotationYawPitchRoll matBeacon, -A, -Cameras(modParse.Player.CameraIndex).Pitch, 0
         
                                             D3DXMatrixScaling matScale, 1, 1, 1
                                             D3DXMatrixMultiply matBeacon, matBeacon, matScale
@@ -712,13 +735,13 @@ Public Sub RenderBeacons()
 
 
                                             
-                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle), -Player.Camera.Pitch, 0
+                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle), -modParse.Player.Camera.Pitch, 0
                                             D3DXMatrixScaling matScale, 1, 1, 1
                                             D3DXMatrixMultiply matBeacon, matBeacon, matScale
-                                            If Player.Camera.Pitch >= -1.5 And Player.Camera.Pitch < -0 Then
-                                               D3DXMatrixTranslation matPos, (a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 2.5)))), a1.Origin(L).Y, (a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 2.5))))
+                                            If modParse.Player.Camera.Pitch >= -1.5 And modParse.Player.Camera.Pitch < -0 Then
+                                               D3DXMatrixTranslation matPos, (a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 2.5)))), a1.Origin(L).Y, (a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 2.5))))
                                             Else
-                                               D3DXMatrixTranslation matPos, (a1.Origin(L).X - (Sin(D360 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 4.5)))), a1.Origin(L).Y, (a1.Origin(L).Z - (Cos(D360 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 4.5))))
+                                               D3DXMatrixTranslation matPos, (a1.Origin(L).X - (Sin(D360 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 4.5)))), a1.Origin(L).Y, (a1.Origin(L).Z - (Cos(D360 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 4.5))))
                                             End If
                                             D3DXMatrixMultiply matBeacon, matBeacon, matPos
                                                 
@@ -727,28 +750,28 @@ Public Sub RenderBeacons()
                                         
                                     ElseIf a1.VerticalSkew Then
     
-                                        If (Perspective = CameraMode) And (Player.CameraIndex > 0) Then
-                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Cameras(Player.CameraIndex).Angle), -(Cameras(Player.CameraIndex).Pitch * 0.25), 0
+                                        If (Perspective = CameraMode) And (modParse.Player.CameraIndex > 0) Then
+                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Cameras(modParse.Player.CameraIndex).Angle), -(Cameras(modParse.Player.CameraIndex).Pitch * 0.25), 0
                                             
-                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Cameras(Player.CameraIndex).Pitch > 0, -Cameras(Player.CameraIndex).Pitch, Cameras(Player.CameraIndex).Pitch) * 0.25), 1
+                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Cameras(modParse.Player.CameraIndex).Pitch > 0, -Cameras(modParse.Player.CameraIndex).Pitch, Cameras(modParse.Player.CameraIndex).Pitch) * 0.25), 1
                                             D3DXMatrixMultiply matBeacon, matBeacon, matScale
         
-                                            D3DXMatrixTranslation matPos, a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Cameras(Player.CameraIndex).Angle)) * (1 / (PI * 6))), a1.Origin(L).Y, a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Cameras(Player.CameraIndex).Angle)) * (1 / (PI * 6)))
+                                            D3DXMatrixTranslation matPos, a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Cameras(modParse.Player.CameraIndex).Angle)) * (1 / (PI * 6))), a1.Origin(L).Y, a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Cameras(modParse.Player.CameraIndex).Angle)) * (1 / (PI * 6)))
                                             D3DXMatrixMultiply matBeacon, matBeacon, matPos
                                         Else
-                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle), -(Player.Camera.Pitch * 0.25), 0
+                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle), -(modParse.Player.Camera.Pitch * 0.25), 0
                                             
-                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Player.Camera.Pitch > 0, -Player.Camera.Pitch, Player.Camera.Pitch) * 0.25), 1
+                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(modParse.Player.Camera.Pitch > 0, -modParse.Player.Camera.Pitch, modParse.Player.Camera.Pitch) * 0.25), 1
                                             D3DXMatrixMultiply matBeacon, matBeacon, matScale
         
-                                            D3DXMatrixTranslation matPos, a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 6))), a1.Origin(L).Y, a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (1 / (PI * 6)))
+                                            D3DXMatrixTranslation matPos, a1.Origin(L).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 6))), a1.Origin(L).Y, a1.Origin(L).Z - (Cos(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (1 / (PI * 6)))
                                             D3DXMatrixMultiply matBeacon, matBeacon, matPos
                                                 
                                         End If
                                         DDevice.SetTransform D3DTS_WORLD, matBeacon
                                     Else
                                     
-                                        D3DXMatrixRotationY matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle)
+                                        D3DXMatrixRotationY matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle)
         
                                         D3DXMatrixScaling matScale, 1, 1, 1
                                         D3DXMatrixMultiply matBeacon, matBeacon, matScale
@@ -761,9 +784,9 @@ Public Sub RenderBeacons()
                                     End If
                              
                                     If a1.BeaconLight > -1 Then
-                                        DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Player.Element.Origin.X) / 80)
-                                        DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Player.Element.Origin.Y) / 80)
-                                        DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Player.Element.Origin.Z) / 80)
+                                        DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - modParse.Player.Element.Origin.X) / 80)
+                                        DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - modParse.Player.Element.Origin.Y) / 80)
+                                        DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - modParse.Player.Element.Origin.Z) / 80)
 
                                         DDevice.SetLight a1.BeaconLight - 1, DXLights(a1.BeaconLight)
                                         DDevice.LightEnable a1.BeaconLight - 1, 1
@@ -819,6 +842,8 @@ Public Sub RenderBeacons()
                                     
                                 ElseIf a1.RoundingCut > 0 Then
     
+                                    
+                                    CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
                                     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         
                                     chop = a1.RoundingCut
@@ -828,7 +853,7 @@ Public Sub RenderBeacons()
                           
                                         D3DXMatrixIdentity matBeacon
 
-                                        D3DXMatrixRotationY matBeacon, (start / (PI * 2)) + IIf(a1.HorizontalLock, 0, -Player.Camera.Angle)
+                                        D3DXMatrixRotationY matBeacon, (start / (PI * 2)) + IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle)
         
                                         D3DXMatrixScaling matScale, 1, 1, 1
                                         D3DXMatrixMultiply matBeacon, matBeacon, matScale
@@ -843,9 +868,9 @@ Public Sub RenderBeacons()
 '
 '                                    If a1.VerticalLock Then
 '
-'                                        If (Perspective = CameraMode) And (Player.CameraIndex > 0) Then
-'                                            a = Cameras(Player.CameraIndex).Angle
-'                                            D3DXMatrixRotationYawPitchRoll matBeacon, -a, -Cameras(Player.CameraIndex).Pitch, 0
+'                                        If (Perspective = CameraMode) And (modParse.Player.CameraIndex > 0) Then
+'                                            a = Cameras(modParse.Player.CameraIndex).Angle
+'                                            D3DXMatrixRotationYawPitchRoll matBeacon, -a, -Cameras(modParse.Player.CameraIndex).Pitch, 0
 '
 '                                            D3DXMatrixScaling matScale, 1, 1, 1
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matScale
@@ -853,40 +878,40 @@ Public Sub RenderBeacons()
 '                                            D3DXMatrixTranslation matPos, (a1.Origin(l).X - (Sin(D720 - a) * (a1.Dimension.height / (PI * 2.5)))), a1.Origin(l).Y, (a1.Origin(l).z - (Cos(D720 - a) * (a1.Dimension.height / (PI * 2.5))))
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matPos
 '                                        Else
-'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle), -Player.Camera.Pitch, 0
+'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle), -modParse.Player.Camera.Pitch, 0
 '
 '                                            D3DXMatrixScaling matScale, 1, 1, 1
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matScale
 '
-'                                            D3DXMatrixTranslation matPos, (a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (a1.Dimension.height / (PI * 2.5)))), a1.Origin(l).Y, (a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (a1.Dimension.height / (PI * 2.5))))
+'                                            D3DXMatrixTranslation matPos, (a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (a1.Dimension.height / (PI * 2.5)))), a1.Origin(l).Y, (a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (a1.Dimension.height / (PI * 2.5))))
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matPos
 '
 '                                        End If
 '                                        DDevice.SetTransform D3DTS_WORLD, matBeacon
 '                                    ElseIf a1.VerticalSkew Then
 '
-'                                        If (Perspective = CameraMode) And (Player.CameraIndex > 0) Then
-'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Cameras(Player.CameraIndex).Angle), -(Cameras(Player.CameraIndex).Pitch * 0.25), 0
+'                                        If (Perspective = CameraMode) And (modParse.Player.CameraIndex > 0) Then
+'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Cameras(modParse.Player.CameraIndex).Angle), -(Cameras(modParse.Player.CameraIndex).Pitch * 0.25), 0
 '
-'                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Cameras(Player.CameraIndex).Pitch > 0, -Cameras(Player.CameraIndex).Pitch, Cameras(Player.CameraIndex).Pitch) * 0.25), 1
+'                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Cameras(modParse.Player.CameraIndex).Pitch > 0, -Cameras(modParse.Player.CameraIndex).Pitch, Cameras(modParse.Player.CameraIndex).Pitch) * 0.25), 1
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matScale
 '
-'                                            D3DXMatrixTranslation matPos, a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Cameras(Player.CameraIndex).Angle)) * (a1.Dimension.height / (PI * 6))), a1.Origin(l).Y, a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Cameras(Player.CameraIndex).Angle)) * (a1.Dimension.height / (PI * 6)))
+'                                            D3DXMatrixTranslation matPos, a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Cameras(modParse.Player.CameraIndex).Angle)) * (a1.Dimension.height / (PI * 6))), a1.Origin(l).Y, a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Cameras(modParse.Player.CameraIndex).Angle)) * (a1.Dimension.height / (PI * 6)))
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matPos
 '                                        Else
-'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle), -(Player.Camera.Pitch * 0.25), 0
+'                                            D3DXMatrixRotationYawPitchRoll matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle), -(modParse.Player.Camera.Pitch * 0.25), 0
 '
-'                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(Player.Camera.Pitch > 0, -Player.Camera.Pitch, Player.Camera.Pitch) * 0.25), 1
+'                                            D3DXMatrixScaling matScale, 1, 1 - (IIf(modParse.Player.Camera.Pitch > 0, -modParse.Player.Camera.Pitch, modParse.Player.Camera.Pitch) * 0.25), 1
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matScale
 '
-'                                            D3DXMatrixTranslation matPos, a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (a1.Dimension.height / (PI * 6))), a1.Origin(l).Y, a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, Player.Camera.Angle)) * (a1.Dimension.height / (PI * 6)))
+'                                            D3DXMatrixTranslation matPos, a1.Origin(l).X - (Sin(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (a1.Dimension.height / (PI * 6))), a1.Origin(l).Y, a1.Origin(l).z - (Cos(D720 - IIf(a1.HorizontalLock, 0, modParse.Player.Camera.Angle)) * (a1.Dimension.height / (PI * 6)))
 '                                            D3DXMatrixMultiply matBeacon, matBeacon, matPos
 '
 '                                        End If
 '                                        DDevice.SetTransform D3DTS_WORLD, matBeacon
 '                                    Else
 '
-'                                        D3DXMatrixRotationY matBeacon, IIf(a1.HorizontalLock, 0, -Player.Camera.Angle)
+'                                        D3DXMatrixRotationY matBeacon, IIf(a1.HorizontalLock, 0, -modParse.Player.Camera.Angle)
 '
 '                                        D3DXMatrixScaling matScale, 1, 1, 1
 '                                        D3DXMatrixMultiply matBeacon, matBeacon, matScale
@@ -929,9 +954,9 @@ Public Sub RenderBeacons()
 
                                                                     
                                         If a1.BeaconLight > -1 Then
-                                            DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Player.Element.Origin.X) / 80)
-                                            DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Player.Element.Origin.Y) / 80)
-                                            DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Player.Element.Origin.Z) / 80)
+                                            DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - modParse.Player.Element.Origin.X) / 80)
+                                            DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - modParse.Player.Element.Origin.Y) / 80)
+                                            DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - modParse.Player.Element.Origin.Z) / 80)
 
                                             DDevice.SetLight a1.BeaconLight - 1, DXLights(a1.BeaconLight)
                                             DDevice.LightEnable a1.BeaconLight - 1, 1
@@ -967,7 +992,7 @@ Public Sub RenderBeacons()
 '                                        End If
                                     Loop
                                     
-                                    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
+                                    DDevice.SetRenderState D3DRS_CULLMODE, CullMode
                                 End If
                             End If
     
@@ -995,11 +1020,11 @@ Public Sub RenderBeacons()
             End If
             
             If ok And a1.Randomize And (a1.Origins.Count < a1.Allowance) Then
-                Dim nb As New Beacon
-                nb.Origin.X = X
-                nb.Origin.Z = Z
-                a1.Origins.Add nb
-                Set nb = Nothing
+                Dim nB As New Beacon
+                nB.Origin.X = X
+                nB.Origin.Z = Z
+                a1.Origins.Add nB
+                Set nB = Nothing
 '                a1.Origins.Count = a1.Origins.Count + 1
 '                ReDim Preserve a1.Origin(1 To a1.Origins.Count) As D3DVECTOR
 '                a1.Origin(a1.Origins.Count).X = X
@@ -1013,12 +1038,12 @@ Public Sub RenderBeacons()
     
 End Sub
 
-Public Sub RenderSpaces()
+Public Sub RenderSpaces(Optional ByRef Mirror As Board = Nothing)
 
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_CCW
     DDevice.SetVertexShader FVF_RENDER
     
+    Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
@@ -1059,7 +1084,7 @@ Public Sub RenderSpaces()
 
 
 
-    RenderSpacesSetup
+    RenderSpacesSetup Mirror
     
     Dim S As Space
     For Each S In Spaces
@@ -1091,7 +1116,7 @@ Public Sub RenderSpaces()
     Next
     
         
-    RenderSpacesClose
+    RenderSpacesClose Mirror
     
     
     
@@ -1123,8 +1148,11 @@ Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
     Set Sounds = New NTNodes10.Collection
     Set Tracks = New NTNodes10.Collection
     Set Spaces = New NTNodes10.Collection
+    Set Players = New NTNodes10.Collection
 
     Set Player = New Player
+    Set Camera = Player.Camera
+    
     
     'Set Space = New Space
 
@@ -1186,6 +1214,8 @@ serialerror:
 
     ShowCredits = False
 
+    Set Camera = Nothing
+    
     Set Player = Nothing
         
     
@@ -1194,11 +1224,13 @@ serialerror:
         Set Spaces = Nothing
     End If
     
-    Dim q As Integer
+    Dim Q As Integer
     Dim o As Integer
     
 
-        
+    If Not Players Is Nothing Then
+        CleanUpAllCollection Players
+    End If
         
     If Not Elements Is Nothing Then
         Dim e As Element
@@ -1279,9 +1311,9 @@ serialerror:
         For o = 1 To MeshCount
         
             If Meshes(o).MaterialCount > 0 Then
-                For q = LBound(Meshes(o).Textures) To UBound(Meshes(o).Textures)
-                    Set Meshes(o).Textures(q) = Nothing
-                Next q
+                For Q = LBound(Meshes(o).Textures) To UBound(Meshes(o).Textures)
+                    Set Meshes(o).Textures(Q) = Nothing
+                Next Q
     
                 Erase Meshes(o).Materials
                 Erase Meshes(o).Textures

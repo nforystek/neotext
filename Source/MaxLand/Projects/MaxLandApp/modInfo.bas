@@ -113,10 +113,13 @@ Public Function DrawText(Text As String, X As Single, Y As Single)
 End Function
 
 Public Sub RenderInfo()
-
+    Dim CullMode As Long
+    
     DDevice.SetRenderState D3DRS_ZENABLE, False
     DDevice.SetRenderState D3DRS_LIGHTING, False
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+    
+    CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
     DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
 
     DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
@@ -195,22 +198,23 @@ Public Sub RenderInfo()
         If ShowStat Then
             txt = "Frames Per Second: " & FPSRate
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(2)
-            txt = "Origin.X = " & Player.Element.Origin.X & vbCrLf & _
-                    "Origin.y = " & Player.Element.Origin.Y & vbCrLf & _
-                    "Origin.z = " & Player.Element.Origin.Z & vbCrLf & _
-                    "Distance = " & Distance(Player.Element.Origin.X, Player.Element.Origin.Y, Player.Element.Origin.Z, 0, 0, 0) & vbCrLf & _
-                    "Angle = " & Player.Element.Twists.Y & vbCrLf & _
-                    "Pitch = " & Player.Element.Twists.Y & vbCrLf & _
-                    "Zoom = " & Player.Camera.Zoom & vbCrLf
-                    
+            If Not modParse.Player.Element Is Nothing Then
+                txt = "Origin.X = " & modParse.Player.Element.Origin.X & vbCrLf & _
+                        "Origin.y = " & modParse.Player.Element.Origin.Y & vbCrLf & _
+                        "Origin.z = " & modParse.Player.Element.Origin.Z & vbCrLf & _
+                        "Distance = " & Distance(modParse.Player.Element.Origin.X, modParse.Player.Element.Origin.Y, modParse.Player.Element.Origin.Z, 0, 0, 0) & vbCrLf & _
+                        "Angle = " & modParse.Player.Element.Twists.Y & vbCrLf & _
+                        "Pitch = " & modParse.Player.Element.Twists.Y & vbCrLf & _
+                        "Zoom = " & modParse.Player.Camera.Zoom & vbCrLf
+            End If
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(3)
             
 
         End If
         
         If Perspective = CameraMode Then
-            If Player.CameraIndex > 0 Then
-                txt = "Current Camera View " & Player.CameraIndex
+            If modParse.Player.CameraIndex > 0 Then
+                txt = "Current Camera View " & modParse.Player.CameraIndex
             Else
                 txt = "Current Camera View NA"
             End If
@@ -375,6 +379,8 @@ Public Sub RenderInfo()
 '
 '
 '    End If
+
+    DDevice.SetRenderState D3DRS_CULLMODE, CullMode
     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
 End Sub

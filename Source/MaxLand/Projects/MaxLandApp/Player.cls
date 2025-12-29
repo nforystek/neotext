@@ -13,6 +13,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+Implements Orient
+
 'Implements Element
 
 
@@ -25,6 +27,7 @@ Option Explicit
 'Private pMinZoom As Single
 'Private pMaxZoom As Single
 
+
 Private pCameraIndex As Long
 
 Private pSpeed As Single
@@ -34,12 +37,84 @@ Private pFriction As Single
 Private pCamera As Camera
 Private pElement As Element
 
+Public Property Get Origin() As Point
+    Set Origin = Orient.Origin
+End Property
+Public Property Set Origin(ByRef RHS As Point)
+    Set Orient.Origin = RHS
+End Property
+
+Public Property Get Offset() As Point
+    Set Offset = Orient.Offset
+End Property
+Public Property Set Offset(ByRef RHS As Point)
+    Set Orient.Offset = RHS
+End Property
+
+Public Property Get Scaled() As Point
+    Set Scaled = Orient.Scaled
+End Property
+Public Property Set Scaled(ByRef RHS As Point)
+    Set Orient.Scaled = RHS
+End Property
+
+Public Property Get Rotate() As Point
+    Set Rotate = Orient.Rotate
+End Property
+Public Property Set Rotate(ByRef RHS As Point)
+    Set Orient.Rotate = RHS
+End Property
+
+
+Friend Property Get Direct() As Point
+    Set Direct = Orient.Direct
+End Property
+Friend Property Set Direct(ByRef RHS As Point)
+    Set Orient.Direct = RHS
+End Property
+
+Friend Property Get Twists() As Point
+    Set Twists = Orient.Twists
+End Property
+Friend Property Set Twists(ByRef RHS As Point)
+    Set Orient.Twists = RHS
+End Property
+
+Friend Property Get Scalar() As Point
+    Set Scalar = Orient.Scalar
+End Property
+Friend Property Set Scalar(ByRef RHS As Point)
+    Set Orient.Scalar = RHS
+End Property
+
+Public Property Let Key(ByVal RHS As String)
+    Orient.Key = RHS
+End Property
+
+Public Property Get Key() As String
+    Key = Orient.Key
+End Property
+
+Public Property Get Attachments() As NTNodes10.Collection
+    Set Attachments = Orient.Attachments
+End Property
+Public Property Set Attachments(ByRef RHS As NTNodes10.Collection)
+    Set Orient.Attachments = RHS
+End Property
+
+Public Property Get AttachedTo() As String
+    AttachedTo = Orient.AttachedTo
+End Property
+Public Property Let AttachedTo(ByVal RHS As String)
+    Orient.AttachedTo = RHS
+End Property
 
 Public Property Get Element() As Element
     Set Element = pElement
 End Property
 Public Property Set Element(ByRef RHS As Element)
     Set pElement = RHS
+    If Not RHS.Player.Value = Me.Value Then Set RHS.Player = Me
 End Property
 
 Public Property Get Camera() As Camera
@@ -47,6 +122,7 @@ Public Property Get Camera() As Camera
 End Property
 Public Property Set Camera(ByRef RHS As Camera)
     Set pCamera = RHS
+    If Not RHS.Player.Value = Me.Value Then Set RHS.Player = Me
 End Property
 
 'Public Property Get Direct() As Point
@@ -142,11 +218,29 @@ End Property
 'Public Property Let Object(ByRef RHS)
 '    Set pElement = ObjectByPtr(RHS)
 'End Property
+Public Property Set Value(ByVal RHS)
+    Dim obj As Object
+    Set obj = ObjectByPtr(RHS)
+    If TypeName(obj) = "Element" Then
+        Set pElement = obj
+    ElseIf TypeName(obj) = "Camera" Then
+        Set pCamera = obj
+    End If
+    If obj.Player Is Nothing Then
+        Set RHS.Player = Me
+    ElseIf Not obj.Player.Value = Me.Value Then
+        Set RHS.Player = Me
+    End If
+End Property
+
+Public Property Let Value(ByVal RHS As Long)
+    Value = RHS
+End Property
 
 Public Property Get Value() As Long
 Attribute Value.VB_UserMemId = 0
-Attribute Value.VB_MemberFlags = "40"
-    Value = ObjPtr(Element)
+Attribute Value.VB_MemberFlags = "240"
+    Value = ObjPtr(Me)
 End Property
 
 'Public Property Get MaxZoom() As Single
@@ -168,7 +262,7 @@ End Property
 'End Property
 'Public Property Let Angle(ByVal RHS As Single)
 '    pAngle = RHS
-''    Player.pElement.Twists.Y = (Player.pElement.Twists.Y + (pAngle * DEGREE)) - Player.pElement.Rotate.Y
+''    modParse.Player.pElement.Twists.Y = (modParse.Player.pElement.Twists.Y + (pAngle * DEGREE)) - modParse.Player.pElement.Rotate.Y
 'End Property
 '
 'Public Property Get Pitch() As Single
@@ -209,166 +303,172 @@ End Property
 Public Sub ZoomIn(Optional ByVal Measure As Single = 0.015)
     ResetIdle
     If Perspective = ThirdPerson Then
-        Player.Camera.Zoom = Player.Camera.Zoom - Measure
-        If Player.Camera.Zoom < Player.Camera.MinZoom Then Player.Camera.Zoom = Player.Camera.MinZoom
+        modParse.Player.Camera.Zoom = modParse.Player.Camera.Zoom - Measure
+        If modParse.Player.Camera.Zoom < modParse.Player.Camera.MinZoom Then modParse.Player.Camera.Zoom = modParse.Player.Camera.MinZoom
     End If
 End Sub
 
 Public Sub ZoomOut(Optional ByVal Measure As Single = 0.015)
     ResetIdle
     If Perspective = ThirdPerson Then
-        Player.Camera.Zoom = Player.Camera.Zoom + Measure
-        If Player.Camera.Zoom > Player.Camera.MaxZoom Then Player.Camera.Zoom = Player.Camera.MaxZoom
+        modParse.Player.Camera.Zoom = modParse.Player.Camera.Zoom + Measure
+        If modParse.Player.Camera.Zoom > modParse.Player.Camera.MaxZoom Then modParse.Player.Camera.Zoom = modParse.Player.Camera.MaxZoom
     End If
 End Sub
 
 Public Sub LookLeft(Optional ByVal Measure As Single = 0.015)
     ResetIdle
-    If Not Perspective = CameraMode Then Player.Camera.Angle = (Player.Camera.Angle + Measure)
-    If Player.Camera.Angle < -(PI * 2) Then Player.Camera.Angle = (Player.Camera.Angle + (PI * 2))
-    'Player.Twists.Y = 1
+    If Not Perspective = CameraMode Then modParse.Player.Camera.Angle = (modParse.Player.Camera.Angle + Measure)
+    If modParse.Player.Camera.Angle < -(PI * 2) Then modParse.Player.Camera.Angle = (modParse.Player.Camera.Angle + (PI * 2))
+    'modParse.Player.Twists.Y = 1
     
 End Sub
 Public Sub LookRight(Optional ByVal Measure As Single = 0.015)
     ResetIdle
-    If Not Perspective = CameraMode Then Player.Camera.Angle = (Player.Camera.Angle - Measure)
-    If Player.Camera.Angle > (PI * 2) Then Player.Camera.Angle = (Player.Camera.Angle - (PI * 2))
-    'Player.Twists.Y = -1
+    If Not Perspective = CameraMode Then modParse.Player.Camera.Angle = (modParse.Player.Camera.Angle - Measure)
+    If modParse.Player.Camera.Angle > (PI * 2) Then modParse.Player.Camera.Angle = (modParse.Player.Camera.Angle - (PI * 2))
+    'modParse.Player.Twists.Y = -1
     
 End Sub
 Public Sub LookUp(Optional ByVal Measure As Single = 0.015)
     ResetIdle
-    Player.Camera.Pitch = Player.Camera.Pitch - Measure
-    If Player.Camera.Pitch < -1.5 Then Player.Camera.Pitch = -1.5
+    modParse.Player.Camera.Pitch = modParse.Player.Camera.Pitch - Measure
+    If modParse.Player.Camera.Pitch < -1.5 Then modParse.Player.Camera.Pitch = -1.5
 
 End Sub
 
 Public Sub LookDown(Optional ByVal Measure As Single = 0.015)
     ResetIdle
-    Player.Camera.Pitch = Player.Camera.Pitch + Measure
-    If Player.Camera.Pitch > 1.5 Then Player.Camera.Pitch = 1.5
+    modParse.Player.Camera.Pitch = modParse.Player.Camera.Pitch + Measure
+    If modParse.Player.Camera.Pitch > 1.5 Then modParse.Player.Camera.Pitch = 1.5
 
 End Sub
 
 Public Sub MoveForward()
     ResetIdle
 
-    '############################################
-    '################ FOREWARDS #################
-    Dim vecDirect As D3DVECTOR
-    If Player.Element.Direct.Y = 0 Then
-        vecDirect.X = Sin(D720 - Player.Camera.Angle)
-        vecDirect.Z = Cos(D720 - Player.Camera.Angle)
-        If ((Perspective = Spectator) Or DebugMode) Or Player.Element.InLiquid Then
-            vecDirect.Y = -(Tan(D720 - Player.Camera.Pitch))
+    If Not modParse.Player.Element Is Nothing Then
+        '############################################
+        '################ FOREWARDS #################
+        Dim vecDirect As D3DVECTOR
+        If modParse.Player.Element.Direct.Y = 0 Then
+            vecDirect.X = Sin(D720 - modParse.Player.Camera.Angle)
+            vecDirect.Z = Cos(D720 - modParse.Player.Camera.Angle)
+            If ((Perspective = Spectator) Or DebugMode) Or modParse.Player.Element.InLiquid Then
+                vecDirect.Y = -(Tan(D720 - modParse.Player.Camera.Pitch))
+            End If
+            D3DXVec3Normalize vecDirect, vecDirect
+            If modParse.Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (modParse.Player.Speed / 2), Friction
+            ElseIf (Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
+                            ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), modParse.Player.Speed, Friction
+            End If
         End If
-        D3DXVec3Normalize vecDirect, vecDirect
-        If Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (Player.Speed / 2), Friction
-        ElseIf (Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                        ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
-        End If
+        '############################################
+        '############################################
     End If
-    '############################################
-    '############################################
-
 End Sub
 Public Sub MoveBackwards()
     ResetIdle
-    
-    '############################################
-    '################ BACKWARDS #################
-    Dim vecDirect As D3DVECTOR
-    If Player.Element.Direct.Y = 0 Then
-        vecDirect.X = -Sin(D720 - Player.Camera.Angle)
-        vecDirect.Z = -Cos(D720 - Player.Camera.Angle)
-        If (Perspective = Spectator) Or DebugMode Then
-            vecDirect.Y = Tan(D720 - Player.Camera.Pitch)
+    If Not modParse.Player.Element Is Nothing Then
+        '############################################
+        '################ BACKWARDS #################
+        Dim vecDirect As D3DVECTOR
+        If modParse.Player.Element.Direct.Y = 0 Then
+            vecDirect.X = -Sin(D720 - modParse.Player.Camera.Angle)
+            vecDirect.Z = -Cos(D720 - modParse.Player.Camera.Angle)
+            If (Perspective = Spectator) Or DebugMode Then
+                vecDirect.Y = Tan(D720 - modParse.Player.Camera.Pitch)
+            End If
+            D3DXVec3Normalize vecDirect, vecDirect
+            If modParse.Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (modParse.Player.Speed / 2), Friction
+            ElseIf (Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
+                            ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), modParse.Player.Speed, Friction
+            End If
         End If
-        D3DXVec3Normalize vecDirect, vecDirect
-        If Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (Player.Speed / 2), Friction
-        ElseIf (Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                        ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
-        End If
+        '############################################
+        '############################################
     End If
-    '############################################
-    '############################################
-
 End Sub
 Public Sub SlideLeft()
     ResetIdle
 
-    '############################################
-    '############### STRAFE LEFT ################
-    Dim vecDirect As D3DVECTOR
-    If Player.Element.Direct.Y = 0 Then
-        vecDirect.X = Sin((D720 - Player.Camera.Angle) - D180)
-        vecDirect.Z = Cos((D720 - Player.Camera.Angle) - D180)
-        D3DXVec3Normalize vecDirect, vecDirect
-        If Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (Player.Speed / 2), Friction
-        ElseIf (Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                        ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
+    If Not modParse.Player.Element Is Nothing Then
+        '############################################
+        '############### STRAFE LEFT ################
+        Dim vecDirect As D3DVECTOR
+        If modParse.Player.Element.Direct.Y = 0 Then
+            vecDirect.X = Sin((D720 - modParse.Player.Camera.Angle) - D180)
+            vecDirect.Z = Cos((D720 - modParse.Player.Camera.Angle) - D180)
+            D3DXVec3Normalize vecDirect, vecDirect
+            If modParse.Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (modParse.Player.Speed / 2), Friction
+            ElseIf (Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
+                            ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), modParse.Player.Speed, Friction
+            End If
         End If
+        '############################################
+        '############################################
     End If
-    '############################################
-    '############################################
-
+    
 End Sub
 Public Sub SlideRight()
     ResetIdle
     
-    '############################################
-    '############### STRAFE RIGHT ###############
-    Dim vecDirect As D3DVECTOR
-    If Player.Element.Direct.Y = 0 Then
-        vecDirect.X = Sin((D720 - Player.Camera.Angle) + D180)
-        vecDirect.Z = Cos((D720 - Player.Camera.Angle) + D180)
-        D3DXVec3Normalize vecDirect, vecDirect
-        If Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (Player.Speed / 2), Friction
-        ElseIf (Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                        ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
+    If Not modParse.Player.Element Is Nothing Then
+        '############################################
+        '############### STRAFE RIGHT ###############
+        Dim vecDirect As D3DVECTOR
+        If modParse.Player.Element.Direct.Y = 0 Then
+            vecDirect.X = Sin((D720 - modParse.Player.Camera.Angle) + D180)
+            vecDirect.Z = Cos((D720 - modParse.Player.Camera.Angle) + D180)
+            D3DXVec3Normalize vecDirect, vecDirect
+            If modParse.Player.Element.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), (modParse.Player.Speed / 2), Friction
+            ElseIf (Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
+                            ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), modParse.Player.Speed, Friction
+            End If
         End If
+        '############################################
+        '############################################
     End If
-    '############################################
-    '############################################
-
 End Sub
 Public Sub Jump()
     
     ResetIdle
     
-    If ((Perspective = Spectator) Or DebugMode) Or (((Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying))) And _
-                                        (Not ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling))) Then
-        '############################################
-        '################## JUMP ####################
-        Dim vecDirect As D3DVECTOR
-        If (Perspective = Spectator) Or DebugMode Then
-            vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
-            Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), Player.Speed, Friction
-        Else
-'            If Player.Element.MotionExists(JumpGUID) Then
-                If (Not ((Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
-                        ((Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
-                    Do Until Not Player.Element.MotionExists(JumpGUID)
-                        Player.Element.DeleteMotion JumpGUID
-                    Loop
-                End If
-'            End If
-'            If Not Player.Element.MotionExists(JumpGUID) Then
-                vecDirect.Y = IIf(Player.Element.InLiquid, 5, 9)
-                JumpGUID = Player.Element.AddMotion(Actions.Directing, JumpGUID, ToPoint(vecDirect), Player.Speed * 4, Friction)
-'            End If
+    If Not modParse.Player.Element Is Nothing Then
+        If ((Perspective = Spectator) Or DebugMode) Or (((Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying))) And _
+                                            (Not ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling))) Then
+            '############################################
+            '################## JUMP ####################
+            Dim vecDirect As D3DVECTOR
+            If (Perspective = Spectator) Or DebugMode Then
+                vecDirect.Y = vecDirect.Y + IIf(modParse.Player.Speed < 1, 1, modParse.Player.Speed)
+                modParse.Player.Element.AddMotion Actions.Directing, Replace(modGuid.GUID, "-", "K"), ToPoint(vecDirect), modParse.Player.Speed, Friction
+            Else
+    '            If modParse.Player.Element.MotionExists(JumpGUID) Then
+                    If (Not ((modParse.Player.Element.IsMoving And Moving.Flying) = Moving.Flying) Or _
+                            ((modParse.Player.Element.IsMoving And Moving.Falling) = Moving.Falling)) Then
+                        Do Until Not modParse.Player.Element.MotionExists(JumpGUID)
+                            modParse.Player.Element.DeleteMotion JumpGUID
+                        Loop
+                    End If
+    '            End If
+    '            If Not modParse.Player.Element.MotionExists(JumpGUID) Then
+                    vecDirect.Y = IIf(modParse.Player.Element.InLiquid, 5, 9)
+                    JumpGUID = modParse.Player.Element.AddMotion(Actions.Directing, JumpGUID, ToPoint(vecDirect), modParse.Player.Speed * 4, Friction)
+    '            End If
+            End If
+            '############################################
+            '############################################
+        
         End If
-        '############################################
-        '############################################
-    
     End If
 End Sub
 
@@ -388,11 +488,15 @@ Public Sub ChangePerspective()
 End Sub
 
 Private Sub Class_Initialize()
+    vbaObjSetAddref Orient, ObjPtr(New Orient)
+    
     Stats_Player_Count = Stats_Player_Count + 1
     vbaObjSetAddref Element, ObjPtr(New Element)
-    
+
     Set pElement = New Element
-    pElement.Key = "Player"
+'    pElement.Key = "Player"
+'    Elements.Add pElement, "Player"
+    
     Set pCamera = New Camera
 
     pSpeed = 0.01
@@ -406,10 +510,74 @@ Private Sub Class_Terminate()
     Set pElement = Nothing
 
     Set pCamera = Nothing
-    
-    vbaObjSet Element, ObjPtr(Nothing)
+
+    vbaObjSet Orient, ObjPtr(Nothing)
     Stats_Player_Count = Stats_Player_Count - 1
 End Sub
+
+Private Property Let Orient_AttachedTo(ByVal RHS As String)
+    Orient.AttachedTo = RHS
+End Property
+
+Private Property Get Orient_AttachedTo() As String
+    Orient_AttachedTo = Orient.AttachedTo
+End Property
+
+Private Property Set Orient_Attachments(RHS As NTNodes10.Collection)
+    Set Orient.Attachments = RHS
+End Property
+
+Private Property Get Orient_Attachments() As NTNodes10.Collection
+    Set Orient_Attachments = Orient.Attachments
+End Property
+
+Private Property Get Orient_Clone() As Orient
+    Set Orient_Clone = Orient.Clone
+End Property
+
+Private Property Let Orient_Key(ByVal RHS As String)
+    Orient.Key = RHS
+End Property
+
+Private Property Get Orient_Key() As String
+    Orient_Key = Orient.Key
+End Property
+
+Private Property Set Orient_Offset(RHS As Point)
+    Set Orient.Offset = RHS
+End Property
+
+Private Property Get Orient_Offset() As Point
+    Set Orient_Offset = Orient.Offset
+End Property
+
+Private Property Set Orient_Origin(RHS As Point)
+    Set Orient.Origin = RHS
+End Property
+
+Private Property Get Orient_Origin() As Point
+    Set Orient_Origin = Orient.Origin
+End Property
+
+Private Property Set Orient_Rotate(RHS As Point)
+    Set Orient_Rotate = RHS
+End Property
+
+Private Property Get Orient_Rotate() As Point
+    Set Orient_Rotate = Orient.Rotate
+End Property
+
+Private Property Set Orient_Scaled(RHS As Point)
+    Set Orient.Scaled = RHS
+End Property
+
+Private Property Get Orient_Scaled() As Point
+    Set Orient_Scaled = Orient.Scaled
+End Property
+
+Private Property Get Orient_Serialize() As Boolean
+    Orient_Serialize = Orient.Serialize
+End Property
 
 'Public Property Let AttachedTo(ByVal RHS As String)
 '    Element.AttachedTo = RHS

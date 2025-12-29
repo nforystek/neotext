@@ -13,6 +13,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+Implements Orient
+
 Public Enum Collides
     Normal = 0
     InDoor = 1
@@ -30,12 +32,6 @@ Public Enum Moving
     Stepping = 8
 End Enum
 
-Private pOrigin As Point
-Private pOffset As Point
-Private pScaled As Point
-Private pRotate As Point
-
-Private pKey As String
 Private pVisible As Boolean
 Private pGravitational As Boolean
 Private pAlphablend As Boolean
@@ -43,7 +39,6 @@ Private pWireFrame As Boolean
 Private pEffect As Long
 Private pCollision As Boolean
 Private pMotions As NTNodes10.Collection
-
 
 Private pSerialize As Boolean
 
@@ -53,10 +48,6 @@ Private pBoundsIndex As Long
 Private pIsMoving As Long
 Private pInLiquid As Boolean
 Private pOnLadder As Boolean
-
-Private pDirect As Point
-Private pTwists As Point
-Private pScalar As Point
 
 
 Private pCollideIndex As Long
@@ -68,15 +59,103 @@ Private pReplacerVals As NTNodes10.Collection
 Private pReplacerKeys As NTNodes10.Collection
 Attribute pReplacerKeys.VB_VarMemberFlags = "440"
 
-Private pAttachments As NTNodes10.Collection
-Private pAttachedTo As String
-
 Private pFulcrums As VBA.Collection
 
 Private Matrix As D3DMATRIX
 
 Private pCentoid As New Point
 Private pDisplace As New Point
+
+Private pPlayer As Player
+Private pCamera As Camera
+
+Public Property Get Origin() As Point
+    Set Origin = Orient.Origin
+End Property
+Public Property Set Origin(ByRef RHS As Point)
+    Set Orient.Origin = RHS
+End Property
+
+Public Property Get Offset() As Point
+    Set Offset = Orient.Offset
+End Property
+Public Property Set Offset(ByRef RHS As Point)
+    Set Orient.Offset = RHS
+End Property
+
+Public Property Get Scaled() As Point
+    Set Scaled = Orient.Scaled
+End Property
+Public Property Set Scaled(ByRef RHS As Point)
+    Set Orient.Scaled = RHS
+End Property
+
+Public Property Get Rotate() As Point
+    Set Rotate = Orient.Rotate
+End Property
+Public Property Set Rotate(ByRef RHS As Point)
+    Set Orient.Rotate = RHS
+End Property
+
+
+Public Property Get Direct() As Point
+    Set Direct = Orient.Direct
+End Property
+Public Property Set Direct(ByRef RHS As Point)
+    Set Orient.Direct = RHS
+End Property
+
+Public Property Get Twists() As Point
+    Set Twists = Orient.Twists
+End Property
+Public Property Set Twists(ByRef RHS As Point)
+    Set Orient.Twists = RHS
+End Property
+
+Public Property Get Scalar() As Point
+    Set Scalar = Orient.Scalar
+End Property
+Public Property Set Scalar(ByRef RHS As Point)
+    Set Orient.Scalar = RHS
+End Property
+
+Public Property Get Attachments() As NTNodes10.Collection
+    Set Attachments = Orient.Attachments
+End Property
+Public Property Set Attachments(ByRef RHS As NTNodes10.Collection)
+    Set Orient.Attachments = RHS
+End Property
+
+Public Property Get AttachedTo() As String
+    AttachedTo = Orient.AttachedTo
+End Property
+Public Property Let AttachedTo(ByVal RHS As String)
+    Orient.AttachedTo = RHS
+End Property
+
+Public Property Let Key(ByVal RHS As String)
+    Orient.Key = RHS
+End Property
+
+Public Property Get Key() As String
+    Key = Orient.Key
+End Property
+
+Public Property Get Camera() As Camera
+    Set Camera = pCamera
+End Property
+Public Property Set Camera(ByRef RHS As Camera)
+    Set pCamera = RHS
+    If Not RHS.Element.Value = Me.Value Then Set RHS.Element = Me
+End Property
+
+Public Property Get Player() As Player
+    Set Player = pPlayer
+End Property
+Public Property Set Player(ByRef RHS As Player)
+    Set pPlayer = RHS
+    If Not RHS.Element.Value = Me.Value Then Set RHS.Element = Me
+End Property
 
 Public Property Get Centoid() As Point
     Set Centoid = pCentoid
@@ -96,9 +175,9 @@ Public Property Get Fulcrums() As VBA.Collection
 End Property
 Public Property Get Fulcrum(Optional ByVal Index As Integer = 0) As Point
     If pFulcrums.Count > 0 And Index <= pFulcrums.Count And Index > 0 Then
-        Set Fulcrum = VectorRotateAxis(pFulcrums(Index), VectorMultiplyBy(pRotate, RADIAN))
+        Set Fulcrum = VectorRotateAxis(pFulcrums(Index), VectorMultiplyBy(Orient.Rotate, RADIAN))
     ElseIf pFulcrums.Count > 0 Then
-        Set Fulcrum = VectorRotateAxis(pFulcrums(1), VectorMultiplyBy(pRotate, RADIAN))
+        Set Fulcrum = VectorRotateAxis(pFulcrums(1), VectorMultiplyBy(Orient.Rotate, RADIAN))
     End If
 End Property
 Public Property Set Fulcrum(Optional ByVal Index As Integer = 0, ByRef RHS As Point)
@@ -183,43 +262,7 @@ Public Sub AutoFulcrums(Optional ByVal Smart As Boolean = True)
         Err.Raise 8, , "AutoFulcrums requires a BoundsModel or VisualModel to be loaded."
     End If
 End Sub
-Public Property Get Attachments() As NTNodes10.Collection
-    Set Attachments = pAttachments
-End Property
-Public Property Set Attachments(ByRef RHS As NTNodes10.Collection)
-    Set pAttachments = RHS
-End Property
 
-Public Property Get AttachedTo() As String
-    AttachedTo = pAttachedTo
-End Property
-Public Property Let AttachedTo(ByVal RHS As String)
-    If pAttachedTo <> "" Then
-        If All.Exists(pAttachedTo) Then
-            If All(pAttachedTo).Attachments.Exists(Me.Key) Then
-                All(pAttachedTo).Attachments.Remove Me.Key
-            End If
-            
-            Set Rotate = VectorMultiplyBy(AngleAxisDeduction(VectorMultiplyBy(Rotate, RADIAN), VectorMultiplyBy(All(pAttachedTo).Rotate, RADIAN)), DEGREE)
-            Set Origin = VectorDeduction(Origin, All(pAttachedTo).Origin)
-            
-        End If
-    End If
-    pAttachedTo = RHS
-    If RHS <> "" Then
-        
-        If All(pAttachedTo).Attachments Is Nothing Then
-            Set All(pAttachedTo).Attachments = New NTNodes10.Collection
-        End If
-        All(pAttachedTo).Attachments.Add Me, RHS
-        Set Origin = VectorAddition(Origin, All(pAttachedTo).Origin)
-
-        Set Rotate = VectorMultiplyBy(AngleAxisAddition(VectorMultiplyBy(Rotate, RADIAN), VectorMultiplyBy(All(pAttachedTo).Rotate, RADIAN)), DEGREE)
-
-
-    End If
-    
-End Property
 
 Friend Property Get ReplacerVals() As NTNodes10.Collection
     Set ReplacerVals = pReplacerVals
@@ -261,9 +304,9 @@ End Function
 
 Public Sub ClearMotions()
 
-    pDirect = "0,0,0"
-    pTwists = "0,0,0"
-    pScalar = "0,0,0"
+    Orient.Direct = "0,0,0"
+    Orient.Twists = "0,0,0"
+    Orient.Scalar = "0,0,0"
     modMove.ClearMotions pMotions
 
 End Sub
@@ -493,61 +536,30 @@ Public Property Let OnLadder(ByVal RHS As Boolean)
 End Property
 
 
-Public Property Get Origin() As Point
-    Set Origin = pOrigin
-End Property
-Public Property Set Origin(ByRef RHS As Point)
-    Set pOrigin = RHS
-End Property
-
-Public Property Get Offset() As Point
-    Set Offset = pOffset
-End Property
-Public Property Set Offset(ByRef RHS As Point)
-    Set pOffset = RHS
-End Property
-
-Public Property Get Scaled() As Point
-    Set Scaled = pScaled
-End Property
-Public Property Set Scaled(ByRef RHS As Point)
-    Set pScaled = RHS
-End Property
-
-Public Property Get Rotate() As Point
-    Set Rotate = pRotate
-End Property
-Public Property Set Rotate(ByRef RHS As Point)
-    Set pRotate = RHS
-End Property
-
-
-Public Property Get Direct() As Point
-    Set Direct = pDirect
-End Property
-Public Property Set Direct(ByRef RHS As Point)
-    Set pDirect = RHS
-End Property
-
-Public Property Get Twists() As Point
-    Set Twists = pTwists
-End Property
-Public Property Set Twists(ByRef RHS As Point)
-    Set pTwists = RHS
-End Property
-
-Public Property Get Scalar() As Point
-    Set Scalar = pScalar
-End Property
-Public Property Set Scalar(ByRef RHS As Point)
-    Set pScalar = RHS
-End Property
-
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property
 Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
+End Property
+
+Public Property Set Value(ByVal RHS)
+    Dim obj As Object
+    Set obj = ObjectByPtr(RHS)
+    If TypeName(obj) = "Camera" Then
+        Set pCamera = obj
+    ElseIf TypeName(obj) = "Player" Then
+        Set pPlayer = obj
+    End If
+    If obj.Element Is Nothing Then
+        Set RHS.Element = Me
+    ElseIf Not obj.Element.Value = Me.Value Then
+        Set RHS.Element = Me
+    End If
+End Property
+
+Public Property Let Value(ByVal RHS As Long)
+    Value = RHS
 End Property
 
 Public Property Get Value() As Long
@@ -557,19 +569,6 @@ Attribute Value.VB_MemberFlags = "40"
 End Property
 
 
-Public Property Get Key() As String
-    Key = pKey
-End Property
-Public Property Let Key(ByVal RHS As String)
-    If RHS <> "" Then
-        If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
-        If All.Exists(RHS) Then
-            All.Remove RHS
-            All.Add Me, RHS
-        End If
-        pKey = RHS
-    End If
-End Property
 
 Public Property Get Gravitational() As Boolean
     Gravitational = pGravitational
@@ -581,16 +580,14 @@ End Property
 Friend Sub PrepairMatrix()
 
     D3DXMatrixIdentity Matrix
-    D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
-'    D3DXMatrixRotationX Matrix, 0
-'    D3DXMatrixRotationY Matrix, 0
-'    D3DXMatrixRotationZ Matrix, 0
-    D3DXMatrixRotationX Matrix, pRotate.X * RADIAN
-    D3DXMatrixRotationY Matrix, pRotate.Y * RADIAN
-    D3DXMatrixRotationZ Matrix, pRotate.Z * RADIAN
-    D3DXMatrixScaling Matrix, pScaled.X, pScaled.Y, pScaled.Z
+    D3DXMatrixTranslation Matrix, Orient.Origin.X, Orient.Origin.Y, Orient.Origin.Z
+    D3DXMatrixRotationX Matrix, Orient.Rotate.X * RADIAN
+    D3DXMatrixRotationY Matrix, Orient.Rotate.Y * RADIAN
+    D3DXMatrixRotationZ Matrix, Orient.Rotate.Z * RADIAN
+    D3DXMatrixScaling Matrix, Orient.Scaled.X, Orient.Scaled.Y, Orient.Scaled.Z
 
-    D3DXMatrixIdentity matWorld
+    DDevice.SetTransform D3DTS_WORLD, Matrix
+    'D3DXMatrixIdentity matWorld
 
 End Sub
 Friend Sub ApplyMatrix()
@@ -612,42 +609,41 @@ Friend Sub ApplyMatrix()
 '    D3DXMatrixMultiply Matrix, matMesh, Matrix
 '    DDevice.SetTransform D3DTS_WORLD, Matrix
 '    D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
-'    D3DXMatrixMultiply matMesh, matMesh, Matrix
+'    D3DXMatrixMultiply Matrix, matMesh, Matrix
 '    DDevice.SetTransform D3DTS_WORLD, matMesh
-'
+
             
     Dim matMesh As D3DMATRIX
-    
 
-    D3DXMatrixIdentity matWorld
+
+    'D3DXMatrixIdentity matWorld
     D3DXMatrixIdentity matMesh
 
    ' If (pAttachedTo = "") Then
-   
-        D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
-        D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
+
+        D3DXMatrixTranslation Matrix, Orient.Origin.X, Orient.Origin.Y, Orient.Origin.Z
+        D3DXMatrixScaling matMesh, Orient.Scaled.X, Orient.Scaled.Y, Orient.Scaled.Z
         D3DXMatrixMultiply Matrix, matMesh, Matrix
         DDevice.SetTransform D3DTS_WORLD, Matrix
-    
+
    ' End If
-    
-    D3DXMatrixRotationX matMesh, Rotate.X * (PI / 180)
+
+    D3DXMatrixRotationX matMesh, Orient.Rotate.X * (PI / 180)
     D3DXMatrixMultiply Matrix, matMesh, Matrix
-    D3DXMatrixRotationY matMesh, Rotate.Y * (PI / 180)
+    D3DXMatrixRotationY matMesh, Orient.Rotate.Y * (PI / 180)
     D3DXMatrixMultiply matMesh, Matrix, matMesh
-    D3DXMatrixRotationZ Matrix, Rotate.Z * (PI / 180)
+    D3DXMatrixRotationZ Matrix, Orient.Rotate.Z * (PI / 180)
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
 
-   ' If (pAttachedTo <> "") Then
-    
+'    If (pAttachedTo <> "") Then
 '        D3DXMatrixTranslation Matrix, Origin.X, Origin.Y, Origin.Z
 '        D3DXMatrixScaling matMesh, Scaled.X, Scaled.Y, Scaled.Z
 '        D3DXMatrixMultiply Matrix, matMesh, Matrix
 '        DDevice.SetTransform D3DTS_WORLD, Matrix
-   ' End If
-    
-    D3DXMatrixTranslation matMesh, Offset.X, Offset.Y, Offset.Z
+'    End If
+
+    D3DXMatrixTranslation matMesh, Orient.Offset.X, Orient.Offset.Y, Orient.Offset.Z
     D3DXMatrixMultiply Matrix, matMesh, Matrix
     DDevice.SetTransform D3DTS_WORLD, Matrix
 
@@ -657,25 +653,47 @@ End Sub
 
 Friend Sub PlayerMatrix()
     
+    Dim matWorld As D3DMATRIX
+    
     D3DXMatrixIdentity matWorld
     D3DXMatrixIdentity Matrix
     
-    D3DXMatrixScaling Matrix, pScaled.X, pScaled.Y, pScaled.Z
+    D3DXMatrixScaling Matrix, Orient.Scaled.X, Orient.Scaled.Y, Orient.Scaled.Z
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
-    D3DXMatrixRotationY Matrix, -Player.Camera.Angle
+    D3DXMatrixRotationY Matrix, -modParse.Player.Camera.Angle
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
-    D3DXMatrixTranslation Matrix, pOrigin.X, pOrigin.Y, pOrigin.Z
+    D3DXMatrixTranslation Matrix, Orient.Origin.X, Orient.Origin.Y, Orient.Origin.Z
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
     DDevice.SetTransform D3DTS_WORLD, matWorld
-
 
 End Sub
 
 Friend Sub SetWorldMatrix()
     DDevice.SetTransform D3DTS_WORLD, Matrix
+End Sub
+
+
+Friend Sub DefaultMatrix()
+    D3DXMatrixIdentity Matrix
+    D3DXMatrixTranslation Matrix, 0, 0, 0
+    D3DXMatrixRotationX Matrix, 0
+    D3DXMatrixRotationY Matrix, 0
+    D3DXMatrixRotationZ Matrix, 0
+    D3DXMatrixScaling Matrix, 1, 1, 1
+
+'    D3DXMatrixIdentity matWorld
+'    D3DXMatrixTranslation matWorld, 0, 0, 0
+'    D3DXMatrixRotationX matWorld, 0
+'    D3DXMatrixRotationY matWorld, 0
+'    D3DXMatrixRotationZ matWorld, 0
+'    D3DXMatrixScaling matWorld, 1, 1, 1
+    
+    DDevice.SetTransform D3DTS_WORLD, Matrix
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
+
 End Sub
 
 
@@ -686,27 +704,9 @@ Friend Function PointMatrix(ByRef p As Point) As Point
     Set PointMatrix = ToPoint(V)
 End Function
 
-Friend Sub DefaultMatrix()
-    D3DXMatrixIdentity Matrix
-    D3DXMatrixTranslation Matrix, 0, 0, 0
-    D3DXMatrixRotationX Matrix, 0
-    D3DXMatrixRotationY Matrix, 0
-    D3DXMatrixRotationZ Matrix, 0
-    D3DXMatrixScaling Matrix, 1, 1, 1
-
-    D3DXMatrixIdentity matWorld
-    D3DXMatrixTranslation matWorld, 0, 0, 0
-    D3DXMatrixRotationX matWorld, 0
-    D3DXMatrixRotationY matWorld, 0
-    D3DXMatrixRotationZ matWorld, 0
-    D3DXMatrixScaling matWorld, 1, 1, 1
-    
-    DDevice.SetTransform D3DTS_WORLD, Matrix
-    DDevice.SetTransform D3DTS_WORLD, matWorld
-
-End Sub
-    
 Private Sub Class_Initialize()
+    vbaObjSetAddref Orient, ObjPtr(New Orient)
+    
     Stats_Element_Count = Stats_Element_Count + 1
     Key = "K" & ObjPtr(Me)
 
@@ -717,15 +717,6 @@ Private Sub Class_Initialize()
     pAlphablend = False
     pCollideIndex = 0
     pCollideObject = -1
-    Set pOrigin = New Point
-    Set pScaled = MakePoint(1, 1, 1)
-    Set pRotate = New Point
-    Set pOffset = New Point
-    
-    Set pDirect = New Point
-    Set pTwists = New Point
-    Set pScalar = New Point
-
     
     'DefaultMatrix
     
@@ -758,26 +749,74 @@ Private Sub Class_Terminate()
         Set pMotions = Nothing
     End If
     
-    AttachedTo = "" 'relocalizes
+    Set pPlayer = Nothing
+    Set pCamera = Nothing
     
-    If Not pAttachments Is Nothing Then
-        Dim e As Element
-        Do Until pAttachments.Count = 0
-            Set e = pAttachments(1)
-            
-            pAttachments.Remove 1
-            Set e = Nothing
-        Loop
-        Set pAttachments = Nothing
-    End If
 
-    Set pOrigin = Nothing
-    Set pScaled = Nothing
-    Set pRotate = Nothing
-    Set pOffset = Nothing
-    Set pDirect = Nothing
-    Set pTwists = Nothing
-    Set pScalar = Nothing
+    vbaObjSet Orient, ObjPtr(Nothing)
     Stats_Element_Count = Stats_Element_Count - 1
 End Sub
 
+Private Property Let Orient_AttachedTo(ByVal RHS As String)
+    Orient.AttachedTo = RHS
+End Property
+
+Private Property Get Orient_AttachedTo() As String
+    Orient_AttachedTo = Orient.AttachedTo
+End Property
+
+Private Property Set Orient_Attachments(RHS As NTNodes10.Collection)
+    Set Orient.Attachments = RHS
+End Property
+
+Private Property Get Orient_Attachments() As NTNodes10.Collection
+    Set Orient_Attachments = Orient.Attachments
+End Property
+
+Private Property Get Orient_Clone() As Orient
+    Set Orient_Clone = Orient.Clone
+End Property
+
+Private Property Let Orient_Key(ByVal RHS As String)
+    Orient.Key = RHS
+End Property
+
+Private Property Get Orient_Key() As String
+    Orient_Key = Orient.Key
+End Property
+
+Private Property Set Orient_Offset(RHS As Point)
+    Set Orient.Offset = RHS
+End Property
+
+Private Property Get Orient_Offset() As Point
+    Set Orient_Offset = Orient.Offset
+End Property
+
+Private Property Set Orient_Origin(RHS As Point)
+    Set Orient.Origin = RHS
+End Property
+
+Private Property Get Orient_Origin() As Point
+    Set Orient_Origin = Orient.Origin
+End Property
+
+Private Property Set Orient_Rotate(RHS As Point)
+    Set Orient_Rotate = RHS
+End Property
+
+Private Property Get Orient_Rotate() As Point
+    Set Orient_Rotate = Orient.Rotate
+End Property
+
+Private Property Set Orient_Scaled(RHS As Point)
+    Set Orient.Scaled = RHS
+End Property
+
+Private Property Get Orient_Scaled() As Point
+    Set Orient_Scaled = Orient.Scaled
+End Property
+
+Private Property Get Orient_Serialize() As Boolean
+    Orient_Serialize = Orient.Serialize
+End Property

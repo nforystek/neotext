@@ -25,9 +25,12 @@ Public Screens As NTNodes10.Collection
 Public Sounds As NTNodes10.Collection
 Public Spaces As NTNodes10.Collection
 Public Tracks As NTNodes10.Collection
+Public Players As NTNodes10.Collection
 
 Public Bindings As Bindings
+
 Public Player As Player
+Public Camera As Camera
 
 
 Public Frame As Boolean
@@ -100,7 +103,7 @@ Public Function ParseQuotedArg(ByRef TheParams As String, Optional ByVal BeginQu
     ParseQuotedArg = retVal
 End Function
 
-Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj As String = "") As Integer
+Public Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj As String = "") As Integer
     'checks for the presence of a reserved word and returns the code for it
     Dim inWord As String
     Do While IsAlphaNumeric(Left(inLine, 1))
@@ -112,18 +115,24 @@ Private Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj 
         'event objects which have code brackets following the tag, which is to be executed later
         Case "oninrange", "onoutrange", "oninrange@", "onoutrange@", "oninrange#", "onoutrange#", "oninrange%", "onoutrange%", "method", "script"
             ParseReservedWord = 1
+
+        '#######################################################################################
+        'collections for purpose of key naming restraints or global objects added, these are in use
+        Case "all", "beacons", "boards", "cameras", "elements", "lights", _
+            "portals", "screens", "sounds", "spaces", "tracks", "players"
+            ParseReservedWord = -1 'true like binding constants
         
         '#######################################################################################
         'objects whose tags repeat newly in creating, or special use case scenario functions
         
         Case "deserialize", "frame", "millis", "onidle", "second", "serialize", _
-            "beacon", "board", "camera", "element", "light", "motion", "portal", "screen", "sound", "space", "track"
+            "beacon", "board", "element", "light", "motion", "portal", "screen", "sound", "space", "track"
 
             ParseReservedWord = 3
             
         '#######################################################################################
         'objects that are not to be new or multiple objects, they're singular already existing
-        Case "bindings", "player"
+        Case "bindings", "include", "player", "camera"
             ParseReservedWord = -3
         Case Else
             ParseReservedWord = IIf(GetBindingIndex(inWord) > -1, 2, 0)
@@ -764,12 +773,15 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
                     ParseBindings inLine, inBlock, atLine
                 ElseIf reserve = -3 Then
                 
-                    inBlock = ParseBracketOff(inBlock, "{", "}")
-                    inName = ParseName(inLine)
-                    inType = ParseType(inLine)
-
-                    ParseScript inBlock, inType, atLine
-
+                    If InStr(inBlock, "}") < InStr(inBlock, "{") Then
+                        Err.Raise 1008, inWith, "Line: " & atLine & " Error: Expected '{'"
+                    Else
+                        inBlock = ParseBracketOff(inBlock, "{", "}")
+                        inName = ParseName(inLine)
+                        inType = ParseType(inLine)
+    
+                        ParseScript inBlock, inType, atLine
+                    End If
                 ElseIf Abs(reserve) > 2 Then
                     ParseObject inLine, inBlock, inWith, atLine
                 End If

@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <math.h>
 #include <stdio.h> 
 
@@ -237,18 +238,26 @@ float Sign(float n) {
 }
 
 /*
-extern bool PointBehindPoly (float pointX, float pointY, float pointZ, float length1, float length2, float length3, float normalX, float normalY, float normalZ) 
+extern int PointTouchesTriangle (float pointX, float pointY, float pointZ, float length1, float length2, float length3, float normalX, float normalY, float normalZ) 
 {
-	return (pointZ * length3 + length2 * pointY + length1 * pointX) - (length3 * normalZ + length1 * normalX + length2 * normalY) <= 0.0;
-}*/
-
+	return ((pointZ * length3 + length2 * pointY + length1 * pointX) - (length3 * normalZ + length1 * normalX + length2 * normalY) <= 0.0)?-1:0;
+}
+*/
 
 extern int PointTouchesTriangle(float PointX, float PointY, float PointZ, float Length1, float Length2, float Length3, float NormalX, float NormalY, float NormalZ) 
 {
-	return (( (Length(MakePoint(PointX, PointY, PointZ)) <=
+
+//	return VectorDotProduct(MakePoint(NormalX,NormalY,NormalZ),MakePoint(PointX,PointY,PointZ))>0;
+
+	return false;//		(  Length(MakePoint(PointX, PointY, PointZ)) <=
+	//( ( ((Length1+Length2)/2.0f)+((Length1+Length3)/2.0f)+((Length2+Length3)/2.0f)  ) /5.0f ));
+	/*
+	return (( (  Length(MakePoint(PointX, PointY, PointZ)) <=
 			( ( ((Length1+Length2)/2.0f)+((Length1+Length3)/2.0f)+((Length2+Length3)/2.0f)  ) /3.0f )) &&	
 			( (Sign(PointX)>=Sign(NormalX)) && (Sign(PointY)>=Sign(NormalY)) && (Sign(PointZ)>=Sign(NormalZ)) )) ) ? -1 :0;
-}
+*/
+ }
+
 
 extern int PointInsidePointList ( float pointX, float pointY, float polyDataX[], float polyDataY[], int polyDataCount)
 {
@@ -345,7 +354,7 @@ extern void ResetCulling (int Flag, int TriangleTotal, float FaceVis[], float Ve
 
 bool SkipCollisionCheck(int Flag, float FaceVis[], int TriangleIndex, int i) {
 	//a very basic simply avoidance check for the collision function to ignore by flag and the triangle checked
-	return ((FaceVis[(i*6)+CUSTOM_FLAG]==Flag)&&(FaceVis[(i*6)+OBJECT_INDEX]!=FaceVis[(TriangleIndex*6)+OBJECT_INDEX])&&(FaceVis[(i*6)+CULLED_FLAG]==Flag));
+	return ((FaceVis[(i*6)+CUSTOM_FLAG]==Flag)&&(FaceVis[(i*6)+OBJECT_INDEX]!=FaceVis[(TriangleIndex*6)+OBJECT_INDEX]));
 }
 
 bool SkipCullingCheck(int Flag, float FaceVis[], int TriangleIndex, int i, int ApplyCulling) {
@@ -366,22 +375,17 @@ bool SkipCullingCheck(int Flag, float FaceVis[], int TriangleIndex, int i, int A
 	}
 	return ret;
 }
-void Get2Dfrom3Dpoints(float vertexList[],int start, int count,float *pointListOut, int *size) {
+void Get2Dfrom3Dpoints(float vertexList[],int start, const int count,float *pointListOut) {
 	
-	float *temp=new float[count*3];
+	pointListOut=new float[count*3];
 
 	int i=0;
 	while (i<(count*3))  {
-		temp[i+VERTEX1] = vertexList[(3*(start+i))+VERTEX1];
-		temp[i+VERTEX2] = vertexList[(3*(start+i))+VERTEX1];
-		temp[i+VERTEX3] = vertexList[(3*(start+i))+VERTEX1];
-		i=i+3;
-		
+		pointListOut[i+VERTEX1] = vertexList[((3*start)+i)+VERTEX1];
+		pointListOut[i+VERTEX2] = vertexList[((3*start)+i)+VERTEX2];
+		pointListOut[i+VERTEX3] = vertexList[((3*start)+i)+VERTEX3];
+		i=i+3;		
 	}
-
-	*size = i;
-	delete[] pointListOut;
-	*pointListOut = *temp;
 
 }
 
@@ -458,9 +462,9 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 					}
 					if (checkbit(ApplyCulling,CullByInside2DShape)||checkbit(ApplyCulling,UseAllCullingMethods)) {
 
-						Get2Dfrom3Dpoints(VertexX, start, count, pointListX, size);
-						Get2Dfrom3Dpoints(VertexY, start, count, pointListY, size);
-						Get2Dfrom3Dpoints(VertexZ, start, count, pointListZ, size);
+						Get2Dfrom3Dpoints(VertexX, start, count, pointListX);
+						Get2Dfrom3Dpoints(VertexY, start, count, pointListY);
+						Get2Dfrom3Dpoints(VertexZ, start, count, pointListZ);
 
 					}
 
@@ -590,48 +594,66 @@ extern int CollisionCull(int Flag, int TriangleTotal, float FaceVis[], float Ver
 
 }
 
+
+
+
 extern bool CollisionCheck(int Flag, int TriangleTotal, float FaceVis[], float VertexX[], float VertexY[], float VertexZ[], int TriangleIndex, int *CollidedObjectIndex, int *CollidedTriangleIndex)
 {
-	int i=0;
-	float lx=0,ly=0,lz=0,nx=0,ny=0,nz=0,cx=0,cy=0,cz=0;
-	Point p1,p2,p3;
+	int start=0, sstop=0, count=0,i=0, inc=0;
 
-	while  (i<TriangleTotal) {		
+	float *pointListX=new float[];
+	float *pointListY=new float[];
+	float *pointListZ=new float[];
+
+	while (i<TriangleTotal) {
 
 		if (!SkipCollisionCheck(Flag,FaceVis,TriangleIndex,i)) {
-			//the flag is equal to the one we want, and the objectindex is not the same as the triangle we are checking			
+			start = i;
+			sstop = i;
 
-			p1=MakePoint(VertexX[(3*i)+VERTEX1],VertexY[(3*i)+VERTEX1],VertexZ[(3*i)+VERTEX1]);
-			p2=MakePoint(VertexX[(3*i)+VERTEX2],VertexY[(3*i)+VERTEX2],VertexZ[(3*i)+VERTEX2]);
-			p3=MakePoint(VertexX[(3*i)+VERTEX3],VertexY[(3*i)+VERTEX3],VertexZ[(3*i)+VERTEX3]);
-
-			lx=DistanceEx(p1,p2);
-			ly=DistanceEx(p2,p3);
-			lz=DistanceEx(p3,p1);
-
-			cx=Least(p1.X, p2.X, p3.X);
-			cy=Least(p1.Y, p2.Y, p3.Y);
-			cz=Least(p1.Z, p2.Z, p3.Z);
-			cx=(cx + ((Large(p1.X, p2.X, p3.X) - cx) / 2));
-			cy=(cy + ((Large(p1.Y, p2.Y, p3.Y) - cy) / 2));
-			cz=(cz + ((Large(p1.Z, p2.Z, p3.Z) - cz) / 2));
-
-			nx=FaceVis[(6*i)+NORMAL_X];
-			ny=FaceVis[(6*i)+NORMAL_Y];
-			nz=FaceVis[(6*i)+NORMAL_Z];
-
-			for (int j=0;j<3;j++) {
-
-				if (PointTouchesTriangle(VertexX[(3*TriangleIndex)+j]-cx,VertexY[(3*TriangleIndex)+j]-cy,VertexZ[(3*TriangleIndex)+j]-cz,lx,ly,lz,nx,ny,nz)) {
-					*CollidedObjectIndex=(int)FaceVis[(i*6)+OBJECT_INDEX];
-					*CollidedTriangleIndex=i;
-					return true;
-				}	
+			while (!SkipCollisionCheck(Flag,FaceVis,TriangleIndex,sstop)) {
+				sstop++;
+				if (sstop>=TriangleTotal) break;
 			}
-			
+
+			if (sstop>start) {
+				sstop = (sstop-1);
+				count = (sstop - (start-1));
+				if ( ((start + (count -1)) <= TriangleTotal) && (start <=sstop)) {
+
+
+
+					Get2Dfrom3Dpoints(VertexX, start, count, pointListX);
+					Get2Dfrom3Dpoints(VertexY, start, count, pointListY);
+					Get2Dfrom3Dpoints(VertexZ, start, count, pointListZ);
+
+					for (int j=0;j<3;j++) {
+						inc=0;
+						
+						if (PointInsidePointList(VertexX[(3*TriangleIndex)+j],VertexY[(3*TriangleIndex)+j],pointListX,pointListY,(count*3))==-1) inc++;
+						if (PointInsidePointList(VertexY[(3*TriangleIndex)+j],VertexZ[(3*TriangleIndex)+j],pointListY,pointListZ,(count*3))==-1) inc++;
+						if (PointInsidePointList(VertexZ[(3*TriangleIndex)+j],VertexX[(3*TriangleIndex)+j],pointListZ,pointListX,(count*3))==-1) inc++;
+
+
+						if (inc>=2) {
+									*CollidedObjectIndex=(int)FaceVis[(i*6)+OBJECT_INDEX];
+									*CollidedTriangleIndex=i;
+									return true;
+
+						}
+					}
+
+					delete[] pointListX;
+					delete[] pointListY;
+					delete[] pointListZ;
+
+				}
+				i = sstop;
+			}
 		}
-		i=i+3;				
-	}
+		i++;	
+	}	
+
 	return false;
 	
 }
@@ -673,7 +695,7 @@ int PointInTriangle(Point p, Point V0, Point v1, Point v2) {
     float wv = VectorDotProduct(w,v);
 
     float d = uv*uv - uu*vv;
-    if (fabs(d) < epsilon) return 0;
+    if (fabsf(d) < epsilon) return 0;
 
     float s = (uv*wv - vv*wu) / d;
     float t = (uv*wu - uu*wv) / d;
@@ -685,7 +707,7 @@ int EdgePlaneIntersect(Point p, Point Q, Point planePoint, Point PlaneNormal, Po
     //const double EPS = 1e-9;
     Point dir = VectorDeduction(Q, p);
     float denom = VectorDotProduct(PlaneNormal, dir);
-    if (fabs(denom) < epsilon) return 0;
+    if (fabsf(denom) < epsilon) return 0;
 
     float t = VectorDotProduct(PlaneNormal, VectorDeduction(planePoint, p)) / denom;
     if (t < -epsilon || t > 1.0+epsilon) return 0;

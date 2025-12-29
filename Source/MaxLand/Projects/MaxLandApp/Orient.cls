@@ -8,118 +8,188 @@ BEGIN
 END
 Attribute VB_Name = "Orient"
 Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = True
+Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Implements Point
+Private pOrigin As Point
+Private pOffset As Point
+Private pScaled As Point
+Private pRotate As Point
+
+Private pDirect As Point
+Private pTwists As Point
+Private pScalar As Point
+
+Private pKey As String
+Private pAttachments As NTNodes10.Collection
+Private pAttachedTo As String
+
+Public Property Get Origin() As Point
+    Set Origin = pOrigin
+End Property
+Public Property Set Origin(ByRef RHS As Point)
+    Set pOrigin = RHS
+End Property
+
+Public Property Get Offset() As Point
+    Set Offset = pOffset
+End Property
+Public Property Set Offset(ByRef RHS As Point)
+    Set pOffset = RHS
+End Property
+
+Public Property Get Scaled() As Point
+    Set Scaled = pScaled
+End Property
+Public Property Set Scaled(ByRef RHS As Point)
+    Set pScaled = RHS
+End Property
+
+Public Property Get Rotate() As Point
+    Set Rotate = pRotate
+End Property
+Public Property Set Rotate(ByRef RHS As Point)
+    Set pRotate = RHS
+End Property
+
+
+Friend Property Get Direct() As Point
+    Set Direct = pDirect
+End Property
+Friend Property Set Direct(ByRef RHS As Point)
+    Set pDirect = RHS
+End Property
+
+Friend Property Get Twists() As Point
+    Set Twists = pTwists
+End Property
+Friend Property Set Twists(ByRef RHS As Point)
+    Set pTwists = RHS
+End Property
+
+Friend Property Get Scalar() As Point
+    Set Scalar = pScalar
+End Property
+Friend Property Set Scalar(ByRef RHS As Point)
+    Set pScalar = RHS
+End Property
+
+Public Property Get Attachments() As NTNodes10.Collection
+    Set Attachments = pAttachments
+End Property
+Public Property Set Attachments(ByRef RHS As NTNodes10.Collection)
+    Set pAttachments = RHS
+End Property
+
+Public Property Get Key() As String
+    Key = pKey
+End Property
+Public Property Let Key(ByVal RHS As String)
+    If RHS <> "" Then
+        If ParseReservedWord(RHS) <> 0 Then
+            Err.Raise 457, App.Title, "This key is already associated with an element of this collection, or a global declaration restriction."
+        Else
+            If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey
+            If All.Exists(RHS) Then
+                All.Remove RHS
+                All.Add Me, RHS
+            End If
+            pKey = RHS
+        End If
+    End If
+End Property
+
+Public Property Get AttachedTo() As String
+    AttachedTo = pAttachedTo
+End Property
+Public Property Let AttachedTo(ByVal RHS As String)
+    If pAttachedTo <> "" Then
+        If All.Exists(pAttachedTo) Then
+            If All(pAttachedTo).Attachments.Exists(Me.Key) Then
+                All(pAttachedTo).Attachments.Remove Me.Key
+            End If
+        End If
+    End If
+    pAttachedTo = RHS
+    If RHS <> "" Then
+        If All(pAttachedTo).Attachments Is Nothing Then
+            Set All(pAttachedTo).Attachments = New NTNodes10.Collection
+        End If
+        All(pAttachedTo).Attachments.Add Me, RHS
+    End If
+End Property
 
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property
-Public Property Get X() As Single
-    X = Point.X
-End Property
-Public Property Let X(ByVal RHS As Single)
-    Point.X = RHS
-End Property
 
-Public Property Get Y() As Single
-    Y = Point.Y
-End Property
-Public Property Let Y(ByVal RHS As Single)
-    Point.Y = RHS
-End Property
+'Public Function Equals(ByRef Orient As Orient) As Boolean
+'    Equals = Point.Equals(Orient)
+'End Function
 
-Public Property Get Z() As Single
-    Z = Point.Z
-End Property
-Public Property Let Z(ByVal RHS As Single)
-    Point.Z = RHS
-End Property
 
-Public Function Equals(ByRef Orient As Orient) As Boolean
-    Equals = Point.Equals(Orient)
-End Function
-
-Public Property Get ToString() As String
-    ToString = "[" & Round(Point.X, 6) & ", " & Round(Point.Y, 6) & ", " & Round(Point.Z, 6) & "]"
-End Property
-Public Property Let ToString(ByVal RHS As String)
-    RHS = Trim(RHS)
-    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
-        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
-        Point.X = ParseNumerical(RHS)
-        Point.Y = ParseNumerical(RHS)
-        Point.Z = ParseNumerical(RHS)
-    End If
-End Property
+'Public Property Get ToString() As String
+'    ToString = "[" & Round(Point.X, 6) & ", " & Round(Point.Y, 6) & ", " & Round(Point.Z, 6) & "]"
+'End Property
+'Public Property Let ToString(ByVal RHS As String)
+'    RHS = Trim(RHS)
+'    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+'        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
+'        Point.X = ParseNumerical(RHS)
+'        Point.Y = ParseNumerical(RHS)
+'        Point.Z = ParseNumerical(RHS)
+'    End If
+'End Property
 
 
 Public Property Get Clone() As Orient
-    Set Clone = New Orient
-    With Clone
-        .X = X
-        .Y = Y
-        .Z = Z
-    End With
+'    Set Clone = New Orient
+'    With Clone
+'        .X = X
+'        .Y = Y
+'        .Z = Z
+'    End With
 End Property
 
 Private Sub Class_Initialize()
     Stats_Orient_Count = Stats_Orient_Count + 1
-    vbaObjSetAddref Point, ObjPtr(New Point)
+    Set pOrigin = New Point
+    Set pScaled = MakePoint(1, 1, 1)
+    Set pRotate = New Point
+    Set pOffset = New Point
+    
+    Set pDirect = New Point
+    Set pTwists = New Point
+    Set pScalar = New Point
 End Sub
 
 Private Sub Class_Terminate()
-    vbaObjSet Point, ObjPtr(Nothing)
     Stats_Orient_Count = Stats_Orient_Count - 1
+    
+    AttachedTo = "" 'relocalizes
+    
+    If Not pAttachments Is Nothing Then
+        Dim e As Element
+        Do Until pAttachments.Count = 0
+            Set e = pAttachments(1)
+            pAttachments.Remove 1
+            Set e = Nothing
+        Loop
+        Set pAttachments = Nothing
+    End If
+    
+    Set pOrigin = Nothing
+    Set pScaled = Nothing
+    Set pRotate = Nothing
+    Set pOffset = Nothing
+    Set pDirect = Nothing
+    Set pTwists = Nothing
+    Set pScalar = Nothing
 End Sub
 
-Private Property Get Point_Clone() As Point
-    Set Point_Clone = Point.Clone
-End Property
 
-Private Function Point_Equals(Point As Point) As Boolean
-    Point_Equals = Point.Equals(Point)
-End Function
-
-
-Private Property Get Point_Serialize() As Boolean
-    Point_Serialize = Point.Serialize
-End Property
-
-Private Property Get Point_ToString() As String
-    Point_ToString = Point.ToString
-End Property
-
-Private Property Let Point_ToString(ByVal RHS As String)
-    Point.ToString = RHS
-End Property
-
-Private Property Let Point_X(ByVal RHS As Single)
-    Point.X = RHS
-End Property
-
-Private Property Get Point_X() As Single
-    Point_X = Point.X
-End Property
-
-Private Property Let Point_Y(ByVal RHS As Single)
-    Point.Y = RHS
-End Property
-
-Private Property Get Point_Y() As Single
-    Point_X = Point.Y
-End Property
-
-Private Property Let Point_Z(ByVal RHS As Single)
-    Point.Z = RHS
-End Property
-
-Private Property Get Point_Z() As Single
-    Point_Z = Point.Y
-End Property
 
 'Option Explicit
 '

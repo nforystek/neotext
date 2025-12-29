@@ -152,105 +152,108 @@ End Function
 
 Friend Sub RenderSpace()
 
-
-    If InSpace(Player.Element.Origin) Then
-
-        
-        If Not SkyRotated = 0 Then
-        
-            If (FPSRate > 0) And SkyRotate > 0 Then
-
-                SkyRotated = SkyRotated + (360 / (HoursInOneDay * SkyRotate)) * _
-                    (PI / (HoursInOneDay * FPSRate)) * (FPSRate / HoursInOneDay)
+    If Not modParse.Player.Element Is Nothing Then
+        If InSpace(modParse.Player.Element.Origin) Then
+    
+            Dim matWorld As D3DMATRIX
+            D3DXMatrixIdentity matWorld
+            
+            
+            If Not SkyRotated = 0 Then
+            
+                If (FPSRate > 0) And SkyRotate > 0 Then
+    
+                    SkyRotated = SkyRotated + (360 / (HoursInOneDay * SkyRotate)) * _
+                        (PI / (HoursInOneDay * FPSRate)) * (FPSRate / HoursInOneDay)
+                End If
+                
+                D3DXMatrixRotationY matWorld, SkyRotated * RADIAN
             End If
             
-            D3DXMatrixRotationY matWorld, SkyRotated * RADIAN
-        End If
-        
-        If Visible Then
-                        
-            
-            DDevice.SetTransform D3DTS_WORLD, matWorld
-            DDevice.SetStreamSource 0, SkyVBuf, Len(SkyPlaq(0))
-            
-            
-            If Translucent Or Alphablend Then
-            
-
+            If Visible Then
+                            
                 
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(0)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(0)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(1)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(1)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(2)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(2)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(3)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(3)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(4)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(4)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
-                DDevice.SetMaterial LucentMaterial
-                DDevice.SetTexture 0, SkySkin(5)
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 1, SkySkin(5)
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
+                DDevice.SetTransform D3DTS_WORLD, matWorld
+                DDevice.SetStreamSource 0, SkyVBuf, Len(SkyPlaq(0))
                 
                 
-            Else
-               
+                If Translucent Or Alphablend Then
                 
-            
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(0)
-                DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+    
+                    
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(0)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(0)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(1)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(1)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(2)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(2)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(3)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(3)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(4)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(4)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
+                    DDevice.SetMaterial LucentMaterial
+                    DDevice.SetTexture 0, SkySkin(5)
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 1, SkySkin(5)
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
+                    
+                    
+                Else
+                   
+                    
                 
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(1)
-                'DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(0)
+                    DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 30, 2
+                    
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(1)
+                    'DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
+                    
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(2)
+                    'DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+                    
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(3)
+                    'DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
+                    
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(4)
+                    'DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
+                    
+                    DDevice.SetMaterial GenericMaterial
+                    DDevice.SetTexture 0, SkySkin(5)
+                    'DDevice.SetTexture 1, Nothing
+                    DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
                 
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(2)
-                'DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 6, 2
+                End If
                 
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(3)
-                'DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 12, 2
                 
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(4)
-                'DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 24, 2
-                
-                DDevice.SetMaterial GenericMaterial
-                DDevice.SetTexture 0, SkySkin(5)
-                'DDevice.SetTexture 1, Nothing
-                DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 18, 2
-            
             End If
             
-            
         End If
-        
     End If
-
 End Sub
 
 Friend Property Get SkyRotated() As Single

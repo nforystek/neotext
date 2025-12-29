@@ -123,14 +123,14 @@ Private Sub DrawAxis(ByVal Axis As String, ByRef PicBox As PictureBox)
     PicBox.Line ((PicBox.ScaleWidth / 2), 0)-((PicBox.ScaleWidth / 2), PicBox.ScaleHeight), &H808080
 End Sub
 
-Private Sub DrawPointRotation(ByRef PicBox As PictureBox, ByVal vX As Double, ByVal vY As Double, ByVal rZ As Double, ByVal Red As Long, ByVal Green As Long, ByVal Blue As Long)
+Private Sub DrawPointRotation(ByRef PicBox As PictureBox, ByVal vX As Double, ByVal vY As Double, ByVal rz As Double, ByVal Red As Long, ByVal Green As Long, ByVal Blue As Long)
 
-    Dim Distance As Single
+    Dim Distance As Double
     Distance = (((vX ^ 2) + (vY ^ 2)) ^ (1 / 2))
 
     PicBox.Line ((PicBox.ScaleWidth / 2), (PicBox.ScaleHeight / 2))-( _
-                ((PicBox.ScaleWidth / 2) + (Distance * Sin(rZ))), _
-                ((PicBox.ScaleHeight / 2) - (Distance * Cos(rZ)))), RGB(Red, Green, Blue)
+                ((PicBox.ScaleWidth / 2) + (Distance * Sin(rz))), _
+                ((PicBox.ScaleHeight / 2) - (Distance * Cos(rz)))), RGB(Red, Green, Blue)
 
     PicBox.Line ((PicBox.ScaleWidth / 2), (PicBox.ScaleHeight / 2))-( _
                 ((PicBox.ScaleWidth / 2) + (Distance * Sine(vX, vY))), _
@@ -149,7 +149,7 @@ Public Sub CornerPrint(ByRef PicBox As PictureBox, ByVal txt As String)
 End Sub
 
 Private Sub Picture1_KeyDown(KeyCode As Integer, Shift As Integer)
-    If KeyCode = 116 Then NewPoints
+    NewPoints
 End Sub
 
 Private Sub Picture1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -161,7 +161,7 @@ Private Sub Picture1_MouseMove(Button As Integer, Shift As Integer, X As Single,
 End Sub
 
 Private Sub Picture2_KeyDown(KeyCode As Integer, Shift As Integer)
-    If KeyCode = 116 Then NewPoints
+    NewPoints
 End Sub
 
 Private Sub Picture2_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -173,7 +173,7 @@ Private Sub Picture2_MouseMove(Button As Integer, Shift As Integer, X As Single,
 End Sub
 
 Private Sub Picture3_KeyDown(KeyCode As Integer, Shift As Integer)
-    If KeyCode = 116 Then NewPoints
+    NewPoints
 End Sub
 
 Private Sub Picture3_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -235,10 +235,12 @@ Public Function GetNewPoint(Optional ByRef v As Point, Optional ByRef X As Varia
         Dim Dist As Double
         Dist = DistanceEx(MakePoint(0, 0, 0), v)
         If Dist > 0 Then
+        
             Dim N As Point
-            Set N = PointNormalize(v)
+            Set N = VertexNormalize(v)
             Set v = DistanceSet(MakePoint(0, 0, 0), N, Dist)
             Set N = Nothing
+            
         End If
 
     End If
@@ -259,9 +261,9 @@ Public Sub NewPoints()
     Vertex.Add GetNewPoint
     Vertex.Add GetNewPoint
     
-    Rotate.Add AnglesOfPoint1(Vertex(1))
-    Rotate.Add AnglesOfPoint1(Vertex(2))
-    Rotate.Add AnglesOfPoint1(Vertex(3))
+    Rotate.Add AnglesOfPoint(Vertex(1))
+    Rotate.Add AnglesOfPoint(Vertex(2))
+    Rotate.Add AnglesOfPoint(Vertex(3))
     
     Form_Paint
 End Sub

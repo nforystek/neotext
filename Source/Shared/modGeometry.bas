@@ -221,10 +221,10 @@ End Function
 
 
 ' ===== Point-in-triangle test (barycentric) =====
-Private Function PointInTriangle(p As Point, V0 As Point, v1 As Point, v2 As Point) As Boolean
+Private Function PointInTriangle(p As Point, V0 As Point, V1 As Point, V2 As Point) As Boolean
     Dim U As Point, V As Point, W As Point
-    U = VectorDeduction(v1, V0)
-    V = VectorDeduction(v2, V0)
+    U = VectorDeduction(V1, V0)
+    V = VectorDeduction(V2, V0)
     W = VectorDeduction(p, V0)
 
     Dim uu As Double, vv As Double, uv As Double
@@ -270,13 +270,13 @@ Private Function EdgePlaneIntersect(p As Point, Q As Point, planePoint As Point,
 End Function
 
 Private Function VectorNormalize(A As Point) As Point
-    Dim l As Double: l = DistanceEx(MakePoint(0, 0, 0), A)
+    Dim L As Double: L = DistanceEx(MakePoint(0, 0, 0), A)
     Set VectorNormalize = New Point
-    If Not l = 0 Then
+    If Not L = 0 Then
         With VectorNormalize
-            .X = A.X / l
-            .Y = A.Y / l
-            .Z = A.Z / l
+            .X = A.X / L
+            .Y = A.Y / L
+            .Z = A.Z / L
         End With
     End If
 End Function
@@ -490,15 +490,15 @@ Public Function ToPoint(ByRef Vector As D3DVECTOR) As Point
     ToPoint.Z = Vector.Z
 End Function
 
-Public Function ToPlane(ByRef v1 As Point, ByRef v2 As Point, ByRef v3 As Point) As Plane
+Public Function ToPlane(ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Plane
         
     Dim pNormal As Point
-    Set pNormal = VectorCrossProduct(VectorDeduction(v2, v1), VectorDeduction(v3, v1))
+    Set pNormal = VectorCrossProduct(VectorDeduction(V2, V1), VectorDeduction(V3, V1))
     'Set pNormal = VertextNormalize(pNormal)
         
     Set ToPlane = New Plane
     With ToPlane
-        .W = VectorDotProduct(pNormal, v1) * -1
+        .W = VectorDotProduct(pNormal, V1) * -1
         .X = pNormal.X
         .Y = pNormal.Y
         .Z = pNormal.Z
@@ -569,23 +569,23 @@ Public Function DistanceSet(ByRef p1 As Point, ByVal p2 As Point, ByVal N As Dou
     End With
 End Function
 
-Public Function PointOnPlane(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Boolean
+Public Function PointOnPlane(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
     Dim r As Plane
-    Set r = ToPlane(V0, v1, v2)
+    Set r = ToPlane(V0, V1, V2)
     PointOnPlane = ((r.X * (p.X - V0.X)) + (r.Y * (p.Y - V0.Y)) + (r.Z * (p.Z - V0.Z)) = 0)
 End Function
 
-Public Function PointSideOfPlane(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Boolean
-    PointSideOfPlane = VectorDotProduct(PlaneNormal(V0, v1, v2), p) > 0
+Public Function PointSideOfPlane(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Boolean
+    PointSideOfPlane = VectorDotProduct(PlaneNormal(V0, V1, V2), p) > 0
 End Function
 
-Public Function PointNearOnPlane(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef p As Point) As Point
+Public Function PointNearOnPlane(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef p As Point) As Point
     Set PointNearOnPlane = New Point
     With PointNearOnPlane
         Dim r As Plane
-        Set r = ToPlane(V0, v1, v2)
+        Set r = ToPlane(V0, V1, V2)
         Dim N As Point
-        Set N = PlaneNormal(V0, v1, v2)
+        Set N = PlaneNormal(V0, V1, V2)
         Dim d As Double
         d = DistanceToPlane(p, r)
         .X = p.X - (d * N.X)
@@ -692,9 +692,9 @@ Public Function RandomPositive(ByVal LowerBound As Long, ByVal UpperBound As Lon
     RandomPositive = CSng((UpperBound - LowerBound + 1) * Rnd + LowerBound)
 End Function
 
-Public Function PlaneNormal(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
+Public Function PlaneNormal(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
     'returns a vector perpendicular to a plane V, at 0,0,0, with out the local coordinates information
-    Set PlaneNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(V0, v1), VectorDeduction(v1, v2)))
+    Set PlaneNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(V0, V1), VectorDeduction(V1, V2)))
 End Function
 
 Public Function PointNormalize(ByRef V As Point) As Point
@@ -730,13 +730,13 @@ Public Function SphereToCubeRoot(ByVal Diameter As Double) As Double
     'surface area of a sphere is still only two dimensions, so we skip ahead cutting down
 End Function
 
-Public Function SquareCenter(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point, ByRef v3 As Point) As Point
+Public Function SquareCenter(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point, ByRef V3 As Point) As Point
     Set SquareCenter = New Point
     With SquareCenter
         'center by adding onto the lowest value of axis with the the middle of the absolute difference of each of axis
-        .X = (Least(V0.X, v1.X, v2.X, v3.X) + ((Large(V0.X, v1.X, v2.X, v3.X) - Least(V0.X, v1.X, v2.X, v3.X)) / 2))
-        .Y = (Least(V0.Y, v1.Y, v2.Y, v3.Y) + ((Large(V0.Y, v1.Y, v2.Y, v3.Y) - Least(V0.Y, v1.Y, v2.Y, v3.Y)) / 2))
-        .Z = (Least(V0.Z, v1.Z, v2.Z, v3.Z) + ((Large(V0.Z, v1.Z, v2.Z, v3.Z) - Least(V0.Z, v1.Z, v2.Z, v3.Z)) / 2))
+        .X = (Least(V0.X, V1.X, V2.X, V3.X) + ((Large(V0.X, V1.X, V2.X, V3.X) - Least(V0.X, V1.X, V2.X, V3.X)) / 2))
+        .Y = (Least(V0.Y, V1.Y, V2.Y, V3.Y) + ((Large(V0.Y, V1.Y, V2.Y, V3.Y) - Least(V0.Y, V1.Y, V2.Y, V3.Y)) / 2))
+        .Z = (Least(V0.Z, V1.Z, V2.Z, V3.Z) + ((Large(V0.Z, V1.Z, V2.Z, V3.Z) - Least(V0.Z, V1.Z, V2.Z, V3.Z)) / 2))
     End With
 End Function
 
@@ -966,12 +966,12 @@ End Function
 '    End With
 'End Function
 
-Public Function VectorNormal(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
+Public Function VectorNormal(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
     Set VectorNormal = New Point
     Dim o As Point
     Dim d As Double
     With VectorNormal
-        Set o = TriangleDisplace(V0, v1, v2)
+        Set o = TriangleDisplace(V0, V1, V2)
         d = (Abs(o.X) + Abs(o.Y) + Abs(o.Z))
         If (d <> 0) Then
             .Z = (((Abs(o.X) + Abs(o.Y)) - Abs(o.Z)) / d)
@@ -985,21 +985,21 @@ End Function
 
 #End If
 
-Public Function TriangleAccordance(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
+Public Function TriangleAccordance(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
     Set TriangleAccordance = New Point
     With TriangleAccordance
-        .X = (((V0.X + v1.X) - v2.X) + ((v1.X + v2.X) - V0.X) - ((v2.X + V0.X) - v1.X))
-        .Y = (((V0.Y + v1.Y) - v2.Y) + ((v1.Y + v2.Y) - V0.Y) - ((v2.Y + V0.Y) - v1.Y))
-        .Z = (((V0.Z + v1.Z) - v2.Z) + ((v1.Z + v2.Z) - V0.Z) - ((v2.Z + V0.Z) - v1.Z))
+        .X = (((V0.X + V1.X) - V2.X) + ((V1.X + V2.X) - V0.X) - ((V2.X + V0.X) - V1.X))
+        .Y = (((V0.Y + V1.Y) - V2.Y) + ((V1.Y + V2.Y) - V0.Y) - ((V2.Y + V0.Y) - V1.Y))
+        .Z = (((V0.Z + V1.Z) - V2.Z) + ((V1.Z + V2.Z) - V0.Z) - ((V2.Z + V0.Z) - V1.Z))
     End With
 End Function
 
-Public Function TriangleDisplace(ByRef V0 As Point, ByRef v1 As Point, ByRef v2 As Point) As Point
+Public Function TriangleDisplace(ByRef V0 As Point, ByRef V1 As Point, ByRef V2 As Point) As Point
     Set TriangleDisplace = New Point
     With TriangleDisplace
-        .X = (Abs((Abs(V0.X) + Abs(v1.X)) - Abs(v2.X)) + Abs((Abs(v1.X) + Abs(v2.X)) - Abs(V0.X)) - Abs((Abs(v2.X) + Abs(V0.X)) - Abs(v1.X)))
-        .Y = (Abs((Abs(V0.Y) + Abs(v1.Y)) - Abs(v2.Y)) + Abs((Abs(v1.Y) + Abs(v2.Y)) - Abs(V0.Y)) - Abs((Abs(v2.Y) + Abs(V0.Y)) - Abs(v1.Y)))
-        .Z = (Abs((Abs(V0.Z) + Abs(v1.Z)) - Abs(v2.Z)) + Abs((Abs(v1.Z) + Abs(v2.Z)) - Abs(V0.Z)) - Abs((Abs(v2.Z) + Abs(V0.Z)) - Abs(v1.Z)))
+        .X = (Abs((Abs(V0.X) + Abs(V1.X)) - Abs(V2.X)) + Abs((Abs(V1.X) + Abs(V2.X)) - Abs(V0.X)) - Abs((Abs(V2.X) + Abs(V0.X)) - Abs(V1.X)))
+        .Y = (Abs((Abs(V0.Y) + Abs(V1.Y)) - Abs(V2.Y)) + Abs((Abs(V1.Y) + Abs(V2.Y)) - Abs(V0.Y)) - Abs((Abs(V2.Y) + Abs(V0.Y)) - Abs(V1.Y)))
+        .Z = (Abs((Abs(V0.Z) + Abs(V1.Z)) - Abs(V2.Z)) + Abs((Abs(V1.Z) + Abs(V2.Z)) - Abs(V0.Z)) - Abs((Abs(V2.Z) + Abs(V0.Z)) - Abs(V1.Z)))
     End With
 End Function
 
@@ -1124,43 +1124,172 @@ Public Function AngleAxisRestrict(ByRef AxisAngles As Point) As Point
     Set AngleAxisRestrict = AxisAngles
 End Function
 
+Public Function Acos(ByVal X As Double) As Double
+    ' Clamp input to valid domain [-1, 1]
+    If X < -1# Then X = -1#
+    If X > 1# Then X = 1#
 
-
-'####################################################################################################
-'####################################################################################################
-'####################################################################################################
-'####################################################################################################
-
-Public Function VectorAxisAngles(ByRef p As Point) As Point
-    Set VectorAxisAngles = New Point
-    Dim tmp As New Point
-    With VectorAxisAngles
-        If Not (p.X = 0 And p.Y = 0 And p.Z = 0) Then
-            Set tmp = p
-            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
-            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
-            .Z = AngleRestrict(AngleOfPlot(tmp.X, tmp.Y))
-            Set tmp = Nothing
-        End If
-    End With
+    ' acos(x) = atan2( sqrt(1 - x^2), x )
+    Acos = Atn2(Sqr(1# - X * X), X)
 End Function
 
-'Public Function VectorAxisAngles(ByRef Point As Point) As Point
-'    Dim tmp As New Point
+
+
+Public Function Atn2(ByVal Y As Double, ByVal X As Double) As Double
+    Const PI As Double = 3.14159265358979
+
+    If X > 0# Then
+        Atn2 = Atn(Y / X)
+    ElseIf X < 0# Then
+        Atn2 = Atn(Y / X) + Sgn(Y) * PI
+    Else
+        Atn2 = Sgn(Y) * PI / 2#
+    End If
+End Function
+
+
+
+Public Sub PointToAngles(ByVal X As Double, ByVal Y As Double, ByVal Z As Double, _
+                         ByRef AngleX As Double, ByRef AngleY As Double, ByRef AngleZ As Double)
+
+    ' Rotate about Z so the point lies on the XZ plane.
+    AngleZ = Atn2(Y, X)   ' Custom Atn2 wrapper (see below)
+
+    ' Length of projection onto XY plane
+    Dim r As Double
+    r = Sqr(X * X + Y * Y)
+
+    ' Rotate about Y to bring the point onto +Z axis
+    AngleY = Atn2(r, Z)
+
+    ' For this mapping, AngleX is always zero
+    AngleX = 0#
+
+End Sub
+
+Public Sub AnglesToPoint(ByVal AngleX As Double, ByVal AngleY As Double, ByVal AngleZ As Double, _
+                         ByRef X As Double, ByRef Y As Double, ByRef Z As Double)
+
+    ' Start from the canonical point (0, 0, 1)
+    Dim pX As Double, pY As Double, pZ As Double
+    pX = 1#: pY = 1#: pZ = 1#
+
+    ' Apply inverse rotations in reverse order:
+    ' 1) Rotate about X
+    Dim cy As Double, sy As Double
+    Dim cx As Double, sx As Double
+    Dim cz As Double, sz As Double
+
+    cx = Cos(AngleX): sx = Sin(AngleX)
+    cy = Cos(AngleY): sy = Sin(AngleY)
+    cz = Cos(AngleZ): sz = Sin(AngleZ)
+
+    ' Rotate about X
+    Dim y1 As Double, z1 As Double
+    y1 = pY * cx - pZ * sx
+    z1 = pY * sx + pZ * cx
+    pX = pX: pY = y1: pZ = z1
+
+    ' Rotate about Y
+    Dim x2 As Double, z2 As Double
+    x2 = pX * cy + pZ * sy
+    z2 = -pX * sy + pZ * cy
+    pX = x2: pY = pY: pZ = z2
+
+    ' Rotate about Z
+    Dim x3 As Double, y3 As Double
+    x3 = pX * cz - pY * sz
+    y3 = pX * sz + pY * cz
+
+    X = x3
+    Y = y3
+    Z = pZ
+
+End Sub
+
+
+
+Public Sub PointToSpherical(ByVal X As Double, ByVal Y As Double, ByVal Z As Double, _
+                            ByRef Azimuth As Double, ByRef Elevation As Double, ByRef Radius As Double)
+
+    Radius = Sqr(X * X + Y * Y + Z * Z)
+
+    ' XY projection length
+    Dim rxy As Double
+    rxy = Sqr(X * X + Y * Y)
+
+    Azimuth = Atn2(Y, X)
+    Elevation = Atn2(Z, rxy)
+
+End Sub
+Public Sub SphericalToPoint(ByVal Azimuth As Double, ByVal Elevation As Double, ByVal Radius As Double, _
+                            ByRef X As Double, ByRef Y As Double, ByRef Z As Double)
+
+    Dim ce As Double, se As Double
+    Dim ca As Double, sa As Double
+
+    ce = Cos(Elevation)
+    se = Sin(Elevation)
+    ca = Cos(Azimuth)
+    sa = Sin(Azimuth)
+
+    X = Radius * ce * ca
+    Y = Radius * ce * sa
+    Z = Radius * se
+
+End Sub
+
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+'####################################################################################################
+
+'Public Function VectorAxisAngles(ByRef p As Point) As Point
 '    Set VectorAxisAngles = New Point
+'    If Not p Is Nothing Then
+'        Dim x As Double
+'        Dim y As Double
+'        Dim z As Double
+'
+'        PointToAngles p.x, p.y, p.z, x, y, z
+'        With VectorAxisAngles
+'            .x = x
+'            .y = y
+'            .z = z
+'        End With
+'    End If
+'End Function
+
+'Public Function VectorAxisAngles(ByRef p As Point) As Point
+'    Set VectorAxisAngles = New Point
+'    Dim tmp As New Point
 '    With VectorAxisAngles
-'        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
-'            Set tmp = Point
-'            .X = AngleRestrict(AngleOfPlot(MakePoint(tmp.Y, tmp.Z, tmp.X)))
-'            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
-'            .Y = AngleRestrict(AngleOfPlot(MakePoint(tmp.Z, tmp.X, tmp.Y)))
-'            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Y))
-'            .Z = AngleRestrict(AngleOfPlot(MakePoint(tmp.X, tmp.Y, tmp.Z)))
-'            Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Z))
+'        If Not (p.x = 0 And p.y = 0 And p.z = 0) Then
+'            Set tmp = p
+'            .x = AngleRestrict(AngleOfPlot(tmp.y, tmp.z))
+'            .y = AngleRestrict(AngleOfPlot(tmp.z, tmp.x))
+'            .z = AngleRestrict(AngleOfPlot(tmp.x, tmp.y))
 '            Set tmp = Nothing
 '        End If
 '    End With
 'End Function
+
+Public Function VectorAxisAngles(ByRef Point As Point) As Point
+    Dim tmp As New Point
+    Set VectorAxisAngles = New Point
+    With VectorAxisAngles
+        If Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0) Then
+            Set tmp = Point
+            .X = AngleRestrict(AngleOfPlot(tmp.Y, tmp.Z))
+            Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.X))
+            .Y = AngleRestrict(AngleOfPlot(tmp.Z, tmp.X))
+            Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Y))
+            .Z = AngleRestrict(AngleOfPlot(tmp.X, tmp.Y))
+            Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), AngleInvertRotation(.Z))
+            Set tmp = Nothing
+        End If
+    End With
+End Function
 
 'Public Function VectorAxisAngles(ByRef Point As Point) As Point
 '    Dim tmp As New Point
@@ -1237,64 +1366,85 @@ End Function
 '####################################################################################################
 '####################################################################################################
 
-
-Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-    Dim tmp As Point
-    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-    End If
-    Set VectorRotateAxis = tmp
-    Set tmp = Nothing
-End Function
-
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
 '    Dim tmp As Point
-'    Set tmp = MakePoint(Point.x, Point.Y, Point.Z)
-'    If (Not (Point.x = 0 And Point.Y = 0 And Point.Z = 0)) And _
-'        (Not (Angles.x = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-'        Set tmp = VectorRotateZ(MakePoint(tmp.x, tmp.Y, tmp.Z), Angles.Z)
-'        Set tmp = VectorRotateX(MakePoint(tmp.Y, tmp.Z, tmp.x), Angles.x)
-'        Set tmp = VectorRotateY(MakePoint(tmp.Z, tmp.x, tmp.Y), Angles.Y)
+'    Set tmp = MakePoint(Point.x, Point.y, Point.z)
+'    If (Not (Point.x = 0 And Point.y = 0 And Point.z = 0)) And _
+'        (Not (Angles.x = 0 And Angles.y = 0 And Angles.z = 0)) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.x, tmp.y, tmp.z), Angles.z)
+'        Set tmp = VectorRotateY(MakePoint(tmp.x, tmp.y, tmp.z), Angles.y)
+'        Set tmp = VectorRotateX(MakePoint(tmp.x, tmp.y, tmp.z), Angles.x)
+'
 '    End If
 '    Set VectorRotateAxis = tmp
 '    Set tmp = Nothing
 'End Function
 
-
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
-'    Dim tmp As Point
-'    Set tmp = MakePoint(Point.X, Point.Y, Point.Z)
-'    If (Not (Point.X = 0 And Point.Y = 0 And Point.Z = 0)) And _
-'        (Not (Angles.X = 0 And Angles.Y = 0 And Angles.Z = 0)) Then
-'        Set tmp = VectorRotateZ(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Z)
-'        Set tmp = VectorRotateX(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.X)
-'        Set tmp = VectorRotateY(MakePoint(tmp.X, tmp.Y, tmp.Z), Angles.Y)
-'    End If
-'    Set VectorRotateAxis = tmp
-'    Set tmp = Nothing
-'End Function
-
-
-'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+'
+'
 '    Dim tmp As New Point
+'    Dim x As Double
+'    Dim y As Double
+'    Dim z As Double
+'    PointToAngles Point.x, Point.y, Point.z, x, y, z
+'    Set tmp = AngleAxisAddition(MakePoint(x, y, z), Angles)
+'    AnglesToPoint tmp.x, tmp.y, tmp.z, x, y, z
 '    Set VectorRotateAxis = New Point
 '    With VectorRotateAxis
-'        .Y = Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.Z
-'        .Z = Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.Z
-'        tmp.X = Point.X
-'        tmp.Y = .Y
-'        tmp.Z = .Z
-'        .X = Sin(Angles.Y) * tmp.Z + Cos(Angles.Y) * tmp.X
-'        .Z = Cos(Angles.Y) * tmp.Z - Sin(Angles.Y) * tmp.X
-'        tmp.X = .X
-'        .X = Cos(Angles.Z) * tmp.X - Sin(Angles.Z) * tmp.Y
-'        .Y = Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y
+'        .x = x
+'        .y = y
+'        .z = z
 '    End With
+'
+'
+''    Dim x As Double
+''    Dim y As Double
+''    Dim z As Double
+''    AnglesToPoint Angles.x, Angles.y, Angles.z, x, y, z
+''    Set VectorRotateAxis = New Point
+''    With VectorRotateAxis
+''        .x = x
+''        .y = y
+''        .z = z
+''    End With
+'
 'End Function
+
+
+'
+'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+'    Dim tmp As Point
+'    Set tmp = MakePoint(Point.x, Point.y, Point.z)
+'    If (Not (Point.x = 0 And Point.y = 0 And Point.z = 0)) And _
+'        (Not (Angles.x = 0 And Angles.y = 0 And Angles.z = 0)) Then
+'        Set tmp = VectorRotateZ(MakePoint(tmp.x, tmp.y, tmp.z), Angles.z)
+'        Set tmp = VectorRotateX(MakePoint(tmp.y, tmp.z, tmp.x), Angles.x)
+'        Set tmp = VectorRotateY(MakePoint(tmp.z, tmp.x, tmp.y), Angles.y)
+'    End If
+'    Set VectorRotateAxis = tmp
+'    Set tmp = Nothing
+'End Function
+
+
+
+
+Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
+    Dim tmp As New Point
+    Set VectorRotateAxis = New Point
+    With VectorRotateAxis
+        .Y = Cos(Angles.X) * Point.Y - Sin(Angles.X) * Point.Z
+        .Z = Sin(Angles.X) * Point.Y + Cos(Angles.X) * Point.Z
+        tmp.X = Point.X
+        tmp.Y = .Y
+        tmp.Z = .Z
+        .X = Sin(Angles.Y) * tmp.Z + Cos(Angles.Y) * tmp.X
+        .Z = Cos(Angles.Y) * tmp.Z - Sin(Angles.Y) * tmp.X
+        tmp.X = .X
+        .X = Cos(Angles.Z) * tmp.X - Sin(Angles.Z) * tmp.Y
+        .Y = Sin(Angles.Z) * tmp.X + Cos(Angles.Z) * tmp.Y
+    End With
+End Function
 
 'Public Function VectorRotateAxis(ByRef Point As Point, ByRef Angles As Point) As Point
 '    Dim tmp As Point
@@ -2413,7 +2563,7 @@ End Function
 'End Function
 
 Public Function TriangleNormal(t1p1 As Point, t1p2 As Point, t1p3 As Point) As Point
-    Set TriangleNormal = VectorCrossProduct(VectorDeduction(t1p2, t1p1), VectorDeduction(t1p3, t1p1))
+    Set TriangleNormal = VectorNormalize(VectorCrossProduct(VectorDeduction(t1p2, t1p1), VectorDeduction(t1p3, t1p1)))
 End Function
 
 
@@ -2662,56 +2812,56 @@ Public Function Lerp(ByVal A As Double, ByVal B As Double, ByVal t As Double) As
     Lerp = A + (B - A) * t
 End Function
 
-Public Function Large(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal v3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(v3) Then
-        If (v1 >= v2) Then
-            Large = v1
+Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+    If IsMissing(V3) Then
+        If (V1 >= V2) Then
+            Large = V1
         Else
-            Large = v2
+            Large = V2
         End If
     ElseIf IsMissing(V4) Then
-        If ((v2 >= v3) And (v2 >= v1)) Then
-            Large = v2
-        ElseIf ((v1 >= v3) And (v1 >= v2)) Then
-            Large = v1
+        If ((V2 >= V3) And (V2 >= V1)) Then
+            Large = V2
+        ElseIf ((V1 >= V3) And (V1 >= V2)) Then
+            Large = V1
         Else
-            Large = v3
+            Large = V3
         End If
     Else
-        If ((v2 >= v3) And (v2 >= v1) And (v2 >= V4)) Then
-            Large = v2
-        ElseIf ((v1 >= v3) And (v1 >= v2) And (v1 >= V4)) Then
-            Large = v1
-        ElseIf ((v3 >= v1) And (v3 >= v2) And (v3 >= V4)) Then
-            Large = v3
+        If ((V2 >= V3) And (V2 >= V1) And (V2 >= V4)) Then
+            Large = V2
+        ElseIf ((V1 >= V3) And (V1 >= V2) And (V1 >= V4)) Then
+            Large = V1
+        ElseIf ((V3 >= V1) And (V3 >= V2) And (V3 >= V4)) Then
+            Large = V3
         Else
             Large = V4
         End If
     End If
 End Function
 
-Public Function Least(ByVal v1 As Variant, ByVal v2 As Variant, Optional ByVal v3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(v3) Then
-        If (v1 <= v2) Then
-            Least = v1
+Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
+    If IsMissing(V3) Then
+        If (V1 <= V2) Then
+            Least = V1
         Else
-            Least = v2
+            Least = V2
         End If
     ElseIf IsMissing(V4) Then
-        If ((v2 <= v3) And (v2 <= v1)) Then
-            Least = v2
-        ElseIf ((v1 <= v3) And (v1 <= v2)) Then
-            Least = v1
+        If ((V2 <= V3) And (V2 <= V1)) Then
+            Least = V2
+        ElseIf ((V1 <= V3) And (V1 <= V2)) Then
+            Least = V1
         Else
-            Least = v3
+            Least = V3
         End If
     Else
-        If ((v2 <= v3) And (v2 <= v1) And (v2 <= V4)) Then
-            Least = v2
-        ElseIf ((v1 <= v3) And (v1 <= v2) And (v1 <= V4)) Then
-            Least = v1
-        ElseIf ((v3 <= v1) And (v3 <= v2) And (v3 <= V4)) Then
-            Least = v3
+        If ((V2 <= V3) And (V2 <= V1) And (V2 <= V4)) Then
+            Least = V2
+        ElseIf ((V1 <= V3) And (V1 <= V2) And (V1 <= V4)) Then
+            Least = V1
+        ElseIf ((V3 <= V1) And (V3 <= V2) And (V3 <= V4)) Then
+            Least = V3
         Else
             Least = V4
         End If

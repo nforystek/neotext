@@ -133,12 +133,15 @@ Public Sub Startup()
     
     With frmMain.ScriptControl
         .Language = "VBScript"
-        'only the global add the code members of
+        'add members of non collections so far
         .AddObject "Include", modParse.Include, True
-        'the rest are builds of and not code based
+        .AddObject "Bindings", modParse.Bindings, True
+        .AddObject "Camera", modParse.Camera, True
+        .AddObject "Player", modParse.Player, True
+        
+        'unsure benefits so all false for now
         .AddObject "All", modParse.All, False
         .AddObject "Beacons", modParse.Beacons, False
-        .AddObject "Bindings", modParse.Bindings, False
         .AddObject "Boards", modParse.Boards, False
         .AddObject "Cameras", modParse.Cameras, False
         .AddObject "Elements", modParse.Elements, False
@@ -148,13 +151,15 @@ Public Sub Startup()
         .AddObject "Sounds", modParse.Sounds, False
         .AddObject "Spaces", modParse.Spaces, False
         .AddObject "Tracks", modParse.Tracks, False
+        .AddObject "Players", modParse.Players, False
 
-        .AddObject "Player", modParse.Player, False
     End With
 End Sub
 
 
 Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
+'    On Error GoTo tryforgiegner
+    
 
     frmMain.ScriptControl.AddCode Code
     If ScriptDebug Then
@@ -162,23 +167,94 @@ Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddC
             DebugPrint "Addcode: " & RemoveNextArg(Code, vbCrLf)
         Loop
     End If
+    
+'    Exit Sub
+'tryforgiegner:
+'    If Err.Number <> 0 Then
+'        Dim Num As Long
+'        Dim des As String
+'        Dim src As String
+'        Num = Err.Number
+'        src = Err.source
+'        des = Err.Description
+'        Err.Clear
+'        On Error GoTo 0
+'        '"An error occured while setting up an object." & vbCrLf
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
 End Sub
 
 
 Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As String = "Evaluate", Optional ByVal LineNumber As Long = 0) As Variant
+'    On Error GoTo tryforgiegner
+    
+
     Evaluate = frmMain.ScriptControl.Eval(Expression)
     If ScriptDebug Then DebugPrint "Eval: " & Expression & " = " & Evaluate
+
+'    Exit Sub
+'tryforgiegner:
+'    If Err.Number <> 0 Then
+'        Dim Num As Long
+'        Dim des As String
+'        Dim src As String
+'        Num = Err.Number
+'        src = Err.source
+'        des = Err.Description
+'        Err.Clear
+'        On Error GoTo 0
+'        '"An error occured while setting up an object." & vbCrLf
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
 End Function
 
 Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As String = "ExecuteStatement", Optional ByVal LineNumber As Long = 0)
+'    On Error GoTo tryforgiegner
+    
 
     frmMain.ScriptControl.ExecuteStatement Statement
     If ScriptDebug Then DebugPrint "Execute: " & Statement
     
+    
+'tryforgiegner:
+'    Dim Num As Long
+'    Dim des As String
+'    Dim src As String
+'    If Err.Number <> 0 Then
+'        Num = Err.Number
+'        src = Err.source
+'        des = Err.Description
+'        Err.Clear
+'        If ScriptControl1.Error.Number <> 0 Then
+'            ScriptControl1.Error.Clear
+'        End If
+'    ElseIf ScriptControl1.Error.Number <> 0 Then
+'        Num = ScriptControl1.Error.Number
+'        src = ScriptControl1.Error.source
+'        des = ScriptControl1.Error.Description
+'        ScriptControl1.Error.Clear
+'    End If
+'
+'
+'
+'    On Error GoTo 0
+'
+'    If Num = 91 Then
+'        scriptcontrol1.
+'        '"An error occured while setting up an object." & vbCrLf
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
+'
+'    If Not Num = 91 And Not Err = 0 Then
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
 End Sub
 
 
 Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As String = "Run", Optional ByVal LineNumber As Long = 0) As Variant
+'    On Error GoTo tryforgiegner
+    
+
 
     If frmMain.ScriptControl.Procedures.Count > 0 Then
         Dim i As Long
@@ -190,7 +266,23 @@ Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As Str
             End If
         Next
     End If
+    
 
+'tryforgiegner:
+'        Dim Num As Long
+'        Dim des As String
+'        Dim src As String
+'        Num = Err.Number
+'        src = Err.source
+'        des = Err.Description
+'        Err.Clear
+'        On Error GoTo 0
+'
+'    If Err <> 0 Then
+'
+'        '"An error occured while setting up an object." & vbCrLf
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
 End Function
 
 Private Sub DebugPrint(ByVal txt As String)

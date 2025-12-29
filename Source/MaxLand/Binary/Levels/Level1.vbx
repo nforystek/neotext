@@ -52,24 +52,35 @@ bindings {
 player
 {
 	
-	.speed=0.01
-	.friction=0.05
+	'.speed=0.01
+	'.friction=0.05
  
-	.camera.angle=1.5705
-	.camera.pitch=-0.177
+	'.camera.angle=1.5705
+	'.camera.pitch=-0.177
 
 	
-	.element.visible=true
-	.element.origin=[3, 0, 0]
-	.element.scaled=[.50, .50, .50]
-	.element.rotate=[0, 0, 0]
-	.element.boundsmodel="bounds-player.x"
-	.element.visualmodel="visual-player.x"
-	.element.gravitational=true
+	'.element.visible=true
+	'.element.origin=[3, 0, 0]
+	'.element.scaled=[.50, .50, .50]
+	'.element.rotate=[0, 0, 0]
+	'.element.boundsmodel="bounds-player.x"
+	'.element.visualmodel="visual-player.x"
+	'.element.gravitational=true
 
 
 }
 
+element <player1>
+{	
+	.visible=true
+	.origin=[3, 0, 0]
+	.scaled=[.50, .50, .50]
+	.rotate=[0, 0, 0]
+	.boundsmodel="bounds-player.x"
+	.visualmodel="visual-player.x"
+	.gravitational=true
+}
+Set Player = player1
 
 'element <pawn7>
 '{
@@ -85,19 +96,19 @@ player
 '}
 
 
-'board <mirror> {
-'
-'	.visible=true
-'	.mirror = true
-'	.point3 = [-1,1,0]
-'	.point4 = [0,1,0]
-'	.point1 = [0,0,0] 
-'	.point2 = [-1,0,0]
-'
-'	.scalex=1
-'	.scaley=1
-'	.filename = "pawn.bmp"
-'}
+board <mirror> {
+
+	.visible=true
+	.mirror = true
+	.point3 = [-1,1,0]
+	.point4 = [0,1,0]
+	.point1 = [0,0,0] 
+	.point2 = [-1,0,0]
+
+	.scalex=1
+	.scaley=1
+	.filename = "pawn.bmp"
+}
 
 
 variable <tempswap1>=0
@@ -1948,7 +1959,7 @@ method <checkgame>
 		end if
 		if puzzlewon then
 			
-			player.Element.visible=false
+			'player.Element.visible=false
 			land.visible=false
 			palace.visible=false
 			blacklawn.visible=false
@@ -1983,11 +1994,11 @@ method <checkgame>
 			'bubble1.visible=false
 			'bubble2.visible=false
 			smoke.visible=false
-			player.Element.origin.x=-45.898
-			player.Element.origin.y=8.533
-			player.Element.origin.z=19.434
-			player.Camer.angle=-0.57
-			player.Camer.pitch=1.327
+			'player.element.origin.x=-45.898
+			'player.element.origin.y=8.533
+			'player.element.origin.z=19.434
+			'player.camera.angle=-0.57
+			'player.camera.pitch=1.327
 			
 			
 			'Console "level level2"
@@ -2299,13 +2310,15 @@ variable <data>=9
 'Echo data
 
 
+	'Player.element.Origin
+	'Player.camera.Angle
+	'Player.camera.Pitch
+	'Player.camera.Zoom
 
 serialize [
-	Player.Element.Origin
-	Player.Element.Rotate
-	Player.Camera.Angle
-	Player.Camera.Pitch
-	Player.Camera.Zoom
+
+
+
 
 	orders
 	firevix1var
