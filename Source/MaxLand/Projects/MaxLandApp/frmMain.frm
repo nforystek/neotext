@@ -122,15 +122,14 @@ Private Sub Form_Click()
 End Sub
 
 
-
 Public Sub Reset()
-
     ScriptControl.Reset
-
-    If PathExists(AppPath & "Script.log", True) Then Kill AppPath & "Script.log"
-End Sub
-Public Sub Startup()
     
+    If PathExists(AppPath & "Script.log", True) Then Kill AppPath & "Script.log"
+        
+End Sub
+
+Public Sub AddObjects()
     With frmMain.ScriptControl
         .Language = "VBScript"
         'add members of non collections so far
@@ -138,6 +137,7 @@ Public Sub Startup()
         .AddObject "Bindings", modParse.Bindings, True
         .AddObject "Camera", modParse.Camera, True
         .AddObject "Player", modParse.Player, True
+        .AddObject "Mouse", modParse.Mouse, True
         
         'unsure benefits so all false for now
         .AddObject "All", modParse.All, False
@@ -152,9 +152,22 @@ Public Sub Startup()
         .AddObject "Spaces", modParse.Spaces, False
         .AddObject "Tracks", modParse.Tracks, False
         .AddObject "Players", modParse.Players, False
-
     End With
+ '   ExecuteStatement "Set Camera = Player.Camera"
 End Sub
+
+Private Sub Form_Load()
+    ScriptControl1.Tag = True
+End Sub
+
+
+Public Property Get StartUp() As Boolean
+    StartUp = ScriptControl1.Tag
+End Property
+
+Public Property Let StartUp(ByVal RHS As Boolean)
+    ScriptControl.Tag = RHS
+End Property
 
 
 Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddCode", Optional ByVal LineNumber As Long = 0)
@@ -209,7 +222,7 @@ Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As S
 End Function
 
 Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As String = "ExecuteStatement", Optional ByVal LineNumber As Long = 0)
-'    On Error GoTo tryforgiegner
+'    On Error GoTo tryforgiegner6
     
 
     frmMain.ScriptControl.ExecuteStatement Statement
@@ -297,3 +310,4 @@ End Sub
 Private Sub Form_Resize()
     MouseOverCanvas 0, 0
 End Sub
+

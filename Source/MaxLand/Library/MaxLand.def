@@ -1,14 +1,6 @@
 EXPORTS
-	FlagClear
-	FlagObject
-	FlagTriangle
-	FlagModify
-	ResetCulling
-	CollisionCull
-	CollisionCheck
-	PointTouchesTriangle
-	PointInsidePointList
-	TriangleCrossSegment
-	TriangleCrossSegmentEx
-
-
+	Test
+	tri_tri_intersect
+	Forystek
+	PointBehindPoly
+	PointInPoly

@@ -16,6 +16,11 @@ Option Explicit
 Private pX As Single
 Private pY As Single
 
+
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = True

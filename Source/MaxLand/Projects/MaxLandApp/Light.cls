@@ -37,6 +37,10 @@ Attribute LightIndex.VB_VarMemberFlags = "40"
 Private pKey As String
 Private pSerialize As Boolean
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property

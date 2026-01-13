@@ -31,6 +31,11 @@ Private pRecount As Single
 Private pEmphasis As Single
 Private pFriction As Single
 Private pInitials As Single
+
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Key() As String
     Key = pKey
 End Property

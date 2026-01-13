@@ -198,14 +198,14 @@ Public Sub RenderInfo()
         If ShowStat Then
             txt = "Frames Per Second: " & FPSRate
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(2)
-            If Not modParse.Player.Element Is Nothing Then
-                txt = "Origin.X = " & modParse.Player.Element.Origin.X & vbCrLf & _
-                        "Origin.y = " & modParse.Player.Element.Origin.Y & vbCrLf & _
-                        "Origin.z = " & modParse.Player.Element.Origin.Z & vbCrLf & _
-                        "Distance = " & Distance(modParse.Player.Element.Origin.X, modParse.Player.Element.Origin.Y, modParse.Player.Element.Origin.Z, 0, 0, 0) & vbCrLf & _
-                        "Angle = " & modParse.Player.Element.Twists.Y & vbCrLf & _
-                        "Pitch = " & modParse.Player.Element.Twists.Y & vbCrLf & _
-                        "Zoom = " & modParse.Player.Camera.Zoom & vbCrLf
+            If Not Camera.Element Is Nothing Then
+                txt = "Origin.X = " & Camera.Element.Origin.X & vbCrLf & _
+                        "Origin.y = " & Camera.Element.Origin.Y & vbCrLf & _
+                        "Origin.z = " & Camera.Element.Origin.Z & vbCrLf & _
+                        "Distance = " & Distance(Camera.Element.Origin.X, Camera.Element.Origin.Y, Camera.Element.Origin.Z, 0, 0, 0) & vbCrLf & _
+                        "Angle = " & Camera.Element.Twists.Y & vbCrLf & _
+                        "Pitch = " & Camera.Element.Twists.Y & vbCrLf & _
+                        "Zoom = " & Camera.Offset.Z & vbCrLf
             End If
             DrawText txt, (frmMain.ScaleWidth / Screen.TwipsPerPixelX) - (frmMain.TextWidth(txt) / Screen.TwipsPerPixelX), Row(3)
             
@@ -213,8 +213,8 @@ Public Sub RenderInfo()
         End If
         
         If Perspective = CameraMode Then
-            If modParse.Player.CameraIndex > 0 Then
-                txt = "Current Camera View " & modParse.Player.CameraIndex
+            If Player.CameraIndex > 0 Then
+                txt = "Current Camera View " & Player.CameraIndex
             Else
                 txt = "Current Camera View NA"
             End If

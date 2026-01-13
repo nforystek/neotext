@@ -19,6 +19,10 @@ Private pGreen As Single
 Private pBlue As Single
 Public Event Changed()
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = True
@@ -100,7 +104,8 @@ End Property
 
 Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)
-    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
+    If (Left(RHS, 1) = "[" And Right(RHS, 1) = "]") Or (Left(RHS, 1) = "{" And Right(RHS, 1) = "}") Then
+        
         RHS = Mid(RHS, 2, Len(RHS) - 2)
         pAlpha = ParseNumerical(RHS)
         If RHS <> "" Then

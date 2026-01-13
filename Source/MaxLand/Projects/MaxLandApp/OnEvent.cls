@@ -27,6 +27,10 @@ Private pStartLine As String
 Private pEventFlags As Integer
 
 
+Friend Sub LateEval()
+
+End Sub
+
 Friend Property Get EventFlags() As Integer
     EventFlags = pEventFlags
 End Property

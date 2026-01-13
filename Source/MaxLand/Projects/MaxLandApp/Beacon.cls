@@ -45,6 +45,16 @@ Private pBeaconLight As Long
 Private pKey As String
 Private pSerialize As Boolean
 
+Friend Sub LateEval()
+    Dim p As Point
+    For Each p In pOrigins
+        p.LateEval
+    Next
+    pPercentXY.LateEval
+    
+
+End Sub
+
 Public Property Get Origins() As VBA.Collection
     Set Origins = pOrigins
 End Property

@@ -160,60 +160,60 @@ End Property
 '            ResetIdle
 '            ToggleJump = False
 '        Case Forward
-'            If modParse.Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin(D720 - modParse.Player.Twists.Y)
-'                vecDirect.z = Cos(D720 - modParse.Player.Twists.Y)
-'                If ((Perspective = Spectator) Or DebugMode) Or modParse.Player.InLiquid Then
-'                    vecDirect.Y = -(Tan(D720 - modParse.Player.Camera.Pitch))
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin(D720 - Player.Twists.Y)
+'                vecDirect.z = Cos(D720 - Player.Twists.Y)
+'                If ((Perspective = Spectator) Or DebugMode) Or Player.InLiquid Then
+'                    vecDirect.Y = -(Tan(D720 - Camera.Rotate.X))
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case Backward
 '
-'            If modParse.Player.Direct.Y = 0 Then
-'                vecDirect.X = -Sin(D720 - modParse.Player.Twists.Y)
-'                vecDirect.z = -Cos(D720 - modParse.Player.Twists.Y)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = -Sin(D720 - Player.Twists.Y)
+'                vecDirect.z = -Cos(D720 - Player.Twists.Y)
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = Tan(D720 - modParse.Player.Camera.Pitch)
+'                    vecDirect.Y = Tan(D720 - Camera.Rotate.X)
 '                End If
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case LeftStep
-'            If modParse.Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - modParse.Player.Twists.Y) - D180)
-'                vecDirect.z = Cos((D720 - modParse.Player.Twists.Y) - D180)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - Player.Twists.Y) - D180)
+'                vecDirect.z = Cos((D720 - Player.Twists.Y) - D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
 '            ToggleJump = False
 '        Case RightStep
-'            If modParse.Player.Direct.Y = 0 Then
-'                vecDirect.X = Sin((D720 - modParse.Player.Twists.Y) + D180)
-'                vecDirect.z = Cos((D720 - modParse.Player.Twists.Y) + D180)
+'            If Player.Direct.Y = 0 Then
+'                vecDirect.X = Sin((D720 - Player.Twists.Y) + D180)
+'                vecDirect.z = Cos((D720 - Player.Twists.Y) + D180)
 '                D3DXVec3Normalize vecDirect, vecDirect
-'                If modParse.Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (modParse.Player.Speed / 2), Friction
+'                If Player.InLiquid And (Not ((Perspective = Spectator) Or DebugMode)) Then
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, (Player.Speed / 2), Friction
 '                Else
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                End If
 '            End If
 '            ResetIdle
@@ -224,23 +224,23 @@ End Property
 '                ToggleJump = True
 '
 '                If (Perspective = Spectator) Or DebugMode Then
-'                    vecDirect.Y = vecDirect.Y + IIf(modParse.Player.Speed < 1, 1, modParse.Player.Speed)
-'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, modParse.Player.Speed, Friction
+'                    vecDirect.Y = vecDirect.Y + IIf(Player.Speed < 1, 1, Player.Speed)
+'                    AddMotion Player, Actions.Directing, Replace(modGuid.GUID, "-", "K"), vecDirect, Player.Speed, Friction
 '                Else
 '
-'                    If modParse.Player.Activities.Exists(JumpGUID) Then
-'                        If (Not ((modParse.Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
-'                                ((modParse.Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
-'                            'If modParse.Player.Activities.Exists(JumpGUID) Then
-'                                Do Until Not modParse.Player.MotionExists(JumpGUID)
+'                    If Player.Activities.Exists(JumpGUID) Then
+'                        If (Not ((Player.IsMoving And Moving.Flying) = Moving.Flying) Or _
+'                                ((Player.IsMoving And Moving.Falling) = Moving.Falling)) Then
+'                            'If Player.Activities.Exists(JumpGUID) Then
+'                                Do Until Not Player.MotionExists(JumpGUID)
 '                                    DeleteMotion Player, JumpGUID
 '                                Loop
 '                            'End If
 '                        End If
 '                    End If
-'                    If Not modParse.Player.Activities.Exists(JumpGUID) Then
-'                        vecDirect.Y = IIf(modParse.Player.InLiquid, 5, 9)
-'                        JumpGUID = AddMotion(Player, Actions.Directing, JumpGUID, vecDirect, (modParse.Player.Speed * 4), Friction)
+'                    If Not Player.Activities.Exists(JumpGUID) Then
+'                        vecDirect.Y = IIf(Player.InLiquid, 5, 9)
+'                        JumpGUID = AddMotion(Player, Actions.Directing, JumpGUID, vecDirect, (Player.Speed * 4), Friction)
 '                    End If
 '                End If
 '            Else
@@ -270,6 +270,8 @@ Public Sub InputScene()
     Dim errsource As String
     
     Dim cnt As Long
+    Dim cnt2 As Single
+    
     
     For cnt = 0 To 255
         Uses(cnt) = False
@@ -479,13 +481,11 @@ Public Sub InputScene()
             GetCursorPos mloc
             GetWindowRect frmMain.hwnd, rec
        
-            Dim mX As Integer
-            Dim mY As Integer
-            Dim mZ As Integer
+
             DIMouseDevice.GetDeviceStateMouse DIMOUSESTATE
-            mX = DIMOUSESTATE.lX
-            mY = DIMOUSESTATE.lY
-            mZ = DIMOUSESTATE.lZ
+            Mouse.X = DIMOUSESTATE.lX * MouseSensitivity / 100
+            Mouse.Y = DIMOUSESTATE.lY * MouseSensitivity / 100
+            Mouse.Z = DIMOUSESTATE.lZ * MouseSensitivity / 100
                            
             If ((MouseTrapped Or FullScreen) And (Bindings.MouseInput = Trap)) Or _
                 ((Bindings.MouseInput = Hide) And MouseOverCanvas(mloc.X, mloc.Y)) Then
@@ -499,8 +499,8 @@ Public Sub InputScene()
                 If (Not (VB.Screen.MousePointer = 0)) Then VB.Screen.MousePointer = 0
             End If
     
-            If modParse.Player.Speed > MaxDisplacement Then modParse.Player.Speed = MaxDisplacement
-            If modParse.Player.Speed < 0.01 Then modParse.Player.Speed = 0.01
+            If Player.Speed > MaxDisplacement Then Player.Speed = MaxDisplacement
+            If Player.Speed < 0.01 Then Player.Speed = 0.01
 
         '########################################################################
         '############## Keys that are available with out console ################
@@ -508,74 +508,36 @@ Public Sub InputScene()
             If ((MouseTrapped And (Not ConsoleVisible)) And (Bindings.MouseInput = Trap)) Or _
                 (((Not MouseTrapped) And (Not ConsoleVisible)) And (Bindings.MouseInput = Hide)) Or _
                 ((Bindings.MouseInput = Icon) And MouseOverCanvas(mloc.X, mloc.Y)) Then
-                
-                If mZ < 0 Then
-                    If (Bindings(DIK_PGDN) Is Nothing) And (Not Uses(DIK_PGDN)) Then
-                        Uses(DIK_PGDN) = True
-                        
-                        
-                        modParse.Player.ZoomOut ((-mZ * MouseSensitivity) / 100)
-                        
-                        
-                    End If
-                ElseIf mZ > 0 Then
-                    If (Bindings(DIK_PGUP) Is Nothing) And (Not Uses(DIK_PGUP)) Then
-                        Uses(DIK_PGUP) = True
-                        
-                        
-                        modParse.Player.ZoomIn ((mZ * MouseSensitivity) / 100)
-                        
-                        
+
+                If Mouse.Z < 0 Then
+                    DIKEYBOARDSTATE.Key(DIK_PGDN) = True
+                    'Bindings(DIK_PGDN).Behavior = Rapid
+                ElseIf Mouse.Z > 0 Then
+                    DIKEYBOARDSTATE.Key(DIK_PGUP) = True
+                    'Bindings(DIK_PGUP).Behavior = Rapid
+                End If
+
+
+                If Not Perspective = CameraMode Then
+                    If Mouse.X < 0 Then
+                        DIKEYBOARDSTATE.Key(DIK_LEFT) = True
+                        'Bindings(DIK_LEFT).Behavior = Rapid
+                    ElseIf Mouse.X > 0 Then
+                        DIKEYBOARDSTATE.Key(DIK_RIGHT) = True
+                        'Bindings(DIK_RIGHT).Behavior = Rapid
                     End If
                 End If
-                
-                
-                If Perspective = CameraMode Then
-'                    If modParse.Player.CameraIndex > 0 Then
-'                        modParse.Player.Element.Twists.Y = Cameras(modParse.Player.CameraIndex).Angle
-'                    End If
-                Else
-                    If mX < 0 Then
-                        If (Bindings(DIK_LEFT) Is Nothing) And (Not Uses(DIK_LEFT)) Then
-                            Uses(DIK_LEFT) = True
-                            
-                            
-                            modParse.Player.LookLeft ((-mX * MouseSensitivity) / 100)
-                            
-                            
-                        End If
-                    ElseIf mX > 0 Then
-                        If (Bindings(DIK_RIGHT) Is Nothing) And (Not Uses(DIK_RIGHT)) Then
-                            Uses(DIK_RIGHT) = True
-                            
-                            
-                            modParse.Player.LookRight ((mX * MouseSensitivity) / 100)
-                            
-                            
-                        End If
-                    End If
+
+                If Mouse.Y < 0 Then
+                     DIKEYBOARDSTATE.Key(DIK_DOWN) = True
+                     'Bindings(DIK_DOWN).Behavior = Rapid
+                ElseIf Mouse.Y > 0 Then
+                    DIKEYBOARDSTATE.Key(DIK_UP) = True
+                    'Bindings(DIK_UP).Behavior = Rapid
                 End If
-            
-                If mY < 0 Then
-                    If (Bindings(DIK_DOWN) Is Nothing) And (Not Uses(DIK_DOWN)) Then
-                        Uses(DIK_DOWN) = True
-                        
-                        
-                        modParse.Player.LookDown ((-mY * MouseSensitivity) / 100)
-                        
-                        
-                    End If
-                ElseIf mY > 0 Then
-                    If (Bindings(DIK_UP) Is Nothing) And (Not Uses(DIK_UP)) Then
-                        Uses(DIK_UP) = True
-                        
-                        
-                        modParse.Player.LookUp ((mY * MouseSensitivity) / 100)
-                        
-                        
-                    End If
-                End If
-    
+                
+
+
                 
                 For cnt = 0 To 255
                     If DIKEYBOARDSTATE.Key(cnt) And (Not Bindings(cnt) Is Nothing) Then
@@ -601,52 +563,116 @@ Public Sub InputScene()
                                 
                                 errsource = "Binding(" & GetBindingText(Bindings(cnt).AppliesTo) & ")"
                                 errline = CLng(Bindings(cnt).StartLine)
-                        
-                                frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+'                                Select Case cnt
+'                                    Case DIK_PGDN, DIK_PGUP
+'                                        For cnt2 = 0 To Abs(Mouse.Z \ 0.015)
+'                                            frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+'                                        Next
+'                                    Case DIK_LEFT, DIK_RIGHT
+'                                        For cnt2 = 0 To Abs(Mouse.X \ 0.015)
+'                                            frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+'                                        Next
+'                                    Case DIK_DOWN, DIK_UP
+'
+'                                        For cnt2 = 0 To Abs(Mouse.Y \ 0.015)
+'                                            frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+'                                        Next
+'                                    Case Else
+                                        frmMain.ExecuteStatement Bindings(cnt).RunScript & vbCrLf
+'                                End Select
                                 
                             End If
                         ElseIf (((Bindings(cnt).EventFlags And 1) = 1) And (Bindings(cnt).Behavior <> Rapid)) Then
                             Bindings(cnt).EventFlags = Bindings(cnt).EventFlags - 1
                         End If
-                        
+
                         On Error GoTo pausing:
                         
                     End If
                 Next
                 
+                If Mouse.Z < 0 Then
+                    If (Bindings(DIK_PGDN) Is Nothing) And (Not Uses(DIK_PGDN)) Then
+                        Uses(DIK_PGDN) = True
+                        
+                        Camera.Zoom Mouse.Z
+                        
+                    End If
+                ElseIf Mouse.Z > 0 Then
+                    If (Bindings(DIK_PGUP) Is Nothing) And (Not Uses(DIK_PGUP)) Then
+                        Uses(DIK_PGUP) = True
+                        
+                        Camera.Zoom Mouse.Z
+                        
+                    End If
+                End If
+                
+                
+                If Perspective = CameraMode Then
+                    If Player.CameraIndex > 0 Then
+                        Player.Camera.Rotate.Y = Cameras(Player.CameraIndex).Rotate.Y
+                    End If
+                Else
+                    If Mouse.X < 0 Then
+                        If (Bindings(DIK_LEFT) Is Nothing) And (Not Uses(DIK_LEFT)) Then
+                            Uses(DIK_LEFT) = True
+                            
+                            Camera.Angle Mouse.X
+                            
+                        End If
+                    ElseIf Mouse.X > 0 Then
+                        If (Bindings(DIK_RIGHT) Is Nothing) And (Not Uses(DIK_RIGHT)) Then
+                            Uses(DIK_RIGHT) = True
+                            
+                            Camera.Angle Mouse.X
+                        
+                        End If
+                    End If
+                End If
+            
+                If Mouse.Y < 0 Then
+                    If (Bindings(DIK_DOWN) Is Nothing) And (Not Uses(DIK_DOWN)) Then
+                        Uses(DIK_DOWN) = True
+                        
+                        Camera.Pitch Mouse.Y
+                        
+                    End If
+                ElseIf Mouse.Y > 0 Then
+                    If (Bindings(DIK_UP) Is Nothing) And (Not Uses(DIK_UP)) Then
+                        Uses(DIK_UP) = True
+                        
+                        Camera.Pitch Mouse.Y
+                    
+                    End If
+                End If
                 
                 If DIKEYBOARDSTATE.Key(DIK_E) And (Bindings(DIK_E) Is Nothing) And (Not Uses(DIK_E)) Then
                     Uses(DIK_E) = True
                     
-                    
-                    
-                    modParse.Player.MoveForward
-                    
+                    Player.MoveForward
                     
                 ElseIf DIKEYBOARDSTATE.Key(DIK_D) And (Bindings(DIK_D) Is Nothing) And (Not Uses(DIK_D)) Then
                     Uses(DIK_D) = True
-                    
-                    
-                    modParse.Player.MoveBackwards
-                    
+         
+                    Player.MoveBackward
                     
                 End If
+
     
                 If DIKEYBOARDSTATE.Key(DIK_W) And (Bindings(DIK_W) Is Nothing) And (Not Uses(DIK_W)) Then
                     Uses(DIK_W) = True
                     
-                    
-                    modParse.Player.SlideLeft
-                    
+                    Player.SlideLeft
                     
                 ElseIf DIKEYBOARDSTATE.Key(DIK_R) And (Bindings(DIK_R) Is Nothing) And (Not Uses(DIK_R)) Then
                     Uses(DIK_R) = True
                     
-                    
-                    modParse.Player.SlideRight
-                    
+                    Player.SlideRight
                     
                 End If
+                
+
+                
                 
                 If DIKEYBOARDSTATE.Key(DIK_SPACE) And (Bindings(DIK_SPACE) Is Nothing) And (Not Uses(DIK_SPACE)) Then
                     Uses(DIK_SPACE) = True
@@ -654,7 +680,7 @@ Public Sub InputScene()
                     If (ToggleMotion(ToggleIdents.MoveJump) <> DIK_SPACE) Then
                         ToggleMotion(ToggleIdents.MoveJump) = DIK_SPACE
                         
-                        modParse.Player.Jump
+                        Player.Jump
                         
                     End If
                     
@@ -700,9 +726,9 @@ Public Sub InputScene()
                 End If
             End If
                     
-            lX = mX
-            lY = mX
-            lZ = mZ
+            lX = Mouse.X
+            lY = Mouse.Y
+            lZ = Mouse.Z
             
         End If
     
@@ -1453,8 +1479,8 @@ Public Sub ConsoleProcess()
 
             Case "goto"
                 ResetIdle
-                If Not modParse.Player.Element Is Nothing Then
-                    modParse.Player.Element.Origin = inArg
+                If Not Camera.Element Is Nothing Then
+                    Camera.Element.Origin = inArg
                 End If
             Case "parse"
                 ResetIdle
@@ -1494,11 +1520,45 @@ Public Sub ConsoleProcess()
                 Else
                     AddMessage "Already in spectate mode."
                 End If
+            Case "thirdperson"
+                ResetIdle
+                If Not (Perspective = ThirdPerson) Then
+                    Perspective = ThirdPerson
+                    AddMessage "Changed to third person mode."
+                Else
+                    AddMessage "Already in third person mode."
+                End If
+            Case "firstperson"
+                ResetIdle
+                If Not (Perspective = FirstPerson) Then
+                    Perspective = FirstPerson
+                    AddMessage "Changed to first person mode."
+                Else
+                    AddMessage "Already in first person mode."
+                End If
+            Case "cameramode"
+                ResetIdle
+                If Not (Perspective = CameraMode) Then
+                    Perspective = CameraMode
+                    AddMessage "Changed to camera mode."
+                Else
+                    AddMessage "Already in camera mode."
+                End If
             Case "join"
+            
                 ResetIdle
                 If (Perspective = Spectator) Then
                     Perspective = ThirdPerson
                     AddMessage "You've entered the game."
+                ElseIf (Perspective = ThirdPerson) Then
+                    Perspective = FirstPerson
+                    AddMessage "Changed to first person."
+                ElseIf (Perspective = FirstPerson) Then
+                    Perspective = CameraMode
+                    AddMessage "Changed to camera mode."
+                ElseIf (Perspective = CameraMode) Then
+                    Perspective = ThirdPerson
+                    AddMessage "Changed to third person."
                 Else
                     AddMessage "Already joined the game."
                 End If

@@ -16,6 +16,10 @@ Option Explicit
 Private pU As Single
 Private pV As Single
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property

@@ -15,67 +15,127 @@ Option Explicit
 
 Implements Orient
 
-Private pAngle As Single
-Private pPitch As Single
-Private pRoll As Single
-Private pZoom As Single
+'Private pAngle As Single
+'Private pPitch As Single
+'Private pRoll As Single
+'Private pZoom As Single
 Private pMinZoom As Single
 Private pMaxZoom As Single
 
 Private pKey As String
 Private pSerialize As Boolean
 
-Private pPlayer As Player
+
 Private pElement As Element
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Origin() As Point
-    Set Origin = Orient.Origin
+    'If pElement Is Nothing Then
+        Set Origin = Orient.Origin
+    'Else
+    '    Set Origin = pElement.Origin
+    'End If
 End Property
 Public Property Set Origin(ByRef RHS As Point)
-    Set Orient.Origin = RHS
+    'If pElement Is Nothing Then
+        Set Orient.Origin = RHS
+    'Else
+    '    Set pElement.Origin = RHS
+    'End If
 End Property
 
 Public Property Get Offset() As Point
-    Set Offset = Orient.Offset
+    'If pElement Is Nothing Then
+        Set Offset = Orient.Offset
+    'Else
+    '    Set Offset = pElement.Offset
+    'End If
 End Property
 Public Property Set Offset(ByRef RHS As Point)
-    Set Orient.Offset = RHS
+    'If pElement Is Nothing Then
+        Set Orient.Offset = RHS
+    'Else
+    '    Set pElement.Offset = RHS
+    'End If
 End Property
 
 Public Property Get Scaled() As Point
-    Set Scaled = Orient.Scaled
+    'If pElement Is Nothing Then
+        Set Scaled = Orient.Scaled
+    'Else
+    '    Set Scaled = pElement.Scaled
+    'End If
 End Property
 Public Property Set Scaled(ByRef RHS As Point)
-    Set Orient.Scaled = RHS
+    'If pElement Is Nothing Then
+        Set Orient.Scaled = RHS
+    'Else
+    '    Set pElement.Scaled = RHS
+    'End If
 End Property
 
 Public Property Get Rotate() As Point
-    Set Rotate = Orient.Rotate
+    'If pElement Is Nothing Then
+        Set Rotate = Orient.Rotate
+    'Else
+    '    Set Rotate = pElement.Rotate
+    'End If
 End Property
 Public Property Set Rotate(ByRef RHS As Point)
-    Set Orient.Rotate = RHS
+    'If pElement Is Nothing Then
+        Set Orient.Rotate = RHS
+    'Else
+    '    Set pElement.Rotate = RHS
+    'End If
 End Property
 
 
-Friend Property Get Direct() As Point
-    Set Direct = Orient.Direct
+Public Property Get Direct() As Point
+    'If pElement Is Nothing Then
+        Set Direct = Orient.Direct
+    'Else
+    '    Set Direct = pElement.Direct
+    'End If
 End Property
-Friend Property Set Direct(ByRef RHS As Point)
-    Set Orient.Direct = RHS
+Public Property Set Direct(ByRef RHS As Point)
+    'If pElement Is Nothing Then
+        Set Orient.Direct = RHS
+    'Else
+    '    Set pElement.Direct = RHS
+    'End If
 End Property
 
-Friend Property Get Twists() As Point
-    Set Twists = Orient.Twists
+Public Property Get Twists() As Point
+    'If pElement Is Nothing Then
+        Set Twists = Orient.Twists
+    'Else
+    '    Set Twists = pElement.Twists
+    'End If
 End Property
-Friend Property Set Twists(ByRef RHS As Point)
-    Set Orient.Twists = RHS
+Public Property Set Twists(ByRef RHS As Point)
+    'If pElement Is Nothing Then
+        Set Orient.Twists = RHS
+    'Else
+    '    Set pElement.Twists = RHS
+    'End If
 End Property
 
-Friend Property Get Scalar() As Point
-    Set Scalar = Orient.Scalar
+Public Property Get Scalar() As Point
+    'If pElement Is Nothing Then
+        Set Scalar = Orient.Scalar
+    'Else
+    '    Set Scalar = pElement.Scalar
+    'End If
 End Property
-Friend Property Set Scalar(ByRef RHS As Point)
-    Set Orient.Scalar = RHS
+Public Property Set Scalar(ByRef RHS As Point)
+    'If pElement Is Nothing Then
+        Set Orient.Scalar = RHS
+    'Else
+    '    Set pElement.Scalar = RHS
+    'End If
 End Property
 
 Public Property Get Attachments() As NTNodes10.Collection
@@ -103,18 +163,46 @@ End Property
 Public Property Get Element() As Element
     Set Element = pElement
 End Property
-Friend Property Set Element(ByRef RHS As Element)
-    Set pElement = RHS
-    If Not RHS.Camera.Value = Me.Value Then Set RHS.Camera = Me
+Public Property Set Element(ByRef RHS As Element)
+    SetObject RHS
+End Property
+Public Property Let Element(ByVal RHS As Element)
+    SetObject RHS
 End Property
 
-Public Property Get Player() As Player
-    Set Player = pPlayer
+Private Sub SetObject(ByRef Obj)
+    If TypeName(Obj) = "Element" Then
+        Set pElement = Obj
+       ' vbaObjSetAddref Orient, ObjPtr(pElement)
+    End If
+End Sub
+Public Property Set Value(ByVal RHS)
+    If IsNumeric(RHS) Then
+        Value = RHS
+    ElseIf IsObject(RHS) Then
+        SetObject RHS
+    End If
 End Property
-Friend Property Set Player(ByRef RHS As Player)
-    Set pPlayer = RHS
-    If Not RHS.Camera.Value = Me.Value Then Set RHS.Camera = Me
+Public Property Let Value(ByVal RHS As Long)
+    SetObject ObjectByPtr(RHS)
 End Property
+Public Property Get Value() As Long
+    Value = ObjPtr(Me)
+End Property
+
+'Public Property Get Player() As Player
+'    Set Player = pPlayer
+'End Property
+'Friend Property Set Player(ByRef RHS As Player)
+'    Set pPlayer = RHS
+'    If Not RHS Is Nothing Then
+'        If Not RHS.Camera Is Nothing Then
+'            If Not RHS.Camera.Value = Me.Value Then Set RHS.Camera = Me
+'        Else
+'            Set RHS.Camera = Me
+'        End If
+'    End If
+'End Property
 
 Public Property Get Serialize() As Boolean
     Serialize = True
@@ -123,33 +211,33 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-Public Property Get Angle() As Single
-    Angle = pAngle
-End Property
-Public Property Let Angle(ByVal RHS As Single)
-    pAngle = RHS
-End Property
-
-Public Property Get Pitch() As Single
-    Pitch = pPitch
-End Property
-Public Property Let Pitch(ByVal RHS As Single)
-    pPitch = RHS
-End Property
-
-Public Property Get Roll() As Single
-    Roll = pRoll
-End Property
-Public Property Let Roll(ByVal RHS As Single)
-    pRoll = RHS
-End Property
-
-Public Property Get Zoom() As Single
-    Zoom = pZoom
-End Property
-Public Property Let Zoom(ByVal RHS As Single)
-    pZoom = RHS
-End Property
+'Public Property Get Angle() As Single
+'    Angle = Orient.Rotate.Y
+'End Property
+'Public Property Let Angle(ByVal RHS As Single)
+'    Orient.Rotate.Y = RHS
+'End Property
+'
+'Public Property Get Pitch() As Single
+'    Pitch = Orient.Rotate.X
+'End Property
+'Public Property Let Pitch(ByVal RHS As Single)
+'    Orient.Rotate.X = RHS
+'End Property
+'
+'Public Property Get Roll() As Single
+'    Roll = Orient.Rotate.Z
+'End Property
+'Public Property Let Roll(ByVal RHS As Single)
+'    Orient.Rotate.Z = RHS
+'End Property
+'
+'Public Property Get Zoom() As Single
+'    Zoom = Orient.Offset.Z
+'End Property
+'Public Property Let Zoom(ByVal RHS As Single)
+'    Orient.Offset.Z = RHS
+'End Property
 
 Public Property Get MinZoom() As Single
     MinZoom = pMinZoom
@@ -166,34 +254,104 @@ Public Property Let MaxZoom(ByVal RHS As Single)
 End Property
 
 
+'Public Sub ZoomIn(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    If Perspective = ThirdPerson Then
+'        Orient.Offset.Z = Orient.Offset.Z - Measure
+'        If Orient.Offset.Z < Orient.MinZoom Then Orient.Offset.Z = Orient.MinZoom
+'    End If
+'
+'End Sub
 
-Public Property Set Value(ByVal RHS)
-    Dim obj As Object
-    Set obj = ObjectByPtr(RHS)
-    If TypeName(obj) = "Element" Then
-        Set pElement = obj
-    ElseIf TypeName(obj) = "Player" Then
-        Set pPlayer = obj
+'Public Sub ZoomOut(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    If Perspective = ThirdPerson Then
+'        Orient.Offset.Z = Orient.Offset.Z + Measure
+'        If Orient.Offset.Z > Orient.MaxZoom Then Orient.Offset.Z = Orient.MaxZoom
+'    End If
+'
+'End Sub
+'
+'Public Sub ZoomIn(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    If Perspective = ThirdPerson Then
+'        Orient.Offset.Z = Orient.Offset.Z - Measure
+'        If Orient.Offset.Z < Orient.MinZoom Then Orient.Offset.Z = Orient.MinZoom
+'    End If
+'
+'End Sub
+
+
+Public Sub Zoom(Optional ByVal Measure As Single = 0.015)
+    ResetIdle
+   'Debug.Print "Zoom " & Measure
+    
+    If Perspective = ThirdPerson Then
+        Orient.Offset.Z = Orient.Offset.Z - Measure
+        If Orient.Offset.Z < pMinZoom Then Orient.Offset.Z = pMinZoom
+        If Orient.Offset.Z > pMaxZoom Then Orient.Offset.Z = pMaxZoom
+        
+
     End If
-    If obj.Camera Is Nothing Then
-        Set RHS.Camera = Me
-    ElseIf Not obj.Camera.Value = Me.Value Then
-        Set RHS.Camera = Me
-    End If
-End Property
+    
+End Sub
 
-Public Property Let Value(ByVal RHS As Long)
-    Value = RHS
-End Property
+'Public Sub LookLeft(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    If Not Perspective = CameraMode Then Orient.Rotate.Y = (Orient.Rotate.Y + Measure)
+'    If Orient.Rotate.Y < -(PI * 2) Then Orient.Rotate.Y = (Orient.Rotate.Y + (PI * 2))
+'
+'End Sub
+'Public Sub LookRight(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    If Not Perspective = CameraMode Then Orient.Rotate.Y = (Orient.Rotate.Y - Measure)
+'    If Orient.Rotate.Y > (PI * 2) Then Orient.Rotate.Y = (Orient.Rotate.Y - (PI * 2))
+'
+'End Sub
 
-Public Property Get Value() As Long
-Attribute Value.VB_UserMemId = 0
-Attribute Value.VB_MemberFlags = "40"
-    Value = ObjPtr(Me)
-End Property
+Public Sub Angle(Optional ByVal Measure As Single = 0.015)
+    ResetIdle
+    'Debug.Print "Angle " & Measure
+    If Not Perspective = CameraMode Then Orient.Rotate.Y = (Orient.Rotate.Y - Measure)
+    Orient.Rotate.Y = AngleRestrict(Orient.Rotate.Y)
+    'If Orient.Rotate.Y > (PI * 2) Then Orient.Rotate.Y = (Orient.Rotate.Y - (PI * 2))
+   
+End Sub
+
+'Public Sub LookUp(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    Orient.Rotate.X = Orient.Rotate.X - Measure
+'    If Orient.Rotate.X < -1.5 Then Orient.Rotate.X = -1.5
+'
+'End Sub
+'
+'Public Sub LookDown(Optional ByVal Measure As Single = 0.015)
+'    ResetIdle
+'
+'    Orient.Rotate.X = Orient.Rotate.X + Measure
+'    If Orient.Rotate.X > 1.5 Then Orient.Rotate.X = 1.5
+'
+'End Sub
+
+Public Sub Pitch(Optional ByVal Measure As Single = 0.015)
+    ResetIdle
+    'Debug.Print "Pitch " & Measure
+    Orient.Rotate.X = Orient.Rotate.X - Measure
+    If Orient.Rotate.X > 1.5 Then Orient.Rotate.X = 1.5
+    If Orient.Rotate.X < -1.5 Then Orient.Rotate.X = -1.5
+
+End Sub
+
+
 
 Public Property Get ToString() As String
-    ToString = "[" & Orient.Origin.X & ", " & Orient.Origin.Y & ", " & Orient.Origin.Z & ", " & pAngle & ", " & pPitch & ", " & pRoll & ", " & pZoom & ", " & pMinZoom & ", " & pMaxZoom & "]"
+    ToString = "[" & Orient.Origin.X & ", " & Orient.Origin.Y & ", " & Orient.Origin.Z & ", " & Orient.Rotate.Y & ", " & Orient.Rotate.X & ", " & Orient.Rotate.Z & ", " & Orient.Offset.Z & ", " & pMinZoom & ", " & pMaxZoom & "]"
 End Property
 Public Property Let ToString(ByVal RHS As String)
     RHS = Trim(RHS)
@@ -203,11 +361,11 @@ Public Property Let ToString(ByVal RHS As String)
         Orient.Origin.Y = ParseNumerical(RHS)
         Orient.Origin.Z = ParseNumerical(RHS)
 
-        pAngle = ParseNumerical(RHS)
-        pPitch = ParseNumerical(RHS)
-        pRoll = ParseNumerical(RHS)
+        Orient.Rotate.Y = ParseNumerical(RHS)
+        Orient.Rotate.X = ParseNumerical(RHS)
+        Orient.Rotate.Z = ParseNumerical(RHS)
    
-        pZoom = ParseNumerical(RHS)
+        Orient.Offset.Z = ParseNumerical(RHS)
         pMinZoom = ParseNumerical(RHS)
         pMaxZoom = ParseNumerical(RHS)
     End If
@@ -222,17 +380,17 @@ Private Sub Class_Initialize()
 
     pMaxZoom = 10
     pMinZoom = 1
-    pZoom = 5
-    pAngle = 0
-    pPitch = 0
+    Orient.Offset.Z = 5
+    Orient.Rotate.Y = 0
+    Orient.Rotate.X = 0
     
 End Sub
 
 Private Sub Class_Terminate()
 
-    Set pPlayer = Nothing
+'    Set pPlayer = Nothing
     
-    Set pElement = Nothing
+   ' Set pElement = Nothing
 
     vbaObjSet Orient, ObjPtr(Nothing)
     Stats_Camera_Count = Stats_Camera_Count - 1
@@ -284,7 +442,7 @@ Private Property Get Orient_Origin() As Point
 End Property
 
 Private Property Set Orient_Rotate(RHS As Point)
-    Set Orient_Rotate = RHS
+    Set Orient.Rotate = RHS
 End Property
 
 Private Property Get Orient_Rotate() As Point
@@ -301,4 +459,28 @@ End Property
 
 Private Property Get Orient_Serialize() As Boolean
     Orient_Serialize = Orient.Serialize
+End Property
+
+Private Property Set Orient_Direct(RHS As Point)
+    Set Orient.Direct = RHS
+End Property
+
+Private Property Get Orient_Direct() As Point
+    Set Orient_Direct = Orient.Direct
+End Property
+
+Private Property Set Orient_Scalar(RHS As Point)
+    Set Orient.Scalar = RHS
+End Property
+
+Private Property Get Orient_Scalar() As Point
+    Set Orient_Scalar = Orient.Scalar
+End Property
+
+Private Property Set Orient_Twists(RHS As Point)
+    Set Orient.Twists = RHS
+End Property
+
+Private Property Get Orient_Twists() As Point
+    Set Orient_Twists = Orient.Twists
 End Property

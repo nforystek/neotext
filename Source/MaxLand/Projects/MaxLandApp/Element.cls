@@ -66,8 +66,14 @@ Private Matrix As D3DMATRIX
 Private pCentoid As New Point
 Private pDisplace As New Point
 
-Private pPlayer As Player
-Private pCamera As Camera
+
+Friend Sub LateEval()
+    pCentoid.LateEval
+    pDisplace.LateEval
+    'pCentoid.LateEval
+    'pDisplace.LateEval
+    
+End Sub
 
 Public Property Get Origin() As Point
     Set Origin = Orient.Origin
@@ -139,22 +145,6 @@ End Property
 
 Public Property Get Key() As String
     Key = Orient.Key
-End Property
-
-Public Property Get Camera() As Camera
-    Set Camera = pCamera
-End Property
-Public Property Set Camera(ByRef RHS As Camera)
-    Set pCamera = RHS
-    If Not RHS.Element.Value = Me.Value Then Set RHS.Element = Me
-End Property
-
-Public Property Get Player() As Player
-    Set Player = pPlayer
-End Property
-Public Property Set Player(ByRef RHS As Player)
-    Set pPlayer = RHS
-    If Not RHS.Element.Value = Me.Value Then Set RHS.Element = Me
 End Property
 
 Public Property Get Centoid() As Point
@@ -543,31 +533,33 @@ Public Property Let Serialize(ByVal RHS As Boolean)
     pSerialize = RHS
 End Property
 
-Public Property Set Value(ByVal RHS)
-    Dim obj As Object
-    Set obj = ObjectByPtr(RHS)
-    If TypeName(obj) = "Camera" Then
-        Set pCamera = obj
-    ElseIf TypeName(obj) = "Player" Then
-        Set pPlayer = obj
-    End If
-    If obj.Element Is Nothing Then
-        Set RHS.Element = Me
-    ElseIf Not obj.Element.Value = Me.Value Then
-        Set RHS.Element = Me
-    End If
-End Property
-
-Public Property Let Value(ByVal RHS As Long)
-    Value = RHS
-End Property
-
+'Private Sub SetObject(ByRef Obj)
+'    If TypeName(Obj) = "Camera" Then
+'        Set pCamera = Obj
+'    ElseIf TypeName(Obj) = "Player" Then
+'        Set pPlayer = Obj
+'    End If
+'    If Obj.Element Is Nothing Then
+'        Set Obj.Element = Me
+'    ElseIf Not Obj.Element.Value = Me.Value Then
+'        Set Obj.Element = Me
+'    End If
+'End Sub
+'Public Property Set Value(ByVal RHS)
+'    If IsNumeric(RHS) Then
+'        Value = RHS
+'    ElseIf IsObject(RHS) Then
+'        SetObject RHS
+'    End If
+'End Property
+'Public Property Let Value(ByVal RHS As Long)
+'    SetObject ObjectByPtr(RHS)
+'End Property
 Public Property Get Value() As Long
 Attribute Value.VB_UserMemId = 0
-Attribute Value.VB_MemberFlags = "40"
+Attribute Value.VB_MemberFlags = "600"
     Value = ObjPtr(Me)
 End Property
-
 
 
 Public Property Get Gravitational() As Boolean
@@ -661,7 +653,7 @@ Friend Sub PlayerMatrix()
     D3DXMatrixScaling Matrix, Orient.Scaled.X, Orient.Scaled.Y, Orient.Scaled.Z
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
-    D3DXMatrixRotationY Matrix, -modParse.Player.Camera.Angle
+    D3DXMatrixRotationY Matrix, -Orient.Rotate.Y
     D3DXMatrixMultiply matWorld, matWorld, Matrix
     
     D3DXMatrixTranslation Matrix, Orient.Origin.X, Orient.Origin.Y, Orient.Origin.Z
@@ -748,9 +740,7 @@ Private Sub Class_Terminate()
         ClearMotions
         Set pMotions = Nothing
     End If
-    
-    Set pPlayer = Nothing
-    Set pCamera = Nothing
+
     
 
     vbaObjSet Orient, ObjPtr(Nothing)
@@ -802,7 +792,7 @@ Private Property Get Orient_Origin() As Point
 End Property
 
 Private Property Set Orient_Rotate(RHS As Point)
-    Set Orient_Rotate = RHS
+    Set Orient.Rotate = RHS
 End Property
 
 Private Property Get Orient_Rotate() As Point
@@ -819,4 +809,28 @@ End Property
 
 Private Property Get Orient_Serialize() As Boolean
     Orient_Serialize = Orient.Serialize
+End Property
+
+Private Property Set Orient_Direct(RHS As Point)
+    Set Orient.Direct = RHS
+End Property
+
+Private Property Get Orient_Direct() As Point
+    Set Orient_Direct = Orient.Direct
+End Property
+
+Private Property Set Orient_Scalar(RHS As Point)
+    Set Orient.Scalar = RHS
+End Property
+
+Private Property Get Orient_Scalar() As Point
+    Set Orient_Scalar = Orient.Scalar
+End Property
+
+Private Property Set Orient_Twists(RHS As Point)
+    Set Orient.Twists = RHS
+End Property
+
+Private Property Get Orient_Twists() As Point
+    Set Orient_Twists = Orient.Twists
 End Property

@@ -13,7 +13,7 @@
 '}
 
 space {
-	.fogcolor=[1, 1.385, 1.275, 1.133]
+	.fogcolor="1, 1.385, 1.275, 1.133"
 	.skytop="sky_top.bmp"
 	.skyleft="sky_left.bmp"
 	.skyright="sky_right.bmp"
@@ -28,13 +28,25 @@ space {
 
 bindings {
 
-
-	E=[]
-	D=[]
-	W=[]
-	R=[]
+	'keyboard player
+	E=[Player.MoveForward]
+	D=[Player.MoveBackward]
+	W=[Player.SlideLeft]
+	R=[Player.SlideRight]
 	S=[]
 	F=[]
+
+	TAB=[Player.ChangePerspective]
+
+	'mosue movements
+	UP=[]
+	DOWN=[]
+	LEFT=[]
+	RIGHT=[]
+
+	'mouse wheel zoom
+	PGDN=[]
+	PGUP=[]
 
 	ESCAPE=[
                 If ((Not FullScreen) Or ConsoleVisible) And MouseTrapped Then
@@ -48,29 +60,7 @@ bindings {
 	.serialize=true
 }
 
-
-player
-{
-	
-	'.speed=0.01
-	'.friction=0.05
- 
-	'.camera.angle=1.5705
-	'.camera.pitch=-0.177
-
-	
-	'.element.visible=true
-	'.element.origin=[3, 0, 0]
-	'.element.scaled=[.50, .50, .50]
-	'.element.rotate=[0, 0, 0]
-	'.element.boundsmodel="bounds-player.x"
-	'.element.visualmodel="visual-player.x"
-	'.element.gravitational=true
-
-
-}
-
-element <player1>
+element <playerElement>
 {	
 	.visible=true
 	.origin=[3, 0, 0]
@@ -80,7 +70,29 @@ element <player1>
 	.visualmodel="visual-player.x"
 	.gravitational=true
 }
-Set Player = player1
+
+
+camera <playerCamera>
+{
+	.rotate.y=1.5705
+	.rotate.x=-0.177
+	.element = playerElement
+}
+
+player
+{
+	
+	.speed=0.01
+	.friction=0.05 
+	.camera = playerCamera
+
+}
+
+
+'set playerCamera = playerElement
+'Player = playerCamera
+
+
 
 'element <pawn7>
 '{
@@ -96,19 +108,19 @@ Set Player = player1
 '}
 
 
-board <mirror> {
-
-	.visible=true
-	.mirror = true
-	.point3 = [-1,1,0]
-	.point4 = [0,1,0]
-	.point1 = [0,0,0] 
-	.point2 = [-1,0,0]
-
-	.scalex=1
-	.scaley=1
-	.filename = "pawn.bmp"
-}
+'board <mirror> {
+'
+'	.visible=true
+'	.mirror = true
+'	.point3 = [-1,1,0]
+'	.point4 = [0,1,0]
+'	.point1 = [0,0,0] 
+'	.point2 = [-1,0,0]
+'
+'	.scalex=1
+'	.scaley=1
+'	.filename = "pawn.bmp"
+'}
 
 
 variable <tempswap1>=0
@@ -1997,8 +2009,8 @@ method <checkgame>
 			'player.element.origin.x=-45.898
 			'player.element.origin.y=8.533
 			'player.element.origin.z=19.434
-			'player.camera.angle=-0.57
-			'player.camera.pitch=1.327
+			'player.camera.rotate.y=-0.57
+			'player.camera.rotate.x=1.327
 			
 			
 			'Console "level level2"
@@ -2030,273 +2042,273 @@ method <checkwater>
 
 camera {
 	.origin=[-3.727864, -1.898001, -9.150569]
-	.angle=-0.1676403
-	.pitch=0.6270023
+	.rotate.y=-0.1676403
+	.rotate.x=0.6270023
 }
 camera {
 	 .origin=[12.0312, 0.3746421, -16.27538]
-	.angle= 0.7398628
-	.pitch= -0.2309998
+	.rotate.y= 0.7398628
+	.rotate.x= -0.2309998
 }
 camera {
 	 .origin=[12.66191, 3.880524, -1.726307]
-	.angle= 1.165866
-	.pitch= -0.6870028
+	.rotate.y= 1.165866
+	.rotate.x= -0.6870028
 }
 camera {
 	 .origin=[7.635109, 3.963608, 13.86588]
-	.angle= 2.677823
-	.pitch= -0.3405004
+	.rotate.y= 2.677823
+	.rotate.x= -0.3405004
 }
 camera {
 	 .origin=[8.811858, 5.095017, 26.77451]
-	.angle= 2.307349
-	.pitch= -0.5445018
+	.rotate.y= 2.307349
+	.rotate.x= -0.5445018
 }
 camera {
 	 .origin=[-11.70464, 5.795365, 26.13777]
-	.angle=3.639253
-	.pitch= -0.579002
+	.rotate.y=3.639253
+	.rotate.x= -0.579002
 }
 camera {
 	 .origin=[-21.25207, 3.008778, 0.8571591]
-	.angle= 4.581277
-	.pitch= -0.2444997
+	.rotate.y= 4.581277
+	.rotate.x= -0.2444997
 }
 camera {
 	 .origin=[-13.42644, 0.1182264, -16.00976]
-	.angle= 5.533859
-	.pitch= -0.3450004
+	.rotate.y= 5.533859
+	.rotate.x= -0.3450004
 }
 camera {
 	 .origin=[-11.41585, -1.342565, 10.99494]
-	.angle=-2.57473
-	.pitch= -5.849997E-02
+	.rotate.y=-2.57473
+	.rotate.x= -5.849997E-02
 }
 camera {
 	 .origin=[7.35132, -4.311385, 9.697162]
-	.angle= -4.62368
-	.pitch= 0.1395001
+	.rotate.y= -4.62368
+	.rotate.x= 0.1395001
 }
 camera {
 	 .origin=[2.563711, -3.444107, -0.9724076]
-	.angle= -8.175938E-02
-	.pitch= -9.150002E-02
+	.rotate.y= -8.175938E-02
+	.rotate.x= -9.150002E-02
 }
 camera {
 	 .origin=[8.885255, -4.645283, 10.69647]
-	.angle= 2.787695
-	.pitch= -0.4020008
+	.rotate.y= 2.787695
+	.rotate.x= -0.4020008
 }
 camera {
 	 .origin=[9.491446, -3.289573, 26.55566]
-	.angle= 2.691702
-	.pitch= -3.000008E-03
+	.rotate.y= 2.691702
+	.rotate.x= -3.000008E-03
 }
 camera {
 	 .origin=[-11.18301, -2.467458, 26.54332]
-	.angle= 3.891615
-	.pitch= -8.100003E-02
+	.rotate.y= 3.891615
+	.rotate.x= -8.100003E-02
 }
 camera {
 	 .origin=[1.347265, -0.4101134, 14.63133]
-	.angle= -1.047384
-	.pitch= -7.050001E-02
+	.rotate.y= -1.047384
+	.rotate.x= -7.050001E-02
 }
 camera {
 	 .origin=[8.872601, 4.654193, 32.65849]
-	.angle= 1.798132
-	.pitch= 1.500022E-03
+	.rotate.y= 1.798132
+	.rotate.x= 1.500022E-03
 }
 camera {
 	 .origin=[-35.72995, 7.197384, 26.80061]
-	.angle= 5.195591
-	.pitch= -0.3420004
+	.rotate.y= 5.195591
+	.rotate.x= -0.3420004
 }
 camera {
 	 .origin=[-42.38638, 5.657622, 40.02435]
-	.angle= 3.338536
-	.pitch= -0.3015001
+	.rotate.y= 3.338536
+	.rotate.x= -0.3015001
 }
 camera {
 	 .origin=[-43.2525, 19.13707, 0.5642707]
-	.angle=-0.3659959
-	.pitch= -1.170006
+	.rotate.y=-0.3659959
+	.rotate.x= -1.170006
 }
 camera {
 	 .origin=[-22.24286, 1.205498, -17.90334]
-	.angle= -0.2999954
-	.pitch= -0.3405004
+	.rotate.y= -0.2999954
+	.rotate.x= -0.3405004
 }
 camera {
 	 .origin=[9.038647, -1.4838, 4.549771]
-	.angle=0.6795074
-	.pitch= -0.1200001
+	.rotate.y=0.6795074
+	.rotate.x= -0.1200001
 }
 camera {
 	 .origin=[3.725664, -1.57322, -3.458859]
-	.angle= 0.763508
-	.pitch= -0.1485
+	.rotate.y= 0.763508
+	.rotate.x= -0.1485
 }
 camera {
 	 .origin=[4.449638E-02, -1.73281, -2.476685]
-	.angle= 3.75589
-	.pitch= -0.1725084
+	.rotate.y= 3.75589
+	.rotate.x= -0.1725084
 }
 camera {
 	 .origin=[-0.4845495, -1.808818, 4.309614]
-	.angle= 5.408994
-	.pitch= -5.700846E-02
+	.rotate.y= 5.408994
+	.rotate.x= -5.700846E-02
 }
 camera {
 	 .origin=[10.81721, -1.965197, 12.64573]
-	.angle= 1.564895
-	.pitch= 4.491522E-03
+	.rotate.y= 1.564895
+	.rotate.x= 4.491522E-03
 }
 camera {
 	 .origin=[6.380943, -1.962754, 12.96667]
-	.angle= -0.5321161
-	.pitch= -1.650848E-02
+	.rotate.y= -0.5321161
+	.rotate.x= -1.650848E-02
 }
 camera {
 	 .origin=[0.3841579, -1.63054, 12.77046]
-	.angle= -1.552504
-	.pitch= -0.1005085
+	.rotate.y= -1.552504
+	.rotate.x= -0.1005085
 }
 camera {
 	 .origin=[5.590574, -1.792194, 13.03555]
-	.angle= 0.7380075
-	.pitch= -6.600846E-02
+	.rotate.y= 0.7380075
+	.rotate.x= -6.600846E-02
 }
 camera {
 	 .origin=[8.27344, -2.008877, -12.83777]
-	.angle= 0.753363
-	.pitch= 0.859504
+	.rotate.y= 0.753363
+	.rotate.x= 0.859504
 }
 camera {
 	 .origin=[16.2699, 7.673531, 4.378298]
-	.angle= 2.238354
-	.pitch= -0.724503
+	.rotate.y= 2.238354
+	.rotate.x= -0.724503
 }
 camera {
 	 .origin=[13.1102, 3.755364, -16.11969]
-	.angle= 0.771363
-	.pitch= -0.5385017
+	.rotate.y= 0.771363
+	.rotate.x= -0.5385017
 }
 camera {
 	 .origin=[-0.2318533, 4.372891, -17.25176]
-	.angle= 4.235967E-02
-	.pitch= -0.8340038
+	.rotate.y= 4.235967E-02
+	.rotate.x= -0.8340038
 }
 camera {
 	 .origin=[-13.91476, 0.7565122, -16.54501]
-	.angle= -0.7331434
-	.pitch= -0.2865
+	.rotate.y= -0.7331434
+	.rotate.x= -0.2865
 }
 camera {
 	 .origin=[-15.92659, 3.598749, -8.618135]
-	.angle= -0.8201441
-	.pitch= -0.4425011
+	.rotate.y= -0.8201441
+	.rotate.x= -0.4425011
 }
 camera {
 	 .origin=[6.127727, 3.15189, 1.362179]
-	.angle= 1.79587
-	.pitch= -0.5910021
+	.rotate.y= 1.79587
+	.rotate.x= -0.5910021
 }
 camera {
 	 .origin=[-3.938129, 2.784335, 3.003888]
-	.angle= 5.43185
-	.pitch= -0.3225002
+	.rotate.y= 5.43185
+	.rotate.x= -0.3225002
 }
 camera {
 	 .origin=[7.759987, 8.319905, 9.516278]
-	.angle= 0.3982463
-	.pitch= -0.6675026
+	.rotate.y= 0.3982463
+	.rotate.x= -0.6675026
 }
 camera {
 	 .origin=[-2.934893, 7.815292, 28.24745]
-	.angle= 3.327661
-	.pitch= -0.7605033
+	.rotate.y= 3.327661
+	.rotate.x= -0.7605033
 }
 camera {
 	 .origin=[-0.2229092, 5.454669, 21.72459]
-	.angle= 2.012257
-	.pitch= -0.5580019
+	.rotate.y= 2.012257
+	.rotate.x= -0.5580019
 }
 camera {
 	 .origin=[-17.60918, 2.236566, 17.57527]
-	.angle= -0.5557562
-	.pitch= -1.949999E-02
+	.rotate.y= -0.5557562
+	.rotate.x= -1.949999E-02
 }
 camera {
 	 .origin=[-43.16224, 5.314007, 36.67743]
-	.angle= -2.111258
-	.pitch= -0.2309998
+	.rotate.y= -2.111258
+	.rotate.x= -0.2309998
 }
 camera {
 	 .origin=[-56.05182, 3.89929, 5.806763]
-	.angle= -0.813758
-	.pitch= -0.3435004
+	.rotate.y= -0.813758
+	.rotate.x= -0.3435004
 }
 camera {
 	 .origin=[-56.05424, 3.893992, 5.814156]
-	.angle= -1.895266
-	.pitch= -0.3705006
+	.rotate.y= -1.895266
+	.rotate.x= -0.3705006
 }
 camera {
 	 .origin=[-11.47059, -1.452489, 10.06566]
-	.angle= -2.661718
-	.pitch= -0.1140001
+	.rotate.y= -2.661718
+	.rotate.x= -0.1140001
 }
 camera {
 	 .origin=[9.183407, -1.314229, 6.8363]
-	.angle= -3.911128
-	.pitch= -0.1545
+	.rotate.y= -3.911128
+	.rotate.x= -0.1545
 }
 camera {
 	 .origin=[-0.4497865, -1.297364, -1.99974]
-	.angle= -2.385739
-	.pitch= -0.1515
+	.rotate.y= -2.385739
+	.rotate.x= -0.1515
 }
 camera {
 	 .origin=[3.398274, -3.677293, 6.380284]
-	.angle= -3.222678
-	.pitch= -7.349999E-02
+	.rotate.y= -3.222678
+	.rotate.x= -7.349999E-02
 }
 camera {
 	 .origin=[5.75411, -3.304948, 10.20695]
-	.angle= -4.502165
-	.pitch= -0.162
+	.rotate.y= -4.502165
+	.rotate.x= -0.162
 }
 camera {
 	 .origin=[8.602193, -6.086119, 4.52833]
-	.angle= 0.4417465
-	.pitch= 9.900007E-02
+	.rotate.y= 0.4417465
+	.rotate.x= 9.900007E-02
 }
 camera {
 	 .origin=[8.83449, -3.382539, 26.92801]
-	.angle= -3.218178
-	.pitch= 4.500022E-03
+	.rotate.y= -3.218178
+	.rotate.x= 4.500022E-03
 }
 camera {
 	 .origin=[-12.26256, -1.799615, 26.96855]
-	.angle= -2.037764
-	.pitch= -0.1635
+	.rotate.y= -2.037764
+	.rotate.x= -0.1635
 }
 camera {
 	 .origin=[-7.671865, -1.305757, 16.55041]
-	.angle= 0.2047453
-	.pitch= -0.429001
+	.rotate.y= 0.2047453
+	.rotate.x= -0.429001
 }
 camera {
 	 .origin=[1.866523, -0.2760385, 15.58411]
-	.angle= -1.10026
-	.pitch= -0.1814999
+	.rotate.y= -1.10026
+	.rotate.x= -0.1814999
 }
 camera {
 	 .origin=[8.999644, -3.371893, 26.33484]
-	.angle= -3.081688
-	.pitch= 0.1335086
+	.rotate.y= -3.081688
+	.rotate.x= 0.1335086
 }
 
 variable <idletext>="Puzzle objective: To change the words Earth, Wind, Water and Fire from the color white to turquoise."
@@ -2311,8 +2323,8 @@ variable <data>=9
 
 
 	'Player.element.Origin
-	'Player.camera.Angle
-	'Player.camera.Pitch
+	'Player.camera.rotate.y
+	'Player.camera.rotate.x
 	'Player.camera.Zoom
 
 serialize [

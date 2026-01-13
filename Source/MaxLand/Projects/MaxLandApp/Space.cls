@@ -101,6 +101,12 @@ Private SkyPlaq() As MyVertex
 Private SkySkin() As Direct3DTexture8
 Private SkyVBuf As Direct3DVertexBuffer8
 
+
+Friend Sub LateEval()
+    pOrigin.LateEval
+    
+End Sub
+
 Public Property Get Translucent() As Boolean
     Translucent = pTranslucent
 End Property
@@ -152,8 +158,8 @@ End Function
 
 Friend Sub RenderSpace()
 
-    If Not modParse.Player.Element Is Nothing Then
-        If InSpace(modParse.Player.Element.Origin) Then
+    If Not Camera.Element Is Nothing Then
+        If InSpace(Camera.Element.Origin) Then
     
             Dim matWorld As D3DMATRIX
             D3DXMatrixIdentity matWorld

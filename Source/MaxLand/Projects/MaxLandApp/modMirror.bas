@@ -7,7 +7,7 @@ Private Mirrors As NTNodes10.Collection
 
 Public Sub BeginMirrors()
 
-    If modParse.Player.Element Is Nothing Then Exit Sub
+    If Camera.Element Is Nothing Then Exit Sub
 
     Dim e As Board
     Dim i As Long
@@ -25,10 +25,10 @@ Public Sub BeginMirrors()
         For i = 1 To Boards.Count
             Set e = Boards(i)
 
-            If e.Visible And e.Mirror And PointSideOfPlane(e.Point1, e.Point2, e.Point3, modParse.Player.Element.Origin) Then
+            If e.Visible And e.Mirror And PointSideOfPlane(e.Point1, e.Point2, e.Point3, Camera.Element.Origin) Then
 
 
-                L = Distance(modParse.Player.Element.Origin.X, modParse.Player.Element.Origin.Y, modParse.Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+                L = Distance(Camera.Element.Origin.X, Camera.Element.Origin.Y, Camera.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
                 If L <= FAR Then
 
                     If Mirrors Is Nothing Then Set Mirrors = New NTNodes10.Collection
@@ -152,7 +152,7 @@ Public Sub RenderMirrors()
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
-    If modParse.Player.Element Is Nothing Then Exit Sub
+    If Camera.Element Is Nothing Then Exit Sub
     
     Dim e As Board
     Dim i As Long
@@ -165,7 +165,7 @@ Public Sub RenderMirrors()
     
                 If e.Visible And e.Mirror Then
                 
-                    L = Distance(modParse.Player.Element.Origin.X, modParse.Player.Element.Origin.Y, modParse.Player.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
+                    L = Distance(Camera.Element.Origin.X, Camera.Element.Origin.Y, Camera.Element.Origin.Z, e.Origin.X, e.Origin.Y, e.Origin.Z)
                     If L <= FAR Then
     
                         If Mirrors.Exists(Boards.Key(i)) Then
@@ -192,7 +192,7 @@ End Sub
 Public Sub SetupMirror(ByRef Mirror As Board)
 On Error GoTo WorldError
 
-    If modParse.Player.Element Is Nothing Then Exit Sub
+    If Camera.Element Is Nothing Then Exit Sub
 
 '    Dim matView As D3DMATRIX
     Dim matProj As D3DMATRIX
@@ -221,7 +221,7 @@ On Error GoTo WorldError
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
     Dim vec As Point
-    Set vec = VectorDeduction(modParse.Player.Element.Origin, Mirror.Origin)
+    Set vec = VectorDeduction(Camera.Element.Origin, Mirror.Origin)
 
     Dim norm As Point
     Set norm = PlaneNormal(Mirror.Point1, Mirror.Point2, Mirror.Point3)
@@ -231,7 +231,7 @@ On Error GoTo WorldError
 
     Angle = AngleOfPlot(-norm.X, -norm.Z)
 
-    Pitch = Mirror.Origin.Y - modParse.Player.Element.Origin.Y
+    Pitch = Mirror.Origin.Y - Camera.Element.Origin.Y
 
    ' Set norm = VertexNormalize(modGeometry.VectorCrossProduct(norm, vec))
 

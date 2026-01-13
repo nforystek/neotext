@@ -27,6 +27,10 @@ Private pCoordinate As Plot
 Private pDimensions As ImageDimensions
 
 Private pPadding As Long
+'
+'Friend Sub LateEval()
+'
+'End Sub
 
 Friend Sub Render()
     DDevice.SetTexture 0, pImage

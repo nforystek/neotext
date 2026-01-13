@@ -29,6 +29,14 @@ Private pDropsMotions As Boolean
 Private pKey As String
 Private pSerialize As Boolean
 
+Friend Sub LateEval()
+    pLocation.LateEval
+    pTeleport.LateEval
+    pOnInRange.LateEval
+    pOnOutRange.LateEval
+    
+End Sub
+
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property

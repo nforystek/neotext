@@ -31,6 +31,7 @@ Public Bindings As Bindings
 
 Public Player As Player
 Public Camera As Camera
+Public Mouse As Mouse
 
 
 Public Frame As Boolean
@@ -126,13 +127,13 @@ Public Function ParseReservedWord(ByVal inLine As String, Optional ByVal inObj A
         'objects whose tags repeat newly in creating, or special use case scenario functions
         
         Case "deserialize", "frame", "millis", "onidle", "second", "serialize", _
-            "beacon", "board", "element", "light", "motion", "portal", "screen", "sound", "space", "track"
+            "beacon", "board", "element", "light", "motion", "portal", "screen", "sound", "space", "track", "camera"
 
             ParseReservedWord = 3
             
         '#######################################################################################
         'objects that are not to be new or multiple objects, they're singular already existing
-        Case "bindings", "include", "player", "camera"
+        Case "bindings", "include", "player", "mouse"
             ParseReservedWord = -3
         Case Else
             ParseReservedWord = IIf(GetBindingIndex(inWord) > -1, 2, 0)
@@ -155,17 +156,26 @@ End Function
 Public Function ParseWhiteSpace(ByVal inBlock As String) As String
     'similar to trimstrip for tab, space, and crlf, and sequence repeating
     'white-spaces at the bginning or end are removed from the result return
+'    Static stack As Boolean
+'    If Not stack Then
+'        stack = True
+'        inBlock = StrReverse(inBlock)
+'        inBlock = ParseWhiteSpace(inBlock)
+'        inBlock = StrReverse(inBlock)
+'        stack = False
+'    End If
+'    Do While Left(inBlock, 1) = " " Or Left(inBlock, 1) = vbTab Or Left(inBlock, 1) = vbCr Or Left(inBlock, 1) = vbLf
+'        inBlock = Mid(inBlock, 2)
+'    Loop
+
     Static stack As Boolean
-    If Not stack Then
-        stack = True
-        inBlock = StrReverse(inBlock)
-        inBlock = ParseWhiteSpace(inBlock)
-        inBlock = StrReverse(inBlock)
-        stack = False
-    End If
     Do While Left(inBlock, 1) = " " Or Left(inBlock, 1) = vbTab Or Left(inBlock, 1) = vbCr Or Left(inBlock, 1) = vbLf
         inBlock = Mid(inBlock, 2)
     Loop
+    Do While Right(inBlock, 1) = " " Or Right(inBlock, 1) = vbTab Or Right(inBlock, 1) = vbCr Or Right(inBlock, 1) = vbLf
+        inBlock = Left(inBlock, Len(inBlock) - 1)
+    Loop
+    
     ParseWhiteSpace = inBlock
 End Function
 Private Function ParseInWith(ByVal inLine As String, Optional ByVal inWith As String = "") As String
@@ -359,7 +369,7 @@ Private Sub ParseSetting(ByVal inLine As String, ByVal inValue As String, ByVal 
         inLine = inName
     End If
     inValue = ParseWhiteSpace(inValue)
-    If ((Left(inValue, 1) = "[") And (Right(inValue, 1) = "]")) Then
+    If ((Left(inValue, 1) = "[") And (Right(inValue, 1) = "]")) Or ((Left(inValue, 1) = "{") And (Right(inValue, 1) = "}")) Then
         LastCall = ParseInWith(inLine, inWith) & "=""" & Replace(Replace(inValue, """", """"""), vbCrLf, """ & vbcrlf & """) & """"
         If inName <> "" Then frmMain.AddCode "Dim " & inName & vbCrLf
         frmMain.ExecuteStatement LastCall, , LineNum
@@ -603,14 +613,20 @@ Private Function ParseObject(ByVal inLine As String, ByVal inBlock As String, By
              inBlock & vbCrLf & "End Sub" & vbCrLf, LineNum
              
     ElseIf ParseReservedWord(inObj) = 3 Then
-        Dim Temporary As Object
-        inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
-        Set Temporary = NewObject(inObj)
-
-        ParseSetupObject Temporary, inObj, inName, inWith, (LineNum - CountWord(inLine, vbCrLf))
+'        Dim Temporary As Object
+'        inObj = Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2)))
+'        Set Temporary = NewObject(inObj)
+'        ParseSetupObject Temporary, inObj, inName, inWith, (LineNum - CountWord(inLine, vbCrLf))
+        
+        ParseSetupObject inObj, inName, inWith, (LineNum - CountWord(inLine, vbCrLf))
+        
+        
         ParseScript inBlock, IIf(inWith <> "", inWith & ".", "") & inObj & "s(""" & inName & """)", LineNum
 
+       ' Debug.Print "ParseObject " & inName
     End If
+
+    
 scripterror:
     If Err.Number <> 0 Then
         Dim Num As Long
@@ -626,14 +642,31 @@ scripterror:
     End If
 End Function
 
-Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Optional ByRef inName As String = "", Optional ByVal inWith As String = "", Optional ByVal LineNum As Long = 0)
+Public Sub ParseSetupObject(ByVal inObj As String, Optional ByRef inName As String = "", Optional ByVal inWith As String = "", Optional ByVal LineNum As Long = 0)
     On Error GoTo scripterror:
+
+    Dim Temporary As Object
+'    If Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2))) = "Camera" Then
+'        Stop
+'    End If
     
-    If inName = "" Then inName = Temporary.Key
-    If Not All.Exists(inName) Then
+        
+   ' If inName = "" Then inName = Temporary.Key
+    If inName <> "" Then
+        If Not All.Exists(inName) Then
+            Set Temporary = NewObject(Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2))))
+            If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf, , LineNum
+            All.Add Temporary, inName
+        Else
+            Set Temporary = All(inName)
+        End If
+    Else
+        Set Temporary = NewObject(Trim(UCase(Left(inObj, 1)) & LCase(Mid(inObj, 2))))
+        inName = Temporary.Key
         If inWith = "" Then frmMain.AddCode "Dim " & inName & vbCrLf, , LineNum
         All.Add Temporary, inName
     End If
+    
     
     If inWith = "" Then
         frmMain.ExecuteStatement "Set " & inName & " =  All(""" & inName & """)", , LineNum
@@ -650,7 +683,8 @@ Public Sub ParseSetupObject(ByRef Temporary As Object, ByVal inObj As String, Op
 
     frmMain.ExecuteStatement IIf(inWith <> "", inWith & ".", "") & inObj & IIf(Right(inObj, 1) <> "s", "s", "") & ".Add All(""" & inName & """), """ & inName & """", , LineNum
     frmMain.ExecuteStatement "All(""" & inName & """).Key = """ & inName & """", , (LineNum - CountWord(inObj, vbCrLf))
-    
+        
+'    Temporary.LateEval
     Temporary.Key = inName
         
     
@@ -711,6 +745,12 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
     On Error GoTo parseerror
     On Local Error GoTo parseerror
     Static serialLevel As Integer
+    Dim elapsed As Single
+    If serialLevel = 0 Then
+        elapsed = Timer
+    
+    End If
+    
     Dim deSer As String
     Dim atLine As Long
     
@@ -779,7 +819,6 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
                         inBlock = ParseBracketOff(inBlock, "{", "}")
                         inName = ParseName(inLine)
                         inType = ParseType(inLine)
-    
                         ParseScript inBlock, inType, atLine
                     End If
                 ElseIf Abs(reserve) > 2 Then
@@ -825,6 +864,8 @@ Public Function ParseScript(ByVal inText As String, Optional ByVal inWith As Str
         If Not NoDeserialize Then
             frmMain.Run "Deserialize" 'now run the deserialzation generated at the beginning
         End If
+        
+        Debug.Print "Elapsed: " & (Timer - elapsed)
         
     End If
     Exit Function

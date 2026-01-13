@@ -34,6 +34,11 @@ Private pSerialize As Boolean
 
 Private pCount As Long
 
+Friend Sub LateEval()
+    pOrigin.LateEval
+    
+End Sub
+
 Public Property Get Count() As Long
 Count = pCount
 End Property

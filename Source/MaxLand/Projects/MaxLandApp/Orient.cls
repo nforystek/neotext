@@ -26,6 +26,15 @@ Private pKey As String
 Private pAttachments As NTNodes10.Collection
 Private pAttachedTo As String
 
+
+Friend Sub LateEval()
+    pOrigin.LateEval
+    pOffset.LateEval
+    pScaled.LateEval
+    pOrigin.LateEval
+    
+End Sub
+
 Public Property Get Origin() As Point
     Set Origin = pOrigin
 End Property
@@ -55,24 +64,24 @@ Public Property Set Rotate(ByRef RHS As Point)
 End Property
 
 
-Friend Property Get Direct() As Point
+Public Property Get Direct() As Point
     Set Direct = pDirect
 End Property
-Friend Property Set Direct(ByRef RHS As Point)
+Public Property Set Direct(ByRef RHS As Point)
     Set pDirect = RHS
 End Property
 
-Friend Property Get Twists() As Point
+Public Property Get Twists() As Point
     Set Twists = pTwists
 End Property
-Friend Property Set Twists(ByRef RHS As Point)
+Public Property Set Twists(ByRef RHS As Point)
     Set pTwists = RHS
 End Property
 
-Friend Property Get Scalar() As Point
+Public Property Get Scalar() As Point
     Set Scalar = pScalar
 End Property
-Friend Property Set Scalar(ByRef RHS As Point)
+Public Property Set Scalar(ByRef RHS As Point)
     Set pScalar = RHS
 End Property
 
@@ -88,7 +97,7 @@ Public Property Get Key() As String
 End Property
 Public Property Let Key(ByVal RHS As String)
     If RHS <> "" Then
-        If ParseReservedWord(RHS) <> 0 Then
+        If ParseReservedWord(RHS) > 0 Then
             Err.Raise 457, App.Title, "This key is already associated with an element of this collection, or a global declaration restriction."
         Else
             If pKey <> RHS And pKey <> "" Then If All.Exists(pKey) Then All.Remove pKey

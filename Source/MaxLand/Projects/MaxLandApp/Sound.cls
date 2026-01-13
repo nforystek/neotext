@@ -23,6 +23,12 @@ Private pSerialize As Boolean
 Private pRange As Single
 Private pFileName As String
 
+
+Friend Sub LateEval()
+    pOrigin.LateEval
+    
+End Sub
+
 Public Property Get Serialize() As Boolean
     Serialize = True
 End Property

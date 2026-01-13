@@ -26,6 +26,10 @@ Private binds(0 To 255) As OnEvent
 Private pMouseInput As MouseControl
 Private pSerialize As Boolean
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get MouseInput() As MouseControl
     MouseInput = pMouseInput
 End Property

@@ -17,6 +17,10 @@ Implements Plot
 
 Private pZ As Single
 
+Friend Sub LateEval()
+
+End Sub
+
 Public Property Get Serialize() As Boolean
 Attribute Serialize.VB_MemberFlags = "40"
     Serialize = True
@@ -65,7 +69,15 @@ Public Property Let ToString(ByVal RHS As String)
             Plot.Y = frmMain.Evaluate(ParseNumerical(RHS))
             pZ = frmMain.Evaluate(ParseNumerical(RHS))
         End If
-    Else
+    ElseIf Left(RHS, 1) = "{" And Right(RHS, 1) = "}" Then
+        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
+        If CountWord(RHS, ",") = 3 Then
+            Plot.X = frmMain.Evaluate(ParseNumerical(RHS))
+            Plot.Y = frmMain.Evaluate(ParseNumerical(RHS))
+            pZ = frmMain.Evaluate(ParseNumerical(RHS))
+        End If
+    ElseIf Left(RHS, 1) = """" And Right(RHS, 1) = """" Then
+    Else 'If Left(RHS, 1) = """" And Right(RHS, 1) = """" Then
         If CountWord(RHS, ",") = 2 Then RHS = RHS & ","
         If CountWord(RHS, ",") = 3 Then
             Plot.X = ParseNumerical(RHS)

@@ -396,11 +396,11 @@ End Function
 
 Function FloatToDWord(F As Single) As Long
     Dim buf As D3DXBuffer
-    Dim l As Long
+    Dim L As Long
     Set buf = D3DX.CreateBuffer(4)
     D3DX.BufferSetData buf, 0, 4, 1, F
-    D3DX.BufferGetData buf, 0, 4, 1, l
-    FloatToDWord = l
+    D3DX.BufferGetData buf, 0, 4, 1, L
+    FloatToDWord = L
 End Function
 
 Public Function GetUserLoginName() As String
@@ -531,20 +531,20 @@ Public Function RemoveQuotedArg(ByRef TheParams As String, Optional ByVal BeginQ
                 TheParams = Left(TheParams, X - 1) & Mid(retVal, InStr(1, retVal, EndQuote, Compare) + Len(EndQuote))
                 retVal = Left(retVal, InStr(1, retVal, EndQuote, Compare) - 1)
             Else
-                Dim l As Long
+                Dim L As Long
                 Dim Y As Long
-                l = 1
+                L = 1
                 Y = X
-                Do Until l = 0
+                Do Until L = 0
                     If (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) > 0) And (InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare) < InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare)) Then
-                        l = l + 1
+                        L = L + 1
                         Y = InStr(Y + Len(BeginQuote), TheParams, BeginQuote, Compare)
                     ElseIf (InStr(Y + Len(BeginQuote), TheParams, EndQuote, Compare) > 0) Then
-                        l = l - 1
+                        L = L - 1
                         Y = InStr(Y + Len(EndQuote), TheParams, EndQuote, Compare)
                     Else
                         Y = Len(TheParams)
-                        l = 0
+                        L = 0
                     End If
                 Loop
                 retVal = Mid(TheParams, X + Len(BeginQuote))
@@ -962,12 +962,12 @@ Public Function ConvertVertexToVector(ByRef V As D3DVERTEX) As D3DVECTOR
 End Function
 
 Public Function VectorNormalize(ByRef V As D3DVECTOR) As D3DVECTOR
-    Dim l As Single
-    l = Sqr(V.X * V.X + V.Y * V.Y + V.Z * V.Z)
-    If l = 0 Then l = 1
-    VectorNormalize.X = (V.X / l)
-    VectorNormalize.Y = (V.Y / l)
-    VectorNormalize.Z = (V.Z / l)
+    Dim L As Single
+    L = Sqr(V.X * V.X + V.Y * V.Y + V.Z * V.Z)
+    If L = 0 Then L = 1
+    VectorNormalize.X = (V.X / L)
+    VectorNormalize.Y = (V.Y / L)
+    VectorNormalize.Z = (V.Z / L)
 End Function
 
 Public Function VectorDotProduct(ByRef V As D3DVECTOR, ByRef U As D3DVECTOR) As Single
@@ -1021,13 +1021,13 @@ Public Function TriangleNormal(p0 As D3DVECTOR, p1 As D3DVECTOR, p2 As D3DVECTOR
 
 End Function
 
-Public Function TriangleCenter(ByRef V0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR) As D3DVECTOR
+Public Function TriangleCenter(ByRef V0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR) As D3DVECTOR
 
     Dim vR As D3DVECTOR
  
-    vR.X = (V0.X + v1.X + v2.X) / 3
-    vR.Y = (V0.Y + v1.Y + v2.Y) / 3
-    vR.Z = (V0.Z + v1.Z + v2.Z) / 3
+    vR.X = (V0.X + V1.X + V2.X) / 3
+    vR.Y = (V0.Y + V1.Y + V2.Y) / 3
+    vR.Z = (V0.Z + V1.Z + V2.Z) / 3
     
     TriangleCenter = vR
 
@@ -1084,11 +1084,11 @@ End Function
 '    Data(Index + 5).nx = vn.X: Data(Index + 5).ny = vn.Y: Data(Index + 5).nz = vn.Z
 '
 'End Sub
-Private Sub SwapVec3(ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR)
-    Dim v3 As D3DVECTOR
-    v3 = v1
-    v1 = v2
-    v2 = v3
+Private Sub SwapVec3(ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR)
+    Dim V3 As D3DVECTOR
+    V3 = V1
+    V1 = V2
+    V2 = V3
     End Sub
 Public Sub CreateSquare(ByRef Data() As MyVertex, ByVal Index As Long, ByRef p1 As D3DVECTOR, ByRef p2 As D3DVECTOR, ByRef p3 As D3DVECTOR, ByRef p4 As D3DVECTOR, Optional ByVal ScaleX As Single = 1, Optional ByVal ScaleY As Single = 1)
 
@@ -1242,10 +1242,10 @@ Public Function NoPoint() As Point
     Set NoPoint = MakePoint(0, 0, 0)
 End Function
 
-Public Function ClassifyPoint(ByRef V0 As D3DVECTOR, ByRef v1 As D3DVECTOR, ByRef v2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
+Public Function ClassifyPoint(ByRef V0 As D3DVECTOR, ByRef V1 As D3DVECTOR, ByRef V2 As D3DVECTOR, ByRef p As D3DVECTOR) As Single
     Dim dtp As Single
     Dim N As D3DVECTOR
-    N = GetPlaneNormal(V0, v1, v2)
+    N = GetPlaneNormal(V0, V1, V2)
     dtp = VectorDotProduct(N, p) + -VectorDotProduct(N, V0)
     If dtp > Epsilon Then
         ClassifyPoint = 1 'front

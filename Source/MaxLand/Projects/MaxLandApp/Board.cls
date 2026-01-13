@@ -54,6 +54,24 @@ Private pKey As String
 Private pSerialize As Boolean
 Private pAlign As Long
 
+Friend Sub LateEval()
+    pPoint1.LateEval
+    pPoint2.LateEval
+    pPoint3.LateEval
+    pPoint4.LateEval
+
+    pNormal1.LateEval
+    pNormal2.LateEval
+    pNormal3.LateEval
+    pNormal4.LateEval
+
+    pTexture1.LateEval
+    pTexture2.LateEval
+    pTexture3.LateEval
+    pTexture4.LateEval
+
+End Sub
+
 Public Property Get Point1() As Point
     Set Point1 = pPoint1
 End Property
