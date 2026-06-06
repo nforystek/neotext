@@ -110,10 +110,10 @@ End Function
 
 Public Function System32Location(Optional ByVal ItemName As String) As String
     Dim retVal As String
-    If (InStr(LCase(WinVerInfo), "server") > 0) Then
+    If (InStr(LCase(WinVerInfo), "server") > 0) And Program.INetSrv Then
         If PathExists(GetSystem32Folder & "inetsrv", False) Then
             If ItemName <> "" Then
-                If Not PathExists(GetSystem32Folder & ItemName, True) Then
+                If (Not PathExists(GetSystem32Folder & IIf(ItemName <> "", IIf(Right(GetSystem32Folder, 1) <> "\" And Left(ItemName, 1) <> "\", "\", "") & ItemName, ""), True)) Then
                     retVal = GetSystem32Folder & "inetsrv"
                 End If
             End If
@@ -121,7 +121,7 @@ Public Function System32Location(Optional ByVal ItemName As String) As String
     End If
     If retVal = "" Then retVal = GetSystem32Folder
     If Right(retVal, 1) = "\" Then retVal = Left(retVal, Len(retVal) - 1)
-    System32Location = retVal & IIf(ItemName <> "", "\" & ItemName, "")
+    System32Location = retVal & IIf(ItemName <> "", IIf(Left(ItemName, 1) <> "\", "\", "") & ItemName, "")
 End Function
 Public Sub Main()
 
@@ -439,6 +439,7 @@ Private Sub SaveManifest(ByVal FilePath As String, ByVal iniText As String)
                 "Contact= " & Program.Contact & vbCrLf & _
                 "Restore= " & Program.Restore & vbCrLf & _
                 "Legacy= " & Program.Legacy & vbCrLf & _
+                "INetSrv= " & Program.INetSrv & vbCrLf & _
                 "System= " & Program.System & vbCrLf & _
                 vbCrLf & "[ExecuteWaits]" & vbCrLf & _
                 "Backup=" & Program.Executes.backup & vbCrLf & _
@@ -507,6 +508,8 @@ Private Sub LoadManifest(ByVal FilePath As String)
                                 End If
                             Case "legacy"
                                 Program.Legacy = CBool(inLine)
+                            Case "inetsrv"
+                                Program.INetSrv = CBool(inLine)
                             Case "system"
                                 Program.System = CBool(inLine) Or (InStr(UCase(Command), "/FULL") > 0) Or (InStr(UCase(Command), "/SYS") > 0)
                         End Select

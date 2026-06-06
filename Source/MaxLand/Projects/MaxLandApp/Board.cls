@@ -15,7 +15,7 @@ Option Explicit
 
 Private pFileNames As VBA.Collection
 Private pSkin() As Direct3DTexture8
-
+Private pDynamic As VBA.Collection
 
 Private pPlaq() As MyVertex
 Private pVBuf As Direct3DVertexBuffer8
@@ -210,6 +210,8 @@ Public Property Let Mirror(ByVal RHS As Boolean)
     pMirror = RHS
     RecreateSkins
 End Property
+
+
 Public Property Get Translucent() As Boolean
     Translucent = pTranslucent
 End Property
@@ -259,10 +261,12 @@ Public Property Get FileName(Optional ByVal Index As Long = 0) As String
         FileName = pFileNames.Item(1)
     End If
 End Property
+
 Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As String)
     If Index = 0 Then
         If PathExists(ScriptRoot & "Models\" & RHS, True) Then
             pFileNames.Add RHS
+            pDynamic.Add IIf(Dynamic, GetDynamic(RHS), "")
             ReDim Preserve pSkin(1 To pFileNames.Count) As Direct3DTexture8
             Set pSkin(pFileNames.Count) = LoadTexture(ScriptRoot & "Models\" & RHS)
             RecreateSkins
@@ -274,13 +278,53 @@ Public Property Let FileName(Optional ByVal Index As Long = 0, ByVal RHS As Stri
             Set pSkin(Index) = Nothing
             Set pSkin(Index) = LoadTexture(ScriptRoot & "Models\" & RHS)
             pFileNames.Add RHS, , , Index
+            pDynamic.Add IIf(Dynamic, GetDynamic(RHS), ""), , , Index
+            
             pFileNames.Remove Index
+            pDynamic.Remove Index
+            
             RecreateSkins
         Else
             Err.Raise 8, App.EXEName, "File not found."
         End If
     End If
     
+End Property
+
+Public Property Get Dynamic(Optional ByVal Index As Long = 0) As Boolean
+    If Index > 0 And Index <= pDynamic.Count Then
+        Dynamic = (pDynamic(Index) <> "")
+    ElseIf pDynamic.Count > 0 Then
+        Dynamic = (pDynamic(1) <> "")
+    End If
+End Property
+Public Property Let Dynamic(Optional ByVal Index As Long = 0, ByVal RHS As Boolean)
+    If RHS Then
+        Dim dyn As String
+        If Index > 0 And Index <= pDynamic.Count Then
+            dyn = GetDynamic(pFileNames(Index))
+            pDynamic.Add dyn, , , Index
+            pDynamic.Remove Index
+        ElseIf pDynamic.Count > 0 Then
+            dyn = GetDynamic(pFileNames(1))
+            pDynamic.Add dyn, , , 1
+            pDynamic.Remove 1
+        ElseIf Index = 0 Then
+            pDynamic.Add "Size:Date:"
+        End If
+    Else
+        If Index > 0 And Index <= pDynamic.Count Then
+            pDynamic.Add "", , , Index
+            pDynamic.Remove Index
+        ElseIf pDynamic.Count > 0 Then
+            pDynamic.Add "", , , 1
+            pDynamic.Remove 1
+        ElseIf Index = 0 Then
+            pDynamic.Add ""
+        End If
+        
+    End If
+    RecreateSkins
 End Property
 
 Public Property Get Serialize() As Boolean
@@ -312,16 +356,29 @@ Public Property Let Visible(ByVal RHS As Boolean)
 End Property
 
 Public Sub SetTexture(ByVal Stage As Long, ByVal Index As Long)
+
     If Index = -1 Then
         DDevice.SetTexture Stage, Nothing
     Else
         If FileNames.Count > 0 Then
+
+            If Dynamic Then
+                Dim dyn As String
+                dyn = GetDynamic(FileNames(Index))
+                If dyn <> pDynamic(Index) Then
+                    Set pSkin(Index) = LoadTexture(ScriptRoot & "Models\" & FileName(Index))
+                    pDynamic.Add dyn, , , Index
+                    pDynamic.Remove Index
+                End If
+            
+            End If
+        
             DDevice.SetTexture Stage, pSkin(Index)
         End If
     End If
 End Sub
 Public Sub Render()
-        
+
     DDevice.SetStreamSource 0, pVBuf, LenB(pPlaq(0))
     DDevice.DrawPrimitive D3DPT_TRIANGLELIST, 0, 2
 
@@ -419,6 +476,7 @@ Private Sub Class_Initialize()
     ReDim pPlaq(0 To 5) As MyVertex
 
     Set pFileNames = New VBA.Collection
+    Set pDynamic = New VBA.Collection
     
     Set pVBuf = DDevice.CreateVertexBuffer(LenB(pPlaq(0)) * (UBound(pPlaq) + 1), 0, FVF_RENDER, D3DPOOL_DEFAULT)
     

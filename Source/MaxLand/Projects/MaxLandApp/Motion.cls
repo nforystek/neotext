@@ -63,13 +63,25 @@ Public Property Let Data(ByVal RHS)
     pData = RHS
 End Property
 
-Public Property Get Script() As String
-Attribute Script.VB_MemberFlags = "40"
+
+Public Property Get Script()
     Script = pScript
 End Property
-Public Property Let Script(ByVal RHS As String)
+Public Property Let Script(ByVal RHS)
+    'If pScript Is Nothing Then Set pScript = New NTStreams10.Stream
     pScript = RHS
 End Property
+'Public Property Set Script(ByRef RHS)
+'    Set pScript = RHS
+'End Property
+
+
+'Public Property Get Script() As String
+'    Script = pScript
+'End Property
+'Public Property Let Script(ByVal RHS As String)
+'    pScript = RHS
+'End Property
 
 Public Property Get Reactive() As Single
     Reactive = pReactive
@@ -115,6 +127,7 @@ Friend Property Let Initials(ByRef RHS As Single)
 End Property
 
 Private Sub Class_Initialize()
+    'Set pScript = New NTStreams10.Stream
     Stats_Motion_Count = Stats_Motion_Count + 1
     pKey = "K" & ObjPtr(Me)
     pReactive = -1
@@ -123,4 +136,5 @@ End Sub
 
 Private Sub Class_Terminate()
     Stats_Motion_Count = Stats_Motion_Count - 1
+    'Set pScript = Nothing
 End Sub

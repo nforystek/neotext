@@ -52,65 +52,11 @@ Option Explicit
 
 Option Compare Binary
 
-#If VBA = -1 Then
 
-'--------------------------------------------------
-'**** VBA Integration code, begin insert
-Public m_apcInt As APCIntegration
-'**** VBA Integration code, end insert
-'--------------------------------------------------
-
-
-'--------------------------------------------------
-'**** VBA Integration code, begin insert
-Public Sub ShowVBE()
-    ' Show the VBE now
-    m_apcInt.ShowVBE
-End Sub
-'**** VBA Integration code, end insert
-'--------------------------------------------------
-
-
-
-'--------------------------------------------------
-'**** VBA Integration code, begin insert
-Public Sub ShowMacroDialog()
-    ' The macros dialog will only be viewable if you have a project loaded
-    m_apcInt.ShowMacroDialog
-End Sub
-'**** VBA Integration code, end insert
-'--------------------------------------------------
-
-
-Private Sub Form_Load()
-
-'--------------------------------------------------
-'**** VBA Integration code, begin insert
-    Dim appObj As Instance
-
-    Set m_apcInt = New APCIntegration
-    ' If you already have an existing application object in your
-    '  original source, replace "new Instance" here with a
-    '  reference to it.
-    Set appObj = New Instance
-    m_apcInt.Initialize appObj, Me.hwnd
-'**** VBA Integration code, end insert
-'--------------------------------------------------
-
-End Sub
-
-#End If
-
-'--------------------------------------------------
-'**** VBA Integration code, begin insert
 Private Sub Form_QueryUnLoad(cancel As Integer, unloadmode As Integer)
-#If VBA = -1 Then
-    m_apcInt.QueryUnload cancel, unloadmode
-#End If
     If Not cancel Then StopGame = True
     If unloadmode = 0 Then cancel = True
-End Sub '**** VBA Integration code, end insert
-'--------------------------------------------------
+End Sub
 
 
 Public Property Get ScriptControl() As ScriptControl
@@ -124,9 +70,6 @@ End Sub
 
 Public Sub Reset()
     ScriptControl.Reset
-    
-    If PathExists(AppPath & "Script.log", True) Then Kill AppPath & "Script.log"
-        
 End Sub
 
 Public Sub AddObjects()
@@ -177,7 +120,7 @@ Public Sub AddCode(ByVal Code As String, Optional ByVal source As String = "AddC
     frmMain.ScriptControl.AddCode Code
     If ScriptDebug Then
         Do Until Code = ""
-            DebugPrint "Addcode: " & RemoveNextArg(Code, vbCrLf)
+            Debug.Print "Addcode: " & RemoveNextArg(Code, vbCrLf)
         Loop
     End If
     
@@ -203,7 +146,31 @@ Public Function Evaluate(ByVal Expression As Variant, Optional ByVal source As S
     
 
     Evaluate = frmMain.ScriptControl.Eval(Expression)
-    If ScriptDebug Then DebugPrint "Eval: " & Expression & " = " & Evaluate
+    DebugPrint "Eval: " & Expression & " = " & Evaluate
+
+'    Exit Sub
+'tryforgiegner:
+'    If Err.Number <> 0 Then
+'        Dim Num As Long
+'        Dim des As String
+'        Dim src As String
+'        Num = Err.Number
+'        src = Err.source
+'        des = Err.Description
+'        Err.Clear
+'        On Error GoTo 0
+'        '"An error occured while setting up an object." & vbCrLf
+'        Err.Raise Num, src, "Line: " & (LineNumber + 1) & " Error: " & des
+'    End If
+End Function
+
+
+Public Function EvaluateProperty(ByVal Expression As Variant, Optional ByVal source As String = "Evaluate", Optional ByVal LineNumber As Long = 0) As Variant
+'    On Error GoTo tryforgiegner
+    
+    EvaluateProperty = Expression
+    'Evaluate = frmMain.ScriptControl.Eval(Expression)
+    'DebugPrint "Eval: " & Expression & " = " & Evaluate
 
 '    Exit Sub
 'tryforgiegner:
@@ -226,7 +193,7 @@ Public Sub ExecuteStatement(ByVal Statement As String, Optional ByVal source As 
     
 
     frmMain.ScriptControl.ExecuteStatement Statement
-    If ScriptDebug Then DebugPrint "Execute: " & Statement
+    DebugPrint "Execute: " & Statement
     
     
 'tryforgiegner:
@@ -274,7 +241,7 @@ Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As Str
         For i = 1 To frmMain.ScriptControl.Procedures.Count
             If LCase(frmMain.ScriptControl.Procedures(i).Name) = LCase(ProcedureName) Then
                 frmMain.ScriptControl.Run ProcedureName
-                If ScriptDebug Then DebugPrint "Run: " & ProcedureName
+                DebugPrint "Run: " & ProcedureName
                 Exit For
             End If
         Next
@@ -298,14 +265,7 @@ Public Function Run(ByRef ProcedureName As Variant, Optional ByVal source As Str
 '    End If
 End Function
 
-Private Sub DebugPrint(ByVal txt As String)
-    Dim fn As Integer
-    fn = FreeFile
-    Open AppPath & "Script.log" For Append As #fn
-        Print #fn, txt
-    Close #fn
-    Debug.Print txt
-End Sub
+
 
 Private Sub Form_Resize()
     MouseOverCanvas 0, 0

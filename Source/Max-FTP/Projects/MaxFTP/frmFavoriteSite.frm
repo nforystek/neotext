@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1180.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1436.0#0"; "NTControls22.ocx"
 Begin VB.Form frmFavoriteSite 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Favorite Site Information"
@@ -76,7 +76,7 @@ Public Property Get FileName() As String
 End Property
 
 Public Sub LoadSite(ByVal FileName As String)
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
 
     LastFileName = FileName
 
@@ -114,7 +114,7 @@ Public Sub LoadSite(ByVal FileName As String)
                 Check1.Value = 1
                 InData = enc.DecryptString(InData, dbSettings.CryptKey)
             End If
-            If Left$(InData, 1) <> "'" Then
+            If Left(InData, 1) <> "'" Then
                 If InStr(InData, "=") > 0 Then
                     inVar = Trim(LCase(Left(InData, InStr(InData, "=") - 1)))
                     InData = Mid(InData, InStr(InData, "=") + 1)
@@ -177,7 +177,7 @@ Public Sub LoadSite(ByVal FileName As String)
 End Sub
 
 Public Sub SaveSite(ByVal FileName As String)
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
 
     Dim FileNum As Integer
     FileNum = FreeFile

@@ -427,7 +427,7 @@ Public Function WindowClassName(ByVal hwnd As Long) As String
     lSize = Len(sBuffer)
     Call GetClassName(hwnd, sBuffer, lSize)
     If lSize > 0 Then
-        WindowClassName = Replace(Left$(sBuffer, lSize), Chr(0), "")
+        WindowClassName = Replace(Left(sBuffer, lSize), Chr(0), "")
     End If
 End Function
 
@@ -438,7 +438,7 @@ Public Function WindowText(ByVal hwnd As Long) As String
     lSize = Len(sBuffer)
     Call GetWindowText(hwnd, sBuffer, lSize)
     If lSize > 0 Then
-        WindowText = Trim(Replace(Left$(sBuffer, lSize), Chr(0), ""))
+        WindowText = Trim(Replace(Left(sBuffer, lSize), Chr(0), ""))
     End If
 End Function
 

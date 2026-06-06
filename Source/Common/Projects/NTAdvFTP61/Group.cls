@@ -20,7 +20,7 @@ Private Const Base36$ = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 Public Enum DetailOptions
     None = 0
     File = 1
-    post = 2
+    Post = 2
 End Enum
 
 Private EventText As String
@@ -120,7 +120,7 @@ Private Function Decim&(Sessa2$)
     Dim Posiz%, CifraT&, ValC&
     CifraT& = 0
     For Posiz% = 1 To Len(Sessa2$)
-        ValC& = (InStr(Base36$, Mid$(Sessa2$, Len(Sessa2$) - Posiz% + 1, 1)) - 1) * 36 ^ (Posiz% - 1)
+        ValC& = (InStr(Base36$, Mid(Sessa2$, Len(Sessa2$) - Posiz% + 1, 1)) - 1) * 36 ^ (Posiz% - 1)
         CifraT& = CifraT& + ValC&
     Next Posiz%
     Decim& = CifraT&
@@ -133,7 +133,7 @@ Private Function Sessa2$(Decim&)
     Do
         Cifra% = DeScr& Mod 36
         DeScr& = DeScr& \ 36
-        CifraT$ = Mid$(Base36$, Cifra% + 1, 1) + CifraT$
+        CifraT$ = Mid(Base36$, Cifra% + 1, 1) + CifraT$
     Loop Until DeScr& = 0
     Sessa2$ = CifraT$
 End Function
@@ -224,7 +224,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     Dim middlepartheader As String
                     Dim finalpartheader As String
 
-                    middlepartheader = "Path: " & sck.host & vbLf
+                    middlepartheader = "Path: " & sck.Host & vbLf
                     middlepartheader = middlepartheader & "From: " & PostAs & vbLf
                     middlepartheader = middlepartheader & "Newsgroups: " & NewsGroup & vbLf
                     middlepartheader = middlepartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part []" & String("0", 11) & vbLf
@@ -391,7 +391,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             Err.Raise 8, , EventText
                         End If
                         
-                        detailheader = "Path: " & sck.host & vbLf
+                        detailheader = "Path: " & sck.Host & vbLf
                         detailheader = detailheader & "From: " & PostAs & vbLf
                         detailheader = detailheader & "Newsgroups: " & NewsGroup & vbLf
                         detailheader = detailheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(0, numParts + 1) & "]" & vbLf
@@ -405,13 +405,13 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         detailheader = detailheader & vbLf
                         detailheader = detailheader & "MessageID(s):" & vbLf
 
-                        firstpartheader = "Path: " & sck.host & vbLf
+                        firstpartheader = "Path: " & sck.Host & vbLf
                         firstpartheader = firstpartheader & "From: " & PostAs & vbLf
                         firstpartheader = firstpartheader & "Newsgroups: " & NewsGroup & vbLf
                         firstpartheader = firstpartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(1, numParts + 1) & "]" & vbLf
                         mIDS.Add "<" & MessageID & ">"
-                        detailheader = detailheader & mIDS(mIDS.count) & vbLf
-                        firstpartheader = firstpartheader & "Message-ID: " & mIDS(mIDS.count) & vbLf
+                        detailheader = detailheader & mIDS(mIDS.Count) & vbLf
+                        firstpartheader = firstpartheader & "Message-ID: " & mIDS(mIDS.Count) & vbLf
                         firstpartheader = firstpartheader & "X-Newsreader: NTAdvFTP61.Gorup" & vbLf
                         firstpartheader = firstpartheader & "X-Information: https://www.neotext.org" & vbLf
                         firstpartheader = firstpartheader & "X-GUniqueID: " & gid & vbLf
@@ -461,13 +461,13 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                                 pId = SetDashes(pId, guidDashes)
                                 gid = SetDashes(gid, poolDashes)
                                 
-                                middlepartheader = "Path: " & sck.host & vbLf
+                                middlepartheader = "Path: " & sck.Host & vbLf
                                 middlepartheader = middlepartheader & "From: " & PostAs & vbLf
                                 middlepartheader = middlepartheader & "Newsgroups: " & NewsGroup & vbLf
                                 middlepartheader = middlepartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(cnt + 1, numParts + 1) & "]" & vbLf
                                 mIDS.Add "<" & MessageID & ">"
-                                detailheader = detailheader & mIDS(mIDS.count) & vbLf
-                                middlepartheader = middlepartheader & "Message-ID: " & mIDS(mIDS.count) & vbLf
+                                detailheader = detailheader & mIDS(mIDS.Count) & vbLf
+                                middlepartheader = middlepartheader & "Message-ID: " & mIDS(mIDS.Count) & vbLf
                                 middlepartheader = middlepartheader & "X-Newsreader: NTAdvFTP61.Gorup" & vbLf
                                 middlepartheader = middlepartheader & "X-Information: https://www.neotext.org" & vbLf
                                 middlepartheader = middlepartheader & "X-GUniqueID: " & gid & vbLf
@@ -514,13 +514,13 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         pId = SetDashes(pId, guidDashes)
                         gid = SetDashes(gid, poolDashes)
                                 
-                        finalpartheader = "Path: " & sck.host & vbLf
+                        finalpartheader = "Path: " & sck.Host & vbLf
                         finalpartheader = finalpartheader & "From: " & PostAs & vbLf
                         finalpartheader = finalpartheader & "Newsgroups: " & NewsGroup & vbLf
                         finalpartheader = finalpartheader & "Subject: Title [" & IIf(pFullPaths, FileName, GetFileName(FileName)) & "] UU-Part [" & FilePartNumber(numParts + 1, numParts + 1) & "]" & vbLf
                         mIDS.Add "<" & MessageID & ">"
-                        detailheader = detailheader & mIDS(mIDS.count) & vbLf
-                        finalpartheader = finalpartheader & "Message-ID: " & mIDS(mIDS.count) & vbLf
+                        detailheader = detailheader & mIDS(mIDS.Count) & vbLf
+                        finalpartheader = finalpartheader & "Message-ID: " & mIDS(mIDS.Count) & vbLf
                         finalpartheader = finalpartheader & "X-Newsreader: NTAdvFTP61.Gorup" & vbLf
                         finalpartheader = finalpartheader & "X-Information: https://www.neotext.org" & vbLf
                         finalpartheader = finalpartheader & "X-GUniqueID: " & gid & vbLf
@@ -544,7 +544,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             Err.Raise 8, , EventText
                         End If
                         
-                        If ((pDetails And DetailOptions.post) = DetailOptions.post) Then
+                        If ((pDetails And DetailOptions.Post) = DetailOptions.Post) Then
                             detailheader = NextArg(detailheader, "Message-ID:") & "Message-ID: <" & MessageID & ">" & vbLf & _
                                     RemoveArg(RemoveArg(detailheader, "Message-ID:"), vbLf)
                         End If
@@ -553,7 +553,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             WriteFile FileName & ".nws", detailheader
                         End If
                         
-                        If ((pDetails And DetailOptions.post) = DetailOptions.post) Then
+                        If ((pDetails And DetailOptions.Post) = DetailOptions.Post) Then
                                    
                             EventFlag = 0
                             sck.SendString StrConv(StrConv("POST" & vbLf, vbUnicode), vbFromUnicode)
@@ -633,8 +633,8 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         If (InStr(txt, "MessageID(s):") > 0) Then
                             If (MessageIDs Is Nothing) Then
                                 Set MessageIDs = New Collection
-                            ElseIf MessageIDs.count > 0 Then
-                                Do Until MessageIDs.count = 0
+                            ElseIf MessageIDs.Count > 0 Then
+                                Do Until MessageIDs.Count = 0
                                     MessageIDs.Remove 1
                                 Loop
                             End If
@@ -649,7 +649,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                     End If
                 
                     If (Not (MessageIDs Is Nothing)) Or IsMissing(MessageIDs) Then
-                        If MessageIDs.count = 0 Then
+                        If MessageIDs.Count = 0 Then
                             Set MessageIDs = Nothing
                         End If
                     End If
@@ -783,7 +783,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                             Do
                                 
                                 If Not (MessageIDs Is Nothing) Then
-                                    If MessageIDs.count > 0 Then
+                                    If MessageIDs.Count > 0 Then
                                         EventFlag = 0
                                         sck.SendString StrConv(StrConv("HEAD " & MessageIDs.Item(1) & vbLf, vbUnicode), vbFromUnicode)
                                         lapse = Timer
@@ -817,7 +817,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                             End If
                                         End If
                                         MessageIDs.Remove 1
-                                        aDone = (MessageIDs.count = 0)
+                                        aDone = (MessageIDs.Count = 0)
 
                                     End If
                                 Else
@@ -840,7 +840,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                                 FileGUID = SetDashes(Replace(NextArg(RemoveArg(EventText, "X-GUniqueID: "), vbLf), "-", ""), gid)
                                                 msgID = "A" & NextArg(Replace(NextArg(EventText, vbLf), "221 ", ""), " ")
                                                 Articles.Add EventText, msgID
-                                                aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.count
+                                                aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.Count
                                                 If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                     sck.Disconnect
                                                     Err.Raise 8, , "Invalid X-Newsreader in postings header."
@@ -848,7 +848,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                             ElseIf Replace(FileGUID, "-", "") = Replace(NextArg(RemoveArg(EventText, "X-GUniqueID: "), vbLf), "-", "") Then
                                                 msgID = "A" & NextArg(Replace(NextArg(EventText, vbLf), "221 ", ""), " ")
                                                 Articles.Add EventText, msgID
-                                                aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.count
+                                                aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.Count
                                                 If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                     sck.Disconnect
                                                     Err.Raise 8, , "Invalid X-Newsreader in postings header."
@@ -882,7 +882,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                             Dim newids As Collection
                             Set newids = New Collection
                             
-                            If Articles.count > 0 Then
+                            If Articles.Count > 0 Then
                                 
                                 Dim fnum As Long
                                 
@@ -893,7 +893,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                 Print #fnum, StrConv(LoadResData(1, "PRIVATE"), vbUnicode) & vbLf & vbLf
                                 
                                 aStart = 1: aCnt = 1
-                                aEnd = Articles.count + 1
+                                aEnd = Articles.Count + 1
                                 
                                 Dim uud As String
                                 Dim tmp As String
@@ -906,7 +906,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
 
                                 Do Until aCnt > aEnd
                                                                            
-                                    For aStart = 1 To Articles.count
+                                    For aStart = 1 To Articles.Count
 
                                         aheader = Articles(aStart)
                                         
@@ -1477,7 +1477,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
 
                 Dim mpath As Boolean
 
-                Do Until Groups.count = 0
+                Do Until Groups.Count = 0
 
                     EventFlag = 0
                     sck.SendString StrConv(StrConv("GROUP " & Groups(1) & vbLf, vbUnicode), vbFromUnicode)
@@ -1654,7 +1654,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             End If
 
 
-                            If Articles.count > 0 Then
+                            If Articles.Count > 0 Then
 
                                 For Each wcard In Articles
 

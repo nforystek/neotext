@@ -185,11 +185,11 @@ End Function
 Private Function GetUnixTime() As String
     Dim M%, N%
     Dim temp$
-    GetUnixTime = String$(4, vbNull)
+    GetUnixTime = String(4, vbNull)
     temp$ = Hex(DateDiff("s", "01/01/1970", Date$))
     M% = 1
     For N% = 1 To Len(temp$) Step 2
-        Mid$(GetUnixTime, M%, 1) = Chr$(Val("&H" & Mid$(temp$, N%, 2)))
+        Mid(GetUnixTime, M%, 1) = Chr(Val("&H" & Mid(temp$, N%, 2)))
         M% = M% + 1
     Next N%
 End Function
@@ -414,8 +414,8 @@ End Sub
 '    If lPntr1 < 5 Then Exit Function
 '    VerifySignature = True
 '    lPntr2 = InStr(lPntr1, sBuff, Chr$(&H30) & Chr$(&H82))
-'    llen = Asc(Mid$(sBuff, lPntr2 + 2, 1)) * 256 + Asc(Mid$(sBuff, lPntr2 + 3, 1)) + 4
-'    CertData = Mid$(sBuff, lPntr2, llen)
+'    llen = Asc(Mid(sBuff, lPntr2 + 2, 1)) * 256 + Asc(Mid(sBuff, lPntr2 + 3, 1)) + 4
+'    CertData = Mid(sBuff, lPntr2, llen)
 '    lPntr2 = lPntr2 + llen
 '    SecureSession.InBuffer = CertData
 '    If lPntr1 > 0 Then
@@ -435,12 +435,12 @@ End Sub
 '    lPntr1 = InStr(lPntr1, sBuff, sSearch)
 '    If lPntr1 > 0 Then
 '        lPntr1 = lPntr1 + Len(sSearch)
-'        PUBLIC_KEY = StrReverse(Mid$(sBuff, lPntr1, RSA_KEY_LEN))
+'        PUBLIC_KEY = StrReverse(Mid(sBuff, lPntr1, RSA_KEY_LEN))
 '   '     Call DebugPrintHex("Server Public Key", PUBLIC_KEY)
 '        'Find next certificate Public Key
 '        lPntr1 = InStr(lPntr1, sBuff, sSearch)
 '        If lPntr1 > 0 Then 'Use key from next Cert in chain
-'            CertKey = StrReverse(Mid$(sBuff, lPntr1 + Len(sSearch), RSA_KEY_LEN))
+'            CertKey = StrReverse(Mid(sBuff, lPntr1 + Len(sSearch), RSA_KEY_LEN))
 '        Else 'Use Server Public key
 '            CertKey = PUBLIC_KEY
 '        End If
@@ -453,7 +453,7 @@ End Sub
 ''        lPntr3 = lPntr1
 ''        lPntr1 = InStr(lPntr1, sBuff, sSearch)
 ''    Loop
-''    CertKey = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
+''    CertKey = StrReverse(Mid(sBuff, lPntr3, RSA_KEY_LEN))
 '  '  Call DebugPrintHex("CA Public Key", CertKey)
 '    SecureSession.PubKey = CertKey
 '    If Not SecureSession.SetPubKey Then
@@ -468,7 +468,7 @@ End Sub
 '    lPntr3 = InStr(lPntr2, sBuff, sSearch)
 '    If lPntr3 > 0 Then
 '        lPntr3 = lPntr3 + Len(sSearch)
-'        SigData = StrReverse(Mid$(sBuff, lPntr3, RSA_KEY_LEN))
+'        SigData = StrReverse(Mid(sBuff, lPntr3, RSA_KEY_LEN))
 '    Else
 '        VerifySignature = False
 '        Exit Function

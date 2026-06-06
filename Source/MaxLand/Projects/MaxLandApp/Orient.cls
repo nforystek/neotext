@@ -365,12 +365,12 @@ End Sub
 '    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
 '        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
 '        If CountWord(RHS, ",") = 3 Then
-'            pParentRotation.X = frmMain.Evaluate(ParseNumerical(RHS))
-'            pParentRotation.Y = frmMain.Evaluate(ParseNumerical(RHS))
-'            pParentRotation.Z = frmMain.Evaluate(ParseNumerical(RHS))
-'            pSelfRotation.X = frmMain.Evaluate(ParseNumerical(RHS))
-'            pSelfRotation.Y = frmMain.Evaluate(ParseNumerical(RHS))
-'            pSelfRotation.Z = frmMain.Evaluate(ParseNumerical(RHS))
+'            pParentRotation.X = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pParentRotation.Y = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pParentRotation.Z = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pSelfRotation.X = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pSelfRotation.Y = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pSelfRotation.Z = frmMain.EvaluateProperty(ParseNumerical(RHS))
 '        End If
 '    Else
 '        If CountWord(RHS, ",") = 2 Then RHS = RHS & ","

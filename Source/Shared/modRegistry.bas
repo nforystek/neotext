@@ -86,7 +86,7 @@ Public Function GetSettingString(hKey As Long, strPath As String, strValue As St
             
             intZeroPos = InStr(strBuffer, Chr$(0))
             If intZeroPos > 0 Then
-                GetSettingString = Left$(strBuffer, intZeroPos - 1)
+                GetSettingString = Left(strBuffer, intZeroPos - 1)
             Else
                 GetSettingString = strBuffer
             End If
@@ -260,7 +260,7 @@ Public Function GetSettingExpand(hKey As Long, strPath As String, strValue As St
             
             intZeroPos = InStr(strBuffer, Chr$(0))
             If intZeroPos > 0 Then
-                GetSettingExpand = Left$(strBuffer, intZeroPos - 1)
+                GetSettingExpand = Left(strBuffer, intZeroPos - 1)
             Else
                 GetSettingExpand = strBuffer
             End If
@@ -315,7 +315,7 @@ Public Function GetSettingMulti(hKey As Long, strPath As String, strValue As Str
             
             intZeroPos = InStr(strBuffer, Chr$(0))
             If intZeroPos > 0 Then
-                GetSettingMulti = Left$(strBuffer, intZeroPos - 1)
+                GetSettingMulti = Left(strBuffer, intZeroPos - 1)
             Else
                 GetSettingMulti = strBuffer
             End If

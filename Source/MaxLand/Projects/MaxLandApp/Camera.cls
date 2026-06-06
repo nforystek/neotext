@@ -33,18 +33,18 @@ Friend Sub LateEval()
 End Sub
 
 Public Property Get Origin() As Point
-    'If pElement Is Nothing Then
+    If pElement Is Nothing Then
         Set Origin = Orient.Origin
-    'Else
-    '    Set Origin = pElement.Origin
-    'End If
+    Else
+        Set Origin = pElement.Origin
+    End If
 End Property
 Public Property Set Origin(ByRef RHS As Point)
-    'If pElement Is Nothing Then
+    If pElement Is Nothing Then
         Set Orient.Origin = RHS
-    'Else
-    '    Set pElement.Origin = RHS
-    'End If
+    Else
+        Set pElement.Origin = RHS
+    End If
 End Property
 
 Public Property Get Offset() As Point

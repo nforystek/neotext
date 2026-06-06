@@ -566,10 +566,10 @@ sockerror:
     
 
 End Function
-Public Function LocalIP(ByVal Handle As Long) As String ' _
+Public Function LocalIP(ByVal handle As Long) As String ' _
 Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact.
 On Error GoTo sockerror
-    LocalIP = WhoAmI(Handle)
+    LocalIP = WhoAmI(handle)
     If LocalIP = "#INVALID#" Then
         If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
             LocalIP = LocalHost
@@ -696,8 +696,8 @@ On Error GoTo catch
         Else
             If LoByte(WSAD.wVersion) < WS_SSL3_VERSION Or (LoByte(WSAD.wVersion) = _
                 WS_SSL3_VERSION And HiByte(WSAD.wVersion) < WS_VERSION_MINOR) Then
-                sHighByte = Trim$(str$(HiByte(WSAD.wVersion)))
-                sLowByte = Trim$(str$(LoByte(WSAD.wVersion)))
+                sHighByte = Trim(str$(HiByte(WSAD.wVersion)))
+                sLowByte = Trim(str$(LoByte(WSAD.wVersion)))
                 sMsg = "Windows Sockets version " & sLowByte & "." & sHighByte
                 sMsg = sMsg & " is not supported by winsock.dll "
                 sckOk = 2
@@ -769,7 +769,7 @@ On Error GoTo catch
             If gethostname(HostName, 256) = Socket_ERROR Then
                 retVal = 1
             Else
-                HostName = Trim$(HostName)
+                HostName = Trim(HostName)
                 Hostent_addr = GetHostByName(HostName)
     
                 If Hostent_addr = 0 Then
@@ -786,7 +786,7 @@ On Error GoTo catch
                         For i = 1 To Host.h_length
                             ip_address = ip_address & temp_ip_address(i) & "."
                         Next
-                        ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+                        ip_address = Mid(ip_address, 1, Len(ip_address) - 1)
         
                         IPList.Add ip_address
         
@@ -817,7 +817,7 @@ On Error GoTo catch
                     For i = 1 To heDestHost.h_length
                         ip_address = ip_address & temp_ip_address(i) & "."
                     Next
-                    ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+                    ip_address = Mid(ip_address, 1, Len(ip_address) - 1)
         
                     IPList.Add ip_address
         
@@ -882,7 +882,7 @@ Public Function ResolveIP(ByVal Host As String) As String
                 For i = 1 To heDestHost.h_length
                     ip_address = ip_address & temp_ip_address(i) & "."
                 Next
-                ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+                ip_address = Mid(ip_address, 1, Len(ip_address) - 1)
     
                 ResolveIP = ip_address
                 
@@ -958,7 +958,7 @@ Public Function LocalHost() As String
         rc = gethostname(Buf, Len(Buf))
         rc = InStr(Buf, vbNullChar)
         If rc > 0 Then
-            LocalHost = Left$(Buf, rc - 1)
+            LocalHost = Left(Buf, rc - 1)
         Else
             LocalHost = ""
         End If
@@ -1046,7 +1046,7 @@ Public Function IPAddress(ByVal Addr As Long) As VBA.Collection
             For i = 1 To Host.h_length
                 ip_address = ip_address & temp_ip_address(i) & "."
             Next
-            ip_address = Mid$(ip_address, 1, Len(ip_address) - 1)
+            ip_address = Mid(ip_address, 1, Len(ip_address) - 1)
 
             IPList.Add ip_address
 

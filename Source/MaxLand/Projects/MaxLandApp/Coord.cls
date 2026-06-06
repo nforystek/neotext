@@ -55,8 +55,8 @@ Public Property Let ToString(ByVal RHS As String)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
         If CountWord(RHS, ",") = 2 Then
-            pU = frmMain.Evaluate(ParseNumerical(RHS))
-            pV = frmMain.Evaluate(ParseNumerical(RHS))
+            pU = frmMain.EvaluateProperty(ParseNumerical(RHS))
+            pV = frmMain.EvaluateProperty(ParseNumerical(RHS))
         End If
     Else
         If InStr(RHS, ",") = 1 Then RHS = RHS & ","

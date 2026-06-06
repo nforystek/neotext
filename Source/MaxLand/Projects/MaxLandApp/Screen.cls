@@ -17,6 +17,7 @@ Private pVisible As Boolean
 Private pKey As String
 Private pSerialize As Boolean
 
+Private pDynamic As String
 Private pFileName As String
 Private pImage As Direct3DTexture8
 Private pVerticies(0 To 4) As MyScreen
@@ -33,6 +34,14 @@ Private pPadding As Long
 'End Sub
 
 Friend Sub Render()
+    If Dynamic Then
+        Dim dyn As String
+        dyn = GetDynamic(pFileName)
+        If Not dyn = pDynamic Then
+            pDynamic = dyn
+            Set pImage = LoadTextureEx(ScriptRoot & "Models\" & pFileName, pDimensions)
+        End If
+    End If
     DDevice.SetTexture 0, pImage
     DDevice.SetTexture 1, pImage
     DDevice.DrawPrimitiveUP D3DPT_TRIANGLESTRIP, 2, pVerticies(0), LenB(pVerticies(0))
@@ -112,6 +121,17 @@ Public Property Let Left(ByVal RHS As Single)
     pCoordinate.X = RHS
     ResetVerticies
 End Property
+
+Public Property Get Dynamic() As Boolean
+    Dynamic = (pDynamic <> "")
+End Property
+Public Property Let Dynamic(ByVal RHS As Boolean)
+    If RHS Then
+        pDynamic = GetDynamic(pFileName)
+    Else
+        pDynamic = ""
+    End If
+End Property
 '                                                        .Verticies(0).X = .Padding
 '                                                        .Verticies(2).X = .Padding
 '                                                .Verticies(1).X = .Verticies(0).X + .Dimensions.Width
@@ -130,13 +150,14 @@ End Property
 Public Property Let FileName(ByVal RHS As String)
     If PathExists(ScriptRoot & "Models\" & RHS, True) Then
         pFileName = RHS
+        pDynamic = GetDynamic(RHS)
         Set pImage = LoadTextureEx(ScriptRoot & "Models\" & RHS, pDimensions)
         If pImage Is Nothing Then
             Debug.Print "Image Dimensions Error"
         End If
         ResetVerticies
     Else
-        Debug.Print "Image Not Found"
+        Err.Raise 53, "Screen", "File not found"
     End If
 End Property
 

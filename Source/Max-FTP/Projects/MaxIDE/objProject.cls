@@ -33,7 +33,7 @@ Private Function Decim&(Sessa2$)
     Dim Posiz%, CifraT&, ValC&
     CifraT& = 0
     For Posiz% = 1 To Len(Sessa2$)
-        ValC& = (InStr(Base36$, Mid$(Sessa2$, Len(Sessa2$) - Posiz% + 1, 1)) - 1) * 36 ^ (Posiz% - 1)
+        ValC& = (InStr(Base36$, Mid(Sessa2$, Len(Sessa2$) - Posiz% + 1, 1)) - 1) * 36 ^ (Posiz% - 1)
         CifraT& = CifraT& + ValC&
     Next Posiz%
     Decim& = CifraT&
@@ -46,7 +46,7 @@ Private Function Sessa2$(Decim&)
     Do
         Cifra% = DeScr& Mod 36
         DeScr& = DeScr& \ 36
-        CifraT$ = Mid$(Base36$, Cifra% + 1, 1) + CifraT$
+        CifraT$ = Mid(Base36$, Cifra% + 1, 1) + CifraT$
     Loop Until DeScr& = 0
     Sessa2$ = CifraT$
 End Function
@@ -155,20 +155,20 @@ Public Function Alert(ByVal Text As Variant, Optional Buttons As Variant = vbOKO
     End If
 End Function
 
-Public Function path(Optional ByVal VarPath As String = "") As String
+Public Function Path(Optional ByVal VarPath As String = "") As String
     If VarPath = "" Then
-        path = AppPath
+        Path = AppPath
     Else
         Dim tmp As String
         tmp = MapFolderVariables(VarPath)
         If modCommon.PathExists(AppPath & tmp, False) Then
-            path = AppPath & tmp
+            Path = AppPath & tmp
         ElseIf modCommon.PathExists(tmp, False) Then
-            path = tmp
+            Path = tmp
         ElseIf modCommon.PathExists(VarPath, False) Then
-            path = VarPath
+            Path = VarPath
         Else
-            path = AppPath
+            Path = AppPath
         End If
     End If
 End Function
@@ -263,4 +263,4 @@ Private Sub sTimeout_OnTicking()
     End If
 End Sub
 
-Attribute 
+

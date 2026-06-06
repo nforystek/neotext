@@ -113,6 +113,7 @@ End Property
 Public Property Let Element(ByRef RHS As Element)
     SetObject RHS
 End Property
+
 Public Property Get Camera() As Camera
     Set Camera = pCamera
 End Property
@@ -407,22 +408,11 @@ End Sub
 
 Private Sub Class_Initialize()
     Set pCamera = New Camera
-
     
     vbaObjSetAddref Orient, ObjPtr(pCamera)
     
     Stats_Player_Count = Stats_Player_Count + 1
-'    vbaObjSetAddref Element, ObjPtr(New Element)
-'
-'    Set pElement = New Element
-'    Set pElement.Player = Me
-    
-    
 
-'    Set pCamera.Player = Me
-
-'    Set pCamera.Element = pElement
-'    Set pElement.Camera = pCamera
 
     pSpeed = 0.01
     pFriction = 0.05
@@ -432,9 +422,7 @@ End Sub
 
 Private Sub Class_Terminate()
 
-'    Set pElement = Nothing
-
- '  Set pCamera = Nothing
+    Set pCamera = Nothing
 
     vbaObjSet Orient, ObjPtr(Nothing)
     Stats_Player_Count = Stats_Player_Count - 1

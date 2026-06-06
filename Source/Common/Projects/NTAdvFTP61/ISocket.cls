@@ -84,7 +84,7 @@ Public Event Connected()
 Public Event Disconnected()
 Public Event DataArriving()
 Public Event SendComplete()
-Public Event Connection(ByRef Handle As Long)
+Public Event Connection(ByRef handle As Long)
 Public Event Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
 
 
@@ -119,8 +119,8 @@ Gets or sets the maximum time out in seconds the socket will wait while not rece
 End Property
 Public Property Let timeout(ByVal newVal As Long)
     mTimeOut = newVal
-    SetReceive Handle
-    SetSending Handle
+    SetReceive handle
+    SetSending handle
 End Property
 
 Public Property Get SendRate() As Long ' _
@@ -129,7 +129,7 @@ Gets or set the number of bytes at which SendBytes will proxy to SendNextPart.  
 End Property
 Public Property Let SendRate(ByVal newVal As Long)
     mSendRate = IIf(CBool((mTransmission And Direction.TextMessages) = Direction.TextMessages), 4096, newVal)
-    SetSending Handle
+    SetSending handle
 End Property
 
 Public Property Get RecvRate() As Long ' _
@@ -138,7 +138,7 @@ Gets or set the number of bytes at which ReadBytes will proxy to ReadNextPart.  
 End Property
 Public Property Let RecvRate(ByVal newVal As Long)
     mRecvRate = IIf(CBool((mTransmission And Direction.TextMessages) = Direction.TextMessages), 4096, newVal)
-    SetReceive Handle
+    SetReceive handle
 End Property
 
 Public Property Get Transmission() As Direction ' _
@@ -147,17 +147,17 @@ Gets or sets the type of transmissions, either TextMessage or NormalStream are b
 End Property
 Public Property Let Transmission(ByVal newVal As Direction)
     mTransmission = newVal
-    SetReceive Handle
-    SetSending Handle
+    SetReceive handle
+    SetSending handle
 End Property
 
 
-Public Property Get Handle() As Long ' _
+Public Property Get handle() As Long ' _
 Returns the current active socket handle that this object is associated with, for use with WhosIs, WhoAmI and Decline or Accept functions.
     If mSocket < -1 Then
-        Handle = (-mSocket) - 1
+        handle = (-mSocket) - 1
     Else
-        Handle = mSocket
+        handle = mSocket
     End If
 End Property
 
@@ -307,7 +307,7 @@ Attribute WhosIs.VB_Description = "Accepts a socket handle as parameter and retu
     If getpeername(sock, sck, LenB(sck)) = 0 Then
         Dim col As VBA.Collection
         Set col = IPAddress(sck.sin_addr)
-        If col.count > 0 Then
+        If col.Count > 0 Then
             WhosIs = col.Item(1)
         Else
             WhosIs = "#INVALID#"
@@ -323,7 +323,7 @@ Attribute WhoAmI.VB_Description = "Acccepts a socket handle as parameter and ret
     If getsockname(sock, sck, LenB(sck)) = 0 Then
         Dim col As VBA.Collection
         Set col = IPAddress(sck.sin_addr)
-        If col.count > 0 Then
+        If col.Count > 0 Then
             WhoAmI = col.Item(1)
         Else
             WhoAmI = "#INVALID#"
@@ -343,7 +343,7 @@ On Error GoTo sockerror
     rc = modSockets.gethostname(Buf, Len(Buf))
     rc = InStr(Buf, vbNullChar)
     If rc > 0 Then
-        LocalHost = Left$(Buf, rc - 1)
+        LocalHost = Left(Buf, rc - 1)
     Else
         LocalHost = ""
     End If
@@ -357,7 +357,7 @@ End Function
 Public Function LocalIP() As String ' _
 Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact.
 Attribute LocalIP.VB_Description = "Returns the local IP address of which this socket is currently utilizing, in multiple adapter use, this resolves to the local IP used in contact."
-    LocalIP = WhoAmI(Handle)
+    LocalIP = WhoAmI(handle)
     If LocalIP = "#INVALID#" Then
         If IsNumeric(Replace(LocalHost, ".", "")) And InStr(LocalHost, ".") > 0 Then
             LocalIP = LocalHost
@@ -370,7 +370,7 @@ End Function
 Public Function RemoteIP() As String ' _
 Returns the IP address of the remote socket's connection, usually this is same as the property supplied for Connect, or Host resolves to the be the same.
 Attribute RemoteIP.VB_Description = "Returns the IP address of the remote socket's connection, usually this is same as the property supplied for Connect, or Host resolves to the be the same."
-    RemoteIP = WhosIs(Handle)
+    RemoteIP = WhosIs(handle)
 End Function
 
 Public Function ResolveIP(ByVal Host As String) As String ' _
@@ -425,7 +425,7 @@ Attribute Accept.VB_Description = "Accepts a incoming connection, or mismatched 
         If State(States.Binded) Then
             State(States.Opening) = True
             State(States.Closed) = False
-            socketclose Handle
+            socketclose handle
             UnregisterSocket Me
             State(States.Binded) = False
         End If
@@ -460,13 +460,13 @@ Attribute Decline.VB_Description = "Declines a active connection request via the
 On Error GoTo sockerror
     If ((State(States.Request) Or State(States.Closed) Or State(States.Binded))) Or _
          ((State(States.Opened) Or State(States.Reading) Or State(States.Sending)) And (mSocket < -1)) Then
-        If nHandle = Handle Then
+        If nHandle = handle Then
             State(States.Closing) = True
             SetEvents False, 0, nHandle
         End If
         socketclose nHandle
         UnregisterSocket Me
-        If nHandle = Handle Then
+        If nHandle = handle Then
             AutoRatedEvent AutoRated.OpenRates
             State(States.Binded) = False
             State(States.Closing) = False
@@ -510,15 +510,15 @@ On Error GoTo sockerror
                 End If
             End With
 
-            rc = modSockets.Bind(Handle, mBanding, sockaddr_size)
+            rc = modSockets.Bind(handle, mBanding, sockaddr_size)
             If rc = 0 Then
 
-                rc = SocketListen(Handle, 0)
+                rc = SocketListen(handle, 0)
                 If rc <> Socket_ERROR Then
                     State(States.Binded) = True
                     State(States.Closed) = False
 
-                    rc = SetEvents(True, FD_LISTEN, Handle)
+                    rc = SetEvents(True, FD_LISTEN, handle)
                     If rc <> Socket_ERROR Then
                         RegisterSocket Me
                         AutoRatedEvent AutoRated.HaltRates
@@ -553,7 +553,7 @@ On Error GoTo sockerror
         If Not nHost = "" Then mHost = nHost
         If Not nPort = 0 Then mPort = nPort
         mSocket = Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-        If (Not (Handle = Socket_ERROR)) Then
+        If (Not (handle = Socket_ERROR)) Then
 
             With mAddress
                 .sin_family = AF_INET
@@ -572,7 +572,7 @@ On Error GoTo sockerror
                 RegisterSocket Me
                 mSendData.Reset
                 mReadData.Reset
-                SocketConnect Handle, mAddress, sockaddr_size
+                SocketConnect handle, mAddress, sockaddr_size
                 Connect = (WSAGetLastError <> WSAEWOULDBLOCK)
             End If
         End If
@@ -810,21 +810,21 @@ End Sub
 Friend Function PauseSocket()
     If Not CBool((mTransmission And Direction.SocketPaused) = Direction.SocketPaused) Then
         mTransmission = mTransmission + Direction.SocketPaused
-        SetReceive Handle
-        SetSending Handle
+        SetReceive handle
+        SetSending handle
     End If
 End Function
 Friend Function ResumeSocket()
     If CBool((mTransmission And Direction.SocketPaused) = Direction.SocketPaused) Then
         mTransmission = mTransmission - Direction.SocketPaused
-        SetReceive Handle
-        SetSending Handle
+        SetReceive handle
+        SetSending handle
     End If
 End Function
 
 Friend Function SetReceive(Optional ByVal sck As Long = -1) As Long
 On Error GoTo sockerror
-    If sck = -1 Then sck = Handle
+    If sck = -1 Then sck = handle
     Dim timo As Long
     timo = IIf(CBool((mTransmission And Direction.TextMessages) = Direction.TextMessages), 0, mTimeOut)
     SetReceive = (setsockopt(sck, SOL_SOCKET, SO_RCVTIMEO, ByVal VarPtr(timo), 4&) = 0) _
@@ -838,7 +838,7 @@ End Function
 
 Friend Function SetSending(Optional ByVal sck As Long = -1) As Long
 On Error GoTo sockerror
-    If sck = -1 Then sck = Handle
+    If sck = -1 Then sck = handle
     Dim timo As Long
     timo = IIf(CBool((mTransmission And Direction.TextMessages) = Direction.TextMessages), 0, mTimeOut)
     SetSending = (setsockopt(sck, SOL_SOCKET, SO_SNDTIMEO, ByVal VarPtr(timo), 4&) = 0) _
@@ -876,7 +876,7 @@ On Error GoTo sockerror
 
         If (sendStream.Length > 0) Then
             State(States.Sending) = True
-            sendActual = modSockets.SocketSendLngPtr(Handle, ByVal sendStream.Address, sendExpect, 0)
+            sendActual = modSockets.SocketSendLngPtr(handle, ByVal sendStream.Address, sendExpect, 0)
 
             If (sendActual > 0) And (sendExpect > 0) Then
                 mSendData.Push sendActual
@@ -923,12 +923,12 @@ On Error GoTo sockerror
         End If
 
 
-        readActual = modSockets.SocketRecvLngPtr(Handle, ByVal mReadData.Address, readExpect, MSG_PEEK)
+        readActual = modSockets.SocketRecvLngPtr(handle, ByVal mReadData.Address, readExpect, MSG_PEEK)
         If readExpect >= 0 Or (WSAGetLastError <> WSAEWOULDBLOCK) Then
 
             If readActual > 0 Then readExpect = readActual
 
-            readActual = modSockets.SocketRecvLngPtr(Handle, ByVal readStream.Address + (readStream.Length - readExpect), readExpect, 0)
+            readActual = modSockets.SocketRecvLngPtr(handle, ByVal readStream.Address + (readStream.Length - readExpect), readExpect, 0)
             If (readExpect > 0) And (readActual > 0) Then
                 readExpect = mReadData.Length
                 mReadData.Length = readActual + readExpect
@@ -959,9 +959,9 @@ Friend Function Incoming() As Boolean
     State(States.Request) = True
     Dim rc As Long
     Dim sk As Long
-    If (Not getsockopt(Handle, SOL_SOCKET, SO_ACCEPTCONN, ByVal VarPtr(sk), 4)) Then
+    If (Not getsockopt(handle, SOL_SOCKET, SO_ACCEPTCONN, ByVal VarPtr(sk), 4)) Then
         If (sk = 1) And State(States.Binded) Then
-            rc = SocketAccept(Handle, mAddress, sockaddr_size)
+            rc = SocketAccept(handle, mAddress, sockaddr_size)
             If (Not (rc = Socket_ERROR)) Then
                 Dim nSock As Long
                 nSock = rc
@@ -979,7 +979,7 @@ End Function
 Friend Function SetEvents(Optional ByVal SetOpt As Boolean = True, Optional ByVal FD_CONST As Long = FD_EVENTS, Optional ByVal sck As Long = -1) As Long
 On Error GoTo sockerror
 
-        If sck = -1 Then sck = Handle
+        If sck = -1 Then sck = handle
         If SetOpt Then SetEvents = SetOptions((FD_CONST = FD_LISTEN), sck)
         SetEvents = SetEvents And WSAAsyncSelect(sck, modWinProc.hwnd, WM_WINSOCK, FD_CONST)
 
@@ -1062,10 +1062,10 @@ Private Function UnsetValidatingMode(ByVal OnHandle As Long, Optional ByVal ErrM
     End If
 End Function
 
-Private Function Whois(ByVal Handle As Long) As String
+Private Function Whois(ByVal handle As Long) As String
     Dim col As VBA.Collection
-    Set col = IPAddress(Handle)
-    If col.count > 0 Then
+    Set col = IPAddress(handle)
+    If col.Count > 0 Then
         Whois = col.Item(1)
     Else
         Whois = "#INVALID#"
@@ -1074,12 +1074,12 @@ End Function
 
 Private Function SetOptions(Optional ByVal DoAccept As Boolean = False, Optional ByVal sck As Long = -1) As Long
 On Error GoTo sockerror
-    If sck = -1 Then sck = Handle
+    If sck = -1 Then sck = handle
     Dim li As LingerType
     Dim rc As Boolean
     rc = True
 
-    rc = rc And (ioctlsocket(Handle, FIONBIO, 0) = 0)
+    rc = rc And (ioctlsocket(handle, FIONBIO, 0) = 0)
     rc = rc And (setsockopt(sck, SOL_SOCKET, SO_REUSEADDR, ByVal VarPtr(SO_ON), 4&) = 0)
     rc = rc And (setsockopt(sck, SOL_SOCKET, SO_OOBINLINE, ByVal VarPtr(SO_ON), 4&) = 0)
     If ((CBool((mTransmission And Direction.TextMessages) = Direction.TextMessages) Or (mTimeOut = 0))) And _
@@ -1173,13 +1173,13 @@ End Sub
 Private Sub DataValidating(ByVal wParam As Long)
     If Not (WhosIs(wParam) = RemoteIP) Then 'Whois(inet_ntoa(lParam))
         SetValidatingMode
-        RaiseEvent Connection(Handle)
-        UnsetValidatingMode Handle, "he remote address did not match the ip address for the connection."
+        RaiseEvent Connection(handle)
+        UnsetValidatingMode handle, "he remote address did not match the ip address for the connection."
     Else
-        If Not (RemoteIP = WhosIs(Handle) And WhoAmI(Handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
+        If Not (RemoteIP = WhosIs(handle) And WhoAmI(handle) = LocalIP) Then ' ResolveIP(LocalHost) Then
             SetValidatingMode
-            RaiseEvent Connection(Handle)
-            UnsetValidatingMode Handle, "Either remote or local socket handle did not match ip address for the connection."
+            RaiseEvent Connection(handle)
+            UnsetValidatingMode handle, "Either remote or local socket handle did not match ip address for the connection."
 
         End If
     End If
@@ -1196,7 +1196,7 @@ Private Function CloseConnection() As Boolean
             State(States.Binded) = False
             State(States.Opened) = False
 
-            socketclose Handle
+            socketclose handle
 
             DebugEvent "Disconnected"
             RaiseEvent Disconnected
@@ -1209,7 +1209,7 @@ End Function
 
 
 Private Sub DebugState()
-    Debug.Print Handle & " ";
+    Debug.Print handle & " ";
     If State(Binded) Then Debug.Print "Binded ";
     If State(Request) Then Debug.Print "Request ";
     If State(Opening) Then Debug.Print "Opening ";

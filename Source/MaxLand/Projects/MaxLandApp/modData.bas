@@ -61,18 +61,22 @@ Public Sub BackupDB()
     
 End Sub
 Public Sub RestoreDB()
-    
-    Dim txt As String
-    
-    Set db = New Database
-    txt = ReadFile(DatabaseFilePath(True))
-    Do Until txt = ""
-        db.dbQuery RemoveNextArg(txt, ";")
-    Loop
-    Kill DatabaseFilePath(True)
 
-    Set db = Nothing
-
+    If PathExists(DatabaseFilePath(True), True) Then
+        
+        Dim txt As String
+        
+        Set db = New Database
+        txt = ReadFile(DatabaseFilePath(True))
+        Do Until txt = ""
+            db.dbQuery RemoveNextArg(txt, ";")
+        Loop
+        Kill DatabaseFilePath(True)
+    
+        Set db = Nothing
+        
+    End If
+    
 End Sub
 Public Sub ResetDB()
     Set db = New Database

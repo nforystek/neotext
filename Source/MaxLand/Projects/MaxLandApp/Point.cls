@@ -65,16 +65,16 @@ Public Property Let ToString(ByVal RHS As String)
     If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
         If CountWord(RHS, ",") = 3 Then
-            Plot.X = frmMain.Evaluate(ParseNumerical(RHS))
-            Plot.Y = frmMain.Evaluate(ParseNumerical(RHS))
-            pZ = frmMain.Evaluate(ParseNumerical(RHS))
+            Plot.X = frmMain.EvaluateProperty(ParseNumerical(RHS))
+            Plot.Y = frmMain.EvaluateProperty(ParseNumerical(RHS))
+            pZ = frmMain.EvaluateProperty(ParseNumerical(RHS))
         End If
     ElseIf Left(RHS, 1) = "{" And Right(RHS, 1) = "}" Then
         RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
         If CountWord(RHS, ",") = 3 Then
-            Plot.X = frmMain.Evaluate(ParseNumerical(RHS))
-            Plot.Y = frmMain.Evaluate(ParseNumerical(RHS))
-            pZ = frmMain.Evaluate(ParseNumerical(RHS))
+            Plot.X = frmMain.EvaluateProperty(ParseNumerical(RHS))
+            Plot.Y = frmMain.EvaluateProperty(ParseNumerical(RHS))
+            pZ = frmMain.EvaluateProperty(ParseNumerical(RHS))
         End If
     ElseIf Left(RHS, 1) = """" And Right(RHS, 1) = """" Then
     Else 'If Left(RHS, 1) = """" And Right(RHS, 1) = """" Then

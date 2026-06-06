@@ -23,11 +23,11 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.806534, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -25.87928, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.806377, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.803052, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -25.84758, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.803052, -11.312]</pawn3.origin>
   </Variables>
-<DateTime>1%2F12%2F2026+9%3A25%3A09+PM</DateTime>
+<DateTime>5%2F10%2F2026+8%3A26%3A30+AM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>
 Set+Bindings%2EItem%28%22ESCAPE%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
 Bindings%2EItem%28%22ESCAPE%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BIf%2B%2528%2528Not%2BFullScreen%2529%2BOr%2BConsoleVisible%2529%2BAnd%2BMouseTrapped%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522untrapmouse%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BElseIf%2BFullScreen%2BOr%2B%2528Not%2BFullScreen%2BAnd%2BNot%2BMouseTrapped%2529%2BThen%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BConsole%2B%2522quit%2522%250D%250A%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BEnd%2BIf%250D%250A%2509%22%29
@@ -37,22 +37,6 @@ Set+Bindings%2EItem%28%22TAB%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
 Bindings%2EItem%28%22TAB%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22Player%252EChangePerspective%22%29
 Bindings%2EItem%28%22TAB%22%29%2EAppliesTo+%3D+15
 Bindings%2EItem%28%22TAB%22%29%2EBehavior+%3D+1
-Set+Bindings%2EItem%28%22W%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
-Bindings%2EItem%28%22W%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22Player%252ESlideLeft%22%29
-Bindings%2EItem%28%22W%22%29%2EAppliesTo+%3D+17
-Bindings%2EItem%28%22W%22%29%2EBehavior+%3D+1
-Set+Bindings%2EItem%28%22E%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
-Bindings%2EItem%28%22E%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22Player%252EMoveForward%22%29
-Bindings%2EItem%28%22E%22%29%2EAppliesTo+%3D+18
-Bindings%2EItem%28%22E%22%29%2EBehavior+%3D+1
-Set+Bindings%2EItem%28%22R%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
-Bindings%2EItem%28%22R%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22Player%252ESlideRight%22%29
-Bindings%2EItem%28%22R%22%29%2EAppliesTo+%3D+19
-Bindings%2EItem%28%22R%22%29%2EBehavior+%3D+1
-Set+Bindings%2EItem%28%22D%22%29+%3D+Include%2ENewObject%28%22OnEvent%22%29
-Bindings%2EItem%28%22D%22%29%2ERunScript+%3D+Include%2EURLDecode%28%22Player%252EMoveBackward%22%29
-Bindings%2EItem%28%22D%22%29%2EAppliesTo+%3D+32
-Bindings%2EItem%28%22D%22%29%2EBehavior+%3D+1
 Bindings%2EMouseInput%3D2
 
 </Bindings>

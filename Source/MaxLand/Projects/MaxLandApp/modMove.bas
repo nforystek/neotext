@@ -185,7 +185,7 @@ Public Function SetMotion(ByRef act As Motion, ByRef Action As Actions, ByRef da
     SetMotion = act.Key
 End Function
 
-Public Function AddMotion(ByRef Motions As NTNodes10.Collection, ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
+Public Function AddMotion(ByRef Motions As NTNodes10.Collection, ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String) As String
 
     Dim act As New Motion
     With act
@@ -202,7 +202,11 @@ Public Function AddMotion(ByRef Motions As NTNodes10.Collection, ByRef Action As
         .Reactive = Reactive
         .latency = Timer
         .Recount = Recount
-        .Script = Script
+        If Not IsMissing(Script) Then
+            .Script = Script
+        Else
+            'Set .Script = New NTStreams10.Stream
+        End If
         AddMotion = .Key
     End With
     If Motions Is Nothing Then
@@ -331,7 +335,7 @@ Public Function CalculateMotion(ByRef Motion As Motion, ByRef Action As Actions)
 
 End Function
 
-Private Sub ApplyMotion(ByRef Obj As Element, ByVal Action As Actions)
+Private Sub ApplyMotion(ByRef obj As Element, ByVal Action As Actions)
     Dim cnt As Long
     Dim cnt2 As Long
     Dim Offset As D3DVECTOR
@@ -340,33 +344,33 @@ Private Sub ApplyMotion(ByRef Obj As Element, ByVal Action As Actions)
     If Not Camera.Element Is Nothing Then
         'gravity
         
-        If ((Not (Perspective = Spectator)) And (Obj.CollideObject = Camera.Element.CollideObject)) Or (Not (Obj.CollideObject = Camera.Element.CollideObject)) Then
+        If ((Not (Perspective = Spectator)) And (obj.CollideObject = Camera.Element.CollideObject)) Or (Not (obj.CollideObject = Camera.Element.CollideObject)) Then
             
-            If Obj.Gravitational Then
-                If Not Obj.OnLadder Then
-                    If Obj.InLiquid Then
+            If obj.Gravitational Then
+                If Not obj.OnLadder Then
+                    If obj.InLiquid Then
                         Select Case Action
                             Case (Action And Directing)
-                                D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(LiquidGravityDirect, Directing)
-                                Set Obj.Direct = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Direct), CalculateMotion(LiquidGravityDirect, Directing)
+                                Set obj.Direct = ToPoint(vout)
                             Case (Action And Rotating)
-                                D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(LiquidGravityRotate, Rotating)
-                                Set Obj.Twists = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Twists), CalculateMotion(LiquidGravityRotate, Rotating)
+                                Set obj.Twists = ToPoint(vout)
                             Case (Action And Scaling)
-                                D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(LiquidGravityScaled, Scaling)
-                                Set Obj.Scalar = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Scalar), CalculateMotion(LiquidGravityScaled, Scaling)
+                                Set obj.Scalar = ToPoint(vout)
                         End Select
                     Else
                         Select Case Action
                             Case (Action And Directing)
-                                D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(GlobalGravityDirect, Directing)
-                                Set Obj.Direct = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Direct), CalculateMotion(GlobalGravityDirect, Directing)
+                                Set obj.Direct = ToPoint(vout)
                             Case (Action And Rotating)
-                                D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(GlobalGravityRotate, Rotating)
-                                Set Obj.Twists = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Twists), CalculateMotion(GlobalGravityRotate, Rotating)
+                                Set obj.Twists = ToPoint(vout)
                             Case (Action And Scaling)
-                                D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(GlobalGravityScaled, Scaling)
-                                Set Obj.Scalar = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Scalar), CalculateMotion(GlobalGravityScaled, Scaling)
+                                Set obj.Scalar = ToPoint(vout)
                         End Select
                     End If
                 End If
@@ -375,23 +379,23 @@ Private Sub ApplyMotion(ByRef Obj As Element, ByVal Action As Actions)
     End If
     
     
-    If Obj.Effect = Collides.Normal Then
-        If Not Obj.Motions Is Nothing Then
-            If Obj.Motions.Count > 0 Then
+    If obj.Effect = Collides.Normal Then
+        If Not obj.Motions Is Nothing Then
+            If obj.Motions.Count > 0 Then
                 Dim A As Long
-                For A = 1 To Obj.Motions.Count
-                    If ValidMotion(Obj.Motions(A)) Then
+                For A = 1 To obj.Motions.Count
+                    If ValidMotion(obj.Motions(A)) Then
                     
                         Select Case Action
                             Case (Action And Directing)
-                                D3DXVec3Add vout, ToVector(Obj.Direct), CalculateMotion(Obj.Motions(A), Directing)
-                                Set Obj.Direct = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Direct), CalculateMotion(obj.Motions(A), Directing)
+                                Set obj.Direct = ToPoint(vout)
                             Case (Action And Rotating)
-                                D3DXVec3Add vout, ToVector(Obj.Twists), CalculateMotion(Obj.Motions(A), Rotating)
-                                Set Obj.Twists = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Twists), CalculateMotion(obj.Motions(A), Rotating)
+                                Set obj.Twists = ToPoint(vout)
                             Case (Action And Scaling)
-                                D3DXVec3Add vout, ToVector(Obj.Scalar), CalculateMotion(Obj.Motions(A), Scaling)
-                                Set Obj.Scalar = ToPoint(vout)
+                                D3DXVec3Add vout, ToVector(obj.Scalar), CalculateMotion(obj.Motions(A), Scaling)
+                                Set obj.Scalar = ToPoint(vout)
                         End Select
                     End If
                 Next
@@ -459,7 +463,7 @@ Private Sub RenderMotion2(ByRef e1 As Element)
                             
                             act.Emphasis = act.Initials
                             e1.DeleteMotion act.Key
-                            If Not act.Script = "" Then
+                            If Not Len(act.Script) = 0 Then
                                 
                                 ExecuteScript e1, act.Script
                             
@@ -681,7 +685,7 @@ Public Sub InputMove2(ByRef e1 As Element)
 '    If (e1.Origin.Z > SpaceBoundary) Or (e1.Origin.Z < -SpaceBoundary) Then e1.Origin.Z = -e1.Origin.Z
 End Sub
 
-Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As Boolean
+Public Function CoupleMove(ByRef obj As Element, ByVal objCollision As Long) As Boolean
 '###################################################################################
 '########## couple the activities of objects in collision with others ##############
 '###################################################################################
@@ -696,15 +700,15 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
         Do While cnt <= Elements.Count
             Set e1 = Elements(cnt)
 
-            If (e1.Effect = Collides.Normal) And (Obj.CollideIndex > -1) Then
-                If (Not e1.CollideObject = Obj.CollideObject) Then
+            If (e1.Effect = Collides.Normal) And (obj.CollideIndex > -1) Then
+                If (Not e1.CollideObject = obj.CollideObject) Then
                     If (e1.CollideObject = objCollision) Then
                     'if found to be with the colliding object
                     
                         'add all motions from one to another
-                        If Not Obj.Motions Is Nothing Then
-                            For A = 1 To Obj.Motions.Count
-                                Set act = Obj.Motions(A)
+                        If Not obj.Motions Is Nothing Then
+                            For A = 1 To obj.Motions.Count
+                                Set act = obj.Motions(A)
                                 If Not e1.MotionExists(act.Key) Then
                                     If act.Action = Directing Then
                                         e1.AddMotion act.Action, act.Key, act.Data, act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
@@ -713,7 +717,9 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
                             Next
                         End If
                         
-                        e1.Direct = Obj.Direct 'setting this seems to "magnetically" couple the directive
+                        e1.Direct.X = obj.Direct.X
+                        e1.Direct.Y = obj.Direct.Y
+                        e1.Direct.Z = obj.Direct.Z 'setting this seems to "magnetically" couple the directive
                         'actions, if not, a sort of pre push and strole uneven happen like real innertia
 
                         CoupleMove = True
@@ -728,7 +734,7 @@ Public Function CoupleMove(ByRef Obj As Element, ByVal objCollision As Long) As 
     End If
 End Function
 
-Public Function CoupleSpin(ByRef Obj As Element, ByVal objCollision As Long) As Boolean
+Public Function CoupleSpin(ByRef obj As Element, ByVal objCollision As Long) As Boolean
 '###################################################################################
 '########## couple the activities of objects in collision with others ##############
 '###################################################################################
@@ -744,16 +750,16 @@ Public Function CoupleSpin(ByRef Obj As Element, ByVal objCollision As Long) As 
 
                 Set e1 = Elements(cnt)
 
-                If (e1.Effect = Collides.Normal) And (Obj.CollideIndex > -1) Then
-                    If (Not e1.CollideObject = Obj.CollideObject) Then
+                If (e1.Effect = Collides.Normal) And (obj.CollideIndex > -1) Then
+                    If (Not e1.CollideObject = obj.CollideObject) Then
                     
                         If (e1.CollideObject = objCollision) Then
                         'if found to be with the colliding object
                         
                             'add all motions from one to another
-                            If Not Obj.Motions Is Nothing Then
-                                For A = 1 To Obj.Motions.Count
-                                    Set act = Obj.Motions(A)
+                            If Not obj.Motions Is Nothing Then
+                                For A = 1 To obj.Motions.Count
+                                    Set act = obj.Motions(A)
                                     If Not e1.MotionExists(act.Key) Then
                                         If act.Action = Rotating Then
                                             e1.AddMotion act.Action, act.Key, VectorNegative(act.Data), act.Emphasis, act.Friction, act.Reactive, act.Recount, act.Script
@@ -762,7 +768,7 @@ Public Function CoupleSpin(ByRef Obj As Element, ByVal objCollision As Long) As 
                                 Next
                             End If
 
-                            e1.Twists = VectorMultiplyBy(AngleAxisInvert(VectorMultiplyBy(Obj.Twists, RADIAN)), DEGREE)
+                            e1.Twists = VectorMultiplyBy(AngleAxisInvert(VectorMultiplyBy(obj.Twists, RADIAN)), DEGREE)
                             
                             CoupleSpin = True
                             Exit Function
@@ -776,9 +782,9 @@ Public Function CoupleSpin(ByRef Obj As Element, ByVal objCollision As Long) As 
     End If
 End Function
 
-Private Sub MoveObject(ByRef Obj As Element)
+Private Sub MoveObject(ByRef obj As Element)
 
-    If Obj.Direct.Equals(NoPoint) Then Exit Sub
+    If obj.Direct.Equals(NoPoint) Then Exit Sub
    
     Dim inAmt As Integer
     Dim S As Space
@@ -795,10 +801,10 @@ Private Sub MoveObject(ByRef Obj As Element)
 '    If inAmt > 0 Then
         For Each S In Spaces
             If S.Boundary > 0 And S.Boundary > S.Range Then
-                If S.InSpace(Obj.Origin) Then
-                    If Not S.InSpace(VectorAddition(Obj.Direct, Obj.Origin)) Then
+                If S.InSpace(obj.Origin) Then
+                    If Not S.InSpace(VectorAddition(obj.Direct, obj.Origin)) Then
 
-                        Set Obj.Direct = NoPoint
+                        Set obj.Direct = NoPoint
                         
 
                         Exit Sub
@@ -848,22 +854,22 @@ On Error GoTo ObjectError
     'and when running diagnal against a wall, yet sometimes it still snags
     'because the bounds objects are cube like nature, this makes a cylinder
 
-    Dim swapY As Single
-
-    Static Rotator As Single
-    Rotator = Rotator + IIf(Camera.Rotate.Y > 0, testNudgeAdjust, -testNudgeAdjust)
-    Rotator = AngleRestrict(Rotator * RADIAN) * DEGREE
-
-    swapY = Obj.Rotate.Y
-    Obj.Rotate.Y = Rotator
-    Rotator = swapY
+'    Dim swapY As Single
+'
+'    Static Rotator As Single
+'    Rotator = Rotator + IIf(Camera.Rotate.Y > 0, testNudgeAdjust, -testNudgeAdjust)
+'    Rotator = AngleRestrict(Rotator * RADIAN) * DEGREE
+'
+'    swapY = Obj.Rotate.Y
+'    Obj.Rotate.Y = Rotator
+'    Rotator = swapY
     
     'on with probably the longest function I ever made...
     
     
     'reset all of the vis flags to zero
     'set to zero, culling ignores them
-    Obj.IsMoving = Moving.None
+    obj.IsMoving = Moving.None
     For cnt = 0 To lngFaceCount - 1
         sngFaceVis(3, cnt) = 0
     Next
@@ -880,18 +886,18 @@ On Error GoTo ObjectError
         Next
 
 
-        If Obj.OnLadder Then 'if we are already on ladder coming in
-            Obj.OnLadder = TestCollision(Obj, Actions.NotDefined, bitType)  'straight to test
+        If obj.OnLadder Then 'if we are already on ladder coming in
+            obj.OnLadder = TestCollision(obj, Actions.NotDefined, bitType)  'straight to test
         Else
-            Obj.OnLadder = TestCollision(Obj, Actions.NotDefined, bitType) 'test as well but..
-            If Obj.OnLadder Then 'if this is the first time we are
+            obj.OnLadder = TestCollision(obj, Actions.NotDefined, bitType) 'test as well but..
+            If obj.OnLadder Then 'if this is the first time we are
                 Do 'on a ladder coming in, clear the objects motions
-                Loop Until Not Obj.DeleteMotion(JumpGUID)
+                Loop Until Not obj.DeleteMotion(JumpGUID)
                 For cnt = 1 To Portals.Count
                     If Not Portals(cnt).Motions Is Nothing Then
                         For cnt2 = 1 To Portals(cnt).Motions.Count
                             Set act = Portals(cnt).Motions(cnt2)
-                            Obj.DeleteMotion act.Key
+                            obj.DeleteMotion act.Key
                             Set act = Nothing
                         Next
                     End If
@@ -907,18 +913,18 @@ On Error GoTo ObjectError
             End If
         Next
 
-        If Obj.InLiquid Then 'the same as ladder, if already liquid;
-            Obj.InLiquid = TestCollision(Obj, Actions.NotDefined, bitType) 'straight to test
+        If obj.InLiquid Then 'the same as ladder, if already liquid;
+            obj.InLiquid = TestCollision(obj, Actions.NotDefined, bitType) 'straight to test
         Else
-            Obj.InLiquid = TestCollision(Obj, Actions.NotDefined, bitType) 'test as well but..
-            If Obj.InLiquid Then 'first time in liquid then
+            obj.InLiquid = TestCollision(obj, Actions.NotDefined, bitType) 'test as well but..
+            If obj.InLiquid Then 'first time in liquid then
                 Do 'delete motions and apeal motions reference
-                Loop Until Not Obj.DeleteMotion(JumpGUID)
+                Loop Until Not obj.DeleteMotion(JumpGUID)
                 For cnt = 1 To Portals.Count
                     If Not Portals(cnt).Motions Is Nothing Then
                         For cnt2 = 1 To Portals(cnt).Motions.Count
                             Set act = Portals(cnt).Motions(cnt2)
-                            Obj.DeleteMotion act.Key
+                            obj.DeleteMotion act.Key
                             Set act = Nothing
                         Next
                     End If
@@ -939,9 +945,9 @@ On Error GoTo ObjectError
     'it's an eye, up and direction vector whose information is relevant to culling
 
 
-    sngCamera(0, 0) = Obj.Origin.X
-    sngCamera(0, 1) = Obj.Origin.Y + 1
-    sngCamera(0, 2) = Obj.Origin.Z
+    sngCamera(0, 0) = obj.Origin.X
+    sngCamera(0, 1) = obj.Origin.Y + 1
+    sngCamera(0, 2) = obj.Origin.Z
 
     sngCamera(1, 0) = 1
     sngCamera(1, 1) = -1
@@ -964,7 +970,7 @@ On Error GoTo ObjectError
 '    sngCamera(2, 2) = -1
     
     If lngFaceCount > 0 Then 'apply the camera perspective to wean out triangles (will be reflected in the flag value)
-        Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
+        obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
         lCullCalls = lCullCalls + 1
     End If
 
@@ -997,44 +1003,44 @@ On Error GoTo ObjectError
 
     'where the directed info data is
     'only going to be about the Y axis
-    backup = ToVector(Obj.Direct)
-    Obj.Direct.Y = backup.Y
-    Obj.Direct.X = 0
-    Obj.Direct.Z = 0
+    backup = ToVector(obj.Direct)
+    obj.Direct.Y = backup.Y
+    obj.Direct.X = 0
+    obj.Direct.Z = 0
 
     'all the collision tests use motion data to modify values of a subset of object change
     'that object change is not applied, and any change that will normally, is ahed of time
     'in a way these are predictions of change, tested for collision 1st before binds them
-    If (Obj.Direct.Y <> 0) Then
+    If (obj.Direct.Y <> 0) Then
         'preform check since any Y change exists at all
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-            Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y  'no collision then adjust the Y to reflect the change is available
-            If Obj.Direct.Y > 0 Then 'and then midify the IsMoving state property of the object
-                If Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.IsMoving = Obj.IsMoving + Moving.Flying
-            ElseIf Obj.Direct.Y < 0 Then
-                If Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving + Moving.Falling
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then
+            obj.Origin.Y = obj.Origin.Y + obj.Direct.Y  'no collision then adjust the Y to reflect the change is available
+            If obj.Direct.Y > 0 Then 'and then midify the IsMoving state property of the object
+                If Not ((obj.IsMoving And Moving.Flying) = Moving.Flying) Then obj.IsMoving = obj.IsMoving + Moving.Flying
+            ElseIf obj.Direct.Y < 0 Then
+                If Not ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving + Moving.Falling
             End If
-            newset.Y = Obj.Direct.Y 'record the difference change to Origin.Y
+            newset.Y = obj.Direct.Y 'record the difference change to Origin.Y
             objCollision = -1
-        ElseIf (Obj.Direct.Y < 0) Then 'the y movement is going down
+        ElseIf (obj.Direct.Y < 0) Then 'the y movement is going down
             Do '(x,z may have or not have changed here too cause Y change)
-                Obj.Direct.Y = Obj.Direct.Y + testNudgeAdjust 'so, we loop until we find out
-                If (Obj.Direct.Y >= 0) Then Exit Do 'of the collision where stands
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.Y < 0) Then
-                Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y 'change the Y to new data, and adjust the IsMoving state for falling
-                If Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving + Moving.Falling
-                newset.Y = Obj.Direct.Y 'record the difference change to Origin.Y
+                obj.Direct.Y = obj.Direct.Y + testNudgeAdjust 'so, we loop until we find out
+                If (obj.Direct.Y >= 0) Then Exit Do 'of the collision where stands
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.Y < 0) Then
+                obj.Origin.Y = obj.Origin.Y + obj.Direct.Y 'change the Y to new data, and adjust the IsMoving state for falling
+                If Not ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving + Moving.Falling
+                newset.Y = obj.Direct.Y 'record the difference change to Origin.Y
             End If
-        ElseIf (Obj.Direct.Y > 0) Then 'the y movement is going up
+        ElseIf (obj.Direct.Y > 0) Then 'the y movement is going up
             Do '(x,z may have or not have changed here too cause Y change)
-                Obj.Direct.Y = Obj.Direct.Y - testNudgeAdjust 'so, we loop until we find out
-                If (Obj.Direct.Y <= 0) Then Exit Do 'of the collision where stands
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.Y > 0) Then
-                Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y 'change the Y to new data, and adjust the IsMoving state for falling
-                If Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying) Then Obj.IsMoving = Obj.IsMoving + Moving.Flying
-                newset.Y = Obj.Direct.Y 'record the difference change to Origin.Y
+                obj.Direct.Y = obj.Direct.Y - testNudgeAdjust 'so, we loop until we find out
+                If (obj.Direct.Y <= 0) Then Exit Do 'of the collision where stands
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.Y > 0) Then
+                obj.Origin.Y = obj.Origin.Y + obj.Direct.Y 'change the Y to new data, and adjust the IsMoving state for falling
+                If Not ((obj.IsMoving And Moving.Flying) = Moving.Flying) Then obj.IsMoving = obj.IsMoving + Moving.Flying
+                newset.Y = obj.Direct.Y 'record the difference change to Origin.Y
             End If
         End If
     End If
@@ -1046,7 +1052,7 @@ On Error GoTo ObjectError
 
     If (Elements.Count > 0) Then
         For Each e1 In Elements 'reset the types of Collision effects to be only object to object collision
-            If (e1.CollideObject = Obj.CollideObject) And (e1.CollideIndex > -1) And e1.BoundsIndex > 0 Then
+            If (e1.CollideObject = obj.CollideObject) And (e1.CollideIndex > -1) And e1.BoundsIndex > 0 Then
                 For cnt2 = e1.CollideIndex To (e1.CollideIndex + Meshes(e1.BoundsIndex).Mesh.GetNumFaces) - 1
                     sngFaceVis(3, cnt2) = visType 'non zero here ensures Culling to consider it left in
                 Next
@@ -1066,7 +1072,7 @@ On Error GoTo ObjectError
 '############# last call to MoveObejct collisions couple Motion here ###############
 '#####################################################################################
 
-    CoupleMove Obj, objCollision 'above was information testing positive for collision
+    CoupleMove obj, objCollision 'above was information testing positive for collision
     'when newest.y <> 0, and objCollision is > -1 which is the first check in CoupleMove()
     'and before any of the following check will be done, the above Y axis will be known.
     'therefore making a call to coupleMove, possibly stacks motions on touching objects,
@@ -1079,46 +1085,46 @@ On Error GoTo ObjectError
     'If Obj.OnLadder Then testNudgeAdjust = testNudgeAdjust / 0.1
     
     
-    Obj.Direct.Y = 0
-    Obj.Direct.X = backup.X
+    obj.Direct.Y = 0
+    obj.Direct.X = backup.X
 
     'very similar recent code above on the Y axis, we will be doing it
-    If (Obj.Direct.X <> 0) Then 'on the X (here) and later on the Z axis
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then 'make the change
-            Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
-            If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+    If (obj.Direct.X <> 0) Then 'on the X (here) and later on the Z axis
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then 'make the change
+            obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust the flags
+            If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
             If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
             End If
-            newset.X = Obj.Direct.X
+            newset.X = obj.Direct.X
             objCollision = -1
-        ElseIf (Obj.Direct.X < 0) Then
+        ElseIf (obj.Direct.X < 0) Then
             Do
-                Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                If (Obj.Direct.X >= 0) Then Exit Do
+                obj.Direct.X = obj.Direct.X + testNudgeAdjust
+                If (obj.Direct.X >= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.X < 0) Then 'make the change
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.X < 0) Then 'make the change
+                obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust the flags
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
                 If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                    If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
                 End If
-                newset.X = Obj.Direct.X
+                newset.X = obj.Direct.X
             End If
-        ElseIf (Obj.Direct.X > 0) Then
+        ElseIf (obj.Direct.X > 0) Then
             Do
-                Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                If (Obj.Direct.X <= 0) Then Exit Do
+                obj.Direct.X = obj.Direct.X - testNudgeAdjust
+                If (obj.Direct.X <= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.X > 0) Then 'make the change
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust the flags
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.X > 0) Then 'make the change
+                obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust the flags
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
                 If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                    If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
                 End If
-                newset.X = Obj.Direct.X
+                newset.X = obj.Direct.X
             End If
         End If
     End If
@@ -1127,53 +1133,53 @@ On Error GoTo ObjectError
 '############# predict the Z movements of objects in motion ##########################
 '#####################################################################################
     
-    Obj.Direct.X = 0
-    Obj.Direct.Z = backup.Z
+    obj.Direct.X = 0
+    obj.Direct.Z = backup.Z
 
     'very similar recent code above on the X and Y axis, we will
-    If (Obj.Direct.Z <> 0) Then 'be doing it here on the Z axis
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then 'make the change
-            Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
-            If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level 'adjust
+    If (obj.Direct.Z <> 0) Then 'be doing it here on the Z axis
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then 'make the change
+            obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'add the movement, and adjust the flags
+            If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level 'adjust
             If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
             End If
-            newset.Z = Obj.Direct.Z
+            newset.Z = obj.Direct.Z
             objCollision = -1
-        ElseIf (Obj.Direct.Z < 0) Then
+        ElseIf (obj.Direct.Z < 0) Then
             Do
-                Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                If (Obj.Direct.Z >= 0) Then Exit Do
+                obj.Direct.Z = obj.Direct.Z + testNudgeAdjust
+                If (obj.Direct.Z >= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.Z < 0) Then 'make the change
-                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.Z < 0) Then 'make the change
+                obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'add the movement, and adjust the flags
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
                 If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                    If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
                 End If
-                newset.Z = Obj.Direct.Z
+                newset.Z = obj.Direct.Z
             End If
-        ElseIf (Obj.Direct.Z > 0) Then
+        ElseIf (obj.Direct.Z > 0) Then
             Do
-                Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                If (Obj.Direct.Z <= 0) Then Exit Do
+                obj.Direct.Z = obj.Direct.Z - testNudgeAdjust
+                If (obj.Direct.Z <= 0) Then Exit Do
             'until we find back to no movement, or something closer inbetween is colliding
-            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-            If (Obj.Direct.Z > 0) Then 'make the change
-                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'add the movement, and adjust the flags
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
+            Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+            If (obj.Direct.Z > 0) Then 'make the change
+                obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'add the movement, and adjust the flags
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
                 If (backup.X <> newset.X) And (backup.Z <> newset.Z) And (Not (backup.Y = newset.Y)) And (Not backup.Y = 0) Then
-                    If ((Obj.IsMoving And Moving.Falling) = Moving.Falling) Then Obj.IsMoving = Obj.IsMoving - Moving.Falling
+                    If ((obj.IsMoving And Moving.Falling) = Moving.Falling) Then obj.IsMoving = obj.IsMoving - Moving.Falling
                 End If
-                newset.Z = Obj.Direct.Z
+                newset.Z = obj.Direct.Z
             End If
         End If
     End If
 
     'If Obj.OnLadder Then testNudgeAdjust = testNudgeAdjust / 10
     
-    Set Obj.Direct = ToPoint(newset)
+    Set obj.Direct = ToPoint(newset)
         
     'everything above here in testing all the moving was for the "newest" point which
     'is the disposition of a prediction from its next motion to the current origin.
@@ -1190,7 +1196,7 @@ On Error GoTo ObjectError
 '############# before applying predictions couple activities of touching #############
 '#####################################################################################
     
-    CoupleMove Obj, objCollision 'periodic TestCollisions may have occured a collision.
+    CoupleMove obj, objCollision 'periodic TestCollisions may have occured a collision.
 
 '#####################################################################################
 '############# push/pull of moving objects in Y slope and small step ups #############
@@ -1201,122 +1207,122 @@ On Error GoTo ObjectError
     'chain links to "pushing" the first object furthest from force.  small step up are
     'a vertical wall height the object can automatically drive over, i.e. it's stairs.
     
-    If (Not Obj.IsMoving = Moving.None) And _
+    If (Not obj.IsMoving = Moving.None) And _
         (backup.X <> newset.X Or backup.Z <> newset.Z) And _
-        (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
+        (Not ((obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
         'falling and flying flags are too also check befire here.
         
-        Obj.Origin.Y = Obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
+        obj.Origin.Y = obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
 
-        Obj.Direct.Y = 0
-        Obj.Direct.X = backup.X
-        Obj.Direct.Z = backup.Z
+        obj.Direct.Y = 0
+        obj.Direct.X = backup.X
+        obj.Direct.Z = backup.Z
 
         'the following two flags are the difference
         'between just setting "newst" like above.
         push = True 'one none effect object pushing another
         pull = False 'an object falling diagnal on a slope
 
-        If (Obj.Direct.X <> 0) Or (Obj.Direct.Z <> 0) Then
+        If (obj.Direct.X <> 0) Or (obj.Direct.Z <> 0) Then
             'first check for collision and if non exists
             'add them to the actual information data
-            If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
+            If (TestCollision(obj, Directing, visType, objCollision) = False) Then
                 'we need a change of X or Z to consider it a pull, already
                 'graivty will take effect to any free falling down objects.
-                If Obj.Direct.X <> 0 Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    newset.X = Obj.Direct.X
+                If obj.Direct.X <> 0 Then
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X
+                    newset.X = obj.Direct.X
                     pull = True
                 End If
-                If Obj.Direct.Z <> 0 Then
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
-                    newset.Z = Obj.Direct.Z
+                If obj.Direct.Z <> 0 Then
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z
+                    newset.Z = obj.Direct.Z
                     pull = True
                 End If
                 objCollision = -1
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
+            ElseIf (obj.Direct.X < 0) And (obj.Direct.Z < 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                    Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
+                    obj.Direct.X = obj.Direct.X + testNudgeAdjust
+                    obj.Direct.Z = obj.Direct.Z + testNudgeAdjust
+                    If ((obj.Direct.X >= 0) Or (obj.Direct.Z >= 0)) Then Exit Do
                 'slow down the change prediction and check until no collision is found
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.Z < 0) Then
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X < 0) And (obj.Direct.Z < 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
-                    newset.Z = Obj.Direct.Z
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
+                    newset.Z = obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
+            ElseIf (obj.Direct.X > 0) And (obj.Direct.Z > 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                    Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
+                    obj.Direct.X = obj.Direct.X - testNudgeAdjust
+                    obj.Direct.Z = obj.Direct.Z - testNudgeAdjust
+                    If ((obj.Direct.X <= 0) Or (obj.Direct.Z <= 0)) Then Exit Do
                 'slow down the change prediction and check until no collision is found
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.Z > 0) Then
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X > 0) And (obj.Direct.Z > 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
-                    newset.Z = Obj.Direct.Z
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
+                    newset.Z = obj.Direct.Z
                     pull = True
                 End If
 
-            ElseIf (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then 'here we do two axis checks at once
+            ElseIf (obj.Direct.X < 0) And (obj.Direct.Z > 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                    Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                    If ((Obj.Direct.X >= 0) Or (Obj.Direct.Z <= 0)) Then Exit Do
+                    obj.Direct.X = obj.Direct.X + testNudgeAdjust
+                    obj.Direct.Z = obj.Direct.Z - testNudgeAdjust
+                    If ((obj.Direct.X >= 0) Or (obj.Direct.Z <= 0)) Then Exit Do
                 'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) And (Obj.Direct.Z > 0) Then
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X < 0) And (obj.Direct.Z > 0) Then
                     'adjust change and flags to reflect happened
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
-                    newset.Z = Obj.Direct.Z
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
+                    newset.Z = obj.Direct.Z
                     pull = True
                 End If
-            ElseIf (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then 'here we do two axis checks at once
+            ElseIf (obj.Direct.X > 0) And (obj.Direct.Z < 0) Then 'here we do two axis checks at once
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                    Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                    If ((Obj.Direct.X <= 0) Or (Obj.Direct.Z >= 0)) Then Exit Do
+                    obj.Direct.X = obj.Direct.X - testNudgeAdjust
+                    obj.Direct.Z = obj.Direct.Z + testNudgeAdjust
+                    If ((obj.Direct.X <= 0) Or (obj.Direct.Z >= 0)) Then Exit Do
                     'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) And (Obj.Direct.Z < 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
-                    newset.Z = Obj.Direct.Z
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X > 0) And (obj.Direct.Z < 0) Then
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
+                    newset.Z = obj.Direct.Z
                     pull = True
                 End If
             End If
         End If
         
-        Obj.Origin.Y = Obj.Origin.Y - stepUpStairHeight 'no longer pretending it can step up
+        obj.Origin.Y = obj.Origin.Y - stepUpStairHeight 'no longer pretending it can step up
 
         If pull Then push = False
 
     End If
 
-    Set Obj.Direct = ToPoint(backup)
+    Set obj.Direct = ToPoint(backup)
 
 '#####################################################################################
 '############# those passing with out pressure couple activities first ###############
 '#####################################################################################
 
     
-    CoupleMove Obj, objCollision 'periodic TestCollisions may have occured a collision.
+    CoupleMove obj, objCollision 'periodic TestCollisions may have occured a collision.
 
 
 '#####################################################################################
@@ -1324,96 +1330,96 @@ On Error GoTo ObjectError
 '#####################################################################################
 
 
-    If push And (Not Obj.IsMoving = Moving.None) And _
+    If push And (Not obj.IsMoving = Moving.None) And _
         (backup.X <> newset.X Or backup.Z <> newset.Z) And _
-        (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
+        (Not ((obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((obj.IsMoving And Moving.Falling) = Moving.Falling)) Then
 
         'where a change existe already, during checks on
         'each axis then occurs the need to change again.
         'so besides the gate IF above this is to do it
         'simgularly on X and Z, which was done above so
         '
-        Obj.Origin.Y = Obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
+        obj.Origin.Y = obj.Origin.Y + stepUpStairHeight 'pretend it can step out of it by step up
 
-        Obj.Direct.Y = 0
-        Obj.Direct.X = backup.X
-        Obj.Direct.Z = backup.Z
+        obj.Direct.Y = 0
+        obj.Direct.X = backup.X
+        obj.Direct.Z = backup.Z
 
         push = False
 
-        If (Obj.Direct.X <> 0) Then 'first comes the X axis
-            If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-                Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                newset.X = Obj.Direct.X
+        If (obj.Direct.X <> 0) Then 'first comes the X axis
+            If (TestCollision(obj, Directing, visType, objCollision) = False) Then
+                obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust change and flags to reflect happened
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                newset.X = obj.Direct.X
                 push = True
                 objCollision = -1
-            ElseIf (Obj.Direct.X < 0) Then
+            ElseIf (obj.Direct.X < 0) Then
                 Do
-                    Obj.Direct.X = Obj.Direct.X + testNudgeAdjust
-                    If (Obj.Direct.X >= 0) Then Exit Do
+                    obj.Direct.X = obj.Direct.X + testNudgeAdjust
+                    If (obj.Direct.X >= 0) Then Exit Do
                 'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X < 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X < 0) Then
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust change and flags to reflect happened
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
                     push = True
                 End If
 
-            ElseIf (Obj.Direct.X > 0) Then
+            ElseIf (obj.Direct.X > 0) Then
                 Do
-                    Obj.Direct.X = Obj.Direct.X - testNudgeAdjust
-                    If (Obj.Direct.X <= 0) Then Exit Do
+                    obj.Direct.X = obj.Direct.X - testNudgeAdjust
+                    If (obj.Direct.X <= 0) Then Exit Do
                 'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.X > 0) Then
-                    Obj.Origin.X = Obj.Origin.X + Obj.Direct.X 'adjust change and flags to reflect happened
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.X = Obj.Direct.X
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.X > 0) Then
+                    obj.Origin.X = obj.Origin.X + obj.Direct.X 'adjust change and flags to reflect happened
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.X = obj.Direct.X
                     push = True
                 End If
             End If
         End If
         
-        If (Obj.Direct.Z <> 0) Then 'first comes the Z axis
-            If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
-                Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'adjust change and flags to reflect happened
-                If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                newset.Z = Obj.Direct.Z
+        If (obj.Direct.Z <> 0) Then 'first comes the Z axis
+            If (TestCollision(obj, Directing, visType, objCollision) = False) Then
+                obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'adjust change and flags to reflect happened
+                If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                newset.Z = obj.Direct.Z
                 push = True
                 objCollision = -1
-            ElseIf (Obj.Direct.Z < 0) Then
+            ElseIf (obj.Direct.Z < 0) Then
                 Do
-                    Obj.Direct.Z = Obj.Direct.Z + testNudgeAdjust
-                    If (Obj.Direct.Z >= 0) Then Exit Do
+                    obj.Direct.Z = obj.Direct.Z + testNudgeAdjust
+                    If (obj.Direct.Z >= 0) Then Exit Do
                 'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.Z < 0) Then
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'adjust change and flags to reflect happened
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.Z = Obj.Direct.Z
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.Z < 0) Then
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'adjust change and flags to reflect happened
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.Z = obj.Direct.Z
                     push = True
                 End If
 
-            ElseIf (Obj.Direct.Z > 0) Then
+            ElseIf (obj.Direct.Z > 0) Then
                 Do
-                    Obj.Direct.Z = Obj.Direct.Z - testNudgeAdjust
-                    If (Obj.Direct.Z <= 0) Then Exit Do
+                    obj.Direct.Z = obj.Direct.Z - testNudgeAdjust
+                    If (obj.Direct.Z <= 0) Then Exit Do
                 'slow down the change prediction and check until
-                Loop Until (TestCollision(Obj, Directing, visType, objCollision) = False)
-                If (Obj.Direct.Z > 0) Then
-                    Obj.Origin.Z = Obj.Origin.Z + Obj.Direct.Z 'adjust change and flags to reflect happened
-                    If Not ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving + Moving.Level
-                    newset.Z = Obj.Direct.Z
+                Loop Until (TestCollision(obj, Directing, visType, objCollision) = False)
+                If (obj.Direct.Z > 0) Then
+                    obj.Origin.Z = obj.Origin.Z + obj.Direct.Z 'adjust change and flags to reflect happened
+                    If Not ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving + Moving.Level
+                    newset.Z = obj.Direct.Z
                     push = True
                 End If
 
             End If
         End If
         
-        Obj.Origin.Y = Obj.Origin.Y - stepUpStairHeight 'no longer pretending it can step up
+        obj.Origin.Y = obj.Origin.Y - stepUpStairHeight 'no longer pretending it can step up
 
     End If
 
@@ -1428,71 +1434,71 @@ On Error GoTo ObjectError
     'they are only needed now in testing skipping this block, when not skipped
     'they may become adjusted to skippin the last block of commented apart code
     
-    If (pull Xor push) And (Not ((Obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
-        (Not ((Obj.IsMoving And Moving.Falling) = Moving.Falling)) And _
-        ((Obj.IsMoving And Moving.Level) = Moving.Level) Then
+    If (pull Xor push) And (Not ((obj.IsMoving And Moving.Flying) = Moving.Flying)) And _
+        (Not ((obj.IsMoving And Moving.Falling) = Moving.Falling)) And _
+        ((obj.IsMoving And Moving.Level) = Moving.Level) Then
         
-        Obj.Direct.Y = 0
-        Obj.Direct.X = 0
-        Obj.Direct.Z = 0
+        obj.Direct.Y = 0
+        obj.Direct.X = 0
+        obj.Direct.Z = 0
 
         'slow down the change prediction and check until
-        Do While (TestCollision(Obj, Directing, visType, objCollision) = True)
-            Obj.Direct.Y = Obj.Direct.Y + testNudgeAdjust
+        Do While (TestCollision(obj, Directing, visType, objCollision) = True)
+            obj.Direct.Y = obj.Direct.Y + testNudgeAdjust
         Loop
 
-        If ((Obj.Direct.Y >= 0) And (Obj.Direct.Y < 0.3)) Or ((Obj.Direct.Y >= 0) And (Obj.Direct.Y <= 0.2)) Then
-            Obj.Origin.Y = Obj.Origin.Y + Obj.Direct.Y 'adjust change and flags to reflect happened
-            If Not ((Obj.IsMoving And Moving.Stepping) = Moving.Stepping) Then Obj.IsMoving = Obj.IsMoving + Moving.Stepping
-            If ((Obj.IsMoving And Moving.Level) = Moving.Level) Then Obj.IsMoving = Obj.IsMoving - Moving.Level
-            newset.Y = Obj.Direct.Y
+        If ((obj.Direct.Y >= 0) And (obj.Direct.Y < 0.3)) Or ((obj.Direct.Y >= 0) And (obj.Direct.Y <= 0.2)) Then
+            obj.Origin.Y = obj.Origin.Y + obj.Direct.Y 'adjust change and flags to reflect happened
+            If Not ((obj.IsMoving And Moving.Stepping) = Moving.Stepping) Then obj.IsMoving = obj.IsMoving + Moving.Stepping
+            If ((obj.IsMoving And Moving.Level) = Moving.Level) Then obj.IsMoving = obj.IsMoving - Moving.Level
+            newset.Y = obj.Direct.Y
         End If
 
-    ElseIf ((Obj.IsMoving = Moving.None) And ((backup.X = 0 And backup.Z = 0) And (newset.X = 0 And newset.Z = 0))) Then
+    ElseIf ((obj.IsMoving = Moving.None) And ((backup.X = 0 And backup.Z = 0) And (newset.X = 0 And newset.Z = 0))) Then
 
         push = False
         pull = False
         
-        Obj.Direct.Y = -testNudgeAdjust
-        If Not push Then Obj.Direct.X = testNudgeAdjust
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
+        obj.Direct.Y = -testNudgeAdjust
+        If Not push Then obj.Direct.X = testNudgeAdjust
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then
             pull = True
             objCollision = -1
         Else
             pull = False
-            Obj.Direct.Y = 0
-            Obj.Direct.X = 0
+            obj.Direct.Y = 0
+            obj.Direct.X = 0
         End If
 
-        If Not pull Then Obj.Direct.Y = -testNudgeAdjust
-        Obj.Direct.Z = testNudgeAdjust
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
+        If Not pull Then obj.Direct.Y = -testNudgeAdjust
+        obj.Direct.Z = testNudgeAdjust
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then
             push = True
             objCollision = -1
         Else
             push = False
-            Obj.Direct.Y = 0
-            Obj.Direct.Z = 0
+            obj.Direct.Y = 0
+            obj.Direct.Z = 0
         End If
 
-        If Not pull And Not push Then Obj.Direct.Y = -testNudgeAdjust
-        Obj.Direct.X = -testNudgeAdjust
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
+        If Not pull And Not push Then obj.Direct.Y = -testNudgeAdjust
+        obj.Direct.X = -testNudgeAdjust
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then
             pull = (push And Not pull) Or (Not push And Not pull)
             objCollision = -1
         Else
-            Obj.Direct.Y = 0
-            Obj.Direct.X = 0
+            obj.Direct.Y = 0
+            obj.Direct.X = 0
         End If
 
-        If Not push And Not pull Then Obj.Direct.Y = -testNudgeAdjust
-        Obj.Direct.Z = -testNudgeAdjust
-        If (TestCollision(Obj, Directing, visType, objCollision) = False) Then
+        If Not push And Not pull Then obj.Direct.Y = -testNudgeAdjust
+        obj.Direct.Z = -testNudgeAdjust
+        If (TestCollision(obj, Directing, visType, objCollision) = False) Then
             push = (pull And Not push) Or (Not push And Not pull)
             objCollision = -1
         Else
-            Obj.Direct.Y = 0
-            Obj.Direct.Z = 0
+            obj.Direct.Y = 0
+            obj.Direct.Z = 0
         End If
 
 
@@ -1504,73 +1510,73 @@ On Error GoTo ObjectError
         'by the rate of adjust, for steps and steeps
         If (push Xor pull) Or (push And pull) Then
 
-            Obj.Direct.Y = 0
+            obj.Direct.Y = 0
 
             Do
-                Obj.Origin.Y = Obj.Origin.Y - testNudgeAdjust
+                obj.Origin.Y = obj.Origin.Y - testNudgeAdjust
                 If pull Then
-                    Obj.Origin.X = Obj.Origin.X + testNudgeAdjust
-                    If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                        Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust * 2)
-                        If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                            Obj.Origin.Y = Obj.Origin.Y + (testNudgeAdjust / 3)
+                    obj.Origin.X = obj.Origin.X + testNudgeAdjust
+                    If (TestCollision(obj, Directing, visType, objCollision) = True) Then
+                        obj.Origin.X = obj.Origin.X - (testNudgeAdjust * 2)
+                        If (TestCollision(obj, Directing, visType, objCollision) = True) Then
+                            obj.Origin.Y = obj.Origin.Y + (testNudgeAdjust / 3)
                         Else
                             objCollision = -1
                             Do
-                                If Obj.Origin.X + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                                Obj.Origin.X = Obj.Origin.X + (testNudgeAdjust / 3)
-                            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                            Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust / 3)
+                                If obj.Origin.X + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                                obj.Origin.X = obj.Origin.X + (testNudgeAdjust / 3)
+                            Loop Until (TestCollision(obj, Directing, visType, objCollision) = True)
+                            obj.Origin.X = obj.Origin.X - (testNudgeAdjust / 3)
                         End If
                     Else
                         objCollision = -1
                         Do
-                            If Obj.Origin.X - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                            Obj.Origin.X = Obj.Origin.X - (testNudgeAdjust / 3)
-                        Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                        Obj.Origin.X = Obj.Origin.X + (testNudgeAdjust / 3)
+                            If obj.Origin.X - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                            obj.Origin.X = obj.Origin.X - (testNudgeAdjust / 3)
+                        Loop Until (TestCollision(obj, Directing, visType, objCollision) = True)
+                        obj.Origin.X = obj.Origin.X + (testNudgeAdjust / 3)
                     End If
                 ElseIf push Then
 
-                    Obj.Origin.Z = Obj.Origin.Z + testNudgeAdjust
-                    If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                        Obj.Origin.Z = Obj.Origin.Z - (testNudgeAdjust * 2)
-                        If (TestCollision(Obj, Directing, visType, objCollision) = True) Then
-                            Obj.Origin.Y = Obj.Origin.Y + (testNudgeAdjust / 3)
+                    obj.Origin.Z = obj.Origin.Z + testNudgeAdjust
+                    If (TestCollision(obj, Directing, visType, objCollision) = True) Then
+                        obj.Origin.Z = obj.Origin.Z - (testNudgeAdjust * 2)
+                        If (TestCollision(obj, Directing, visType, objCollision) = True) Then
+                            obj.Origin.Y = obj.Origin.Y + (testNudgeAdjust / 3)
                         Else
                             objCollision = -1
                             Do
-                                If Obj.Origin.Z + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                                Obj.Origin.Z = Obj.Origin.Z + (testNudgeAdjust / 3)
-                            Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                            Obj.Origin.Z = Obj.Origin.Z - (testNudgeAdjust / 3)
+                                If obj.Origin.Z + (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                                obj.Origin.Z = obj.Origin.Z + (testNudgeAdjust / 3)
+                            Loop Until (TestCollision(obj, Directing, visType, objCollision) = True)
+                            obj.Origin.Z = obj.Origin.Z - (testNudgeAdjust / 3)
                         End If
                     Else
                         objCollision = -1
                         Do
-                            If Obj.Origin.Z - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
-                            Obj.Origin.Z = Obj.Origin.Z - (testNudgeAdjust / 3)
-                        Loop Until (TestCollision(Obj, Directing, visType, objCollision) = True)
-                        Obj.Origin.Z = Obj.Origin.Z + (testNudgeAdjust / 3)
+                            If obj.Origin.Z - (testNudgeAdjust / 3) <> testNudgeAdjust Then Exit Do
+                            obj.Origin.Z = obj.Origin.Z - (testNudgeAdjust / 3)
+                        Loop Until (TestCollision(obj, Directing, visType, objCollision) = True)
+                        obj.Origin.Z = obj.Origin.Z + (testNudgeAdjust / 3)
                     End If
                 End If
 
-            Loop While (TestCollision(Obj, Directing, visType, objCollision) = True)
+            Loop While (TestCollision(obj, Directing, visType, objCollision) = True)
 
         End If
         
     End If
 
-    swapY = Obj.Rotate.Y
-    Obj.Rotate.Y = Rotator
-    Rotator = swapY
+'    swapY = Obj.Rotate.Y
+'    Obj.Rotate.Y = Rotator
+'    Rotator = swapY
 
     Exit Sub
 ObjectError:
 
-    swapY = Obj.Rotate.Y
-    Obj.Rotate.Y = Rotator
-    Rotator = swapY
+'    swapY = Obj.Rotate.Y
+'    Obj.Rotate.Y = Rotator
+'    Rotator = swapY
     
 '#####################################################################################
 '############# direct activities are primed for Next call to MoveObject  #############
@@ -1583,7 +1589,7 @@ ObjectError:
    ' Resume
 End Sub
 
-Private Sub SpinObject(ByRef Obj As Element)
+Private Sub SpinObject(ByRef obj As Element)
 
 On Error GoTo ObjectError
 
@@ -1591,17 +1597,19 @@ On Error GoTo ObjectError
 '############# nothing as fancy as MoveObject for FPS rate/play vs. needs  ###########
 '#####################################################################################
 
-    If Not Obj Is Nothing Then
+    If Not obj Is Nothing Then
 
-        If Not TestCollision(Obj, Rotating, 2) Then
+        If Not TestCollision(obj, Rotating, 2) Then
 
-            Obj.Rotate.X = Obj.Rotate.X + Obj.Twists.X
-            Obj.Rotate.Y = Obj.Rotate.Y + Obj.Twists.Y
-            Obj.Rotate.Z = Obj.Rotate.Z + Obj.Twists.Z
+            obj.Rotate.X = obj.Rotate.X + obj.Twists.X
+            obj.Rotate.Y = obj.Rotate.Y + obj.Twists.Y
+            obj.Rotate.Z = obj.Rotate.Z + obj.Twists.Z
 
         End If
 
-        Obj.Twists = NoAngle
+        obj.Twists.X = 360
+        obj.Twists.Y = 360
+        obj.Twists.Z = 360
 
     End If
 
@@ -1927,10 +1935,10 @@ ObjectError:
     Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Sub
 
-Private Sub BlowObject(ByRef Obj As Element)
+Private Sub BlowObject(ByRef obj As Element)
 
     
-    If Obj.Scalar.Equals(NoPoint) Then Exit Sub
+    If obj.Scalar.Equals(NoPoint) Then Exit Sub
     
 On Error GoTo ObjectError
 
@@ -1938,17 +1946,17 @@ On Error GoTo ObjectError
 '############# nothing as fancy as MoveObject for FPS rate/play vs. needs  ###########
 '#####################################################################################
 
-    If Not Obj Is Nothing Then
+    If Not obj Is Nothing Then
     
-        If Not TestCollision(Obj, Scaling, 2) Then
+        If Not TestCollision(obj, Scaling, 2) Then
         
-            Obj.Scaled.X = Obj.Scaled.X + Obj.Scalar.X
-            Obj.Scaled.Y = Obj.Scaled.Y + Obj.Scalar.Y
-            Obj.Scaled.Z = Obj.Scaled.Z + Obj.Scalar.Z
+            obj.Scaled.X = obj.Scaled.X + obj.Scalar.X
+            obj.Scaled.Y = obj.Scaled.Y + obj.Scalar.Y
+            obj.Scaled.Z = obj.Scaled.Z + obj.Scalar.Z
             
         End If
         
-        Obj.Scalar = NoPoint
+        obj.Scalar = NoPoint
     
     End If
 
@@ -2031,7 +2039,7 @@ End Sub
 '    sngCamera(1, 2) = p.Z
 '
 'End Sub
-Public Function TestCollision(ByRef Obj As Element, ByRef Action As Actions, ByVal visType As Long, Optional ByRef lngCollideObj As Long = -1) As Boolean
+Public Function TestCollision(ByRef obj As Element, ByRef Action As Actions, ByVal visType As Long, Optional ByRef lngCollideObj As Long = -1) As Boolean
 On Error GoTo ObjectError
 
 
@@ -2039,7 +2047,7 @@ On Error GoTo ObjectError
 '############# face data is temporary transformed and checked for collision ##########
 '#####################################################################################
 
-    If Obj Is Nothing Then Exit Function
+    If obj Is Nothing Then Exit Function
 
     If Action = Rotating Then
 
@@ -2066,9 +2074,9 @@ On Error GoTo ObjectError
 '        sngCamera(2, 2) = Round(p.Z, 6)
 
 
-        sngCamera(0, 0) = Obj.Origin.X
-        sngCamera(0, 1) = Obj.Origin.Y + 1
-        sngCamera(0, 2) = Obj.Origin.Z
+        sngCamera(0, 0) = obj.Origin.X
+        sngCamera(0, 1) = obj.Origin.Y + 1
+        sngCamera(0, 2) = obj.Origin.Z
 
         sngCamera(1, 0) = 1
         sngCamera(1, 1) = -1
@@ -2079,7 +2087,7 @@ On Error GoTo ObjectError
         sngCamera(2, 2) = -1
         
         If lngFaceCount > 0 Then
-            Obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
+            obj.CulledFaces = Culling(visType, lngFaceCount, sngCamera, sngFaceVis, sngVertexX, sngVertexY, sngVertexZ, sngScreenX, sngScreenY, sngScreenZ, sngZBuffer)
             lCullCalls = lCullCalls + 1
         End If
 
@@ -2106,42 +2114,42 @@ On Error GoTo ObjectError
 
     
     If (Action And Scaling) = Scaling Then
-        D3DXMatrixScaling matScale, (Obj.Scaled.X + Obj.Scalar.X), (Obj.Scaled.Y + Obj.Scalar.Y), (Obj.Scaled.Z + Obj.Scalar.Z)
+        D3DXMatrixScaling matScale, (obj.Scaled.X + obj.Scalar.X), (obj.Scaled.Y + obj.Scalar.Y), (obj.Scaled.Z + obj.Scalar.Z)
     Else
-        D3DXMatrixScaling matScale, Obj.Scaled.X, Obj.Scaled.Y, Obj.Scaled.Z
+        D3DXMatrixScaling matScale, obj.Scaled.X, obj.Scaled.Y, obj.Scaled.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
 
 
     If (Action And Directing) = Directing Then
-        D3DXMatrixTranslation matScale, (Obj.Origin.X + Obj.Direct.X), (Obj.Origin.Y + Obj.Direct.Y), (Obj.Origin.Z + Obj.Direct.Z)
+        D3DXMatrixTranslation matScale, (obj.Origin.X + obj.Direct.X), (obj.Origin.Y + obj.Direct.Y), (obj.Origin.Z + obj.Direct.Z)
     Else
-        D3DXMatrixTranslation matScale, Obj.Origin.X, Obj.Origin.Y, Obj.Origin.Z
+        D3DXMatrixTranslation matScale, obj.Origin.X, obj.Origin.Y, obj.Origin.Z
     End If
     D3DXMatrixMultiply matMesh, matMesh, matScale
     
     If (Action And Rotating) = Rotating Then
 
-        D3DXMatrixRotationX matRot, ((Obj.Rotate.X + Obj.Twists.X) * RADIAN)
+        D3DXMatrixRotationX matRot, ((obj.Rotate.X + obj.Twists.X) * RADIAN)
         'D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
-        D3DXMatrixRotationY matRot, ((Obj.Rotate.Y + Obj.Twists.Y) * RADIAN)
+        D3DXMatrixRotationY matRot, ((obj.Rotate.Y + obj.Twists.Y) * RADIAN)
         'D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
-        D3DXMatrixRotationZ matRot, ((Obj.Rotate.Z + Obj.Twists.Z) * RADIAN)
+        D3DXMatrixRotationZ matRot, ((obj.Rotate.Z + obj.Twists.Z) * RADIAN)
         'D3DXMatrixMultiply matRot, matRot, matMesh
         D3DXMatrixMultiply matMesh, matRot, matMesh
     Else
 
-        D3DXMatrixRotationX matRot, (Obj.Rotate.X * RADIAN)
+        D3DXMatrixRotationX matRot, (obj.Rotate.X * RADIAN)
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
-        D3DXMatrixRotationY matRot, (Obj.Rotate.Y * RADIAN)
+        D3DXMatrixRotationY matRot, (obj.Rotate.Y * RADIAN)
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
-        D3DXMatrixRotationZ matRot, (Obj.Rotate.Z * RADIAN)
+        D3DXMatrixRotationZ matRot, (obj.Rotate.Z * RADIAN)
         D3DXMatrixMultiply matMesh, matRot, matMesh
 
     End If
@@ -2149,7 +2157,7 @@ On Error GoTo ObjectError
 
     
             
-    If lngFaceCount > 0 And Obj.CollideIndex > -1 And Obj.BoundsIndex > 0 Then
+    If lngFaceCount > 0 And obj.CollideIndex > -1 And obj.BoundsIndex > 0 Then
     
 
 '#####################################################################################
@@ -2157,13 +2165,13 @@ On Error GoTo ObjectError
 '#####################################################################################
 
 
-        For Face = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.BoundsIndex).Mesh.GetNumFaces) - 1
+        For Face = obj.CollideIndex To (obj.CollideIndex + Meshes(obj.BoundsIndex).Mesh.GetNumFaces) - 1
     
             For cnt = 0 To 2
                 
-                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).X
-                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Y
-                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Index + cnt).Z
+                V(cnt).X = Meshes(obj.BoundsIndex).Verticies(Index + cnt).X
+                V(cnt).Y = Meshes(obj.BoundsIndex).Verticies(Index + cnt).Y
+                V(cnt).Z = Meshes(obj.BoundsIndex).Verticies(Index + cnt).Z
     
                 D3DXVec3TransformCoord V(cnt), V(cnt), matMesh
                 
@@ -2182,8 +2190,8 @@ On Error GoTo ObjectError
 
         Dim lngCollideIdx As Long
         lngCollideIdx = -1
-        If Obj.BoundsIndex > 0 Then
-            For cnt = Obj.CollideIndex To (Obj.CollideIndex + Meshes(Obj.BoundsIndex).Mesh.GetNumFaces) - 1
+        If obj.BoundsIndex > 0 Then
+            For cnt = obj.CollideIndex To (obj.CollideIndex + Meshes(obj.BoundsIndex).Mesh.GetNumFaces) - 1
                 lngTestCalls = lngTestCalls + 1
                 lFacesShown = lFacesShown + lngFaceCount
                 If lngFaceCount > 0 Then
@@ -2229,7 +2237,7 @@ ObjectError:
     If Err.Number = 6 Or Err.Number = 11 Then Resume
     Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
 End Function
-Public Function DelCollision(ByRef Obj As Element)
+Public Function DelCollision(ByRef obj As Element)
 On Error GoTo ObjectError
     Stats_Collision_Count = Stats_Collision_Count - 1
     'Debug.Print "DelCollision"
@@ -2238,17 +2246,17 @@ On Error GoTo ObjectError
     Dim Index As Long
     
     
-    If Obj.BoundsIndex > 0 Then
+    If obj.BoundsIndex > 0 Then
 '        If Not Meshes Is Nothing Then
 '        If Obj.BoundsIndex <= UBound(Meshes()) Then
 '        If Not Meshes(Obj.BoundsIndex).Mesh Is Nothing Then
-            Index = Meshes(Obj.BoundsIndex).Mesh.GetNumFaces
+            Index = Meshes(obj.BoundsIndex).Mesh.GetNumFaces
 '        End If
 '        End If
 '        End If
         If lngFaceCount - Index > 0 And Index >= UBound(Meshes()) Then 'Obj.CollideIndex + Index < lngFaceCount Then
     
-            For Face = Obj.CollideIndex To lngFaceCount - Index - 1 'Obj.CollideIndex + Index - 1
+            For Face = obj.CollideIndex To lngFaceCount - Index - 1 'Obj.CollideIndex + Index - 1
                 sngFaceVis(0, Face) = sngFaceVis(0, Index + Face - 1)
                 sngFaceVis(1, Face) = sngFaceVis(1, Index + Face - 1)
                 sngFaceVis(2, Face) = sngFaceVis(2, Index + Face - 1)
@@ -2290,7 +2298,7 @@ On Error GoTo ObjectError
                 Dim e1 As Element
                 For Each e1 In Elements
                 'For cnt = 1 To Elements.count
-                    If e1.CollideIndex > Obj.CollideIndex Then
+                    If e1.CollideIndex > obj.CollideIndex Then
                         e1.CollideIndex = e1.CollideIndex - Index
                     End If
                 Next
@@ -2298,7 +2306,7 @@ On Error GoTo ObjectError
             
         End If
         
-        Obj.CollideIndex = -1
+        obj.CollideIndex = -1
         lngObjCount = lngObjCount - 1
         lngFaceCount = lngFaceCount - Index
         
@@ -2444,7 +2452,7 @@ ObjectError:
 End Function
 
 
-Public Function AddCollision(ByRef Obj As Element, Optional ByVal visType As Long = 0) As Long
+Public Function AddCollision(ByRef obj As Element, Optional ByVal visType As Long = 0) As Long
 On Error GoTo ObjectError
     Stats_Collision_Count = Stats_Collision_Count + 1
 '#####################################################################################
@@ -2463,28 +2471,28 @@ On Error GoTo ObjectError
 
     ReDim V(0 To 3) As D3DVECTOR
 
-    If Obj.BoundsIndex > 0 Then
-        Obj.CollideIndex = lngFaceCount
+    If obj.BoundsIndex > 0 Then
+        obj.CollideIndex = lngFaceCount
         AddCollision = lngFaceCount
     
         Dim FaceCount As Long
         Dim addingFace As Boolean
 
         'obj.PrepairMatrix
-        Obj.ApplyMatrix
+        obj.ApplyMatrix
         'obj.SetWorldMatrix
         
         Index = 0
-        For Face = 0 To Meshes(Obj.BoundsIndex).Mesh.GetNumFaces - 1
+        For Face = 0 To Meshes(obj.BoundsIndex).Mesh.GetNumFaces - 1
     
             For cnt = 0 To 2
     
-                V(cnt).X = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).X
-                V(cnt).Y = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Y
-                V(cnt).Z = Meshes(Obj.BoundsIndex).Verticies(Meshes(Obj.BoundsIndex).Indicies(Index + cnt)).Z
+                V(cnt).X = Meshes(obj.BoundsIndex).Verticies(Meshes(obj.BoundsIndex).Indicies(Index + cnt)).X
+                V(cnt).Y = Meshes(obj.BoundsIndex).Verticies(Meshes(obj.BoundsIndex).Indicies(Index + cnt)).Y
+                V(cnt).Z = Meshes(obj.BoundsIndex).Verticies(Meshes(obj.BoundsIndex).Indicies(Index + cnt)).Z
     
                 'D3DXVec3TransformCoord vn, v(cnt), matObject
-                vn = ToVector(Obj.PointMatrix(ToPoint(V(cnt))))
+                vn = ToVector(obj.PointMatrix(ToPoint(V(cnt))))
                 
                 V(cnt).X = vn.X
                 V(cnt).Y = vn.Y
@@ -2526,7 +2534,7 @@ On Error GoTo ObjectError
             
         Next
     
-        Obj.CollideObject = lngObjCount
+        obj.CollideObject = lngObjCount
     
         lngObjCount = lngObjCount + 1
     End If
@@ -2649,7 +2657,7 @@ On Error GoTo scripterror
     Dim cnt2 As Long
     
     Dim cnt As Long
-    Dim Obj As Long
+    Dim obj As Long
                             
     Dim A As Long
     Dim act As Motion
@@ -2672,6 +2680,8 @@ On Error GoTo scripterror
     End If
     
     If portalHit Then
+        
+    
         If Not t1.Teleport.Equals(NoPoint) Then
             pos = ToVector(e1.Origin)
             
@@ -2713,6 +2723,8 @@ On Error GoTo scripterror
             End If
         End If
         
+
+        
         If Not t1.OnInRange Is Nothing Then
         
             If InStr(LCase(t1.OnInRange.AppliesTo) & ",", LCase(e1.Key) & ",") > 0 Or t1.OnInRange.AppliesTo = "" Then
@@ -2740,7 +2752,8 @@ On Error GoTo scripterror
                         errsource = "OnInRange"
                         errline = CLng(t1.OnInRange.StartLine)
                         frmMain.Run t1.OnInRange.RunScript, e1.Key, errline
-                        'Debug.Print "OnInRange " & t1.Key & " " & e1.Key
+                        
+                        Debug.Print "OnInRange " & t1.Key & " " & e1.Key & " Running " & t1.OnInRange.RunScript
                     End If
                 End If
                 
@@ -2824,11 +2837,12 @@ scripterror:
     End If
 
 End Sub
-Private Sub ExecuteScript(ByRef e1 As Element, ByVal EventText As String)
+Private Sub ExecuteScript(ByRef e1 As Element, ByRef EventText As String)
     Dim trig As String
     Dim line As String
     Dim id As String
-        
+    
+    
     line = NextArg(EventText, ":")
     trig = RemoveArg(EventText, ":")
     If Left(Trim(trig), 1) = "<" Then

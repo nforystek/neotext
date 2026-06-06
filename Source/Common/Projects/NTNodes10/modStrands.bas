@@ -2,7 +2,7 @@ Attribute VB_Name = "modStrands"
 #Const modStrands = -1
 Option Explicit
 Option Compare Binary
-
+Option Private Module
 
 Public Type MemInfo
     MemP As Long
@@ -61,7 +61,7 @@ Public Const GPTR = &H40
 
 Public Declare Function AryPtr Lib "msvbvm60" Alias "VarPtr" (ary() As Any) As Long
  
-Public Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
+Public Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, source As Any, ByVal Length As Long)
 
 '&H11000000
 Public Declare Function GetCurrentProcess Lib "kernel32" () As Long
@@ -140,7 +140,7 @@ Public Type OVERLAPPED
         hEvent As Long
 End Type
 
-Public Declare Function VarPtrArray Lib "msvbvm60.dll" Alias "VarPtr" (Var() As Any) As Long
+Public Declare Function VarPtrArray Lib "MSVBVM60.DLL" Alias "VarPtr" (Var() As Any) As Long
 Public Declare Function StrCpy Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As String, ByVal lpString2 As Long) As Long
 Public Declare Function StrCpyReverse Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As Long, ByVal lpString2 As String) As Long
 Public Declare Function StrLen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
@@ -162,6 +162,20 @@ Public Declare Function GetWindowsDirectory Lib "kernel32" Alias "GetWindowsDire
 Public Declare Function GetTempFileName Lib "kernel32" Alias "GetTempFileNameA" (ByVal lpszPath As String, ByVal lpPrefixString As String, ByVal wUnique As Long, ByVal lpTempFileName As String) As Long
 Public Declare Function GetTempPath Lib "kernel32" Alias "GetTempPathA" (ByVal nBufferLength As Long, ByVal lpBuffer As String) As Long
 Public Declare Function GetLastError Lib "kernel32" () As Long
+
+
+'Private Declare Sub RtlMoveMemory Lib "kernel32" (ByRef Destination As Any, ByRef source As Any, ByVal Length As Long)
+
+Public Property Get ObjectByPtr(ByVal lPtr As Long) As Object
+    Dim NewObj As Object
+    RtlMoveMemory NewObj, lPtr, 4
+    Set ObjectByPtr = NewObj
+    DestroyObject NewObj
+End Property
+
+Private Sub DestroyObject(ByRef Obj As Object)
+    RtlMoveMemory Obj, 0&, 4
+End Sub
 
 'Public Const Num_128 = &H80
 'Public Const Num_255 = &HFF&
@@ -251,21 +265,21 @@ End Function
 
 Public Function GetWinDir() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(MAX_PATH, Chr(0))
-    Ret = GetWindowsDirectory(winDir, MAX_PATH)
+    ret = GetWindowsDirectory(winDir, MAX_PATH)
     winDir = Trim(Replace(winDir, Chr(0), ""))
-    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.path
+    If Trim(Dir(winDir, vbDirectory)) = "" Then winDir = App.Path
     If Right(winDir, 1) <> "\" Then winDir = winDir + "\"
     GetWinDir = winDir
 End Function
 
 Public Function GetWinTempDir() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(255, Chr(0))
-    Ret = GetTempPath(255, winDir)
-    If (Ret <> 16) And (Ret <> 34) Then
+    ret = GetTempPath(255, winDir)
+    If (ret <> 16) And (ret <> 34) Then
         winDir = GetWinDir()
         If LCase(Dir(winDir & "TEMP", vbDirectory)) = "" Then
             MkDir winDir + "TEMP"
@@ -280,14 +294,14 @@ End Function
 
 Public Function GetTemporaryFile() As String
     Dim winDir As String
-    Dim Ret As Long
+    Dim ret As Long
     winDir = String(255, Chr(0))
-    Ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
-    If Ret = 0 Then
+    ret = GetTempFileName(GetWinTempDir, App.Title, 0, winDir)
+    If ret = 0 Then
         winDir = GetWinTempDir & "\" & Left(Left(App.Title, 3) & Hex(CLng(Mid(CStr(Rnd), 3))), 14) & ".tmp"
-        Ret = FreeFile
-        Open winDir For Output As #Ret
-        Close #Ret
+        ret = FreeFile
+        Open winDir For Output As #ret
+        Close #ret
     Else
         winDir = Trim(Replace(winDir, Chr(0), ""))
     End If
@@ -329,34 +343,34 @@ dimerror:
 End Function
 
 Public Function Convert(Info)
-    Dim n As Long
+    Dim N As Long
     Dim out() As Byte
-    Dim Ret As String
+    Dim ret As String
     Select Case VBA.TypeName(Info)
         Case "String"
             If Len(Info) > 0 Then
                 ReDim out(0 To Len(Info) - 1) As Byte
-                For n = 0 To Len(Info) - 1
-                    out(n) = Asc(Mid(Info, n + 1, 1))
+                For N = 0 To Len(Info) - 1
+                    out(N) = Asc(Mid(Info, N + 1, 1))
                 Next
             End If
             Convert = out
         Case "Byte()"
             If (ArraySize(Info) > 0) Then
                 On Error GoTo dimcheck
-                For n = LBound(Info) To UBound(Info)
-                    Ret = Ret & Chr(Info(n))
+                For N = LBound(Info) To UBound(Info)
+                    ret = ret & Chr(Info(N))
                 Next
             End If
-            Convert = Ret
+            Convert = ret
     End Select
     Exit Function
 dimcheck:
     If Err Then Err.Clear
-    For n = LBound(Info, 2) To UBound(Info, 2)
-        Ret = Ret & Chr(Info(0, n))
+    For N = LBound(Info, 2) To UBound(Info, 2)
+        ret = ret & Chr(Info(0, N))
     Next
-    Convert = Ret
+    Convert = ret
 End Function
 
 

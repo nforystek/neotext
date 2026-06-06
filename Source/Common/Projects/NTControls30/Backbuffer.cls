@@ -73,7 +73,7 @@ End Enum
 
 Public Enum LineStyles
     Default = 0
-    [B] = 1
+    [b] = 1
     [bf] = 2
     Box = 1
     boxfilled = 2
@@ -124,9 +124,9 @@ Private Function UpdateFont()
     Dim plf As LOGFONT, I As Long
     Dim FontName As String
     
-    FontName = pFont.name + String(32 - Len(pFont.name), 0)
+    FontName = pFont.Name + String(32 - Len(pFont.Name), 0)
     For I = 1 To 32
-        plf.lfFaceName(I) = Asc(Mid$(FontName, I, 1))
+        plf.lfFaceName(I) = Asc(Mid(FontName, I, 1))
     Next
     'Height
     plf.lfHeight = (pFont.Size + 4)
@@ -370,7 +370,7 @@ Public Sub DrawLine(ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal 
     End If
 
     Select Case LineStyle
-        Case LineStyles.[B], LineStyles.Box
+        Case LineStyles.[b], LineStyles.Box
             MoveToEx myBackBuffer, X1, Y1, pt
             lineto myBackBuffer, X1, Y2
             lineto myBackBuffer, X2, Y2

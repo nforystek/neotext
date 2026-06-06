@@ -3,6 +3,7 @@ Attribute VB_Name = "modBitValue"
 Option Explicit
 'TOP DOWN
 Option Compare Binary
+Option Private Module
 
 'byte
 Public Const Bit1 As Byte = &H1

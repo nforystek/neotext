@@ -183,15 +183,15 @@ Attribute Partial.VB_Description = "Returns a sub set array of bytes from the st
     Dim lSize As Long
     lSize = Length
     If ((Width - Offset) > lSize) Or (Width = -1) Then Width = lSize - Offset
-    Dim Ret() As Byte
+    Dim ret() As Byte
     If (Width > 0) And (Pointer <> 0) Then
-        ReDim Ret(0 To Width - 1) As Byte
-        RtlMoveMemory ByVal VarPtr(Ret(LBound(Ret))), ByVal Pointer + Offset, Width
+        ReDim ret(0 To Width - 1) As Byte
+        RtlMoveMemory ByVal VarPtr(ret(LBound(ret))), ByVal Pointer + Offset, Width
     Else
-        ReDim Ret(-1 To -1) As Byte
+        ReDim ret(-1 To -1) As Byte
     End If
-    Partial = Ret
-    Erase Ret
+    Partial = ret
+    Erase ret
 End Function
 
 Public Sub Prepend(ByRef Data() As Byte) ' _
@@ -357,3 +357,5 @@ Sets a byte in the data stream immediatly after Offset and does not alter the si
     End If
 
 End Sub
+
+

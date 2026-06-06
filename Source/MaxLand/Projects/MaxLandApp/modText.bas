@@ -35,6 +35,13 @@ Public ReflectStencilDepth As Direct3DSurface8
 Public ColumnCount As Long
 Public RowCount As Long
 
+Public Function GetDynamic(ByVal FileName As String) As String
+    If PathExists(ScriptRoot & "Models\" & FileName, True) Then
+        GetDynamic = "Size:" & FileLen(ScriptRoot & "Models\" & FileName) & "Date:" & FileDateTime(ScriptRoot & "Models\" & FileName)
+    Else
+        GetDynamic = "Size:Date:"
+    End If
+End Function
 
 Public Sub CreateText()
 
@@ -203,32 +210,156 @@ End Sub
 'End Function
 
 
+'Public Function ReadFile(ByVal Path As String) As String
+'    Dim Num As Long
+'    Dim Text As String
+'    Dim timeout As Single
+'
+'    Num = FreeFile
+'    On Error Resume Next
+'    On Local Error Resume Next
+'    If PathExists(Path, True) Then
+'        Open Path For Append Shared As #Num Len = 1 ' LenB(Chr(CByte(0)))
+'        Close #Num
+'        Select Case Err.Number
+'            Case 54, 70, 75
+'                Err.Clear
+'                On Error GoTo tryagain
+'                On Local Error GoTo tryagain
+'
+'                Open Path For Binary Access Read Lock Write As Num Len = 1
+'                If timeout <> 0 Then
+'                    Open Path For Binary Shared As #Num Len = 1
+'                End If
+'                Text = String(LOF(Num), " ")
+'                Get #Num, 1, Text
+'                Close #Num
+'            Case Else
+'                On Error GoTo tryagain
+'                On Local Error GoTo tryagain
+'
+'                Open Path For Binary Access Read As Num Len = 1
+'                If timeout <> 0 Then
+'                    Open Path For Binary Shared As Num Len = 1
+'                End If
+'                Text = String(LOF(Num), " ")
+'                Get #Num, 1, Text
+'                Close #Num
+'        End Select
+'        If Err Then GoTo failit
+'        On Error GoTo 0
+'        On Local Error GoTo 0
+'    End If
+'    ReadFile = Text
+
+'End Function
+
+
 Public Function LoadTexture(ByVal FileName As String) As Direct3DTexture8
     Dim e As String
     Dim t As Direct3DTexture8
     Dim Dimensions As ImageDimensions
-    
+    Dim timeout As Single
+    Dim Num As Long
+
+    On Error Resume Next
+    On Local Error Resume Next
+                
     If ImageDimensions(FileName, Dimensions, e) Then
         Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTexture = t
-
+        Set t = Nothing
     End If
-    Set t = Nothing
+    If Err.Number <> 0 Then
+    
+        On Error GoTo tryagain
+        On Local Error GoTo tryagain
+
+        If ImageDimensions(FileName, Dimensions, e) Then
+            Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
+                D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
+            Set LoadTexture = t
+            Set t = Nothing
+        End If
+        
+    End If
+
+    If Err Then GoTo failit
+    On Error GoTo 0
+    On Local Error GoTo 0
+    
+    Exit Function
+tryagain:
+    On Error GoTo tryagain
+    On Local Error GoTo tryagain
+    If timeout = 0 Then
+        timeout = Timer
+        Resume Next
+    ElseIf Timer - timeout > 10 Then
+        GoTo failit
+    Else
+        On Error GoTo failit
+        Resume
+    End If
+failit:
+    On Error GoTo 0
+    On Local Error GoTo 0
+    Err.Raise 75, "LoadTexture"
 End Function
 
 
 Public Function LoadTextureEx(ByVal FileName As String, ByRef Dimensions As ImageDimensions) As Direct3DTexture8
     Dim e As String
     Dim t As Direct3DTexture8
-    
+    Dim timeout As Single
+    Dim Num As Long
+
+    On Error Resume Next
+    On Local Error Resume Next
+                
     If ImageDimensions(FileName, Dimensions, e) Then
         Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
             D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
         Set LoadTextureEx = t
-
+        Set t = Nothing
     End If
-    Set t = Nothing
+    
+    If Err.Number <> 0 Then
+    
+        On Error GoTo tryagain
+        On Local Error GoTo tryagain
+
+        If ImageDimensions(FileName, Dimensions, e) Then
+            Set t = D3DX.CreateTextureFromFileEx(DDevice, FileName, Dimensions.Width, Dimensions.Height, D3DX_FILTER_NONE, 0, _
+                D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0)
+            Set LoadTextureEx = t
+            Set t = Nothing
+        End If
+        
+    End If
+    
+    If Err Then GoTo failit
+    On Error GoTo 0
+    On Local Error GoTo 0
+    
+        Exit Function
+tryagain:
+    On Error GoTo tryagain
+    On Local Error GoTo tryagain
+    If timeout = 0 Then
+        timeout = Timer
+        Resume Next
+    ElseIf Timer - timeout > 10 Then
+        GoTo failit
+    Else
+        On Error GoTo failit
+        Resume
+    End If
+failit:
+    On Error GoTo 0
+    On Local Error GoTo 0
+    Err.Raise 75, "LoadTextureEx"
 End Function
 
 

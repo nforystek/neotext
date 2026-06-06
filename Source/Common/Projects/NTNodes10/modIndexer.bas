@@ -3,6 +3,7 @@ Attribute VB_Name = "modIndexer"
 Option Explicit
 
 Option Compare Binary
+Option Private Module
 
 Public Type IndexData
     NextLoc As Long

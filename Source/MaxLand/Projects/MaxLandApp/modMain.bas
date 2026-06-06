@@ -63,9 +63,23 @@ Public elapsed As Long
 Public elapsed2 As Long
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
+Public Sub DebugPrint(ByVal txt As String)
+    If ScriptDebug Then
+        Dim fn As Integer
+        fn = FreeFile
+        Open AppPath & "Script.log" For Append As #fn
+            Print #fn, txt
+        Close #fn
+        Debug.Print txt
+    End If
+    
+    
+End Sub
+
 Public Sub Main()
 
-
+    ScriptDebug = True
+    If PathExists(AppPath & "Script.log", True) Then Kill AppPath & "Script.log"
     
     'On Error GoTo fault:
     StartTime = Now
@@ -420,6 +434,7 @@ Render:
     Unload frmMain
     
     MsgBox "There was an error trying to run the game.  Please try reinstalling it or contact support." & vbCrLf & "Error Infromation: " & Err.Number & ", " & Err.Description, vbOKOnly + vbInformation, App.Title
+
     Err.Clear
 
     End
@@ -506,10 +521,20 @@ On Error GoTo WorldError
     D3DXMatrixRotationX matPitch, 0.5
     D3DXMatrixIdentity matWorld
     D3DXMatrixMultiply matLook, matRotation, matPitch
+    
+    
     DDevice.SetTransform D3DTS_WORLD, matWorld
+    
+'    If Not Mirror Is Nothing Then
+'        D3DXMatrixRotationY matRotation, 180 * RADIAN
+'        D3DXMatrixMultiply matWorld, matRotation, matLook
+'        DDevice.SetTransform D3DTS_WORLD, matWorld
+'
+'
+'    End If
 
     
-    If Camera.Element Is Nothing Then Exit Sub
+    If Player.Camera Is Nothing Then Exit Sub
 
     If ((Perspective = Playmode.CameraMode) And (Player.CameraIndex > 0 And Player.CameraIndex <= Cameras.Count)) Or (((Perspective = Spectator) Or DebugMode) And (Player.CameraIndex > 0)) Then
 
@@ -529,10 +554,10 @@ On Error GoTo WorldError
 
         If Camera.Rotate.X > 0 Then
 
-            D3DXMatrixTranslation matPos, -Camera.Element.Origin.X, -Camera.Element.Origin.Y, -Camera.Element.Origin.Z
+            D3DXMatrixTranslation matPos, -Camera.Origin.X, -Camera.Origin.Y, -Camera.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
         Else
-            D3DXMatrixTranslation matPos, -Camera.Element.Origin.X, -Camera.Element.Origin.Y + 0.2, -Camera.Element.Origin.Z
+            D3DXMatrixTranslation matPos, -Camera.Origin.X, -Camera.Origin.Y + 0.2, -Camera.Origin.Z
             D3DXMatrixMultiply matLook, matPos, matLook
 
         End If
@@ -698,9 +723,16 @@ On Error GoTo WorldError
             D3DXMatrixMultiply matView, matLook, matTemp
         End If
         DDevice.SetTransform D3DTS_VIEW, matView
+        
     Else
         DDevice.SetTransform D3DTS_VIEW, matLook
+        
     End If
+    
+    
+    
+    
+    
 
 
     D3DXMatrixPerspectiveFovLH matProj, FOVY, AspectRatio, 0.01, FadeDistance

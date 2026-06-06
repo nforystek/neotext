@@ -50,12 +50,12 @@ Private Const SM_CYSMCAPTION = 51
 
 Private Declare Function UpdateWindow Lib "user32" (ByVal hwnd As Long) As Long
 
-Private Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hDC As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hdc As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function GetStockObject Lib "gdi32" (ByVal nIndex As Long) As Long
-Private Declare Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
-Private Declare Function SetROP2 Lib "gdi32" (ByVal hDC As Long, ByVal nDrawMode As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function Rectangle Lib "gdi32" (ByVal hdc As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Private Declare Function SetROP2 Lib "gdi32" (ByVal hdc As Long, ByVal nDrawMode As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hdc As Long, ByVal hObject As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hwnd As Long) As Long
 Private Declare Function CreatePen Lib "gdi32" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
 Private Declare Function GetParent Lib "user32" (ByVal hwnd As Long) As Long
@@ -65,7 +65,7 @@ Private Declare Function ClientToScreen Lib "user32" (ByVal hwnd As Long, lpPoin
 Private Declare Function MoveWindow Lib "user32" (ByVal hwnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function WindowFromPoint Lib "user32" (ByVal xPoint As Long, ByVal yPoint As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function DrawEdge Lib "user32" (ByVal hDC As Long, qrc As RECT, ByVal edge As Long, ByVal grfFlags As Long) As Long
+Private Declare Function DrawEdge Lib "user32" (ByVal hdc As Long, qrc As RECT, ByVal edge As Long, ByVal grfFlags As Long) As Long
 Private Declare Function SetCapture Lib "user32" (ByVal hwnd As Long) As Long
 Private Declare Function ReleaseCapture Lib "user32" () As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As Any) As Long
@@ -130,67 +130,67 @@ Private m_Caption As String
 Public Property Get Movable() As Boolean
     Movable = bMovable
 End Property
-Public Property Let Movable(ByVal newval As Boolean)
-    bMovable = newval
+Public Property Let Movable(ByVal newVal As Boolean)
+    bMovable = newVal
 End Property
 
 Public Property Get Resizable() As Boolean
     Resizable = bResizable
 End Property
-Public Property Let Resizable(ByVal newval As Boolean)
-    bResizable = newval
+Public Property Let Resizable(ByVal newVal As Boolean)
+    bResizable = newVal
 End Property
 
 Public Property Get Dockable() As Boolean
     Dockable = bDockable
 End Property
-Public Property Let Dockable(ByVal newval As Boolean)
-    bDockable = newval
+Public Property Let Dockable(ByVal newVal As Boolean)
+    bDockable = newVal
 End Property
 
 Public Property Get Docked() As Boolean
     Docked = bDocked
 End Property
-Public Property Let Docked(ByVal newval As Boolean)
-    bDocked = newval
+Public Property Let Docked(ByVal newVal As Boolean)
+    bDocked = newVal
 End Property
 
 Public Property Get DockedWidth() As Long
     DockedWidth = lDockedWidth - (8 * Screen.TwipsPerPixelX)
 End Property
-Public Property Let DockedWidth(ByVal newval As Long)
-    lDockedWidth = newval
+Public Property Let DockedWidth(ByVal newVal As Long)
+    lDockedWidth = newVal
 End Property
 Public Property Get DockedHeight() As Long
     DockedHeight = lDockedHeight - (8 * Screen.TwipsPerPixelY)
 End Property
-Public Property Let DockedHeight(ByVal newval As Long)
-    lDockedHeight = newval
+Public Property Let DockedHeight(ByVal newVal As Long)
+    lDockedHeight = newVal
 End Property
 
 Public Property Get FloatingTop() As Long
     FloatingTop = lFloatingTop
 End Property
-Public Property Let FloatingTop(ByVal newval As Long)
-    lFloatingTop = newval
+Public Property Let FloatingTop(ByVal newVal As Long)
+    lFloatingTop = newVal
 End Property
 Public Property Get FloatingLeft() As Long
     FloatingLeft = lFloatingLeft
 End Property
-Public Property Let FloatingLeft(ByVal newval As Long)
-    lFloatingLeft = newval
+Public Property Let FloatingLeft(ByVal newVal As Long)
+    lFloatingLeft = newVal
 End Property
 Public Property Get FloatingWidth() As Long
     FloatingWidth = lFloatingWidth
 End Property
-Public Property Let FloatingWidth(ByVal newval As Long)
-    lFloatingWidth = newval
+Public Property Let FloatingWidth(ByVal newVal As Long)
+    lFloatingWidth = newVal
 End Property
 Public Property Get FloatingHeight() As Long
     FloatingHeight = lFloatingHeight
 End Property
-Public Property Let FloatingHeight(ByVal newval As Long)
-    lFloatingHeight = newval
+Public Property Let FloatingHeight(ByVal newVal As Long)
+    lFloatingHeight = newVal
 End Property
 
 Public Sub SetupDockedForm(ByRef MDIParent As MDIForm, ByRef DockedForm As Form, ByVal DockAlign As Integer)
@@ -509,17 +509,17 @@ End Sub
 
 Private Sub DrawDragRectangle(ByVal X As Long, ByVal Y As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal lWidth As Long)
 
-    Dim hDC As Long
+    Dim hdc As Long
     Dim hPen As Long
     hPen = CreatePen(PS_SOLID, lWidth, &HE0E0E0)
-    hDC = GetDC(0)
-    Call SelectObject(hDC, hPen)
-    Call SetROP2(hDC, R2_NOTXORPEN)
-    Call Rectangle(hDC, X, Y, x1, y1)
-    Call SelectObject(hDC, GetStockObject(BLACK_PEN))
+    hdc = GetDC(0)
+    Call SelectObject(hdc, hPen)
+    Call SetROP2(hdc, R2_NOTXORPEN)
+    Call Rectangle(hdc, X, Y, x1, y1)
+    Call SelectObject(hdc, GetStockObject(BLACK_PEN))
     Call DeleteObject(hPen)
-    Call SelectObject(hDC, hPen)
-    Call ReleaseDC(0, hDC)
+    Call SelectObject(hdc, hPen)
+    Call ReleaseDC(0, hdc)
     
 End Sub
 
@@ -552,13 +552,13 @@ Private Sub UserControl_Paint()
         UserControl.Line (Screen.TwipsPerPixelX, Screen.TwipsPerPixelY)-(UserControl.ScaleWidth - (2 * Screen.TwipsPerPixelX), UserControl.ScaleHeight - Screen.TwipsPerPixelY), lBackColor, BF
         .CurrentX = 4 * Screen.TwipsPerPixelX
         .CurrentY = 3 * Screen.TwipsPerPixelY
-        .Font.name = "MS Sans Serif"
+        .Font.Name = "MS Sans Serif"
         .Font.Bold = True
         
         sCaption = m_Caption
         If UserControl.TextWidth(sCaption) > (UserControl.ScaleWidth - (4 * Screen.TwipsPerPixelX)) Then
              Do While UserControl.TextWidth(sCaption & "...") > (UserControl.ScaleWidth - (4 * Screen.TwipsPerPixelX)) And Len(sCaption) > 0
-                sCaption = Trim$(Left$(sCaption, Len(sCaption) - 1))
+                sCaption = Trim(Left(sCaption, Len(sCaption) - 1))
             Loop
             sCaption = sCaption & "..."
         End If

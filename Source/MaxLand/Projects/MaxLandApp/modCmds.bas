@@ -486,6 +486,11 @@ Public Sub InputScene()
             Mouse.X = DIMOUSESTATE.lX * MouseSensitivity / 100
             Mouse.Y = DIMOUSESTATE.lY * MouseSensitivity / 100
             Mouse.Z = DIMOUSESTATE.lZ * MouseSensitivity / 100
+            
+            Mouse.Buttons(0) = DIMOUSESTATE.Buttons(0)
+            Mouse.Buttons(1) = DIMOUSESTATE.Buttons(1)
+            Mouse.Buttons(2) = DIMOUSESTATE.Buttons(2)
+            Mouse.Buttons(3) = DIMOUSESTATE.Buttons(3)
                            
             If ((MouseTrapped Or FullScreen) And (Bindings.MouseInput = Trap)) Or _
                 ((Bindings.MouseInput = Hide) And MouseOverCanvas(mloc.X, mloc.Y)) Then
@@ -957,6 +962,7 @@ Public Function AddMessage(ByVal Message As String)
         ConsoleMsgs.Remove 1
     End If
     ConsoleMsgs.Add Message
+    DebugPrint Message
     
 End Function
 
@@ -1750,7 +1756,8 @@ Public Sub ConsoleProcess()
                             cnt = 1
                             Do Until inTmp = ""
                                 If cnt >= L And cnt <= o Then
-                                    AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
+                                    'AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArgNoTrim(inTmp, vbCrLf), vbTab, "     ")
+                                    AddMessage String(3 - Len(Trim(CStr(cnt))), "0") & Trim(CStr(cnt)) & ": " & Replace(RemoveNextArg(inTmp, vbCrLf, , False), vbTab, "     ")
                                 Else
                                     RemoveNextArg inTmp, vbCrLf
                                 End If
@@ -1787,7 +1794,8 @@ Public Sub ConsoleProcess()
                                 If cnt >= L And cnt <= o Then
                                     inNew = inNew & vbCrLf
                                 Else
-                                    inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                                    'inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                                    inNew = inNew & RemoveNextArg(inTmp, vbCrLf, , False) & vbCrLf
                                 End If
                                 cnt = cnt + 1
                             Loop
@@ -1808,7 +1816,8 @@ Public Sub ConsoleProcess()
                 ResetIdle
                 If PathExists(AppPath & "Levels\" & EditFileName & ".vbx", True) Then
                     If IsNumeric(NextArg(inArg, " ")) Then
-                        L = RemoveNextArgNoTrim(inArg, " ")
+                        'L = RemoveNextArgNoTrim(inArg, " ")
+                        L = RemoveNextArg(inArg, " ", , False)
                         inTmp = EditFileData
                         cnt = 1
                         Do Until inTmp = ""
@@ -1816,7 +1825,8 @@ Public Sub ConsoleProcess()
                                 inNew = inNew & inArg & vbCrLf
                                 RemoveNextArg inTmp, vbCrLf
                             Else
-                                inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                                'inNew = inNew & RemoveNextArgNoTrim(inTmp, vbCrLf) & vbCrLf
+                                inNew = inNew & RemoveNextArg(inTmp, vbCrLf, , False) & vbCrLf
                             End If
                             cnt = cnt + 1
                         Loop

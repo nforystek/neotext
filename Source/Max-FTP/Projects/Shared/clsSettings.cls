@@ -178,7 +178,7 @@ End Function
 '        lSize = Len(sBuffer)
 '        Call GetCompName(sBuffer, lSize)
 '        If lSize > 0 Then
-'            GetMachineName = Replace(Left$(sBuffer, lSize), Chr(0), "")
+'            GetMachineName = Replace(Left(sBuffer, lSize), Chr(0), "")
 '        End If
 '
 '    End If

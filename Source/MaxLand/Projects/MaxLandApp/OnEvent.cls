@@ -58,13 +58,22 @@ End Property
 Public Property Let AppliesTo(ByVal RHS As Variant)
     pAppliesTo = RHS
 End Property
-Public Property Get RunScript() As String
-    RunScript = pRunScript
+
+Public Property Get RunScript()
+     RunScript = pRunScript
 End Property
-Public Property Let RunScript(ByVal RHS As String)
+Public Property Let RunScript(ByVal RHS)
     pRunScript = RHS
 End Property
+'Public Property Set RunScript(ByRef RHS)
+'    Set pRunScript = RHS
+'End Property
 
 Private Sub Class_Initialize()
+    'Set pRunScript = New NTStreams10.Stream
     pBehavior = 1
+End Sub
+
+Private Sub Class_Terminate()
+  '  Set pRunScript = Nothing
 End Sub

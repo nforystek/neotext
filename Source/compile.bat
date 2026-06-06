@@ -58,6 +58,7 @@ rem echo Unregistering Neotext shared libraries at the windows system path...
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTControls30.ocx"
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTControls22.ocx"
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTImaging10.ocx"
+regsvr32.exe /u /s "C:\WINDOWS\system32\NTStreams10.dll"
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTAdvFTP61.dll"
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTService20.dll"
 regsvr32.exe /u /s "C:\WINDOWS\system32\NTSchedule20.dll"
@@ -75,6 +76,7 @@ rem echo Erasing Neotext shared librarie files at the windows system path...
 erase "C:\WINDOWS\system32\NTControls30.ocx"
 erase "C:\WINDOWS\system32\NTControls22.ocx"
 erase "C:\WINDOWS\system32\NTImaging10.ocx"
+erase "C:\Windows\System32\NTStreams10.dll"
 erase "C:\WINDOWS\system32\NTAdvFTP61.dll"
 erase "C:\WINDOWS\system32\NTService20.dll"
 erase "C:\WINDOWS\system32\NTSchedule20.dll"
@@ -93,6 +95,7 @@ rem echo Unregistering Neotext shared libraries at the compile deploy path...
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTControls30.ocx"
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTControls22.ocx"
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTImaging10.ocx"
+regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTStreams10.dll"
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTAdvFTP61.dll"
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTService20.dll"
 regsvr32.exe /u /s "C:\Development\Neotext\Common\Binary\NTSchedule20.dll"
@@ -144,6 +147,9 @@ rem "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /open "C:\Developmen
 echo|set /p="12. "
 rem "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /open "C:\Development\Neotext\Common\Projects\NTImaging10.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /d VBIDE=0 /make "C:\Development\Neotext\Common\Projects\NTImaging10.vbp"
+echo|set /p="13. "
+rem "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /open "C:\Development\Neotext\Common\Projects\NTStreams10.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /d VBIDE=0 /make "C:\Development\Neotext\Common\Projects\NTStreams10.vbp"
 echo Done. 
 
 
@@ -244,6 +250,7 @@ echo Sign and time stamping all EXE's and DLL's to be packed...
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTControls22.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTControls30.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTImaging10.vbp"
+"C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Common\Projects\NTStreams10.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Blacklawn\Projects\Blacklawn.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\Blacklawn\Projects\BlkLServer.vbp"
 "C:\Program Files\Microsoft Visual Studio\VB98\vbn.exe" /sign "C:\Development\Neotext\To-Doster\Projects\ToDoster.vbp"
@@ -268,9 +275,9 @@ echo Sign and time stamping all EXE's and DLL's to be packed...
 
 
 
-"C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_DLL.vbp" /d VBIDE=0:modRegistry=-1
-"C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_EXE.vbp" /d VBIDE=0:modRegistry=-1
-"C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNotable.vbp" /d VBIDE=0
+rem "C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_DLL.vbp" /d VBIDE=0:modRegistry=-1
+rem "C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNeotext_EXE.vbp" /d VBIDE=0:modRegistry=-1
+rem "C:\Program Files\Microsoft Visual Studio\VB98\VB6.EXE" /make "C:\Development\Neotext\BasicNeotext\Projects\BasicNotable.vbp" /d VBIDE=0
 
 
 
@@ -334,12 +341,12 @@ Wizard.exe /compile IdentAuth
 
 echo Done. 
 
-"C:\Program Files\NSIS\makensis.exe" /V1 "C:\Development\Neotext\BasicNeotext\Deploy\BasicNeotext v3.0.0.nsi"
+rem "C:\Program Files\NSIS\makensis.exe" /V1 "C:\Development\Neotext\BasicNeotext\Deploy\BasicNeotext v3.0.0.nsi"
 
 
-"C:\Program Files\Microsoft Visual Studio\VB98\Uninstall.exe" /S
+rem "C:\Program Files\Microsoft Visual Studio\VB98\Uninstall.exe" /S
 
-"C:\Development\Neotext\BasicNeotext\Deploy\BasicNeotext v3.0.0.exe" /S
+rem "C:\Development\Neotext\BasicNeotext\Deploy\BasicNeotext v3.0.0.exe" /S
 
 
 echo Installing local packages with the silent enabled for testing...
@@ -367,6 +374,8 @@ rem "C:\Development\Neotext\KadPatch\Deploy\KadPatch v1.0.0.exe" /Q
 rem echo 10.Installing CrayonStill 
 rem "C:\Development\Neotext\CrayonStill\Deploy\CrayonStill v0.0.0.exe" /Q
 
+
+net start Securities
 
 echo Done. 
 

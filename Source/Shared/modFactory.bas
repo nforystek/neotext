@@ -1,6 +1,6 @@
 Attribute VB_Name = "modFactory"
 Option Explicit
-
+Option Private Module
 '
 ' This must be a standard (BAS) module and it MUST be named "modFactory" if things are to work correctly.
 '

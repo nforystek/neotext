@@ -29,10 +29,10 @@ space {
 bindings {
 
 	'keyboard player
-	E=[Player.MoveForward]
-	D=[Player.MoveBackward]
-	W=[Player.SlideLeft]
-	R=[Player.SlideRight]
+	E=[]
+	D=[]
+	W=[]
+	R=[]
 	S=[]
 	F=[]
 
@@ -59,6 +59,8 @@ bindings {
 	.mouseinput=Trap
 	.serialize=true
 }
+
+
 
 element <playerElement>
 {	
@@ -89,8 +91,7 @@ player
 }
 
 
-'set playerCamera = playerElement
-'Player = playerCamera
+
 
 
 
@@ -108,19 +109,48 @@ player
 '}
 
 
-'board <mirror> {
-'
-'	.visible=true
-'	.mirror = true
-'	.point3 = [-1,1,0]
-'	.point4 = [0,1,0]
-'	.point1 = [0,0,0] 
-'	.point2 = [-1,0,0]
-'
-'	.scalex=1
-'	.scaley=1
-'	.filename = "pawn.bmp"
-'}
+board <mirror> {
+
+	.visible=true
+	.mirror = true
+	.point3 = [-1,1,0]
+	.point4 = [0,1,0]
+	.point1 = [0,0,0] 
+	.point2 = [-1,0,0]
+
+	.scalex=1
+	.scaley=1
+	.filename = "pawn.bmp"
+}
+
+board <dynamic1> {
+
+	.visible=true
+	.dynamic = true
+	.point1 = [-12,-3.7,23.8]
+	.point2 = [-12,-3.7,22.8]
+	.point3 = [-12,-1.7,22.8] 
+	.point4 = [-12,-1.7,23.8]
+
+	.scalex=1
+	.scaley=1
+	.filename = "dynamic1.bmp"
+}
+
+
+board <dynamic2> {
+
+	.visible=true
+	.dynamic = true
+	.point1 = [-12,-3.7,20.8]
+	.point2 = [-12,-3.7,19.8]
+	.point3 = [-12,-1.7,19.8] 
+	.point4 = [-12,-1.7,20.8]
+
+	.scalex=1
+	.scaley=1
+	.filename = "dynamic2.bmp"
+}
 
 
 variable <tempswap1>=0
@@ -1247,7 +1277,7 @@ portal
 {
 	.location=[9.748, -3.399, -3.611]
 	.range=1.3
-	oninrange [ <player>
+	oninrange [ <playerElement>
 		hudearth2img.visible=true
 		checkearth
 	]
@@ -1257,7 +1287,7 @@ portal
 {
 	.location=[-4.449, -2.3, 1.547]
 	.range=1
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=0) then
 				orders=1
@@ -1273,7 +1303,7 @@ portal
 {
 	.location=[-4.283, -2.3 ,-1.643]
 	.range=1
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=0) then
 				orders=1
@@ -1288,7 +1318,7 @@ portal <hottub>
 {
 	.location=[ -0.05 ,-1.05 ,-0.028]
 	.range=0.8
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			tempswap1=windvix2var
 			windvix2var=windvix1var
@@ -1310,7 +1340,7 @@ portal
 {
 	.location=[-45.911, 1.726, 17.392]
 	.range=1
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			tempswap1=windvix1var
 			windvix1var=windvix2var
@@ -1330,11 +1360,11 @@ portal
 	]
 
 }
-portal
+portal <firePortal>
 {
 	.location=[ -2.270, 1.199, -2.382]
-	.range=.7
-	oninrange	[ <player,pawn1,pawn2>
+	.range=0.7
+	oninrange	[ <playerElement,pawn1,pawn2>
 
 		smuther
 	]
@@ -1352,7 +1382,7 @@ portal
 {
 	.location=[-1.439, 1.571, 18.378]
 	.range=2
-	oninrange [ <player>
+	oninrange [ <playerElement>
 		hudearthkimg.visible=true
 		checkearth
 	]
@@ -1361,7 +1391,7 @@ portal
 {
 	.range=1
 	.location=[ 0.5, -1.927, -2.156 ]
-	oninrange [ <player>
+	oninrange [ <playerElement>
 		hudearthrimg.visible=true
 		checkearth
 	]
@@ -1370,7 +1400,7 @@ portal
 {
 	.location=[9.434, -3.614, 12.575]
 	.range=1.3
-	oninrange [ <player>
+	oninrange [ <playerElement>
 		hudearthbimg.visible=true
 		checkearth
 	]
@@ -1385,7 +1415,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1406,7 +1436,7 @@ portal
 		.friction=0.015
 	}
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1427,7 +1457,7 @@ portal
 		.friction=0.015
 	}
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1447,7 +1477,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1467,7 +1497,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1487,7 +1517,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1507,7 +1537,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1526,7 +1556,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1548,7 +1578,7 @@ portal
 		.friction=0.015
 	}
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1567,7 +1597,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1587,7 +1617,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1606,7 +1636,7 @@ portal
 		.emphasis=0.02
 		.friction=0.015
 	}
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1627,7 +1657,7 @@ portal
 		.friction=0.015
 	}
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=2) then
 				orders=3
@@ -1642,7 +1672,7 @@ portal
 	.teleport=[-6.9, 1.3, -0.1]
 	.range=0.6
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders="3") then
 				orders=4
@@ -1669,7 +1699,7 @@ portal
 		.friction=.015
 	}
 	.range=0.6
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 			if (orders=1) then
 				orders=2
@@ -1698,7 +1728,7 @@ portal
 		.friction=0.01
 	}
 
-	oninrange [ <player>
+	oninrange [ <playerElement>
 
 
 			tempswap1=windvix2var
@@ -1724,7 +1754,7 @@ portal
 {
 	.location=[-45.545, 9.786, 20.055]
 	.range=2
-	oninrange [ <player>
+	oninrange [ <playerElement>
 		puzzlewon = true
 		checkgame
 	]

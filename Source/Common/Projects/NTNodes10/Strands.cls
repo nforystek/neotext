@@ -1017,6 +1017,26 @@ Private Function NextLine(ByRef lines() As Byte, ByRef line() As Byte, ByRef lle
     End If
 End Function
 
+Public Property Get Self()
+Attribute Self.VB_UserMemId = 0
+Attribute Self.VB_MemberFlags = "240"
+    Self = Me.Address()
+End Property
+
+Public Property Let Self(ByVal RHS)
+    If VBA.TypeName(RHS) = "String" Then
+        Me.Reset
+        Me.Concat StrConv(RHS, vbFromUnicode)
+    ElseIf VBA.TypeName(RHS) = "Long" Then
+        Me.Clone ObjectByPtr(RHS)
+    ElseIf VBA.TypeName(RHS) = "Stream" Then
+        Dim sp As Stream
+        Set sp = RHS
+        Me.Clone sp
+        Set sp = Nothing
+    End If
+End Property
+
 Private Property Get Stream_Address(Optional ByVal Offset As Long = 0&) As Long
     Stream_Address = Me.Address(Offset)
 End Property
@@ -1091,4 +1111,12 @@ End Sub
 
 Private Property Get Stream_Scope() As MemoryScopes
     Stream_Scope = Me.Scope
+End Property
+
+Private Property Let Stream_Self(ByVal RHS)
+    Me.Self = RHS
+End Property
+
+Private Property Get Stream_Self()
+    Stream_Self = Me.Self
 End Property

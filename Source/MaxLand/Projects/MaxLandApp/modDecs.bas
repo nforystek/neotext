@@ -443,6 +443,109 @@ Public Function CountWord(ByVal Text As String, ByVal Word As String) As Long
     CountWord = cnt
 End Function
 
+Private Function DetermineDataConcatenation(ByRef obj, Optional ByRef Data) As Boolean
+    If IsMissing(Data) Then Exit Function
+    If VBA.TypeName(obj) = "String" Then
+        If VBA.TypeName(Data) = "String" Then
+            obj = obj & Data
+        ElseIf VBA.TypeName(Data) = "Stream" Then
+            Dim str1 As Stream
+            Set str1 = Data
+            obj = obj & StrConv(str1.Partial, vbUnicode)
+            Set str1 = Nothing
+        End If
+    ElseIf VBA.TypeName(obj) = "Stream" Then
+        Dim obj2 As Stream
+        Set obj2 = obj
+        If VBA.TypeName(Data) = "String" Then
+            obj2.ConcatBytes StrConv(Data, vbFromUnicode)
+        ElseIf VBA.TypeName(Data) = "Stream" Then
+            Dim str2 As Stream
+            Set str2 = Data
+            obj2.ConcatBytes str2.Partial
+            Set str2 = Nothing
+        End If
+        Set obj2 = Nothing
+    Else
+        Err.Raise 5, App.Title, "Invalid procedure call or argument"
+    End If
+    DetermineDataConcatenation = True
+End Function
+
+Public Function ConcatenateEx(ByRef Data1, ByRef Data2, Optional ByRef Data3, Optional ByRef Data4, Optional ByRef Data5, _
+    Optional ByRef Data6, Optional ByRef Data7, Optional ByRef Data8, Optional ByRef Data9, Optional ByRef Data10)
+    If VBA.TypeName(Data1) = "Stream" Then
+        Dim newObj As New Stream
+        If Not DetermineDataConcatenation(newObj, Data1) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data2) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data3) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data4) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data5) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data6) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data7) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data8) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data9) Then GoTo doneobj
+        DetermineDataConcatenation newObj, Data10
+doneobj:
+        Set ConcatenateEx = newObj
+        Set newObj = Nothing
+    ElseIf VBA.TypeName(Data1) = "String" Then
+        Dim newStr As String
+        If Not DetermineDataConcatenation(newStr, Data1) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data2) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data3) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data4) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data5) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data6) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data7) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data8) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data9) Then GoTo doneStr
+        DetermineDataConcatenation newStr, Data10
+doneStr:
+        ConcatenateEx = newStr
+        newStr = ""
+    Else
+        Err.Raise 5, App.Title, "Invalid procedure call or argument"
+    End If
+End Function
+
+Public Sub ConcatenateTo(ByRef obj, ByRef Data1, Optional ByRef Data2, Optional ByRef Data3, Optional ByRef Data4, _
+    Optional ByRef Data5, Optional ByRef Data6, Optional ByRef Data7, Optional ByRef Data8, Optional ByRef Data9, Optional ByRef Data10)
+    If VBA.TypeName(obj) = "Stream" Then
+        Dim newObj As New Stream
+        If Not DetermineDataConcatenation(newObj, Data1) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data2) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data3) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data4) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data5) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data6) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data7) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data8) Then GoTo doneobj
+        If Not DetermineDataConcatenation(newObj, Data9) Then GoTo doneobj
+        DetermineDataConcatenation newObj, Data10
+doneobj:
+        Set obj = newObj
+        Set newObj = Nothing
+    ElseIf VBA.TypeName(obj) = "String" Then
+        Dim newStr As String
+        If Not DetermineDataConcatenation(newStr, Data1) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data2) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data3) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data4) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data5) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data6) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data7) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data8) Then GoTo doneStr
+        If Not DetermineDataConcatenation(newStr, Data9) Then GoTo doneStr
+        DetermineDataConcatenation newStr, Data10
+doneStr:
+        obj = newStr
+        newStr = ""
+    Else
+        Err.Raise 5, App.Title, "Invalid procedure call or argument"
+    End If
+End Sub
+
 Public Function NextArg(ByVal TheParams As String, ByVal TheSeperator As String, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare, Optional ByVal TrimResult As Boolean = True) As String
     If TrimResult Then
         If InStr(1, TheParams, TheSeperator, Compare) > 0 Then
@@ -494,6 +597,7 @@ Public Function RemoveNextArg(ByRef TheParams As Variant, ByVal TheSeperator As 
         End If
     End If
 End Function
+
 Public Function NextQuotedArg(ByVal TheParams As String, Optional ByVal BeginQuote As String = """", Optional ByVal EndQuote As String = """", Optional ByVal Embeded As Boolean = False, Optional ByVal Compare As VbCompareMethod = vbBinaryCompare) As String
     NextQuotedArg = RemoveQuotedArg(TheParams, BeginQuote, EndQuote, Embeded, Compare)
 End Function
@@ -507,7 +611,7 @@ Public Function RemoveLineArg(ByRef TheParams As Variant, Optional ByVal EndOfLi
             RemoveLineArg = Left(TheParams, InStr(TheParams, vbCrLf) - 1)
             TheParams = Mid(TheParams, InStr(TheParams, vbCrLf) + Len(vbCrLf))
         End If
-        
+
     ElseIf (InStr(TheParams, vbCrLf) = 0) And (InStr(TheParams, EndOfLine) = 0) Then
         RemoveLineArg = TheParams
         TheParams = ""
@@ -1143,7 +1247,7 @@ Public Sub CreateSquareEx(ByRef Data() As MyVertex, ByVal Index As Long, ByRef p
 End Sub
 
 
-Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh As D3DXMesh, Buffer As D3DXBuffer, MeshMaterials() As D3DMATERIAL8, MeshTextures() As Direct3DTexture8, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long)
+Public Function CreateMesh(ByRef obj As Element, ByVal FileName As String, Mesh As D3DXMesh, Buffer As D3DXBuffer, MeshMaterials() As D3DMATERIAL8, MeshTextures() As Direct3DTexture8, MeshVerticies() As D3DVERTEX, MeshIndicies() As Integer, nMaterials As Long)
     Dim TextureName As String
 
     Set Mesh = D3DX.LoadMeshFromX(FileName, D3DXMESH_DYNAMIC, DDevice, Nothing, Buffer, nMaterials)
@@ -1194,7 +1298,7 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
     Dim V As Long
     
     Dim avg As New Point
-    If Obj.Displace Is Nothing Then Set Obj.Displace = New Point
+    If obj.Displace Is Nothing Then Set obj.Displace = New Point
     
     For i = 0 To ((id.Size \ 2) - 1)
         V = MeshIndicies(i)
@@ -1202,21 +1306,21 @@ Public Function CreateMesh(ByRef Obj As Element, ByVal FileName As String, Mesh 
         avg.X = avg.X + MeshVerticies(V).X
         avg.Y = avg.Y + MeshVerticies(V).Y
         avg.Z = avg.Z + MeshVerticies(V).Z
-        If Abs(MeshVerticies(V).X - Obj.Origin.X) > Obj.Displace.X Then
-            Obj.Displace.X = Abs(MeshVerticies(V).X - Obj.Origin.X)
+        If Abs(MeshVerticies(V).X - obj.Origin.X) > obj.Displace.X Then
+            obj.Displace.X = Abs(MeshVerticies(V).X - obj.Origin.X)
         End If
-        If Abs(MeshVerticies(V).Y - Obj.Origin.Y) > Obj.Displace.Y Then
-            Obj.Displace.Y = Abs(MeshVerticies(V).Y - Obj.Origin.Y)
+        If Abs(MeshVerticies(V).Y - obj.Origin.Y) > obj.Displace.Y Then
+            obj.Displace.Y = Abs(MeshVerticies(V).Y - obj.Origin.Y)
         End If
-        If Abs(MeshVerticies(V).Z - Obj.Origin.Z) > Obj.Displace.Z Then
-            Obj.Displace.Z = Abs(MeshVerticies(V).Z - Obj.Origin.Z)
+        If Abs(MeshVerticies(V).Z - obj.Origin.Z) > obj.Displace.Z Then
+            obj.Displace.Z = Abs(MeshVerticies(V).Z - obj.Origin.Z)
         End If
     Next
     i = ((id.Size \ 2) - 1)
     avg.X = avg.X / i
     avg.Y = avg.Y / i
     avg.Z = avg.Z / i
-    Set Obj.Centoid = avg
+    Set obj.Centoid = avg
         
 
 End Function

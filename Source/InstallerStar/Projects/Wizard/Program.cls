@@ -27,6 +27,7 @@ Public WebSite As String
 Public Author As String
 Public Restore As Boolean 'whether or not the installer should make a restore point before installing, this wont work on some OS versions earlier
 Public Legacy As Boolean 'determines the installation folder for some files, when legacy is set it goes to the program files directory, otherwise, user and appdata folders
+Public INetSrv As Boolean 'determines whether shared activeX DLL's will go to the InetSrv folder if exists, so they may be used via ASP, this for utilities and not gaming apps
 Public System As Boolean 'whether or not the non activex system dll's will be applied during installing, as they still will be packed, use exclude to keep them out completely,
 Public AllShortCuts As Boolean
 
@@ -94,12 +95,12 @@ Friend Property Let Installed(ByVal newVal As Boolean)
 End Property
 
 Public Function IsRunning() As Boolean
-    If pProgramFiles.count > 0 Then
+    If pProgramFiles.Count > 0 Then
         Dim cnt As Long
         Dim fnum As Long
         Dim fname As String
         
-        For cnt = 1 To pProgramFiles.count
+        For cnt = 1 To pProgramFiles.Count
             fname = NextArg(RemoveArg(pProgramFiles(cnt), " "), "|")
             
             Select Case GetFileExt(fname, True, True)
@@ -123,12 +124,12 @@ Public Sub CloseAll()
         End If
     End If
     
-    If pProgramFiles.count > 0 Then
+    If pProgramFiles.Count > 0 Then
         Dim cnt As Long
         Dim fnum As Long
         Dim fname As String
         
-        For cnt = 1 To pProgramFiles.count
+        For cnt = 1 To pProgramFiles.Count
             fname = NextArg(RemoveArg(pProgramFiles(cnt), " "), "|")
             
             Select Case GetFileExt(fname, True, True)
@@ -217,16 +218,16 @@ End Property
 
 Public Property Get Summary() As String
 
-    If pSystem32.count > 0 Then
+    If pSystem32.Count > 0 Then
         Dim cnt As Long
         cnt = 1
         Do
             Do While Left(pSystem32.item(cnt), 1) = "="
                 pSystem32.Remove cnt
-                If cnt > pSystem32.count Then Exit Do
+                If cnt > pSystem32.Count Then Exit Do
             Loop
             cnt = cnt + 1
-        Loop Until cnt > pSystem32.count
+        Loop Until cnt > pSystem32.Count
     End If
             
     Dim ret As String
@@ -242,11 +243,11 @@ Public Property Get Summary() As String
         ret = ret & "         A restore point will be created;" & vbCrLf
     End If
 
-    TotalOfItem = pProgramFiles.count + pSystem32.count
+    TotalOfItem = pProgramFiles.Count + pSystem32.Count
     Dim folderCount As Long
     
-    If pProgramFiles.count > 0 Then
-        For cnt = 1 To pProgramFiles.count
+    If pProgramFiles.Count > 0 Then
+        For cnt = 1 To pProgramFiles.Count
             If IsNumeric(NextArg(RemoveArg(pProgramFiles(cnt), "|"), "|")) Then
                 TotalOfBytes = TotalOfBytes + CDbl(NextArg(RemoveArg(pProgramFiles(cnt), "|"), "|"))
             ElseIf NextArg(RemoveArg(pProgramFiles(cnt), "|"), "|") = "<DIR>" Then
@@ -256,10 +257,10 @@ Public Property Get Summary() As String
     End If
 
     ret = ret & "         Main program requires;" & vbCrLf
-    If pProgramFiles.count > 0 And folderCount > 0 Then
+    If pProgramFiles.Count > 0 And folderCount > 0 Then
         ret = ret & "                   Files placed in, " & Program.AppValue & " folders:" & vbCrLf
-        If pProgramFiles.count > 0 Then
-            ret = ret & "                  " & pProgramFiles.count & " files totaling " & Trim(FormatFileSize(TotalOfBytes)) & vbCrLf
+        If pProgramFiles.Count > 0 Then
+            ret = ret & "                  " & pProgramFiles.Count & " files totaling " & Trim(FormatFileSize(TotalOfBytes)) & vbCrLf
         End If
         If folderCount > 0 Then
             ret = ret & "                  " & folderCount & " folders will be created." & vbCrLf
@@ -270,8 +271,8 @@ Public Property Get Summary() As String
     folderCount = 0
     
     Dim tmp As Double
-    If pSystem32.count > 0 Then
-        For cnt = 1 To pSystem32.count
+    If pSystem32.Count > 0 Then
+        For cnt = 1 To pSystem32.Count
             If IsNumeric(NextArg(RemoveArg(pSystem32(cnt), "|"), "|")) Then
                 tmp = tmp + CDbl(NextArg(RemoveArg(pSystem32(cnt), "|"), "|"))
             ElseIf NextArg(RemoveArg(pSystem32(cnt), "|"), "|") = "<DIR>" Then
@@ -281,9 +282,9 @@ Public Property Get Summary() As String
     End If
     
     ret = ret & "         Shared libraries require;" & vbCrLf
-    If pSystem32.count > 0 Then
+    If pSystem32.Count > 0 Then
         ret = ret & "                   Files placed in windows system folder:" & vbCrLf
-        ret = ret & "                  " & pSystem32.count & " files totaling: " & Trim(FormatFileSize(tmp)) & vbCrLf
+        ret = ret & "                  " & pSystem32.Count & " files totaling: " & Trim(FormatFileSize(tmp)) & vbCrLf
     Else
         ret = ret & "                  No file is installed in this section." & vbCrLf
     End If
@@ -292,8 +293,8 @@ Public Property Get Summary() As String
     
     tmp = 0
     
-    If pShortCuts.count > 0 Then
-        For cnt = 1 To pShortCuts.count
+    If pShortCuts.Count > 0 Then
+        For cnt = 1 To pShortCuts.Count
             If NextArg(pShortCuts(cnt), " ") = "?" Then
                 tmp = tmp + 4096
             Else
@@ -303,19 +304,19 @@ Public Property Get Summary() As String
     End If
     
     ret = ret & "         Menu shortcuts and file types require;" & vbCrLf
-    If pShortCuts.count > 0 And folderCount > 0 Then
+    If pShortCuts.Count > 0 And folderCount > 0 Then
         ret = ret & "                   Files under the start menu programs:" & vbCrLf
-        If pShortCuts.count > 0 Then
-            ret = ret & "                  " & pShortCuts.count & " files approximately: " & Trim(FormatFileSize(tmp)) & vbCrLf
+        If pShortCuts.Count > 0 Then
+            ret = ret & "                  " & pShortCuts.Count & " files approximately: " & Trim(FormatFileSize(tmp)) & vbCrLf
         End If
         If folderCount > 0 Then
-            ret = ret & "                  " & folderCount & " folders will be created, and " & pFileTypes.count & " file types." & vbCrLf
+            ret = ret & "                  " & folderCount & " folders will be created, and " & pFileTypes.Count & " file types." & vbCrLf
         End If
     Else
         ret = ret & "                  No file is installed in this section." & vbCrLf
     End If
     
-    TotalOfItem = pSystem32.count + pProgramFiles.count + pShortCuts.count
+    TotalOfItem = pSystem32.Count + pProgramFiles.Count + pShortCuts.Count
     
     TotalOfBytes = TotalOfBytes + tmp
     ret = ret & "Total of " & TotalOfItem & " files, at a total of " & Trim(FormatFileSize(TotalOfBytes)) & vbCrLf
@@ -393,7 +394,7 @@ Private Sub RoundUpHistoryDLLS2(ByRef vals() As String)
         num = 0
         Select Case GetFileExt(vals(cnt), True, True)
             Case "dll", "ocx", "exe", "tlb"
-                If pSystem32.count > 0 Then
+                If pSystem32.Count > 0 Then
                     num = 1
                     Do
                         If LCase(GetFileName(NextArg(RemoveArg(pSystem32(num), " "), "|"))) = LCase(vals(cnt)) Then
@@ -401,7 +402,7 @@ Private Sub RoundUpHistoryDLLS2(ByRef vals() As String)
                             Exit For
                         End If
                         num = num + 1
-                    Loop While num <= pSystem32.count
+                    Loop While num <= pSystem32.Count
                 End If
         End Select
         If num > 0 Then
@@ -466,7 +467,7 @@ Public Function UnlockInstalling() As Boolean
 'if this is called early then rollback is initiated on
 'the current lock and similarly the unlock must complete
     If LockState = InstallLock Then
-        If pProgramFiles.count = 0 And pSystem32.count = 0 Then
+        If pProgramFiles.Count = 0 And pSystem32.Count = 0 Then
             CommitInstall
             LockState = NoCurrentLock
             UnlockInstalling = True
@@ -475,7 +476,7 @@ Public Function UnlockInstalling() As Boolean
             UnlockInstalling = False
         End If
     ElseIf LockState = RollBackLock Then
-        If pRollback.count = 0 Then
+        If pRollback.Count = 0 Then
             CleanupInstall
             LockState = NoCurrentLock
             UnlockInstalling = True
@@ -557,7 +558,7 @@ Public Function UnlockUninstalling() As Boolean
 'and then this returns true, canceling/pausing uninstall
     If LockState = UninstallLock Then
         CleanupInstall
-        If pProgramFiles.count = 0 And pSystem32.count = 0 Then
+        If pProgramFiles.Count = 0 And pSystem32.Count = 0 Then
             LockState = NoCurrentLock
             UnlockUninstalling = True
         End If
@@ -565,16 +566,16 @@ Public Function UnlockUninstalling() As Boolean
 End Function
 Private Sub DebugProgramFiles()
     Dim cnt As Long
-    If pProgramFiles.count > 0 Then
-        For cnt = 1 To pProgramFiles.count
+    If pProgramFiles.Count > 0 Then
+        For cnt = 1 To pProgramFiles.Count
             Debug.Print pProgramFiles.item(cnt)
         Next
     End If
 End Sub
 Private Sub DebugSystem23()
     Dim cnt As Long
-    If pSystem32.count > 0 Then
-        For cnt = 1 To pSystem32.count
+    If pSystem32.Count > 0 Then
+        For cnt = 1 To pSystem32.Count
             Debug.Print pSystem32.item(cnt)
         Next
     End If
@@ -585,8 +586,8 @@ Private Static Function FindNextFileIndex() As Long
     Dim cnt As Long
     Dim fInfo As String
     
-    If (pProgramFiles.count > 0) Then
-        For cnt = 1 To pProgramFiles.count
+    If (pProgramFiles.Count > 0) Then
+        For cnt = 1 To pProgramFiles.Count
             Select Case NextArg(pProgramFiles.item(cnt), " ")
                 Case "*"
                     FindNextFileIndex = cnt
@@ -595,8 +596,8 @@ Private Static Function FindNextFileIndex() As Long
         Next
 
     End If
-    If (pSystem32.count > 0) Then
-        For cnt = 1 To pSystem32.count
+    If (pSystem32.Count > 0) Then
+        For cnt = 1 To pSystem32.Count
             Select Case NextArg(pSystem32.item(cnt), " ")
                 Case "^", "%"
                     FindNextFileIndex = -cnt
@@ -614,8 +615,8 @@ Private Static Function FindNextFileIndex() As Long
     fInfo = RemoveQuotedArg(fInfo, "<FULLNAME>", "</FULLNAME>")
     
     
-    If pProgramFiles.count > 0 Then
-        For cnt = 1 To pProgramFiles.count
+    If pProgramFiles.Count > 0 Then
+        For cnt = 1 To pProgramFiles.Count
             If LCase(fInfo) = Trim(LCase(NextArg(RemoveArg(pProgramFiles.item(cnt), " "), "|"))) Then
                 FindNextFileIndex = cnt
                 'Debug.Print fInfo & " " & pProgramFiles.item(cnt)
@@ -624,8 +625,8 @@ Private Static Function FindNextFileIndex() As Long
         Next
     End If
     
-    If pSystem32.count > 0 Then
-        For cnt = 1 To pSystem32.count
+    If pSystem32.Count > 0 Then
+        For cnt = 1 To pSystem32.Count
             If LCase(fInfo) = Trim(LCase(NextArg(RemoveArg(pSystem32.item(cnt), " "), "|"))) Then
                 FindNextFileIndex = -cnt
                 'Debug.Print fInfo & " " & pSystem32.item(cnt)
@@ -648,32 +649,32 @@ Public Function NextProgressive(ByRef InfoText As String) As Boolean
                 pStartExecutes = (Not Executes.NextExecute(InfoText))
                 NextProgressive = True
             Else
-                If pProgramFiles.count > 0 Or pSystem32.count > 0 Then
+                If pProgramFiles.Count > 0 Or pSystem32.Count > 0 Then
                     colIndex = FindNextFileIndex()
-                    If pProgramFiles.count > 0 And colIndex > 0 Then
+                    If pProgramFiles.Count > 0 And colIndex > 0 Then
                         InstallProgramFiles pProgramFiles(colIndex), InfoText, colIndex
                         pProgramFiles.Remove colIndex
                         NextProgressive = True
-                    ElseIf pSystem32.count > 0 And colIndex < 0 Then
+                    ElseIf pSystem32.Count > 0 And colIndex < 0 Then
                         InstallSystem32 pSystem32(-colIndex), InfoText, -colIndex
                         pSystem32.Remove -colIndex
                         NextProgressive = True
                     Else
                         NextProgressive = True
                     End If
-                ElseIf pShortCuts.count > 0 Then
+                ElseIf pShortCuts.Count > 0 Then
                     If Not LCase(CurDir) = LCase(GetStartMenuProgramsFolder) Then ChDir GetStartMenuProgramsFolder
                     If SimSilence = Normal Or AllShortCuts Then
                         InstallShortCut pShortCuts(1), InfoText
                         pShortCuts.Remove 1
                     Else
                         InstallShortCut "? " & AppValue & "|" & InstallLocation & "\" & Program.AppValue & "\" & Default & "|", InfoText
-                        Do Until pShortCuts.count = 0
+                        Do Until pShortCuts.Count = 0
                             pShortCuts.Remove 1
                         Loop
                     End If
                     NextProgressive = True
-                ElseIf pFileTypes.count > 0 Then
+                ElseIf pFileTypes.Count > 0 Then
                     InstallFileType pFileTypes(1), InfoText
                     pFileTypes.Remove 1
                     NextProgressive = True
@@ -682,11 +683,11 @@ Public Function NextProgressive(ByRef InfoText As String) As Boolean
                 End If
             End If
         ElseIf LockState = RollBackLock Then
-            If pRollback.count > 0 Then
-                RollbackEntry pRollback(pRollback.count), InfoText
-                pRollback.Remove pRollback.count
+            If pRollback.Count > 0 Then
+                RollbackEntry pRollback(pRollback.Count), InfoText
+                pRollback.Remove pRollback.Count
                 NextProgressive = True
-            ElseIf pRollback.count = 0 And Registry.KeyExists(HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" & Me.AppValue) Then
+            ElseIf pRollback.Count = 0 And Registry.KeyExists(HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" & Me.AppValue) Then
                 Registry.DeleteKey HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" & Me.AppValue
                 NextProgressive = True
             Else
@@ -704,29 +705,29 @@ Public Function NextProgressive(ByRef InfoText As String) As Boolean
             pStartExecutes = Not Executes.NextExecute(InfoText)
             NextProgressive = True
         Else
-            If pProgramFiles.count > 0 Then
+            If pProgramFiles.Count > 0 Then
                 UninstallProgramFiles pProgramFiles(1), InfoText, 1
                 pProgramFiles.Remove 1
                 NextProgressive = True
-            ElseIf pSystem32.count > 0 Then
+            ElseIf pSystem32.Count > 0 Then
                 'If Not LCase(CurDir) = LCase(Left(GetSystem32Folder, Len(GetSystem32Folder) - 1)) Then ChDir Left(GetSystem32Folder, Len(GetSystem32Folder) - 1)
                 UninstallSystem32 pSystem32(1), InfoText, 1
                 pSystem32.Remove 1
 
                 NextProgressive = True
-            ElseIf pShortCuts.count > 0 Then
+            ElseIf pShortCuts.Count > 0 Then
                 If Not LCase(CurDir) = LCase(GetStartMenuProgramsFolder) Then ChDir GetStartMenuProgramsFolder
                 If SimSilence = Normal Then
                     UninstallShortCut pShortCuts(1), InfoText
                     pShortCuts.Remove 1
                 Else
                     UninstallShortCut "? " & AppValue & "|" & InstallLocation & "\" & Program.AppValue & "\" & Default & "|", InfoText
-                    Do Until pShortCuts.count = 0
+                    Do Until pShortCuts.Count = 0
                         pShortCuts.Remove 1
                     Loop
                 End If
                 NextProgressive = True
-            ElseIf pFileTypes.count > 0 Then
+            ElseIf pFileTypes.Count > 0 Then
                 UninstallFileType pFileTypes(1), InfoText
                 pFileTypes.Remove 1
                 NextProgressive = True
@@ -1334,7 +1335,7 @@ Private Function UninstallShortCut(ByVal ItemData As String, ByRef InfoText As S
 
     Select Case ItemType
         Case "^"
-            If pShortCuts.count > 1 Then
+            If pShortCuts.Count > 1 Then
                 If InStr(1, pShortCuts(2), ItemName, vbTextCompare) > 0 Then
                     pShortCuts.Add pShortCuts(1)
                 Else
@@ -1406,7 +1407,7 @@ Private Function UninstallProgramFiles(ByVal ItemData As String, ByRef InfoText 
 
     Select Case ItemType
         Case "^"
-            If pProgramFiles.count > 1 Then
+            If pProgramFiles.Count > 1 Then
                 If InStr(1, pProgramFiles(2), ItemName, vbTextCompare) > 0 Then
                     pProgramFiles.Add pProgramFiles(colIndex)
                 Else

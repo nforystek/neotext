@@ -102,10 +102,12 @@ Public Sub RenderPlayer(Optional ByRef Mirror As Board = Nothing)
         DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         
         DDevice.SetVertexShader FVF_RENDER
+
+
         
-        If Camera.Element Is Nothing Then Exit Sub
+        If Player.Element Is Nothing Then Exit Sub
         
-        Camera.Element.PlayerMatrix
+        Player.Element.PlayerMatrix
         
         
         
@@ -179,8 +181,20 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
     Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
+
+    Dim useObj As Orient
+
+    If Not Camera Is Nothing Then
+        If Not Camera.Element Is Nothing Then
+            Set useObj = Camera.Element
+        Else
+            Set useObj = Camera
+        End If
+    Else
+        Exit Sub
+    End If
     
-    If Camera.Element Is Nothing Then Exit Sub
+    
                         
     If Lights.Count > 0 Then
         Dim l1 As Light
@@ -189,7 +203,7 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
 
 
             If l1.LightType = Lighting.Directed Or (l1.Enabled And _
-                DistanceEx(Camera.Element.Origin, l1.Origin) <= (FadeDistance - l1.Range)) Then
+                DistanceEx(useObj.Origin, l1.Origin) <= (FadeDistance - l1.Range)) Then
                 
                 If (l1.LightBlink > 0) Or (l1.DiffuseRoll <> 0) Then
                     If (l1.LightBlink > 0) Then
@@ -243,7 +257,7 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
         Dim s1 As Sound
         For Each s1 In Sounds
             If s1.Range > 0 And s1.Enabled Then
-                r = DistanceEx(Camera.Element.Origin, s1.Origin)
+                r = DistanceEx(useObj.Origin, s1.Origin)
                 If r < s1.Range Then
                     
                     r = Round(CSng(s1.Range - Dist), 3)
@@ -264,7 +278,7 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
         Dim t1 As Track
         For Each t1 In Tracks
             If t1.Range > 0 And t1.Enabled Then
-                r = DistanceEx(Camera.Element.Origin, t1.Origin)
+                r = DistanceEx(useObj.Origin, t1.Origin)
                 If r < t1.Range Then
                 
                     r = Round(CSng(t1.Range - r), 3)
@@ -289,7 +303,7 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
 
             If e1.Visible And (Not (e1.Effect = Collides.Ladder Or e1.Effect = Collides.Liquid)) Then
             
-                If ((e1.BoundsIndex >= 0) And DistanceEx(Camera.Element.Origin, e1.Origin) <= FadeDistance) Then
+                If ((e1.BoundsIndex >= 0) And DistanceEx(useObj.Origin, e1.Origin) <= FadeDistance) Then
                     
                     If e1.VisualIndex > 0 Then
                         V = e1.VisualIndex
@@ -421,14 +435,14 @@ Public Sub RenderBoards(Optional ByRef Mirror As Board = Nothing)
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
-    If Camera.Element Is Nothing Then Exit Sub
+    If Camera Is Nothing Then Exit Sub
 
     If Boards.Count > 0 Then
         Dim b1 As Board
         For Each b1 In Boards
         
             If b1.Visible Then
-                If DistanceEx(Camera.Element.Origin, b1.Origin) <= FadeDistance Then
+                If DistanceEx(Camera.Origin, b1.Origin) <= FadeDistance Then
                     If Not b1.Translucent Then
 
                         If (b1.Animated > 0) Then
@@ -480,7 +494,7 @@ Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
     
-    If Camera.Element Is Nothing Then Exit Sub
+    If Camera Is Nothing Then Exit Sub
         
     Dim b1 As Board
     If Elements.Count > 0 Then
@@ -492,7 +506,7 @@ Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
         'For o = 1 To Elements.count
             If e1.Visible And (Not DebugMode) Then
             
-                If (e1.BoundsIndex > 0) And DistanceEx(Camera.Element.Origin, e1.Origin) <= FadeDistance Then
+                If (e1.BoundsIndex > 0) And DistanceEx(Camera.Origin, e1.Origin) <= FadeDistance Then
                     With Meshes(e1.BoundsIndex)
                     
                         For i = 0 To .MaterialCount - 1
@@ -601,7 +615,7 @@ Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
         'For o = 1 To Boards.count
             If b1.Visible Then
 
-                    If DistanceEx(Camera.Element.Origin, b1.Origin) <= FadeDistance Then
+                    If DistanceEx(Camera.Origin, b1.Origin) <= FadeDistance Then
                         If b1.Translucent Then
             
                             If (b1.Animated > 0) Then
@@ -697,11 +711,11 @@ Public Sub RenderBeacons(Optional ByRef Mirror As Board = Nothing)
                     ok = False
                 End If
                 
-                If a1.Origins.Count > 0 And (Not Camera.Element Is Nothing) Then
+                If a1.Origins.Count > 0 And (Not Camera Is Nothing) Then
                     L = 1
     
                     Do While L <= a1.Origins.Count
-                        d = DistanceEx(a1.Origin(L), Camera.Element.Origin)
+                        d = DistanceEx(a1.Origin(L), Camera.Origin)
                         If ok Then ok = ok And (DistanceEx(a1.Origin(L), MakePoint(X, 0, Z)) > BeaconSpacing)
 
                         If d <= FadeDistance Then
@@ -782,9 +796,9 @@ Public Sub RenderBeacons(Optional ByRef Mirror As Board = Nothing)
                                     End If
                              
                                     If a1.BeaconLight > -1 Then
-                                        DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Camera.Element.Origin.X) / 80)
-                                        DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Camera.Element.Origin.Y) / 80)
-                                        DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Camera.Element.Origin.Z) / 80)
+                                        DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Camera.Origin.X) / 80)
+                                        DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Camera.Origin.Y) / 80)
+                                        DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Camera.Origin.Z) / 80)
 
                                         DDevice.SetLight a1.BeaconLight - 1, DXLights(a1.BeaconLight)
                                         DDevice.LightEnable a1.BeaconLight - 1, 1
@@ -952,9 +966,9 @@ Public Sub RenderBeacons(Optional ByRef Mirror As Board = Nothing)
 
                                                                     
                                         If a1.BeaconLight > -1 Then
-                                            DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Camera.Element.Origin.X) / 80)
-                                            DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Camera.Element.Origin.Y) / 80)
-                                            DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Camera.Element.Origin.Z) / 80)
+                                            DXLights(a1.BeaconLight).Position.X = a1.Origin(L).X - ((a1.Origin(L).X - Camera.Origin.X) / 80)
+                                            DXLights(a1.BeaconLight).Position.Y = a1.Origin(L).Y - ((a1.Origin(L).Y - Camera.Origin.Y) / 80)
+                                            DXLights(a1.BeaconLight).Position.Z = a1.Origin(L).Z - ((a1.Origin(L).Z - Camera.Origin.Z) / 80)
 
                                             DDevice.SetLight a1.BeaconLight - 1, DXLights(a1.BeaconLight)
                                             DDevice.LightEnable a1.BeaconLight - 1, 1
@@ -1080,8 +1094,6 @@ Public Sub RenderSpaces(Optional ByRef Mirror As Board = Nothing)
     DDevice.SetTextureStageState 1, D3DTSS_MINFILTER, D3DTEXF_POINT
 
 
-
-
     RenderSpacesSetup Mirror
     
     Dim S As Space
@@ -1155,7 +1167,6 @@ Public Sub CreateLand(Optional ByVal NoDeserialize As Boolean = False)
         
     
     'Set Space = New Space
-
     
     Bindings.MouseInput = Trap
     Perspective = ThirdPerson

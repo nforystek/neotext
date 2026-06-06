@@ -471,7 +471,7 @@ Public Function ChooseCipher(sCiphers As String) As String
     Alg_Hash = 0
     N% = 1
     Do Until Alg_Hash <> 0
-        lCipher = CLng(Asc(Mid$(sCiphers, N%, 1))) * 256 + CLng(Asc(Mid$(sCiphers, N% + 1, 1)))
+        lCipher = CLng(Asc(Mid(sCiphers, N%, 1))) * 256 + CLng(Asc(Mid(sCiphers, N% + 1, 1)))
         Select Case lCipher
             Case 4
                 Alg_Hash = CALG_MD5
@@ -482,14 +482,14 @@ Public Function ChooseCipher(sCiphers As String) As String
         End Select
         N% = N% + 2
     Loop
-    ChooseCipher = Mid$(sCiphers, N% - 2, 1) & Mid$(sCiphers, N% - 1, 1)
+    ChooseCipher = Mid(sCiphers, N% - 2, 1) & Mid(sCiphers, N% - 1, 1)
 End Function
 Public Property Get CipherToUse2() As Long
     CipherToUse2 = lCipher
     
 End Property
 Public Property Let CipherToUse(sNewCipher As String)
-    lCipher = Asc(Left$(sNewCipher, 1)) * 256 + Asc(Right$(sNewCipher, 1))
+    lCipher = Asc(Left(sNewCipher, 1)) * 256 + Asc(Right(sNewCipher, 1))
     Select Case lCipher
         Case 4
             Alg_Hash = CALG_MD5
@@ -689,7 +689,7 @@ Public Function ImportMasterKey() As String
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    ImportMasterKey = Left$(sTemp, 48)
+    ImportMasterKey = Left(sTemp, 48)
     llen = 0
     'Get WriteMAC Key Length
     If CryptExportKey(hWriteMAC, hExchngKey, SIMPLEBLOB, 0, ByVal 0&, llen) = 0 Then
@@ -703,15 +703,15 @@ Public Function ImportMasterKey() As String
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
     If Alg_Hash = CALG_SHA1 Then
-        WRITE_MAC_KEY = Left$(sTemp, 20)
+        WRITE_MAC_KEY = Left(sTemp, 20)
     Else
-        WRITE_MAC_KEY = Left$(sTemp, 16)
+        WRITE_MAC_KEY = Left(sTemp, 16)
     End If
     llen = 0
     'Get ReadMAC Key Length
@@ -726,15 +726,15 @@ Public Function ImportMasterKey() As String
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
     If Alg_Hash = CALG_SHA1 Then
-        READ_MAC_KEY = Left$(sTemp, 20)
+        READ_MAC_KEY = Left(sTemp, 20)
     Else
-        READ_MAC_KEY = Left$(sTemp, 16)
+        READ_MAC_KEY = Left(sTemp, 16)
     End If
     llen = 0
     'Get Write Key Length
@@ -749,12 +749,12 @@ Public Function ImportMasterKey() As String
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    WRITE_KEY = Left$(sTemp, 16)
+    WRITE_KEY = Left(sTemp, 16)
     llen = 0
     'Get Read Key Length
     If CryptExportKey(hReadKey, hExchngKey, SIMPLEBLOB, 0, ByVal 0&, llen) = 0 Then
@@ -768,12 +768,12 @@ Public Function ImportMasterKey() As String
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    READ_KEY = Left$(sTemp, 16)
+    READ_KEY = Left(sTemp, 16)
  '   Call DebugPrintString("Read Key:", READ_KEY)
  '   Call DebugPrintString("Write Key:", WRITE_KEY)
  '   Call DebugPrintString("Read MAC Key:", READ_MAC_KEY)
@@ -955,15 +955,15 @@ Public Function ExportMasterKey() As Boolean
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
     If Alg_Hash = CALG_SHA1 Then
-        WRITE_MAC_KEY = Left$(sTemp, 20)
+        WRITE_MAC_KEY = Left(sTemp, 20)
     Else
-        WRITE_MAC_KEY = Left$(sTemp, 16)
+        WRITE_MAC_KEY = Left(sTemp, 16)
     End If
     llen = 0
     'Get ReadMAC Key Length
@@ -978,15 +978,15 @@ Public Function ExportMasterKey() As Boolean
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
     If Alg_Hash = CALG_SHA1 Then
-        READ_MAC_KEY = Left$(sTemp, 20)
+        READ_MAC_KEY = Left(sTemp, 20)
     Else
-        READ_MAC_KEY = Left$(sTemp, 16)
+        READ_MAC_KEY = Left(sTemp, 16)
     End If
     llen = 0
     'Get Write Key Length
@@ -1001,12 +1001,12 @@ Public Function ExportMasterKey() As Boolean
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    WRITE_KEY = Left$(sTemp, 16)
+    WRITE_KEY = Left(sTemp, 16)
     llen = 0
     'Get Read Key Length
     If CryptExportKey(hReadKey, hExchngKey, SIMPLEBLOB, 0, ByVal 0&, llen) = 0 Then
@@ -1020,12 +1020,12 @@ Public Function ExportMasterKey() As Boolean
     End If
     ReDim bTemp(Len(MasterKeyBlob) - 1)
     CopyMemory bTemp(0), MasterKeyBlob, Len(MasterKeyBlob)
-    sTemp = Mid$(StrConv(bTemp, vbUnicode), 13)
+    sTemp = Mid(StrConv(bTemp, vbUnicode), 13)
     If CryptDecrypt(hExchngKey, 0, True, 0, sTemp, Len(sTemp)) = 0 Then
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    READ_KEY = Left$(sTemp, 16)
+    READ_KEY = Left(sTemp, 16)
   '  Call DebugPrintString("Read Key:", READ_KEY)
   '  Call DebugPrintString("Write Key:", WRITE_KEY)
   '  Call DebugPrintString("Read MAC Key:", READ_MAC_KEY)
@@ -1418,7 +1418,7 @@ Public Function DecryptSessionKey()
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    OutBuffer = Left$(sTemp, 32)
+    OutBuffer = Left(sTemp, 32)
 ReleaseHandles:
     If hPublicKey Then CryptDestroyKey hPublicKey
 '    If hCryptProv Then CryptReleaseContext hCryptProv, 0
@@ -1613,12 +1613,12 @@ Private Function VerifyHMAC(ByRef DecryptedRecord As String) As Boolean
         VerifyHMAC = False
      '   Debug.Print "HMAC Recv = ";
      '   For N% = 1 To Len(AppendedHMAC)
-     '       Debug.Print Right$("0" & Hex$(Asc(Mid$(AppendedHMAC, N%, 1))), 2) & " ";
+     '       Debug.Print Right("0" & Hex$(Asc(Mid(AppendedHMAC, N%, 1))), 2) & " ";
      '   Next N%
      '   Debug.Print
      '   Debug.Print "HMAC Calc = ";
      '   For N% = 1 To Len(CalculatedHMAC)
-     '       Debug.Print Right$("0" & Hex$(Asc(Mid$(CalculatedHMAC, N%, 1))), 2) & " ";
+     '       Debug.Print Right("0" & Hex$(Asc(Mid(CalculatedHMAC, N%, 1))), 2) & " ";
      '   Next N%
      '   Debug.Print
     End If
@@ -1683,7 +1683,7 @@ Public Sub Encrypt()
         RaiseEvent Error(Err.LastDllError, CE, Routine)
         'GoTo ReleaseHandles
     End If
-    OutBuffer = Mid$(sCryptBuffer, 1, lCryptLength)
+    OutBuffer = Mid(sCryptBuffer, 1, lCryptLength)
 ReleaseHandles:
     If hKey Then CryptDestroyKey hKey
     If hExchgKey Then CryptDestroyKey hExchgKey
@@ -1718,7 +1718,7 @@ Public Function HMAC2(h_HMAC As Long, ByVal sMsg As String, flgSend As Boolean) 
     End If
     Dim N%
 '    For N% = 1 To Len(MAC_Header)
-'        Debug.Print Right$("0" & Hex$(Asc(Mid$(MAC_Header, N%, 1))), 2) & " ";
+'        Debug.Print Right("0" & Hex$(Asc(Mid(MAC_Header, N%, 1))), 2) & " ";
 '    Next N%
 '    Debug.Print
     'if inner & outer strings and lengths set to 0, defaults are used
@@ -1768,7 +1768,7 @@ Public Function HMAC(HashAlg As Long, sKey As String, sMsg As String, flgSend As
     '    Debug.Print "MAC Header on Receive:"
     End If
  '   For N% = 1 To Len(MAC_Header)
- '       Debug.Print Right$("0" & Hex$(Asc(Mid$(MAC_Header, N%, 1))), 2) & " ";
+ '       Debug.Print Right("0" & Hex$(Asc(Mid(MAC_Header, N%, 1))), 2) & " ";
  '   Next N%
  '   Debug.Print
     If Len(sKey) > 64 Then
@@ -1781,8 +1781,8 @@ Public Function HMAC(HashAlg As Long, sKey As String, sMsg As String, flgSend As
     o_key_pad = String$(64, &H5C)
     i_key_pad = String$(64, &H36)
     For N% = 1 To Len(sKey)
-        Mid$(o_key_pad, N%, 1) = Chr$(Asc(Mid$(sKey, N%, 1)) Xor &H5C)
-        Mid$(i_key_pad, N%, 1) = Chr$(Asc(Mid$(sKey, N%, 1)) Xor &H36)
+        Mid(o_key_pad, N%, 1) = Chr$(Asc(Mid(sKey, N%, 1)) Xor &H5C)
+        Mid(i_key_pad, N%, 1) = Chr$(Asc(Mid(sKey, N%, 1)) Xor &H36)
     Next N%
     If HashAlg = CALG_MD5 Then
         HMAC = MD5_Hash(o_key_pad & MD5_Hash(i_key_pad & MAC_Header & sMsg))
@@ -1815,7 +1815,7 @@ Private Sub DebugPrintString(sDescr As String, strToPrint As String)
     Dim N%
     Debug.Print sDescr & ":"
     For N% = 1 To Len(strToPrint)
-        Debug.Print Right$("0" & Hex$(Asc(Mid$(strToPrint, N%, 1))), 2) & " ";
+        Debug.Print Right("0" & Hex$(Asc(Mid(strToPrint, N%, 1))), 2) & " ";
         If N% Mod 16 = 0 Then Debug.Print
     Next N%
     Debug.Print
@@ -1868,7 +1868,7 @@ Public Sub Decrypt()
         RaiseEvent Error(Err.LastDllError, CD, Routine)
         GoTo ReleaseHandles
     End If
-    OutBuffer = Mid$(sCryptBuffer, 1, sInBuffer.Length)
+    OutBuffer = Mid(sCryptBuffer, 1, sInBuffer.Length)
 ReleaseHandles:
     If (hKey) Then CryptDestroyKey hKey
     If hExchgKey Then CryptDestroyKey hExchgKey

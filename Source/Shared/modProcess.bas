@@ -120,13 +120,13 @@ Public Function IsWindows98() As Boolean
     If isWin98 > 0 Then
         IsWindows98 = IIf(isWin98 = 1, True, False)
     Else
-        Dim I As Long
+        Dim i As Long
         isWin98 = 2
         IsWindows98 = False
 '
 '        If GetProcAddress(GetModuleHandle("kernel32"), "RegisterServiceProcess") <> 0 Then
             On Error Resume Next
-            I = RegisterServiceProcess(GetCurrentProcessId, 0)
+            i = RegisterServiceProcess(GetCurrentProcessId, 0)
         
             If Not (Err = 453) Then
                 isWin98 = 1
@@ -148,14 +148,14 @@ End Function
         lSize = Len(sBuffer)
         Call GetWindowText(hwnd, sBuffer, lSize)
         If lSize > 0 Then
-            WindowText = Trim(Replace(Left$(sBuffer, lSize), Chr(0), ""))
+            WindowText = Trim(Replace(Left(sBuffer, lSize), Chr(0), ""))
         End If
     End Function
     
 #End If
 
-Public Function IsFileExecutable(ByVal Filename As String) As Boolean
-    Select Case GetFileExt(Filename)
+Public Function IsFileExecutable(ByVal FileName As String) As Boolean
+    Select Case GetFileExt(FileName)
         Case ".exe", ".bat", ".com" ', ".msi"
             IsFileExecutable = True
         Case Else
@@ -182,12 +182,12 @@ End Function
 
 Public Function RunProcess(ByVal Path As String, Optional ByVal Params As String = "", Optional ByVal Focus As Integer = vbNormalFocus, Optional ByVal Wait As Boolean = False) As Long
     If Wait Then
-        Dim PID As Double
-        PID = Shell(Trim(Trim(Path) & " " & Trim(Params)), Focus)
-        Do While ProcessRunning(PID)
+        Dim pId As Double
+        pId = Shell(Trim(Trim(Path) & " " & Trim(Params)), Focus)
+        Do While ProcessRunning(pId)
             modCommon.DoTasks
         Loop
-        RunProcess = -CInt((PID > 0))
+        RunProcess = -CInt((pId > 0))
     Else
         RunProcess = Shell(Trim(Path & " " & Params), Focus)
     End If
@@ -199,7 +199,7 @@ Public Function ProcessExeOrPIDBy(ByVal EXEorPID As Variant, Optional ByVal Exac
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
     
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -211,8 +211,8 @@ Public Function ProcessExeOrPIDBy(ByVal EXEorPID As Variant, Optional ByVal Exac
     cnt = 0
     
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase(Left(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
 
         If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
                 
@@ -270,7 +270,7 @@ Public Function ProcessRunning(ByVal EXEorPID As Variant, Optional ByVal ExactMa
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
     
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -282,8 +282,8 @@ Public Function ProcessRunning(ByVal EXEorPID As Variant, Optional ByVal ExactMa
     cnt = 0
     
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase(Left(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
 
         If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
                
@@ -325,10 +325,10 @@ End Function
 '    Do While rProcessFound
 '        i = InStr(1, uProcess.szexeFile, Chr(0))
 '        szExename = LCase(Left(uProcess.szexeFile, i - 1))
-'        If ((szExename <> "") And (((Right$(szExename, Len(GetFileName(EXENameOrPID))) = LCase$(GetFileName(EXENameOrPID))) Or _
-'            (Right$(EXENameOrPID, Len(GetFileName(szExename))) = LCase$(GetFileName(szExename)))) Or _
-'            ((Right$(szExename, Len(EXENameOrPID)) = LCase$(EXENameOrPID)) Or _
-'            (Right$(EXENameOrPID, Len(szExename)) = LCase$(szExename))))) Or _
+'        If ((szExename <> "") And (((Right(szExename, Len(GetFileName(EXENameOrPID))) = LCase(GetFileName(EXENameOrPID))) Or _
+'            (Right(EXENameOrPID, Len(GetFileName(szExename))) = LCase(GetFileName(szExename)))) Or _
+'            ((Right(szExename, Len(EXENameOrPID)) = LCase(EXENameOrPID)) Or _
+'            (Right(EXENameOrPID, Len(szExename)) = LCase(szExename))))) Or _
 '            ((CStr(uProcess.th32ProcessID) = CStr(EXENameOrPID)) And (CStr(EXENameOrPID) <> "0")) Then
 '            cnt = cnt + 1
 '            If IsNumeric(EXENameOrPID) Then
@@ -369,7 +369,7 @@ Public Function RunningProcessCount(ByVal EXEorPID As Variant, Optional ByVal Ex
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
 
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -381,8 +381,8 @@ Public Function RunningProcessCount(ByVal EXEorPID As Variant, Optional ByVal Ex
     cnt = 0
 
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase(Left(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
         
         If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
             
@@ -404,7 +404,7 @@ Public Function RunningEXEProcessByID(ByVal EXEPID As Long) As String
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
 
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -416,8 +416,8 @@ Public Function RunningEXEProcessByID(ByVal EXEPID As Long) As String
     cnt = 0
 
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase(Left(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
         If uProcess.th32ProcessID = EXEPID Then
             RunningEXEProcessByID = szExename
             Exit Do
@@ -437,7 +437,7 @@ Public Function IsProccessIDRunning(ByVal EXEPID As Long) As Boolean
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
 
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -470,7 +470,7 @@ Public Function IsProccessEXERunning(ByVal EXE As Variant, Optional ByVal ExactM
     Dim rProcessFound As Long
     Dim hSnapshot As Long
     Dim szExename As String
-    Dim I As Integer
+    Dim i As Integer
     Dim cnt As Long
 
     Const TH32CS_SNAPPROCESS As Long = 2&
@@ -482,8 +482,8 @@ Public Function IsProccessEXERunning(ByVal EXE As Variant, Optional ByVal ExactM
     cnt = 0
 
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase(Left(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
         
         If ProcessCheck(szExename, EXE, ExactMatch) Then
                 
@@ -510,7 +510,7 @@ Public Sub DebugProcesses()
     Dim myProcess As Long
     Dim AppKill As Boolean
     Dim appCount As Integer
-    Dim I As Integer
+    Dim i As Integer
     On Local Error GoTo Finish
     appCount = 0
     
@@ -521,8 +521,8 @@ Public Sub DebugProcesses()
     rProcessFound = ProcessFirst(hSnapshot, uProcess)
     
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase$(Left$(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
         
         Debug.Print szExename
 
@@ -546,7 +546,7 @@ Public Function KillApp(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As 
     Dim myProcess As Long
     Dim AppKill As Boolean
     Dim appCount As Integer
-    Dim I As Integer
+    Dim i As Integer
     On Local Error GoTo Finish
     appCount = 0
     
@@ -557,8 +557,8 @@ Public Function KillApp(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As 
     rProcessFound = ProcessFirst(hSnapshot, uProcess)
     
     Do While rProcessFound
-        I = InStr(1, uProcess.szexeFile, Chr(0))
-        szExename = LCase$(Left$(uProcess.szexeFile, I - 1))
+        i = InStr(1, uProcess.szexeFile, Chr(0))
+        szExename = LCase(Left(uProcess.szexeFile, i - 1))
 
         If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
                 
@@ -579,7 +579,7 @@ Public Function KillApp(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As 
         End If
         
         
-'        If (Right$(szExename, Len(myName)) = LCase$(myName) Or Right$(LCase(myName), Len(szExename)) = szExename) Or (Left(szExename, Len(myName)) = LCase$(myName) Or Left(LCase(myName), Len(szExename)) = szExename) Then
+'        If (Right(szExename, Len(myName)) = LCase(myName) Or Right(LCase(myName), Len(szExename)) = szExename) Or (Left(szExename, Len(myName)) = LCase(myName) Or Left(LCase(myName), Len(szExename)) = szExename) Then
 '            KillApp = True
 '            appCount = appCount + 1
 '            myProcess = OpenProcess(1, False, uProcess.th32ProcessID)
@@ -587,8 +587,8 @@ Public Function KillApp(ByVal EXEorPID As Variant, Optional ByVal ExactMatch As 
 '            Call CloseHandle(myProcess)
 '        ElseIf InStr(szExename, "\") = 0 Then
 '
-'            If (Right$(szExename, Len(GetFileName(myName))) = LCase$(GetFileName(myName)) Or Right$(LCase(GetFileName(myName)), Len(szExename)) = szExename) Or _
-'                (Left(szExename, Len(GetFileName(myName))) = LCase$(GetFileName(myName)) Or Left(LCase(GetFileName(myName)), Len(szExename)) = szExename) Then
+'            If (Right(szExename, Len(GetFileName(myName))) = LCase(GetFileName(myName)) Or Right(LCase(GetFileName(myName)), Len(szExename)) = szExename) Or _
+'                (Left(szExename, Len(GetFileName(myName))) = LCase(GetFileName(myName)) Or Left(LCase(GetFileName(myName)), Len(szExename)) = szExename) Then
 '                KillApp = True
 '                appCount = appCount + 1
 '                myProcess = OpenProcess(1, False, uProcess.th32ProcessID)
@@ -607,9 +607,9 @@ Finish:
 End Function
 Private Function ColExists(ByRef col As Collection, ByVal Val As String) As Boolean
     If col.Count > 0 Then
-        Dim I As Long
-        For I = 1 To col.Count
-            If col(I) = Val Then
+        Dim i As Long
+        For i = 1 To col.Count
+            If col(i) = Val Then
                 ColExists = True
                 Exit Function
             End If
@@ -627,7 +627,7 @@ Public Function KillSubApps(ByVal EXEorPID As Variant, Optional ByVal ExactMatch
     Dim myProcess As Long
     Dim AppKill As Boolean
     Dim appCount As Integer
-    Dim I As Integer
+    Dim i As Integer
     On Local Error GoTo Finish
     appCount = 0
     Dim col As New Collection
@@ -647,8 +647,8 @@ Public Function KillSubApps(ByVal EXEorPID As Variant, Optional ByVal ExactMatch
         rProcessFound = ProcessFirst(hSnapshot, uProcess)
     
         Do While rProcessFound
-            I = InStr(1, uProcess.szexeFile, Chr(0))
-            szExename = LCase$(Left$(uProcess.szexeFile, I - 1))
+            i = InStr(1, uProcess.szexeFile, Chr(0))
+            szExename = LCase(Left(uProcess.szexeFile, i - 1))
             If ProcessCheck(szExename, EXEorPID, ExactMatch) Then
                 If Not ColExists(col, uProcess.th32ProcessID) Then
                     col.Add CStr(uProcess.th32ProcessID), Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")
@@ -682,14 +682,14 @@ Public Function KillSubApps(ByVal EXEorPID As Variant, Optional ByVal ExactMatch
     Loop
 
     If col.Count > 0 Then
-        For I = 1 To col.Count
+        For i = 1 To col.Count
 
-            If col(I) <> col(Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")) Then
+            If col(i) <> col(Replace(Replace(CStr(EXEorPID), " ", "_"), ".", "_")) Then
               '  If CLng(col(I)) <> GetCurrentProcessId Then
-                    Debug.Print "    SubApp: " & CLng(col(I))
+                    Debug.Print "    SubApp: " & CLng(col(i))
                     KillSubApps = True
                     appCount = appCount + 1
-                    myProcess = OpenProcess(1, False, CLng(col(I)))
+                    myProcess = OpenProcess(1, False, CLng(col(i)))
                     AppKill = TerminateProcess(myProcess, exitCode)
                     Call CloseHandle(myProcess)
                ' End If
@@ -722,8 +722,8 @@ Private Function ProcessCheck(ByVal szExename As String, ByVal EXEorPID As Varia
              ( _
                 ( _
                   (LCase(szExename) = LCase(EXEorPID)) Or _
-                  ((InStr(EXEorPID, "\") = 0 And InStr(EXEorPID, "/") = 0) And (LCase$(GetFileName(szExename)) = LCase(EXEorPID))) Or _
-                  ((InStr(szExename, "\") = 0 And InStr(szExename, "/") = 0) And (LCase$(szExename) = LCase(GetFileName(EXEorPID)))) _
+                  ((InStr(EXEorPID, "\") = 0 And InStr(EXEorPID, "/") = 0) And (LCase(GetFileName(szExename)) = LCase(EXEorPID))) Or _
+                  ((InStr(szExename, "\") = 0 And InStr(szExename, "/") = 0) And (LCase(szExename) = LCase(GetFileName(EXEorPID)))) _
                 ) _
               ) _
               And ExactMatch _

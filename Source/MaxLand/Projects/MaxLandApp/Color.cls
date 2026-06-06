@@ -123,10 +123,10 @@ Public Property Let ToString(ByVal RHS As String)
 '    If Left(RHS, 1) = "[" And Right(RHS, 1) = "]" Then
 '        RHS = Mid(RHS, 2, Len(RHS) - 2) & ","
 '        If CountWord(RHS, ",") = 4 Then
-'            pAlpha = frmMain.Evaluate(ParseNumerical(RHS))
-'            pRed = frmMain.Evaluate(ParseNumerical(RHS))
-'            pGreen = frmMain.Evaluate(ParseNumerical(RHS))
-'            pBlue = frmMain.Evaluate(ParseNumerical(RHS))
+'            pAlpha = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pRed = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pGreen = frmMain.EvaluateProperty(ParseNumerical(RHS))
+'            pBlue = frmMain.EvaluateProperty(ParseNumerical(RHS))
 '        End If
 '    Else
 '        If InStr(RHS, ",") = 3 Then RHS = RHS & ","

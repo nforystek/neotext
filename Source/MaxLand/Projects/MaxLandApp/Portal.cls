@@ -104,7 +104,7 @@ Public Property Set Teleport(ByRef RHS As Point)
 End Property
 
 
-Public Function AddMotion(ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String = "") As String
+Public Function AddMotion(ByRef Action As Long, ByVal Key As String, ByRef Data As Point, Optional ByRef Emphasis As Single = 0, Optional ByVal Friction As Single = 0, Optional ByVal Reactive As Single = -1, Optional ByVal Recount As Single = -1, Optional Script As String) As String
 
     AddMotion = modMove.AddMotion(Motions, Action, Key, Data, Emphasis, Friction, Reactive, Recount, Script)
 

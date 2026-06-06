@@ -51,7 +51,7 @@ Attribute ToString.VB_MemberFlags = "40"
     Dim i As Long
     For i = 0 To 255
         If Not binds(i) Is Nothing Then
-            If binds(i).RunScript <> "" Then
+            If binds(i).RunScript > 0 Then
                 ToString = ToString & Include.URLEncode("Set Bindings.Item(""" & GetBindingText(i) & """) = Include.NewObject(""OnEvent"")") & vbCrLf
                 ToString = ToString & Include.URLEncode("Bindings.Item(""" & GetBindingText(i) & """).RunScript = Include.URLDecode(""" & Include.URLEncode(binds(i).RunScript) & """)") & vbCrLf
                 ToString = ToString & Include.URLEncode("Bindings.Item(""" & GetBindingText(i) & """).AppliesTo = " & binds(i).AppliesTo) & vbCrLf
