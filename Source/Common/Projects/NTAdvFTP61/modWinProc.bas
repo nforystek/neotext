@@ -83,17 +83,17 @@ Public Function RegisterSocket(ByRef sock As ISocket)
 '    ptrs = ObjectPointers(sock, 3, 12, 1, 20)
         
     
-    mSockets.Add sock, "h" & sock.Handle
+    mSockets.Add sock, "h" & sock.handle
 
     
 End Function
 Public Function UnregisterSocket(ByRef sock As ISocket)
 
-    mSockets.Remove "h" & sock.Handle
+    mSockets.Remove "h" & sock.handle
 
-    If mSockets.count = 0 Then
+    If mSockets.Count = 0 Then
         Set mSockets = Nothing
-        TermCerts
+
     End If
     
 End Function
@@ -137,7 +137,7 @@ On Local Error GoTo noproc
    ' Debug.Print tmp.hwnd & " " & tmp.uMsg & " " & tmp.wParam & " " & tmp.lParam
 
 
-    If (mSubProc <> 0) Then
+    If (mSubProc <> 0) And (wParam > 2) Then
 
         Dim sck As ISocket
         Set sck = mSockets("h" & wParam)
@@ -168,7 +168,7 @@ On Local Error GoTo noproc
     
 Exit Function
 noproc:
-    Err.Clear
+    err.Clear
 exitfunc:
     RtlMoveMemory WinsockEvents, ByVal VarPtr(ret), 4&
 End Function

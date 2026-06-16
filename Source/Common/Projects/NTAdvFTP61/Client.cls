@@ -15,6 +15,14 @@ Option Explicit
 
 Option Compare Binary
 
+
+Public Enum SSLMethods
+    Insecure = 0
+    'Automatic = -1
+    Implicit = 1
+    Explicit = 2
+End Enum
+
 Public Enum RateTypes
     HardDrive = 0
     Download = 1
@@ -129,6 +137,7 @@ Private ftpSendCountKnot As Double
 Private ftpSendBytesLeft As Double
 Private ftpSendPacketLen As Double
 Private ftpResumeByte As Double
+Private ftpSSL As SSLMethods
 
 Private ftpWriteFileNum As Integer
 Private ftpWriteTextStream As Scripting.TextStream
@@ -195,7 +204,7 @@ Private Function SetLastError(ByVal ErrAction As ErrEventType, Optional ByVal dw
     If ErrAction And EventError = EventError Then
         RaiseEvent Error(dwErrCode, App.EXEName, strMsg)
     ElseIf ErrAction And RaiseError = RaiseError Then
-        Err.Raise dwErrCode, App.EXEName, strMsg
+        err.Raise dwErrCode, App.EXEName, strMsg
     End If
     SetLastError = lstErr
 
@@ -219,25 +228,25 @@ End Function
 '    SetError = lstErr
 'End Function
 
-
-Public Property Get ImplicitSSL() As Boolean ' _
-Gets or sets whether Secure Sockets Layer is implied on all connections to establish before any communications occurs.
-    ImplicitSSL = mTCP.SSL
+Public Property Get SSL() As SSLMethods
+    SSL = ftpSSL
 End Property
-Public Property Let ImplicitSSL(ByVal RHS As Boolean)
-    If mTCP.SSL <> RHS Then
-        If mTCP.Connected Then mTCP.Disconnect
-        If mData.Connected Then mData.Disconnect
-        
-        If (Not mTCP.Connected) And (Not mData.Connected) Then
-            mTCP.SSL = RHS
-            mData.SSL = RHS
-        Else
-            SetLastError RaiseError, 40006, "Can not set this property while connected."
-            'Err.Raise 8, "SsL", "Can not set this property while connected."
-        End If
+Public Property Let SSL(ByRef RHS As SSLMethods)
+    
+    If RHS = Implicit Then
+        If Not mTCP.Connected Then mTCP.SSL = True
+        If Not mData.Connected Then mData.SSL = True
+    ElseIf RHS = Explicit Then
+        If mTCP.Connected Then mTCP.SSL = True
+        If mData.Connected Then mData.SSL = True
+    ElseIf RHS = Insecure Then
+        If Not mTCP.Connected Then mTCP.SSL = False
+        If Not mData.Connected Then mData.SSL = False
     End If
+    
+    ftpSSL = RHS
 End Property
+
 
 Public Property Get AutoRate() As Boolean ' _
 Gets or sets whether or not the transfer rate determined by buffer sizes will be automatically adapting.
@@ -359,7 +368,7 @@ End Property
 Public Property Get AdapterCount() As Long ' _
 Returns the number of network IP addresses (locally based hardware) in the AllAdapters collection.
 Attribute AdapterCount.VB_Description = "Returns the number of network IP addresses (locally based hardware) in the AllAdapters collection."
-    AdapterCount = GetPortIP.count
+    AdapterCount = GetPortIP.Count
 End Property
 
 Public Property Get NetAdapter() As Variant ' _
@@ -369,7 +378,7 @@ Attribute NetAdapter.VB_Description = "Gets or sets the IP address to be used in
 End Property
 Public Property Let NetAdapter(ByVal newVal As Variant)
     If IsNumeric(newVal) And (CountWord(newVal, ".") = 0) Then
-        If newVal > 0 And newVal <= GetPortIP.count Then
+        If newVal > 0 And newVal <= GetPortIP.Count Then
             ftpNetAdapter = newVal
         Else
             SetLastError RaiseError, 10050, "Network adapter does not exist."
@@ -381,7 +390,7 @@ Public Property Let NetAdapter(ByVal newVal As Variant)
         Dim use As Long
         Set tmp = GetPortIP
         use = 1
-        For cnt = 1 To tmp.count
+        For cnt = 1 To tmp.Count
             If LCase(Trim(tmp.Item(cnt))) = LCase(Trim(newVal)) Then
                 use = cnt
                 Exit For
@@ -398,24 +407,24 @@ Public Property Let NetAdapter(ByVal newVal As Variant)
 End Property
 
 
-Public Property Get ConnectedState(Optional ByVal check As ConnectedStates = AllStates) As Boolean ' _
+Public Property Get ConnectedState(Optional ByVal Check As ConnectedStates = AllStates) As Boolean ' _
 Read-only property that returns the state of the ConnectedStates that is passed to the property, returning either true or false to express the state requested.
 Attribute ConnectedState.VB_Description = "Read-only property that returns the state of the ConnectedStates that is passed to the property, returning either true or false to express the state requested."
-    If check = AllStates Then
+    If Check = AllStates Then
         ConnectedState = (ftpConnected <> NotState)
-    ElseIf check = NotState Then
-        If (ftpConnected And check) = ConnectedStates.NotState Then
+    ElseIf Check = NotState Then
+        If (ftpConnected And Check) = ConnectedStates.NotState Then
             ConnectedState = True
         Else
             ConnectedState = False
         End If
     Else
-        ConnectedState = ((ftpConnected And (check)) = check)
+        ConnectedState = ((ftpConnected And (Check)) = Check)
     End If
 End Property
-Friend Property Let ConnectedState(Optional ByVal check As ConnectedStates = AllStates, ByVal RHS As Boolean)
+Friend Property Let ConnectedState(Optional ByVal Check As ConnectedStates = AllStates, ByVal RHS As Boolean)
     If RHS Then
-        Select Case check
+        Select Case Check
             Case ListingToFile, LocalToLocal, LocalToRemote, RemoteToLocal
                 If (ftpConnected And ListingToFile) = ListingToFile Then
                     ftpConnected = ftpConnected - ListingToFile
@@ -432,10 +441,10 @@ Friend Property Let ConnectedState(Optional ByVal check As ConnectedStates = All
         End Select
     End If
 
-    If (ftpConnected And (check)) And (Not RHS) Then
-        ftpConnected = ftpConnected - (check)
-    ElseIf (Not (ftpConnected And (check))) And RHS Then
-        ftpConnected = ftpConnected Or (check)
+    If (ftpConnected And (Check)) And (Not RHS) Then
+        ftpConnected = ftpConnected - (Check)
+    ElseIf (Not (ftpConnected And (Check))) And RHS Then
+        ftpConnected = ftpConnected Or (Check)
     End If
 
 End Property
@@ -454,11 +463,15 @@ Public Property Let URL(ByVal newVal As String)
         'SetLastError RaiseError,8, "Can not set this value while connected."
     End If
     
-    Dim nURL As New URL
-    If ImplicitSSL <> nURL.GetSSL(newVal) Then
-        Disconnect
     
-        ImplicitSSL = nURL.GetSSL(newVal)
+    Dim nURL As New URL
+    If CInt(ftpSSL) <> CInt(nURL.GetSSL(newVal)) Then
+    
+        Disconnect
+        
+        SSL = CInt(nURL.GetSSL(newVal))
+        
+
     End If
     
     ftpType = nURL.GetType(newVal)
@@ -679,10 +692,8 @@ Private Sub Class_Initialize()
             
     Set mTCP = New NTAdvFTP61.Socket
     Set mData = New NTAdvFTP61.Socket
-
-    mTCP.SSL = False
-    mData.SSL = False
     
+    SSL = ftpSSL
     
     mTCP.Transmission = Direction.TextMessages
     
@@ -836,11 +847,14 @@ Attribute Connect.VB_Description = "Connects to a remote system and sends the in
         End If
             
         ConnectedState(LoggingInto) = True
-
-        If Trim(ftpAccount) <> "" Then
-            ftpNextCommand = ftpNextCommand & "ACCT " & ftpAccount & vbCrLf
+        If ftpSSL = Explicit Then
+            ftpNextCommand = ftpNextCommand & "AUTH TLS" & vbCrLf
         Else
-            ftpNextCommand = ftpNextCommand & "USER " & ftpUsername & vbCrLf
+            If Trim(ftpAccount) <> "" Then
+                ftpNextCommand = ftpNextCommand & "ACCT " & ftpAccount & vbCrLf
+            Else
+                ftpNextCommand = ftpNextCommand & "USER " & ftpUsername & vbCrLf
+            End If
         End If
 
         mTCP.Connect ftpServer, ftpPort
@@ -921,7 +935,7 @@ Attribute CancelTransfer.VB_Description = "Cancels any ListContents or TransferF
         End If
         
     End If
-    If Err Then Err.Clear
+    If err Then err.Clear
     
 End Sub
 
@@ -1262,11 +1276,11 @@ Public Sub TransferFile(ByVal SourceFileName As String, ByVal DestinationObject 
     
     Exit Sub
 FileError:
-    If Err.Description <> "" Then ftpEventReason = Err.Description
+    If err.Description <> "" Then ftpEventReason = err.Description
     If ftpEventError = ErrorReturns.Last Then
         RaiseEvent Error(8, App.Title, ftpEventReason)
     Else
-        RaiseEvent Error(8, App.Title, Err.Description)
+        RaiseEvent Error(8, App.Title, err.Description)
     End If
 
 End Sub
@@ -1366,11 +1380,11 @@ Public Function ListContents(Optional ByVal LocalFileName As String = "(Temp)", 
 
     Exit Function
 FileError:
-    If Err.Description <> "" Then ftpEventReason = Err.Description
+    If err.Description <> "" Then ftpEventReason = err.Description
     If ftpEventError = ErrorReturns.Last Then
         RaiseEvent Error(8, App.Title, ftpEventReason)
     Else
-        RaiseEvent Error(8, App.Title, Err.Description)
+        RaiseEvent Error(8, App.Title, err.Description)
     End If
 End Function
 
@@ -1767,7 +1781,7 @@ Else
     GoTo method2:
 End If
 method1:
-Err.Clear
+err.Clear
 On Error GoTo catch:
 skipit:
     dataPort = SendDataFTTPCommand("PASV")
@@ -1790,7 +1804,7 @@ skipit:
 fttpModePole = True
 GoTo methodSuccess
 method2:
-Err.Clear
+err.Clear
 If fttpModePole Then
     On Error GoTo catch:
 Else
@@ -1821,7 +1835,7 @@ On Error GoTo catch:
 Exit Function
 catch:
     Set ftpRaiseFTTPComplete = Nothing
-    Err.Clear
+    err.Clear
     On Error GoTo 0
     SetLastError RaiseError, 8, "Unable to make both servers negotiate a connection between each other.  Both servers may each be behind a firewall not allowing the either of the other to make a required exception, or either of both servers may not allow special server to server transfers with out further administration."
 End Function
@@ -1982,7 +1996,7 @@ Private Function GetMSDosListParams(ByVal FullStr As String) As String
     End If
     Exit Function
 finished:
-    Err.Clear
+    err.Clear
     GetMSDosListParams = ""
 End Function
 
@@ -2025,7 +2039,7 @@ Private Function GetUnixListParams(ByVal FullStr As String) As String
     End If
     Exit Function
 finished:
-    Err.Clear
+    err.Clear
     GetUnixListParams = ""
 End Function
 
@@ -2158,12 +2172,13 @@ Private Sub mData_Connected()
 
 End Sub
 
-Private Sub mData_Connection(ByRef Handle As Long)
+Private Sub mData_Connection(ByRef handle As Long)
 
-    If mData.WhosIs(mTCP.Handle) <> mTCP.RemoteIP() Then
-        mData.Decline Handle
+    
+    If mData.WhosIs(mTCP.handle) <> mTCP.RemoteIP() Then
+        mData.Decline handle
     Else
-        mData.Accept Handle
+        mData.Accept handle
     End If
 
 End Sub
@@ -2213,7 +2228,7 @@ failerror:
         
         'RaiseEvent Error(8, App.Title, errDesc)
     End If
-    Err.Clear
+    err.Clear
 End Sub
 
 Private Sub mData_Disconnected()
@@ -2404,8 +2419,8 @@ On Error GoTo failerror
     Exit Sub
 failerror:
     Dim errDesc As String
-    If Err.Number = 5 Then
-        Err.Clear
+    If err.Number = 5 Then
+        err.Clear
         Resume Next
     Else
         errDesc = GetLastError
@@ -2413,7 +2428,7 @@ failerror:
             SetLastError EventError, 8, errDesc
             'RaiseEvent Error(8, App.Title, errDesc)
         End If
-        Err.Clear
+        err.Clear
     End If
 End Sub
 
@@ -2460,7 +2475,7 @@ Private Sub mTCP_DataArriving()
                         Dim pServer As String
                         Dim pPHigh As Long
                         Dim pPLow As Long
-                        Dim pPort As Integer
+                        Dim pPort As Long
                         pServer = StrReverse(oneMsg)
                         pServer = Mid(pServer, InStr(pServer, ")") + 1)
                         pServer = Left(pServer, InStr(pServer, "(") - 1)
@@ -2469,10 +2484,11 @@ Private Sub mTCP_DataArriving()
                         pPHigh = CLng(StrReverse(Left(pServer, InStr(pServer, ",") - 1)))
                         pServer = Replace(StrReverse(Mid(pServer, InStr(pServer, ",") + 1)), ",", ".")
                         pPort = (Val(pPHigh) * 256) + Val(pPLow)
-                        modBitValue.HiByte(pPort) = CByte(pPHigh)
-                        modBitValue.LoByte(pPort) = CByte(pPLow)
+                       ' modBitValue.HiWord(pPort) = CByte(pPHigh)
+                       ' modBitValue.LoWord(pPort) = CByte(pPLow)
                         mData.Host = pServer
                         mData.Port = pPort
+                       ' If ftpSSL <> 0 Then mData.SSL = True
 
                     End If
                     
@@ -2542,6 +2558,12 @@ Private Sub mTCP_DataArriving()
                     Else
                         ftpGatherType = GatherTypes.MOTD
                     End If
+                Case "234"
+                    ftpEventError = ErrorReturns.None
+                    ftpEventReason = oneMsg
+                    mTCP.SSL = True
+                    mData.SSL = True
+                    
                 Case "257"
                     ftpFolder = oneMsg
                     ftpFolder = RemoveQuotedArg(ftpFolder, """", """")
@@ -2594,7 +2616,7 @@ catch:
         SetLastError EventError, 8, ftpEventReason
         'RaiseEvent Error(8, App.Title, ftpEventReason)
     Else
-        SetLastError EventError, 8, Err.Description
+        SetLastError EventError, 8, err.Description
         'RaiseEvent Error(8, App.Title, Err.Description)
     End If
 End Sub
@@ -2607,7 +2629,7 @@ Private Sub mTCP_Disconnected()
         If ConnectedState(SocketNetwork) And Not ftpCancelThread Then
             SetLastError EventError, 8, ftpEventReason
            ' RaiseEvent Error(8, "NTAdvFTP", ftpEventReason)
-            Err.Clear
+            err.Clear
         End If
         ConnectedState(SocketNetwork) = False
         ConnectedState(LoggingInto) = False
@@ -2671,7 +2693,7 @@ Private Sub DoOutCommands()
                         If ((ftpAccount = "") And (ftpPassword <> "")) Then
                             ftpNextCommand = "PASS " & ftpPassword & vbCrLf & ftpNextCommand
                         End If
-                    Case "REIN"
+                    Case "REIN", "AUTH"
                         ConnectedState(FullyRemoting) = False
                         If ((ftpUsername <> "") And (ftpPassword <> "")) Then
                             ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand
@@ -2724,7 +2746,7 @@ Private Sub DoOutCommands()
                             ConnectedState(FullyRemoting) = True
                         End If
                     Case "PASV", "PORT"
-    
+                       ' mData.SSL = (ftpSSL <> 0)
     
                     Case "STOR", "RETR", "LIST", "REST", "APPE"
     
@@ -2736,6 +2758,7 @@ Private Sub DoOutCommands()
                                 If mData.Connected Then mData.Disconnect
     
                                 If Not mData.Connected Then
+                                  ' mData.SSL = (ftpSSL <> 0)
                                     mData.Connect mData.Host, mData.Port
                                         'ftpEventError = ErrorReturns.Last
                                         'ftpEventReason = "Unable to accept connection."

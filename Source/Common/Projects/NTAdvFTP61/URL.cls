@@ -32,7 +32,13 @@ End Enum
 Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Public Function GetSSL(ByVal theURL As String) As String
-    GetSSL = (InStr(LCase(theURL), "s://") > 0)
+    If InStr(theURL, ":990") Then
+        GetSSL = SSLMethods.Implicit
+    ElseIf InStr(LCase(theURL), "s://") > 0 Then
+        GetSSL = SSLMethods.Explicit
+    Else
+        GetSSL = SSLMethods.Insecure
+    End If
 End Function
 Public Function GetShareName(ByVal theURL As String) As String
 
@@ -238,7 +244,7 @@ On Error GoTo catch
 
 Exit Function
 catch:
-    Err.Clear
+    err.Clear
     GetPort = FTP_Port
 End Function
 Public Function GetDirChar(ByVal theURL As String) As String
@@ -422,8 +428,8 @@ Public Function ValidateURL(ByRef theURL As String) As Boolean
             If Right(eDir, 1) = "/" And Len(eDir) > 1 Then eDir = Left(eDir, Len(eDir) - 1)
         End If
     
-        If Err > 0 Then
-            Err.Clear
+        If err > 0 Then
+            err.Clear
             URLOk = False
         End If
     Else

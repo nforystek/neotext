@@ -240,7 +240,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     
                     If padSpace < 2 Then
                     
-                        Err.Raise 8, , "Bytes too low for message sizes."
+                        err.Raise 8, , "Bytes too low for message sizes."
                     End If
                     
                     Dim uu As Object
@@ -317,7 +317,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If Not sck.Connected Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , "Could not establish connection."
+                            err.Raise 8, , "Could not establish connection."
                         End If
                         
                         EventFlag = 0
@@ -328,7 +328,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If EventFlag = 3 Or EventFlag = 10 Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         Else
                             dc = True
                         End If
@@ -373,7 +373,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             If (EventFlag = 3 Or EventFlag = 10) Then
                                 pAuthenticated = False
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             Else
                                 pAuthenticated = True
                             End If
@@ -388,7 +388,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If EventFlag = 3 Or EventFlag = 10 Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
                         
                         detailheader = "Path: " & sck.Host & vbLf
@@ -436,7 +436,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If EventFlag = 3 Or EventFlag = 10 Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
                         
                         If fullSize > 0 Then
@@ -453,7 +453,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     Close #fnum
                                     sck.Disconnect
-                                    Err.Raise 8, , EventText
+                                    err.Raise 8, , EventText
                                 End If
 
                                 pId = ci.Generate '(FileName)
@@ -490,7 +490,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                                 If EventFlag = 3 Or EventFlag = 10 Then
                                     Close #fnum
                                     sck.Disconnect
-                                    Err.Raise 8, , EventText
+                                    err.Raise 8, , EventText
                                 End If
 
                             Next
@@ -506,7 +506,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If EventFlag = 3 Or EventFlag = 10 Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
 
                         pId = ci.Generate '(FileName)
@@ -541,7 +541,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         If EventFlag = 3 Or EventFlag = 10 Then
                             Close #fnum
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
                         
                         If ((pDetails And DetailOptions.Post) = DetailOptions.Post) Then
@@ -564,7 +564,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 Close #fnum
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             End If
                         
                             EventFlag = 0
@@ -576,7 +576,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 Close #fnum
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             End If
                         End If
                         
@@ -587,7 +587,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     Else
                         
                         sck.Disconnect
-                        Err.Raise 8, , EventText
+                        err.Raise 8, , EventText
                     End If
                         
                     If dc Then
@@ -599,7 +599,7 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                         Loop
                         If EventFlag = 3 Or EventFlag = 10 Then
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         Else
                             sck.Disconnect
                         End If
@@ -608,13 +608,13 @@ Public Function PutBinary(ByVal FileName As String, Optional ByRef FileGUID As V
                     Close #fnum
                     
             Else
-                Err.Raise 8, "NewsGroup unspecified."
+                err.Raise 8, "NewsGroup unspecified."
             End If
         Else
-            Err.Raise 8, "Post As unspecified."
+            err.Raise 8, "Post As unspecified."
         End If
     Else
-        Err.Raise 8, "Server unspecified."
+        err.Raise 8, "Server unspecified."
     End If
 
     EventFlag = 10
@@ -681,7 +681,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         Loop
                         If Not sck.Connected Then
                             sck.Disconnect
-                            Err.Raise 8, , "Could not establish connection."
+                            err.Raise 8, , "Could not establish connection."
                         End If
                         
                         EventFlag = 0
@@ -691,7 +691,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         Loop
                         If EventFlag = 3 Or EventFlag = 10 Then
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         Else
                             dc = True
                         End If
@@ -736,7 +736,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                             If (EventFlag = 3 Or EventFlag = 10) Then
                                 pAuthenticated = False
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             Else
                                 pAuthenticated = True
                             End If
@@ -792,7 +792,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
                                         
                                         If (InStr(LCase(EventText), "subject: title [" & LCase(IIf(pFullPaths, FileName, GetFileName(FileName))) & "] uu-part [") > 0) Then
@@ -804,14 +804,14 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                                     Articles.Add EventText, msgID
                                                     If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                         sck.Disconnect
-                                                        Err.Raise 8, , "Invalid X-Newsreader in postings header."
+                                                        err.Raise 8, , "Invalid X-Newsreader in postings header."
                                                     End If
                                                 ElseIf (Replace(FileGUID, "-", "") = Replace(NextArg(RemoveArg(EventText, "X-GUniqueID: "), vbLf), "-", "")) Then
                                                     msgID = MessageIDs(1)
                                                     Articles.Add EventText, msgID
                                                     If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                         sck.Disconnect
-                                                        Err.Raise 8, , "Invalid X-Newsreader in postings header."
+                                                        err.Raise 8, , "Invalid X-Newsreader in postings header."
                                                     End If
                                                 End If
                                             End If
@@ -829,9 +829,9 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                     Loop
                                     If EventFlag = 3 Or EventFlag = 10 Then
                                         sck.Disconnect
-                                        Err.Raise 8, , EventText
+                                        err.Raise 8, , EventText
                                     End If
-                                    Debug.Print EventText
+                                    'Debug.Print EventText
                                     If (InStr(LCase(EventText), "subject: title [" & LCase(IIf(pFullPaths, FileName, GetFileName(FileName))) & "] uu-part [") > 0) Then
 
                                         If (NextArg(RemoveArg(EventText, "X-GUniqueID: "), vbLf) <> "") And _
@@ -843,7 +843,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                                 aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.Count
                                                 If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                     sck.Disconnect
-                                                    Err.Raise 8, , "Invalid X-Newsreader in postings header."
+                                                    err.Raise 8, , "Invalid X-Newsreader in postings header."
                                                 End If
                                             ElseIf Replace(FileGUID, "-", "") = Replace(NextArg(RemoveArg(EventText, "X-GUniqueID: "), vbLf), "-", "") Then
                                                 msgID = "A" & NextArg(Replace(NextArg(EventText, vbLf), "221 ", ""), " ")
@@ -851,7 +851,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                                 aDone = CLng(LTrimStrip(RemoveQuotedArg(EventText, "/", "]"), "0")) = Articles.Count
                                                 If (InStr(LCase(EventText), "x-newsreader: ntadvftp61.gorup") = 0) Then
                                                     sck.Disconnect
-                                                    Err.Raise 8, , "Invalid X-Newsreader in postings header."
+                                                    err.Raise 8, , "Invalid X-Newsreader in postings header."
                                                 End If
                                             End If
                                             
@@ -931,7 +931,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                                             If EventFlag = 3 Or EventFlag = 10 Then
                                                 Close #fnum
                                                 sck.Disconnect
-                                                Err.Raise 8, , EventText
+                                                err.Raise 8, , EventText
                                             End If
 
                                             EventText = Replace(EventText, StrConv(LoadResData(1, "PUBLIC"), vbUnicode) & vbLf & vbLf, "")
@@ -1013,7 +1013,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         
                         Else
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
                 
                         If dc Then
@@ -1025,7 +1025,7 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                             Loop
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             Else
                                 sck.Disconnect
                             End If
@@ -1033,16 +1033,16 @@ Public Sub GetBinary(ByVal FileName As String, Optional ByRef FileGUID As Varian
                         
                     Else
                         sck.Disconnect
-                        Err.Raise 8, , EventText
+                        err.Raise 8, , EventText
                     End If
             Else
-                Err.Raise 8, "NewsGroup unspecified."
+                err.Raise 8, "NewsGroup unspecified."
             End If
         Else
-            Err.Raise 8, "Post As unspecified."
+            err.Raise 8, "Post As unspecified."
         End If
     Else
-        Err.Raise 8, "Server unspecified."
+        err.Raise 8, "Server unspecified."
     End If
     
     EventFlag = 10
@@ -1413,7 +1413,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                 Loop
                 If Not sck.Connected Then
                     sck.Disconnect
-                    Err.Raise 8, , "Could not establish connection."
+                    err.Raise 8, , "Could not establish connection."
                 End If
 
                 EventFlag = 0
@@ -1423,7 +1423,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                 Loop
                 If EventFlag = 3 Or EventFlag = 10 Then
                     sck.Disconnect
-                    Err.Raise 8, , EventText
+                    err.Raise 8, , EventText
                 Else
                     dc = True
                 End If
@@ -1469,7 +1469,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             If (EventFlag = 3 Or EventFlag = 10) Then
                                 pAuthenticated = False
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             Else
                                 pAuthenticated = True
                             End If
@@ -1508,7 +1508,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                         Loop
                         If EventFlag = 3 Or EventFlag = 10 Then
                             sck.Disconnect
-                            Err.Raise 8, , EventText
+                            err.Raise 8, , EventText
                         End If
 
                         If RemoveNextArg(EventText, " ") = "223" Then
@@ -1553,7 +1553,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
 
@@ -1567,7 +1567,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
                                         mpath = Not mpath
 
@@ -1581,7 +1581,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         msgpst = msgpst & "" & RemoveArg(msgID, "|") & vbLf
                                         msgpst = msgpst & vbLf & "." & vbLf
                                         EventFlag = 0
-                                        Debug.Print msgpst
+                                        'Debug.Print msgpst
 
                                         sck.SendString StrConv(StrConv(msgpst, vbUnicode), vbFromUnicode)
                                         lapse = Timer
@@ -1590,7 +1590,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
                                         
                                         EventFlag = 0
@@ -1601,7 +1601,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
                                         EventFlag = 0
@@ -1612,7 +1612,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
                                         EventFlag = 0
@@ -1623,7 +1623,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
 
@@ -1650,7 +1650,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             Loop
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             End If
 
 
@@ -1670,7 +1670,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
                                         msgpst = ""
@@ -1683,7 +1683,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         msgpst = msgpst & "" & RemoveArg(wcard, "|") & vbLf
                                         msgpst = msgpst & vbLf & "." & vbLf
                                         EventFlag = 0
-                                        Debug.Print msgpst
+                                        'Debug.Print msgpst
 
                                         sck.SendString StrConv(StrConv(msgpst, vbUnicode), vbFromUnicode)
                                         lapse = Timer
@@ -1692,7 +1692,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                                         Loop
                                         If EventFlag = 3 Or EventFlag = 10 Then
                                             sck.Disconnect
-                                            Err.Raise 8, , EventText
+                                            err.Raise 8, , EventText
                                         End If
 
 
@@ -1711,7 +1711,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             Loop
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             End If
 
                             EventFlag = 0
@@ -1722,7 +1722,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                             Loop
                             If EventFlag = 3 Or EventFlag = 10 Then
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             End If
 
                             EventFlag = 0
@@ -1763,7 +1763,7 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
                     Loop
                     If EventFlag = 3 Or EventFlag = 10 Then
                         sck.Disconnect
-                        Err.Raise 8, , EventText
+                        err.Raise 8, , EventText
                     Else
                         sck.Disconnect
                     End If
@@ -1771,14 +1771,14 @@ Public Function PostCancel(ByRef Groups As Collection, ByVal WildCards As Collec
 
             Else
                 sck.Disconnect
-                Err.Raise 8, , EventText
+                err.Raise 8, , EventText
             End If
 
         Else
-            Err.Raise 8, "Post As unspecified."
+            err.Raise 8, "Post As unspecified."
         End If
     Else
-        Err.Raise 8, "Server unspecified."
+        err.Raise 8, "Server unspecified."
     End If
 
     EventFlag = 10
@@ -1804,7 +1804,7 @@ Public Sub Connect()
             Loop
             If Not sck.Connected Then
                 sck.Disconnect
-                Err.Raise 8, , "Could not establish connection."
+                err.Raise 8, , "Could not establish connection."
             End If
 
             EventFlag = 0
@@ -1814,7 +1814,7 @@ Public Sub Connect()
             Loop
             If EventFlag = 3 Or EventFlag = 10 Then
                 sck.Disconnect
-                Err.Raise 8, , EventText
+                err.Raise 8, , EventText
             End If
             
             
@@ -1861,7 +1861,7 @@ Public Sub Connect()
                             If (EventFlag = 3 Or EventFlag = 10) Then
                                 pAuthenticated = False
                                 sck.Disconnect
-                                Err.Raise 8, , EventText
+                                err.Raise 8, , EventText
                             Else
                                 pAuthenticated = True
                             End If
@@ -1870,7 +1870,7 @@ Public Sub Connect()
         End If
 
     Else
-        Err.Raise 8, "Server unspecified."
+        err.Raise 8, "Server unspecified."
     End If
 
     EventFlag = 10
@@ -2096,7 +2096,7 @@ Private Sub sck_DataArriving()
     
         Do Until inData = ""
             inLine = Replace(RemoveNextArg(inData, vbLf), vbCr, "")
-            Debug.Print "NNTP->: " & inLine
+            'Debug.Print "NNTP->: " & inLine
             
             Select Case Left(inLine, 3)
                 Case "."

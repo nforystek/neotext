@@ -210,22 +210,22 @@ On Error GoTo sockerror
 
             Select Case lParam 'WSAGetSelectEvent(lParam)
                 Case FD_CONNECT
-                    DebugEvent "FD_CONNECT"
+                    'DebugEvent "FD_CONNECT"
                     State(States.Opened) = True
                     State(States.Opening) = False
                     RaiseEvent Connected
                     EventRaised = -CInt(State(States.Closing) = False)
                 Case FD_ACCEPT
-                    DebugEvent "FD_ACCEPT"
+                    'DebugEvent "FD_ACCEPT"
                     State(States.Opening) = False
                     EventRaised = -CInt(Incoming)
                 Case FD_CLOSE
-                    DebugEvent "FD_CLOSE"
+                    'DebugEvent "FD_CLOSE"
 
                     If (State(States.Opening) = False) And (State(States.Closed) = False) Then
                         EventRaised = -CInt(Ready And ((State(States.Opened) = False) And ((State(States.Closing) - True) Or (State(States.Closed) - True))))
                         If (State(States.Closing) = False) And (State(States.Closed) = False) Then
-                            DebugEvent "Disconnected"
+                            'DebugEvent "Disconnected"
                             RaiseEvent Disconnected
                             UnregisterSocket Me
                             State(States.Closed) = True
@@ -238,7 +238,7 @@ On Error GoTo sockerror
 
                 Case FD_WRITE
                     AutoRatedEvent AutoRated.SendEvent
-                    DebugEvent "FD_WRITE"
+                    'DebugEvent "FD_WRITE"
                     If Not State(States.Sending) Then
                         RaiseEvent SendComplete
                     Else
@@ -248,7 +248,7 @@ On Error GoTo sockerror
 
                 Case FD_READ, FD_OOB
                     AutoRatedEvent AutoRated.ReadEvent
-                    DebugEvent "FD_READ"
+                    'DebugEvent "FD_READ"
                     If (mSendData.Length = 0) Then
                         State(States.Sending) = False
                     End If
@@ -291,9 +291,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to incoming request."
+    err.Raise 8, "Socket", "Error attempting to incoming request."
     Resume
 End Function
 
@@ -349,9 +349,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to resolve localhost."
+    err.Raise 8, "Socket", "Error attempting to resolve localhost."
 End Function
 
 Public Function LocalIP() As String ' _
@@ -380,9 +380,9 @@ On Error GoTo sockerror
     ResolveIP = modSockets.ResolveIP(Host)
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "socket", "Error attempting to resolve host to ip."
+    err.Raise 8, "socket", "Error attempting to resolve host to ip."
 End Function
 
 Public Function Ready() As Boolean ' _
@@ -414,7 +414,7 @@ On Error GoTo sockerror
 
 Exit Sub
 sockerror:
-    Err.Clear
+    err.Clear
 End Sub
 
 
@@ -445,13 +445,13 @@ Attribute Accept.VB_Description = "Accepts a incoming connection, or mismatched 
     ElseIf (State(States.Opened) Or State(States.Reading) Or State(States.Sending)) And (mSocket < -1) Then
         Accept = UnsetValidatingMode(nHandle)
     Else
-        Err.Raise 8, "Connect", "Invalid at current state."
+        err.Raise 8, "Connect", "Invalid at current state."
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Accept", "Error attempting to accept."
+    err.Raise 8, "Accept", "Error attempting to accept."
 End Function
 
 Public Function Decline(Optional ByRef nHandle As Long = 0) As Boolean ' _
@@ -476,13 +476,13 @@ On Error GoTo sockerror
         Decline = True
 
     Else
-        Err.Raise 8, "Decline", "Invalid at current state."
+        err.Raise 8, "Decline", "Invalid at current state."
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to decline."
+    err.Raise 8, "Socket", "Error attempting to decline."
 End Function
 
 
@@ -529,13 +529,13 @@ On Error GoTo sockerror
             End If
         End If
     Else
-        Err.Raise 8, "Connect", "Invalid at current state."
+        err.Raise 8, "Connect", "Invalid at current state."
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to bind or listen."
+    err.Raise 8, "Socket", "Error attempting to bind or listen."
 End Function
 
 Public Function Connect(Optional ByVal nHost As String = "", Optional ByVal nPort As Long = 0) As Boolean ' _
@@ -577,13 +577,13 @@ On Error GoTo sockerror
             End If
         End If
     Else
-        Err.Raise 8, "Connect", "Invalid at current state."
+        err.Raise 8, "Connect", "Invalid at current state."
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Connect", "Error attempting to connect to host."
+    err.Raise 8, "Connect", "Error attempting to connect to host."
 End Function
 
 
@@ -594,9 +594,9 @@ On Error GoTo sockerror
     SendBytes modMemory.Convert(data)
 Exit Sub
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to send data."
+    err.Raise 8, "Socket", "Error attempting to send data."
 End Sub
 
 Public Function SendString(ByRef data As String) As Boolean ' _
@@ -606,9 +606,9 @@ On Error GoTo sockerror
     SendString = SendBytes(modMemory.Convert(data))
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to send data."
+    err.Raise 8, "Socket", "Error attempting to send data."
 End Function
 
 Public Function ReadString(ByRef data As String) As Boolean ' _
@@ -623,9 +623,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to read data."
+    err.Raise 8, "Socket", "Error attempting to read data."
 End Function
 
 Public Function Read() As String ' _
@@ -640,9 +640,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to read data."
+    err.Raise 8, "Socket", "Error attempting to read data."
 End Function
 
 Public Function SendBytes(ByRef data() As Byte) As Boolean ' _
@@ -678,9 +678,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to read data."
+    err.Raise 8, "Socket", "Error attempting to read data."
 End Function
 
 Public Function ReadBytes(ByRef data() As Byte) As Boolean ' _
@@ -706,9 +706,9 @@ On Error GoTo sockerror
     End If
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to read data."
+    err.Raise 8, "Socket", "Error attempting to read data."
 End Function
 
 
@@ -751,9 +751,9 @@ On Error GoTo sockerror
     Resolve = modSockets.Resolve(Host)
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to resolve address."
+    err.Raise 8, "Socket", "Error attempting to resolve address."
 End Function
 
 Friend Sub AutoRatedEvent(ByVal Func As AutoRated)
@@ -831,9 +831,9 @@ On Error GoTo sockerror
             And (setsockopt(sck, SOL_SOCKET, SO_RCVBUF, ByVal VarPtr(mRecvRate), 4&) = 0)
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to set socket options."
+    err.Raise 8, "Socket", "Error attempting to set socket options."
 End Function
 
 Friend Function SetSending(Optional ByVal sck As Long = -1) As Long
@@ -845,9 +845,9 @@ On Error GoTo sockerror
                 And (setsockopt(sck, SOL_SOCKET, SO_SNDBUF, ByVal VarPtr(mSendRate), 4&) = 0)
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to set socket options."
+    err.Raise 8, "Socket", "Error attempting to set socket options."
 End Function
 
 
@@ -894,9 +894,9 @@ On Error GoTo sockerror
     AutoRatedEvent AutoRated.SendWidth
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to send data."
+    err.Raise 8, "Socket", "Error attempting to send data."
 End Function
 
 Friend Function ReadNextPart() As Long ' _
@@ -949,9 +949,9 @@ On Error GoTo sockerror
     AutoRatedEvent AutoRated.ReadWidth
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to read data."
+    err.Raise 8, "Socket", "Error attempting to read data."
 End Function
 
 
@@ -985,9 +985,9 @@ On Error GoTo sockerror
 
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to capture events."
+    err.Raise 8, "Socket", "Error attempting to capture events."
 End Function
 
 
@@ -1099,9 +1099,9 @@ On Error GoTo sockerror
     SetOptions = rc And SetReceive(sck) And SetSending(sck)
 Exit Function
 sockerror:
-    Err.Clear
+    err.Clear
     On Error GoTo 0
-    Err.Raise 8, "Socket", "Error attempting to set socket options."
+    err.Raise 8, "Socket", "Error attempting to set socket options."
 End Function
 
 Private Function addFlag(ByRef Flags As Long, ByVal newFlag As Long) As Long
@@ -1198,7 +1198,7 @@ Private Function CloseConnection() As Boolean
 
             socketclose handle
 
-            DebugEvent "Disconnected"
+            'DebugEvent "Disconnected"
             RaiseEvent Disconnected
             UnregisterSocket Me
             CloseConnection = True
