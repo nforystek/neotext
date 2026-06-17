@@ -194,11 +194,11 @@ Private Property Get ISocket_State(bBit As Byte) As Boolean
 End Property
 
 Private Property Let ISocket_Timeout(ByVal RHS As Long)
-    Me.timeout = RHS
+    Me.Timeout = RHS
 End Property
 
 Private Property Get ISocket_Timeout() As Long
-    ISocket_Timeout = Me.timeout
+    ISocket_Timeout = Me.Timeout
 End Property
 
 Private Property Let ISocket_Transmission(ByVal RHS As Direction)
@@ -294,6 +294,8 @@ Private Sub wClient_SendComplete()
 End Sub
 
 Public Function Accept(Optional handle As Long = 0&) As Boolean
+    mInTls = False
+    mHandshakeStarted = False
     Accept = wClient.Accept(handle)
 End Function
 
@@ -338,6 +340,7 @@ Public Property Get Host() As String
 End Property
 
 Public Function Listen(Optional ByVal nHost As String = "", Optional ByVal nPort As Long = 0&) As Boolean
+
     Listen = wClient.Listen(nHost, nPort)
 End Function
 
@@ -448,259 +451,6 @@ Private Sub HandleTlsAppData(enc() As Byte)
 End Sub
 
 
-
-
-Public Function Read() As String
-    If Not SSL Then
-        wClient.ReadString Read
-    Else
-        If mHandshakeStarted Then
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-        End If
-        
-        Dim data() As Byte
-        
-        If mInTls Then
-            If wClient.ReadBytes(data) Then
-                HandleTlsAppDat data
-                Read = StringFromBytes(data)
-            End If
-        Else
-            wClient.ReadString Read
-'            wClient.AutoRatedEvent AutoRated.ReadCalls
-'            Read = SecureSession.OutBuffer
-'            wClient.AutoRatedEvent AutoRated.ReadWidth
-    
-        End If
-
-    End If
-
-End Function
-
-Public Function ReadBytes(data() As Byte) As Boolean
-    If Not SSL Then
-        ReadBytes = wClient.ReadBytes(data)
-    Else
-        If mHandshakeStarted Then
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-        End If
-        
-        If mInTls Then
-            ReadBytes = wClient.ReadBytes(data)
-            If ReadBytes Then HandleTlsAppData data
-        Else
-            ReadBytes = wClient.ReadBytes(data)
-'            wClient.AutoRatedEvent AutoRated.ReadCalls
-'            Erase data
-'            data = SecureSession.sOutBuffer.Partial
-'            ReadBytes = (SecureSession.sOutBuffer.Length > 0)
-'            wClient.AutoRatedEvent AutoRated.ReadWidth
-    
-        End If
-
-
-    End If
-    
-End Function
-
-
-Public Function ReadString(data As String) As Boolean
-    If Not SSL Then
-        ReadString = wClient.ReadString(data)
-    Else
-    
-        If mHandshakeStarted Then
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-        End If
-        
-        Dim b() As Byte
-
-        If mInTls Then
-            ReadString = wClient.ReadBytes(b)
-            If ReadBytes Then
-                HandleTlsAppData b
-                data = StringFromBytes(b)
-            End If
-        Else
-             ReadString = wClient.ReadString(data)
-            'wClient.AutoRatedEvent AutoRated.ReadCalls
-            'data = wClient.ReadString(data)
-            'ReadString = (SecureSession.sOutBuffer.Length > 0)
-            'wClient.AutoRatedEvent AutoRated.ReadWidth
-        End If
-
-    End If
-
-End Function
-
-Public Function Ready() As Boolean
-    Ready = wClient.Ready
-End Function
-
-Public Property Let RecvRate(ByVal RHS As Long)
-    wClient.RecvRate = RHS
-End Property
-
-Public Property Get RecvRate() As Long
-    RecvRate = wClient.RecvRate
-End Property
-
-Public Function RemoteIP() As String
-    RemoteIP = wClient.RemoteIP
-End Function
-
-
-
-Public Function ResolveIP(ByVal Host As String) As String
-    ResolveIP = wClient.ResolveIP(Host)
-End Function
-
-Public Sub Send(ByVal data As String)
-
-    If Not SSL Then
-        wClient.SendBytes BytesFromString(data)
-    Else
-
-'        If mInTls Then
-'            SendTlsCommand BytesFromString(data)
-'        Else
-'            wClient.SendBytes BytesFromString(data)
-'        End If
-
-        If mHandshakeStarted Then
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-        End If
-
-        
-        If mInTls And Not mHandshakeStarted Then
-            SendTlsCommand BytesFromString(data)
-        Else
-            wClient.SendBytes BytesFromString(data)
-        End If
-
-'        wClient.AutoRatedEvent AutoRated.SendCalls
-'
-'        SecureSession.InBuffer = data
-'        Call SecureSession.TLSEncrypt
-'        data = AddRecHeader(SecureSession.OutBuffer)
-'        wClient.SendBytes modMemory.Convert(data)
-'        SecureSession.IncSendSeqNum
-'
-'        wClient.AutoRatedEvent AutoRated.SendWidth
-    End If
-
-End Sub
-
-Public Function SendBytes(data() As Byte) As Boolean
-    If Not SSL Then
-        SendBytes = wClient.SendBytes(data)
-    Else
-'        If mInTls Then
-'            SendBytes = SendTlsCommand(data)
-'        Else
-'            SendBytes = wClient.SendBytes(data)
-        If mHandshakeStarted Then
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-        End If
- 
-        
-        
-        If mInTls Then
-            SendBytes = SendTlsCommand(data)
-        Else
-            SendBytes = wClient.SendBytes(data)
-        End If
-
-
-'        wClient.AutoRatedEvent AutoRated.SendCalls
-'
-'        SecureSession.InBuffer = modMemory.Convert(data)
-'        Call SecureSession.TLSEncrypt
-'        data = modMemory.Convert(AddRecHeader(SecureSession.OutBuffer))
-'        SendBytes = wClient.SendBytes(data)
-'        SecureSession.IncSendSeqNum
-'
-'        wClient.AutoRatedEvent AutoRated.SendWidth
-    End If
-
-End Function
-
-
-Public Property Let SendRate(ByVal RHS As Long)
-    wClient.SendRate = RHS
-End Property
-
-Public Property Get SendRate() As Long
-    SendRate = wClient.SendRate
-End Property
-
-Public Function SendString(data As String) As Boolean
-    If Not SSL Then
-        SendString = wClient.SendBytes(BytesFromString(data))
-    Else
-'        If mInTls Then
-'            SendString = SendTlsCommand(BytesFromString(data))
-'        Else
-'            SendString = wClient.SendBytes(BytesFromString(data))
-'        End If
-
-        If mHandshakeStarted Then
-
-            ' BLOCK ALL APPLICATION DATA
-            'Debug.Print "Blocked send during TLS handshake"
-            Do Until mHandshakeStarted = False And mInTls = True
-                DoTasks
-            Loop
-            'Exit Function
-
-        End If
-        
-        If mInTls And Not mHandshakeStarted Then
-            SendString = SendTlsCommand(BytesFromString(data))
-        Else
-            SendString = wClient.SendBytes(BytesFromString(data))
-        End If
-        
-'        wClient.AutoRatedEvent AutoRated.SendCalls
-'
-'
-'        SecureSession.InBuffer = data
-'        Call SecureSession.TLSEncrypt
-'        data = AddRecHeader(SecureSession.OutBuffer)
-'        SendString = wClient.SendBytes(modMemory.Convert(data))
-'        SecureSession.IncSendSeqNum
-'
-'        wClient.AutoRatedEvent AutoRated.SendWidth
-       
-    End If
-
-End Function
-
 Private Function SendTlsCommand(ByRef plain() As Byte) As Boolean
    ' Dim plain() As Byte
     Dim enc() As Byte
@@ -730,17 +480,194 @@ Private Function SendTlsCommand(ByRef plain() As Byte) As Boolean
     End If
 End Function
 
+Private Function HandshakeBlocking() As Boolean
+    If mHandshakeStarted Then
+
+        Dim elapsed As Single
+        elapsed = Timer
+        Do Until (mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > (Timeout * 4)) 'four communications occur, in relay witht he server
+            DoTasks
+        Loop
+        HandshakeBlocking = (Timer - elapsed > (Timeout * 4))  'four communications occur, in relay witht he server, give them the time
+
+    End If
+
+End Function
+
+
+Public Function Read() As String
+'            wClient.AutoRatedEvent AutoRated.ReadCalls
+
+    If Not SSL Then
+        wClient.ReadString Read
+    Else
+        If Not HandshakeBlocking() Then
+            
+            Dim data() As Byte
+            
+            If mInTls Then
+                If wClient.ReadBytes(data) Then
+                    HandleTlsAppDat data
+                    Read = StringFromBytes(data)
+                End If
+            Else
+                wClient.ReadString Read
+            End If
+        End If
+    End If
+
+'            wClient.AutoRatedEvent AutoRated.ReadWidth
+End Function
+
+Public Function ReadBytes(data() As Byte) As Boolean
+'            wClient.AutoRatedEvent AutoRated.ReadCalls
+    If Not SSL Then
+        ReadBytes = wClient.ReadBytes(data)
+    Else
+        If Not HandshakeBlocking() Then
+            
+            If mInTls Then
+                ReadBytes = wClient.ReadBytes(data)
+                If ReadBytes Then HandleTlsAppData data
+            Else
+                ReadBytes = wClient.ReadBytes(data)
+    
+            End If
+        End If
+
+    End If
+'            wClient.AutoRatedEvent AutoRated.ReadWidth
+End Function
+
+
+Public Function ReadString(data As String) As Boolean
+            'wClient.AutoRatedEvent AutoRated.ReadCalls
+            
+    If Not SSL Then
+        ReadString = wClient.ReadString(data)
+    Else
+    
+        If Not HandshakeBlocking() Then
+            
+            Dim b() As Byte
+    
+            If mInTls Then
+                ReadString = wClient.ReadBytes(b)
+                If ReadBytes Then
+                    HandleTlsAppData b
+                    data = StringFromBytes(b)
+                End If
+            Else
+                 ReadString = wClient.ReadString(data)
+    
+            End If
+        End If
+    End If
+            'wClient.AutoRatedEvent AutoRated.ReadWidth
+End Function
+
+Public Function Ready() As Boolean
+    Ready = wClient.Ready
+End Function
+
+Public Property Let RecvRate(ByVal RHS As Long)
+    wClient.RecvRate = RHS
+End Property
+
+Public Property Get RecvRate() As Long
+    RecvRate = wClient.RecvRate
+End Property
+
+Public Function RemoteIP() As String
+    RemoteIP = wClient.RemoteIP
+End Function
+
+
+
+Public Function ResolveIP(ByVal Host As String) As String
+    ResolveIP = wClient.ResolveIP(Host)
+End Function
+
+Public Sub Send(ByVal data As String)
+'        wClient.AutoRatedEvent AutoRated.SendCalls
+
+    If Not SSL Then
+        wClient.SendBytes BytesFromString(data)
+    Else
+
+        If Not HandshakeBlocking() Then
+        
+            If mInTls And Not mHandshakeStarted Then
+                SendTlsCommand BytesFromString(data)
+            Else
+                wClient.SendBytes BytesFromString(data)
+            End If
+        End If
+    End If
+'        wClient.AutoRatedEvent AutoRated.SendWidth
+End Sub
+
+Public Function SendBytes(data() As Byte) As Boolean
+'        wClient.AutoRatedEvent AutoRated.SendCalls
+
+    If Not SSL Then
+        SendBytes = wClient.SendBytes(data)
+    Else
+
+        If Not HandshakeBlocking() Then
+            
+            If mInTls Then
+                SendBytes = SendTlsCommand(data)
+            Else
+                SendBytes = wClient.SendBytes(data)
+            End If
+        End If
+        
+    End If
+'        wClient.AutoRatedEvent AutoRated.SendWidth
+End Function
+
+
+Public Property Let SendRate(ByVal RHS As Long)
+    wClient.SendRate = RHS
+End Property
+
+Public Property Get SendRate() As Long
+    SendRate = wClient.SendRate
+End Property
+
+Public Function SendString(data As String) As Boolean
+'        wClient.AutoRatedEvent AutoRated.SendCalls
+
+    If Not SSL Then
+        SendString = wClient.SendBytes(BytesFromString(data))
+    Else
+
+        If Not HandshakeBlocking() Then
+        
+            If mInTls And Not mHandshakeStarted Then
+                SendString = SendTlsCommand(BytesFromString(data))
+            Else
+                SendString = wClient.SendBytes(BytesFromString(data))
+            End If
+        End If
+       
+    End If
+'        wClient.AutoRatedEvent AutoRated.SendWidth
+End Function
+
+
 
 Public Property Get State(bBit As Byte) As Boolean
     State = wClient.State(bBit)
 End Property
 
-Public Property Let timeout(ByVal RHS As Long)
-    wClient.timeout = RHS
+Public Property Let Timeout(ByVal RHS As Long)
+    wClient.Timeout = RHS
 End Property
 
-Public Property Get timeout() As Long
-    timeout = wClient.timeout
+Public Property Get Timeout() As Long
+    Timeout = wClient.Timeout
 End Property
 
 Public Property Let Transmission(ByVal RHS As Direction)

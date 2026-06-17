@@ -17,7 +17,7 @@ Option Compare Binary
 
 
 Public Enum SSLMethods
-    Insecure = 0
+    InSecure = 0
     'Automatic = -1
     Implicit = 1
     Explicit = 2
@@ -239,7 +239,7 @@ Public Property Let SSL(ByRef RHS As SSLMethods)
     ElseIf RHS = Explicit Then
         If mTCP.Connected Then mTCP.SSL = True
         If mData.Connected Then mData.SSL = True
-    ElseIf RHS = Insecure Then
+    ElseIf RHS = InSecure Then
         If Not mTCP.Connected Then mTCP.SSL = False
         If Not mData.Connected Then mData.SSL = False
     End If
@@ -2680,6 +2680,24 @@ Private Sub DoOutCommands()
         
                 ftpCommand = RemoveNextArg(ftpNextCommand, vbCrLf)
                 Select Case NextArg(ftpCommand, " ")
+                    Case "AUTH"
+                        ConnectedState(FullyRemoting) = False
+                        ftpNextCommand = "PBSZ 0" & vbCrLf & ftpNextCommand
+                    Case "PBSZ"
+                        ftpNextCommand = "PROT P" & vbCrLf & ftpNextCommand
+                    Case "PROT"
+                        If ((ftpUsername <> "") And (ftpPassword <> "")) Then
+                            ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand
+                        ElseIf ((ftpAccount <> "") And (ftpPassword = "")) Then
+                            ftpNextCommand = "ACCT " & ftpAccount & vbCrLf & ftpNextCommand
+                        End If
+                    Case "REIN"
+                        ConnectedState(FullyRemoting) = False
+                        If ((ftpUsername <> "") And (ftpPassword <> "")) Then
+                            ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand
+                        ElseIf ((ftpAccount <> "") And (ftpPassword = "")) Then
+                            ftpNextCommand = "ACCT " & ftpAccount & vbCrLf & ftpNextCommand
+                        End If
                     Case "ACCT"
                         If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
                             ConnectedState(LoggingInto) = True
@@ -2692,13 +2710,6 @@ Private Sub DoOutCommands()
                         ConnectedState(LoggingInto) = True
                         If ((ftpAccount = "") And (ftpPassword <> "")) Then
                             ftpNextCommand = "PASS " & ftpPassword & vbCrLf & ftpNextCommand
-                        End If
-                    Case "REIN", "AUTH"
-                        ConnectedState(FullyRemoting) = False
-                        If ((ftpUsername <> "") And (ftpPassword <> "")) Then
-                            ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand
-                        ElseIf ((ftpAccount <> "") And (ftpPassword = "")) Then
-                            ftpNextCommand = "ACCT " & ftpAccount & vbCrLf & ftpNextCommand
                         End If
                     Case "PASS"
                         If (Not ConnectedState(FullyRemoting)) And (ftpEventError = ErrorReturns.None) Then
@@ -2747,7 +2758,7 @@ Private Sub DoOutCommands()
                         End If
                     Case "PASV", "PORT"
                        ' mData.SSL = (ftpSSL <> 0)
-    
+
                     Case "STOR", "RETR", "LIST", "REST", "APPE"
     
     
@@ -2758,7 +2769,7 @@ Private Sub DoOutCommands()
                                 If mData.Connected Then mData.Disconnect
     
                                 If Not mData.Connected Then
-                                  ' mData.SSL = (ftpSSL <> 0)
+                                    mData.SSL = (ftpSSL <> 0)
                                     mData.Connect mData.Host, mData.Port
                                         'ftpEventError = ErrorReturns.Last
                                         'ftpEventReason = "Unable to accept connection."
