@@ -4,29 +4,28 @@ Begin VB.UserControl SiteInformation
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   6060
-   LockControls    =   -1  'True
    ScaleHeight     =   1695
    ScaleWidth      =   6060
    ToolboxBitmap   =   "SiteInformation.ctx":0000
    Begin VB.Frame Frame1 
       Height          =   1635
-      Left            =   75
-      TabIndex        =   9
+      Left            =   -45
+      TabIndex        =   8
       Top             =   -15
       Width           =   5925
-      Begin VB.CheckBox Check2 
-         Caption         =   "SSL"
-         Height          =   240
-         Left            =   4440
-         TabIndex        =   5
-         Top             =   795
-         Width           =   615
+      Begin VB.ComboBox Combo2 
+         Height          =   315
+         Left            =   3540
+         Style           =   2  'Dropdown List
+         TabIndex        =   13
+         Top             =   750
+         Width           =   1335
       End
       Begin VB.ComboBox Combo1 
          Height          =   315
          Left            =   2685
          Style           =   2  'Dropdown List
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   1155
          Width           =   1785
       End
@@ -34,7 +33,7 @@ Begin VB.UserControl SiteInformation
          Height          =   315
          Left            =   4545
          MaxLength       =   11
-         TabIndex        =   7
+         TabIndex        =   6
          Text            =   "10000-20000"
          Top             =   1155
          Width           =   1230
@@ -42,9 +41,9 @@ Begin VB.UserControl SiteInformation
       Begin VB.CheckBox Check1 
          Caption         =   "Save"
          Height          =   240
-         Left            =   5085
-         TabIndex        =   8
-         Top             =   795
+         Left            =   2715
+         TabIndex        =   7
+         Top             =   780
          Width           =   675
       End
       Begin NTControls22.URLBox URLBox1 
@@ -52,7 +51,7 @@ Begin VB.UserControl SiteInformation
          Left            =   555
          TabIndex        =   0
          Top             =   300
-         Width           =   5220
+         Width           =   4230
          _ExtentX        =   9208
          _ExtentY        =   556
       End
@@ -66,11 +65,11 @@ Begin VB.UserControl SiteInformation
       End
       Begin VB.TextBox Text3 
          Alignment       =   2  'Center
-         Height          =   285
-         Left            =   3105
+         Height          =   300
+         Left            =   5265
          TabIndex        =   3
          Text            =   "21"
-         Top             =   750
+         Top             =   315
          Width           =   480
       End
       Begin VB.TextBox Text2 
@@ -86,7 +85,7 @@ Begin VB.UserControl SiteInformation
       Begin VB.CheckBox Check3 
          Caption         =   "Pasv"
          Height          =   240
-         Left            =   3675
+         Left            =   5040
          TabIndex        =   4
          Top             =   795
          Width           =   675
@@ -94,16 +93,16 @@ Begin VB.UserControl SiteInformation
       Begin VB.Label Label4 
          Caption         =   "Port"
          Height          =   195
-         Left            =   2730
-         TabIndex        =   13
-         Top             =   810
+         Left            =   4890
+         TabIndex        =   12
+         Top             =   375
          Width           =   315
       End
       Begin VB.Label Label3 
          Caption         =   "Pass"
          Height          =   255
          Left            =   135
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   1200
          Width           =   375
       End
@@ -111,7 +110,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "User"
          Height          =   255
          Left            =   135
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   795
          Width           =   360
       End
@@ -119,7 +118,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "URL"
          Height          =   210
          Left            =   135
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   360
          Width           =   390
       End
@@ -163,7 +162,6 @@ End Property
 Public Sub Reset()
     
     Check1.Value = 0
-    Check2.Value = 0
     Check3.Value = 0
     
     sHostURL.Text = ""
@@ -174,6 +172,8 @@ Public Sub Reset()
     sPortRange.Text = "3000-6000"
     
     If Combo1.ListCount > 0 Then Combo1.ListIndex = 0
+    
+    Combo2.ListIndex = 0
 
 End Sub
 Public Property Let ShowAdvSettings(ByVal newVal As Boolean)
@@ -181,10 +181,11 @@ Public Property Let ShowAdvSettings(ByVal newVal As Boolean)
    ' Label4.Left = IIf(newVal, 2730, 2730 + 750)
    ' Text3.Left = IIf(newVal, 3105, 3105 + 750)
 
+    Combo2.Visible = newVal
     Combo1.Visible = newVal
     Check3.Visible = newVal
     Text1.Visible = newVal
-    Check2.Visible = newVal
+
 
     
     If (Combo1.Text = "" Or Combo1.ListIndex = -1) And Combo1.ListCount > 0 Then Combo1.ListIndex = 0
@@ -322,7 +323,7 @@ Private Sub SetPasswordBox()
         Label4.Enabled = True
         Text3.Enabled = True
         Check3.Enabled = True
-        Check2.Enabled = True
+        Combo2.Enabled = True
         
         Text1.Enabled = True
         
@@ -347,7 +348,7 @@ Private Sub SetPasswordBox()
         Label4.Enabled = True
         Text3.Enabled = True
         Check3.Enabled = True
-        Check2.Enabled = True
+        Combo2.Enabled = True
         
         Text1.Enabled = True
         
@@ -367,7 +368,7 @@ Private Sub SetPasswordBox()
         Text3.Enabled = False
         Check3.Enabled = False
         Text1.Enabled = False
-        Check2.Enabled = False
+        Combo2.Enabled = False
         
         sUserName.Text = ""
         sPassword.Text = ""
@@ -380,17 +381,18 @@ Private Sub SetPasswordBox()
         Text1.Enabled = (Check3.Value = 0)
 
     End If
-    If Check2.Enabled Then
-        Check2.Value = IIf((InStr(LCase(URLBox1.Text), "s://") > 0), 1, 0)
+    If Combo2.Enabled Then
+        If InStr(URLBox1.Text, ":990") Then
+            Combo2.ListIndex = 1
+        ElseIf InStr(LCase(URLBox1.Text), "s://") > 0 Then
+            Combo2.ListIndex = 2
+        Else
+            Combo2.ListIndex = 0
+        End If
     End If
     
 End Sub
 
-Private Sub Check2_Click()
-    If InStr(URLBox1.Text, "://") > 0 And InStr(URLBox1.Text, "s://") = 0 Then
-        URLBox1.Text = Replace(URLBox1.Text, "://", "s://")
-    End If
-End Sub
 
 Private Sub Check3_Click()
     SetPasswordBox
@@ -407,6 +409,18 @@ Private Sub Combo1_Change()
         Combo1.ListIndex = 0
     End If
     
+End Sub
+
+Private Sub Combo2_Change()
+    If Combo2.ListIndex > 0 Then
+        If InStr(URLBox1.Text, "://") > 0 And InStr(URLBox1.Text, "s://") = 0 Then
+            URLBox1.Text = Replace(URLBox1.Text, "://", "s://")
+        End If
+    Else
+        If InStr(URLBox1.Text, "://") > 0 And InStr(URLBox1.Text, "s://") > 0 Then
+            URLBox1.Text = Replace(URLBox1.Text, "s://", "://")
+        End If
+    End If
 End Sub
 
 Private Sub Text2_Change(Index As Integer)
@@ -451,8 +465,9 @@ Private Sub UserControl_Initialize()
     Set sPassive = Check3
     Set sAdapter = Combo1
     Set sPortRange = Text1
-    Set sSSL = Check2
+    Set sSSL = Combo2
     UserControl_Show
+    SetPasswordBox
 
 End Sub
 
@@ -462,6 +477,12 @@ Private Sub UserControl_Resize()
 End Sub
 
 Private Sub UserControl_Show()
+    
+    Combo2.Clear
+    Combo2.AddItem "Insecure"
+    Combo2.AddItem "Explicit TLS"
+    Combo2.AddItem "Implicit TLS"
+    Combo2.ListIndex = 0
     
     Dim item As Long
     item = -1

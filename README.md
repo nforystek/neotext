@@ -1,4 +1,5 @@
 # neotext
+
 Neotext Software
 
 
@@ -12,5 +13,6 @@ IDE Tools; BasicNeotext (VB6 Addon)
 
 
 
-Note: Max-FTP only supported SSLv2 and since it's not considered to be
-secure, it no longer supports SSL.  It does however ACT as if it does.
+
+Note: 8:44 AM 6/17/2026 I'm currently working on getting Implicit/Explicit SSL in Max-FTP. 
+
