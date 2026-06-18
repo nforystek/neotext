@@ -267,13 +267,13 @@ Private Sub wClient_DataArriving()
 End Sub
 
 Private Sub wClient_Disconnected()
-    RaiseEvent Disconnected
     If mCtx <> 0 Then
         TlsClose mCtx
         mCtx = 0
     End If
     mInTls = False
     mHandshakeStarted = False
+    RaiseEvent Disconnected
 End Sub
 
 Private Sub wClient_Error(ByVal Number As Long, ByVal Source As String, ByVal Description As String)
@@ -426,6 +426,7 @@ Private Sub HandleTlsHandshakeData(enc() As Byte)
         Debug.Print "TLS handshake complete."
         mHandshakeStarted = False
         mInTls = True
+        RaiseEvent Connected
     End If
 End Sub
 

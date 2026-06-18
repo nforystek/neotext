@@ -405,6 +405,9 @@ Public Property Let NetAdapter(ByVal newVal As Variant)
         End If
     End If
 End Property
+Public Property Get Connected() As Boolean
+    Connected = mTCP.Connected
+End Property
 
 
 Public Property Get ConnectedState(Optional ByVal Check As ConnectedStates = AllStates) As Boolean ' _
@@ -2623,6 +2626,7 @@ End Sub
 
 Private Sub mTCP_Disconnected()
     On Error Resume Next
+    
     If ftpType = ftp Then
         ftpEventReason = "Disconnected..."
         ftpEventError = False
@@ -2637,7 +2641,9 @@ Private Sub mTCP_Disconnected()
         ConnectedState(LocalHardDisk) = False
     End If
     ConnectedState(FullyRemoting) = False
-
+    If ftpSSL = Explicit Then
+        mTCP.SSL = False
+    End If
     On Error GoTo 0
 End Sub
 

@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1452.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1453.0#0"; "NTControls22.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
@@ -475,6 +475,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -956,6 +957,7 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
+            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
@@ -1383,12 +1385,12 @@ Private Declare Sub PostQuitMessage Lib "user32" (ByVal nExitCode As Long)
 Public Property Get PrevWndProc() As Long
     PrevWndProc = pPrevWndProc
 End Property
-Public Property Let PrevWndProc(ByVal newval As Long)
-    pPrevWndProc = newval
+Public Property Let PrevWndProc(ByVal newVal As Long)
+    pPrevWndProc = newVal
 End Property
 
-Public Property Let InRecursion(ByVal Index As Long, ByVal newval As Boolean)
-    InRecursiveAction(Index) = newval
+Public Property Let InRecursion(ByVal Index As Long, ByVal newVal As Boolean)
+    InRecursiveAction(Index) = newVal
 End Property
 
 Public Property Get InRecursion(ByVal Index As Long) As Boolean
@@ -1469,11 +1471,11 @@ Public Property Get GetTransferThread(ByVal TransferIndex As Long) As clsTransfe
         End If
     End If
 End Property
-Public Property Set GetTransferThread(ByVal TransferIndex As Long, ByVal newval As clsTransfer)
+Public Property Set GetTransferThread(ByVal TransferIndex As Long, ByVal newVal As clsTransfer)
     If TransferIndex <= myTransferCount Then
         If Not (myTransfers(TransferIndex) Is Nothing) Then
             On Error GoTo 0
-            myTransfers(TransferIndex) = newval
+            myTransfers(TransferIndex) = newVal
         End If
     End If
 End Property
@@ -1481,29 +1483,29 @@ End Property
 Public Property Get copyToClientForm(ByVal Index As Integer) As frmFTPClientGUI
     Set copyToClientForm = pCopyToClientForm(Index)
 End Property
-Public Property Set copyToClientForm(ByVal Index As Integer, ByRef newval As frmFTPClientGUI)
-    Set pCopyToClientForm(Index) = newval
+Public Property Set copyToClientForm(ByVal Index As Integer, ByRef newVal As frmFTPClientGUI)
+    Set pCopyToClientForm(Index) = newVal
 End Property
 
 Public Property Get copyToClientIndex(ByVal Index As Integer) As Integer
     copyToClientIndex = pCopyToClientIndex(Index)
 End Property
-Public Property Let copyToClientIndex(ByVal Index As Integer, ByVal newval As Integer)
-    pCopyToClientIndex(Index) = newval
+Public Property Let copyToClientIndex(ByVal Index As Integer, ByVal newVal As Integer)
+    pCopyToClientIndex(Index) = newVal
 End Property
 
 Public Property Get copyIsSource(ByVal Index As Integer) As Boolean
     copyIsSource = pCopyIsSource(Index)
 End Property
-Public Property Let copyIsSource(ByVal Index As Integer, ByVal newval As Boolean)
-    pCopyIsSource(Index) = newval
+Public Property Let copyIsSource(ByVal Index As Integer, ByVal newVal As Boolean)
+    pCopyIsSource(Index) = newVal
 End Property
 
 Public Property Get ClientGUILoaded(ByVal Index As Integer) As Boolean
     ClientGUILoaded = pClientGUILoaded(Index)
 End Property
-Public Property Let ClientGUILoaded(ByVal Index As Integer, ByVal newval As Boolean)
-    pClientGUILoaded(Index) = newval
+Public Property Let ClientGUILoaded(ByVal Index As Integer, ByVal newVal As Boolean)
+    pClientGUILoaded(Index) = newVal
 End Property
 
 Public Function GetState(ByVal Index As Integer) As Integer
@@ -1519,11 +1521,11 @@ Public Sub SetMyFocus()
     Next
 End Sub
 
-Public Sub SetCancelStatusGUI(ByVal Index As Integer, ByVal newval As Boolean)
-    CancelStatusGUI(Index) = newval
+Public Sub SetCancelStatusGUI(ByVal Index As Integer, ByVal newVal As Boolean)
+    CancelStatusGUI(Index) = newVal
 End Sub
-Public Sub SetInRecursiveAction(ByVal Index As Integer, ByVal newval As Boolean)
-    InRecursiveAction(Index) = newval
+Public Sub SetInRecursiveAction(ByVal Index As Integer, ByVal newVal As Boolean)
+    InRecursiveAction(Index) = newVal
 End Sub
 
 Public Function GetCancelStatusGUI(ByVal Index As Integer) As Boolean
@@ -1536,8 +1538,8 @@ End Function
 Public Function GetFTPCommand(ByVal Index As Integer) As Boolean
     GetFTPCommand = FTPCommand(Index)
 End Function
-Public Function SetFTPCommand(ByVal Index As Integer, ByVal newval As String)
-    FTPCommand(Index) = newval
+Public Function SetFTPCommand(ByVal Index As Integer, ByVal newVal As String)
+    FTPCommand(Index) = newVal
 End Function
 
 Private Sub dContainer_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
@@ -3215,12 +3217,33 @@ On Error GoTo catch
     End If
 
     If FTPCommand(Index) <> "Stop" And (Not myClient.ConnectedState() = False) Then
-        FTPRefresh Index
-
-        If myClient.URLType = URLTypes.File Then
-            If IsOnDriveList(pViewDrives(Index), myClient.Folder) > -1 Then
-                pViewDrives(Index).ListIndex = IsOnDriveList(pViewDrives(Index), myClient.Folder)
+        Dim elapsed As Single
+        elapsed = Timer
+        Dim statusUp As String
+        
+        Do Until myClient.Connected Or ((Timer - elapsed) > myClient.timeout)
+            DoTasks
+            If statusUp <> "Connecting to " & myClient.Server & "... (time out in " & Round(myClient.timeout - (Timer - elapsed), 0) & "secs)" Then
+                statusUp = "Connecting to " & myClient.Server & "... (time out in " & Round(myClient.timeout - (Timer - elapsed), 0) & "secs)"
+                SetStatus Index, "Connecting to " & myClient.Server & "... (time out in " & Round(myClient.timeout - (Timer - elapsed), 0) & "secs)"
             End If
+
+            
+
+        Loop
+        
+        If Not ((Timer - elapsed) > myClient.timeout) Then
+        
+            FTPRefresh Index
+    
+            If myClient.URLType = URLTypes.File Then
+                If IsOnDriveList(pViewDrives(Index), myClient.Folder) > -1 Then
+                    pViewDrives(Index).ListIndex = IsOnDriveList(pViewDrives(Index), myClient.Folder)
+                End If
+            End If
+        Else
+                FTPDisconnect Index
+             SetStatus Index, "Attempting to connect timed out..."
         End If
     End If
 

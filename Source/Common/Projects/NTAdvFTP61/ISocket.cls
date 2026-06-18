@@ -107,6 +107,7 @@ End Property
 Public Property Get Connected() As Boolean ' _
 Returns whether the socket is in a active state by a previous call to Connect, any state of Opening, Opned or Closing while not Closed, validates as Connected.
     Connected = ((State(States.Opened) Or State(States.Opening)) And State(States.Closing)) Or (State(States.Opened) And (Not State(States.Closed)))
+'    Debug.Print State(States.Opening); State(States.Opened); State(States.Closing); State(States.Closed)
 End Property
 Public Property Get Listening() As Boolean ' _
 Returns whether the socket is in Listening mode from a previous call to Listen, and would determine the Connection event then is also active if so.
@@ -397,19 +398,40 @@ Public Sub Disconnect() ' _
 Resets the socket from most states to unopened and neither listening, also occurs when the remote party intiaites close but will finishing reading or sending first.
 Attribute Disconnect.VB_Description = "Resets the socket from most states to unopened and neither listening, also occurs when the remote party intiaites close but will finishing reading or sending first."
 On Error GoTo sockerror
-
-    State(States.Opening) = False
-    If Not (Connected Or Listening) Then
+   ' Debug.Print "Disconnect"
+   'DebugState
+    
+'
+'     State(States.Opening) = False
+'    If Not (Connected Or Listening) Then
+'        State(States.Closing) = False
+'    Else
+'        State(States.Closing) = True
+'    End If
+'
+'    If (Connected Or Listening) Then
+'        CloseConnection
+'        State(States.Closed) = True
+'        State(States.Closing) = False
+'        AutoRatedEvent AutoRated.HaltRates
+'    End If
+    
+    
+    If (Not (Connected Or Listening)) And (Not State(States.Opening)) Then
         State(States.Closing) = False
     Else
         State(States.Closing) = True
+        State(States.Opening) = False
     End If
 
-    If (Connected Or Listening) Then
+    If (Connected Or Listening) Or State(States.Opening) Or State(States.Closing) Then
         CloseConnection
         State(States.Closed) = True
         State(States.Closing) = False
+        State(States.Opening) = False
         AutoRatedEvent AutoRated.HaltRates
+    ElseIf Not State(States.Closing) Then
+        State(States.Closed) = True
     End If
 
 Exit Sub
@@ -537,14 +559,63 @@ sockerror:
     On Error GoTo 0
     err.Raise 8, "Socket", "Error attempting to bind or listen."
 End Function
+'Private Sub GetNetworkInfo(ByVal Host As String, Optional Ping As Boolean = False)
+'
+'    Debug.Print "Network Lookup"
+'    Debug.Print Host & " ";
+'    Dim IPAddr As String
+'    IPAddr = Resolve(Host)
+'    Debug.Print IPAddr
+'    If IPAddr <> "-1" Then
+'        Dim col As Collection
+'        Set col = GetPortIP(Host)
+''        If Ping Then
+''            Do Until col.Count = 0
+''                EchoAddress col(1)
+''                col.Remove 1
+''            Loop
+''        End If
+'        Set col = Nothing
+'    End If
+'    Debug.Print
+'End Sub
+'Private Function EchoAddress(ByVal IPAddr As String) As Boolean
+'
+'    Dim ECHO As ICMP_ECHO_REPLY
+'    Dim pos As Integer
+'    'ping an ip address, passing the
+'    'address and the ECHO structure
+'    Call Ping(IPAddr, ECHO)
+'    'display the results from the ECHO struc
+'
+'    ' ture
+'    EchoAddress = (ECHO.Status = IP_SUCCESS)
+'
+'    Debug.Print "   " & "   " & GetStatusCode(ECHO.Status)
+'    Debug.Print "   " & "   " & ECHO.RoundTripTime & " ms ";
+'
+'    Debug.Print ECHO.DataSize & " bytes"
+'    Debug.Print "   " & "   " & "@" & ECHO.dataPointer & "=[";
+'
+'    If Left$(ECHO.data, 1) <> Chr$(0) Then
+'        pos = InStr(ECHO.data, Chr$(0))
+'
+'        Debug.Print Left$(ECHO.data, pos - 1);
+'    End If
+'    Debug.Print "]"
+'    Debug.Print
+'
+'End Function
 
 Public Function Connect(Optional ByVal nHost As String = "", Optional ByVal nPort As Long = 0) As Boolean ' _
 Connects to the specified host and port, if none supplied the objects host and post property are evaluated for use, returns whether the connect succeeds and is awaiting connect event.
 Attribute Connect.VB_Description = "Connects to the specified host and port, if none supplied the objects host and post property are evaluated for use, returns whether the connect succeeds and is awaiting connect event."
-On Error GoTo sockerror
+'On Error GoTo sockerror
     If Not State(States.Closed) Then
         Disconnect
     End If
+'    GetNetworkInfo nHost, False
+    
     If State(States.Closed) Then
         Dim rc As Long
         State(States.Binded) = False
@@ -579,11 +650,11 @@ On Error GoTo sockerror
     Else
         err.Raise 8, "Connect", "Invalid at current state."
     End If
-Exit Function
-sockerror:
-    err.Clear
-    On Error GoTo 0
-    err.Raise 8, "Connect", "Error attempting to connect to host."
+'Exit Function
+'sockerror:
+'    err.Clear
+'    On Error GoTo 0
+'    err.Raise 8, "Connect", "Error attempting to connect to host."
 End Function
 
 
@@ -1187,6 +1258,27 @@ End Sub
 
 
 
+'Private Function CloseConnection() As Boolean
+'
+'    If Ready And (State(States.Opening) = False) Then
+'        If (State(States.Closing) = True) And (State(States.Closed) = False) Then
+'
+'            State(States.Closing) = True
+'            State(States.Binded) = False
+'            State(States.Opened) = False
+'
+'            socketclose handle
+'            UnregisterSocket Me
+'
+'            DebugEvent "Disconnected"
+'            RaiseEvent Disconnected
+'
+'            CloseConnection = True
+'        End If
+'    End If
+'
+'End Function
+
 Private Function CloseConnection() As Boolean
 
     If Ready And (State(States.Opening) = False) Then
@@ -1206,7 +1298,6 @@ Private Function CloseConnection() As Boolean
     End If
 
 End Function
-
 
 Private Sub DebugState()
     Debug.Print handle & " ";
