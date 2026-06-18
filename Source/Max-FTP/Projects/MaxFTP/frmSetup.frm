@@ -35,13 +35,13 @@ Begin VB.Form frmSetup
          Top             =   150
          Visible         =   0   'False
          Width           =   5790
-         Begin VB.CheckBox Check26 
-            Caption         =   "Use Secure Sockets Layer as default option."
-            Height          =   255
-            Left            =   240
+         Begin VB.ComboBox Combo5 
+            Height          =   315
+            Left            =   2520
             TabIndex        =   87
-            Top             =   1680
-            Width           =   3615
+            Text            =   "Combo5"
+            Top             =   1650
+            Width           =   1425
          End
          Begin VB.CheckBox Check14 
             Caption         =   "Log schedule events to the LogFiles folder under Windows System  folder."
@@ -118,6 +118,14 @@ Begin VB.Form frmSetup
             TabIndex        =   3
             Top             =   3555
             Width           =   2760
+         End
+         Begin VB.Label Label11 
+            Caption         =   "Default Secure Socket Layer"
+            Height          =   240
+            Left            =   270
+            TabIndex        =   88
+            Top             =   1695
+            Width           =   2175
          End
          Begin VB.Label Label7 
             Caption         =   "Data Connection Listening Adapter and Port Range:"
@@ -971,9 +979,9 @@ Private Sub Form_Load()
     Set col = ftp.AllAdapters
     Set ftp = Nothing
     
-    If col.count > 0 Then
+    If col.Count > 0 Then
         Dim cnt As Long
-        For cnt = 1 To col.count
+        For cnt = 1 To col.Count
             Combo4.AddItem col.Item(cnt)
         Next
     Else
@@ -1103,6 +1111,11 @@ Private Sub InitPropBoxes()
     Combo1(1).AddItem "Never Overwrite"
     Combo1(1).AddItem "Always Overwrite"
     Combo1(1).AddItem "Automatic Decide"
+    
+    Combo5.AddItem "Insecure"
+    Combo5.AddItem "Implicit"
+    Combo5.AddItem "Explicit"
+    
  End Sub
 Private Function TextExists(ByRef combo As ComboBox, ByVal Text As String) As Boolean
     Dim cnt As Long
@@ -1115,7 +1128,7 @@ Private Function TextExists(ByRef combo As ComboBox, ByVal Text As String) As Bo
     End If
 End Function
 Private Sub LoadProperties()
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
 
     Check25.Value = BoolToCheck(dbSettings.GetProfileSetting("ftpAutoRate"))
     Check12.Value = BoolToCheck(dbSettings.GetPublicSetting("ServiceNetwork"))
@@ -1154,7 +1167,8 @@ Private Sub LoadProperties()
         Combo4.ListIndex = 0
     End If
     
-    Check26.Value = dbSettings.GetProfileSetting("SSL")
+    Combo5.ListIndex = dbSettings.GetProfileSetting("SSL")
+    
     Text3.Text = dbSettings.GetProfileSetting("ftpLocalSize")
     Text4.Text = dbSettings.GetProfileSetting("ftpBufferSize")
     Text5.Text = dbSettings.GetProfileSetting("ftpPacketSize")
@@ -1188,7 +1202,7 @@ Private Sub LoadProperties()
 End Sub
 
 Private Function SaveProperties() As Boolean
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
     
     Dim xForm
     Dim Cancel As Boolean
@@ -1245,7 +1259,7 @@ Private Function SaveProperties() As Boolean
     dbSettings.SetPublicSetting "ServiceEventLog", (Check24.Value = 1)
     
     dbSettings.SetProfileSetting "EventLog", (Check14.Value = 1)
-    dbSettings.SetProfileSetting "SSL", Check26.Value
+    dbSettings.SetProfileSetting "SSL", Combo5.ListIndex
     dbSettings.SetProfileSetting "ShowAdvSettings", (Check6.Value = 1)
     frmMain.RefreshShowAdvSettings
     dbSettings.SetProfileSetting "DefaultPortRange", Text2.Text

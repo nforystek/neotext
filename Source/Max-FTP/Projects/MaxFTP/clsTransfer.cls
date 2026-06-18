@@ -69,31 +69,31 @@ Public Function ThreadStatus(ByVal pProgress As String, ByVal pFileBytes As Stri
     MyListItem.SubItems(3) = pRate
 End Function
 
-Public Sub SetSource(ByVal HostURL As String, ByVal Port As Long, ByVal Username As String, ByVal Password As String, ByVal SSL As Boolean)
+Public Sub SetSource(ByVal HostURL As String, ByVal Port As Long, ByVal Username As String, ByVal Password As String, ByVal SSL As Integer)
     ftpSClient.URL = HostURL
     ftpSClient.Port = Port
     ftpSClient.Username = Username
     ftpSClient.Password = Password
-    ftpSClient.ImplicitSSL = SSL
+    ftpSClient.SSL = SSL
     
     SourceURL = HostURL
 
 End Sub
 
-Public Sub SetDestination(ByVal HostURL As String, ByVal Port As Long, ByVal Username As String, ByVal Password As String, ByVal SSL As Boolean)
+Public Sub SetDestination(ByVal HostURL As String, ByVal Port As Long, ByVal Username As String, ByVal Password As String, ByVal SSL As Integer)
     ftpDClient.URL = HostURL
     ftpDClient.Port = Port
     ftpDClient.Username = Username
     ftpDClient.Password = Password
-    ftpDClient.ImplicitSSL = SSL
+    ftpDClient.SSL = SSL
     DestURL = HostURL
 
 End Sub
 
-Public Sub SetTransfer(ByVal Action As String, ByVal SourceFolder As String, ByVal DestFolder As String, ByVal Filename As String, ByVal FileSize As Double, ByVal ResumeByte As Double, ByVal DestFileSize As Double)
+Public Sub SetTransfer(ByVal Action As String, ByVal SourceFolder As String, ByVal DestFolder As String, ByVal FileName As String, ByVal FileSize As Double, ByVal ResumeByte As Double, ByVal DestFileSize As Double)
 
     sAction = Action
-    sFileName = Filename
+    sFileName = FileName
     sFileSize = FileSize
     dFileSize = DestFileSize
     sResumeByte = ResumeByte
@@ -162,12 +162,12 @@ On Error GoTo errcatch
     ftpSClient.timeout = dbSettings.GetProfileSetting("TimeOut")
     ftpSClient.PauseOnStandBy = dbSettings.GetPublicSetting("ServiceStandBy")
     ftpSClient.LogBytes = dbSettings.GetClientSetting("LogFileSize")
-    ftpSClient.ImplicitSSL = dbSettings.GetClientSetting("SSL")
+    ftpSClient.SSL = dbSettings.GetClientSetting("SSL")
     
     ftpDClient.timeout = dbSettings.GetProfileSetting("TimeOut")
     ftpDClient.PauseOnStandBy = dbSettings.GetPublicSetting("ServiceStandBy")
     ftpDClient.LogBytes = dbSettings.GetClientSetting("LogFileSize")
-    ftpDClient.ImplicitSSL = dbSettings.GetClientSetting("SSL")
+    ftpDClient.SSL = dbSettings.GetClientSetting("SSL")
     
     If dbSettings.GetProfileSetting("ConnectionMode") = 1 Then
         ftpSClient.ConnectionMode = "PORT"

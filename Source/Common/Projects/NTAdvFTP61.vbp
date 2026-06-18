@@ -26,6 +26,7 @@ Class=Certificate; NTAdvFTP61\Certificate.cls
 Module=modGuid; ..\..\Shared\modGUID.bas
 Form=NTAdvFTP61\frmCert.frm
 Module=modCrypt; NTAdvFTP61\modCrypt.bas
+Module=modCert; NTAdvFTP61\modCert.bas
 ResFile32="NTAdvFTP61\PGPKeys.RES"
 Startup="Sub Main"
 HelpFile=""

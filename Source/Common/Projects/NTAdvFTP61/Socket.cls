@@ -194,11 +194,11 @@ Private Property Get ISocket_State(bBit As Byte) As Boolean
 End Property
 
 Private Property Let ISocket_Timeout(ByVal RHS As Long)
-    Me.Timeout = RHS
+    Me.timeout = RHS
 End Property
 
 Private Property Get ISocket_Timeout() As Long
-    ISocket_Timeout = Me.Timeout
+    ISocket_Timeout = Me.timeout
 End Property
 
 Private Property Let ISocket_Transmission(ByVal RHS As Direction)
@@ -485,10 +485,10 @@ Private Function HandshakeBlocking() As Boolean
 
         Dim elapsed As Single
         elapsed = Timer
-        Do Until (mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > (Timeout * 4)) 'four communications occur, in relay witht he server
+        Do Until (mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > (timeout * 4)) 'four communications occur, in relay witht he server
             DoTasks
         Loop
-        HandshakeBlocking = (Timer - elapsed > (Timeout * 4))  'four communications occur, in relay witht he server, give them the time
+        HandshakeBlocking = (Timer - elapsed > (timeout * 4))  'four communications occur, in relay witht he server, give them the time
 
     End If
 
@@ -507,7 +507,7 @@ Public Function Read() As String
             
             If mInTls Then
                 If wClient.ReadBytes(data) Then
-                    HandleTlsAppDat data
+                    HandleTlsAppData data
                     Read = StringFromBytes(data)
                 End If
             Else
@@ -553,7 +553,7 @@ Public Function ReadString(data As String) As Boolean
     
             If mInTls Then
                 ReadString = wClient.ReadBytes(b)
-                If ReadBytes Then
+                If ReadString Then
                     HandleTlsAppData b
                     data = StringFromBytes(b)
                 End If
@@ -657,17 +657,83 @@ Public Function SendString(data As String) As Boolean
 End Function
 
 
+Public Function CipherInfo()
+    Dim s As String * 256
+    TlsGetCipherInfo mCtx, s, 256
+    CipherInfo = Trim$(s)
+End Function
+
+Public Sub Reinstate()
+    TlsRenegotiate mCtx
+    mHandshakeStarted = True
+End Sub
+
+Public Function PeerCertificate() As Byte()
+    Dim cert() As Byte
+    Dim certLen As Long
+    Dim err As Long
+    
+    ReDim cert(0 To 4095)
+    
+    certLen = TlsGetPeerCert(mCtx, VarPtr(cert(0)), 4096, err)
+    
+    If certLen > 0 Then
+        ReDim cert(0 To certLen - 1)
+        PeerCertificate = cert
+    Else
+        Erase cert
+    End If
+
+End Function
+
+Public Function ValidateCertificate() As Boolean
+    Dim err As Long
+    Dim ok As Long
+    
+    ok = TlsValidateCert(mCtx, mServerName, err)
+    
+    ValidateCertificate = (ok = 1)
+
+End Function
+
+Public Function SSLProtocolVersion() As String
+
+    Dim v As Long
+    v = TlsGetProtocolVersion(mCtx)
+    
+    Select Case v
+        Case &H300: SSLProtocolVersion = "Protocol: TLS 1.0"
+        Case &H301: SSLProtocolVersion = "Protocol: TLS 1.1"
+        Case &H302: SSLProtocolVersion = "Protocol: TLS 1.2"
+        Case Else:  SSLProtocolVersion = "Protocol: Unknown (" & Hex$(v) & ")"
+    End Select
+
+End Function
+
+Public Function PeerCertificateInfo() As String
+    Dim info As String * 512
+    Dim err As Long
+    
+    If TlsGetPeerCertInfo(mCtx, info, 512, err) = 1 Then
+        PeerCertificateInfo = Trim$(info)
+    Else
+        PeerCertificateInfo = "Failed to get cert info, err=" & err
+    End If
+
+End Function
+
+
 
 Public Property Get State(bBit As Byte) As Boolean
     State = wClient.State(bBit)
 End Property
 
-Public Property Let Timeout(ByVal RHS As Long)
-    wClient.Timeout = RHS
+Public Property Let timeout(ByVal RHS As Long)
+    wClient.timeout = RHS
 End Property
 
-Public Property Get Timeout() As Long
-    Timeout = wClient.Timeout
+Public Property Get timeout() As Long
+    timeout = wClient.timeout
 End Property
 
 Public Property Let Transmission(ByVal RHS As Direction)

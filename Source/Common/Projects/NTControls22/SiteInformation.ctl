@@ -480,8 +480,8 @@ Private Sub UserControl_Show()
     
     Combo2.Clear
     Combo2.AddItem "Insecure"
-    Combo2.AddItem "Explicit TLS"
     Combo2.AddItem "Implicit TLS"
+    Combo2.AddItem "Explicit TLS"
     Combo2.ListIndex = 0
     
     Dim item As Long

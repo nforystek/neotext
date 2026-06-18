@@ -17,7 +17,7 @@ Public Const WM_WINDOWPOSCHANGED = &H47
 Type WINDOWPOS
         hwnd As Long
         hWndInsertAfter As Long
-        x As Long
+        X As Long
         Y As Long
         cx As Long
         cy As Long
@@ -66,7 +66,7 @@ Public Type PasswordInfo
     Username As String
     Password As String
     
-    SSL As Boolean
+    SSL As Integer
 End Type
 
 Public Function ShowOverwrite(frm As Form, ByRef OptionClick As OverwriteTypes, ByVal ThisFile As String, ByVal WithFile As String) As Boolean
@@ -126,7 +126,7 @@ Public Function ShowPassword(frm As Form, ByRef pwdInfo As PasswordInfo) As Bool
     frm.sInfo.sPassive.Value = -CInt(pwdInfo.Pasv)
     frm.sInfo.sPortRange.Text = pwdInfo.PortRange
     frm.sInfo.sAdapter.ListIndex = pwdInfo.Adapter
-    frm.sInfo.sSSL.Value = -CInt(pwdInfo.SSL)
+    frm.sInfo.sSSL.ListIndex = pwdInfo.SSL
     LoadCache frm.sInfo
     
 reshow:
@@ -170,10 +170,10 @@ reshow:
         pwdInfo.Pasv = frm.sInfo.sPassive.Value
         pwdInfo.PortRange = frm.sInfo.sPortRange.Text
         pwdInfo.Adapter = frm.sInfo.sAdapter.ListIndex
-        pwdInfo.SSL = (frm.sInfo.sSSL.Value = 1)
+        pwdInfo.SSL = frm.sInfo.sSSL.ListIndex
         If (Not Left(Trim(LCase(pwdInfo.HostURL)), 6) = "ftp://") And (Not Left(Trim(LCase(pwdInfo.HostURL)), 7) = "ftps://") And (Not pwdInfo.HostURL = "") Then
             
-            pwdInfo.HostURL = IIf(dbSettings.GetProfileSetting("SSL") = 1, "ftps://", "ftp://") & pwdInfo.HostURL
+            pwdInfo.HostURL = IIf(dbSettings.GetProfileSetting("SSL") <> 0, "ftps://", "ftp://") & pwdInfo.HostURL
             
         End If
 

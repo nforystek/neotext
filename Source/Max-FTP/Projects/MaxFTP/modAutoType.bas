@@ -110,7 +110,7 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
 
         Dim URL As New NTAdvFTP61.URL
                 
-        dbConn.rsQuery rs, "SELECT * FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL = '" & Replace(HostServer, "'", "''") & "' AND Port = " & sInfo.sPort & " AND SSL = " & sInfo.sSSL.Value & ") OR HostURL = '" & Replace(HostServer, "'", "''") & "';"
+        dbConn.rsQuery rs, "SELECT * FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL = '" & Replace(HostServer, "'", "''") & "' AND Port = " & sInfo.sPort & " AND SSL = " & sInfo.sSSL.ListIndex & ") OR HostURL = '" & Replace(HostServer, "'", "''") & "';"
         
         If Not rsEnd(rs) Then
     
@@ -119,12 +119,12 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
             sInfo.sPort.Text = CStr(rs("Port"))
             sInfo.sPassive.Value = BoolToCheck(rs("Passive"))
             sInfo.sPortRange.Text = rs("PortRange")
-            sInfo.sSSL.Value = rs("SSL")
+            sInfo.sSSL.ListIndex = rs("SSL")
             sInfo.sAdapter.ListIndex = (rs("Adapter") - 1)
             sInfo.sSavePass.Value = 1
         Else
         
-            dbConn.rsQuery rs, "SELECT * FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.Value & ") OR HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%';"
+            dbConn.rsQuery rs, "SELECT * FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.ListIndex & ") OR HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%';"
            
             If Not rsEnd(rs) Then
         
@@ -133,7 +133,7 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
                 sInfo.sPort.Text = CStr(rs("Port"))
                 sInfo.sPassive.Value = BoolToCheck(rs("Passive"))
                 sInfo.sPortRange.Text = rs("PortRange")
-                sInfo.sSSL.Value = rs("SSL")
+                sInfo.sSSL.ListIndex = rs("SSL")
                 sInfo.sAdapter.ListIndex = (rs("Adapter") - 1)
                 sInfo.sSavePass.Value = 1
             Else
@@ -166,16 +166,16 @@ Public Sub SaveCache(ByVal sInfo As NTControls22.SiteInformation)
         
         Dim URL As New NTAdvFTP61.URL
 
-        dbConn.rsQuery rs, "DELETE FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL='" & Replace(HostServer, "'", "''") & "' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.Value & ") OR HostURL='" & Replace(HostServer, "'", "''") & "';"
+        dbConn.rsQuery rs, "DELETE FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL='" & Replace(HostServer, "'", "''") & "' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.ListIndex & ") OR HostURL='" & Replace(HostServer, "'", "''") & "';"
     
         If sInfo.sSavePass.Value = 1 Then
             If sInfo.sUserName.Text <> "" And sInfo.sPassword.Text <> "" Then
             dbConn.rsQuery rs, "INSERT INTO SiteCache (ParentID, HostURL, Username, Password, Port, Passive, PortRange, Adapter, DateAltered, SSL) " & _
-                    "VALUES (" & dbSettings.CurrentUserID & ", '" & Replace(HostServer, "'", "''") & "', '" & enc.EncryptString(Replace(sInfo.sUserName.Text, "'", "''"), dbSettings.CryptKey) & "', '" & enc.EncryptString(Replace(sInfo.sPassword.Text, "'", "''"), dbSettings.CryptKey(Replace(sInfo.sUserName.Text, "'", "''"))) & "', " & sInfo.sPort.Text & ", " & CheckToBool(sInfo.sPassive.Value) & ", '" & Replace(sInfo.sPortRange.Text, "'", "''") & "', " & (sInfo.sAdapter.ListIndex + 1) & ", '" & Now & "', " & sInfo.sSSL.Value & ");"
+                    "VALUES (" & dbSettings.CurrentUserID & ", '" & Replace(HostServer, "'", "''") & "', '" & enc.EncryptString(Replace(sInfo.sUserName.Text, "'", "''"), dbSettings.CryptKey) & "', '" & enc.EncryptString(Replace(sInfo.sPassword.Text, "'", "''"), dbSettings.CryptKey(Replace(sInfo.sUserName.Text, "'", "''"))) & "', " & sInfo.sPort.Text & ", " & CheckToBool(sInfo.sPassive.Value) & ", '" & Replace(sInfo.sPortRange.Text, "'", "''") & "', " & (sInfo.sAdapter.ListIndex + 1) & ", '" & Now & "', " & sInfo.sSSL.ListIndex & ");"
             End If
         Else
         
-            dbConn.rsQuery rs, "DELETE FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.Value & ") OR HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%';"
+            dbConn.rsQuery rs, "DELETE FROM SiteCache WHERE ParentID=" & dbSettings.CurrentUserID & " AND (HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%' AND Port=" & sInfo.sPort & " AND SSL=" & sInfo.sSSL.ListIndex & ") OR HostURL LIKE '%" & Replace(URL.GetServer(HostServer), "'", "''") & "%';"
             
         End If
     

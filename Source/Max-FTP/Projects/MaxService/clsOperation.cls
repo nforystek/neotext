@@ -296,7 +296,7 @@ Public Sub RunOperation()
     oCancelOperation = False
     Dim MyID As String
     Dim tmpName As String
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
     Dim dbSettings As New clsSettings
     If dbSettings.LoadUser(oUserID) Or (ScheduleID = -1) Then
         If Not (ScheduleID = -1) Then
@@ -320,10 +320,10 @@ Public Sub RunOperation()
     
                 If Seconds > 0 Then
                     MaxEvents.AddEvent dbSettings, MyID, AppPath & MaxIDEFileName, "Running " & mprjScript & " Waiting " & Seconds & " Seconds"
-                    fPID = MODPROCESS.RunProcess(AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec  ", "/exec ") & mprjScript, fPID, Seconds)
+                    fPID = modProcess.RunProcess(AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec  ", "/exec ") & mprjScript, fPID, Seconds)
                 Else
                     MaxEvents.AddEvent dbSettings, MyID, AppPath & MaxIDEFileName, "Running " & mprjScript & " Waiting Indefinite"
-                    fPID = MODPROCESS.RunProcess(AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec ", "/exec ") & mprjScript, fPID, True)
+                    fPID = modProcess.RunProcess(AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec ", "/exec ") & mprjScript, fPID, True)
                     
                 End If
                 If ForceTerminate Then
@@ -332,7 +332,7 @@ Public Sub RunOperation()
             Else
                 fPID = vbHide
                 MaxEvents.AddEvent dbSettings, MyID, AppPath & MaxIDEFileName, "Running " & mprjScript & " Without Waiting"
-                MODPROCESS.RunProcess AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec  ", "/exec ") & mprjScript, fPID, False
+                modProcess.RunProcess AppPath & MaxIDEFileName, IIf(NoInterface, "/noui /exec  ", "/exec ") & mprjScript, fPID, False
             End If
     
             MaxEvents.AddEvent dbSettings, MyID, AppPath & MaxIDEFileName, "Finish " & UCase(Left(oAction, 1)) & LCase(Mid(oAction, 2))
@@ -388,7 +388,7 @@ Public Sub RunOperation()
             oSClient.ConnectionMode = IIf(oSPasv, "PASV", "PORT")
             If Not (oSData = "") Then oSClient.DataPortRange = oSData
             If Not (oSAdap = 0) Then oSClient.NetAdapter = oSAdap
-            oSClient.ImplicitSSL = oSSSL
+            oSClient.SSL = oSSSL
             
             If Not (ScheduleID = -1) Then
                 Select Case LCase(Trim(oAction))
@@ -435,7 +435,7 @@ Public Sub RunOperation()
                 oDClient.ConnectionMode = IIf(oDPasv, "PASV", "PORT")
                 If Not (oDData = "") Then oDClient.DataPortRange = oDData
                 If Not (oSAdap = 0) Then oDClient.NetAdapter = oSAdap
-                oDClient.ImplicitSSL = oDSSL
+                oDClient.SSL = oDSSL
                 
                 oDClient.Connect
             End If

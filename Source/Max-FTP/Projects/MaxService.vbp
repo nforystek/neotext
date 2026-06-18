@@ -1,10 +1,10 @@
 Type=OleExe
-Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\WINDOWS\system32\msado15.dll#Microsoft ActiveX Data Objects 2.8 Library
-Reference=*\G{E6BA22CF-86D6-47DE-912D-0F4958156152}#90.0#0#..\..\Common\Binary\NTCipher10.dll#Neotext Cipher Object 1.0
+Reference=*\G{2A75196C-D9EB-4129-B803-931327F72D5C}#2.8#0#..\..\..\..\Program Files (x86)\Common Files\System\ado\msado28.tlb#Microsoft ActiveX Data Objects 2.8 Library
+Reference=*\G{E6BA22CF-86D6-47DE-912D-0F4958156152}#90.0#0#..\..\..\..\WINDOWS\SysWow64\NTCipher10.dll#Neotext Cipher Object 1.0
 Reference=*\G{133D2769-1F54-417C-887A-F796487C154E}#181.0#0#..\..\Common\Binary\NTAdvFTP61.dll#Neotext Advanced FTP Object 6.1
-Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#6.0#0#..\..\Common\Binary\NTNodes10.dll#Neotext Hyper Node Objects 1.0
-Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#188.0#0#..\..\Common\Binary\NTService20.dll#Neotext Windows Service Object 2.0
-Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#49f.0#0#..\..\Common\Binary\NTSchedule20.dll#Neotext Schedule Object 2.0
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#6.0#0#..\..\..\..\WINDOWS\SysWow64\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{989FAD7B-A5AF-430D-ACED-E2FBFB117F2D}#188.0#0#..\..\..\..\WINDOWS\SysWow64\NTService20.dll#Neotext Windows Service Object 2.0
+Reference=*\G{46A6CA7E-AB83-4EE6-BDB7-F07E759433F0}#49f.0#0#..\..\..\..\WINDOWS\SysWow64\NTSchedule20.dll#Neotext Schedule Object 2.0
 Form=MaxService\frmService.frm
 Module=modService; MaxService\modService.bas
 Class=clsDBConnection; Shared\clsDBConnection.cls

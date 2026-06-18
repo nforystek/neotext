@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1425.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1452.0#0"; "NTControls22.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
    Caption         =   "Max-FTP"
@@ -1383,19 +1383,19 @@ Private Declare Sub PostQuitMessage Lib "user32" (ByVal nExitCode As Long)
 Public Property Get PrevWndProc() As Long
     PrevWndProc = pPrevWndProc
 End Property
-Public Property Let PrevWndProc(ByVal newVal As Long)
-    pPrevWndProc = newVal
+Public Property Let PrevWndProc(ByVal newval As Long)
+    pPrevWndProc = newval
 End Property
 
-Public Property Let InRecursion(ByVal Index As Long, ByVal newVal As Boolean)
-    InRecursiveAction(Index) = newVal
+Public Property Let InRecursion(ByVal Index As Long, ByVal newval As Boolean)
+    InRecursiveAction(Index) = newval
 End Property
 
 Public Property Get InRecursion(ByVal Index As Long) As Boolean
     InRecursion = InRecursiveAction(Index)
 End Property
 
-Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, ByVal Action As String, ByRef copyClient As NTAdvFTP61.Client, ByRef copyToClient As NTAdvFTP61.Client, ByVal Filename As String, ByVal FileSize As Double, Optional ByVal ResumeByte As Double = 0, Optional ByVal DestFileSize As Double = 0)
+Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, ByVal Action As String, ByRef copyClient As NTAdvFTP61.Client, ByRef copyToClient As NTAdvFTP61.Client, ByVal FileName As String, ByVal FileSize As Double, Optional ByVal ResumeByte As Double = 0, Optional ByVal DestFileSize As Double = 0)
    
     Dim newTransfer As clsTransfer
     Set newTransfer = New clsTransfer
@@ -1408,9 +1408,9 @@ Public Sub CreateTransferThread(ByRef myForm As Form, ByVal OwnerID As String, B
     
     Set newTransfer.MyParent = myForm
     newTransfer.sOwnerID = OwnerID
-    newTransfer.SetSource copyClient.URL, copyClient.Port, copyClient.Username, copyClient.Password, copyClient.ImplicitSSL
-    newTransfer.SetDestination copyToClient.URL, copyToClient.Port, copyToClient.Username, copyToClient.Password, copyToClient.ImplicitSSL
-    newTransfer.SetTransfer Action, copyClient.Folder, copyToClient.Folder, Filename, FileSize, ResumeByte, DestFileSize
+    newTransfer.SetSource copyClient.URL, copyClient.Port, copyClient.Username, copyClient.Password, copyClient.SSL
+    newTransfer.SetDestination copyToClient.URL, copyToClient.Port, copyToClient.Username, copyToClient.Password, copyToClient.SSL
+    newTransfer.SetTransfer Action, copyClient.Folder, copyToClient.Folder, FileName, FileSize, ResumeByte, DestFileSize
     newTransfer.ThreadOpen
     
     newTransfer.StartTransfer
@@ -1469,11 +1469,11 @@ Public Property Get GetTransferThread(ByVal TransferIndex As Long) As clsTransfe
         End If
     End If
 End Property
-Public Property Set GetTransferThread(ByVal TransferIndex As Long, ByVal newVal As clsTransfer)
+Public Property Set GetTransferThread(ByVal TransferIndex As Long, ByVal newval As clsTransfer)
     If TransferIndex <= myTransferCount Then
         If Not (myTransfers(TransferIndex) Is Nothing) Then
             On Error GoTo 0
-            myTransfers(TransferIndex) = newVal
+            myTransfers(TransferIndex) = newval
         End If
     End If
 End Property
@@ -1481,29 +1481,29 @@ End Property
 Public Property Get copyToClientForm(ByVal Index As Integer) As frmFTPClientGUI
     Set copyToClientForm = pCopyToClientForm(Index)
 End Property
-Public Property Set copyToClientForm(ByVal Index As Integer, ByRef newVal As frmFTPClientGUI)
-    Set pCopyToClientForm(Index) = newVal
+Public Property Set copyToClientForm(ByVal Index As Integer, ByRef newval As frmFTPClientGUI)
+    Set pCopyToClientForm(Index) = newval
 End Property
 
 Public Property Get copyToClientIndex(ByVal Index As Integer) As Integer
     copyToClientIndex = pCopyToClientIndex(Index)
 End Property
-Public Property Let copyToClientIndex(ByVal Index As Integer, ByVal newVal As Integer)
-    pCopyToClientIndex(Index) = newVal
+Public Property Let copyToClientIndex(ByVal Index As Integer, ByVal newval As Integer)
+    pCopyToClientIndex(Index) = newval
 End Property
 
 Public Property Get copyIsSource(ByVal Index As Integer) As Boolean
     copyIsSource = pCopyIsSource(Index)
 End Property
-Public Property Let copyIsSource(ByVal Index As Integer, ByVal newVal As Boolean)
-    pCopyIsSource(Index) = newVal
+Public Property Let copyIsSource(ByVal Index As Integer, ByVal newval As Boolean)
+    pCopyIsSource(Index) = newval
 End Property
 
 Public Property Get ClientGUILoaded(ByVal Index As Integer) As Boolean
     ClientGUILoaded = pClientGUILoaded(Index)
 End Property
-Public Property Let ClientGUILoaded(ByVal Index As Integer, ByVal newVal As Boolean)
-    pClientGUILoaded(Index) = newVal
+Public Property Let ClientGUILoaded(ByVal Index As Integer, ByVal newval As Boolean)
+    pClientGUILoaded(Index) = newval
 End Property
 
 Public Function GetState(ByVal Index As Integer) As Integer
@@ -1519,11 +1519,11 @@ Public Sub SetMyFocus()
     Next
 End Sub
 
-Public Sub SetCancelStatusGUI(ByVal Index As Integer, ByVal newVal As Boolean)
-    CancelStatusGUI(Index) = newVal
+Public Sub SetCancelStatusGUI(ByVal Index As Integer, ByVal newval As Boolean)
+    CancelStatusGUI(Index) = newval
 End Sub
-Public Sub SetInRecursiveAction(ByVal Index As Integer, ByVal newVal As Boolean)
-    InRecursiveAction(Index) = newVal
+Public Sub SetInRecursiveAction(ByVal Index As Integer, ByVal newval As Boolean)
+    InRecursiveAction(Index) = newval
 End Sub
 
 Public Function GetCancelStatusGUI(ByVal Index As Integer) As Boolean
@@ -1536,8 +1536,8 @@ End Function
 Public Function GetFTPCommand(ByVal Index As Integer) As Boolean
     GetFTPCommand = FTPCommand(Index)
 End Function
-Public Function SetFTPCommand(ByVal Index As Integer, ByVal newVal As String)
-    FTPCommand(Index) = newVal
+Public Function SetFTPCommand(ByVal Index As Integer, ByVal newval As String)
+    FTPCommand(Index) = newval
 End Function
 
 Private Sub dContainer_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
@@ -1592,7 +1592,7 @@ Public Sub LoadClient(Optional ByVal ClientDescription As String = "")
     myClient0.TransferRates(1) = dbSettings.GetProfileSetting("ftpBufferSize")
     myClient0.TransferRates(2) = dbSettings.GetProfileSetting("ftpPacketSize")
     myClient0.LargeFileMode = dbSettings.GetProfileSetting("LargeFileMode")
-    myClient0.ImplicitSSL = (dbSettings.GetProfileSetting("SSL") = 1)
+    myClient0.SSL = dbSettings.GetProfileSetting("SSL")
     
     Set myClient1 = ThreadManager.GetClients(ClientIndex).FTPClient2
     myClient1.timeout = dbSettings.GetProfileSetting("TimeOut")
@@ -1602,7 +1602,7 @@ Public Sub LoadClient(Optional ByVal ClientDescription As String = "")
     myClient1.TransferRates(1) = dbSettings.GetProfileSetting("ftpBufferSize")
     myClient1.TransferRates(2) = dbSettings.GetProfileSetting("ftpPacketSize")
     myClient1.LargeFileMode = dbSettings.GetProfileSetting("LargeFileMode")
-    myClient1.ImplicitSSL = (dbSettings.GetProfileSetting("SSL") = 1)
+    myClient1.SSL = dbSettings.GetProfileSetting("SSL")
     
     If dbSettings.GetProfileSetting("ConnectionMode") = 1 Then
         myClient0.ConnectionMode = "PORT"
@@ -1636,17 +1636,17 @@ Public Sub LoadClient(Optional ByVal ClientDescription As String = "")
     
 End Sub
  
-Public Sub SetCaption(Optional ByVal Filename As String = "", Optional ByVal percent As Integer = -1)
+Public Sub SetCaption(Optional ByVal FileName As String = "", Optional ByVal percent As Integer = -1)
     Dim newCap As String
     If MultiThread Then
         newCap = AppName & " [" & Trim(myTransferCount) & IIf(myTransferCount = 1, " Transfer", " Transfer(s)") & "]"
-    ElseIf (Filename = "") Then
+    ElseIf (FileName = "") Then
         newCap = AppName
     Else
         If (percent >= 0) And (percent <= 100) Then
-            newCap = AppName & " [" & Trim(CStr(percent)) & "% - " & Filename & "]"
+            newCap = AppName & " [" & Trim(CStr(percent)) & "% - " & FileName & "]"
         Else
-            newCap = AppName & " [" & Filename & "]"
+            newCap = AppName & " [" & FileName & "]"
         End If
     End If
     If Not (Me.Caption = newCap) Then Me.Caption = newCap
@@ -2829,7 +2829,7 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
         
     If ListItems(0) <> "" Then
             
-        Dim Filename As String
+        Dim FileName As String
         Dim fileType As String
         Dim cnt As Integer
         Dim attr As Long
@@ -2837,20 +2837,20 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
         If Not Trim(ListItems(0)) = "" Then
             For cnt = 0 To UBound(ListItems)
                     
-                Filename = RemoveNextArg(ListItems(cnt), "|")
+                FileName = RemoveNextArg(ListItems(cnt), "|")
                 If Not (URLType(Index) = URLTypes.ftp) Then
                     On Error Resume Next
                     attr = 0
                     Select Case Index
                         Case 0
-                            If Not Filename = "pagefile.sys" Then
-                                attr = GetAttr(MapFolder(myClient0.Folder, Filename))
+                            If Not FileName = "pagefile.sys" Then
+                                attr = GetAttr(MapFolder(myClient0.Folder, FileName))
                             Else
                                 attr = vbSystem + vbReadOnly
                             End If
                         Case 1
-                            If Not Filename = "pagefile.sys" Then
-                                attr = GetAttr(MapFolder(myClient0.Folder, Filename))
+                            If Not FileName = "pagefile.sys" Then
+                                attr = GetAttr(MapFolder(myClient0.Folder, FileName))
                             Else
                                 attr = vbSystem + vbReadOnly
                             End If
@@ -2862,25 +2862,25 @@ Private Sub RefreshFileView(ByVal Index As Integer, ByRef ListItems() As String)
 
                 If (((attr And vbSystem) = vbSystem) And dbSettings.GetPublicSetting("ServiceSystem")) Or (Not ((attr And vbSystem) = vbSystem)) Then
                 
-                    If (Left(Filename, 1) = "/") Or ((attr And vbDirectory) = vbDirectory) Then
+                    If (Left(FileName, 1) = "/") Or ((attr And vbDirectory) = vbDirectory) Then
                         fileType = "folder"
                         
-                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, Filename), Filename, , "folder")
+                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, FileName), FileName, , "folder")
                     Else
 
-                        fileType = Trim(LCase(GetFileExt(Filename)))
+                        fileType = Trim(LCase(GetFileExt(FileName)))
                     
                         If Right(setLocation(Index).Text, 1) = "\" Then
-                            GetAssociation fileType, setLocation(Index).Text & Filename, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & FileName, pFileIcon(Index)
                         ElseIf Right(setLocation(Index).Text, 1) = "/" Then
-                            GetAssociation fileType, setLocation(Index).Text & Filename, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & FileName, pFileIcon(Index)
                         Else
-                            GetAssociation fileType, setLocation(Index).Text & "\" & Filename, pFileIcon(Index)
+                            GetAssociation fileType, setLocation(Index).Text & "\" & FileName, pFileIcon(Index)
                         End If
                     
                         LoadAssociation pFileIcon(Index)
                     
-                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, Filename), Filename, , pFileIcon(Index).Tag)
+                        Set lstItem = pView(Index).ListItems.Add(, MapFolder(setLocation(Index).Text, FileName), FileName, , pFileIcon(Index).Tag)
                         
                     End If
                     
@@ -3031,7 +3031,7 @@ On Error GoTo catch
 
     If Not (nUrl.GetType(setLocation(Index).Text) = URLTypes.ftp) Then
         If (Not PathExists(setLocation(Index).Text)) And setLocation(Index).Text <> "" And ((Not (Left(LCase(Trim(setLocation(Index).Text)), 6) = "ftp://") And (Not (Left(LCase(Trim(setLocation(Index).Text)), 7) = "ftps://")))) Then
-            setLocation(Index).Text = IIf(dbSettings.GetProfileSetting("SSL") = 1, "ftps://", "ftp://") & setLocation(Index).Text
+            setLocation(Index).Text = IIf(dbSettings.GetProfileSetting("SSL") <> 0, "ftps://", "ftp://") & setLocation(Index).Text
         End If
     End If
 
@@ -3072,7 +3072,7 @@ On Error GoTo catch
                 myClient.ConnectionMode = IIf((dbSettings.GetProfileSetting("ConnectionMode") = 0), "PASV", "PORT")
                 myClient.DataPortRange = dbSettings.GetProfileSetting("DefaultPortRange")
                 myClient.NetAdapter = dbSettings.GetProfileSetting("AdapterIndex")
-                myClient.ImplicitSSL = (dbSettings.GetProfileSetting("SSL") = 1)
+                myClient.SSL = dbSettings.GetProfileSetting("SSL")
                 addUrl = True
 
             ElseIf (nUrl.GetServer(setLocation(Index).Text) = nUrl.GetServer(myClient.URL)) Then
@@ -3093,7 +3093,7 @@ On Error GoTo catch
 
             If ((Not Left(Trim(LCase(setLocation(Index).Text)), 6) = "ftp://") And setLocation(Index).Text <> "" And (Not Left(Trim(LCase(setLocation(Index).Text)), 7) = "ftps://")) And (Not setLocation(Index).Text = "") Then
 
-                setLocation(Index).Text = IIf(dbSettings.GetProfileSetting("SSL") = 1, "ftps://", "ftp://") & setLocation(Index).Text
+                setLocation(Index).Text = IIf(dbSettings.GetProfileSetting("SSL") <> 0, "ftps://", "ftp://") & setLocation(Index).Text
 
                 URLType(Index) = nUrl.GetType(setLocation(Index).Text)
 
@@ -3110,7 +3110,7 @@ On Error GoTo catch
                 myClient.ConnectionMode = IIf((SiteInfo.sPassive.Value = 1), "PASV", "PORT")
                 myClient.DataPortRange = SiteInfo.sPortRange.Text
                 myClient.NetAdapter = dbSettings.GetProfileSetting("AdapterIndex")
-                myClient.ImplicitSSL = (SiteInfo.sSSL.Value = 1)
+                myClient.SSL = SiteInfo.sSSL.ListIndex
             End If
 
             If myClient.Username = "" Or myClient.Password = "" Then
@@ -3129,7 +3129,7 @@ On Error GoTo catch
                     Paswd.sInfo.sPassive.Value = -CInt(CBool(myClient.ConnectionMode = "PASV"))
                     Paswd.sInfo.sPortRange.Text = myClient.DataPortRange
                     Paswd.sInfo.sAdapter.ListIndex = (myClient.NetAdapter - 1)
-                    Paswd.sInfo.sSSL.Value = -CInt(myClient.ImplicitSSL)
+                    Paswd.sInfo.sSSL.ListIndex = myClient.SSL
                     
                     LoadCache Paswd.sInfo
 
@@ -3142,7 +3142,7 @@ On Error GoTo catch
                     myClient.ConnectionMode = IIf(CBool(Paswd.sInfo.sPassive.Value = 1), "PASV", "PORT")
                     myClient.DataPortRange = Paswd.sInfo.sPortRange.Text
                     myClient.NetAdapter = Paswd.sInfo.sAdapter.ListIndex + 1
-                    myClient.ImplicitSSL = (Paswd.sInfo.sSSL.Value = 1)
+                    myClient.SSL = Paswd.sInfo.sSSL.ListIndex
                 Else
                     Dim passInfo As PasswordInfo
                     passInfo.HostURL = setLocation(Index).Text
@@ -3154,7 +3154,7 @@ On Error GoTo catch
                     passInfo.Pasv = (myClient.ConnectionMode = "PASV")
                     passInfo.PortRange = myClient.DataPortRange
                     passInfo.Adapter = myClient.NetAdapter - 1
-                    passInfo.SSL = myClient.ImplicitSSL
+                    passInfo.SSL = myClient.SSL
                     Paswd.ParentHWnd = Me.hwnd
                     
                     If Not AutoLogin Then
@@ -3183,7 +3183,7 @@ On Error GoTo catch
                         myClient.ConnectionMode = IIf(passInfo.Pasv, "PASV", "PORT")
                         myClient.DataPortRange = passInfo.PortRange
                         myClient.NetAdapter = passInfo.Adapter + 1
-                        myClient.ImplicitSSL = passInfo.SSL
+                        myClient.SSL = passInfo.SSL
                     End If
                 End If
 
@@ -3500,7 +3500,7 @@ On Error GoTo catch
         FTPConnect Index
     End If
     
-    Debug.Print GetState(Index)
+    'Debug.Print GetState(Index)
     
 
     MaxEvents.AddEvent dbSettings, MyDescription, myClient.URL, "Listing of " & myClient.Folder, myClient
@@ -3542,7 +3542,7 @@ End Sub
 
 Public Sub ClientListComplete(ByVal Index As Integer)
 On Error GoTo catch
- Debug.Print "ClientListComplete"
+ 'Debug.Print "ClientListComplete"
     Dim fullText As String
     Dim ListItems() As String
     
@@ -3594,7 +3594,7 @@ End Sub
 
 Public Sub RecursiveClientListComplete(ByVal Index As Integer)
 On Error GoTo catch
- Debug.Print "RecursiveClientListComplete"
+ 'Debug.Print "RecursiveClientListComplete"
     Dim fullText As String
     
     If PathExists(tmpListFile(Index), True) Then fullText = ReadFile(tmpListFile(Index))

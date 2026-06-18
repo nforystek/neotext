@@ -104,14 +104,14 @@ Public Sub ViewCertificate() ' _
 Opens a window for the current loaded certificate for viewing.
 Attribute ViewCertificate.VB_Description = "Opens a window for the current loaded certificate for viewing."
 
-    modCrypto.ViewCertificate Me
+    modCert.ViewCertificate Me
 End Sub
 
 Public Function CheckCertificate() As Boolean ' _
 Opens a window for the current loaded certificate prompting for acceptance or rejection response.
 Attribute CheckCertificate.VB_Description = "Opens a window for the current loaded certificate prompting for acceptance or rejection response."
 
-    CheckCertificate = modCrypto.CheckCertificate(Me)
+    CheckCertificate = modCert.CheckCertificate(Me)
 End Function
 
 Friend Property Get NoPrompt() As Boolean
@@ -136,7 +136,7 @@ Loads a certificate in binary form by the FileName supplied, if it is a .CER fil
     If PathExists(FileName, True) Then
         LoadCertificate Stream(ReadFile(FileName))
     Else
-        Err.Raise 53
+        err.Raise 53
     End If
 End Sub
 
@@ -222,7 +222,7 @@ Attribute Namely.VB_Description = "Converts the identifier number or key to it's
             Case LCase("ObjectIdentifyer")
                 Namely = CInt(ObjectIdentifyer)
             Case Else
-                Err.Raise 8, , "Field identifier unrecognized."
+                err.Raise 8, , "Field identifier unrecognized."
         End Select
         Namely = CInt(Namely + ext)
     Else
@@ -268,7 +268,7 @@ Attribute Namely.VB_Description = "Converts the identifier number or key to it's
             Case CInt(ObjectIdentifyer)
                 Namely = "ObjectIdentifyer"
             Case Else
-                Err.Raise 8, , "Field identifier unrecognized."
+                err.Raise 8, , "Field identifier unrecognized."
         End Select
         If ext <> 0 Then Namely = Namely & ext
     End If
@@ -706,18 +706,18 @@ End Property
 Public Property Get Keys(ByVal Number As Integer) As String ' _
 Returns the key of a specific ordinal Number in the collection of properties for the loaded certificate.
 
-    If Number > 0 And Number <= pKeys.count Then
+    If Number > 0 And Number <= pKeys.Count Then
         Keys = pKeys(Number)
     Else
-        Err.Raise 8, , "Ordinal does not exist in collection."
+        err.Raise 8, , "Ordinal does not exist in collection."
     End If
     
 End Property
 Public Function Exists(Optional ByVal Refer As Variant = CertificateCollection) As Boolean ' _
 Checks for the existance of a property in the loaded certificate by key or name supplied as Refer parameter.
     If Refer = CertificateCollection Then
-        Exists = pFields.count > 0
-    ElseIf pFields.count > 0 Then
+        Exists = pFields.Count > 0
+    ElseIf pFields.Count > 0 Then
 
         If Not IsNumeric(Refer) Then
             If Not IsNumeric(Replace(Refer, "ID_", "")) Then
@@ -728,7 +728,7 @@ Checks for the existance of a property in the loaded certificate by key or name 
         End If
         
         Dim cnt As Integer
-        For cnt = 1 To pFields.count
+        For cnt = 1 To pFields.Count
             If pKeys(cnt) = Refer Then
                 Exists = True
                 Exit Function
@@ -762,10 +762,10 @@ Load a certificate in binary form contained in the CertData stream object.
     pNoPrompt = False
     pAccepted = False
     
-    Do Until pFields.count = 0
+    Do Until pFields.Count = 0
         pFields.Remove 1
     Loop
-    Do Until pKeys.count = 0
+    Do Until pKeys.Count = 0
         pKeys.Remove 1
     Loop
     
@@ -913,9 +913,9 @@ badload:
     Set tmp = Nothing
     Set FromData = Nothing
         
-    If Err Then
+    If err Then
         On Error GoTo 0
-        Err.Raise 8, , "Unable to load certificate"
+        err.Raise 8, , "Unable to load certificate"
     End If
 
 End Function
@@ -926,11 +926,11 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    Do Until pFields.count = 0
+    Do Until pFields.Count = 0
         pFields.Remove 1
     Loop
     Set pFields = Nothing
-    Do Until pKeys.count = 0
+    Do Until pKeys.Count = 0
         pKeys.Remove 1
     Loop
     Set pKeys = Nothing

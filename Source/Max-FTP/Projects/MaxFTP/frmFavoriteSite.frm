@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1436.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1452.0#0"; "NTControls22.ocx"
 Begin VB.Form frmFavoriteSite 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Favorite Site Information"
@@ -89,7 +89,7 @@ Public Sub LoadSite(ByVal FileName As String)
     SiteInformation1.sUserName.Text = ""
     SiteInformation1.sPassword.Text = ""
     SiteInformation1.sSavePass.Value = 0
-    SiteInformation1.sSSL.Value = 0
+    SiteInformation1.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
     SiteInformation1.sAdapter.ListIndex = (dbSettings.GetProfileSetting("AdapterIndex") - 1)
     
     SiteInformation2.sHostURL.Text = ""
@@ -99,7 +99,7 @@ Public Sub LoadSite(ByVal FileName As String)
     SiteInformation2.sUserName.Text = ""
     SiteInformation2.sPassword.Text = ""
     SiteInformation2.sSavePass.Value = 0
-    SiteInformation2.sSSL.Value = 0
+    SiteInformation2.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
     SiteInformation2.sAdapter.ListIndex = (dbSettings.GetProfileSetting("AdapterIndex") - 1)
     
     Check1.Value = 0
@@ -162,9 +162,9 @@ Public Sub LoadSite(ByVal FileName As String)
                         If Not InData = "" Then SiteInformation2.sPassword.Text = IIf(Check1.Value = 1, enc.DecryptString(InData, dbSettings.CryptKey(SiteInformation2.sUserName.Text)), InData)
                     
                     Case "pssl"
-                        SiteInformation1.sSSL.Value = CInt(InData)
+                        SiteInformation1.sSSL.ListIndex = CInt(InData)
                     Case "sssl"
-                        SiteInformation2.sSSL.Value = CInt(InData)
+                        SiteInformation2.sSSL.ListIndex = CInt(InData)
                     
                     End Select
 
@@ -235,8 +235,8 @@ Public Sub SaveSite(ByVal FileName As String)
             End If
         End If
         
-        Print #FileNum, "pSSL =" & CStr(SiteInformation1.sSSL.Value)
-        Print #FileNum, "sSSL =" & CStr(SiteInformation2.sSSL.Value)
+        Print #FileNum, "pSSL =" & CStr(SiteInformation1.sSSL.ListIndex)
+        Print #FileNum, "sSSL =" & CStr(SiteInformation2.sSSL.ListIndex)
     Else
         Print #FileNum, enc.EncryptString("pLocation =" & SiteInformation1.sHostURL.Text, dbSettings.CryptKey)
         Print #FileNum, enc.EncryptString("sLocation =" & SiteInformation2.sHostURL.Text, dbSettings.CryptKey)
@@ -286,8 +286,8 @@ Public Sub SaveSite(ByVal FileName As String)
             End If
         End If
         
-        Print #FileNum, enc.EncryptString("pSSL =" & CStr(SiteInformation1.sSSL.Value), dbSettings.CryptKey)
-        Print #FileNum, enc.EncryptString("sSSL =" & CStr(SiteInformation2.sSSL.Value), dbSettings.CryptKey)
+        Print #FileNum, enc.EncryptString("pSSL =" & CStr(SiteInformation1.sSSL.ListIndex), dbSettings.CryptKey)
+        Print #FileNum, enc.EncryptString("sSSL =" & CStr(SiteInformation2.sSSL.ListIndex), dbSettings.CryptKey)
     End If
     
     Close #FileNum
@@ -331,8 +331,8 @@ Private Sub Form_Load()
     SiteInformation1.sPassive.Value = BoolToCheck(dbSettings.GetProfileSetting("ConnectionMode") = 0)
     SiteInformation2.sPassive.Value = BoolToCheck(dbSettings.GetProfileSetting("ConnectionMode") = 0)
 
-    SiteInformation1.sSSL.Value = dbSettings.GetProfileSetting("SSL")
-    SiteInformation2.sSSL.Value = dbSettings.GetProfileSetting("SSL")
+    SiteInformation1.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
+    SiteInformation2.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
     
     SiteInformation1.sPortRange.Text = dbSettings.GetProfileSetting("DefaultPortRange")
     SiteInformation2.sPortRange.Text = dbSettings.GetProfileSetting("DefaultPortRange")

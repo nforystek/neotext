@@ -1,12 +1,12 @@
 VERSION 5.00
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1452.0#0"; "NTControls22.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1160.0#0"; "NTControls22.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   0  'None
    Caption         =   "Max-FTP Application Server"
    ClientHeight    =   2640
    ClientLeft      =   150
-   ClientTop       =   720
+   ClientTop       =   795
    ClientWidth     =   3840
    ControlBox      =   0   'False
    Icon            =   "frmMain.frx":0000
@@ -299,7 +299,7 @@ Public Sub RunScript()
     Dim fname As String
     fname = frmMain.BrowseButton1.Browse
     If PathExists(fname, True) Then
-        MODPROCESS.RunProcess AppPath & MaxIDEFileName, "exec " & fname
+        modProcess.RunProcess AppPath & MaxIDEFileName, "exec " & fname
     End If
 End Sub
 Private Sub CmdLine_Change()
@@ -413,18 +413,18 @@ Public Sub RefreshShowAdvSettings()
                 frm.sInfo.ShowAdvSettings = dbSettings.GetProfileSetting("ShowAdvSettings")
                 If Not frm.sInfo.ShowAdvSettings Then
                     frm.sInfo.sPassive.Value = IIf((dbSettings.GetProfileSetting("ConnectionMode") = 0), 1, 0)
-                    frm.sInfo.sSSL.Value = IIf((dbSettings.GetProfileSetting("SSL") = 0), 1, 0)
+                    frm.sInfo.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
                 End If
             Case "frmFavoriteSite", "frmSchOpProperties"
                 frm.SiteInformation1.ShowAdvSettings = dbSettings.GetProfileSetting("ShowAdvSettings")
                 If Not frm.SiteInformation1.ShowAdvSettings Then
                     frm.SiteInformation1.sPassive.Value = IIf((dbSettings.GetProfileSetting("ConnectionMode") = 0), 1, 0)
-                    frm.SiteInformation1.sSSL.Value = IIf((dbSettings.GetProfileSetting("SSL") = 0), 1, 0)
+                    frm.SiteInformation1.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
                 End If
                 frm.SiteInformation2.ShowAdvSettings = dbSettings.GetProfileSetting("ShowAdvSettings")
                 If Not frm.SiteInformation2.ShowAdvSettings Then
                     frm.SiteInformation2.sPassive.Value = IIf((dbSettings.GetProfileSetting("ConnectionMode") = 0), 1, 0)
-                    frm.SiteInformation2.sSSL.Value = IIf((dbSettings.GetProfileSetting("SSL") = 0), 1, 0)
+                    frm.SiteInformation2.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
                 End If
                 
         End Select
@@ -433,25 +433,25 @@ End Sub
 
 Public Sub ValidDataPortRange(ByRef txt)
 
-    Dim NewVal As String
+    Dim newVal As String
     
     Dim sHi As String
     Dim sLow As String
     
-    NewVal = Replace(Replace(Replace(Replace(txt.Text, " ", ""), vbTab, ""), vbCr, ""), vbLf, "")
+    newVal = Replace(Replace(Replace(Replace(txt.Text, " ", ""), vbTab, ""), vbCr, ""), vbLf, "")
     
-    sHi = NextArg(NewVal, "-")
-    sLow = RemoveArg(NewVal, "-")
+    sHi = NextArg(newVal, "-")
+    sLow = RemoveArg(newVal, "-")
     If Not IsNumeric(sLow) Then
         sLow = sHi
-        NewVal = sHi & "-" & sHi
+        newVal = sHi & "-" & sHi
     End If
     If Not IsNumeric(sHi) Then
         sHi = sLow
-        NewVal = sLow & "-" & sLow
+        newVal = sLow & "-" & sLow
     End If
     
-    If ((Not (InStr(NewVal, "-") > 0)) Or (Not IsNumeric(sHi)) Or (Not IsNumeric(sLow)) Or (InStr(sLow, ".") > 0) Or (InStr(sHi, ".") > 0) Or (InStr(sLow, "-") > 0) Or (InStr(sHi, "-") > 0)) Then
+    If ((Not (InStr(newVal, "-") > 0)) Or (Not IsNumeric(sHi)) Or (Not IsNumeric(sLow)) Or (InStr(sLow, ".") > 0) Or (InStr(sHi, ".") > 0) Or (InStr(sLow, "-") > 0) Or (InStr(sHi, "-") > 0)) Then
         MsgBox "Invalid data port range; (Must be one to two whole numbers seperated by a single dash greater then zero and less then 65535)", vbInformation, AppName
         txt.Text = dbSettings.GetProfileSetting("DefaultPortRange")
     Else

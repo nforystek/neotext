@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1160.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1452.0#0"; "NTControls22.ocx"
 Begin VB.Form frmSchOpProperties 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Operation Info"
@@ -243,7 +243,7 @@ Public Sub ShowOperation(frm As Form, ByVal Action As String, ByVal ScheduleID A
     ElseIf OpAction = "edit" Then
         Me.Caption = Action & " Operation [Operation ID: " & OpId & ", Schedule ID: " & ScheduleID & "]"
         
-        Dim enc As New NTCipher10.ncode
+        Dim enc As New NTCipher10.nCode
         Dim dbSchedule As New clsDBSchedule
         
         Dim tmpValue As String
@@ -289,7 +289,7 @@ Public Sub ShowOperation(frm As Form, ByVal Action As String, ByVal ScheduleID A
             SiteInformation1.sPassive.Value = BoolToCheck(.GetOperationValue(OpId, "SPasv"))
             SiteInformation1.sPortRange.Text = .GetOperationValue(OpId, "SData")
             SiteInformation1.sAdapter.ListIndex = (.GetOperationValue(OpId, "SAdap") - 1)
-            SiteInformation1.sssl.Value = .GetOperationValue(OpId, "SSSL")
+            SiteInformation1.sSSL.ListIndex = .GetOperationValue(OpId, "SSSL")
             
             SiteInformation1.Refresh
 
@@ -309,7 +309,7 @@ Public Sub ShowOperation(frm As Form, ByVal Action As String, ByVal ScheduleID A
             SiteInformation2.sPassive.Value = BoolToCheck(.GetOperationValue(OpId, "DPasv"))
             SiteInformation2.sPortRange.Text = .GetOperationValue(OpId, "DData")
             SiteInformation2.sAdapter.ListIndex = (.GetOperationValue(OpId, "DAdap") - 1)
-            SiteInformation2.sssl.Value = .GetOperationValue(OpId, "DSSL")
+            SiteInformation2.sSSL.ListIndex = .GetOperationValue(OpId, "DSSL")
             SiteInformation2.Refresh
 
         End With
@@ -334,7 +334,7 @@ Private Sub OpActionDone()
         
     End If
 
-    Dim enc As New NTCipher10.ncode
+    Dim enc As New NTCipher10.nCode
     Dim dbSchedule As New clsDBSchedule
 
     Dim tmpValue As String
@@ -361,7 +361,7 @@ Private Sub OpActionDone()
         .SetOperationValue OpId, "SPasv", CBool(SiteInformation1.sPassive.Value)
         .SetOperationValue OpId, "SData", SiteInformation1.sPortRange.Text
         .SetOperationValue OpId, "SAdap", (SiteInformation1.sAdapter.ListIndex + 1)
-        .SetOperationValue OpId, "SSSL", SiteInformation1.sssl.Value
+        .SetOperationValue OpId, "SSSL", SiteInformation1.sSSL.ListIndex
 
 
         tmpValue = SiteInformation2.sHostURL.Text
@@ -380,7 +380,7 @@ Private Sub OpActionDone()
         .SetOperationValue OpId, "DPasv", CBool(SiteInformation2.sPassive.Value)
         .SetOperationValue OpId, "DData", SiteInformation2.sPortRange.Text
         .SetOperationValue OpId, "DAdap", (SiteInformation2.sAdapter.ListIndex + 1)
-        .SetOperationValue OpId, "DSSL", SiteInformation2.sssl.Value
+        .SetOperationValue OpId, "DSSL", SiteInformation2.sSSL.ListIndex
         
         .SetOperationValue OpId, "OperationName", txtName.Text
         If OpAction = "add" Then
@@ -756,8 +756,8 @@ Private Sub Form_Load()
     SiteInformation1.sPassive.Value = BoolToCheck(dbSettings.GetProfileSetting("ConnectionMode") = 0)
     SiteInformation2.sPassive.Value = BoolToCheck(dbSettings.GetProfileSetting("ConnectionMode") = 0)
    
-    SiteInformation1.sssl.Value = BoolToCheck(dbSettings.GetProfileSetting("SSL") = 0)
-    SiteInformation2.sssl.Value = BoolToCheck(dbSettings.GetProfileSetting("SSL") = 0)
+    SiteInformation1.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
+    SiteInformation2.sSSL.ListIndex = dbSettings.GetProfileSetting("SSL")
    
     SiteInformation1.sPortRange.Text = dbSettings.GetProfileSetting("DefaultPortRange")
     SiteInformation2.sPortRange.Text = dbSettings.GetProfileSetting("DefaultPortRange")

@@ -17,7 +17,7 @@ Option Compare Binary
 
 
 Public Enum SSLMethods
-    InSecure = 0
+    Insecure = 0
     'Automatic = -1
     Implicit = 1
     Explicit = 2
@@ -232,14 +232,14 @@ Public Property Get SSL() As SSLMethods
     SSL = ftpSSL
 End Property
 Public Property Let SSL(ByRef RHS As SSLMethods)
-    
+  
     If RHS = Implicit Then
         If Not mTCP.Connected Then mTCP.SSL = True
         If Not mData.Connected Then mData.SSL = True
     ElseIf RHS = Explicit Then
         If mTCP.Connected Then mTCP.SSL = True
         If mData.Connected Then mData.SSL = True
-    ElseIf RHS = InSecure Then
+    ElseIf RHS = Insecure Then
         If Not mTCP.Connected Then mTCP.SSL = False
         If Not mData.Connected Then mData.SSL = False
     End If
@@ -2692,6 +2692,8 @@ Private Sub DoOutCommands()
                             ftpNextCommand = "ACCT " & ftpAccount & vbCrLf & ftpNextCommand
                         End If
                     Case "REIN"
+                        If mTCP.Connected Then mTCP.Reinstate
+                        If mData.Connected Then mData.Reinstate
                         ConnectedState(FullyRemoting) = False
                         If ((ftpUsername <> "") And (ftpPassword <> "")) Then
                             ftpNextCommand = "USER " & ftpUsername & vbCrLf & ftpNextCommand

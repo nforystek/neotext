@@ -14,12 +14,12 @@ Begin VB.Form frmProjectExplorer
    StartUpPosition =   3  'Windows Default
    Begin MaxIDE.ctlDragger ctlDragger1 
       Align           =   1  'Align Top
-      Height          =   390
+      Height          =   345
       Left            =   0
       Top             =   0
       Width           =   4770
       _ExtentX        =   8414
-      _ExtentY        =   688
+      _ExtentY        =   609
       Dockable        =   0   'False
       Movable         =   0   'False
       Docked          =   0   'False
@@ -473,7 +473,7 @@ Private Sub TreeView1_Expand(ByVal Node As MSComctlLib.Node)
     End Select
 End Sub
 
-Private Sub TreeView1_MouseUp(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub TreeView1_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 2 Then
         RefreshScriptMenu
         If Not (SelectedNode Is Nothing) Then
