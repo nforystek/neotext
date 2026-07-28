@@ -259,6 +259,7 @@ Public Sub Main()
                 RenderPlayer
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+
                 
 
                 '##################################################################
@@ -268,7 +269,8 @@ Public Sub Main()
                 RenderBoards
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
-                
+
+
 
                 '################################################################
                 '#### RenderMirrors renders mirrors collected by BeginMirros ####
@@ -277,7 +279,7 @@ Public Sub Main()
                 RenderMirrors
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-
+                
 
                 '##################################################################
                 '#### RenderLucent renders alphablent and translucent textures ####
@@ -287,6 +289,7 @@ Public Sub Main()
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
 
+                
 
                 '#############################################################
                 '#### RenderBeacons renders forward faced texture beacons ####
@@ -296,6 +299,7 @@ Public Sub Main()
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
 
+                
 
                 '###########################################################
                 '#### RenderPortals handles all the Portal based events ####
@@ -313,6 +317,8 @@ Public Sub Main()
                 RenderCameras
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
+       
+
                 
                 
                 '#################################################################
@@ -350,6 +356,7 @@ Public Sub Main()
                 InputScene
                 'elapsed = (Timer - elapsed)
                 'If elapsed > 0 Then Debug.Print "InputScene: " & elapsed
+
 
                 
                 If Not PauseGame Then

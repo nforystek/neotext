@@ -9,7 +9,7 @@ BOOL APIENTRY DllMain(HINSTANCE hModule,
 }
 
 
-
+/*
 
 extern "C" __declspec(dllexport)
 void* __stdcall TlsInit(const char* serverName, int* pErr)
@@ -63,6 +63,115 @@ void* __stdcall TlsInit(const char* serverName, int* pErr)
     ctx->haveContext = FALSE;
     ctx->handshakeComplete = FALSE;
     ctx->lastStatus = ss;
+
+    if (pErr) *pErr = 0;
+    return (void*)ctx;
+}
+*/
+/*
+extern "C" __declspec(dllexport)
+void* __stdcall TlsInit(const char* serverName, int* pErr)
+{
+    TLS_CTX_INTERNAL* ctx = (TLS_CTX_INTERNAL*)HeapAlloc(
+        GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(TLS_CTX_INTERNAL));
+
+    if (!ctx) {
+        if (pErr) *pErr = -1;
+        return NULL;
+    }
+
+    SCHANNEL_CRED cred;
+    ZeroMemory(&cred, sizeof(cred));
+
+    cred.dwVersion = SCHANNEL_CRED_VERSION;
+
+    // Modern-only: TLS 1.2 (+ TLS 1.3 flag for future/OS support)
+    cred.grbitEnabledProtocols =
+        SP_PROT_TLS1_2_CLIENT |
+        SP_PROT_TLS1_3_CLIENT;   // harmless on older SChannel, used on newer
+
+    cred.dwFlags =
+        SCH_CRED_NO_DEFAULT_CREDS |
+        SCH_CRED_MANUAL_CRED_VALIDATION |
+        SCH_USE_STRONG_CRYPTO;   // filters weak cipher suites
+
+    TimeStamp tsExpiry;
+    SECURITY_STATUS ss = AcquireCredentialsHandleA(
+        NULL,
+        UNISP_NAME_A,
+        SECPKG_CRED_OUTBOUND,
+        NULL,
+        &cred,
+        NULL,
+        NULL,
+        &ctx->hCred,
+        &tsExpiry
+    );
+
+    if (ss != SEC_E_OK) {
+        SetLastError((int)ss);
+        HeapFree(GetProcessHeap(), 0, ctx);
+        if (pErr) *pErr = (int)ss;
+        return NULL;
+    }
+
+    ctx->haveContext        = FALSE;
+    ctx->handshakeComplete  = FALSE;
+    ctx->lastStatus         = ss;
+
+    if (pErr) *pErr = 0;
+    return (void*)ctx;
+}
+*/
+
+extern "C" __declspec(dllexport)
+void* __stdcall TlsInit(const char* serverName, int* pErr)
+{
+    TLS_CTX_INTERNAL* ctx = (TLS_CTX_INTERNAL*)HeapAlloc(
+        GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(TLS_CTX_INTERNAL));
+
+    if (!ctx) {
+        if (pErr) *pErr = -1;
+        return NULL;
+    }
+
+    SCHANNEL_CRED cred;
+    ZeroMemory(&cred, sizeof(cred));
+
+    cred.dwVersion = SCHANNEL_CRED_VERSION;
+
+    // IMPORTANT: let Windows 11 decide protocols (TLS 1.2 / TLS 1.3)
+    // Do NOT set grbitEnabledProtocols at all.
+    cred.grbitEnabledProtocols = 0;
+
+    cred.dwFlags =
+        SCH_CRED_NO_DEFAULT_CREDS |
+        SCH_CRED_MANUAL_CRED_VALIDATION |
+        SCH_USE_STRONG_CRYPTO;   // keep strong crypto
+
+    TimeStamp tsExpiry;
+    SECURITY_STATUS ss = AcquireCredentialsHandleA(
+        NULL,
+        UNISP_NAME_A,
+        SECPKG_CRED_OUTBOUND,
+        NULL,
+        &cred,
+        NULL,
+        NULL,
+        &ctx->hCred,
+        &tsExpiry
+    );
+
+    if (ss != SEC_E_OK) {
+        SetLastError((int)ss);
+        HeapFree(GetProcessHeap(), 0, ctx);
+        if (pErr) *pErr = (int)ss;
+        return NULL;
+    }
+
+    ctx->haveContext       = FALSE;
+    ctx->handshakeComplete = FALSE;
+    ctx->lastStatus        = ss;
 
     if (pErr) *pErr = 0;
     return (void*)ctx;
@@ -162,7 +271,7 @@ int __stdcall TlsGetCipherInfo(void* h, char* outBuf, int outSize)
     return 0;
 }
 */
-
+/*
 extern "C" __declspec(dllexport)
 int __stdcall TlsRenegotiate(void* h)
 {
@@ -178,6 +287,18 @@ int __stdcall TlsRenegotiate(void* h)
 
     return 0;
 }
+*/
+extern "C" __declspec(dllexport)
+int __stdcall TlsRenegotiate(void* h)
+{
+    TLS_CTX_INTERNAL* ctx = (TLS_CTX_INTERNAL*)h;
+    if (!ctx || !ctx->handshakeComplete) return -1;
+
+    // TLS 1.3: renegotiation is not supported; caller must close and re-handshake
+    return SEC_E_UNSUPPORTED_FUNCTION;
+}
+
+
 
 extern "C" __declspec(dllexport)
 int __stdcall TlsHandshake(
@@ -199,6 +320,9 @@ int __stdcall TlsIsHandshakeComplete(void* ctx)
     if (!c) return 0;
     return c->handshakeComplete ? 1 : 0;
 }
+
+
+
 extern "C" __declspec(dllexport)
 int __stdcall TlsSend(
     void* h,

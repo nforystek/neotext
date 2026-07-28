@@ -61,7 +61,8 @@ Public Declare Function TlsGetPeerCertInfo Lib "TlsWrapper.dll" _
 
 
 
-
+#If modMemory = -1 Then
+#Else
 Public Function BytesFromString(ByVal s As String) As Byte()
     Dim b() As Byte
     If LenB(s) = 0 Then
@@ -79,6 +80,6 @@ Public Function StringFromBytes(b() As Byte) As String
         StringFromBytes = StrConv(b, vbUnicode)
     End If
 End Function
-
+#End If
 
 

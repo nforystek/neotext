@@ -17,7 +17,7 @@ Option Compare Binary
 
 
 Public Enum SSLMethods
-    Insecure = 0
+    InSecure = 0
     'Automatic = -1
     Implicit = 1
     Explicit = 2
@@ -239,7 +239,7 @@ Public Property Let SSL(ByRef RHS As SSLMethods)
     ElseIf RHS = Explicit Then
         If mTCP.Connected Then mTCP.SSL = True
         If mData.Connected Then mData.SSL = True
-    ElseIf RHS = Insecure Then
+    ElseIf RHS = InSecure Then
         If Not mTCP.Connected Then mTCP.SSL = False
         If Not mData.Connected Then mData.SSL = False
     End If
@@ -861,6 +861,8 @@ Attribute Connect.VB_Description = "Connects to a remote system and sends the in
         End If
 
         mTCP.Connect ftpServer, ftpPort
+        
+        
     
         If ftpEventError = ErrorReturns.Last Then
             SetLastError RaiseError, 8, ftpEventReason
@@ -1871,6 +1873,7 @@ Attribute ParseListing.VB_Description = "Attempts to determine listing systems f
     Dim oneLine As String
     Dim delim As String
     Dim lSys As Integer
+    Debug.Print """" & ListData & """"
     lSys = ListSystems.None
     delim = vbLf
     ListData = Replace(Replace(ListData, vbCrLf, vbLf), vbCr, vbNullString)
@@ -2473,6 +2476,7 @@ Private Sub mTCP_DataArriving()
                     ftpEventError = ErrorReturns.Last
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
+                    ftpNextCommand = ""
                 Case "227", "125", "150"
                     If Left(oneMsg, 3) = "227" Then
                         Dim pServer As String

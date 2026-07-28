@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1453.0#0"; "NTControls22.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1453.0#0"; "NTControls22.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
    Caption         =   "Max-FTP"
@@ -46,6 +46,25 @@ Begin VB.Form frmFTPClientGUI
       TabIndex        =   18
       Top             =   60
       Width           =   4140
+      Begin VB.PictureBox pSecure 
+         BorderStyle     =   0  'None
+         Height          =   180
+         Index           =   1
+         Left            =   2835
+         ScaleHeight     =   180
+         ScaleWidth      =   240
+         TabIndex        =   37
+         Top             =   4530
+         Width           =   240
+         Begin VB.Image pCert 
+            Height          =   195
+            Index           =   1
+            Left            =   0
+            Picture         =   "frmFTPClientGUI.frx":08CA
+            Top             =   0
+            Width           =   255
+         End
+      End
       Begin VB.ListBox pHistory 
          Height          =   255
          Index           =   1
@@ -479,7 +498,7 @@ Begin VB.Form frmFTPClientGUI
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
-            TextRTF         =   $"frmFTPClientGUI.frx":08CA
+            TextRTF         =   $"frmFTPClientGUI.frx":0BB0
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Lucida Console"
                Size            =   8.25
@@ -528,6 +547,26 @@ Begin VB.Form frmFTPClientGUI
       TabIndex        =   9
       Top             =   150
       Width           =   3930
+      Begin VB.PictureBox pSecure 
+         BorderStyle     =   0  'None
+         Height          =   180
+         Index           =   0
+         Left            =   2805
+         Picture         =   "frmFTPClientGUI.frx":0C33
+         ScaleHeight     =   180
+         ScaleWidth      =   240
+         TabIndex        =   36
+         Top             =   4185
+         Width           =   240
+         Begin VB.Image pCert 
+            Height          =   195
+            Index           =   0
+            Left            =   0
+            Picture         =   "frmFTPClientGUI.frx":0F19
+            Top             =   0
+            Width           =   255
+         End
+      End
       Begin VB.ListBox pHistory 
          Height          =   255
          Index           =   0
@@ -961,7 +1000,7 @@ Begin VB.Form frmFTPClientGUI
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
-            TextRTF         =   $"frmFTPClientGUI.frx":094D
+            TextRTF         =   $"frmFTPClientGUI.frx":11FF
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Lucida Console"
                Size            =   8.25
@@ -2438,6 +2477,10 @@ Private Sub pAddressBar_Resize(Index As Integer)
     On Error GoTo 0
 End Sub
 
+Private Sub pCert_Click(Index As Integer)
+
+End Sub
+
 Private Sub pDummyView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
@@ -2451,6 +2494,21 @@ End Sub
 Private Sub pProgress_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
     Source.DragIcon = frmMain.imgDragDrop.ListImages("abort").Picture
 
+End Sub
+
+
+
+Private Sub pSecure_Click(Index As Integer)
+
+End Sub
+
+Private Sub pSecure_Resize(Index As Integer)
+    pCert(Index).Top = 0
+    pCert(Index).Left = 0
+    
+    pSecure(Index).Width = pCert(Index).Width
+    pSecure(Index).Height = pCert(Index).Height
+     
 End Sub
 
 Private Sub pStatus_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
@@ -3221,7 +3279,7 @@ On Error GoTo catch
         elapsed = Timer
         Dim statusUp As String
         
-        Do Until myClient.Connected Or ((Timer - elapsed) > myClient.timeout)
+        Do Until (myClient.Connected Or ((Timer - elapsed) > myClient.timeout)) Or FTPUnloading(Index)
             DoTasks
             If statusUp <> "Connecting to " & myClient.Server & "... (time out in " & Round(myClient.timeout - (Timer - elapsed), 0) & "secs)" Then
                 statusUp = "Connecting to " & myClient.Server & "... (time out in " & Round(myClient.timeout - (Timer - elapsed), 0) & "secs)"
@@ -3232,7 +3290,7 @@ On Error GoTo catch
 
         Loop
         
-        If Not ((Timer - elapsed) > myClient.timeout) Then
+        If (Not ((Timer - elapsed) > myClient.timeout)) And (Not FTPUnloading(Index)) Then
         
             FTPRefresh Index
     

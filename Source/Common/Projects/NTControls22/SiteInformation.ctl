@@ -10,14 +10,14 @@ Begin VB.UserControl SiteInformation
    Begin VB.Frame Frame1 
       Height          =   1635
       Left            =   -45
-      TabIndex        =   8
+      TabIndex        =   9
       Top             =   -15
       Width           =   5925
       Begin VB.ComboBox Combo2 
          Height          =   315
          Left            =   3540
          Style           =   2  'Dropdown List
-         TabIndex        =   13
+         TabIndex        =   4
          Top             =   750
          Width           =   1335
       End
@@ -25,7 +25,7 @@ Begin VB.UserControl SiteInformation
          Height          =   315
          Left            =   2685
          Style           =   2  'Dropdown List
-         TabIndex        =   5
+         TabIndex        =   7
          Top             =   1155
          Width           =   1785
       End
@@ -33,7 +33,7 @@ Begin VB.UserControl SiteInformation
          Height          =   315
          Left            =   4545
          MaxLength       =   11
-         TabIndex        =   6
+         TabIndex        =   8
          Text            =   "10000-20000"
          Top             =   1155
          Width           =   1230
@@ -42,7 +42,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "Save"
          Height          =   240
          Left            =   2715
-         TabIndex        =   7
+         TabIndex        =   5
          Top             =   780
          Width           =   675
       End
@@ -59,7 +59,7 @@ Begin VB.UserControl SiteInformation
          Height          =   285
          Index           =   0
          Left            =   555
-         TabIndex        =   1
+         TabIndex        =   2
          Top             =   750
          Width           =   2025
       End
@@ -67,7 +67,7 @@ Begin VB.UserControl SiteInformation
          Alignment       =   2  'Center
          Height          =   300
          Left            =   5265
-         TabIndex        =   3
+         TabIndex        =   1
          Text            =   "21"
          Top             =   315
          Width           =   480
@@ -78,7 +78,7 @@ Begin VB.UserControl SiteInformation
          Index           =   1
          Left            =   555
          PasswordChar    =   "*"
-         TabIndex        =   2
+         TabIndex        =   3
          Top             =   1170
          Width           =   2025
       End
@@ -86,7 +86,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "Pasv"
          Height          =   240
          Left            =   5040
-         TabIndex        =   4
+         TabIndex        =   6
          Top             =   795
          Width           =   675
       End
@@ -94,7 +94,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "Port"
          Height          =   195
          Left            =   4890
-         TabIndex        =   12
+         TabIndex        =   13
          Top             =   375
          Width           =   315
       End
@@ -102,7 +102,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "Pass"
          Height          =   255
          Left            =   135
-         TabIndex        =   11
+         TabIndex        =   12
          Top             =   1200
          Width           =   375
       End
@@ -110,7 +110,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "User"
          Height          =   255
          Left            =   135
-         TabIndex        =   10
+         TabIndex        =   11
          Top             =   795
          Width           =   360
       End
@@ -118,7 +118,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "URL"
          Height          =   210
          Left            =   135
-         TabIndex        =   9
+         TabIndex        =   10
          Top             =   360
          Width           =   390
       End

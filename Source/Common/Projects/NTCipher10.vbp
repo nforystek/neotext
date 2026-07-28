@@ -14,6 +14,7 @@ Module=modCommon; ..\..\Shared\modCommon.bas
 Form=NTCipher10\frmTimeSync.frm
 Class=Tractor; NTCipher10\Tractor.cls
 Class=BWord; NTCipher10\BWord.cls
+Module=modMemory; ..\..\Shared\modMemory.bas
 Startup="Sub Main"
 HelpFile=""
 Title="NTCipher10"
@@ -35,7 +36,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Cipher Object"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Max-FTP 6.1"
-CondComp="NTCipher10=-1:VBIDE=-1:modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1"
+CondComp="NTCipher10=-1:VBIDE=-1:modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1:modMemory=-1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -58,4 +59,4 @@ DebugStartupOption=0
 AutoRefresh=1
 
 [Neotext]
-CompCond="modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1"
+CompCond="modHexStr=-1:modBitValue=-1:modMain=-1:modGuid=-1:modCommon=-1:modMemory=-1"

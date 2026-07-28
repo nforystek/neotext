@@ -486,10 +486,10 @@ Private Function HandshakeBlocking() As Boolean
 
         Dim elapsed As Single
         elapsed = Timer
-        Do Until (mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > (timeout * 4)) 'four communications occur, in relay witht he server
+        Do Until ((mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > timeout)) Or (Not wClient.Connected) Or wClient.Cancelling
             DoTasks
         Loop
-        HandshakeBlocking = (Timer - elapsed > (timeout * 4))  'four communications occur, in relay witht he server, give them the time
+        HandshakeBlocking = (Timer - elapsed > timeout)
 
     End If
 
