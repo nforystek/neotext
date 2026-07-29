@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
-Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1453.0#0"; "NTControls22.ocx"
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1459.0#0"; "NTControls22.ocx"
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Begin VB.Form frmFTPClientGUI 
    AutoRedraw      =   -1  'True
@@ -47,20 +47,23 @@ Begin VB.Form frmFTPClientGUI
       Top             =   60
       Width           =   4140
       Begin VB.PictureBox pSecure 
+         AutoRedraw      =   -1  'True
          BorderStyle     =   0  'None
          Height          =   180
          Index           =   1
-         Left            =   2835
+         Left            =   2925
+         Picture         =   "frmFTPClientGUI.frx":08CA
          ScaleHeight     =   180
          ScaleWidth      =   240
          TabIndex        =   37
-         Top             =   4530
+         Top             =   4320
+         Visible         =   0   'False
          Width           =   240
          Begin VB.Image pCert 
             Height          =   195
             Index           =   1
             Left            =   0
-            Picture         =   "frmFTPClientGUI.frx":08CA
+            Picture         =   "frmFTPClientGUI.frx":0BB0
             Top             =   0
             Width           =   255
          End
@@ -494,11 +497,10 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   1429
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
-            TextRTF         =   $"frmFTPClientGUI.frx":0BB0
+            TextRTF         =   $"frmFTPClientGUI.frx":0E96
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Lucida Console"
                Size            =   8.25
@@ -548,21 +550,23 @@ Begin VB.Form frmFTPClientGUI
       Top             =   150
       Width           =   3930
       Begin VB.PictureBox pSecure 
+         AutoRedraw      =   -1  'True
          BorderStyle     =   0  'None
          Height          =   180
          Index           =   0
          Left            =   2805
-         Picture         =   "frmFTPClientGUI.frx":0C33
+         Picture         =   "frmFTPClientGUI.frx":0F19
          ScaleHeight     =   180
          ScaleWidth      =   240
          TabIndex        =   36
          Top             =   4185
+         Visible         =   0   'False
          Width           =   240
          Begin VB.Image pCert 
             Height          =   195
             Index           =   0
             Left            =   0
-            Picture         =   "frmFTPClientGUI.frx":0F19
+            Picture         =   "frmFTPClientGUI.frx":11FF
             Top             =   0
             Width           =   255
          End
@@ -956,9 +960,9 @@ Begin VB.Form frmFTPClientGUI
       Begin MSComctlLib.StatusBar pStatus 
          Height          =   315
          Index           =   0
-         Left            =   105
+         Left            =   60
          TabIndex        =   16
-         Top             =   4305
+         Top             =   4365
          Width           =   2790
          _ExtentX        =   4921
          _ExtentY        =   556
@@ -996,11 +1000,10 @@ Begin VB.Form frmFTPClientGUI
             _ExtentY        =   953
             _Version        =   393217
             BorderStyle     =   0
-            Enabled         =   -1  'True
             ReadOnly        =   -1  'True
             ScrollBars      =   3
             Appearance      =   0
-            TextRTF         =   $"frmFTPClientGUI.frx":11FF
+            TextRTF         =   $"frmFTPClientGUI.frx":14E5
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Lucida Console"
                Size            =   8.25
@@ -2478,7 +2481,20 @@ Private Sub pAddressBar_Resize(Index As Integer)
 End Sub
 
 Private Sub pCert_Click(Index As Integer)
-
+    If Index = 0 Then
+        If myClient0.SSL <> 0 Then
+            If Not myClient0.PeerCertificate Is Nothing Then
+                myClient0.PeerCertificate.ViewCertificate
+            End If
+        End If
+    End If
+    If Index = 1 Then
+        If myClient1.SSL <> 0 Then
+            If Not myClient1.PeerCertificate Is Nothing Then
+                myClient1.PeerCertificate.ViewCertificate
+            End If
+        End If
+    End If
 End Sub
 
 Private Sub pDummyView_DragOver(Index As Integer, Source As Control, X As Single, Y As Single, State As Integer)
@@ -2497,10 +2513,6 @@ Private Sub pProgress_DragOver(Index As Integer, Source As Control, X As Single,
 End Sub
 
 
-
-Private Sub pSecure_Click(Index As Integer)
-
-End Sub
 
 Private Sub pSecure_Resize(Index As Integer)
     pCert(Index).Top = 0
@@ -3291,7 +3303,8 @@ On Error GoTo catch
         Loop
         
         If (Not ((Timer - elapsed) > myClient.timeout)) And (Not FTPUnloading(Index)) Then
-        
+
+
             FTPRefresh Index
     
             If myClient.URLType = URLTypes.File Then
@@ -3303,6 +3316,9 @@ On Error GoTo catch
                 FTPDisconnect Index
              SetStatus Index, "Attempting to connect timed out..."
         End If
+
+            PaintClientGUI Me, 0
+            PaintClientGUI Me, 1
     End If
 
     Set myClient = Nothing
@@ -5233,6 +5249,25 @@ Public Sub PaintClientGUI(ByRef myForm, ByVal Index As Integer)
             
             .pStatus(Index).Move 0, (.userGUI(Index).Height - .pStatus(Index).Height), .userGUI(Index).Width, (20 * Screen.TwipsPerPixelY)
             .pProgress(Index).Move 0, (.userGUI(Index).Height - .pProgress(Index).Height), .userGUI(Index).Width, (20 * Screen.TwipsPerPixelY)
+            If (Index = 0) And (myClient0.SSL <> 0) And myClient0.Connected Then
+                .pStatus(0).Width = .pStatus(0).Width - pSecure(0).Width
+                .pProgress(0).Width = (.pProgress(0).Width - pSecure(0).Width)
+                pSecure(0).Left = .pStatus(0).Width
+                pSecure(0).Top = .pStatus(0).Top + (4 * Screen.TwipsPerPixelY)
+                pSecure(0).Visible = True
+            ElseIf Index = 0 Then
+                pSecure(0).Visible = False
+            End If
+            
+            If (Index = 1) And (myClient1.SSL <> 0) And myClient1.Connected Then
+                .pStatus(1).Width = .pStatus(1).Width - pSecure(1).Width
+                .pProgress(1).Width = .pProgress(1).Width - pSecure(1).Width
+                pSecure(1).Left = .pStatus(1).Width
+                pSecure(1).Top = .pStatus(1).Top
+                pSecure(1).Visible = True
+            ElseIf Index = 1 Then
+                pSecure(1).Visible = False
+            End If
             
         Else
             cHeight = cHeight - (2 * Screen.TwipsPerPixelY)

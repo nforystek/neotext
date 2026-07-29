@@ -41,20 +41,20 @@ Public Declare Function TlsRenegotiate Lib "C:\Development\Neotext\Common\Binary
     (ByVal ctx As Long) As Long
 
 
-Public Declare Function TlsGetPeerCert Lib "TlsWrapper.dll" _
+Public Declare Function TlsGetPeerCert Lib "C:\Development\Neotext\Common\Binary\NTSecureTSL.dll" _
     (ByVal ctx As Long, _
      ByVal outBuf As Long, ByVal outSize As Long, _
      ByRef pErr As Long) As Long
 
-Public Declare Function TlsValidateCert Lib "TlsWrapper.dll" _
+Public Declare Function TlsValidateCert Lib "C:\Development\Neotext\Common\Binary\NTSecureTSL.dll" _
     (ByVal ctx As Long, _
      ByVal serverName As String, _
      ByRef pErr As Long) As Long
 
-Public Declare Function TlsGetProtocolVersion Lib "TlsWrapper.dll" _
+Public Declare Function TlsGetProtocolVersion Lib "C:\Development\Neotext\Common\Binary\NTSecureTSL.dll" _
     (ByVal ctx As Long) As Long
 
-Public Declare Function TlsGetPeerCertInfo Lib "TlsWrapper.dll" _
+Public Declare Function TlsGetPeerCertInfo Lib "C:\Development\Neotext\Common\Binary\NTSecureTSL.dll" _
     (ByVal ctx As Long, _
      ByVal outBuf As String, ByVal outSize As Long, _
      ByRef pErr As Long) As Long
@@ -63,12 +63,12 @@ Public Declare Function TlsGetPeerCertInfo Lib "TlsWrapper.dll" _
 
 #If modMemory = -1 Then
 #Else
-Public Function BytesFromString(ByVal s As String) As Byte()
+Public Function BytesFromString(ByVal S As String) As Byte()
     Dim b() As Byte
-    If LenB(s) = 0 Then
+    If LenB(S) = 0 Then
         ReDim b(0 To -1)
     Else
-        b = StrConv(s, vbFromUnicode)
+        b = StrConv(S, vbFromUnicode)
     End If
     BytesFromString = b
 End Function

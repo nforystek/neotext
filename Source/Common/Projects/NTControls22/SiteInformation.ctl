@@ -17,7 +17,7 @@ Begin VB.UserControl SiteInformation
          Height          =   315
          Left            =   3540
          Style           =   2  'Dropdown List
-         TabIndex        =   4
+         TabIndex        =   5
          Top             =   750
          Width           =   1335
       End
@@ -42,7 +42,7 @@ Begin VB.UserControl SiteInformation
          Caption         =   "Save"
          Height          =   240
          Left            =   2715
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   780
          Width           =   675
       End
@@ -381,8 +381,9 @@ Private Sub SetPasswordBox()
         Text1.Enabled = (Check3.Value = 0)
 
     End If
-    If Combo2.Enabled Then
-        If InStr(URLBox1.Text, ":990") Then
+    
+    If Combo2.Enabled And (InStr(LCase(URLBox1.Text), "s://") Or (InStr(URLBox1.Text, ":990") Or Text3.Text = "990")) And Combo2.ListIndex = 0 Then
+        If (InStr(URLBox1.Text, ":990") Or Text3.Text = "990") Then
             Combo2.ListIndex = 1
         ElseIf InStr(LCase(URLBox1.Text), "s://") > 0 Then
             Combo2.ListIndex = 2
@@ -457,6 +458,11 @@ End Property
 
 Private Sub UserControl_Initialize()
     
+    Combo2.AddItem "Insecure"
+    Combo2.AddItem "Implicit TLS"
+    Combo2.AddItem "Explicit TLS"
+    Combo2.ListIndex = 0
+    
     Set sHostURL = URLBox1
     Set sUserName = Text2(0)
     Set sPassword = Text2(1)
@@ -478,11 +484,7 @@ End Sub
 
 Private Sub UserControl_Show()
     
-    Combo2.Clear
-    Combo2.AddItem "Insecure"
-    Combo2.AddItem "Implicit TLS"
-    Combo2.AddItem "Explicit TLS"
-    Combo2.ListIndex = 0
+
     
     Dim item As Long
     item = -1

@@ -37,7 +37,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Neotext Common Controls"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Max-FTP 6.1"
-CondComp="NTControls22=-1:VBIDE=-1:modForms=-1:modWinProc=-1:modEditor=-1:modSockets=-1:modCommon=-1"
+CondComp="NTControls22 = -1 : VBIDE = -1 : modForms = -1 : modWinProc = -1 : modEditor = -1 : modSockets = -1 : modCommon = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

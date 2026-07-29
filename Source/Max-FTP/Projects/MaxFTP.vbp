@@ -1,6 +1,6 @@
 Type=OleExe
 Object={831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0; MSCOMCTL.OCX
-Object={C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1453.0#0; NTControls22.ocx
+Object={C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1458.0#0; NTControls22.ocx
 Object={86CF1D34-0C5F-11D2-A9FC-0000F8754DA1}#2.0#0; mscomct2.ocx
 Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; RICHTX32.OCX
 Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; comdlg32.ocx
@@ -93,7 +93,7 @@ VersionCompanyName="Neotext"
 VersionFileDescription="Max-FTP"
 VersionLegalCopyright="© 1999,2006,2013 by Nicholas Forystek"
 VersionProductName="Max-FTP 6.1"
-CondComp="MaxFTP=-1:VBIDE=-1:modMain=-1:modTrayIcon=-1:modGraphics=-1:modClipBoard=-1:modWildCard=-1:modAutoType=-1:modDBSchedule=-1:modFileAssoc=-1:modUser=-1:modMsgQueue=-1:modShared=-1:modForms=-1:modLists=-1:modInternet=-1:modGuid=-1:modChildren=-1:modNTServices=-1:modProcess=-1:modMenuUp=-1:modBitValue=-1:modWindow=-1:modCommon=-1:modUserInfo=-1:modMemory=-1:modSockets=-1:modRegistry=-1:modFolders=-1:modWin32Ver=-1"
+CondComp="MaxFTP = -1 : VBIDE = -1 : modMain = -1 : modTrayIcon = -1 : modGraphics = -1 : modClipBoard = -1 : modWildCard = -1 : modAutoType = -1 : modDBSchedule = -1 : modFileAssoc = -1 : modUser = -1 : modMsgQueue = -1 : modShared = -1 : modForms = -1 : modLists = -1 : modInternet = -1 : modGuid = -1 : modChildren = -1 : modNTServices = -1 : modProcess = -1 : modMenuUp = -1 : modBitValue = -1 : modWindow = -1 : modCommon = -1 : modUserInfo = -1 : modMemory = -1 : modSockets = -1 : modRegistry = -1 : modFolders = -1 : modWin32Ver = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0

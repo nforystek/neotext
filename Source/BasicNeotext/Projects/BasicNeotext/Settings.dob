@@ -13,8 +13,8 @@ Begin VB.UserDocument Settings
    VScrollSmallChange=   225
    Begin VB.Timer Timer1 
       Enabled         =   0   'False
-      Interval        =   5
-      Left            =   4035
+      Interval        =   500
+      Left            =   4065
       Top             =   840
    End
    Begin VB.CommandButton Command1 
@@ -232,7 +232,7 @@ Private Sub Check3_Click()
 End Sub
 
 Private Sub Check4_Click()
-    Command3.Enabled = (Check4.Value)
+    Command3.enabled = (Check4.Value)
     If Text2(1).Tag = 0 Then SaveSetting "BasicNeotext", "Options", "RestrictOnly", Check4.Value
 End Sub
 
@@ -247,11 +247,24 @@ End Sub
 Private Sub Text1_Change()
     If Text2(1).Tag = 0 Then SaveSetting "BasicNeotext", "Options", "Certificate", CStr(Text1.Text)
 End Sub
+
+Private Sub Text2_KeyPress(Index As Integer, KeyAscii As Integer)
+
+    If Timer1.enabled Then
+        Timer1.enabled = False
+        Timer1.enabled = True
+    End If
+End Sub
+
 Private Sub Text7_Change()
     If Text2(1).Tag = 0 Then SaveSetting "BasicNeotext", "Options", "Auxiliary", CStr(Text7.Text)
 End Sub
 
 Private Sub Text2_Change(Index As Integer)
+    Dim enabled As Boolean
+    enabled = Timer1.enabled
+    If enabled Then Timer1.enabled = False
+    
     If Text2(1).Tag = 0 Then
         Text2(1).Tag = -1
         If Not (Trim(Text2(0).Text) <> Trim(Text2(1).Text) And (Not (Text2(1).Text = "" And Text2(0).Text = Text2(0).Tag))) Then
@@ -268,6 +281,7 @@ Private Sub Text2_Change(Index As Integer)
         End If
         Text2(1).Tag = 0
     End If
+    If enabled Then Timer1.enabled = True
 End Sub
 
 Private Sub Text3_Change()
@@ -299,7 +313,7 @@ Private Sub Text6_Change()
 End Sub
 
 Private Sub Timer1_Timer()
-    Timer1.Enabled = False
+    Timer1.enabled = False
     
     RaiseEvent TimeFrame
     
@@ -320,7 +334,7 @@ Private Sub Timer1_Timer()
         End If
         
         If Text2(1).Tag <> -2 Then
-            Timer1.Enabled = True
+            Timer1.enabled = True
         End If
     End If
     
@@ -357,11 +371,11 @@ Private Sub UserDocument_Initialize()
 End Sub
 
 Public Sub StartTimer()
-    Timer1.Enabled = True
+    Timer1.enabled = True
 End Sub
 
 Public Sub StopTimer()
-    Timer1.Enabled = False
+    Timer1.enabled = False
     Text2(1).Tag = -2
 End Sub
 

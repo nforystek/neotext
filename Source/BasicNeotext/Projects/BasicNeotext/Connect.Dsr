@@ -183,7 +183,7 @@ Private Sub docSettings_TimeFrame()
     
         GetCursorPos M_Mouse ' Get the mouse x and y positions
         
-        Wnd = WindowFromPoint(M_Mouse.x, M_Mouse.y) ' Get the windows handle
+        Wnd = WindowFromPoint(M_Mouse.X, M_Mouse.Y) ' Get the windows handle
         Wnd_ClassCaption = Space(256) ' ' Sets wnd_caption to a space of 256
         
         ' Get the class name
@@ -195,7 +195,7 @@ Private Sub docSettings_TimeFrame()
     
                 GetWindowRect Wnd, rt
                 
-                cmdButton9.Caption = "(" & (M_Mouse.x - rt.Left) & ", " & (M_Mouse.y - rt.Top) & ")"
+                cmdButton9.Caption = "(" & (M_Mouse.X - rt.Left) & ", " & (M_Mouse.Y - rt.Top) & ")"
         
             Case Else
                 cmdButton9.Caption = "(X, Y)"
@@ -320,9 +320,9 @@ Private Function CheckCommandObj(ByVal cmdObj As Object, ByVal UIState As UIStat
             Else
                 val = ((UIState And UIStates.Design) = UIStates.Design)
             End If
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case "Start &The Executable", 459
             If Not (VBInstance.ActiveVBProject Is Nothing) Then
@@ -330,15 +330,15 @@ Private Function CheckCommandObj(ByVal cmdObj As Object, ByVal UIState As UIStat
             Else
                 val = ((UIState And UIStates.Design) = UIStates.Design)
             End If
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case "Start With &Full Compile", 539
             val = ((UIState And UIStates.Design) = UIStates.Design)
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case "Remake Pro&ject Build", 37
             If Not (VBInstance.ActiveVBProject Is Nothing) Then
@@ -346,21 +346,21 @@ Private Function CheckCommandObj(ByVal cmdObj As Object, ByVal UIState As UIStat
              Else
                 val = ((UIState And UIStates.Design) = UIStates.Design)
             End If
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case "Make...", 215
             val = ((UIState And UIStates.Design) = UIStates.Design)
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case "Make Project &Group..."
             val = ((UIState And UIStates.Design) = UIStates.Design)
-            If Not (cmdObj.Enabled = val) Then
-                cmdObj.Enabled = val
-                CheckCommandObj = (cmdObj.Enabled <> val)
+            If Not (cmdObj.enabled = val) Then
+                cmdObj.enabled = val
+                CheckCommandObj = (cmdObj.enabled <> val)
             End If
         Case Else
     End Select

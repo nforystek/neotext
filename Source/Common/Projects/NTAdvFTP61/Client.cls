@@ -17,7 +17,7 @@ Option Compare Binary
 
 
 Public Enum SSLMethods
-    InSecure = 0
+    Insecure = 0
     'Automatic = -1
     Implicit = 1
     Explicit = 2
@@ -177,6 +177,11 @@ Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Private ftpElapse As Single
 
+Public Function PeerCertificate() As Certificate
+    If mTCP.Connected And (Not mTCP.SSL = 0) Then
+        Set PeerCertificate = mTCP.PeerCertificate
+    End If
+End Function
 
 Public Property Get GetLastError() As String
     GetLastError = SetLastError(ReturnError)
@@ -239,7 +244,7 @@ Public Property Let SSL(ByRef RHS As SSLMethods)
     ElseIf RHS = Explicit Then
         If mTCP.Connected Then mTCP.SSL = True
         If mData.Connected Then mData.SSL = True
-    ElseIf RHS = InSecure Then
+    ElseIf RHS = Insecure Then
         If Not mTCP.Connected Then mTCP.SSL = False
         If Not mData.Connected Then mData.SSL = False
     End If
