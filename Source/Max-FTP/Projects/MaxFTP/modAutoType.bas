@@ -119,7 +119,9 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
             sInfo.sPort.Text = CStr(rs("Port"))
             sInfo.sPassive.Value = BoolToCheck(rs("Passive"))
             sInfo.sPortRange.Text = rs("PortRange")
+            Debug.Print "SSL1: " & rs("SSL")
             sInfo.sSSL.ListIndex = rs("SSL")
+            Debug.Print "SSL2: " & sInfo.sSSL.ListIndex
             sInfo.sAdapter.ListIndex = (rs("Adapter") - 1)
             sInfo.sSavePass.Value = 1
         Else
@@ -133,7 +135,10 @@ Public Sub LoadCache(ByVal sInfo As NTControls22.SiteInformation)
                 sInfo.sPort.Text = CStr(rs("Port"))
                 sInfo.sPassive.Value = BoolToCheck(rs("Passive"))
                 sInfo.sPortRange.Text = rs("PortRange")
+            sInfo.sPortRange.Text = rs("PortRange")
+            Debug.Print "SSL3: " & rs("SSL")
                 sInfo.sSSL.ListIndex = rs("SSL")
+            Debug.Print "SSL4: " & sInfo.sSSL.ListIndex
                 sInfo.sAdapter.ListIndex = (rs("Adapter") - 1)
                 sInfo.sSavePass.Value = 1
             Else

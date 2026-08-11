@@ -36,14 +36,14 @@ Public Enum eDATASIZE
     doubleArray = 8
 End Enum
 
-Public Declare Function VarPtrArray Lib "msvbvm60.dll" Alias "VarPtr" (Var() As Any) As Long
+Public Declare Function VarPtrArray Lib "MSVBVM60.DLL" Alias "VarPtr" (Var() As Any) As Long
 Public Declare Function StrCpy Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As String, ByVal lpString2 As Long) As Long
 Public Declare Function StrCpyReverse Lib "kernel32" Alias "lstrcpyA" (ByVal lpString1 As Long, ByVal lpString2 As String) As Long
 Public Declare Function StrLen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
-Public Declare Function vbaObjSetAddref Lib "msvbvm60.dll" Alias _
+Public Declare Function vbaObjSetAddref Lib "MSVBVM60.DLL" Alias _
     "__vbaObjSetAddref" (dstObject As Any, ByVal srcObjPtr As Long) As Long
     
-Public Declare Function vbaObjSet Lib "msvbvm60.dll" Alias "__vbaObjSet" _
+Public Declare Function vbaObjSet Lib "MSVBVM60.DLL" Alias "__vbaObjSet" _
     (dstObject As Any, ByVal srcObjPtr As Long) As Long
     
 Public Type MethodInfo
@@ -133,10 +133,10 @@ Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (pDst As Any,
 Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 Public Declare Sub FillMemory Lib "kernel32.dll" Alias "RtlFillMemory" (Destination As Any, ByVal Length As Long, ByVal Fill As Byte)
 
-Public Declare Sub CopyBytes Lib "msvbvm60.dll" Alias "__vbaCopyBytes" (ByVal ByteLen As Long, ByRef Dest As Any, ByVal src As Any)
-Public Declare Sub GetMem8 Lib "msvbvm60.dll" (ByRef pSrc As Any, ByRef pDest As Any)
-Public Declare Sub GetMem4 Lib "msvbvm60.dll" (ByRef pSrc As Any, ByRef pDest As Any)
-Public Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Addr As Long, ByVal newVal As Long)
+Public Declare Sub CopyBytes Lib "MSVBVM60.DLL" Alias "__vbaCopyBytes" (ByVal ByteLen As Long, ByRef Dest As Any, ByVal src As Any)
+Public Declare Sub GetMem8 Lib "MSVBVM60.DLL" (ByRef pSrc As Any, ByRef pDest As Any)
+Public Declare Sub GetMem4 Lib "MSVBVM60.DLL" (ByRef pSrc As Any, ByRef pDest As Any)
+Public Declare Sub PutMem4 Lib "MSVBVM60.DLL" (ByVal Addr As Long, ByVal newVal As Long)
 
 
 Private Function GetPtr(VarVal As Variant) As Long
@@ -380,36 +380,38 @@ On Local Error GoTo dimerror:
 dimerror:
     If dimcheck = 0 Then
         dimcheck = 1
-        Err.Clear
+        err.Clear
         GoTo startover
     End If
     ArraySize = 0
 End Function
-Public Function Convert(Info)
+Public Function Convert(info)
     'slow method of converting byte
     'array to string and vice versa
     '1:1, byte:character no unicode
-    Dim N As Long
-    Dim out() As Byte
-    Dim ret As String
-    Select Case TypeName(Info)
+'    Dim N As Long
+'    Dim out() As Byte
+'    Dim ret As String
+    Select Case TypeName(info)
         Case "String"
-            If Len(Info) > 0 Then
-                ReDim out(0 To Len(Info) - 1) As Byte
-                For N = 0 To Len(Info) - 1
-                    out(N) = Asc(Mid(Info, N + 1, 1))
-                Next
-            Else
-                ReDim out(-1 To -1) As Byte
-            End If
-            Convert = out
+            Convert = BytesFromString(info)
+'            If Len(info) > 0 Then
+'                ReDim out(0 To Len(info) - 1) As Byte
+'                For N = 0 To Len(info) - 1
+'                    out(N) = Asc(Mid(info, N + 1, 1))
+'                Next
+'            Else
+'                ReDim out(-1 To -1) As Byte
+'            End If
+'            Convert = out
         Case "Byte()"
-            If (ArraySize(Info) > 0) Then
-                For N = LBound(Info) To UBound(Info)
-                    ret = ret & Chr(Info(N))
-                Next
-            End If
-            Convert = ret
+            Convert = StringFromBytes(info)
+'            If (ArraySize(info) > 0) Then
+'                For N = LBound(info) To UBound(info)
+'                    ret = ret & Chr(info(N))
+'                Next
+'            End If
+'            Convert = ret
     End Select
 End Function
 
@@ -434,7 +436,7 @@ Public Function ArrayPtr(Arr) As Long
     End If
     Exit Function
 UnInit:
-    If Err Then Err.Clear
+    If err Then err.Clear
 End Function
 ' ++++++++++++++++++++++++++++++++++++++
 
@@ -471,7 +473,7 @@ Public Function CreateANSI(Optional ByVal StringX As String = "") As Long 'globa
     'creates the ansi memory for a stringx
     Dim out As Long
     out = GlobalAlloc(GMEM_MOVEABLE And VarPtr(out), LenB(StringX))
-    If out <> GlobalLock(out) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+    If out <> GlobalLock(out) Then err.Raise 8, App.Title, "Global memory lock mismatch."
     RtlMoveMemory ByVal out, StringX, LenB(StringX)
     CreateANSI = out
 End Function
@@ -486,7 +488,7 @@ Public Sub AppendANSI(ByRef ansi As Long, ByVal StringX As String) 'global
     'concatenates the stringx to the end of the ansi
     GlobalUnlock ansi
     ansi = GlobalReAlloc(ansi, StrLen(ansi) + LenB(StringX), GMEM_MOVEABLE Or GPTR)
-    If ansi <> GlobalLock(ansi) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+    If ansi <> GlobalLock(ansi) Then err.Raise 8, App.Title, "Global memory lock mismatch."
     StrCpyReverse ansi, StringANSI(ansi) & StringX
 End Sub
 
@@ -534,7 +536,7 @@ Public Function ArrayToANSI(ByRef ansi() As Byte) As Long 'global
     'converts the array to ansi making it able the local ansi use
     Dim out As Long
     out = GlobalAlloc(GMEM_MOVEABLE Or VarPtr(out), ArraySize(ansi))
-    If out <> GlobalLock(out) Then Err.Raise 8, App.Title, "Global memory lock mismatch."
+    If out <> GlobalLock(out) Then err.Raise 8, App.Title, "Global memory lock mismatch."
     RtlMoveMemory ByVal out, ByVal VarPtr(ansi(LBound(ansi))), ArraySize(ansi)
     ArrayToANSI = out
 End Function
@@ -550,7 +552,7 @@ Public Function lCreateANSI(Optional ByVal StringX As String = "") As Long 'loca
     'creates the ansi memory for a stringx
     Dim out As Long
     out = LocalAlloc(LMEM_MOVEABLE And VarPtr(out), LenB(StringX))
-    If out <> LocalLock(out) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+    If out <> LocalLock(out) Then err.Raise 8, App.Title, "Local memory lock mismatch."
     RtlMoveMemory ByVal out, StringX, LenB(StringX)
     lCreateANSI = out
 End Function
@@ -565,7 +567,7 @@ Public Sub lAppendANSI(ByRef ansi As Long, ByVal StringX As String) 'local
     'concatenates the stringx to the end of the ansi
     LocalUnlock ansi
     ansi = LocalReAlloc(ansi, StrLen(ansi) + LenB(StringX), LMEM_MOVEABLE Or lPtr)
-    If ansi <> LocalLock(ansi) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+    If ansi <> LocalLock(ansi) Then err.Raise 8, App.Title, "Local memory lock mismatch."
     StrCpyReverse ansi, lStringANSI(ansi) & StringX
 End Sub
 
@@ -612,7 +614,7 @@ Public Function lArrayToANSI(ByRef ansi() As Byte) As Long 'local
     'converts the array to ansi making it able the local ansi use
     Dim out As Long
     out = LocalAlloc(LMEM_MOVEABLE And VarPtr(out), ArraySize(ansi))
-    If out <> LocalLock(out) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+    If out <> LocalLock(out) Then err.Raise 8, App.Title, "Local memory lock mismatch."
     RtlMoveMemory ByVal out, ByVal VarPtr(ansi(LBound(ansi))), ArraySize(ansi)
     lArrayToANSI = out
 End Function
@@ -643,7 +645,7 @@ Public Function nArrayToString(ByRef ary() As Byte) As String
     Dim ansi As Long
    ' ansi = lCreateANSI(String(ArraySize(ary), Chr(0)))
     ansi = LocalAlloc(LMEM_MOVEABLE And VarPtr(ansi), ArraySize(ary))
-    If ansi <> LocalLock(ansi) Then Err.Raise 8, App.Title, "Local memory lock mismatch."
+    If ansi <> LocalLock(ansi) Then err.Raise 8, App.Title, "Local memory lock mismatch."
     RtlMoveMemory ByVal ansi, ByVal VarPtr(ary(LBound(ary))), ArraySize(ary)
     nArrayToString = lStringANSI(ansi)
     lDestroyANSI ansi
@@ -651,3 +653,25 @@ End Function
 
 '##########################################################################################################################
 '##########################################################################################################################
+
+
+Public Function BytesFromString(ByVal S As String) As Byte()
+    Dim b() As Byte
+    If LenB(S) = 0 Then
+        ReDim b(0 To -1)
+    Else
+        b = StrConv(S, vbFromUnicode)
+    End If
+    BytesFromString = b
+End Function
+
+Public Function StringFromBytes(b) As String
+    Dim b2() As Byte
+    b2 = b
+    If (Not Not b2) = 0 Then
+        StringFromBytes = ""
+    Else
+        StringFromBytes = StrConv(b2, vbUnicode)
+    End If
+    Erase b2
+End Function

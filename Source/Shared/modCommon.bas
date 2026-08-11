@@ -269,37 +269,54 @@ dimerror:
 End Function
 
 
-Public Function Convert(Info)
+Public Function Convert(info)
+#If modMemory = -1 Then
+        #Else
     Dim N As Long
     Dim out() As Byte
     Dim ret As String
-    Select Case VBA.TypeName(Info)
+        #End If
+    Select Case VBA.TypeName(info)
         Case "String"
-            If Len(Info) > 0 Then
-                ReDim out(0 To Len(Info) - 1) As Byte
-                For N = 0 To Len(Info) - 1
-                    out(N) = Asc(Mid(Info, N + 1, 1))
+        #If modMemory = -1 Then
+            Convert = BytesFromString(info)
+        #Else
+            If Len(info) > 0 Then
+                ReDim out(0 To Len(info) - 1) As Byte
+                For N = 0 To Len(info) - 1
+                    out(N) = Asc(Mid(info, N + 1, 1))
                 Next
             Else
                 ReDim out(-1 To -1) As Byte
             End If
             Convert = out
+        #End If
         Case "Byte()"
-            If (ArraySize(Info) > 0) Then
+        #If modMemory = -1 Then
+            Convert = StringFromBytes(info)
+        #Else
+            If (ArraySize(info) > 0) Then
                 On Error GoTo dimcheck
-                For N = LBound(Info) To UBound(Info)
-                    ret = ret & Chr(Info(N))
+                For N = LBound(info) To UBound(info)
+                    ret = ret & Chr(info(N))
                 Next
             End If
             Convert = ret
+        #End If
     End Select
+#If modMemory = -1 Then
+        #Else
     Exit Function
 dimcheck:
     If Err Then Err.Clear
-    For N = LBound(Info, 2) To UBound(Info, 2)
-        ret = ret & Chr(Info(0, N))
+    Dim m As Long
+    For N = LBound(info, 2) To UBound(info, 2)
+        For m = LBound(info, 1) To UBound(info, 1)
+            ret = ret & Chr(info(m, N))
+        Next
     Next
     Convert = ret
+#End If
 End Function
 #End If
 
@@ -859,13 +876,13 @@ Public Function ClearCollection(ByRef ColList, Optional ByVal IsObjects As Boole
     If Not ColList Is Nothing Then
         If IsObjects Then
             Dim obj As Object
-            Do Until ColList.Count = 0
+            Do Until ColList.count = 0
                 Set obj = ColList(1)
                 ColList.Remove 1
                 Set obj = Nothing
             Loop
         Else
-            Do Until ColList.Count = 0
+            Do Until ColList.count = 0
                 ColList.Remove 1
             Loop
         End If

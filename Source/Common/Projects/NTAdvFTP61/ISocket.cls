@@ -109,6 +109,11 @@ Returns whether the socket is in a active state by a previous call to Connect, a
     Connected = ((State(States.Opened) Or State(States.Opening)) And State(States.Closing)) Or (State(States.Opened) And (Not State(States.Closed)))
 '    Debug.Print State(States.Opening); State(States.Opened); State(States.Closing); State(States.Closed)
 End Property
+Friend Property Get Cancelling() As Boolean ' _
+Returns whether the socket is in a active state of flagged for cancelling from Disconnect() or otherwise.
+    Cancelling = (State(States.Closing) Or State(States.Closed)) Or (Not State(States.Opened))
+'    Debug.Print State(States.Opening); State(States.Opened); State(States.Closing); State(States.Closed)
+End Property
 Public Property Get Listening() As Boolean ' _
 Returns whether the socket is in Listening mode from a previous call to Listen, and would determine the Connection event then is also active if so.
     Listening = State(States.Binded)

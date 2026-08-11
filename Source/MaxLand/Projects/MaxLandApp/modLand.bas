@@ -177,10 +177,12 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
         
     DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDefault
+
+
     
-    Dim matWorld As D3DMATRIX
-    D3DXMatrixIdentity matWorld
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+'    Dim matWorld As D3DMATRIX
+'    D3DXMatrixIdentity matWorld
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
 
     Dim useObj As Orient
 
@@ -412,6 +414,7 @@ Public Sub RenderWorld(Optional ByRef Mirror As Board = Nothing)
             Set e1 = Nothing
         Next
     End If
+
 End Sub
 
 Public Sub RenderBoards(Optional ByRef Mirror As Board = Nothing)
@@ -419,7 +422,8 @@ Public Sub RenderBoards(Optional ByRef Mirror As Board = Nothing)
     Dim o As Long
                                     
     DDevice.SetRenderState D3DRS_ZENABLE, 1
-
+    
+                                    
     DDevice.SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
     DDevice.SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
     DDevice.SetRenderState D3DRS_ALPHABLENDENABLE, 1
@@ -469,6 +473,7 @@ Public Sub RenderBoards(Optional ByRef Mirror As Board = Nothing)
             End If
         Next
     End If
+
     
 End Sub
 
@@ -493,6 +498,7 @@ Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
     Dim matWorld As D3DMATRIX
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
+
     
     If Camera Is Nothing Then Exit Sub
         
@@ -521,7 +527,6 @@ Public Sub RenderLucent(Optional ByRef Mirror As Board = Nothing)
                                     
                                     
                                     'e1.SetWorldMatrix
-                                    
                                     'D3DXMatrixIdentity matLucent
                                     'DDevice.SetTransform D3DTS_WORLD, matLucent
                                     'e1.PrepairMatrix
@@ -677,9 +682,9 @@ Public Sub RenderBeacons(Optional ByRef Mirror As Board = Nothing)
     Dim matPos As D3DMATRIX
     Dim matBeacon As D3DMATRIX
     
-    Dim matWorld As D3DMATRIX
-    D3DXMatrixIdentity matWorld
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+'    Dim matWorld As D3DMATRIX
+'    D3DXMatrixIdentity matWorld
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
     
     Dim a1 As Beacon
     
@@ -1055,9 +1060,9 @@ Public Sub RenderSpaces(Optional ByRef Mirror As Board = Nothing)
     DDevice.SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
     DDevice.SetVertexShader FVF_RENDER
     
-    Dim matWorld As D3DMATRIX
-    D3DXMatrixIdentity matWorld
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+'    Dim matWorld As D3DMATRIX
+'    D3DXMatrixIdentity matWorld
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
     
     Dim fogState As Boolean
     fogState = DDevice.GetRenderState(D3DRS_FOGENABLE)

@@ -6,10 +6,8 @@
 
 #include <windows.h>
 #include <wincrypt.h>
-#include <schannel.h>
 #include <sspi.h>
-
-
+#include <schannel.h>
 
 // VC6 / Server 2003 SDK does not define modern TLS protocol flags
 #ifndef SP_PROT_TLS1_0_CLIENT
@@ -30,16 +28,42 @@
 #ifndef SP_PROT_TLS1_1_SERVER
 #define SP_PROT_TLS1_1_SERVER 0x00000100
 #endif
+
 #ifndef SP_PROT_TLS1_1_CLIENT
 #define SP_PROT_TLS1_1_CLIENT 0x00000200
 #endif
-#ifndef SP_PROT_TLS1_2_SERVER
-#define SP_PROT_TLS1_2_SERVER 0x00000400
-#endif
+
+// TLS 1.2 flags (older SDKs often missing these)
 #ifndef SP_PROT_TLS1_2_CLIENT
 #define SP_PROT_TLS1_2_CLIENT 0x00000800
 #endif
 
+#ifndef SP_PROT_TLS1_2_SERVER
+#define SP_PROT_TLS1_2_SERVER 0x00000400
+#endif
+
+// TLS 1.3 flags (exist only in very new SDKs)
+#ifndef SP_PROT_TLS1_3_CLIENT
+#define SP_PROT_TLS1_3_CLIENT 0x00002000
+#endif
+
+#ifndef SP_PROT_TLS1_3_SERVER
+#define SP_PROT_TLS1_3_SERVER 0x00001000
+#endif
+
+// Strong crypto flag (filters weak cipher suites)
+#ifndef SCH_USE_STRONG_CRYPTO
+#define SCH_USE_STRONG_CRYPTO 0x00400000
+#endif
+
+
+#ifndef SP_PROT_TLS1_3_SERVER
+#define SP_PROT_TLS1_3_SERVER 0x00001000
+#endif
+// Strong crypto flag (filters weak cipher suites)
+#ifndef SCH_USE_STRONG_CRYPTO
+#define SCH_USE_STRONG_CRYPTO 0x00400000
+#endif
 
 #ifdef __cplusplus
 extern "C" {

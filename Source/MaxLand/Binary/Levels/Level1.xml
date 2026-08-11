@@ -23,9 +23,9 @@
         <hudearthrimg.visible>False</hudearthrimg.visible>
         <hudearthbimg.visible>False</hudearthbimg.visible>
         <hudearth2img.visible>False</hudearth2img.visible>
-        <pawn1.origin>[-8.948, -1.803052, -11.312]</pawn1.origin>
-        <pawn2.origin>[-11.606, -25.84758, 26.708]</pawn2.origin>
-        <pawn3.origin>[-7.948, -1.803052, -11.312]</pawn3.origin>
+        <pawn1.origin>[-8.948, -1.805899, -11.312]</pawn1.origin>
+        <pawn2.origin>[-11.606, -25.79988, 26.708]</pawn2.origin>
+        <pawn3.origin>[-7.948, -1.805899, -11.312]</pawn3.origin>
   </Variables>
 <DateTime>5%2F10%2F2026+8%3A26%3A30+AM</DateTime>
 <Code>checkvix%0D%0A%09checkearth%0D%0A%09checkwater%0D%0A%09checkgame</Code>  <Bindings>

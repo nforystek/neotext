@@ -5,6 +5,9 @@ Public Mirroring As Boolean
 
 Private Mirrors As NTNodes10.Collection
 
+Private MirrorPoint As D3DVECTOR
+Private MirrorNormal As D3DVECTOR
+
 Public Sub BeginMirrors()
 
     If Camera Is Nothing Then Exit Sub
@@ -18,7 +21,11 @@ Public Sub BeginMirrors()
     Dim rct As RECT
     Dim CullMode As Long
 
-        
+
+    
+  '  CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
+   ' DDevice.SetRenderState D3DRS_CULLMODE, IIf(CullMode = D3DCULL_CW, D3DCULL_CCW, IIf(CullMode = D3DCULL_CCW, D3DCULL_CW, D3DCULL_NONE))
+    
     If Not Mirrors Is Nothing Then Mirrors.Clear
 
     If Boards.Count > 0 Then
@@ -32,10 +39,7 @@ Public Sub BeginMirrors()
                 If L <= FAR Then
 
                     If Mirrors Is Nothing Then Set Mirrors = New NTNodes10.Collection
-                    
-                    
-                    CullMode = DDevice.GetRenderState(D3DRS_CULLMODE)
-                    DDevice.SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
+
                     
                     
                     DViewPort.X = 0
@@ -45,22 +49,205 @@ Public Sub BeginMirrors()
                     
                     DSurface.BeginScene ReflectRenderTarget, DViewPort
 
+                
+                '#################################################################
+                '#### SetupWorld configures the matricies used for DirectX 3D ####
+                '#################################################################
+                'elapsed = Timer
+                SetupWorld
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+                
+                
+                '##################################################################
+                '#### RenderMotion prepairs a subsets of preliminary movements ####
+                '##################################################################
+                'elapsed = Timer
+                RenderMotion
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+                                
+            
+
+                '#########################################################
+                '#### RenderSpaces the skies/planes that may be setup ####
+                '#########################################################
+                'elapsed = Timer
+                RenderSpaces
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+                
+                
+                '########################################################
+                '#### RenderWorld renders all the mesh based objects ####
+                '########################################################
+                'elapsed = Timer
+                RenderWorld
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
+                
+
+                '##########################################################
+                '#### RenderPlayer renders the player's element object ####
+                '##########################################################
+                'elapsed = Timer
+                RenderPlayer
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+                
+
+                '##################################################################
+                '#### RenderBoards renders any visible texture boards or walls ####
+                '##################################################################
+                'elapsed = Timer
+                RenderBoards
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
 
 
+                '##################################################################
+                '#### RenderLucent renders alphablent and translucent textures ####
+                '##################################################################
+                'elapsed = Timer
+                RenderLucent
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+
+
+                '#############################################################
+                '#### RenderBeacons renders forward faced texture beacons ####
+                '#############################################################
+                'elapsed = Timer
+                RenderBeacons
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+
+
+                '###############################################################
+                '#### RenderCameras moves the view camera if in camera mode ####
+                '###############################################################
+                'elapsed = Timer
+                RenderCameras
+                'elapsed = (Timer - elapsed)
+                'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
+                
+                
+
+
+'                '#################################################################
+'                '#### SetupWorld configures the matricies used for DirectX 3D ####
+'                '#################################################################
+'                'elapsed = Timer
+'                SetupWorld
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
+'
+'
+''                '##################################################################
+''                '#### RenderMotion prepairs a subsets of preliminary movements ####
+''                '##################################################################
+''                'elapsed = Timer
+''                RenderMotion
+''                'elapsed = (Timer - elapsed)
+''                'If elapsed > 0 Then Debug.Print "RenderMotion: " & elapsed
+'
+'
+'
+'                '#########################################################
+'                '#### RenderSpaces the skies/planes that may be setup ####
+'                '#########################################################
+'                'elapsed = Timer
+'                RenderSpaces
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+'
+'
+'                '########################################################
+'                '#### RenderWorld renders all the mesh based objects ####
+'                '########################################################
+'                'elapsed = Timer
+'                RenderWorld
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
+'
+'
+'                '##########################################################
+'                '#### RenderPlayer renders the player's element object ####
+'                '##########################################################
+'                'elapsed = Timer
+'                RenderPlayer
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+'
+'
+'                '##################################################################
+'                '#### RenderBoards renders any visible texture boards or walls ####
+'                '##################################################################
+'                'elapsed = Timer
+'                RenderBoards
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderBoards: " & elapsed
+'
+'
+''                '################################################################
+''                '#### RenderMirrors renders mirrors collected by BeginMirros ####
+''                '################################################################
+''                 'elapsed = Timer
+''                RenderMirrors
+''                'elapsed = (Timer - elapsed)
+''                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+'
+'
+'                '##################################################################
+'                '#### RenderLucent renders alphablent and translucent textures ####
+'                '##################################################################
+'                'elapsed = Timer
+'                RenderLucent
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderLucent: " & elapsed
+'
+'
+'                '#############################################################
+'                '#### RenderBeacons renders forward faced texture beacons ####
+'                '#############################################################
+'                'elapsed = Timer
+'                RenderBeacons
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
+'
+'
+''                '###########################################################
+''                '#### RenderPortals handles all the Portal based events ####
+''                '###########################################################
+''                'elapsed = Timer
+''                RenderPortals
+''                'elapsed = (Timer - elapsed)
+''                'If elapsed > 0 Then Debug.Print "RenderPortals: " & elapsed
+'
+'
+'                '###############################################################
+'                '#### RenderCameras moves the view camera if in camera mode ####
+'                '###############################################################
+'                'elapsed = Timer
+'                RenderCameras
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderCameras: " & elapsed
+
+
+
+
+''                    'elapsed = Timer
+''                    SetupWorld
+''                    'elapsed = (Timer - elapsed)
+''                    'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
 '
 '
 '                    'elapsed = Timer
-'                    SetupWorld
+'                    SetupMirror e
 '                    'elapsed = (Timer - elapsed)
 '                    'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
-                    
-
-                    'elapsed = Timer
-                    SetupMirror e
-                    'elapsed = (Timer - elapsed)
-                    'If elapsed > 0 Then Debug.Print "SetupWorld: " & elapsed
-
-
+'
+'
 '                    '#########################################################
 '                    '#### RenderSpaces the skies/planes that may be setup ####
 '                    '#########################################################
@@ -113,46 +300,44 @@ Public Sub BeginMirrors()
 '                    RenderBeacons e
 '                    'elapsed = (Timer - elapsed)
 '                    'If elapsed > 0 Then Debug.Print "ReanderBeacons: " & elapsed
-                    
-          
 
                                 
             
 
-                '#########################################################
-                '#### RenderSpaces the skies/planes that may be setup ####
-                '#########################################################
-                'elapsed = Timer
-                RenderSpaces
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
-                
-                
-                '########################################################
-                '#### RenderWorld renders all the mesh based objects ####
-                '########################################################
-                'elapsed = Timer
-                RenderWorld
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
-                
-
-                '##########################################################
-                '#### RenderPlayer renders the player's element object ####
-                '##########################################################
-                'elapsed = Timer
-                RenderPlayer
-                'elapsed = (Timer - elapsed)
-                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
-                
-                
-                
-                
-                
-                
-                
-                
-                
+'                '#########################################################
+'                '#### RenderSpaces the skies/planes that may be setup ####
+'                '#########################################################
+'                'elapsed = Timer
+'                RenderSpaces
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderSpaces: " & elapsed
+'
+'
+'                '########################################################
+'                '#### RenderWorld renders all the mesh based objects ####
+'                '########################################################
+'                'elapsed = Timer
+'                RenderWorld
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderWorld: " & elapsed
+'
+'
+'                '##########################################################
+'                '#### RenderPlayer renders the player's element object ####
+'                '##########################################################
+'                'elapsed = Timer
+'                RenderPlayer
+'                'elapsed = (Timer - elapsed)
+'                'If elapsed > 0 Then Debug.Print "RenderPlayer: " & elapsed
+'
+'
+'
+'
+'
+'
+'
+'
+'
 '                '##################################################################
 '                '#### RenderBoards renders any visible texture boards or walls ####
 '                '##################################################################
@@ -218,8 +403,6 @@ Public Sub BeginMirrors()
                         DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
                         D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), Boards.Key(i)
                     Kill GetTemporaryFolder & "\" & Boards.Key(i) & ".bmp"
-
-                    DDevice.SetRenderState D3DRS_CULLMODE, CullMode
                 
                 End If
 
@@ -227,6 +410,8 @@ Public Sub BeginMirrors()
             Set e = Nothing
         Next
     End If
+   ' DDevice.SetRenderState D3DRS_CULLMODE, CullMode
+    
 End Sub
 
 
@@ -242,9 +427,9 @@ Public Sub RenderMirrors()
     DDevice.SetVertexShader FVF_RENDER
     DDevice.SetPixelShader PixelShaderDefault
 
-    Dim matWorld As D3DMATRIX
-    D3DXMatrixIdentity matWorld
-    DDevice.SetTransform D3DTS_WORLD, matWorld
+'    Dim matWorld As D3DMATRIX
+'    D3DXMatrixIdentity matWorld
+'    DDevice.SetTransform D3DTS_WORLD, matWorld
     
     If Player.Camera Is Nothing Then Exit Sub
     
@@ -309,57 +494,42 @@ On Error GoTo WorldError
     D3DXMatrixIdentity matPitch
 
 
+
     D3DXMatrixRotationY matRotation, 0
     D3DXMatrixRotationX matPitch, 0.5
     D3DXMatrixMultiply matWorld, matRotation, matPitch
     DDevice.SetTransform D3DTS_WORLD, matWorld
-
-    Dim vec As Point
-    Set vec = VectorDeduction(Camera.Element.Origin, Mirror.Origin)
-
-'    Dim norm As Point
-'    Set norm = PlaneNormal(Mirror.Point1, Mirror.Point2, Mirror.Point3)
-
-    Dim Angle As Single
-    Dim Pitch As Single
-
-    Angle = AngleOfPlot(-vec.X, -vec.Z)
-
-    Pitch = vec.Y
     
-'Debug.Print Player.Camera.Pitch
-
-   ' Set norm = VertexNormalize(modGeometry.VectorCrossProduct(norm, vec))
-   
-   
-
-
-    D3DXMatrixTranslation matPos, vec.X, vec.Y, vec.Z
     
-    D3DXMatrixMultiply matLook, matPos, matLook
-    DDevice.SetTransform D3DTS_VIEW, matLook
-
-   ' Set norm = modGeometry.VectorMultiply(norm, MakePoint(Pitch, Angle, 0))
-
-
-    D3DXMatrixRotationY matRotation, Angle
-    D3DXMatrixMultiply matLook, matRotation, matLook
     
-
-    D3DXMatrixRotationX matPitch, Pitch
-    D3DXMatrixMultiply matLook, matPitch, matLook
-
-
-    DDevice.SetTransform D3DTS_VIEW, matLook
+'    'Mirror plane: at z = 0, facing +Z
+'    Dim MirrorPlane As Plane
+'    Set MirrorPlane = ToPlane(Mirror.Point1, Mirror.Point2, Mirror.Point3)
+'
+'
+'
+'    Dim rPos As Point
+'    Dim rLook As Point
+'
+'    ' Reflect camera position & look direction
+'    Set rPos = ReflectPoint(Camera.Origin, MirrorPlane)
+'    Set rLook = ReflectPoint(Camera.Rotate, MirrorPlane)
+'
+'
+'
+'    Dim MirrorView As D3DMATRIX
+'
+'
+'
+'
+'    D3DXMatrixLookAtLH MirrorView, ToVector(rPos), ToVector(rLook), MakeVector(0, 1, 0)
+'    DDevice.SetTransform D3DTS_VIEW, MirrorView
+        
 
 
     
-    
-    D3DXMatrixPerspectiveFovLH matProj, FOVY * 2, AspectRatio, 0.01, FadeDistance
-    DDevice.SetTransform D3DTS_PROJECTION, matProj
-    
 
-    Set vec = Nothing
+    'Set vec = Nothing
     
     Exit Sub
 WorldError:
@@ -368,5 +538,72 @@ WorldError:
 Resume
 End Sub
 
+'Private Function NormalizeVector(V As D3DVECTOR) As D3DVECTOR
+'    Dim L As Single
+'    L = Sqr(V.X * V.X + V.Y * V.Y + V.Z * V.Z)
+'    If L <> 0! Then
+'        NormalizeVector.X = V.X / L
+'        NormalizeVector.Y = V.Y / L
+'        NormalizeVector.Z = V.Z / L
+'    Else
+'        NormalizeVector = V
+'    End If
+'End Function
+'
+'Private Function ReflectPointAcrossPlane(p As D3DVECTOR, _
+'                                         PlanePoint As D3DVECTOR, _
+'                                         PlaneNormal As D3DVECTOR) As D3DVECTOR
+'    Dim V As D3DVECTOR
+'    Dim dot As Single
+'
+'    V.X = p.X - PlanePoint.X
+'    V.Y = p.Y - PlanePoint.Y
+'    V.Z = p.Z - PlanePoint.Z
+'
+'    dot = V.X * PlaneNormal.X + V.Y * PlaneNormal.Y + V.Z * PlaneNormal.Z
+'
+'    ReflectPointAcrossPlane.X = p.X - 2! * dot * PlaneNormal.X
+'    ReflectPointAcrossPlane.Y = p.Y - 2! * dot * PlaneNormal.Y
+'    ReflectPointAcrossPlane.Z = p.Z - 2! * dot * PlaneNormal.Z
+'End Function
+'
+'Private Function ReflectVector(V As D3DVECTOR, N As D3DVECTOR) As D3DVECTOR
+'    Dim dot As Single
+'    dot = V.X * N.X + V.Y * N.Y + V.Z * N.Z
+'
+'    ReflectVector.X = V.X - 2! * dot * N.X
+'    ReflectVector.Y = V.Y - 2! * dot * N.Y
+'    ReflectVector.Z = V.Z - 2! * dot * N.Z
+'End Function
+
+
+'Private Function VecDot(a As Vec3, b As Vec3) As Single
+'    VecDot = a.X * b.X + a.Y * b.Y + a.Z * b.Z
+'End Function
+'
+'Private Function VecSub(a As Vec3, b As Vec3) As Vec3
+'    VecSub.X = a.X - b.X
+'    VecSub.Y = a.Y - b.Y
+'    VecSub.Z = a.Z - b.Z
+'End Function
+'
+'Private Function VecAdd(a As Vec3, b As Vec3) As Vec3
+'    VecAdd.X = a.X + b.X
+'    VecAdd.Y = a.Y + b.Y
+'    VecAdd.Z = a.Z + b.Z
+'End Function
+'
+'Private Function VecScale(a As Vec3, s As Single) As Vec3
+'    VecScale.X = a.X * s
+'    VecScale.Y = a.Y * s
+'    VecScale.Z = a.Z * s
+'End Function
+
+' Reflect a point across a plane
+Private Function ReflectPoint(p As Point, pl As Plane) As Point
+    Dim Dist As Single
+    Dist = modGeometry.VectorDotProduct(pl, p) + pl.W
+    Set ReflectPoint = VectorDeduction(p, VectorMultiplyBy(pl, 2 * Dist))
+End Function
 
 

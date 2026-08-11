@@ -486,10 +486,10 @@ Private Function HandshakeBlocking() As Boolean
 
         Dim elapsed As Single
         elapsed = Timer
-        Do Until (mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > (timeout * 4)) 'four communications occur, in relay witht he server
+        Do Until ((mHandshakeStarted = False And mInTls = True) Or (Timer - elapsed > timeout)) Or (Not wClient.Connected) Or wClient.Cancelling
             DoTasks
         Loop
-        HandshakeBlocking = (Timer - elapsed > (timeout * 4))  'four communications occur, in relay witht he server, give them the time
+        HandshakeBlocking = (Timer - elapsed > timeout)
 
     End If
 
@@ -497,7 +497,7 @@ End Function
 
 
 Public Function Read() As String
-'            wClient.AutoRatedEvent AutoRated.ReadCalls
+            wClient.AutoRatedEvent AutoRated.ReadCalls
 
     If Not SSL Then
         wClient.ReadString Read
@@ -517,11 +517,11 @@ Public Function Read() As String
         End If
     End If
 
-'            wClient.AutoRatedEvent AutoRated.ReadWidth
+            wClient.AutoRatedEvent AutoRated.ReadWidth
 End Function
 
 Public Function ReadBytes(data() As Byte) As Boolean
-'            wClient.AutoRatedEvent AutoRated.ReadCalls
+            wClient.AutoRatedEvent AutoRated.ReadCalls
     If Not SSL Then
         ReadBytes = wClient.ReadBytes(data)
     Else
@@ -537,12 +537,12 @@ Public Function ReadBytes(data() As Byte) As Boolean
         End If
 
     End If
-'            wClient.AutoRatedEvent AutoRated.ReadWidth
+            wClient.AutoRatedEvent AutoRated.ReadWidth
 End Function
 
 
 Public Function ReadString(data As String) As Boolean
-            'wClient.AutoRatedEvent AutoRated.ReadCalls
+            wClient.AutoRatedEvent AutoRated.ReadCalls
             
     If Not SSL Then
         ReadString = wClient.ReadString(data)
@@ -564,7 +564,7 @@ Public Function ReadString(data As String) As Boolean
             End If
         End If
     End If
-            'wClient.AutoRatedEvent AutoRated.ReadWidth
+            wClient.AutoRatedEvent AutoRated.ReadWidth
 End Function
 
 Public Function Ready() As Boolean
@@ -590,7 +590,7 @@ Public Function ResolveIP(ByVal Host As String) As String
 End Function
 
 Public Sub Send(ByVal data As String)
-'        wClient.AutoRatedEvent AutoRated.SendCalls
+        wClient.AutoRatedEvent AutoRated.SendCalls
 
     If Not SSL Then
         wClient.SendBytes BytesFromString(data)
@@ -605,11 +605,11 @@ Public Sub Send(ByVal data As String)
             End If
         End If
     End If
-'        wClient.AutoRatedEvent AutoRated.SendWidth
+        wClient.AutoRatedEvent AutoRated.SendWidth
 End Sub
 
 Public Function SendBytes(data() As Byte) As Boolean
-'        wClient.AutoRatedEvent AutoRated.SendCalls
+        wClient.AutoRatedEvent AutoRated.SendCalls
 
     If Not SSL Then
         SendBytes = wClient.SendBytes(data)
@@ -625,7 +625,7 @@ Public Function SendBytes(data() As Byte) As Boolean
         End If
         
     End If
-'        wClient.AutoRatedEvent AutoRated.SendWidth
+        wClient.AutoRatedEvent AutoRated.SendWidth
 End Function
 
 
@@ -638,7 +638,7 @@ Public Property Get SendRate() As Long
 End Property
 
 Public Function SendString(data As String) As Boolean
-'        wClient.AutoRatedEvent AutoRated.SendCalls
+        wClient.AutoRatedEvent AutoRated.SendCalls
 
     If Not SSL Then
         SendString = wClient.SendBytes(BytesFromString(data))
@@ -654,22 +654,22 @@ Public Function SendString(data As String) As Boolean
         End If
        
     End If
-'        wClient.AutoRatedEvent AutoRated.SendWidth
+        wClient.AutoRatedEvent AutoRated.SendWidth
 End Function
 
 
 Public Function CipherInfo()
-    Dim s As String * 256
-    TlsGetCipherInfo mCtx, s, 256
-    CipherInfo = Trim$(s)
+    Dim S As String * 256
+    TlsGetCipherInfo mCtx, S, 256
+    CipherInfo = Trim$(S)
 End Function
 
 Public Sub Reinstate()
     TlsRenegotiate mCtx
     mHandshakeStarted = True
 End Sub
-
-Public Function PeerCertificate() As Byte()
+Public Function PeerCertificate() As Certificate
+    
     Dim cert() As Byte
     Dim certLen As Long
     Dim err As Long
@@ -679,13 +679,20 @@ Public Function PeerCertificate() As Byte()
     certLen = TlsGetPeerCert(mCtx, VarPtr(cert(0)), 4096, err)
     
     If certLen > 0 Then
-        ReDim cert(0 To certLen - 1)
-        PeerCertificate = cert
-    Else
-        Erase cert
+        ReDim Preserve cert(0 To certLen - 1)
+      
+        Dim S As New Stream
+        S.Concat cert
+        
+        Set PeerCertificate = New Certificate
+        PeerCertificate.LoadCertificate S
+        Set S = Nothing
+        
     End If
+    Erase cert
 
 End Function
+
 
 Public Function ValidateCertificate() As Boolean
     Dim err As Long
@@ -711,17 +718,6 @@ Public Function SSLProtocolVersion() As String
 
 End Function
 
-Public Function PeerCertificateInfo() As String
-    Dim info As String * 512
-    Dim err As Long
-    
-    If TlsGetPeerCertInfo(mCtx, info, 512, err) = 1 Then
-        PeerCertificateInfo = Trim$(info)
-    Else
-        PeerCertificateInfo = "Failed to get cert info, err=" & err
-    End If
-
-End Function
 
 
 

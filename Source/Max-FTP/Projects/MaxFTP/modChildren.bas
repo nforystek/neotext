@@ -159,12 +159,12 @@ reshow:
             frm.sInfo.sSavePass.Value = 1
         End If
         pwdInfo.Username = frm.sInfo.sUserName.Text
-        If (Trim(LCase(frm.sInfo.sUserName.Text)) = "anonymous") And frm.IsOk Then
-            If Not (InStr(frm.sInfo.sPassword.Text, ".") > InStr(frm.sInfo.sPassword.Text, "@")) Then
-                MsgBox "Anonymous logins must provide an email address as the password consisting of the following mask *@*.*", vbInformation + vbOK, AppName
-                GoTo reshow
-            End If
-        End If
+'        If (Trim(LCase(frm.sInfo.sUserName.Text)) = "anonymous") And frm.IsOk Then
+'            If Not (InStr(frm.sInfo.sPassword.Text, ".") > InStr(frm.sInfo.sPassword.Text, "@")) Then
+'                MsgBox "Anonymous logins must provide an email address as the password consisting of the following mask *@*.*", vbInformation + vbOK, AppName
+'                GoTo reshow
+'            End If
+'        End If
         pwdInfo.Password = frm.sInfo.sPassword.Text
         If IsNumeric(frm.sInfo.sPort.Text) Then pwdInfo.Port = CLng(frm.sInfo.sPort.Text)
         pwdInfo.Pasv = frm.sInfo.sPassive.Value

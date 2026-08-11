@@ -177,6 +177,11 @@ Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Private ftpElapse As Single
 
+Public Function PeerCertificate() As Certificate
+    If mTCP.Connected And (Not mTCP.SSL = 0) Then
+        Set PeerCertificate = mTCP.PeerCertificate
+    End If
+End Function
 
 Public Property Get GetLastError() As String
     GetLastError = SetLastError(ReturnError)
@@ -861,6 +866,8 @@ Attribute Connect.VB_Description = "Connects to a remote system and sends the in
         End If
 
         mTCP.Connect ftpServer, ftpPort
+        
+        
     
         If ftpEventError = ErrorReturns.Last Then
             SetLastError RaiseError, 8, ftpEventReason
@@ -1871,6 +1878,7 @@ Attribute ParseListing.VB_Description = "Attempts to determine listing systems f
     Dim oneLine As String
     Dim delim As String
     Dim lSys As Integer
+    Debug.Print """" & ListData & """"
     lSys = ListSystems.None
     delim = vbLf
     ListData = Replace(Replace(ListData, vbCrLf, vbLf), vbCr, vbNullString)
@@ -2473,6 +2481,7 @@ Private Sub mTCP_DataArriving()
                     ftpEventError = ErrorReturns.Last
                     ftpEventReason = oneMsg
                     ConnectedState(CommandRequest) = False
+                    ftpNextCommand = ""
                 Case "227", "125", "150"
                     If Left(oneMsg, 3) = "227" Then
                         Dim pServer As String

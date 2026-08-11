@@ -1,6 +1,7 @@
 #ifndef NTSECURETSL_INTERNAL_H
 #define NTSECURETSL_INTERNAL_H
 
+
 #include <windows.h>
 #include <sspi.h>
 #include <schannel.h>
