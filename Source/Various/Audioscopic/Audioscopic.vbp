@@ -1,16 +1,22 @@
 Type=Exe
 Object={0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}#1.0#0; msscript.ocx
+Reference=*\G{3CA8E2C9-DB43-4232-9BC7-97AE792BB0B3}#1d3.0#0#..\..\..\WINDOWS\system32\NTNodes10.dll#Neotext Hyper Node Objects 1.0
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
 Object={F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0; comdlg32.ocx
 Form=frmMain.frm
 UserControl=WaveView.ctl
 Module=modAudio; modAudio.bas
+Module=modHook; modHook.bas
 Module=modColor; modColor.bas
+Module=modWave; modWave.bas
+Form=mdiMain.frm
+Form=frmMagic.frm
 IconForm="frmMain"
-Startup="frmMain"
+Startup="mdiMain"
 HelpFile=""
 Title="Audioscopic"
 ExeName32="Audioscopic.exe"
-Command32=""
+Command32="C:\Development\Projects\Audioscopic\g note 0 full.wav"
 Name="Audioscopic"
 HelpContextID="0"
 CompatibleMode="0"
@@ -19,9 +25,8 @@ MinorVer=0
 RevisionVer=0
 AutoIncrementVer=0
 ServerSupportFiles=0
-VersionComments="The wave base viewer analyzer I began when I wanted to try to arthroscopic target in any 3D location of sound from legacy audio recordings isolating and extrapolating it, like as if pixel rendered arthroscopic only for audio."
 VersionCompanyName="Computer Science"
-CondComp="Audioscopic=-1:VBIDE=-1:modHook=-1:modDeclares=-1:modAudio=-1:modWave=-1:modMain=-1:modColor=-1"
+CondComp="Audioscopic = -1 : VBIDE = -1 : modHook = -1 : modDeclares = -1 : modAudio = -1 : modWave = -1 : modMain = -1 : modColor = -1"
 CompilationType=0
 OptimizationType=0
 FavorPentiumPro(tm)=0
@@ -42,4 +47,4 @@ MaxNumberOfThreads=1
 AutoRefresh=1
 
 [Neotext]
-CompCond="modAudio=-1:modColor=-1"
+CompCond="modAudio=-1:modHook=-1:modColor=-1:modWave=-1"

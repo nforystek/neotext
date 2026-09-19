@@ -74,16 +74,16 @@ Public Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
 
 #End If
 
-#If Not modGeometry Then
+#If Not modGeometry And Not modSchematic Then
 
 Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(V3) Then
+    If IsMissing(V3) Or VBA.TypeName(V3) = "Empty" Then
         If (V1 >= V2) Then
             Large = V1
         Else
             Large = V2
         End If
-    ElseIf IsMissing(V4) Then
+    ElseIf IsMissing(V4) Or VBA.TypeName(V4) = "Empty" Then
         If ((V2 >= V3) And (V2 >= V1)) Then
             Large = V2
         ElseIf ((V1 >= V3) And (V1 >= V2)) Then
@@ -105,13 +105,13 @@ Public Function Large(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V
 End Function
 
 Public Function Least(ByVal V1 As Variant, ByVal V2 As Variant, Optional ByVal V3 As Variant, Optional ByVal V4 As Variant) As Variant
-    If IsMissing(V3) Then
+    If IsMissing(V3) Or VBA.TypeName(V3) = "Empty" Then
         If (V1 <= V2) Then
             Least = V1
         Else
             Least = V2
         End If
-    ElseIf IsMissing(V4) Then
+    ElseIf IsMissing(V4) Or VBA.TypeName(V4) = "Empty" Then
         If ((V2 <= V3) And (V2 <= V1)) Then
             Least = V2
         ElseIf ((V1 <= V3) And (V1 <= V2)) Then
@@ -875,14 +875,14 @@ End Function
 Public Function ClearCollection(ByRef ColList, Optional ByVal IsObjects As Boolean = False, Optional ByVal SetNothing As Boolean = False)
     If Not ColList Is Nothing Then
         If IsObjects Then
-            Dim obj As Object
-            Do Until ColList.count = 0
-                Set obj = ColList(1)
+            Dim Obj As Object
+            Do Until ColList.Count = 0
+                Set Obj = ColList(1)
                 ColList.Remove 1
-                Set obj = Nothing
+                Set Obj = Nothing
             Loop
         Else
-            Do Until ColList.count = 0
+            Do Until ColList.Count = 0
                 ColList.Remove 1
             Loop
         End If

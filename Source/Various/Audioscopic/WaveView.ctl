@@ -22,16 +22,50 @@ Begin VB.UserControl WaveView
    EndProperty
    ScaleHeight     =   3600
    ScaleWidth      =   7710
-   Begin MSScriptControlCtl.ScriptControl FilterScripts 
-      Left            =   6180
-      Top             =   600
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      AllowUI         =   0   'False
-   End
-   Begin VB.CommandButton ResetButton 
+   Begin VB.PictureBox PicDisplay 
       Appearance      =   0  'Flat
-      DisabledPicture =   "WaveView.ctx":0000
+      AutoRedraw      =   -1  'True
+      AutoSize        =   -1  'True
+      BackColor       =   &H80000005&
+      BorderStyle     =   0  'None
+      DragIcon        =   "WaveView.ctx":0000
+      FillColor       =   &H00FFFFFF&
+      ForeColor       =   &H80000008&
+      Height          =   1455
+      Left            =   720
+      OLEDropMode     =   1  'Manual
+      ScaleHeight     =   1455
+      ScaleWidth      =   2775
+      TabIndex        =   7
+      Top             =   420
+      Width           =   2775
+      Begin VB.Line LeftMarker 
+         BorderColor     =   &H00808080&
+         Visible         =   0   'False
+         X1              =   60
+         X2              =   60
+         Y1              =   360
+         Y2              =   1080
+      End
+      Begin VB.Line RightMarker 
+         BorderColor     =   &H00404040&
+         X1              =   360
+         X2              =   360
+         Y1              =   360
+         Y2              =   1020
+      End
+      Begin VB.Line PlayCursor 
+         BorderColor     =   &H00E0E0E0&
+         Visible         =   0   'False
+         X1              =   1200
+         X2              =   1200
+         Y1              =   300
+         Y2              =   900
+      End
+   End
+   Begin VB.CommandButton OpenButton 
+      Appearance      =   0  'Flat
+      DisabledPicture =   "WaveView.ctx":0442
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -42,76 +76,17 @@ Begin VB.UserControl WaveView
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   4320
+      Left            =   2880
       MaskColor       =   &H00FF00FF&
-      Picture         =   "WaveView.ctx":04D2
+      Picture         =   "WaveView.ctx":0914
       Style           =   1  'Graphical
-      TabIndex        =   7
-      Top             =   2280
+      TabIndex        =   6
+      Top             =   2520
       UseMaskColor    =   -1  'True
       Width           =   255
    End
-   Begin VB.Timer Blinkers 
-      Interval        =   20
-      Left            =   1020
-      Top             =   2280
-   End
-   Begin VB.PictureBox PicVolscale 
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      FillColor       =   &H8000000F&
-      BeginProperty Font 
-         Name            =   "Small Fonts"
-         Size            =   6.75
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H000000FF&
-      Height          =   735
-      Left            =   4020
-      ScaleHeight     =   735
-      ScaleWidth      =   315
-      TabIndex        =   6
-      Top             =   2640
-      Width           =   315
-   End
-   Begin VB.PictureBox PicSlidebar 
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      ClipControls    =   0   'False
-      DrawStyle       =   5  'Transparent
-      FillColor       =   &H8000000F&
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   375
-      Left            =   420
-      ScaleHeight     =   375
-      ScaleWidth      =   2175
-      TabIndex        =   5
-      Top             =   3060
-      Width           =   2175
-      Begin VB.Shape ViewSlider 
-         FillColor       =   &H8000000F&
-         Height          =   315
-         Left            =   120
-         Top             =   60
-         Width           =   1635
-      End
-   End
-   Begin VB.CommandButton PlayButton 
-      DisabledPicture =   "WaveView.ctx":09A4
+   Begin VB.CommandButton StopButton 
+      DisabledPicture =   "WaveView.ctx":0DE6
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -122,12 +97,12 @@ Begin VB.UserControl WaveView
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   3660
+      Left            =   3480
       MaskColor       =   &H00FF00FF&
-      Picture         =   "WaveView.ctx":0E76
+      Picture         =   "WaveView.ctx":12B8
       Style           =   1  'Graphical
-      TabIndex        =   4
-      Top             =   2520
+      TabIndex        =   5
+      Top             =   2820
       UseMaskColor    =   -1  'True
       Width           =   255
    End
@@ -146,16 +121,16 @@ Begin VB.UserControl WaveView
          Strikethrough   =   0   'False
       EndProperty
       Height          =   1395
-      Left            =   2340
+      Left            =   2295
       ScaleHeight     =   1395
       ScaleWidth      =   2295
-      TabIndex        =   3
-      Top             =   180
+      TabIndex        =   4
+      Top             =   75
       Visible         =   0   'False
       Width           =   2295
    End
-   Begin VB.CommandButton StopButton 
-      DisabledPicture =   "WaveView.ctx":1348
+   Begin VB.CommandButton PlayButton 
+      DisabledPicture =   "WaveView.ctx":178A
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -166,18 +141,77 @@ Begin VB.UserControl WaveView
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   3600
+      Left            =   3540
       MaskColor       =   &H00FF00FF&
-      Picture         =   "WaveView.ctx":181A
+      Picture         =   "WaveView.ctx":1C5C
       Style           =   1  'Graphical
-      TabIndex        =   2
-      Top             =   3000
+      TabIndex        =   3
+      Top             =   2340
       UseMaskColor    =   -1  'True
       Width           =   255
    End
-   Begin VB.CommandButton OpenButton 
+   Begin VB.PictureBox PicSlidebar 
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H80000005&
+      BorderStyle     =   0  'None
+      ClipControls    =   0   'False
+      DrawStyle       =   5  'Transparent
+      FillColor       =   &H8000000F&
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Left            =   300
+      ScaleHeight     =   375
+      ScaleWidth      =   2175
+      TabIndex        =   2
+      Top             =   2880
+      Width           =   2175
+      Begin VB.Shape ViewSlider 
+         FillColor       =   &H8000000F&
+         Height          =   315
+         Left            =   120
+         Top             =   60
+         Width           =   1635
+      End
+   End
+   Begin VB.PictureBox PicVolscale 
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H80000005&
+      BorderStyle     =   0  'None
+      FillColor       =   &H8000000F&
+      BeginProperty Font 
+         Name            =   "Small Fonts"
+         Size            =   6.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H000000FF&
+      Height          =   735
+      Left            =   3900
+      ScaleHeight     =   735
+      ScaleWidth      =   315
+      TabIndex        =   1
+      Top             =   2460
+      Width           =   315
+   End
+   Begin VB.Timer Blinkers 
+      Interval        =   20
+      Left            =   900
+      Top             =   2100
+   End
+   Begin VB.CommandButton ResetButton 
       Appearance      =   0  'Flat
-      DisabledPicture =   "WaveView.ctx":1CEC
+      DisabledPicture =   "WaveView.ctx":212E
       BeginProperty Font 
          Name            =   "MS Sans Serif"
          Size            =   8.25
@@ -188,68 +222,34 @@ Begin VB.UserControl WaveView
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   3000
+      Left            =   4200
       MaskColor       =   &H00FF00FF&
-      Picture         =   "WaveView.ctx":21BE
+      Picture         =   "WaveView.ctx":2600
       Style           =   1  'Graphical
-      TabIndex        =   1
-      Top             =   2700
+      TabIndex        =   0
+      Top             =   2100
       UseMaskColor    =   -1  'True
       Width           =   255
+   End
+   Begin MSScriptControlCtl.ScriptControl FilterScripts 
+      Left            =   6060
+      Top             =   420
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      AllowUI         =   0   'False
    End
    Begin MSComDlg.CommonDialog BrowseForWave 
-      Left            =   120
-      Top             =   180
+      Left            =   0
+      Top             =   0
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
    End
-   Begin VB.PictureBox PicDisplay 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      AutoSize        =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      DragIcon        =   "WaveView.ctx":2690
-      FillColor       =   &H00FFFFFF&
-      ForeColor       =   &H80000008&
-      Height          =   1455
-      Left            =   840
-      OLEDropMode     =   1  'Manual
-      ScaleHeight     =   1455
-      ScaleWidth      =   2775
-      TabIndex        =   0
-      Top             =   600
-      Width           =   2775
-      Begin VB.Line PlayCursor 
-         BorderColor     =   &H00E0E0E0&
-         Visible         =   0   'False
-         X1              =   1200
-         X2              =   1200
-         Y1              =   300
-         Y2              =   900
-      End
-      Begin VB.Line RightMarker 
-         BorderColor     =   &H00404040&
-         X1              =   360
-         X2              =   360
-         Y1              =   360
-         Y2              =   1020
-      End
-      Begin VB.Line LeftMarker 
-         BorderColor     =   &H00808080&
-         Visible         =   0   'False
-         X1              =   60
-         X2              =   60
-         Y1              =   360
-         Y2              =   1080
-      End
-   End
    Begin VB.Image DragIcon 
       Height          =   480
-      Left            =   3060
+      Left            =   2940
       Picture         =   "WaveView.ctx":2AD2
-      Top             =   2220
+      Top             =   2040
       Visible         =   0   'False
       Width           =   480
    End
@@ -260,18 +260,6 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-
-Private Type POINTAPI
-        x As Long
-        y As Long
-End Type
-Private Type RECT
-        Left As Long
-        Top As Long
-        Right As Long
-        Bottom As Long
-End Type
-
 
 ' Declare Color Constants
 Private Const cBlue = &HFF0000
@@ -294,9 +282,9 @@ Private Const cOrange = &H96FF
 
 Private dBitsPerTwip As Single
 Private FileLoaded As String
-Private Peak As Single, Dip As Single
+Private peak As Single, Dip As Single
 
-Private SoundPlay As Boolean
+Private SoundPlaying As Long
 Private CursorAdjust As Integer
 
 Private TotalTime As Single
@@ -305,23 +293,22 @@ Private DotsOnly As Boolean
 Private MRatio As Single
 Private DBZoom As Single
 
-Private AudioFile As AudioFile
+Private AudioFile As AudioFile2
 
 Private LastX As Single
 Private LastY As Single
 Private LastBtn As Integer
 Private LaststartMS As Single
 Private LaststopMS As Single
-        
-Private Declare Function WindowFromPoint Lib "user32" (ByVal xPoint As Long, ByVal yPoint As Long) As Long
-
-Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hwnd As Long, lpRect As RECT) As Long
 
 Private Declare Function RegisterClipboardFormat Lib "user32.dll" Alias "RegisterClipboardFormatA" (ByVal lpszFormat$) As Integer
 Private MyFormat As Integer
 
 Public Event Click()
+
+Public Property Get FileName() As String
+    FileName = FileLoaded
+End Property
 
 Public Property Get WaveMarkerStartMS() As Single
     LineRestrictions
@@ -349,11 +336,11 @@ Private Function ScrollOver() As Control
     
     GetWindowRect PicSlidebar.hwnd, rct
 
-    If ((pt.x > rct.Left) And (pt.x < rct.Right)) And ((pt.y > rct.Top) And (pt.y < rct.Bottom)) Then
+    If ((pt.X > rct.Left) And (pt.X < rct.Right)) And ((pt.Y > rct.Top) And (pt.Y < rct.Bottom)) Then
         Set ScrollOver = PicSlidebar
     Else
         GetWindowRect PicVolscale.hwnd, rct
-        If (((pt.x > rct.Left) And (pt.x < rct.Right)) And ((pt.y > rct.Top) And (pt.y < rct.Bottom))) Then
+        If (((pt.X > rct.Left) And (pt.X < rct.Right)) And ((pt.Y > rct.Top) And (pt.Y < rct.Bottom))) Then
             Set ScrollOver = PicVolscale
         Else
             Set ScrollOver = PicDisplay
@@ -393,10 +380,10 @@ Friend Sub ScrollUp()
                 
             Case Else
 
-                Dim startMS As Single
+                Dim StartMS As Single
                 Dim stopMS As Single
 
-                startMS = WaveMarkerStartMS
+                StartMS = WaveMarkerStartMS
                 stopMS = WaveMarkerStopMS
             
                 PicDisplay.Width = PicDisplay.Width + (PicDisplay.Width / (Screen.Width / Screen.Height))
@@ -410,7 +397,7 @@ Friend Sub ScrollUp()
                 End If
 
                 If TotalTime > 0 Then
-                    LeftMarker.X1 = (PicDisplay.Width * (startMS / TotalTime))
+                    LeftMarker.X1 = (PicDisplay.Width * (StartMS / TotalTime))
                     LeftMarker.X2 = LeftMarker.X1
                     RightMarker.X1 = (PicDisplay.Width * (stopMS / TotalTime))
                     RightMarker.X2 = RightMarker.X1
@@ -431,8 +418,8 @@ Friend Sub ScrollUp()
     
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 Friend Sub ScrollDown()
 
@@ -465,10 +452,10 @@ Friend Sub ScrollDown()
                 
             Case Else
 
-                Dim startMS As Single
+                Dim StartMS As Single
                 Dim stopMS As Single
 
-                startMS = WaveMarkerStartMS
+                StartMS = WaveMarkerStartMS
                 stopMS = WaveMarkerStopMS
                 
                 If (PicDisplay.Width - (PicDisplay.Width / (Screen.Width / Screen.Height))) >= (17 * Screen.TwipsPerPixelX) Then
@@ -495,7 +482,7 @@ Friend Sub ScrollDown()
                 End If
 
                 If TotalTime > 0 Then
-                    LeftMarker.X1 = (PicDisplay.Width * (startMS / TotalTime))
+                    LeftMarker.X1 = (PicDisplay.Width * (StartMS / TotalTime))
                     LeftMarker.X2 = LeftMarker.X1
                     RightMarker.X1 = (PicDisplay.Width * (stopMS / TotalTime))
                     RightMarker.X2 = RightMarker.X1
@@ -515,21 +502,21 @@ Friend Sub ScrollDown()
     
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    'MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
-Private Sub MoveViewPort(ByVal x As Single)
+Private Sub MoveViewPort(ByVal X As Single)
 
     RenderFileInfo vbWhite
     If PicSlidebar.Tag > 0 Then
     
-        If Not (ViewSlider.Left + (x - PicSlidebar.Tag) >= 0) Then
+        If Not (ViewSlider.Left + (X - PicSlidebar.Tag) >= 0) Then
             PicSlidebar.Tag = -ViewSlider.Left
-        ElseIf Not (ViewSlider.Left + (x - PicSlidebar.Tag) + ViewSlider.Width < PicSlidebar.Width) Then
+        ElseIf Not (ViewSlider.Left + (X - PicSlidebar.Tag) + ViewSlider.Width < PicSlidebar.Width) Then
             PicSlidebar.Tag = PicSlidebar.Width - (ViewSlider.Left + ViewSlider.Width)
         Else
-            PicSlidebar.Tag = (x - PicSlidebar.Tag)
+            PicSlidebar.Tag = (X - PicSlidebar.Tag)
         End If
         
         PicDisplay.Left = PicDisplay.Left - (PicDisplay.Width * (PicSlidebar.Tag / PicSlidebar.Width))
@@ -568,20 +555,21 @@ Public Property Get WaveData(Optional ByVal StartTimeMS As Single = 0, Optional 
     On Error GoTo catcherr
     
     If StartTimeMS > TotalTime Or StartTimeMS < 0 Then
-        err.Raise 8, "WaveData", "Invalid or exceeding start time."
+        Err.Raise 8, "WaveData", "Invalid or exceeding start time."
     Else
         If DurationTimeMS = -1 Then DurationTimeMS = TotalTime - StartTimeMS
         If StartTimeMS + DurationTimeMS <= TotalTime Then
             WaveData = WaveAudioPartial(AudioFile, StartTimeMS, DurationTimeMS)
+            
         Else
-            err.Raise 9, "WaveData", "Invalid or exceeding  duration time."
+            Err.Raise 9, "WaveData", "Invalid or exceeding  duration time."
         End If
     End If
     
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Property
 
 'Public Sub WaveMixIn(ByRef SourceWaveView As WaveView, Optional ByVal DestStartTimeMS As Single = 0, Optional ByVal SourceStartTimeMS As Single = 0, Optional ByVal SourceDurationTimeMS As Single = -1)
@@ -589,72 +577,247 @@ End Property
 '    On Error GoTo catcherr
 '
 '    If ((DestStartTimeMS > TotalTime) Or (DestStartTimeMS < 0)) Or ((SourceStartTimeMS > SourceWaveView.WaveLengthMS) Or (SourceStartTimeMS < 0)) Then
-'        err.Raise 9, "WaveData", "Invalid or exceeding start time."
+'        Err.Raise 9, "WaveData", "Invalid or exceeding start time."
 '    Else
 '        If SourceDurationTimeMS = -1 Then SourceDurationTimeMS = SourceWaveView.WaveLengthMS - SourceStartTimeMS
 '        If (DestStartTimeMS + SourceDurationTimeMS <= TotalTime) And (SourceStartTimeMS + SourceDurationTimeMS <= SourceWaveView.WaveLengthMS) Then
 '            WaveCombine WaveData, DestStartTimeMS, SourceWaveView.WaveData(SourceStartTimeMS, SourceDurationTimeMS), SourceDurationTimeMS
 '
 '        Else
-'            err.Raise 9, "WaveData", "Invalid or exceeding duration time."
+'            Err.Raise 9, "WaveData", "Invalid or exceeding duration time."
 '        End If
 '    End If
 '
 '    Exit Sub
 'catcherr:
-'    MsgBox err.Description, vbCritical, "An error occured"
-'    err.Clear
+'    MsgBox Err.Description, vbCritical, "An error occured"
+'    Err.Clear
 'End Sub
 
 Public Sub WaveStop()
 
     On Error GoTo catcherr
     
-    If SoundPlay Then
-        PlayWaveSound WaveSilentAudio(AudioFile, 0)
-        SoundPlay = False
+    If SoundPlaying Then
+        PlayWaveSound SilentBytes
+        
+        SoundPlaying = False
         PlayButton.Enabled = True
         StopButton.Enabled = False
     End If
 
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
+'Public Sub WavePlay()
+'
+'    On Error GoTo catcherr
+'
+'    If FileLoaded <> "" And SoundPlay = False Then
+'
+'        Dim i As Single
+'        Dim lTiming As Single
+'        Dim startMS As Single
+'        Dim stopMS As Single
+'
+'        Dim X As Single, Y As Single, y1 As Single, h As Single, w As Single
+'
+'
+'        Dim CurrentTrack As Integer
+'
+'        LineRestrictions
+'
+'        SoundPlay = True
+'        PlayButton.Enabled = False
+'        StopButton.Enabled = True
+'
+'        PlayCursor.X1 = LeftMarker.X1 - Screen.TwipsPerPixelX
+'        PlayCursor.X2 = PlayCursor.X1
+'
+'        startMS = WaveMarkerStartMS
+'
+'        Dim sndBytes() As Byte
+'
+'        sndBytes = WaveAudioPartial(AudioFile, startMS, WaveMarkerStopMS - startMS)
+'
+'        startMS = PlayCursor.X1
+'        stopMS = RightMarker.X1 + Screen.TwipsPerPixelX
+'
+'        If PlayCursor.X1 + PicDisplay.Left >= 0 And PlayCursor.X1 + PicDisplay.Left < (UserControl.Width - PicVolscale.Width) Then
+'            If ((LeftMarker.X1 + PicDisplay.Left >= 0) And ((LeftMarker.X1 + PicDisplay.Left) < (UserControl.Width - PicVolscale.Width))) And _
+'                ((RightMarker.X1 + PicDisplay.Left >= 0) And ((RightMarker.X1 + PicDisplay.Left) < (UserControl.Width - PicVolscale.Width))) Then
+'                CursorAdjust = 0
+'            Else
+'                CursorAdjust = 1
+'            End If
+'        Else
+'            CursorAdjust = 0
+'        End If
+'
+'        Open "C:\Development\Projects\Audioscopic\partial.wav" For Binary As #1
+'        Put 1, , sndBytes
+'        Close 1
+'        'PlayWaveSound sndBytes
+'        lTiming = Timer
+'
+'        PlayCursor.Visible = True
+'
+'
+'        Do
+'
+'            If (Timer - lTiming) > 0 And TotalTime > 0 Then
+'                PlayCursor.X1 = startMS + (PicDisplay.Width * (((Timer - lTiming) * 1000) / TotalTime))
+'            End If
+'
+'            If CursorAdjust = 1 Then
+'                If PlayCursor.X1 + PicDisplay.Left >= ((UserControl.Width - PicVolscale.Width) / 2) - ((17 * Screen.TwipsPerPixelX) / 2) And _
+'                    PlayCursor.X1 + PicDisplay.Left < ((UserControl.Width - PicVolscale.Width) / 2) + ((17 * Screen.TwipsPerPixelX) / 2) Then
+'
+'                    If (PicDisplay.Width + (PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2))) >= (UserControl.Width - PicVolscale.Width) Then
+'
+'                        PicDisplay.Left = PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2)
+'                        ViewSlider.Left = (PicSlidebar.Width * (-PicDisplay.Left / PicDisplay.Width))
+'                    End If
+'
+'                End If
+'            End If
+'
+'            PlayCursor.X2 = PlayCursor.X1
+'
+'            h = (((Abs(Peak) + Abs(Dip)) / (Abs(-32768) + Abs(32767))) / PicDisplay.Height)
+'
+'            Dim j As Single
+'
+'            For CurrentTrack = 1 To AudioFile.Infos(1).wNumberOfChannels
+'
+'                Y = Round((AudioFile.Infos(1).lBytesPerSecond * WaveMarkerPlayMS) / 1000) / AudioFile.Infos(1).wNumberOfChannels
+'                y1 = Abs(AudioFile.Datas(1).wWave(Round((AudioFile.Infos(1).lBytesPerSecond * (WaveMarkerPlayMS / 1000)) / AudioFile.Infos(1).wNumberOfChannels)))  '+ (CurrentTrack - 1)))
+'
+'
+''                w = PicRender.Height / (AudioFile.Infos(1).wNumberOfChannels + 1)
+''                y1 = ((w + (AudioFile.Datas(1).wWave(i + CurrentTrack) * MRatio)) * CurrentTrack)
+'
+'              '  w = PicRender.Height / (AudioFile.Infos(1).wNumberOfChannels + 1) '(PicSlidebar.Width / AudioFile.Infos(1).wNumberOfChannels)
+'
+'
+'               ' y1 = ((w + (AudioFile.Datas(1).wWave(i + CurrentTrack) * MRatio)) * CurrentTrack)
+'
+'               ' y1 = Abs(AudioFile.Datas(1).wWave(Round((AudioFile.Infos(1).lBytesPerSecond * (WaveMarkerPlayMS / 1000)) / AudioFile.Infos(1).wNumberOfChannels)))  '+ (CurrentTrack - 1)))
+'
+'            '    j = Round((AudioFile.Infos(1).lBytesPerSecond * WaveMarkerPlayMS) / 1000) / AudioFile.Infos(1).wNumberOfChannels
+'
+'            '    Debug.Print Round((AudioFile.Infos(1).lBytesPerSecond * WaveMarkerPlayMS) / 1000) / AudioFile.Infos(1).wNumberOfChannels
+'
+'            '    y1 = AudioFile.Datas(1).wWave(j)
+'
+'                On Error Resume Next
+'
+'                '351624
+'
+'                'Print 351972 - 351624
+'                '348
+'              '  y1 = Abs(AudioFile.Datas(1).wWave(j))  '+ (CurrentTrack - 1)))
+'
+'                If Err Then
+'                    Debug.Print "Error: " & Err.Description
+'                    Err.Clear
+'                End If
+'                h = (y1 / (Abs(Peak) + Abs(Dip)))
+'
+'                y1 = (h * (Abs(-32768) + Abs(32767)))
+'
+'                h = ((-100 - Round(h * 100)) + 200) '
+'
+'                If h > 75 Then
+'                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbYellow, vbGreen, h), BF
+'                ElseIf h > 50 Then
+'                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(&H80C0FF, vbYellow, h), BF
+'                Else
+'                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbRed, &H80C0FF, h), BF
+'                End If
+'
+'                PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), 0), vbWhite, BF
+'
+'                PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), vbBlack
+'
+'                PicVolscale.Refresh
+'
+'            Next
+'
+'            y1 = 0
+'
+'            DoEvents
+'
+'            If SoundPlay = False Then Exit Do
+'
+'        Loop While PlayCursor.X1 < stopMS
+'
+'        RenderVolScale
+'
+'        PlayCursor.Visible = False
+'
+'        PlayButton.Enabled = True
+'        StopButton.Enabled = False
+'
+'        SoundPlay = False
+'
+'    End If
+'
+'    Exit Sub
+'catcherr:
+'    MsgBox Err.Description, vbCritical, "An error occured"
+'    Err.Clear
+'End Sub
+'
+'Public Sub WaveFromData(ByRef wData() As Byte)
+'
+'    On Error GoTo catcherr
+'
+'    WaveResetRecord AudioFile
+'
+'    AudioFile = WaveBytesAsAudio(wData)
+'
+'    WaveInitial
+'
+'    Exit Sub
+'catcherr:
+'    MsgBox Err.Description, vbCritical, "An error occured"
+'    Err.Clear
+'End Sub
+'
 Public Sub WavePlay()
 
     On Error GoTo catcherr
     
-    If FileLoaded <> "" And SoundPlay = False Then
-        
+    If FileLoaded <> "" And Not SoundPlaying Then
+        SoundPlaying = True
         Dim i As Single
         Dim lTiming As Single
-        Dim startMS As Single
+        Dim StartMS As Single
         Dim stopMS As Single
         
-        Dim x As Single, y As Single, y1 As Single, h As Single, w As Single
+        Dim X As Single, Y As Single, y1 As Single, h As Single, w As Single
         
         
         Dim CurrentTrack As Integer
         
         LineRestrictions
 
-        SoundPlay = True
+        
         PlayButton.Enabled = False
         StopButton.Enabled = True
 
         PlayCursor.X1 = LeftMarker.X1 - Screen.TwipsPerPixelX
         PlayCursor.X2 = PlayCursor.X1
         
-        startMS = WaveMarkerStartMS
+        StartMS = WaveMarkerStartMS
         
-        Dim sndBytes() As Byte
+        PlayingBytes = WaveAudioPartial(AudioFile, StartMS, WaveMarkerStopMS - StartMS)
         
-        sndBytes = WaveAudioPartial(AudioFile, startMS, WaveMarkerStopMS - startMS)
-        
-        startMS = PlayCursor.X1
+        StartMS = PlayCursor.X1
         stopMS = RightMarker.X1 + Screen.TwipsPerPixelX
         
         If PlayCursor.X1 + PicDisplay.Left >= 0 And PlayCursor.X1 + PicDisplay.Left < (UserControl.Width - PicVolscale.Width) Then
@@ -668,70 +831,85 @@ Public Sub WavePlay()
             CursorAdjust = 0
         End If
         
-        PlayWaveSound sndBytes
+        PlayWaveSound PlayingBytes
+        
         lTiming = Timer
         
         PlayCursor.Visible = True
-
+        Dim nx As Single
         
         Do
-        
+            
             If (Timer - lTiming) > 0 And TotalTime > 0 Then
-                PlayCursor.X1 = startMS + (PicDisplay.Width * (((Timer - lTiming) * 1000) / TotalTime))
+                nx = StartMS + (PicDisplay.Width * (((Timer - lTiming) * 1000) / TotalTime))
+            Else
+                nx = 0
             End If
         
-            If CursorAdjust = 1 Then
-                If PlayCursor.X1 + PicDisplay.Left >= ((UserControl.Width - PicVolscale.Width) / 2) - ((17 * Screen.TwipsPerPixelX) / 2) And _
-                    PlayCursor.X1 + PicDisplay.Left < ((UserControl.Width - PicVolscale.Width) / 2) + ((17 * Screen.TwipsPerPixelX) / 2) Then
-                    
-                    If (PicDisplay.Width + (PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2))) >= (UserControl.Width - PicVolscale.Width) Then
-                    
-                        PicDisplay.Left = PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2)
-                        ViewSlider.Left = (PicSlidebar.Width * (-PicDisplay.Left / PicDisplay.Width))
+            If nx < stopMS And nx > 0 Then
+                PlayCursor.X1 = nx
+                If CursorAdjust = 1 Then
+                    If PlayCursor.X1 + PicDisplay.Left >= ((UserControl.Width - PicVolscale.Width) / 2) - ((17 * Screen.TwipsPerPixelX) / 2) And _
+                        PlayCursor.X1 + PicDisplay.Left < ((UserControl.Width - PicVolscale.Width) / 2) + ((17 * Screen.TwipsPerPixelX) / 2) Then
+                        
+                        If (PicDisplay.Width + (PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2))) >= (UserControl.Width - PicVolscale.Width) Then
+                        
+                            PicDisplay.Left = PicDisplay.Left - (PlayCursor.X1 - PlayCursor.X2)
+                            ViewSlider.Left = (PicSlidebar.Width * (-PicDisplay.Left / PicDisplay.Width))
+                        End If
+                        
                     End If
-                    
                 End If
+            
+                PlayCursor.X2 = PlayCursor.X1
+    
+                h = (((Abs(peak) + Abs(Dip)) / (Abs(-32768) + Abs(32767))) / PicDisplay.Height)
+                   
+                For CurrentTrack = 1 To AudioFile.FMTChunk.nChannels
+    
+                    w = (PicSlidebar.Width / AudioFile.FMTChunk.nChannels)
+    
+                    Y = Round((AudioFile.FMTChunk.nAvgBytesPerSec * WaveMarkerPlayMS) / 1000) / AudioFile.FMTChunk.nBlockAlign
+                    If Y < WaveSamples(AudioFile) Then
+                        
+                        If AudioFile.FMTChunk.wBitsPerSample = 8 Then
+                            y1 = Abs(AudioFile.WaveData8bit.ChannelData(CurrentTrack, Y))  '+ (CurrentTrack - 1)))
+                        ElseIf AudioFile.FMTChunk.wBitsPerSample = 16 Then
+                            
+                            y1 = Abs(AudioFile.WaveData16bit.ChannelData(CurrentTrack, Y)) ' * AudioFile.FMTChunk.nChannels ' + (CurrentTrack - 1)))
+                        End If
+        
+                        h = (y1 / (Abs(peak) + Abs(Dip)))
+                        
+                        y1 = (h * (Abs(-32768) + Abs(32767)))
+        
+                        h = ((-100 - Round(h * 100)) + 200)
+                        
+                        If h > 75 Then
+                            PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbYellow, vbGreen, h), BF
+                        ElseIf h > 50 Then
+                            PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(&H80C0FF, vbYellow, h), BF
+                        Else
+                            PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbRed, &H80C0FF, h), BF
+                        End If
+                        
+                        PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), 0), vbWhite, BF
+        
+                        PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), vbBlack
+                        
+                        PicVolscale.Refresh
+                    End If
+    
+                Next
+    
+                y1 = 0
+    
+                DoEvents
             End If
+            
+            If SoundPlaying = False Then Exit Do
         
-            PlayCursor.X2 = PlayCursor.X1
-
-            h = (((Abs(Peak) + Abs(Dip)) / (Abs(-32768) + Abs(32767))) / PicDisplay.Height)
-               
-            For CurrentTrack = 1 To AudioFile.Infos(1).wNumberOfChannels
-
-                w = (PicSlidebar.Width / AudioFile.Infos(1).wNumberOfChannels)
-                    
-                y1 = Abs(AudioFile.Datas(1).wWave(Round((AudioFile.Infos(1).lBytesPerSecond * (WaveMarkerPlayMS / 1000)) / AudioFile.Infos(1).wNumberOfChannels) + (CurrentTrack - 1)))
-                
-                h = (y1 / (Abs(Peak) + Abs(Dip)))
-                
-                y1 = (h * (Abs(-32768) + Abs(32767)))
-
-                h = ((-100 - Round(h * 100)) + 200)
-                
-                If h > 75 Then
-                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbYellow, vbGreen, h), BF
-                ElseIf h > 50 Then
-                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(&H80C0FF, vbYellow, h), BF
-                Else
-                    PicVolscale.Line ((w * (CurrentTrack - 1)), PicDisplay.Height)-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), Blend(vbRed, &H80C0FF, h), BF
-                End If
-                
-                PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), 0), vbWhite, BF
-
-                PicVolscale.Line ((w * (CurrentTrack - 1)), (PicDisplay.Height * (h / 100)))-((w * CurrentTrack), (PicDisplay.Height * (h / 100))), vbBlack
-                
-                PicVolscale.Refresh
-
-            Next
-
-            y1 = 0
-
-            DoEvents
-        
-            If SoundPlay = False Then Exit Do
-        
-        Loop Until PlayCursor.X1 > stopMS
+        Loop While nx < stopMS
         
         RenderVolScale
         
@@ -740,14 +918,14 @@ Public Sub WavePlay()
         PlayButton.Enabled = True
         StopButton.Enabled = False
 
-        SoundPlay = False
+        SoundPlaying = False
 
     End If
 
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
 Public Sub WaveFromData(ByRef wData() As Byte)
@@ -762,10 +940,22 @@ Public Sub WaveFromData(ByRef wData() As Byte)
 
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
+Public Sub WaveSaveAs(ByVal FileName As String)
+
+    On Error GoTo catcherr
+    
+    WaveSaveToFile AudioFile, FileName
+    FileLoaded = FileName
+  
+    Exit Sub
+catcherr:
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
+End Sub
 
 Public Sub WaveFromFile(ByVal FileName As String)
 
@@ -776,29 +966,31 @@ Public Sub WaveFromFile(ByVal FileName As String)
         FileLoaded = ""
     End If
     
-    WaveLoadFromFile FileName, AudioFile
+    AudioFile = WaveLoadFromFile(FileName)
     
-    WaveInitial
+    If AudioFile.RiffHdr.DataType = "WAVE" Then
+    
+        WaveInitial
 
-    FileLoaded = FileName
-    
+        FileLoaded = FileName
+    End If
+      '      DrawWave16 AudioFile, PicDisplay
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
-
 Private Sub RenderTimeLine()
     If FileLoaded <> "" Then
         Dim i As Single
-        Dim x As Single
+        Dim X As Single
         
-        i = ((PicDisplay.Width / (((AudioFile.Datas(1).lBytes / 2) / AudioFile.Infos(1).wChannelBandwidth) / AudioFile.Infos(1).lSamplesPerSecond)) * 0.1)
+        i = ((PicDisplay.Width / (((LengthOfData(AudioFile) / 2) / AudioFile.FMTChunk.nChannels) / AudioFile.FMTChunk.nSamplesPerSec)) * 0.1)
         If i > 0 Then
             If PicDisplay.Width / i > Screen.TwipsPerPixelX Then
-                For x = 1 To PicDisplay.Width Step i
-                    PicDisplay.Line (x, (UserControl.Height - PicSlidebar.Height) - ((UserControl.Height - PicSlidebar.Height) * IIf((x / i) Mod 10 = 0, 0.09, IIf((x / i) Mod 5 = 0, 0.06, 0.03))))-(x, (UserControl.Height - PicSlidebar.Height)), vbBlack
-                    UserControl.Line (x, (UserControl.Height - PicSlidebar.Height) - ((UserControl.Height - PicSlidebar.Height) * IIf((x / i) Mod 10 = 0, 0.09, IIf((x / i) Mod 5 = 0, 0.06, 0.03))))-(x, (UserControl.Height - PicSlidebar.Height)), vbBlack
+                For X = 1 To PicDisplay.Width Step i
+                    PicDisplay.Line (X, (UserControl.Height - PicSlidebar.Height) - ((UserControl.Height - PicSlidebar.Height) * IIf((X / i) Mod 10 = 0, 0.09, IIf((X / i) Mod 5 = 0, 0.06, 0.03))))-(X, (UserControl.Height - PicSlidebar.Height)), vbBlack
+                    UserControl.Line (X, (UserControl.Height - PicSlidebar.Height) - ((UserControl.Height - PicSlidebar.Height) * IIf((X / i) Mod 10 = 0, 0.09, IIf((X / i) Mod 5 = 0, 0.06, 0.03))))-(X, (UserControl.Height - PicSlidebar.Height)), vbBlack
                 
                 Next
             End If
@@ -809,13 +1001,13 @@ End Sub
 Private Sub RenderCenters()
     If FileLoaded <> "" Then
         Dim i As Long
-        Dim y As Single
+        Dim Y As Single
         If (PicDisplay.Width < (UserControl.Width - PicVolscale.Width)) Then
-            For i = 1 To AudioFile.Infos(1).wNumberOfChannels
-                y = ((UserControl.Height - PicSlidebar.Height) / (AudioFile.Infos(1).wNumberOfChannels + 1) * i) - _
+            For i = 1 To AudioFile.FMTChunk.nChannels
+                Y = ((UserControl.Height - PicSlidebar.Height) / (AudioFile.FMTChunk.nChannels + 1) * i) - _
                     (((UserControl.Height - PicSlidebar.Height) / 2) - (PicDisplay.Height / 2))
 
-                UserControl.Line (0, y)-(UserControl.Width - PicVolscale.Width, y), GetColorShade(i, 0)
+                UserControl.Line (0, Y)-(UserControl.Width - PicVolscale.Width, Y), GetColorShade(i, 0)
             Next
         End If
     End If
@@ -843,15 +1035,15 @@ Private Sub RenderVolScale()
     PicVolscale.Cls
     If FileLoaded <> "" Then
         Dim i As Long
-        Dim y As Single
+        Dim Y As Single
         PicVolscale.ForeColor = vbBlack
-        For i = 1 To AudioFile.Infos(1).wNumberOfChannels
-            y = ((UserControl.Height - PicSlidebar.Height) / (AudioFile.Infos(1).wNumberOfChannels + 1) * i) - _
+        For i = 1 To AudioFile.FMTChunk.nChannels
+            Y = ((UserControl.Height - PicSlidebar.Height) / (AudioFile.FMTChunk.nChannels + 1) * i) - _
                 (((UserControl.Height - PicSlidebar.Height) / 2) - (PicDisplay.Height / 2))
         
-            PicVolscale.Line (0, y)-((PicVolscale.Width / 2), y), vbBlack
+            PicVolscale.Line (0, Y)-((PicVolscale.Width / 2), Y), vbBlack
             PicVolscale.CurrentX = (PicVolscale.Width - PicVolscale.TextWidth("00"))
-            PicVolscale.CurrentY = y - (PicVolscale.TextHeight("0") / 2)
+            PicVolscale.CurrentY = Y - (PicVolscale.TextHeight("0") / 2)
             If (PicDisplay.Width < (UserControl.Width - PicVolscale.Width)) Then
                 UserControl.ForeColor = GetColorShade(i, 0)
                 UserControl.CurrentX = PicVolscale.CurrentX
@@ -871,22 +1063,16 @@ Private Sub RenderFileInfo(ByVal clr As Long)
         info = CStr((TotalTime / 1000))
         If InStr(info, ".") > 0 Then info = Left(info, InStr(info, ".") - 1) & Mid(info, InStr(info, "."), 3)
         
-        Select Case AudioFile.Infos(1).wNumberOfChannels
+        Select Case AudioFile.FMTChunk.nChannels
             Case 1
-                info = "Standard PCM " & AudioFile.Infos(1).lSamplesPerSecond & " Hertz, " & _
-                            AudioFile.Infos(1).wBitsPerSample & "-bits, " & "Mono, " & (AudioFile.Datas(1).lBytes / 2) & " KBytes, " & info & " Seconds"
+                info = "Standard PCM " & AudioFile.FMTChunk.nSamplesPerSec & " Hertz, " & _
+                            AudioFile.FMTChunk.wBitsPerSample & "-bits, " & "Mono, " & LengthOfData(AudioFile) & " Bytes, " & info & " Seconds"
             Case 2
-                info = "Standard PCM " & AudioFile.Infos(1).lSamplesPerSecond & " Hertz, " & _
-                            AudioFile.Infos(1).wBitsPerSample & "-bits, " & "Stereo, " & (AudioFile.Datas(1).lBytes / 2) & " KBytes, " & info & " Seconds"
-            Case 3
-                info = "Standard PCM " & AudioFile.Infos(1).lSamplesPerSecond & " Hertz, " & _
-                            AudioFile.Infos(1).wBitsPerSample & "-bits, " & "3 Channels, " & (AudioFile.Datas(1).lBytes / 2) & " KBytes, " & info & " Seconds"
-            Case 4
-                info = "Standard PCM " & AudioFile.Infos(1).lSamplesPerSecond & " Hertz, " & _
-                            AudioFile.Infos(1).wBitsPerSample & "-bits, " & "Quad, " & (AudioFile.Datas(1).lBytes / 2) & " KBytes, " & info & " Seconds"
+                info = "Standard PCM " & AudioFile.FMTChunk.nSamplesPerSec & " Hertz, " & _
+                           AudioFile.FMTChunk.wBitsPerSample & "-bits, " & "Stereo, " & LengthOfData(AudioFile) & " Bytes, " & info & " Seconds"
             Case Is >= 5
-                info = "Standard PCM " & AudioFile.Infos(1).lSamplesPerSecond & " Hertz, " & _
-                            AudioFile.Infos(1).wBitsPerSample & "-bits, " & AudioFile.Infos(1).wNumberOfChannels & " Channels, " & (AudioFile.Datas(1).lBytes / 2) & " KBytes, " & info & " Seconds"
+                info = "Standard PCM " & AudioFile.FMTChunk.nSamplesPerSec & " Hertz, " & _
+                            AudioFile.FMTChunk.wBitsPerSample & "-bits, " & AudioFile.FMTChunk.nChannels & " Channels, " & LengthOfData(AudioFile) & " Bytes, " & info & " Seconds"
         End Select
         PicDisplay.Print info
         UserControl.Cls
@@ -905,38 +1091,58 @@ Private Sub WaveInitial()
 
     RenderStatus "Loading wave file..."
 
-    Peak = 0: Dip = 0
+    peak = 0: Dip = 0
     TotalTime = 0
     ChannelTap = 0
+    Dim TotalBytes As Long
+    TotalBytes = LengthOfData(AudioFile)
                 
-    If AudioFile.wDataLen > 0 And AudioFile.wInfoLen > 0 Then
+    If TotalBytes > 0 Then
 
         Dim elapse As Single
         elapse = Timer
 
-        For d = 1 To (AudioFile.Datas(1).lBytes / 2)
-
-            If AudioFile.Datas(1).wWave(d) < Dip Then Dip = CSng(AudioFile.Datas(1).wWave(d))
-            If AudioFile.Datas(1).wWave(d) > Peak Then Peak = CSng(AudioFile.Datas(1).wWave(d))
-
-
-            If Timer - elapse > 0.3 Then
-                elapse = Timer
-                RenderStatus "Loading wave file (" & CInt(((d / (AudioFile.Datas(1).lBytes / 2)) * 100)) & "%)..."
-            End If
-        Next
-
+        If AudioFile.FMTChunk.wBitsPerSample = 8 Then
+            For d = LBound(AudioFile.WaveData16bit.ChannelData, 2) To UBound(AudioFile.WaveData16bit.ChannelData, 2)
+    
+                If AudioFile.WaveData8bit.ChannelData(1, d) < Dip Then Dip = CSng(AudioFile.WaveData8bit.ChannelData(1, d))
+                If AudioFile.WaveData8bit.ChannelData(1, d) > peak Then peak = CSng(AudioFile.WaveData8bit.ChannelData(1, d))
+    
+    
+                If Timer - elapse > 0.25 Then
+                    elapse = Timer
+                    RenderStatus "Loading wave file (" & CInt(((d / UBound(AudioFile.WaveData16bit.ChannelData, 2)) * 100)) & "%)..."
+                End If
+            Next
+        Else
+            For d = LBound(AudioFile.WaveData16bit.ChannelData, 2) To UBound(AudioFile.WaveData16bit.ChannelData, 2)
+            
+                If AudioFile.WaveData16bit.ChannelData(1, d) < Dip Then Dip = CSng(AudioFile.WaveData16bit.ChannelData(1, d))
+                If AudioFile.WaveData16bit.ChannelData(1, d) > peak Then peak = CSng(AudioFile.WaveData16bit.ChannelData(1, d))
+    
+    
+                If Timer - elapse > 0.25 Then
+                    elapse = Timer
+                    RenderStatus "Loading wave file (" & CInt(((d / UBound(AudioFile.WaveData16bit.ChannelData, 2)) * 100)) & "%)..."
+                End If
+            Next
+        End If
         
-        If ChannelTap < AudioFile.Infos(1).wNumberOfChannels Then ChannelTap = AudioFile.Infos(1).wNumberOfChannels
+        
+        If ChannelTap < AudioFile.FMTChunk.nChannels Then ChannelTap = AudioFile.FMTChunk.nChannels
         
         TotalTime = WaveMilliseconds(AudioFile)
         
-        MRatio = -(PicRender.Height / AudioFile.Infos(1).wNumberOfChannels)
+        MRatio = -(PicRender.Height / AudioFile.FMTChunk.nChannels)
         
-        MRatio = MRatio / (Abs(Peak) + Abs(Dip))
+        If (Abs(peak) + Abs(Dip)) <> 0 Then
+            MRatio = MRatio / (Abs(peak) + Abs(Dip))
+        Else
+            MRatio = 1
+        End If
         DBZoom = 0
              
-        PicRender.Width = ((TotalTime / Screen.TwipsPerPixelY) * (AudioFile.Infos(AudioFile.wInfoLen).wBitsPerSample * AudioFile.Infos(AudioFile.wInfoLen).lSamplesPerSecond))
+        PicRender.Width = ((TotalTime / Screen.TwipsPerPixelY) * (AudioFile.FMTChunk.wBitsPerSample * AudioFile.FMTChunk.nSamplesPerSec))
         
        ' PicRender.Width = ((TotalTime * 1000) * (Screen.TwipsPerPixelX / 100))
        
@@ -948,15 +1154,16 @@ Private Sub WaveInitial()
         
         ViewSlider.Width = PicSlidebar.Width
         
-        If Not FileLoaded = "" Then
-
-        
+        If FileLoaded = "" Then
+            HookObj Me
+        Else
             FileLoaded = ""
         End If
 
         WaveDisplay ".\"
 
     End If
+    
     
     PicDisplay.ForeColor = vbWhite
     PicDisplay.CurrentX = 0: PicDisplay.CurrentY = 0
@@ -979,40 +1186,52 @@ End Sub
 Public Sub WaveDisplay(Optional ByVal fname As String = "")
 
     On Error GoTo catcherr
-    
+
     If fname <> "" Or FileLoaded <> "" Then
 
         Dim CurrentTrack As Integer
         Dim i As Single
-        
-        Dim x As Single, y As Single
-        
+
+        Dim X As Single, Y As Single
+
         Dim y1 As Single
 
         Dim clrShade As Long
+        Dim TotalBytes As Long
+      '  TotalBytes = LengthOfData(AudioFile) 'ArrayBoundSize(AudioFile.WaveData16bit.ChannelData, 2) / 2  'LengthOfData(AudioFile)
+    
+        If AudioFile.FMTChunk.wBitsPerSample = 8 Then
+            TotalBytes = (UBound(AudioFile.WaveData8bit.ChannelData, 2) * AudioFile.FMTChunk.nChannels) * (LenB(AudioFile.WaveData8bit.ChannelData(LBound(AudioFile.WaveData8bit.ChannelData, 1), LBound(AudioFile.WaveData8bit.ChannelData, 2))) * AudioFile.FMTChunk.nBlockAlign)
+        ElseIf AudioFile.FMTChunk.wBitsPerSample = 16 Then
+            TotalBytes = (UBound(AudioFile.WaveData16bit.ChannelData, 2) * AudioFile.FMTChunk.nChannels) * (LenB(AudioFile.WaveData16bit.ChannelData(LBound(AudioFile.WaveData16bit.ChannelData, 1), LBound(AudioFile.WaveData16bit.ChannelData, 2))) * AudioFile.FMTChunk.nBlockAlign)
+        End If
 
-        dBitsPerTwip = Screen.TwipsPerPixelX / AudioFile.Infos(1).wChannelBandwidth
+        dBitsPerTwip = Screen.TwipsPerPixelX / AudioFile.FMTChunk.nBlockAlign
        ' dBitsPerTwip = AudioFile.Infos(1).wNumberOfChannels * AudioFile.Infos(1).wChannelBandwidth
        ' dBitsPerTwip = ((AudioFile.Datas(1).lBytes / AudioFile.Infos(1).wNumberOfChannels) / PicRender.Width)
 
         RenderStatus "Rendering wave file..."
-                
+
         PicRender.Cls
 
+        Dim ub As Long
+        Dim lb As Long
+        lb = LBound(AudioFile.WaveData16bit.ChannelData, 2)
+        ub = UBound(AudioFile.WaveData16bit.ChannelData, 2)
         Dim elapse As Single
         elapse = Timer
 
-        For i = 1 To (AudioFile.Datas(1).lBytes / 2) - AudioFile.Infos(1).wNumberOfChannels Step AudioFile.Infos(1).wNumberOfChannels * Format(dBitsPerTwip, "##000")
+        For i = lb To ub '- AudioFile.FMTChunk.nChannels Step AudioFile.FMTChunk.nChannels * Format(dBitsPerTwip, "##000")
 
-            If Timer - elapse > 0.3 Then
+            If Timer - elapse > 0.25 Then
                 elapse = Timer
-                RenderStatus "Rendering wave file (" & CInt((i / ((AudioFile.Datas(1).lBytes / 2) - AudioFile.Infos(1).wNumberOfChannels)) * 100) & "%)..."
+                RenderStatus "Rendering wave file (" & CInt((i / ub) * 100) & "%)..."
             End If
 
-            x = x + ((PicRender.Width / (AudioFile.Datas(1).lBytes / AudioFile.Infos(1).wChannelBandwidth)) * Format(dBitsPerTwip, "##000"))
+            X = X + ((PicRender.Width / (TotalBytes / AudioFile.FMTChunk.nBlockAlign)) * Format(dBitsPerTwip, "##000"))
       '      X = X + (PicRender.Width / (AudioFile.Datas(1).lBytes / AudioFile.Infos(1).wChannelBandwidth))
-            
-            For CurrentTrack = 1 To AudioFile.Infos(1).wNumberOfChannels
+
+            For CurrentTrack = 1 To AudioFile.FMTChunk.nChannels
 '
 '                PicRender.ForeColor = GetColorShade(CurrentTrack, clrShade)
 '                If CurrentTrack Mod AudioFile.Infos(1).wNumberOfChannels = 0 Then
@@ -1032,26 +1251,30 @@ Public Sub WaveDisplay(Optional ByVal fname As String = "")
 '                    End Select
 '                End If
 
-                y = (PicRender.Height / (AudioFile.Infos(1).wNumberOfChannels + 1) * CurrentTrack)
-                
-                y1 = (y + (AudioFile.Datas(1).wWave(i + CurrentTrack) * MRatio))
-                
-                PicRender.ForeColor = GetColorShade(CurrentTrack, (Abs(y - y1) / Round((PicRender.Height / ((AudioFile.Infos(1).wNumberOfChannels + 1) * 2)) / 6)))
+                Y = (PicRender.Height / (AudioFile.FMTChunk.nChannels + 1) * CurrentTrack)
 
+                If AudioFile.FMTChunk.wBitsPerSample = 8 Then
+                    y1 = (Y + (AudioFile.WaveData8bit.ChannelData(CurrentTrack, i) * MRatio))
+                ElseIf AudioFile.FMTChunk.wBitsPerSample = 16 Then
+                    y1 = (Y + (AudioFile.WaveData16bit.ChannelData(CurrentTrack, i) * MRatio))
+                End If
+                
+                PicRender.ForeColor = GetColorShade(CurrentTrack, (Abs(Y - y1) / Round((PicRender.Height / ((AudioFile.FMTChunk.nChannels + 1) * 2)) / 6)))
+                
                 If Not DotsOnly Then
 
-                    PicRender.Line (x, y)-(x, y1)
+                    PicRender.Line (X, Y)-(X, y1)
 
                     If i = 1 Then
-                        PicRender.Line (0, y)-(PicRender.Width, y)
-                        UserControl.Line (0, y)-(PicRender.Width, y), PicRender.ForeColor
+                        PicRender.Line (0, Y)-(PicRender.Width, Y)
+                        UserControl.Line (0, Y)-(PicRender.Width, Y), PicRender.ForeColor
                     End If
                 Else
-                    PicRender.Line (x, y1)-(x, y1), , BF
-                    
+                    PicRender.Line (X, y1)-(X, y1), , BF
+
                     If i = 1 Then
-                        PicRender.Line (0, y)-(PicRender.Width, y)
-                        UserControl.Line (0, y)-(PicRender.Width, y), PicRender.ForeColor
+                        PicRender.Line (0, Y)-(PicRender.Width, Y)
+                        UserControl.Line (0, Y)-(PicRender.Width, Y), PicRender.ForeColor
                     End If
 
                 End If
@@ -1059,31 +1282,34 @@ Public Sub WaveDisplay(Optional ByVal fname As String = "")
             Next CurrentTrack
 
         Next i
-        
+
         LeftMarker.Visible = True
         RightMarker.Visible = True
         LeftMarker.X1 = 0
         LeftMarker.X2 = 0
         RightMarker.X1 = PicDisplay.Width
         RightMarker.X2 = PicDisplay.Width
-            
+
         If FileLoaded = "" And fname <> "" Then
             FileLoaded = fname
         End If
 
         RenderVolScale
-        
+
         PicDisplay.PaintPicture PicRender.Image, 0, 0, PicDisplay.Width, PicDisplay.Height, 0, 0, PicRender.Width, PicRender.Height
 
         PicSlidebar.PaintPicture PicRender.Image, 0, 0, PicSlidebar.Width, PicSlidebar.Height, 0, 0, PicRender.Width, PicRender.Height
-        
+
         ViewSlider.Width = (PicSlidebar.Width * ((UserControl.Width - PicVolscale.Width) / PicDisplay.Width))
         ViewSlider.Left = 0
         ViewSlider.Visible = True
-    
+
         RenderTimeLine
 
         RenderFileInfo vbBlack
+
+
+
         
         ResetButton.Enabled = True
         PlayButton.Enabled = True
@@ -1098,20 +1324,20 @@ Public Sub WaveDisplay(Optional ByVal fname As String = "")
         LeftMarker.Visible = False
         RightMarker.Visible = False
         PlayCursor.Visible = False
-        
+
         ViewSlider.Visible = False
         PicSlidebar.Cls
         PicVolscale.Cls
         PicDisplay.Cls
         UserControl.Cls
-        
-        
+
+
     End If
-    
+
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
 Private Sub OpenButton_Click()
@@ -1123,8 +1349,8 @@ Private Sub OpenButton_Click()
     BrowseForWave.FileName = FileLoaded
     BrowseForWave.ShowOpen
     
-    If err.Number = cdlCancel Then
-        err.Clear
+    If Err.Number = cdlCancel Then
+        Err.Clear
     Else
         On Error GoTo 0
         WaveFromFile BrowseForWave.FileName
@@ -1148,21 +1374,21 @@ Private Sub ResetButton_Click()
     WaveClose
 End Sub
 
-Private Sub PicSlidebar_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicSlidebar_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 1 Then
-        PicSlidebar.Tag = x
+        PicSlidebar.Tag = X
     Else
         PicSlidebar.Tag = 0
     End If
 End Sub
 
-Private Sub PicSlidebar_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicSlidebar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 1 Then
         If PicSlidebar.Tag <> 0 And ViewSlider.Width < PicSlidebar.Width Then
             PicSlidebar.Tag = Abs(PicSlidebar.Tag)
-            MoveViewPort x
+            MoveViewPort X
 
-            PicSlidebar.Tag = -x
+            PicSlidebar.Tag = -X
 
         End If
     Else
@@ -1170,10 +1396,10 @@ Private Sub PicSlidebar_MouseMove(Button As Integer, Shift As Integer, x As Sing
     End If
 End Sub
 
-Private Sub PicSlidebar_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
-    If x = PicSlidebar.Tag And ViewSlider.Width < PicSlidebar.Width Then
+Private Sub PicSlidebar_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    If X = PicSlidebar.Tag And ViewSlider.Width < PicSlidebar.Width Then
         PicSlidebar.Tag = (ViewSlider.Width / 2)
-        MoveViewPort (x - ViewSlider.Left)
+        MoveViewPort (X - ViewSlider.Left)
     Else
         PicSlidebar.Tag = 0
     End If
@@ -1200,20 +1426,20 @@ Private Sub PicDisplay_KeyPress(KeyAscii As Integer)
 
     On Error GoTo catcherr
     
-    If KeyAscii >= Asc("1") And KeyAscii <= Asc("9") Then
-
-        FilterScripts.Reset
-        FilterScripts.AddCode GetSetting(App.Title, "Filters", "VBScript")
-        
-        WaveFilter AudioFile, WaveMarkerStartMS, WaveMarkerStopMS - WaveMarkerStartMS, FilterScripts, "func" & Chr(KeyAscii) & "(%)"
-
-        WaveDisplay
-    End If
+'    If KeyAscii >= Asc("1") And KeyAscii <= Asc("9") Then
+'
+'        FilterScripts.Reset
+'        FilterScripts.AddCode GetSetting(App.Title, "Filters", "VBScript")
+'
+'        'WaveFilter AudioFile, WaveMarkerStartMS, WaveMarkerStopMS - WaveMarkerStartMS, FilterScripts, "func" & Chr(KeyAscii) & "(%)"
+'
+'        'WaveDisplay
+'    End If
 
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
 Private Sub PicDisplay_LostFocus()
@@ -1221,7 +1447,7 @@ Private Sub PicDisplay_LostFocus()
     LastY = 0
 End Sub
 
-Private Sub PicDisplay_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicDisplay_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     Static lX As Single
   
@@ -1230,14 +1456,14 @@ Private Sub PicDisplay_MouseDown(Button As Integer, Shift As Integer, x As Singl
         If (lX <> Screen.TwipsPerPixelX) Then
             RightMarker.Tag = LeftMarker.X1
         End If
-        LeftMarker.Tag = x
+        LeftMarker.Tag = X
 
         If LeftMarker.X1 = RightMarker.X1 Then
             RightMarker.Tag = PicDisplay.Width - Screen.TwipsPerPixelX
         ElseIf (RightMarker.X2 = PicDisplay.Width - Screen.TwipsPerPixelX) Then
             LeftMarker.Tag = Screen.TwipsPerPixelX
         End If
-        lX = x
+        lX = X
         
     ElseIf (Button = 2) Then
 
@@ -1247,9 +1473,9 @@ Private Sub PicDisplay_MouseDown(Button As Integer, Shift As Integer, x As Singl
 
 End Sub
 
-Private Sub PicDisplay_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicDisplay_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     
-    If (x <> LastX And y <> LastY And Button = 1) And (LastBtn = 1 And LastX <> 0 And LastY <> 0) Then
+    If (X <> LastX And Y <> LastY And Button = 1) And (LastBtn = 1 And LastX <> 0 And LastY <> 0) Then
 
         PicDisplay.OLEDrag
 
@@ -1261,13 +1487,13 @@ Private Sub PicDisplay_MouseMove(Button As Integer, Shift As Integer, x As Singl
         End If
     End If
     
-    LastX = x
-    LastY = y
+    LastX = X
+    LastY = Y
     LastBtn = Button
     PicDisplay.SetFocus
 End Sub
 
-Private Sub PicDisplay_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicDisplay_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     
     If (PicDisplay.MousePointer <> 0) Then
     
@@ -1301,50 +1527,50 @@ Private Sub PicDisplay_OLECompleteDrag(Effect As Long)
 
 End Sub
 
-Private Sub PicDisplay_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub PicDisplay_OLEDragDrop(data As DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     On Error GoTo catcherr
     
-    If Data.GetFormat(MyFormat) Then
+    If data.GetFormat(MyFormat) Then
         If Screen.MousePointer = 99 Then
             
-            Dim temp() As Byte
-            temp = Data.GetData(MyFormat)
-
-            If Shift Then
-
-
-            Else
-                Dim af As AudioFile
-                af = WaveBytesAsAudio(temp)
-                If af.wInfoLen > 0 And af.wDataLen > 0 Then
-                    Dim SourceDurationTimeMS As Single
-                    SourceDurationTimeMS = Round(((af.Datas(1).lBytes / af.Infos(af.wInfoLen).lBytesPerSecond) * 1000))
-                    If SourceDurationTimeMS - (WaveMilliseconds(af) - WaveMarkerStartMS) < 0 Then
-                        err.Raise 8, "WaveData", "Invalid or exceeding duration time."
-                    Else
-                        AudioFile = WaveBytesAsAudio(WaveCombine(WaveData, WaveMarkerStartMS, temp, SourceDurationTimeMS))
-                        WaveInitial
-                        
-                    End If
-                End If
-            End If
-            Erase temp
-
+'            Dim temp() As Byte
+'            temp = data.GetData(MyFormat)
+'
+'            If Shift Then
+'
+'
+'            Else
+'                Dim af As AudioFile2
+'                af = WaveBytesAsAudio(temp)
+'                If LengthOfData(af) > 0 Then
+'                    Dim SourceDurationTimeMS As Single
+'                    SourceDurationTimeMS = Round(((LengthOfData(af) / af.FMTChunk.nAvgBytesPerSec) * 1000))
+'                    If SourceDurationTimeMS - (WaveMilliseconds(af) - WaveMarkerStartMS) < 0 Then
+'                        Err.Raise 8, "WaveData", "Invalid or exceeding duration time."
+'                    Else
+'                        AudioFile = WaveBytesAsAudio(WaveCombine(WaveData, WaveMarkerStartMS, temp, SourceDurationTimeMS))
+'                        WaveInitial
+'
+'                    End If
+'                End If
+'            End If
+'            Erase temp
+            Screen.MousePointer = 0
         End If
     End If
     
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
 End Sub
 
 Private Sub DragDetermine()
 
     Dim pt As POINTAPI
     GetCursorPos pt
-    If CStr(WindowFromPoint(pt.x, pt.y)) = CStr(PicDisplay.hwnd) Then
+    If CStr(WindowFromPoint(pt.X, pt.Y)) = CStr(PicDisplay.hwnd) Then
          Screen.MousePointer = 12
     Else
          Set Screen.MouseIcon = DragIcon.Picture
@@ -1359,14 +1585,14 @@ Private Sub PicDisplay_OLEGiveFeedback(Effect As Long, DefaultCursors As Boolean
     DragDetermine
 End Sub
 
-Private Sub PicDisplay_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
+Private Sub PicDisplay_OLEStartDrag(data As DataObject, AllowedEffects As Long)
     
     AllowedEffects = vbDropEffectMove Or vbDropEffectCopy
     
     If FileLoaded <> "" Then
 
-        Data.Clear
-        Data.SetData WaveData, MyFormat
+        data.Clear
+        data.SetData WaveData, MyFormat
 
         PicDisplay.MousePointer = 12
 
@@ -1403,35 +1629,41 @@ Public Sub WaveClose()
 
     If FileLoaded <> "" Then
         FileLoaded = ""
+        HookObj Me
     End If
 
     WaveResetRecord AudioFile
-
+    
+    
     WaveDisplay
     Exit Sub
 catcherr:
-    MsgBox err.Description, vbCritical, "An error occured"
-    err.Clear
+    MsgBox Err.Description, vbCritical, "An error occured"
+    Err.Clear
     
 End Sub
 
 Private Sub UserControl_Initialize()
+   
+    SilentBytes = WaveSilentAudio(0)
     MyFormat = RegisterClipboardFormat("audio/wav")
     
     PicSlidebar.Tag = 0
     WaveDisplay
     UserControl_Resize
+
 End Sub
 
 Public Property Get hwnd() As Long
     hwnd = UserControl.hwnd
 End Property
 
-Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     PicDisplay.SetFocus
 End Sub
 
 Private Sub UserControl_Resize()
+    On Error GoTo exitresize
     If UserControl.Width < ((17 * Screen.TwipsPerPixelX) * 2) Then
         UserControl.Width = ((17 * Screen.TwipsPerPixelX) * 2)
     End If
@@ -1469,11 +1701,11 @@ Private Sub UserControl_Resize()
     OpenButton.Left = (PlayButton.Left - OpenButton.Width)
 
     LeftMarker.y1 = 0
-    LeftMarker.y2 = UserControl.Height
+    LeftMarker.Y2 = UserControl.Height
     RightMarker.y1 = 0
-    RightMarker.y2 = UserControl.Height
+    RightMarker.Y2 = UserControl.Height
     PlayCursor.y1 = 0
-    PlayCursor.y2 = UserControl.Height
+    PlayCursor.Y2 = UserControl.Height
 
 
     If FileLoaded <> "" Then
@@ -1509,13 +1741,15 @@ Private Sub UserControl_Resize()
         RenderTimeLine
         RenderFileInfo vbBlack
         
-
-
         LaststartMS = WaveMarkerStartMS
         LaststopMS = WaveMarkerStopMS
         
-
     End If
+    Exit Sub
+exitresize:
+    Debug.Print "Usercontrol_Resize(Error)"
+    Err.Clear
+    
 End Sub
 
 Private Sub UserControl_Terminate()

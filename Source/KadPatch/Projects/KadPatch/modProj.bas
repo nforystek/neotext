@@ -171,9 +171,9 @@ Public Function WriteToDisk() As Boolean
     
     For X = 1 To ThatchXUnits
         For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).count > 0 Then
-                Put #fn, , ProjGrid(X, Y).count
-                For i = 1 To ProjGrid(X, Y).count
+            If ProjGrid(X, Y).Count > 0 Then
+                Put #fn, , ProjGrid(X, Y).Count
+                For i = 1 To ProjGrid(X, Y).Count
                  '   c = ProjGrid(X, Y).Details(i).Color
                  '   c = Val("&" & GetFileTitle(frmStudio.Gallery1.FilePath(c)))
                     If Not clrs.Exists("C" & ProjGrid(X, Y).Details(i).Color) Then clrs.Add ProjGrid(X, Y).Details(i).Color, "C" & ProjGrid(X, Y).Details(i).Color
@@ -187,8 +187,8 @@ Public Function WriteToDisk() As Boolean
         Next
     Next
     
-    If clrs.count > 0 Then
-        Do While clrs.count > 0
+    If clrs.Count > 0 Then
+        Do While clrs.Count > 0
             Put #fn, , SymbolToBinary(frmStudio.GetSymbol(clrs(1)))
             clrs.Remove 1
         Loop
@@ -199,7 +199,7 @@ Public Function WriteToDisk() As Boolean
     
 faildiskaccess:
     Close #fn
-    WriteToDisk = (Err.number = 0)
+    WriteToDisk = (Err.Number = 0)
     If Err Then Err.Clear
     On Error GoTo 0
 End Function
@@ -213,9 +213,9 @@ Public Function ReadFromDisk() As Boolean
     
     For X = 1 To ThatchXUnits
         For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).count > 0 Then
+            If ProjGrid(X, Y).Count > 0 Then
                 Erase ProjGrid(X, Y).Details
-                ProjGrid(X, Y).count = 0
+                ProjGrid(X, Y).Count = 0
             End If
         Next
     Next
@@ -223,7 +223,7 @@ Public Function ReadFromDisk() As Boolean
     
     Dim clrs As New NTNodes10.Collection
     
-    Dim count As Byte
+    Dim Count As Byte
     Dim i As Byte
     
     Dim tmp As Single
@@ -262,12 +262,12 @@ Public Function ReadFromDisk() As Boolean
     
     Do
         
-        Get #fn, , count
-        If count > 0 Then
-            ProjGrid(X, Y).count = count
-            ReDim Preserve ProjGrid(X, Y).Details(1 To count) As ItemDetail
+        Get #fn, , Count
+        If Count > 0 Then
+            ProjGrid(X, Y).Count = Count
+            ReDim Preserve ProjGrid(X, Y).Details(1 To Count) As ItemDetail
             i = 0
-            Do Until i = count
+            Do Until i = Count
                 i = i + 1
                 Get #fn, , total
                 
@@ -294,12 +294,12 @@ Public Function ReadFromDisk() As Boolean
         End If
     Loop Until EOF(fn)
     
-    If (Not EOF(fn)) And (clrs.count > 0) Then
+    If (Not EOF(fn)) And (clrs.Count > 0) Then
         If MsgBox("Do you want to import the symbols in the saved file?" & vbCrLf & _
                    "(Note: Yes, will overwrite existing color symbols." & vbCrLf & _
                    "No, erases the files symbols when saving it later.", vbYesNo + vbQuestion) = vbYes Then
         
-            Do Until EOF(fn) Or (clrs.count = 0)
+            Do Until EOF(fn) Or (clrs.Count = 0)
                 Dim binary(1 To SymbolWidth * SymbolHeight) As Boolean
                 Get #fn, , binary
                 frmStudio.SetSymbol clrs(1), SymbolFromBinary(binary)
@@ -320,7 +320,7 @@ Public Function ReadFromDisk() As Boolean
     
 faildiskaccess:
     Close #fn
-    ReadFromDisk = (Err.number = 0)
+    ReadFromDisk = (Err.Number = 0)
     If Err Then Err.Clear
     On Error GoTo 0
 End Function
@@ -332,7 +332,7 @@ Public Function Serialize(ByRef data() As Byte) As Boolean
     
     
 faildiskaccess:
-    Serialize = (Err.number = 0)
+    Serialize = (Err.Number = 0)
     On Error GoTo 0
 End Function
 
@@ -344,7 +344,7 @@ Public Function Deserialize(ByRef data() As Byte) As Boolean
     
     
 faildiskaccess:
-    Deserialize = (Err.number = 0)
+    Deserialize = (Err.Number = 0)
     On Error GoTo 0
 End Function
 
@@ -389,9 +389,12 @@ Public Sub GotoCenter()
   ' Player.Location.Y = ((BlockHeightY / BlockSqrPerText) * ThatchYUnits) + ((frmStudio.Designer.Height / Screen.TwipsPerPixelY) / 2)
   '  Player.Location.X = -((BlockWidthX / BlockSqrPerText) * ThatchXUnits) + ((frmStudio.Designer.Width / Screen.TwipsPerPixelX) / 2)
     
-    Player.Location.Y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) + ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
-    Player.Location.X = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) + ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
-    
+'    Player.Location.Y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) + ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
+'    Player.Location.X = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) + ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
+   
+    Player.Location.Y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) ' - ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
+    Player.Location.X = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) ' - ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
+   
 
     Player.Location.Z = 0
 
@@ -684,30 +687,30 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     D3DXVec3Subtract vDir, p2, p1
 
     'Check if the points hit
-    Dim v1 As D3DVECTOR
-    Dim v2 As D3DVECTOR
-    Dim v3 As D3DVECTOR
+    Dim V1 As D3DVECTOR
+    Dim V2 As D3DVECTOR
+    Dim V3 As D3DVECTOR
 
-    Dim v4 As D3DVECTOR
+    Dim V4 As D3DVECTOR
     Dim v5 As D3DVECTOR
     Dim v6 As D3DVECTOR
 
     Dim pPlane1 As D3DVECTOR4
 
     Dim cnt As Long
-    v1.X = ThatchVertex(0).X
-    v1.Y = ThatchVertex(0).Y
-    v1.Z = ThatchVertex(0).Z
+    V1.X = ThatchVertex(0).X
+    V1.Y = ThatchVertex(0).Y
+    V1.Z = ThatchVertex(0).Z
 
-    v2.X = ThatchVertex(1).X
-    v2.Y = ThatchVertex(1).Y
-    v2.Z = ThatchVertex(1).Z
+    V2.X = ThatchVertex(1).X
+    V2.Y = ThatchVertex(1).Y
+    V2.Z = ThatchVertex(1).Z
 
-    v3.X = ThatchVertex(2).X
-    v3.Y = ThatchVertex(2).Y
-    v3.Z = ThatchVertex(2).Z
+    V3.X = ThatchVertex(2).X
+    V3.Y = ThatchVertex(2).Y
+    V3.Z = ThatchVertex(2).Z
 
-    pPlane1 = Create4DPlaneVectorFromPoints(v1, v2, v3)
+    pPlane1 = Create4DPlaneVectorFromPoints(V1, V2, V3)
 
     Dim c As D3DVECTOR
     Dim N As D3DVECTOR
@@ -794,7 +797,7 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     For X = 1 To ThatchXUnits
         For Y = 1 To ThatchYUnits
             'If ProjGrid(X, Y).count > 0 Then
-                For i = 1 To ProjGrid(X, Y).count
+                For i = 1 To ProjGrid(X, Y).Count
                     'If ProjGrid(X, Y).Details(i).Stitch > 0 Then
                     
                         DrawStitch X, Y, ProjGrid(X, Y).Details(i).Stitch, ProjGrid(X, Y).Details(i).Color, TwoDimension
@@ -1345,8 +1348,8 @@ Public Function CountColorUsed(ByVal Color As Long) As Long
     Dim i As Byte
     For X = 1 To ThatchXUnits
         For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).count > 0 Then
-                For i = 1 To ProjGrid(X, Y).count
+            If ProjGrid(X, Y).Count > 0 Then
+                For i = 1 To ProjGrid(X, Y).Count
                     If ProjGrid(X, Y).Details(i).Stitch > 0 Then
                         If Color = ProjGrid(X, Y).Details(i).Color Then CountColorUsed = CountColorUsed + 1
                     End If
@@ -1364,8 +1367,8 @@ Public Function RemoveColorUsed(ByVal Color As Long) As Long
     Dim i As Byte
     For X = 1 To ThatchXUnits
         For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).count > 0 Then
-                For i = 1 To ProjGrid(X, Y).count
+            If ProjGrid(X, Y).Count > 0 Then
+                For i = 1 To ProjGrid(X, Y).Count
                     If ProjGrid(X, Y).Details(i).Stitch > 0 Then
                         If Color = ProjGrid(X, Y).Details(i).Color Then ProjGrid(X, Y).Details(i).Stitch = 0
                     End If

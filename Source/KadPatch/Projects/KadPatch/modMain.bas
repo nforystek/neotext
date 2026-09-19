@@ -265,6 +265,7 @@ Public Sub RenderFrame()
 
 Exit Sub
 nofocus:
+
     Debug.Print Err.Description
     Err.Clear
     DoNotFocused

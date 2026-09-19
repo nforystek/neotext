@@ -688,8 +688,8 @@ Public Property Get CheckStitch(ByVal sBit As StitchBit, Optional ByVal bSetX As
     Dim i As Byte
     If bSetX = 0 Then bSetX = BlockSetX
     If bSetY = 0 Then bSetY = BlockSetY
-    If ProjGrid(bSetX, bSetY).count > 0 Then
-        For i = 1 To ProjGrid(bSetX, bSetY).count
+    If ProjGrid(bSetX, bSetY).Count > 0 Then
+        For i = 1 To ProjGrid(bSetX, bSetY).Count
             If BitLong(ProjGrid(bSetX, bSetY).Details(i).Stitch, sBit) Then
                 CheckStitch = True
                 Exit Property
@@ -713,22 +713,22 @@ Public Property Let CheckStitch(ByVal sBit As StitchBit, Optional ByVal bSetX As
         isUndo = True
     End If
     
-    If ProjGrid(bSetX, bSetY).count > 0 And (Not RHS) Then
-        For i = 1 To ProjGrid(bSetX, bSetY).count
+    If ProjGrid(bSetX, bSetY).Count > 0 And (Not RHS) Then
+        For i = 1 To ProjGrid(bSetX, bSetY).Count
             If BitLong(ProjGrid(bSetX, bSetY).Details(i).Stitch, sBit) Then
                 BitLong(ProjGrid(bSetX, bSetY).Details(i).Stitch, sBit) = False
                 If ProjGrid(bSetX, bSetY).Details(i).Stitch = 0 Then
-                    If i < ProjGrid(bSetX, bSetY).count - 2 Then
-                        For N = i To ProjGrid(bSetX, bSetY).count - 2
+                    If i < ProjGrid(bSetX, bSetY).Count - 2 Then
+                        For N = i To ProjGrid(bSetX, bSetY).Count - 2
                             ProjGrid(bSetX, bSetY).Details(N) = ProjGrid(bSetX, bSetY).Details(N + 1)
                         Next
                     End If
-                    If ProjGrid(bSetX, bSetY).count > 1 Then
-                        ReDim Preserve ProjGrid(bSetX, bSetY).Details(1 To ProjGrid(bSetX, bSetY).count - 1) As ItemDetail
+                    If ProjGrid(bSetX, bSetY).Count > 1 Then
+                        ReDim Preserve ProjGrid(bSetX, bSetY).Details(1 To ProjGrid(bSetX, bSetY).Count - 1) As ItemDetail
                     Else
                         Erase ProjGrid(bSetX, bSetY).Details
                     End If
-                    ProjGrid(bSetX, bSetY).count = ProjGrid(bSetX, bSetY).count - 1
+                    ProjGrid(bSetX, bSetY).Count = ProjGrid(bSetX, bSetY).Count - 1
                 End If
                 Exit For
             End If
@@ -739,8 +739,8 @@ Public Property Let CheckStitch(ByVal sBit As StitchBit, Optional ByVal bSetX As
     
     If RHS Then
         N = 0
-        If ProjGrid(bSetX, bSetY).count > 0 Then
-            For i = 1 To ProjGrid(bSetX, bSetY).count
+        If ProjGrid(bSetX, bSetY).Count > 0 Then
+            For i = 1 To ProjGrid(bSetX, bSetY).Count
                 If ProjGrid(bSetX, bSetY).Details(i).Color = Color Then
                     N = i
                     Exit For
@@ -748,9 +748,9 @@ Public Property Let CheckStitch(ByVal sBit As StitchBit, Optional ByVal bSetX As
             Next
         End If
         If N = 0 Then
-            ReDim Preserve ProjGrid(bSetX, bSetY).Details(1 To ProjGrid(bSetX, bSetY).count + 1) As ItemDetail
-            ProjGrid(bSetX, bSetY).count = ProjGrid(bSetX, bSetY).count + 1
-            N = ProjGrid(bSetX, bSetY).count
+            ReDim Preserve ProjGrid(bSetX, bSetY).Details(1 To ProjGrid(bSetX, bSetY).Count + 1) As ItemDetail
+            ProjGrid(bSetX, bSetY).Count = ProjGrid(bSetX, bSetY).Count + 1
+            N = ProjGrid(bSetX, bSetY).Count
         End If
         ProjGrid(bSetX, bSetY).Details(N).Color = Color
         BitLong(ProjGrid(bSetX, bSetY).Details(N).Stitch, sBit) = True

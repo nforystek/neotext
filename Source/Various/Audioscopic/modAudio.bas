@@ -3,537 +3,1051 @@ Option Explicit
 Option Compare Binary
 #Const modAudio = -1
 
-Public Type AudioHead
-    bPart(0 To 3) As Byte
-    lInfo As Long
-End Type
-
-Public Type AudioInfo
-    wFormatSpecific As Integer
-    wNumberOfChannels As Integer
-    lSamplesPerSecond As Long
-    lBytesPerSecond As Long
-    wChannelBandwidth As Integer
-    wBitsPerSample As Integer
-End Type
-
-Public Type AudioData
-    lBytes As Long
-    wWave() As Integer
-End Type
-
-Public Type AudioFile
-    wInfoLen As Integer
-    Infos() As AudioInfo
+Private Function CancelCalled() As Boolean
+    CancelCalled = (Not frmMagic.Visible)
+End Function
+Public Function SoundLevelAtDistance(ByVal distanceFeet As Double, Optional ByVal sourceDB As Double = 0) As Double
+    If distanceFeet <= 0 Then
+        ' Prevent invalid log(0)
+        SoundLevelAtDistance = sourceDB
+        Exit Function
+    End If
     
-    wDataLen As Integer
-    Datas() As AudioData
+    ' Convert natural log to log10
+    Const LN10 As Double = 2.30258509299405
     
-    wOtherLen As Integer
-    Other() As AudioHead
-    bRemain() As Byte
-End Type
+    Dim dropDB As Double
+    dropDB = 20 * (Log(distanceFeet) / LN10)
+    
+    SoundLevelAtDistance = sourceDB - dropDB
+End Function
 
-' API Declarations
-Public Declare Sub RtlMoveMemory Lib "kernel32" (ByVal Dest As Long, ByVal Source As Long, ByVal Length As Long)
+'example:
+'Dim level As Double
+'level = SoundLevelAtDistance(100, 5)
+'Print level   ' ~86 dB
 
-Public Declare Function sndPlaySound Lib "WINMM.DLL" Alias "sndPlaySoundA" (ByVal lpszSoundName As String, ByVal uFlags As Long) As Long
 
-Public Declare Function PlaySound Lib "WINMM.DLL" Alias "PlaySoundA" (ByRef Sound As Any, ByVal hLib As Long, ByVal lngFlag As Long) As Long      'BOOL
+Public Function SoundLevelAtTime(ByVal sourceDB As Double, ByVal timeSeconds As Double) As Double
+    Const speedOfSound As Double = 1125.32808
+    Dim distanceFeet As Double
+    
+    distanceFeet = timeSeconds * speedOfSound
+    SoundLevelAtTime = SoundLevelAtDistance(sourceDB, distanceFeet)
+End Function
 
-Public Enum sndConst
-    SND_ASYNC = &H1 ' play asynchronously
-    SND_LOOP = &H8 ' loop the sound until Next sndPlaySound
-    SND_MEMORY = &H4 ' lpszSoundName points To a memory file
-    SND_NODEFAULT = &H2 ' silence Not default, If sound not found
-    SND_NOSTOP = &H10 ' don't stop any currently playing sound
-    SND_SYNC = &H0 ' play synchronously (default), halts prog use till done playing
-End Enum
+Public Function SoundTravelTimeSeconds(ByVal distanceFeet As Double) As Double
+    Const speedOfSound As Double = 1125.32808 ' ft/s
+    
+    If distanceFeet <= 0 Then
+        SoundTravelTimeSeconds = 0
+        Exit Function
+    End If
+    
+    SoundTravelTimeSeconds = distanceFeet / speedOfSound
+    
+End Function
 
-Public Sub WavePCM16bitStereo(ByRef aFile As AudioFile)
-    With aFile
-        Erase aFile.Infos
-        Erase aFile.Other
-        .wOtherLen = 0
-        .wInfoLen = 1
-        ReDim aFile.Infos(1 To 1) As AudioInfo
-    End With
-    With aFile.Infos(1)
-        .wFormatSpecific = 1
-        .wNumberOfChannels = 2
-        .lSamplesPerSecond = 44100
-        .lBytesPerSecond = 176400
-        .wChannelBandwidth = 4
-        .wBitsPerSample = 16
-    End With
+
+Public Function SoundTravelTimeMilliseconds(ByVal distanceFeet As Double) As Double
+    Const speedOfSound As Double = 1125.32808 ' ft/s
+    
+    If distanceFeet <= 0 Then
+        SoundTravelTimeMilliseconds = 0
+        Exit Function
+    End If
+    
+    SoundTravelTimeMilliseconds = (distanceFeet / speedOfSound) * 1000
+
+End Function
+
+'example:
+'Dim ms As Double
+'ms = SoundTravelTimeMilliseconds(5)
+'Print ms   ' ~4.44 ms
+
+Public Function BytesToInt(ByVal B1 As Variant, ByVal B2 As Variant) As Variant
+
+    BytesToInt = B1 + (B2 * &H100&)
+    If BytesToInt > 32767 Then BytesToInt = BytesToInt - 65536
+    BytesToInt = CInt(BytesToInt)
+End Function
+
+Public Function BytesToLong(ByVal B1 As Variant, ByVal B2 As Variant, ByRef b3 As Variant, ByRef b4 As Variant) As Variant
+    BytesToLong = B1 + (B2 * &H100&)
+    BytesToLong = BytesToLong + (b3 * &H10000)
+    BytesToLong = BytesToLong + (b4 * &H1000000)
+    BytesToLong = CLng(BytesToLong)
+End Function
+Public Sub IntToByes(ByVal I1 As Integer, ByRef B1 As Variant, ByRef B2 As Variant)
+    
+    B1 = I1 And &HFF&
+    B2 = (I1 \ &H100&) And &HFF&
+
 End Sub
-Public Function ArraySize(InArray) As Single
- ArraySize = CSng((UBound(InArray) + -CInt(Not CBool(-LBound(InArray)))))
-End Function
 
-Public Static Sub PlayWaveSound(ByRef WaveData() As Byte)
-    Static SoundByte() As Byte
-    SoundByte = WaveData
-    PlaySound SoundByte(0), 0, SND_MEMORY Or SND_NODEFAULT Or SND_ASYNC
+Public Sub LongToBytes(ByVal L1 As Long, ByRef B1 As Variant, ByRef B2 As Variant, ByRef b3 As Variant, ByRef b4 As Variant)
+
+    B1 = L1 And &HFF&
+    B2 = (L1 \ &H100&) And &HFF&
+    b3 = (L1 \ &H10000) And &HFF&
+    b4 = (L1 \ &H1000000) And &HFF&
+    
 End Sub
 
-Private Function WaveFileSize(ByRef aFile As AudioFile) As Long
+Public Function ChangeWaveVolume(ByVal inFile As String, ByVal outFile As String, ByVal dBChange As Double) As Boolean
+    On Error GoTo ErrHandler
+    
+    Dim gain As Double
+    gain = 10 ^ (dBChange / 20#)
+
+    Dim b() As Byte
+    Dim f As Integer
+    f = FreeFile
+
+    ' Load entire WAV file
+    Open inFile For Binary As #f
+        ReDim b(LOF(f) - 1)
+        Get #f, , b
+    Close #f
+
+    ' PCM data starts at offset 44 for standard WAV
     Dim i As Long
-    If aFile.wInfoLen > 0 Then
-        For i = 1 To aFile.wInfoLen
-            WaveFileSize = WaveFileSize + LenB(aFile.Infos(i))
-            WaveFileSize = WaveFileSize + 8
-        Next
-    End If
-    If aFile.wDataLen > 0 Then
-        For i = 1 To aFile.wDataLen
-            WaveFileSize = WaveFileSize + (ArraySize(aFile.Datas(i).wWave) * 2)
-            WaveFileSize = WaveFileSize + 8
-        Next
-    End If
-    If aFile.wOtherLen > 0 Then
-        For i = 1 To aFile.wOtherLen
-            WaveFileSize = WaveFileSize + aFile.Other(i).lInfo
-            WaveFileSize = WaveFileSize + 8
-        Next
-    End If
-    WaveFileSize = WaveFileSize + 4
+    Dim sample As Double
+
+    For i = 44 To UBound(b) Step 2
+        sample = BytesToInt(b(i), b(i + 1))
+        If sample > 32767 Then sample = sample - 65536
+
+        sample = CLng(sample * gain)
+
+        If sample > 32767 Then sample = 32767
+        If sample < -32768 Then sample = -32768
+
+        b(i) = sample And &HFF
+        b(i + 1) = (sample \ &H100) And &HFF
+    Next i
+
+    f = FreeFile
+    Open outFile For Binary As #f
+        Put #f, , b
+    Close #f
+
+    ChangeWaveVolume = True
+    Exit Function
+
+ErrHandler:
+    Close #f
+    ChangeWaveVolume = False
 End Function
 
-Public Function WaveInfosEqual(ByRef Info1 As AudioInfo, ByRef Info2 As AudioInfo) As Boolean
-    WaveInfosEqual = (Info1.lBytesPerSecond = Info2.lBytesPerSecond) And _
-                         (Info1.lSamplesPerSecond = Info2.lSamplesPerSecond) And _
-                          (Info1.wBitsPerSample = Info2.wBitsPerSample) And _
-                           (Info1.wChannelBandwidth = Info2.wChannelBandwidth) And _
-                            (Info1.wFormatSpecific = Info2.wFormatSpecific) And _
-                             (Info1.wNumberOfChannels = Info2.wNumberOfChannels)
-End Function
+'Public Function ChangeWaveVolume(ByVal InFile As String, ByVal OutFile As String, ByVal dBChange As Double) As Boolean
+'    On Error GoTo ErrHandler
+'    'If CancelCalled Then GoTo ErrHandler
+'
+'    Dim gain As Double
+'    gain = 10 ^ (dBChange / 20#)
+'
+'    Dim b() As Byte
+'    Dim f As Integer
+'    f = FreeFile
+'
+'    ' Load entire WAV file
+'    Open InFile For Binary As #f
+'        ReDim b(LOF(f) - 1)
+'        Get #f, 1, b
+'    Close #f
+'
+'    ' PCM data starts at offset 44 for standard WAV
+'    Dim i As Long
+'    Dim sample As Long
+'
+'    i = 12
+'    Do While i + 3 <= UBound(b) And (Not (UCase(Chr(b(i))) = "D" And UCase(Chr(b(i + 1))) = "A" And UCase(Chr(b(i + 2))) = "T" And UCase(Chr(b(i + 3))) = "A"))
+'
+'        i = i + 1
+'    Loop
+'
+'    If i + 3 <= UBound(b) Then
+'        If (UCase(Chr(b(i))) & UCase(Chr(b(i + 1))) & UCase(Chr(b(i + 2))) & UCase(Chr(b(i + 3))) = "DATA") Then
+'
+'
+'            i = i + 8
+'
+'
+'            'i = 44
+'            Do While i <= UBound(b)
+'            'For i = 44 To UBound(B) Step 2
+'                sample = CLng(BytesToInt(b(i), b(i + 1)))
+'                If sample > 32767 Then sample = sample - 65536
+'                sample = CLng(sample * gain)
+'
+'                If sample > 32767 Then sample = 32767
+'                If sample < -32768 Then sample = -32768
+'
+'                b(i) = CInt(sample) And &HFF
+'                b(i + 1) = (CInt(sample) \ &H100) And &HFF
+'
+'                'If CancelCalled Then GoTo ErrHandler
+'                i = i + 2
+'            Loop
+'            'Next i
+'
+'            f = FreeFile
+'            Open OutFile For Binary As #f
+'                Put #f, 1, b
+'            Close #f
+'        Else
+'            MsgBox "The file you have selected is not a RIFF nor WAVE file.  Only Standard PCM wave format is supported."
+'
+'        End If
+'    Else
+'        MsgBox "The file you have selected is not a RIFF nor WAVE file.  Only Standard PCM wave format is supported."
+'    End If
+'    ChangeWaveVolume = True
+'    Exit Function
+'
+'ErrHandler:
+'    ChangeWaveVolume = False
+'End Function
 
-Public Function WaveSilentAudio(ByRef aFile As AudioFile, ByVal DurationMS As Single) As Byte()
-    Dim outBytes() As Byte
-    ReDim outBytes(0 To 3) As Byte
-    AddDesc outBytes, "RIFF", 0
-    AddLong outBytes, WaveFileSize(aFile)
-    AddDesc outBytes, "WAVE"
-    Dim i As Long
-    If aFile.wInfoLen > 0 Then
-        For i = 1 To aFile.wInfoLen
-            AddDesc outBytes, "fmt "
-            AddLong outBytes, LenB(aFile.Infos(i))
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + LenB(aFile.Infos(i))) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (LenB(aFile.Infos(i)) - 1))), ByVal VarPtr(aFile.Infos(i)), LenB(aFile.Infos(i))
-            If aFile.wDataLen >= i Then
-                AddDesc outBytes, "data"
-                DurationMS = (((aFile.Infos(i).lSamplesPerSecond * (DurationMS / 1000)) * aFile.Infos(i).wBitsPerSample) / aFile.Infos(i).wChannelBandwidth)
-                AddLong outBytes, DurationMS
-                ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + DurationMS) As Byte
-            End If
-        Next
-    End If
-    If aFile.wOtherLen > 0 Then
-        Dim runTotal As Long
-        For i = 1 To aFile.wOtherLen
-            AddDesc outBytes, GetDesc(aFile.Other(i))
-            AddLong outBytes, aFile.Other(i).lInfo
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + aFile.Other(i).lInfo) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (aFile.Other(i).lInfo - 1))), ByVal VarPtr(aFile.bRemain(LBound(aFile.bRemain) + runTotal)), aFile.Other(i).lInfo
-            runTotal = runTotal + aFile.Other(i).lInfo
-        Next
-    End If
-    WaveSilentAudio = outBytes
-End Function
 
-Public Sub WaveFilter(ByRef aFile As AudioFile, ByVal StartTimeMS As Single, ByVal DurationMS As Single, ByRef definedFilters As ScriptControl, ByVal filterFunction As String)
-    If aFile.wDataLen > 0 And aFile.wInfoLen > 0 Then
-        StartTimeMS = Round(aFile.Infos(1).lBytesPerSecond * (StartTimeMS / 1000))
-        DurationMS = Round(aFile.Infos(1).lBytesPerSecond * (DurationMS / 1000))
-        
-        Dim i As Long
-        For i = 1 To (DurationMS / 2)
-            aFile.Datas(1).wWave((StartTimeMS / 2) + i) = definedFilters.Eval((Replace(filterFunction, "%", CStr(aFile.Datas(1).wWave((StartTimeMS / 2) + i)))))
-        Next
+Public Function AddSilenceToWav( _
+        ByVal inFile As String, _
+        ByVal outFile As String, _
+        ByVal SilenceMs As Long, _
+        ByVal AddAtEnd As Boolean) As Boolean
+
+    On Error GoTo fail
+
+    Dim f As Integer
+    Dim hdr(43) As Byte
+    Dim data() As Byte
+    Dim silence() As Byte
+
+    f = FreeFile
+    Open inFile For Binary As #f
+
+    '--- read header
+    Get #f, , hdr
+
+    '--- extract format info
+    Dim channels As Integer
+    Dim sampleRate As Long
+    Dim bitsPerSample As Integer
+    Dim blockAlign As Integer
+    Dim dataSize As Long
+
+    channels = hdr(22) + hdr(23) * &H100&
+    sampleRate = hdr(24) + hdr(25) * &H100& + hdr(26) * &H10000 + hdr(27) * &H1000000
+    bitsPerSample = hdr(34) + hdr(35) * &H100&
+    blockAlign = hdr(32) + hdr(33) * &H100&
+    dataSize = hdr(40) + hdr(41) * &H100& + hdr(42) * &H10000 + hdr(43) * &H1000000
+
+    '--- read PCM data
+    ReDim data(dataSize - 1)
+    Get #f, , data
+    Close #f
+
+    '--- compute silence length in bytes
+    Dim bytesPerMs As Long
+    bytesPerMs = (sampleRate * blockAlign) \ 1000
+
+    Dim silenceBytes As Long
+    silenceBytes = bytesPerMs * SilenceMs
+
+    ReDim silence(silenceBytes - 1)
+
+    '--- build new PCM buffer
+    Dim newData() As Byte
+    Dim newSize As Long
+
+    If AddAtEnd = False Then
+        ' silence at beginning
+        newSize = silenceBytes + dataSize
+        ReDim newData(newSize - 1)
+        ' copy silence
+        CopyMemory newData(0), silence(0), silenceBytes
+        ' copy original
+        CopyMemory newData(silenceBytes), data(0), dataSize
     Else
-        err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
+        ' silence at end
+        newSize = dataSize + silenceBytes
+        ReDim newData(newSize - 1)
+        ' copy original
+        CopyMemory newData(0), data(0), dataSize
+        ' copy silence
+        CopyMemory newData(dataSize), silence(0), silenceBytes
     End If
-    
-End Sub
 
-Public Function WaveCombine(ByRef DestWave() As Byte, ByVal DestStartTimeMS As Single, ByRef SourceWave() As Byte, ByVal SourceDurationTimeMS As Single) As Byte()
-    
-    Dim aFile1 As AudioFile
-    Dim aFile2 As AudioFile
-    
-    aFile1 = WaveBytesAsAudio(DestWave)
-    aFile2 = WaveBytesAsAudio(SourceWave)
- 
-    If aFile1.wDataLen > 0 And aFile1.wInfoLen > 0 And _
-        aFile2.wDataLen > 0 And aFile2.wInfoLen > 0 Then
-    
-        DestStartTimeMS = Round(aFile1.Infos(1).lBytesPerSecond * (DestStartTimeMS / 1000))
-        SourceDurationTimeMS = Round(aFile2.Infos(1).lBytesPerSecond * (SourceDurationTimeMS / 1000))
-        
-        Dim newData() As Integer
-        ReDim Preserve newData(1 To ((aFile1.Datas(1).lBytes + SourceDurationTimeMS) \ 2)) As Integer
-        
-        If DestStartTimeMS > 0 Then
-            RtlMoveMemory VarPtr(newData(LBound(newData))), _
-                ByVal VarPtr(aFile1.Datas(1).wWave(LBound(aFile1.Datas(1).wWave))), DestStartTimeMS
-        End If
-        
-        RtlMoveMemory VarPtr(newData(LBound(newData) + (DestStartTimeMS / 2))), _
-            ByVal VarPtr(aFile2.Datas(1).wWave(LBound(aFile2.Datas(1).wWave))), SourceDurationTimeMS
+    '--- update header
+    Dim riffSize As Long
+    riffSize = 36 + newSize
+
+    hdr(4) = riffSize And &HFF&
+    hdr(5) = (riffSize \ &H100&) And &HFF&
+    hdr(6) = (riffSize \ &H10000) And &HFF&
+    hdr(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdr(40) = newSize And &HFF&
+    hdr(41) = (newSize \ &H100&) And &HFF&
+    hdr(42) = (newSize \ &H10000) And &HFF&
+    hdr(43) = (newSize \ &H1000000) And &HFF&
+
+    '--- write output file
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdr
+    Put #f, , newData
+    Close #f
+
+    AddSilenceToWav = True
+    Exit Function
+
+fail:
+    Close #f
+    AddSilenceToWav = False
+End Function
+'Public Function AddWavFiles( _
+'        ByVal FileA As String, _
+'        ByVal FileB As String, _
+'        ByVal OutFile As String) As Boolean
+'
+'    On Error GoTo Fail
+'    If CancelCalled Then GoTo Fail
+'
+'    Dim hdrA(43) As Byte, hdrB(43) As Byte
+'    Dim dataA() As Byte, dataB() As Byte
+'    Dim f As Integer
+'
+'    '--- read header A
+'    f = FreeFile
+'    Open FileA For Binary As #f
+'    Get #f, , hdrA
+'    Dim sizeA As Long
+'    sizeA = BytesToLong(hdrA(40), hdrA(41), hdrA(42), hdrA(43))
+'    ReDim dataA(sizeA - 1)
+'    Get #f, , dataA
+'    Close #f
+'
+'    '--- read header B
+'    f = FreeFile
+'    Open FileB For Binary As #f
+'    Get #f, , hdrB
+'    Dim sizeB As Long
+'    sizeB = BytesToLong(hdrB(40), hdrB(41), hdrB(42), hdrB(43))
+'    ReDim dataB(sizeB - 1)
+'    Get #f, , dataB
+'    Close #f
+'
+'    '--- extract format (must match)
+'    Dim bits As Integer
+'    Dim blockAlign As Integer
+'
+'    bits = BytesToInt(hdrA(34), hdrA(35))
+'    blockAlign = BytesToInt(hdrA(32), hdrA(33))
+'
+'    '--- choose larger size
+'    Dim outSize As Long
+'    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+'
+'    Dim outData() As Byte
+'    ReDim outData(outSize - 1)
+'
+'    Dim i As Long
+'
+'    If bits = 8 Then
+'        '--- 8-bit unsigned PCM
+'        For i = 0 To outSize - 1
+'            Dim a As Integer, b As Integer, m As Integer
+'
+'            a = IIf(i < sizeA, dataA(i), 128)
+'            b = IIf(i < sizeB, dataB(i), 128)
+'
+'            m = a + b - 128
+'            If m < 0 Then m = 0
+'            If m > 255 Then m = 255
+'
+'            outData(i) = m
+'
+'            If CancelCalled Then GoTo Fail
+'        Next i
+'
+'    ElseIf bits = 16 Then
+'        '--- 16-bit signed PCM
+'        For i = 0 To outSize - 2 Step 2
+'            Dim sa As Long, sb As Long, sm As Long
+'
+'            '--- sample A
+'            If i < sizeA - 2 Then
+'                sa = BytesToInt(dataA(i), dataA(i + 1))
+'                If sa > 32767 Then sa = sa - 65536
+'            Else
+'                sa = 0
+'            End If
+'
+'            '--- sample B
+'            If i < sizeB - 2 Then
+'                sb = BytesToInt(dataB(i), dataB(i + 1))
+'                If sb > 32767 Then sb = sb - 65536
+'            Else
+'                sb = 0
+'            End If
+'
+'            '--- mix
+'            sm = sa + sb
+'            If sm < -32768 Then sm = -32768
+'            If sm > 32767 Then sm = 32767
+'
+'            '--- store
+'            Dim us As Long
+'            If sm < 0 Then
+'                us = sm + 65536
+'            Else
+'                us = sm
+'            End If
+'
+'            outData(i) = us And &HFF&
+'            outData(i + 1) = (us \ &H100&) And &HFF&
+'            If CancelCalled Then GoTo Fail
+'        Next i
+'    End If
+'
+'    '--- update header A (use A's format)
+'    Dim riffSize As Long
+'    riffSize = 36 + outSize
+'
+'    hdrA(4) = riffSize And &HFF&
+'    hdrA(5) = (riffSize \ &H100&) And &HFF&
+'    hdrA(6) = (riffSize \ &H10000) And &HFF&
+'    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+'
+'    hdrA(36) = Asc("d")
+'    hdrA(37) = Asc("A")
+'    hdrA(38) = Asc("T")
+'    hdrA(39) = Asc("A")
+'    hdrA(40) = outSize And &HFF&
+'    hdrA(41) = (outSize \ &H100&) And &HFF&
+'    hdrA(42) = (outSize \ &H10000) And &HFF&
+'    hdrA(43) = (outSize \ &H1000000) And &HFF&
+'
+'    '--- write output
+'    f = FreeFile
+'    Open OutFile For Binary As #f
+'    Put #f, , hdrA
+'    Put #f, 45, outData
+'    Close #f
+'
+'    AddWavFiles = True
+'    Exit Function
+'
+'Fail:
+'    Close f
+'    AddWavFiles = False
+'End Function
+
+Public Function MixWavFiles( _
+        ByVal FileA As String, _
+        ByVal FileB As String, _
+        ByVal outFile As String) As Boolean
+
+    On Error GoTo fail
+
+    Dim hdrA(43) As Byte, hdrB(43) As Byte
+    Dim dataA() As Byte, dataB() As Byte
+    Dim f As Integer
+
+    '--- read header A
+    f = FreeFile
+    Open FileA For Binary As #f
+    Get #f, , hdrA
+    Dim sizeA As Long
+    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+    ReDim dataA(sizeA - 1)
+    Get #f, , dataA
+    Close #f
+
+    '--- read header B
+    f = FreeFile
+    Open FileB For Binary As #f
+    Get #f, , hdrB
+    Dim sizeB As Long
+    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+    ReDim dataB(sizeB - 1)
+    Get #f, , dataB
+    Close #f
+
+    '--- extract format (must match)
+    Dim bits As Integer
+    Dim blockAlign As Integer
+
+    bits = hdrA(34) + hdrA(35) * &H100&
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+
+    '--- choose larger size
+    Dim outSize As Long
+    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+
+    Dim outData() As Byte
+    ReDim outData(outSize - 1)
+
+    Dim i As Long
+
+    If bits = 8 Then
+        '--- 8-bit unsigned PCM
+        For i = 0 To outSize - 1
+            Dim a As Integer, b As Integer, m As Integer
+
+            a = IIf(i < sizeA, dataA(i), 128)
+            b = IIf(i < sizeB, dataB(i), 128)
+
+            m = (a + b) - 128
+            If m < 0 Then m = 0
+            If m > 255 Then m = 255
+
+            outData(i) = m
+        Next i
+
+    ElseIf bits = 16 Then
+        '--- 16-bit signed PCM
+        For i = 0 To outSize - 1 Step 2
+            Dim sa As Long, sb As Long, sm As Long
+
+            '--- sample A
+            If i < sizeA Then
+                sa = BytesToInt(dataA(i), dataA(i + 1))
+                If sa > 32767 Then sa = sa - 65536
+            Else
+                sa = 0
+            End If
+
+            '--- sample B
+            If i < sizeB Then
+                sb = BytesToInt(dataB(i), dataB(i + 1))
+                If sb > 32767 Then sb = sb - 65536
+            Else
+                sb = 0
+            End If
+
+            '--- mix
+            sm = (sa + sb)
+            If sm < -32768 Then sm = -32768
+            If sm > 32767 Then sm = 32767
+
+            '--- store
+            Dim us As Long
+            If sm < 0 Then
+                us = sm + 65536
+            Else
+                us = sm
+            End If
+
+            outData(i) = us And &HFF&
+            outData(i + 1) = (us \ &H100&) And &HFF&
+        Next i
+    End If
+
+    '--- update header A (use A's format)
+    Dim riffSize As Long
+    riffSize = 36 + outSize
+
+    hdrA(4) = riffSize And &HFF&
+    hdrA(5) = (riffSize \ &H100&) And &HFF&
+    hdrA(6) = (riffSize \ &H10000) And &HFF&
+    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdrA(40) = outSize And &HFF&
+    hdrA(41) = (outSize \ &H100&) And &HFF&
+    hdrA(42) = (outSize \ &H10000) And &HFF&
+    hdrA(43) = (outSize \ &H1000000) And &HFF&
+
+    '--- write output
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdrA
+    Put #f, , outData
+    Close #f
+
+    MixWavFiles = True
+    Exit Function
+
+fail:
+    Close #f
+    MixWavFiles = False
+End Function
+
+Public Function DeductWavFile( _
+        ByVal FileA As String, _
+        ByVal FileB As String, _
+        ByVal outFile As String) As Boolean
+
+    On Error GoTo fail
+
+    Dim hdrA(43) As Byte, hdrB(43) As Byte
+    Dim dataA() As Byte, dataB() As Byte
+    Dim f As Integer
+
+    '--- read header A
+    f = FreeFile
+    Open FileA For Binary As #f
+    Get #f, , hdrA
+    Dim sizeA As Long
+    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+    ReDim dataA(sizeA - 1)
+    Get #f, , dataA
+    Close #f
+
+    '--- read header B
+    f = FreeFile
+    Open FileB For Binary As #f
+    Get #f, , hdrB
+    Dim sizeB As Long
+    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+    ReDim dataB(sizeB - 1)
+    Get #f, , dataB
+    Close #f
+
+    '--- extract format (must match)
+    Dim bits As Integer
+    Dim blockAlign As Integer
+
+    bits = hdrA(34) + hdrA(35) * &H100&
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+
+    '--- choose larger size
+    Dim outSize As Long
+    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+
+    Dim outData() As Byte
+    ReDim outData(outSize - 1)
+
+    Dim i As Long
+
+    If bits = 8 Then
+        '--- 8-bit unsigned PCM
+        For i = 0 To outSize - 1
+            Dim a As Integer, b As Integer, m As Integer
+
+            a = IIf(i < sizeA, dataA(i), 128)
+            b = IIf(i < sizeB, dataB(i), 128)
+
+            m = (a - b) - 128
+            If m < 0 Then m = 0
+            If m > 255 Then m = 255
+
+            outData(i) = m
+        Next i
+
+    ElseIf bits = 16 Then
+        '--- 16-bit signed PCM
+        For i = 0 To outSize - 1 Step 2
+            Dim sa As Long, sb As Long, sm As Long
+
+            '--- sample A
+            If i < sizeA Then
+                sa = BytesToInt(dataA(i), dataA(i + 1))
+                If sa > 32767 Then sa = sa - 65536
+            Else
+                sa = 0
+            End If
+
+            '--- sample B
+            If i < sizeB Then
+                sb = BytesToInt(dataB(i), dataB(i + 1))
+                If sb > 32767 Then sb = sb - 65536
+            Else
+                sb = 0
+            End If
+
+            '--- mix
+            sm = (sa - sb)
+            If sm < -32768 Then sm = -32768
+            If sm > 32767 Then sm = 32767
+
+            '--- store
+            Dim us As Long
+            If sm < 0 Then
+                us = sm + 65536
+            Else
+                us = sm
+            End If
+
+            outData(i) = us And &HFF&
+            outData(i + 1) = (us \ &H100&) And &HFF&
+        Next i
+    End If
+
+    '--- update header A (use A's format)
+    Dim riffSize As Long
+    riffSize = 36 + outSize
+
+    hdrA(4) = riffSize And &HFF&
+    hdrA(5) = (riffSize \ &H100&) And &HFF&
+    hdrA(6) = (riffSize \ &H10000) And &HFF&
+    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdrA(40) = outSize And &HFF&
+    hdrA(41) = (outSize \ &H100&) And &HFF&
+    hdrA(42) = (outSize \ &H10000) And &HFF&
+    hdrA(43) = (outSize \ &H1000000) And &HFF&
+
+    '--- write output
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdrA
+    Put #f, , outData
+    Close #f
+
+    DeductWavFile = True
+    Exit Function
+
+fail:
+    Close #f
+    DeductWavFile = False
+End Function
+
+Public Function AverageWavFiles( _
+        ByVal FileA As String, _
+        ByVal FileB As String, _
+        ByVal outFile As String) As Boolean
+
+    On Error GoTo fail
+
+    Dim hdrA(43) As Byte, hdrB(43) As Byte
+    Dim dataA() As Byte, dataB() As Byte
+    Dim f As Integer
+
+    '--- read header A
+    f = FreeFile
+    Open FileA For Binary As #f
+    Get #f, , hdrA
+    Dim sizeA As Long
+    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+    ReDim dataA(sizeA - 1)
+    Get #f, , dataA
+    Close #f
+
+    '--- read header B
+    f = FreeFile
+    Open FileB For Binary As #f
+    Get #f, , hdrB
+    Dim sizeB As Long
+    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+    ReDim dataB(sizeB - 1)
+    Get #f, , dataB
+    Close #f
+
+    '--- extract format (must match)
+    Dim bits As Integer
+    Dim blockAlign As Integer
+
+    bits = hdrA(34) + hdrA(35) * &H100&
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+
+    '--- choose larger size
+    Dim outSize As Long
+    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+
+    Dim outData() As Byte
+    ReDim outData(outSize - 1)
+
+    Dim i As Long
+
+    If bits = 8 Then
+        '--- 8-bit unsigned PCM
+        For i = 0 To outSize - 1
+            Dim a As Integer, b As Integer, m As Integer
+
+            a = IIf(i < sizeA, dataA(i), 128)
+            b = IIf(i < sizeB, dataB(i), 128)
+
+            m = ((a + b) / 2) - 128
+
+            If m < 0 Then m = 0
+            If m > 255 Then m = 255
+
+            outData(i) = m
+        Next i
+
+    ElseIf bits = 16 Then
+        '--- 16-bit signed PCM
+        For i = 0 To outSize - 1 Step 2
+            Dim sa As Long, sb As Long, sm As Long
+
+            '--- sample A
+            If i < sizeA Then
+                sa = BytesToInt(dataA(i), dataA(i + 1))
+                If sa > 32767 Then sa = sa - 65536
+            Else
+                sa = 0
+            End If
+
+            '--- sample B
+            If i < sizeB Then
+                sb = BytesToInt(dataB(i), dataB(i + 1))
+                If sb > 32767 Then sb = sb - 65536
+            Else
+                sb = 0
+            End If
+
+            '--- mix
+            sm = (sa + sb) / 2
             
-        If (aFile1.Datas(1).lBytes - DestStartTimeMS) > 0 Then
-            RtlMoveMemory VarPtr(newData(LBound(newData) + ((DestStartTimeMS + SourceDurationTimeMS) \ 2))), _
-                ByVal VarPtr(aFile1.Datas(1).wWave(LBound(aFile1.Datas(1).wWave) + (DestStartTimeMS \ 2))), _
-                (aFile1.Datas(1).lBytes - DestStartTimeMS)
-        End If
-        
-        aFile1.Datas(1).lBytes = aFile1.Datas(1).lBytes + SourceDurationTimeMS
-        Erase aFile1.Datas(1).wWave
-        aFile1.Datas(1).wWave = newData
-        
-        WaveRecordToBytes aFile1, WaveCombine
-        
-        Erase newData
-        WaveResetRecord aFile1
-        WaveResetRecord aFile2
-    Else
-        err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-    End If
-End Function
+            If sm < -32768 Then sm = -32768
+            If sm > 32767 Then sm = 32767
 
-Public Function WaveAudioPartial(ByRef aFile As AudioFile, ByVal StartTimeMS As Single, ByVal DurationMS As Single) As Byte()
-    Dim outBytes() As Byte
-    ReDim outBytes(0 To 3) As Byte
-    AddDesc outBytes, "RIFF", 0
-    AddLong outBytes, WaveFileSize(aFile)
-    AddDesc outBytes, "WAVE"
-    Dim i As Long
-    If aFile.wInfoLen > 0 Then
-        For i = 1 To aFile.wInfoLen
-            AddDesc outBytes, "fmt "
-            AddLong outBytes, LenB(aFile.Infos(i))
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + LenB(aFile.Infos(i))) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (LenB(aFile.Infos(i)) - 1))), ByVal VarPtr(aFile.Infos(i)), LenB(aFile.Infos(i))
-            If aFile.wDataLen >= i Then
-                AddDesc outBytes, "data"
-                StartTimeMS = Round(aFile.Infos(1).lBytesPerSecond * (StartTimeMS / 1000))
-                DurationMS = Round(aFile.Infos(1).lBytesPerSecond * (DurationMS / 1000))
-                
-               ' StartTimeMS = (((aFile.Infos(i).lSamplesPerSecond * (StartTimeMS / 1000)) * aFile.Infos(i).wBitsPerSample) / aFile.Infos(i).wChannelBandwidth)
-               ' DurationMS = (((aFile.Infos(i).lSamplesPerSecond * (DurationMS / 1000)) * aFile.Infos(i).wBitsPerSample) / aFile.Infos(i).wChannelBandwidth)
-                
-                AddLong outBytes, DurationMS
-                ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + DurationMS) As Byte
-                RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (DurationMS - 1))), _
-                    ByVal VarPtr(aFile.Datas(i).wWave(LBound(aFile.Datas(i).wWave) + StartTimeMS)), DurationMS
+            '--- store
+            Dim us As Long
+            If sm < 0 Then
+                us = sm + 65536
+            Else
+                us = sm
             End If
-        Next
-    End If
-    If aFile.wOtherLen > 0 Then
-        Dim runTotal As Long
-        For i = 1 To aFile.wOtherLen
-            AddDesc outBytes, GetDesc(aFile.Other(i))
-            AddLong outBytes, aFile.Other(i).lInfo
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + aFile.Other(i).lInfo) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (aFile.Other(i).lInfo - 1))), ByVal VarPtr(aFile.bRemain(LBound(aFile.bRemain) + runTotal)), aFile.Other(i).lInfo
-            runTotal = runTotal + aFile.Other(i).lInfo
-        Next
-    End If
-    WaveAudioPartial = outBytes
 
+            outData(i) = us And &HFF&
+            outData(i + 1) = (us \ &H100&) And &HFF&
+        Next i
+    End If
+
+    '--- update header A (use A's format)
+    Dim riffSize As Long
+    riffSize = 36 + outSize
+
+    hdrA(4) = riffSize And &HFF&
+    hdrA(5) = (riffSize \ &H100&) And &HFF&
+    hdrA(6) = (riffSize \ &H10000) And &HFF&
+    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdrA(40) = outSize And &HFF&
+    hdrA(41) = (outSize \ &H100&) And &HFF&
+    hdrA(42) = (outSize \ &H10000) And &HFF&
+    hdrA(43) = (outSize \ &H1000000) And &HFF&
+
+    '--- write output
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdrA
+    Put #f, , outData
+    Close #f
+
+    AverageWavFiles = True
+    Exit Function
+
+fail:
+    Close #f
+    AverageWavFiles = False
 End Function
-Public Function WaveBytesAsAudio(ByRef inBytes() As Byte) As AudioFile
-    Dim riff As AudioHead
-    Dim aFile As AudioFile
-    Dim validity As Integer
-    Dim fNum As Long
-    fNum = LBound(inBytes)
-    Dim temp() As Byte
-    riff = GetHead(inBytes, fNum)
-    If GetDesc(riff) = "RIFF" Then
-        Debug.Print "File Size " & riff.lInfo
-        Do While fNum < UBound(inBytes)
-            riff = GetHead(inBytes, fNum)
-            If GetDesc(riff) = "WAVE" Then
-                fNum = fNum - 4
-                Do While fNum < UBound(inBytes)
-                    riff = GetHead(inBytes, fNum)
-                    Select Case Trim(GetDesc(riff))
-                        Case "DATA"
-                            aFile.wDataLen = aFile.wDataLen + 1
-                            ReDim Preserve aFile.Datas(1 To aFile.wDataLen) As AudioData
-                            aFile.Datas(aFile.wDataLen).lBytes = riff.lInfo
 
-                            If riff.lInfo > 0 Then
-                                ReDim aFile.Datas(aFile.wDataLen).wWave(1 To (riff.lInfo / 2)) As Integer
-                                RtlMoveMemory VarPtr(aFile.Datas(aFile.wDataLen).wWave(LBound(aFile.Datas(aFile.wDataLen).wWave))), _
-                                     ByVal VarPtr(inBytes(fNum)), riff.lInfo
-                                fNum = fNum + riff.lInfo
-                                If aFile.wInfoLen = aFile.wDataLen - 1 Then
-                                    aFile.wInfoLen = aFile.wInfoLen + 1
-                                    ReDim Preserve aFile.Infos(1 To aFile.wInfoLen) As AudioInfo
-                                    aFile.Infos(aFile.wInfoLen) = aFile.Infos(aFile.wDataLen)
-                                End If
-                            End If
-                            Debug.Print "Data Size " & aFile.Datas(aFile.wDataLen).lBytes & " bytes"
-                            Debug.Print "Data Length " & (WaveMilliseconds(aFile) / 1000) & " s"
+Public Function SubtractWavFile( _
+        ByVal FileA As String, _
+        ByVal FileB As String, _
+        ByVal outFile As String) As Boolean
+
+    On Error GoTo fail
+
+    Dim hdrA(43) As Byte, hdrB(43) As Byte
+    Dim dataA() As Byte, dataB() As Byte
+    Dim f As Integer
+
+    '--- read header A
+    f = FreeFile
+    Open FileA For Binary As #f
+    Get #f, , hdrA
+    Dim sizeA As Long
+    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+    ReDim dataA(sizeA - 1)
+    Get #f, , dataA
+    Close #f
+
+    '--- read header B
+    f = FreeFile
+    Open FileB For Binary As #f
+    Get #f, , hdrB
+    Dim sizeB As Long
+    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+    ReDim dataB(sizeB - 1)
+    Get #f, , dataB
+    Close #f
+
+    '--- extract format (must match)
+    Dim bits As Integer
+    Dim blockAlign As Integer
+
+    bits = hdrA(34) + hdrA(35) * &H100&
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+
+    '--- choose larger size
+    Dim outSize As Long
+    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+
+    Dim outData() As Byte
+    ReDim outData(outSize - 1)
+
+    Dim i As Long
+
+    If bits = 8 Then
+        '--- 8-bit unsigned PCM
+        For i = 0 To outSize - 1
+            Dim a As Integer, b As Integer, m As Integer
+
+            a = IIf(i < sizeA, dataA(i), 128)
+            b = IIf(i < sizeB, dataB(i), 128)
+
+            If (Abs(a) > Abs(b)) Then
+                If a > 0 Then
+                    m = (Abs(a) - Abs(b)) - 128
+                ElseIf a < 0 Then
+                    m = -(Abs(a) - Abs(b)) + 128
+                End If
+            ElseIf (Abs(a) < Abs(b)) Then
+                If b > 0 Then
+                    m = (Abs(b) - Abs(a)) - 128
+                ElseIf b < 0 Then
+                    m = -(Abs(b) - Abs(a)) + 128
+                End If
+            End If
+            
+            
+            If m < 0 Then m = 0
+            If m > 255 Then m = 255
+
+            outData(i) = m
+        Next i
+
+    ElseIf bits = 16 Then
+        '--- 16-bit signed PCM
+        For i = 0 To outSize - 1 Step 2
+            Dim sa As Long, sb As Long, sm As Long
+
+            '--- sample A
+            If i < sizeA Then
+                sa = BytesToInt(dataA(i), dataA(i + 1))
+                If sa > 32767 Then sa = sa - 65536
+            Else
+                sa = 0
+            End If
+
+            '--- sample B
+            If i < sizeB Then
+                sb = BytesToInt(dataB(i), dataB(i + 1))
+                If sb > 32767 Then sb = sb - 65536
+            Else
+                sb = 0
+            End If
+
+            '--- mix
+            
+            If (Abs(sa) > Abs(sb)) Then
+                If sa > 0 Then
+                    sm = (Abs(sa) - Abs(sb))
+                ElseIf sa < 0 Then
+                    sm = -(Abs(sa) - Abs(sb))
+                End If
+            ElseIf (Abs(sa) < Abs(sb)) Then
+                If sb > 0 Then
+                    sm = (Abs(sb) - Abs(sa))
+                ElseIf sb < 0 Then
+                    sm = -(Abs(sb) - Abs(sa))
+                End If
+            End If
+            If sm < -32768 Then sm = -32768
+            If sm > 32767 Then sm = 32767
+
+            '--- store
+            Dim us As Long
+            If sm < 0 Then
+                us = sm + 65536
+            Else
+                us = sm
+            End If
+
+            outData(i) = us And &HFF&
+            outData(i + 1) = (us \ &H100&) And &HFF&
+        Next i
+    End If
+
+    '--- update header A (use A's format)
+    Dim riffSize As Long
+    riffSize = 36 + outSize
+
+    hdrA(4) = riffSize And &HFF&
+    hdrA(5) = (riffSize \ &H100&) And &HFF&
+    hdrA(6) = (riffSize \ &H10000) And &HFF&
+    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdrA(40) = outSize And &HFF&
+    hdrA(41) = (outSize \ &H100&) And &HFF&
+    hdrA(42) = (outSize \ &H10000) And &HFF&
+    hdrA(43) = (outSize \ &H1000000) And &HFF&
+
+    '--- write output
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdrA
+    Put #f, , outData
+    Close #f
+
+    SubtractWavFile = True
+    Exit Function
+
+fail:
+    Close #f
+    SubtractWavFile = False
+End Function
+
+Public Function GetPeakDBFS(ByVal wavFile As String) As Double
+    On Error GoTo ErrHandler
+    If CancelCalled Then GoTo ErrHandler
     
-                            'Debug.Print "Data Length " & Round(((riff.lInfo / aFile.Infos(aFile.wInfoLen).lBytesPerSecond) * 1000)) & " ms"
-                            validity = validity + 1
-                        Case "FMT"
-                            aFile.wInfoLen = aFile.wInfoLen + 1
-                            ReDim Preserve aFile.Infos(1 To aFile.wInfoLen) As AudioInfo
-                            If LenB(aFile.Infos(aFile.wInfoLen)) = riff.lInfo Then
-                                RtlMoveMemory VarPtr(aFile.Infos(aFile.wInfoLen)), ByVal VarPtr(inBytes(fNum)), LenB(aFile.Infos(aFile.wInfoLen))
-                                fNum = fNum + LenB(aFile.Infos(aFile.wInfoLen))
-                                 If aFile.wInfoLen - 2 = aFile.wDataLen Then
-                                    aFile.wDataLen = aFile.wDataLen + 1
-                                    ReDim Preserve aFile.Datas(1 To aFile.wDataLen) As AudioData
-                                    aFile.Datas(aFile.wDataLen) = aFile.Datas(aFile.wDataLen - 1)
-                                End If
-                            
-                                With aFile.Infos(aFile.wInfoLen)
-                                    Debug.Print "Format Specific " & .wFormatSpecific
-                                    Debug.Print "Number Of Channels " & .wNumberOfChannels
-                                    Debug.Print "Samples Per Second " & .lSamplesPerSecond
-                                    Debug.Print "Bytes Per Second " & .lBytesPerSecond
-                                    Debug.Print "Channel Bandwidth " & .wChannelBandwidth
-                                    Debug.Print "Bits Per Sample " & .wBitsPerSample
-                                End With
-                                If aFile.Infos(aFile.wInfoLen).wBitsPerSample <> 16 Then
-                                    err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-                                Else
-                                    validity = validity + 1
-                                End If
-                            Else
-                                ReDim Preserve aFile.Infos(1 To aFile.wInfoLen - 1) As AudioInfo
-                                aFile.wInfoLen = aFile.wInfoLen - 1
-                                fNum = fNum + riff.lInfo
-                            End If
-                        
-                        Case Else
-                            aFile.wOtherLen = aFile.wOtherLen + 1
-                            ReDim Preserve aFile.Other(1 To aFile.wOtherLen) As AudioHead
-                            aFile.Other(aFile.wOtherLen) = riff
+    Dim b() As Byte
+    Dim f As Integer
+    f = FreeFile
 
-                            ReDim temp(1 To aFile.Other(aFile.wOtherLen).lInfo) As Byte
-                            RtlMoveMemory VarPtr(temp(LBound(temp))), ByVal VarPtr(inBytes(fNum)), aFile.Other(aFile.wOtherLen).lInfo
-                            If aFile.wOtherLen = 1 Then
-                                aFile.bRemain = temp
-                            Else
-                                ReDim Preserve aFile.bRemain(LBound(aFile.bRemain) To UBound(aFile.bRemain) + aFile.Other(aFile.wOtherLen).lInfo) As Byte
-                                RtlMoveMemory VarPtr(aFile.bRemain(UBound(aFile.bRemain) - (aFile.Other(aFile.wOtherLen).lInfo - 1))), ByVal VarPtr(temp(LBound(temp))), aFile.Other(aFile.wOtherLen).lInfo
-                            End If
-                            fNum = fNum + aFile.Other(aFile.wOtherLen).lInfo
+    ' Load entire WAV file
+    Open wavFile For Binary As #f
+        ReDim b(LOF(f) - 1)
+        Get #f, , b
+    Close #f
 
-                    End Select
-                Loop
-            Else
-                err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-            End If
-        Loop
-    Else
-        err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-    End If
-    If validity < 2 Then
-        err.Raise 321, , "Invalid file type, expected riff (a few single musical note, tone, key or chord blended as a conbined melodic harmony, continious sound or portion of a song.... a riff)."
-    End If
-    WaveBytesAsAudio = aFile
-End Function
-
-Public Sub WaveRecordToBytes(ByRef aFile As AudioFile, ByRef outBytes() As Byte)
-    ReDim outBytes(0 To 3) As Byte
-    AddDesc outBytes, "RIFF", 0
-    AddLong outBytes, WaveFileSize(aFile)
-    AddDesc outBytes, "WAVE"
+    ' PCM data starts at offset 44
     Dim i As Long
-    If aFile.wInfoLen > 0 Then
-        For i = 1 To aFile.wInfoLen
-            AddDesc outBytes, "fmt "
-            AddLong outBytes, LenB(aFile.Infos(i))
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + LenB(aFile.Infos(i))) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (LenB(aFile.Infos(i)) - 1))), ByVal VarPtr(aFile.Infos(i)), LenB(aFile.Infos(i))
-            If aFile.wDataLen >= i Then
-                AddDesc outBytes, "data"
-                AddLong outBytes, aFile.Datas(aFile.wDataLen).lBytes
-                ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + aFile.Datas(aFile.wDataLen).lBytes) As Byte
-                RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (aFile.Datas(aFile.wDataLen).lBytes - 1))), _
-                    ByVal VarPtr(aFile.Datas(i).wWave(LBound(aFile.Datas(i).wWave))), aFile.Datas(aFile.wDataLen).lBytes
-            End If
-        Next
-    End If
-    If aFile.wOtherLen > 0 Then
-        Dim runTotal As Long
-        For i = 1 To aFile.wOtherLen
-            AddDesc outBytes, GetDesc(aFile.Other(i))
-            AddLong outBytes, aFile.Other(i).lInfo
-            ReDim Preserve outBytes(LBound(outBytes) To UBound(outBytes) + aFile.Other(i).lInfo) As Byte
-            RtlMoveMemory VarPtr(outBytes(UBound(outBytes) - (aFile.Other(i).lInfo - 1))), ByVal VarPtr(aFile.bRemain(LBound(aFile.bRemain) + runTotal)), aFile.Other(i).lInfo
-            runTotal = runTotal + aFile.Other(i).lInfo
-        Next
-    End If
-End Sub
-Public Function WaveMilliseconds(ByRef aFile As AudioFile) As Long
-    With aFile.Infos(aFile.wInfoLen)
-        Dim factor As Single
-        Dim remain As Single
-        Dim multiplyer As Single
-          
-        factor = ((.lSamplesPerSecond * .wNumberOfChannels * .wBitsPerSample) \ (.wNumberOfChannels * .wChannelBandwidth))
-        multiplyer = (aFile.Datas(aFile.wDataLen).lBytes \ factor)
-        remain = (aFile.Datas(aFile.wDataLen).lBytes Mod factor)
-                                
-        WaveMilliseconds = ((multiplyer + (((factor / (factor - remain)) / 100))) * 1000)
-    End With
-End Function
-Public Sub WaveLoadFromFile(ByVal FileName As String, ByRef aFile As AudioFile)
-    Dim riff As AudioHead
-    Dim validity As Integer
-    Dim temp() As Byte
-    Dim fNum As Long
-    fNum = FreeFile
-    Open FileName For Binary As #fNum
-    Get #fNum, 1, riff
-    If GetDesc(riff) = "RIFF" Then
-        WaveResetRecord aFile
-        Debug.Print "File Size " & riff.lInfo
-        Do While Not EOF(fNum)
-            Get #fNum, Seek(fNum), riff
-            If GetDesc(riff) = "WAVE" Then
-                RtlMoveMemory VarPtr(riff), ByVal VarPtr(riff.lInfo), 4
-                Get #fNum, Seek(fNum), riff.lInfo
-                Do While Not EOF(fNum)
-                    Select Case Trim(GetDesc(riff))
-                        Case "DATA"
-                            aFile.wDataLen = aFile.wDataLen + 1
-                            ReDim Preserve aFile.Datas(1 To aFile.wDataLen) As AudioData
-                            aFile.Datas(aFile.wDataLen).lBytes = riff.lInfo
-                            If riff.lInfo > 0 Then
-                            
-                                ReDim aFile.Datas(aFile.wDataLen).wWave(1 To (riff.lInfo / 2)) As Integer
-                                Get #fNum, Seek(fNum), aFile.Datas(aFile.wDataLen).wWave
-                                If aFile.wInfoLen = aFile.wDataLen - 1 Then
-                                    aFile.wInfoLen = aFile.wInfoLen + 1
-                                    ReDim Preserve aFile.Infos(1 To aFile.wInfoLen) As AudioInfo
-                                    aFile.Infos(aFile.wInfoLen) = aFile.Infos(aFile.wDataLen)
-                                End If
-                            End If
+    Dim sample As Long
+    Dim peak As Long
+    peak = 0
 
-                            Debug.Print "Data Size " & aFile.Datas(aFile.wDataLen).lBytes & " bytes"
+    For i = 44 To UBound(b) - 1 Step 2
+        sample = BytesToInt(b(i), b(i + 1))
+        
+        ' Convert unsigned to signed
+        If sample > 32767 Then sample = sample - 65536
+        
+        ' Track absolute peak
+        If Abs(sample) > peak Then peak = Abs(sample)
+        If CancelCalled Then GoTo ErrHandler
+    Next i
 
-                            Debug.Print "Data Length " & (WaveMilliseconds(aFile) / 1000) & " s"
- 
-                            validity = validity + 1
-                                                    
-                        Case "FMT"
-                            aFile.wInfoLen = aFile.wInfoLen + 1
-                            ReDim Preserve aFile.Infos(1 To aFile.wInfoLen) As AudioInfo
-                            If LenB(aFile.Infos(aFile.wInfoLen)) = riff.lInfo Then
-                                Get #fNum, Seek(fNum), aFile.Infos(aFile.wInfoLen)
-                                If aFile.wInfoLen - 2 = aFile.wDataLen Then
-                                    aFile.wDataLen = aFile.wDataLen + 1
-                                    ReDim Preserve aFile.Datas(1 To aFile.wDataLen) As AudioData
-                                    aFile.Datas(aFile.wDataLen) = aFile.Datas(aFile.wDataLen - 1)
-                                End If
-                            
-                                With aFile.Infos(aFile.wInfoLen)
-                                    Debug.Print "Format Specific " & .wFormatSpecific
-                                    Debug.Print "Number Of Channels " & .wNumberOfChannels
-                                    Debug.Print "Samples Per Second " & .lSamplesPerSecond
-                                    Debug.Print "Bytes Per Second " & .lBytesPerSecond
-                                    Debug.Print "Channel Bandwidth " & .wChannelBandwidth
-                                    Debug.Print "Bits Per Sample " & .wBitsPerSample
-                                End With
-                                If aFile.Infos(aFile.wInfoLen).wBitsPerSample <> 16 Then
-                                    err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-                                Else
-                                    validity = validity + 1
-                                End If
-                            Else
-                                ReDim Preserve aFile.Infos(1 To aFile.wInfoLen - 1) As AudioInfo
-                                aFile.wInfoLen = aFile.wInfoLen - 1
-                                Seek #fNum, Seek(fNum) + riff.lInfo
-                            End If
-                        Case Else
-                            aFile.wOtherLen = aFile.wOtherLen + 1
-                            ReDim Preserve aFile.Other(1 To aFile.wOtherLen) As AudioHead
-                            aFile.Other(aFile.wOtherLen) = riff
-                            ReDim temp(1 To aFile.Other(aFile.wOtherLen).lInfo) As Byte
-                            Get #fNum, Seek(fNum), temp
-                            If aFile.wOtherLen = 1 Then
-                                aFile.bRemain = temp
-                            Else
-                                ReDim Preserve aFile.bRemain(LBound(aFile.bRemain) To UBound(aFile.bRemain) + aFile.Other(aFile.wOtherLen).lInfo) As Byte
-                                RtlMoveMemory VarPtr(aFile.bRemain(UBound(aFile.bRemain) - (aFile.Other(aFile.wOtherLen).lInfo - 1))), ByVal VarPtr(temp(LBound(temp))), aFile.Other(aFile.wOtherLen).lInfo
-                            End If
-                    End Select
-                    Get #fNum, Seek(fNum), riff
-                Loop
-            Else
-                err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
-            End If
-        Loop
-    Else
-        err.Raise 321, , "The file you have selected is not a RIFF nor WAVE file.  Only 16-bits (Standard PCM) wave format is supported."
+    If peak <= 0 Then
+        GetPeakDBFS = -9999 ' silence
+        Exit Function
     End If
-    Close #fNum
-    If validity < 2 Then
-        err.Raise 321, , "Invalid file type, expected riff (a few single musical note, tone, key or chord blended as a conbined melodic harmony, continious sound or portion of a song.... a riff)."
-    End If
-End Sub
 
-Public Sub AddDesc(ByRef audio() As Byte, ByVal Desc As String, Optional ByVal StartIndex As Long = -1)
-    If StartIndex = -1 Then
-        ReDim Preserve audio(LBound(audio) To UBound(audio) + 4) As Byte
-        StartIndex = UBound(audio) - 3
-    End If
-    audio(StartIndex + 0) = Asc(Mid(Desc, 1, 1))
-    audio(StartIndex + 1) = Asc(Mid(Desc, 2, 1))
-    audio(StartIndex + 2) = Asc(Mid(Desc, 3, 1))
-    audio(StartIndex + 3) = Asc(Mid(Desc, 4, 1))
-End Sub
+    ' Convert peak to dBFS
+    Const LN10 As Double = 2.30258509299405
+    Dim db As Double
+    db = 20# * (Log(peak / 32767#) / LN10)
 
-Public Sub AddLong(ByRef audio() As Byte, ByVal lValue As Long)
-    ReDim Preserve audio(LBound(audio) To UBound(audio) + 4) As Byte
-    RtlMoveMemory VarPtr(audio(UBound(audio) - 3)), ByVal VarPtr(lValue) + 0, 4
-End Sub
+    GetPeakDBFS = peak 'db
+    Exit Function
 
-Public Function GetHead(ByRef inBytes() As Byte, ByRef Idx As Long) As AudioHead
-    RtlMoveMemory VarPtr(GetHead), ByVal VarPtr(inBytes(Idx)), LenB(GetHead)
-    Idx = Idx + LenB(GetHead)
+ErrHandler:
+    Close #f
+    GetPeakDBFS = -9999
 End Function
 
-Public Function GetDesc(ByRef header As AudioHead) As String
-    GetDesc = UCase(Chr(header.bPart(0)) & Chr(header.bPart(1)) & Chr(header.bPart(2)) & Chr(header.bPart(3)))
-End Function
 
-Public Sub WaveResetRecord(ByRef aFile As AudioFile)
-    Dim i As Long
-    If aFile.wInfoLen > 0 Then
-        For i = LBound(aFile.Infos) To UBound(aFile.Infos)
-            aFile.Infos(i).wFormatSpecific = 0
-            aFile.Infos(i).wNumberOfChannels = 0
-            aFile.Infos(i).lSamplesPerSecond = 0
-            aFile.Infos(i).lBytesPerSecond = 0
-            aFile.Infos(i).wChannelBandwidth = 0
-            aFile.Infos(i).wBitsPerSample = 0
-        Next
-        Erase aFile.Infos
-        aFile.wInfoLen = 0
-    End If
-    If aFile.wDataLen > 0 Then
-        For i = LBound(aFile.Datas) To UBound(aFile.Datas)
-            Erase aFile.Datas(i).wWave
-        Next
-        Erase aFile.Datas
-        aFile.wDataLen = 0
-    End If
-    If aFile.wOtherLen > 0 Then
-        Erase aFile.Other
-        Erase aFile.bRemain
-        aFile.wOtherLen = 0
-    End If
-End Sub
+'example:
+'Dim peakDB As Double
+'peakDB = GetPeakDBFS("C:\audio\test.wav")
+'Print "Peak level: "; peakDB; " dBFS"
+
 

@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#436.0#0"; "NTImaging10.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
+Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#460.0#0"; "NTImaging10.ocx"
 Begin VB.Form frmStudio 
    Caption         =   "adPatch"
    ClientHeight    =   10605
@@ -416,6 +416,10 @@ Begin VB.Form frmStudio
    End
    Begin VB.Menu mnuView 
       Caption         =   "&View"
+      Begin VB.Menu mnuDesigner 
+         Caption         =   "&Designer"
+         Shortcut        =   {F5}
+      End
       Begin VB.Menu mnuSymbols 
          Caption         =   "&Symbols"
          Shortcut        =   {F6}
@@ -470,6 +474,7 @@ Public Sub UpdateGallery()
     
     Gallery1.Clear
     Gallery1.StretchImages = False
+    
 
 
 startover:
@@ -485,13 +490,18 @@ startover:
             StringToSymbol rs("Symbol")
 
             Gallery1.AddImageByPicture SymbolBitmap, rs("ID")
-            Gallery1.BackgroundColors(Gallery1.Count - 1) = rs("Color")
-            
 
+            Gallery1.BackgroundColors(Gallery1.Count - 1) = rs("Color")
+
+            Set Gallery1.Images(Gallery1.Count - 1) = SymbolBitmap.Image
+
+        
+        
             If Not PathExists(GetSymbolFile(rs("ID")), True) Then
                 SavePicture SymbolBitmap.Image, GetSymbolFile(rs("ID"))
             End If
             
+
             If Not PathExists(GetColorFile(rs("Color")), True) Then
                 HelperImage.Cls
                 HelperImage.Line (1, 1)-(HelperImage.Width, HelperImage.Height), rs("Color"), BF
@@ -507,10 +517,11 @@ startover:
 
     db.rsClose rs
     If backSel > -1 And backSel < Gallery1.Count Then
-        Gallery1.ListIndex = backSel
+   '     Gallery1.ListIndex = backSel
     End If
     
     Gallery1_Click
+    Gallery1.Refresh
 End Sub
 Friend Sub MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
@@ -882,6 +893,7 @@ Private Sub Gallery1_Click()
 
             If PathExists(GetSymbolFile, True) Then
                 SymbolBitmap.Picture = LoadPicture(GetSymbolFile)
+                Debug.Print GetSymbolFile
             Else
                 SymbolBitmap.Cls
             End If
@@ -924,7 +936,7 @@ Public Function GetMaterialID(ByVal Color As Long) As String
     If Gallery1.Count > 0 Then
         For cnt = 0 To Gallery1.Count - 1
             If Gallery1.BackgroundColors(cnt) = Color Then
-                GetMaterialID = ColorToHex(frmStudio.Gallery1.Info(cnt))
+                GetMaterialID = ColorToHex(frmStudio.Gallery1.info(cnt))
             End If
         Next
     End If
@@ -941,7 +953,7 @@ End Function
 Private Function GetSymbolFile(Optional ByVal id As Long = -1) As String
     If id = -1 Then
         If Gallery1.Count > 0 Then
-            GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(Gallery1.Info(Gallery1.ListIndex)) & ".bmp"
+            GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(Gallery1.info(Gallery1.ListIndex)) & ".bmp"
         End If
     Else
         GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(id) & ".bmp"
@@ -1016,6 +1028,12 @@ Private Sub mnuAdd_Click()
 
 End Sub
 
+Private Sub mnuDesigner_Click()
+    Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
+    TabStrip1_Click
+    
+End Sub
+
 Private Sub mnuExport_Click()
 '    Load frmThatch
 '    frmThatch.SetupExport
@@ -1054,7 +1072,7 @@ Private Sub mnuExport_Click()
             Dim DSurface As D3DXRenderToSurface
             Dim dm As D3DDISPLAYMODE
             Dim pal As PALETTEENTRY
-            Dim rct As DxVBLibA.RECT
+            Dim rct As dxvbliba.RECT
             Dim BufferedTexture As Direct3DTexture8
             Dim ReflectRenderTarget As Direct3DSurface8
             Dim ReflectFrontBuffer As Direct3DSurface8
@@ -1143,7 +1161,7 @@ Public Sub FinishCapture()
 
         Dim dm As D3DDISPLAYMODE
         Dim pal As PALETTEENTRY
-        Dim rct As DxVBLibA.RECT
+        Dim rct As dxvbliba.RECT
         
     If ExportCapture = 3 Then
     
@@ -1210,6 +1228,11 @@ Public Sub FinishCapture()
 '        frmMain.Picture1.Height = LastHeight
 '        frmMain.Picture1.Width = LastWidth
             
+End Sub
+
+Private Sub mnuPattern_Click()
+    Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
+    TabStrip1_Click
 End Sub
 
 Private Sub mnuRemove_Click()
@@ -1303,6 +1326,7 @@ Private Sub mnuOpen_Click()
             modProj.CleanUpProj
             modProj.CreateProj
             UndoReset
+            
         
         
         End If
@@ -1344,6 +1368,12 @@ Private Sub SelectColor(ByVal Color As Long)
         Next
     End If
 End Sub
+
+Private Sub mnuSymbols_Click()
+    Set TabStrip1.SelectedItem = TabStrip1.Tabs("symbols")
+    TabStrip1_Click
+End Sub
+
 Public Sub mnuUndo_Click()
     UndoCOmmit
 
@@ -1535,6 +1565,12 @@ Public Sub UndoEnables()
 End Sub
 
 
+
+Private Sub mnuView_Click()
+    mnuDesigner.Enabled = TabStrip1.SelectedItem.Caption <> "Designer"
+    mnuSymbols.Enabled = TabStrip1.SelectedItem.Caption <> "Symbols"
+    mnuPattern.Enabled = TabStrip1.SelectedItem.Caption <> "Pattern"
+End Sub
 
 Public Sub Precision_Click()
     If CancelUpdate = False Then
@@ -1805,7 +1841,7 @@ Private Sub UpdateSymbol()
 
         SavePicture SymbolBitmap.Image, GetSymbolFile
 '        Debug.Print Gallery1.Info(Gallery1.ListIndex)
-        db.dbQuery "UPDATE Materials SET Symbol='" & SymbolToString & "' WHERE ID=" & Gallery1.Info(Gallery1.ListIndex) & ";"
+        db.dbQuery "UPDATE Materials SET Symbol='" & SymbolToString & "' WHERE ID=" & Gallery1.info(Gallery1.ListIndex) & ";"
         
         Set Gallery1.Images(Gallery1.ListIndex) = SymbolBitmap.Image
         
