@@ -29,10 +29,10 @@ Public SpecialMat As D3DMATERIAL8
 Public Sub CreateText()
     ColumnCount = 129
     
-    frmMain.Font.name = "Lucida Console"
+    frmMain.Font.Name = "Lucida Console"
     frmMain.Font.Bold = False
     frmMain.Font.Italic = False
-    frmMain.Font.CharSet = 0
+    frmMain.Font.Charset = 0
     
     Dim Size As Long
     
@@ -181,7 +181,7 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
 'True if the function was successful.
 
   'declare vars
-  Dim Handle As Integer, isValidImage As Boolean
+  Dim handle As Integer, isValidImage As Boolean
   Dim byteArr(255) As Byte, i As Integer
 
   'init vars
@@ -190,11 +190,11 @@ Public Function BitmapDimensions(ByVal FileName As String, imgdim As ImgDimType,
   imgdim.Width = 0
   
   'open file and get 256 byte chunk
-  Handle = FreeFile
+  handle = FreeFile
   On Error GoTo endFunction
-  Open FileName For Binary Access Read As #Handle
-  Get Handle, , byteArr
-  Close #Handle
+  Open FileName For Binary Access Read As #handle
+  Get handle, , byteArr
+  Close #handle
 
   'check for jpg header (SOI): &HFF and &HD8
   ' contained in first 2 bytes
@@ -329,7 +329,51 @@ Public Function LoadTextureRes(ByRef byteArr() As Byte) As Direct3DTexture8
     End If
 End Function
 
+Function FileToHex(filePath)
+    Dim stream, byteArray, i, hexStr
+    hexStr = ""
 
+    ' Open file as binary
+    Set stream = CreateObject("ADODB.Stream")
+    stream.Type = 1 ' adTypeBinary
+    stream.Open
+    stream.LoadFromFile filePath
+
+    byteArray = stream.Read() ' Read entire file into byte array
+    stream.Close
+    Set stream = Nothing
+
+    ' Convert each byte to hex
+    For i = 0 To UBound(byteArray)
+        hexStr = hexStr & Right("0" & Hex(AscB(MidB(byteArray, i + 1, 1))), 2)
+    Next
+Debug.Print Len(hexStr)
+
+    FileToHex = hexStr
+End Function
+
+' Convert hex string back to binary file
+Sub HexToFile(hexStr, outputPath)
+    Dim stream, i, byteVal, byteArray
+    Dim byteCount
+    byteCount = Len(hexStr) \ 2
+
+    ' Build binary string from hex
+    byteArray = ""
+    For i = 1 To Len(hexStr) Step 2
+        byteVal = CByte("&H" & Mid(hexStr, i, 2))
+        byteArray = byteArray & ChrB(byteVal)
+    Next
+
+    ' Write binary to file
+    Set stream = CreateObject("ADODB.Stream")
+    stream.Type = 1 ' adTypeBinary
+    stream.Open
+    stream.Write byteArray
+    stream.SaveToFile outputPath, 2 ' adSaveCreateOverWrite
+    stream.Close
+    Set stream = Nothing
+End Sub
 
 
 

@@ -1,7 +1,8 @@
 VERSION 5.00
+Object = "{C98B112F-745F-4542-B5B3-DDFADF1F6E2F}#1461.0#0"; "NTControls22.ocx"
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
-Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#460.0#0"; "NTImaging10.ocx"
+Object = "{BA98913A-7219-4720-8E5D-F3D8E058DF1B}#463.0#0"; "NTImaging10.ocx"
 Begin VB.Form frmStudio 
    Caption         =   "adPatch"
    ClientHeight    =   10605
@@ -15,6 +16,31 @@ Begin VB.Form frmStudio
    ScaleHeight     =   10605
    ScaleWidth      =   21750
    StartUpPosition =   2  'CenterScreen
+   Begin VB.PictureBox ExportImage 
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H00FFFFFF&
+      BorderStyle     =   0  'None
+      FillColor       =   &H00FFFFFF&
+      FillStyle       =   0  'Solid
+      Height          =   705
+      Left            =   6195
+      ScaleHeight     =   705
+      ScaleWidth      =   840
+      TabIndex        =   23
+      Top             =   4710
+      Visible         =   0   'False
+      Width           =   840
+   End
+   Begin NTControls22.BrowseButton BrowseButton1 
+      Height          =   315
+      Left            =   3705
+      TabIndex        =   22
+      Top             =   4875
+      Visible         =   0   'False
+      Width           =   315
+      _ExtentX        =   556
+      _ExtentY        =   556
+   End
    Begin VB.Timer UpdateTimer 
       Enabled         =   0   'False
       Interval        =   1000
@@ -703,6 +729,7 @@ Private Sub Designer_Resize()
 End Sub
 
 Private Sub Form_Load()
+
     
     ChDir AppPath & "Base\Patterns"
     
@@ -738,6 +765,7 @@ Private Sub Form_Load()
     TabStrip1_Click
     VScroll2_Change
         
+    ReDim ProjGrid(1 To 1, 1 To 1) As GridItem
     ResizeMultidimArray
 
     
@@ -813,7 +841,7 @@ Public Function SaveProject(Optional ByVal Prompt As Boolean = False) As Boolean
         CommonDialog1.DefaultExt = ".csp"
         CommonDialog1.DialogTitle = "Save Cross Stitch Project"
         CommonDialog1.Filter = "Cross Stitch Project (*.csp)|*.csp|All Files (*.*)|*.*"
-        If CommonDialog1.Filename <> "" Then CommonDialog1.Filename = Replace(CommonDialog1.Filename, ".pdf", ".csp", , , vbTextCompare)
+        If CommonDialog1.FileName <> "" Then CommonDialog1.FileName = Replace(CommonDialog1.FileName, ".pdf", ".csp", , , vbTextCompare)
         CommonDialog1.FilterIndex = 1
         CommonDialog1.flags = &H4 And &H200000 And &H8000 And &H2
         CommonDialog1.ShowSave
@@ -830,7 +858,7 @@ Public Function SaveProject(Optional ByVal Prompt As Boolean = False) As Boolean
             TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
             TabStrip1_Click
             
-            ProjPath = CommonDialog1.Filename
+            ProjPath = CommonDialog1.FileName
             SaveProject = modProj.WriteToDisk
             modProj.Dirty = False
         End If
@@ -950,7 +978,7 @@ Private Function GetColorFile(Optional ByVal Color As Long = -1) As String
     End If
 End Function
 
-Private Function GetSymbolFile(Optional ByVal id As Long = -1) As String
+Public Function GetSymbolFile(Optional ByVal id As Long = -1) As String
     If id = -1 Then
         If Gallery1.Count > 0 Then
             GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(Gallery1.info(Gallery1.ListIndex)) & ".bmp"
@@ -959,6 +987,8 @@ Private Function GetSymbolFile(Optional ByVal id As Long = -1) As String
         GetSymbolFile = AppPath & "Base\Stitchings\LegendKeys\" & ColorToHex(id) & ".bmp"
     End If
 End Function
+
+
 
 Public Function CreateColor(ByVal Color As Long, ByVal OnlyIfMissing As Boolean, Optional ByVal Symbol As String) As Boolean
     Dim rs As New ADODB.Recordset
@@ -1042,193 +1072,278 @@ Private Sub mnuExport_Click()
 '
 '    If frmThatch.Tag = "OK" Then
 
-    Dim doCenter As Integer
-    doCenter = MsgBox("Ensure the full thatch canvas is in view before continuing." & vbCrLf & "Is the thatch canvas fully with in the view?", vbQuestion + vbYesNoCancel)
-    If doCenter <> vbCancel Then
-    
-        On Error Resume Next
-        CommonDialog1.CancelError = True
-        CommonDialog1.DefaultExt = ".pdf"
-        CommonDialog1.DialogTitle = "Export Cross Stitch Project View"
-        CommonDialog1.Filter = "Windows Bitmap (*.bmp)|*.bmp|All Files (*.*)|*.*"
-        If CommonDialog1.Filename <> "" Then CommonDialog1.Filename = Replace(CommonDialog1.Filename, ".csp", ".pdf", , , vbTextCompare)
-        CommonDialog1.FilterIndex = 1
-        CommonDialog1.flags = &H4 And &H200000 And &H8000 And &H2
-        CommonDialog1.ShowSave
-        If Err Then
-            Err.Clear
-        Else
+'    Dim doCenter As Integer
+'    doCenter = MsgBox("Ensure the full thatch canvas is in view before continuing." & vbCrLf & "Is the thatch canvas fully with in the view?", vbQuestion + vbYesNoCancel)
+'    If doCenter <> vbCancel Then
+On Error GoTo failure:
+
+    With BrowseButton1
+        If Not PathExists(AppPath & "Base\Export", False) Then
+            MakeFolder AppPath & "Base\Export"
+        End If
+        .BrowseTitle = "Select existing or new folder."
+
+       .FilterPath = AppPath & "Base\Export\" & GetFileTitle(modProj.ProjPath)
+        
+        .BrowseAction = Dialog
+        
+        .Browse
+        If .BrowseReturn <> "" Then
             UndoCOmmit
+            Dim folder As String
+            folder = .BrowseReturn
             
             On Error GoTo 0
 
+            Do While LCase(GetFileName(folder)) = LCase(GetFileName(GetFilePath(folder))) _
+                And LCase(GetFileName(folder)) = LCase(GetFileTitle(modProj.ProjPath))
             
-            Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
-            TabStrip1_Click
-'            ExportCapture = 1
+                folder = GetFilePath(folder)
+            Loop
+            If LCase(GetFileTitle(folder)) <> LCase(GetFileTitle(modProj.ProjPath)) Then
+                folder = folder & "\" & LCase(GetFileTitle(modProj.ProjPath))
+            End If
             
-            
-            Dim dViewPort As D3DVIEWPORT8
-            Dim DSurface As D3DXRenderToSurface
-            Dim dm As D3DDISPLAYMODE
-            Dim pal As PALETTEENTRY
-            Dim rct As dxvbliba.RECT
-            Dim BufferedTexture As Direct3DTexture8
-            Dim ReflectRenderTarget As Direct3DSurface8
-            Dim ReflectFrontBuffer As Direct3DSurface8
-
-            DDevice.GetViewport dViewPort
+            If MsgBox("Continue with the path: " & folder & "?", vbYesNo) = vbYes Then
             
 
-            
-            Set DSurface = D3DX.CreateRenderToSurface(DDevice, Screen.Width / Screen.TwipsPerPixelX, Screen.Height / Screen.TwipsPerPixelY, Display.Format, False, D3DFMT_D16)
-
-'            Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
-'            Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
-'            Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
-
-            If doCenter = vbNo Then GotoCenter
-            
-            dViewPort.Width = Screen.Width / Screen.TwipsPerPixelX
-            dViewPort.Height = Screen.Height / Screen.TwipsPerPixelY
-
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, BackColor, 1, 0
-
-            
-            DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
-            
-            SetupWorld True
-
-            RenderView False, True
+                If Not PathExists(folder, False) Then
+                    MakeFolder folder
+                End If
+    
+                
+                Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
+                TabStrip1_Click
+                
+                
+                Dim dViewPort As D3DVIEWPORT8
+                Dim DSurface As D3DXRenderToSurface
+                Dim dm As D3DDISPLAYMODE
+                Dim pal As PALETTEENTRY
+                Dim rct As dxvbliba.RECT
+                Dim BufferedTexture As Direct3DTexture8
+                Dim ReflectRenderTarget As Direct3DSurface8
+                Dim ReflectFrontBuffer As Direct3DSurface8
+    
+                DDevice.GetViewport dViewPort
+                
+    
+                
+                Set DSurface = D3DX.CreateRenderToSurface(DDevice, Screen.Width / Screen.TwipsPerPixelX, Screen.Height / Screen.TwipsPerPixelY, Display.Format, False, D3DFMT_D16)
+    
+    
+                Set ReflectRenderTarget = DDevice.CreateRenderTarget(Screen.Width / Screen.TwipsPerPixelX, Screen.Height / Screen.TwipsPerPixelY, Display.Format, D3DMULTISAMPLE_NONE, True)
         
-
-            DSurface.EndScene
-
-            DDevice.GetDisplayMode dm
-
-            rct.Top = 0
-            rct.Left = 0
-
-            rct.Right = dViewPort.Width
-            rct.Bottom = dViewPort.Height
+    '            Set ReflectRenderTarget = DDevice.CreateRenderTarget((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, True)
+    '            Set BufferedTexture = DDevice.CreateTexture((frmMain.Width / Screen.TwipsPerPixelX), (frmMain.Height / Screen.TwipsPerPixelY), 1, CONST_D3DUSAGEFLAGS.D3DUSAGE_RENDERTARGET, CONST_D3DFORMAT.D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT)
+    '            Set ReflectFrontBuffer = BufferedTexture.GetSurfaceLevel(0)
+    
+                GotoCenter
+                
+                dViewPort.Width = Screen.Width / Screen.TwipsPerPixelX
+                dViewPort.Height = Screen.Height / Screen.TwipsPerPixelY
+    
+                DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, BackColor, 1, 0
+    
+                
+                'DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
+                DSurface.BeginScene ReflectRenderTarget, dViewPort
+                
+                
+                
+                SetupWorld True
+    
+                RenderView False, True
             
-
-            D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".bmp", " Display.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-       
-            Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
-            TabStrip1_Click
-
-
-            DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, BackColor, 1, 0
+    
+                DSurface.EndScene
+    
+                DDevice.GetDisplayMode dm
+    
+                rct.Top = 0
+                rct.Left = 0
+    
+                rct.Right = dViewPort.Width
+                rct.Bottom = dViewPort.Height
+                
+    
+                'D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".bmp", " Display.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+                D3DX.SaveSurfaceToFile folder & "\Display.bmp", D3DXIFF_BMP, ReflectRenderTarget, pal, rct
+           
+                Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
+                TabStrip1_Click
+    
+    
+                DDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, BackColor, 1, 0
+                
+                'DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
+                DSurface.BeginScene ReflectRenderTarget, dViewPort
+                
+                SetupWorld True
+    
+                RenderView False, True
             
-            DSurface.BeginScene DDevice.GetRenderTarget, dViewPort
-            
-            SetupWorld True
-
-            RenderView False, True
-        
-
-            DSurface.EndScene
-
-            DDevice.GetDisplayMode dm
-
-            rct.Top = 0
-            rct.Left = 0
-
-            rct.Right = dViewPort.Width
-            rct.Bottom = dViewPort.Height
-            
-
-            D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".bmp", " Pattern.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-            
-'            Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & Electrons.Key(i) & ".bmp", _
-'                DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
-'                D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), Electrons.Key(i)
-
-
-            
-
-            
-          '  Set DSurface = Nothing
-            
+    
+                DSurface.EndScene
+    
+                DDevice.GetDisplayMode dm
+    
+                rct.Top = 0
+                rct.Left = 0
+    
+                rct.Right = dViewPort.Width
+                rct.Bottom = dViewPort.Height
+                
+    
+                'D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".bmp", " Pattern.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+                D3DX.SaveSurfaceToFile folder & "\Pattern.bmp", D3DXIFF_BMP, ReflectRenderTarget, pal, rct
+                
+    '            Mirrors.Add D3DX.CreateTextureFromFileEx(DDevice, GetTemporaryFolder & "\" & Electrons.Key(i) & ".bmp", _
+    '                DViewPort.Width, DViewPort.Height, D3DX_FILTER_NONE, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, _
+    '                D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, Transparent, ByVal 0, ByVal 0), Electrons.Key(i)
+    
+    
+                
+    
+                If Not PathExists(folder & "\patterns", False) Then
+                    MakeFolder folder & "\patterns"
+                End If
+                
+              '  Set DSurface = Nothing
+                  Dim clr As String
+                  Dim rs As New ADODB.Recordset
+                  Dim file As String
+                  Dim txt As String
+                  
+                  txt = "<html><body>"
+                  txt = txt & "<img src=""Display.bmp""><br>"
+                  txt = txt & "<img src=""Pattern.bmp""><br>"
+                  txt = txt & "<table cellpadding=0 cellspacing=0 style=""font-family:Small Fonts;font-size:8px"" border=1px>"
+                  
+                Dim X As Long
+                Dim Y As Long
+                    
+                For Y = 1 To ThatchYUnits
+                    txt = txt & "<tr>"
+                    For X = 1 To ThatchXUnits
+                     '   ProjGrid(x, y).Details(i).Stitch,
+    
+                        If ProjGrid(X, Y).Count > 0 Then
+                            clr = ProjGrid(X, Y).Details(1).Color
+                            db.rsQuery rs, "SELECT * FROM Materials WHERE Color=" & clr & ";"
+                            If Not db.rsEnd(rs) Then
+                                file = GetSymbolFile(rs("ID"))
+ 
+                            Else
+                                file = AppPath & "Base\blank2bmp"
+                            End If
+                            
+                        Else
+                            file = AppPath & "Base\blank2bmp"
+                        End If
+                        
+                    
+                        If PathExists(folder & "\patterns\" & GetFileName(file), True) Then Kill folder & "\patterns\" & GetFileName(file)
+                         FileCopy file, folder & "\patterns\" & GetFileName(file)
+                         
+                         txt = txt & "<td>&nbsp;<img width=44 height=44 src=""patterns/" & GetFileName(file) & """><br>" & X & ", " & Y & "</td>"
+                         'Debug.Print GetSymbolFile(rs("ID"))
+                    Next
+                    txt = txt & "</tr>"
+                Next
+                
+                txt = txt & "</table></body></html>"
+                WriteFile folder & "\index.htm", txt
+                
+                
+                
+            End If
+    
+    
         End If
-    End If
+  
+    End With
+    
+    Exit Sub
+failure:
+    MsgBox "An unknown error occured.", vbOKOnly
+    Err.Clear
     
 '    End If
 '    Unload frmThatch
 End Sub
-Public Sub FinishCapture()
-
-        Dim dm As D3DDISPLAYMODE
-        Dim pal As PALETTEENTRY
-        Dim rct As dxvbliba.RECT
-        
-    If ExportCapture = 3 Then
-    
-
-        DDevice.GetDisplayMode dm
-        rct.Top = 3
-        rct.Left = 5
-        rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
-        rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
-        D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare))
-        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare), 100
-        Kill Replace(CommonDialog1.Filename, ".pdf", "1.bmp", , , vbTextCompare)
-        frmMain.Picture1.Picture = LoadPicture("")
-        Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
-            
-        TabStrip1_Click
-        
-    ElseIf ExportCapture = 6 Then
-
-        DDevice.GetDisplayMode dm
-        rct.Top = 3
-        rct.Left = 5
-        rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
-        rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
-        D3DX.SaveSurfaceToFile Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
-        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare))
-        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare), 100
-        Kill Replace(CommonDialog1.Filename, ".pdf", "2.bmp", , , vbTextCompare)
-        frmMain.Picture1.Picture = LoadPicture("")
-        Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
-            
-        TabStrip1_Click
-                
-        ExportCapture = 0
-        
-        If PathExists(CommonDialog1.Filename, True) Then Kill CommonDialog1.Filename
-
-        Dim pdf As New NTImaging10.PDFCompiler
-        pdf.QueueFile Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare)
-        pdf.QueueFile Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare)
-        pdf.FitImageTopage = False
-        pdf.PageWidth = (((frmMain.Picture1.Width / Screen.TwipsPerPixelX) / PixelPerPoint) * (PixelPerPoint / GetMonitorDPI.Width)) + 4
-
-        pdf.PageHeight = (((frmMain.Picture1.Height / Screen.TwipsPerPixelY) / PixelPerPoint) * (PixelPerPoint / GetMonitorDPI.Height)) + 4
-
-        pdf.MarginBottom = 0
-        pdf.MarginLeft = 0
-        pdf.MarginTop = 0
-        pdf.MarginRight = 0
-        pdf.PageFooter = False
-        pdf.ChangeQuality = False
-        pdf.Exhibit = False
-        pdf.CompilePDF CommonDialog1.Filename
-        Kill Replace(CommonDialog1.Filename, ".pdf", "1.jpg", , , vbTextCompare)
-        Kill Replace(CommonDialog1.Filename, ".pdf", "2.jpg", , , vbTextCompare)
-        
-        
-        
-         
-    End If
-    
-    
-'        frmMain.Picture1.Height = LastHeight
-'        frmMain.Picture1.Width = LastWidth
-            
-End Sub
+'Public Sub FinishCapture()
+'
+'        Dim dm As D3DDISPLAYMODE
+'        Dim pal As PALETTEENTRY
+'        Dim rct As dxvbliba.RECT
+'
+'    If ExportCapture = 3 Then
+'
+'
+'        DDevice.GetDisplayMode dm
+'        rct.Top = 3
+'        rct.Left = 5
+'        rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
+'        rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
+'        D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+'        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare))
+'        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare), 100
+'        Kill Replace(CommonDialog1.FileName, ".pdf", "1.bmp", , , vbTextCompare)
+'        frmMain.Picture1.Picture = LoadPicture("")
+'        Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
+'
+'        TabStrip1_Click
+'
+'    ElseIf ExportCapture = 6 Then
+'
+'        DDevice.GetDisplayMode dm
+'        rct.Top = 3
+'        rct.Left = 5
+'        rct.Right = (frmMain.Picture1.Width / Screen.TwipsPerPixelX)
+'        rct.Bottom = (frmMain.Picture1.Height / Screen.TwipsPerPixelY)
+'        D3DX.SaveSurfaceToFile Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare), D3DXIFF_BMP, DDevice.GetRenderTarget, pal, rct
+'        frmMain.Picture1.Picture = LoadPicture(Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare))
+'        SaveJPG frmMain.Picture1.Image, Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare), 100
+'        Kill Replace(CommonDialog1.FileName, ".pdf", "2.bmp", , , vbTextCompare)
+'        frmMain.Picture1.Picture = LoadPicture("")
+'        Set TabStrip1.SelectedItem = TabStrip1.Tabs("designer")
+'
+'        TabStrip1_Click
+'
+'        ExportCapture = 0
+'
+'        If PathExists(CommonDialog1.FileName, True) Then Kill CommonDialog1.FileName
+'
+'        Dim pdf As New NTImaging10.PDFCompiler
+'        pdf.QueueFile Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare)
+'        pdf.QueueFile Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare)
+'        pdf.FitImageTopage = False
+'        pdf.PageWidth = (((frmMain.Picture1.Width / Screen.TwipsPerPixelX) / PixelPerPoint) * (PixelPerPoint / GetMonitorDPI.Width)) + 4
+'
+'        pdf.PageHeight = (((frmMain.Picture1.Height / Screen.TwipsPerPixelY) / PixelPerPoint) * (PixelPerPoint / GetMonitorDPI.Height)) + 4
+'
+'        pdf.MarginBottom = 0
+'        pdf.MarginLeft = 0
+'        pdf.MarginTop = 0
+'        pdf.MarginRight = 0
+'        pdf.PageFooter = False
+'        pdf.ChangeQuality = False
+'        pdf.Exhibit = False
+'        pdf.CompilePDF CommonDialog1.FileName
+'        Kill Replace(CommonDialog1.FileName, ".pdf", "1.jpg", , , vbTextCompare)
+'        Kill Replace(CommonDialog1.FileName, ".pdf", "2.jpg", , , vbTextCompare)
+'
+'
+'
+'
+'    End If
+'
+'
+''        frmMain.Picture1.Height = LastHeight
+''        frmMain.Picture1.Width = LastWidth
+'
+'End Sub
 
 Private Sub mnuPattern_Click()
     Set TabStrip1.SelectedItem = TabStrip1.Tabs("pattern")
@@ -1321,7 +1436,7 @@ Private Sub mnuOpen_Click()
         
             TabStrip1_Click
     
-            ProjPath = CommonDialog1.Filename
+            ProjPath = CommonDialog1.FileName
             modProj.ReadFromDisk
             modProj.CleanUpProj
             modProj.CreateProj

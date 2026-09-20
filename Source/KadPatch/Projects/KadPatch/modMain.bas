@@ -227,9 +227,10 @@ Public Sub RenderFrame()
 
         SetupWorld
         
-        If Not expCap Then InputScene
+        'If Not expCap Then
+        InputScene
 
-        RenderView expCap
+        RenderView  'expCap
 
         RenderInfo
 
@@ -238,16 +239,16 @@ Public Sub RenderFrame()
         On Error Resume Next
         DDevice.Present ByVal 0, ByVal 0, frmMain.Picture1.hwnd, ByVal 0
    
-        If expCap Then
-            frmStudio.ExportCapture = frmStudio.ExportCapture + 1
-
-            If frmStudio.ExportCapture Mod 3 = 0 Then
-            
-                frmStudio.FinishCapture
-            End If
-
-            
-        End If
+'        If expCap Then
+'            frmStudio.ExportCapture = frmStudio.ExportCapture + 1
+'
+'            If frmStudio.ExportCapture Mod 3 = 0 Then
+'
+'                frmStudio.FinishCapture
+'            End If
+'
+'
+'        End If
    
         FPSCount = FPSCount + 1
         If (FPSTimer = 0) Or ((Timer - FPSTimer) >= 1) Then
@@ -311,9 +312,9 @@ Public Sub SetupWorld(Optional ByVal Exporting As Boolean = False)
     D3DXMatrixMultiply matLook, matRotation, matPitch
     If Exporting Then
     
-        D3DXMatrixTranslation matPos, -Player.Location.X, -Player.Location.Y, Player.CameraZoom
+        D3DXMatrixTranslation matPos, -Player.Location.x, -Player.Location.y, Player.CameraZoom
     Else
-        D3DXMatrixTranslation matPos, -Player.Location.X, -Player.Location.Y, Player.CameraZoom
+        D3DXMatrixTranslation matPos, -Player.Location.x, -Player.Location.y, Player.CameraZoom
     End If
     D3DXMatrixMultiply matView, matPos, matLook
     DDevice.SetTransform D3DTS_VIEW, matView

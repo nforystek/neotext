@@ -703,7 +703,9 @@ Public Function Browse() As String
             If Err Then .hOwner = UserControl.hwnd
             On Error GoTo 0
         
+
             nFolder = GetFolderValue(pBrowseAction)
+
         
             If SHGetSpecialFolderLocation(ByVal .hOwner, ByVal nFolder, IDL) = NOERROR Then
                 .pidlRoot = IDL.mkid.cb
@@ -792,6 +794,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         FileFilter = .ReadProperty("bFileFilter", "All Files|*.*")
         
         FileFilterIndex = .ReadProperty("bFileFilterIndex", 1)
+        FilterPath = .ReadProperty("FilterPath", "")
        
         ToolTipText = .ReadProperty("bToolTipText", "")
         
@@ -871,6 +874,8 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         .WriteProperty "bBrowseAction", pBrowseAction, BrowseActions.Desktop
         .WriteProperty "bFileFilter", pFileFilter, "All Files|*.*"
         .WriteProperty "bFileFilterIndex", pFileFilterIndex, 1
+        .WriteProperty "FilterPath", FilterPath, ""
+
 
         .WriteProperty "bToolTipText", pToolTipText, ""
 

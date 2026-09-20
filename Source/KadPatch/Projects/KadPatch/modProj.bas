@@ -123,6 +123,7 @@ Public Property Let ThatchIndex(ByVal RHS As Byte)
     Dirty = True
 End Property
 
+
 Private Function SymbolToBinary(ByVal Symbol As String) As Boolean()
     Dim cnt As Long
 
@@ -164,22 +165,22 @@ Public Function WriteToDisk() As Boolean
     
     Seek #fn, 14
     
-    Dim X As Long
-    Dim Y As Long
+    Dim x As Long
+    Dim y As Long
     Dim i As Byte
-    Dim c As Long
+    Dim C As Long
     
-    For X = 1 To ThatchXUnits
-        For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).Count > 0 Then
-                Put #fn, , ProjGrid(X, Y).Count
-                For i = 1 To ProjGrid(X, Y).Count
+    For x = 1 To ThatchXUnits
+        For y = 1 To ThatchYUnits
+            If ProjGrid(x, y).Count > 0 Then
+                Put #fn, , ProjGrid(x, y).Count
+                For i = 1 To ProjGrid(x, y).Count
                  '   c = ProjGrid(X, Y).Details(i).Color
                  '   c = Val("&" & GetFileTitle(frmStudio.Gallery1.FilePath(c)))
-                    If Not clrs.Exists("C" & ProjGrid(X, Y).Details(i).Color) Then clrs.Add ProjGrid(X, Y).Details(i).Color, "C" & ProjGrid(X, Y).Details(i).Color
+                    If Not clrs.Exists("C" & ProjGrid(x, y).Details(i).Color) Then clrs.Add ProjGrid(x, y).Details(i).Color, "C" & ProjGrid(x, y).Details(i).Color
                     
-                    Put #fn, , ProjGrid(X, Y).Details(i).Color
-                    Put #fn, , ProjGrid(X, Y).Details(i).Stitch
+                    Put #fn, , ProjGrid(x, y).Details(i).Color
+                    Put #fn, , ProjGrid(x, y).Details(i).Stitch
                 Next
             Else
                 Put #fn, , CByte(0)
@@ -208,14 +209,14 @@ Public Function ReadFromDisk() As Boolean
     
     On Error GoTo faildiskaccess
     'serialization of loaded project to byte array
-    Dim X As Long
-    Dim Y As Long
+    Dim x As Long
+    Dim y As Long
     
-    For X = 1 To ThatchXUnits
-        For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).Count > 0 Then
-                Erase ProjGrid(X, Y).Details
-                ProjGrid(X, Y).Count = 0
+    For x = 1 To ThatchXUnits
+        For y = 1 To ThatchYUnits
+            If ProjGrid(x, y).Count > 0 Then
+                Erase ProjGrid(x, y).Details
+                ProjGrid(x, y).Count = 0
             End If
         Next
     Next
@@ -257,15 +258,15 @@ Public Function ReadFromDisk() As Boolean
     Dim cnt As Long
 
     Seek #fn, 14
-    X = 1
-    Y = 1
+    x = 1
+    y = 1
     
     Do
         
         Get #fn, , Count
         If Count > 0 Then
-            ProjGrid(X, Y).Count = Count
-            ReDim Preserve ProjGrid(X, Y).Details(1 To Count) As ItemDetail
+            ProjGrid(x, y).Count = Count
+            ReDim Preserve ProjGrid(x, y).Details(1 To Count) As ItemDetail
             i = 0
             Do Until i = Count
                 i = i + 1
@@ -277,20 +278,20 @@ Public Function ReadFromDisk() As Boolean
                     frmStudio.UpdateGallery
                 End If
                 
-                ProjGrid(X, Y).Details(i).Color = total
+                ProjGrid(x, y).Details(i).Color = total
                 
                 Get #fn, , total
-                ProjGrid(X, Y).Details(i).Stitch = total
+                ProjGrid(x, y).Details(i).Stitch = total
             Loop
         End If
             
-        Y = Y + 1
-        If Y = ThatchYUnits + 1 Then
-            X = X + 1
-            If X = ThatchXUnits + 1 Then
+        y = y + 1
+        If y = ThatchYUnits + 1 Then
+            x = x + 1
+            If x = ThatchXUnits + 1 Then
                 Exit Do
             End If
-           Y = 1
+           y = 1
         End If
     Loop Until EOF(fn)
     
@@ -392,8 +393,8 @@ Public Sub GotoCenter()
 '    Player.Location.Y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) + ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
 '    Player.Location.X = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) + ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
    
-    Player.Location.Y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) ' - ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
-    Player.Location.X = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) ' - ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
+    Player.Location.y = (((BlockHeightY / BlockSqrPerText) * ThatchYUnits) / 2) ' - ((((frmStudio.Top + frmStudio.Designer.Top) / 2) - (frmStudio.Designer.Height / 2)) / Screen.TwipsPerPixelY)
+    Player.Location.x = (((BlockHeightY / BlockSqrPerText) * ThatchXUnits) / 2) ' - ((((frmStudio.Left + frmStudio.Designer.Left) / 2) - (frmStudio.Designer.Width / 2)) / Screen.TwipsPerPixelX)
    
 
     Player.Location.Z = 0
@@ -592,8 +593,8 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     D3DXMatrixIdentity matWorld
     DDevice.SetTransform D3DTS_WORLD, matWorld
 
-    Dim X As Single
-    Dim Y As Single
+    Dim x As Single
+    Dim y As Single
 
     Dim cursetX As Single
     Dim cursetY As Single
@@ -625,8 +626,8 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
         DDevice.SetTexture 1, ThatchSkins(ThatchIndex)
     End If
 
-    For Y = (ThatchYUnits - (BlockSqrPerText - 1)) To 0 Step -BlockSqrPerText
-        For X = (ThatchXUnits - (BlockSqrPerText - 1)) To 0 Step -BlockSqrPerText
+    For y = (ThatchYUnits - (BlockSqrPerText - 1)) To 0 Step -BlockSqrPerText
+        For x = (ThatchXUnits - (BlockSqrPerText - 1)) To 0 Step -BlockSqrPerText
 
             D3DXMatrixIdentity matWorld
             SetLocatoins -offsetx + cursetX, -offsety + cursetY, TwoDimension, 256 + 68, 256 + 68
@@ -668,12 +669,12 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     Dim p1 As D3DVECTOR 'StartPoint on the nearplane
     Dim p2 As D3DVECTOR 'EndPoint on the farplane
 
-    p1.X = MouseX * NEAR
-    p1.Y = MouseY * NEAR
+    p1.x = MouseX * NEAR
+    p1.y = MouseY * NEAR
     p1.Z = NEAR
 
-    p2.X = MouseX * FAR
-    p2.Y = MouseY * FAR
+    p2.x = MouseX * FAR
+    p2.y = MouseY * FAR
     p2.Z = FAR
 
     'Inverse the view matrix
@@ -687,9 +688,9 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     D3DXVec3Subtract vDir, p2, p1
 
     'Check if the points hit
-    Dim V1 As D3DVECTOR
-    Dim V2 As D3DVECTOR
-    Dim V3 As D3DVECTOR
+    Dim v1 As D3DVECTOR
+    Dim v2 As D3DVECTOR
+    Dim v3 As D3DVECTOR
 
     Dim V4 As D3DVECTOR
     Dim v5 As D3DVECTOR
@@ -698,21 +699,21 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
     Dim pPlane1 As D3DVECTOR4
 
     Dim cnt As Long
-    V1.X = ThatchVertex(0).X
-    V1.Y = ThatchVertex(0).Y
-    V1.Z = ThatchVertex(0).Z
+    v1.x = ThatchVertex(0).x
+    v1.y = ThatchVertex(0).y
+    v1.Z = ThatchVertex(0).Z
 
-    V2.X = ThatchVertex(1).X
-    V2.Y = ThatchVertex(1).Y
-    V2.Z = ThatchVertex(1).Z
+    v2.x = ThatchVertex(1).x
+    v2.y = ThatchVertex(1).y
+    v2.Z = ThatchVertex(1).Z
 
-    V3.X = ThatchVertex(2).X
-    V3.Y = ThatchVertex(2).Y
-    V3.Z = ThatchVertex(2).Z
+    v3.x = ThatchVertex(2).x
+    v3.y = ThatchVertex(2).y
+    v3.Z = ThatchVertex(2).Z
 
-    pPlane1 = Create4DPlaneVectorFromPoints(V1, V2, V3)
+    pPlane1 = Create4DPlaneVectorFromPoints(v1, v2, v3)
 
-    Dim c As D3DVECTOR
+    Dim C As D3DVECTOR
     Dim N As D3DVECTOR
     Dim P As D3DVECTOR
     Dim V As D3DVECTOR
@@ -728,26 +729,26 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
 
     LastScreenSetX = ScreenSetX
     LastScreenSetY = ScreenSetY
-    ScreenSetX = vIntersect.X
-    ScreenSetY = vIntersect.Y
+    ScreenSetX = vIntersect.x
+    ScreenSetY = vIntersect.y
 
     If hit = True Then
-        X = 1
-        Y = 1
+        x = 1
+        y = 1
         hit = False
 
-        If ((vIntersect.X > -offsetx) And (vIntersect.Y > -offsety)) And _
-             ((vIntersect.X <= -offsetx + BlockCoordX(ThatchXUnits + 1)) And (vIntersect.Y <= -offsety + BlockCoordY(ThatchYUnits + 1))) Then
+        If ((vIntersect.x > -offsetx) And (vIntersect.y > -offsety)) And _
+             ((vIntersect.x <= -offsetx + BlockCoordX(ThatchXUnits + 1)) And (vIntersect.y <= -offsety + BlockCoordY(ThatchYUnits + 1))) Then
 
-            X = vIntersect.X + offsetx
-            cursetX = (X Mod BlockWidthX)
+            x = vIntersect.x + offsetx
+            cursetX = (x Mod BlockWidthX)
             If cursetX < 0 Then cursetX = InvertNum(-cursetX, BlockWidthX) / 2
-            offsetx = (X \ BlockWidthX) + IIf(cursetX <> 0, ThreadSize, 0)
+            offsetx = (x \ BlockWidthX) + IIf(cursetX <> 0, ThreadSize, 0)
 
-            Y = vIntersect.Y + offsety
-            cursetY = (Y Mod BlockHeightY)
+            y = vIntersect.y + offsety
+            cursetY = (y Mod BlockHeightY)
             If cursetY < 0 Then cursetY = InvertNum(-cursetY, BlockHeightY) / 2
-            offsety = (Y \ BlockHeightY) + IIf(cursetY <> 0, ThreadSize, 0)
+            offsety = (y \ BlockHeightY) + IIf(cursetY <> 0, ThreadSize, 0)
 
             hit = True
 
@@ -782,8 +783,8 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
         DetailSetX = cursetX
         DetailSetY = cursetY
 
-        cursetX = ((X \ BlockWidthX) * BlockWidthX) - ((BlockWidthX * ThatchXUnits) / 2) + (BlockWidthX * 2)
-        cursetY = ((Y \ BlockHeightY) * BlockHeightY) - ((BlockHeightY * ThatchYUnits) / 2) + (BlockHeightY * 2)
+        cursetX = ((x \ BlockWidthX) * BlockWidthX) - ((BlockWidthX * ThatchXUnits) / 2) + (BlockWidthX * 2)
+        cursetY = ((y \ BlockHeightY) * BlockHeightY) - ((BlockHeightY * ThatchYUnits) / 2) + (BlockHeightY * 2)
 
     Else
         BlockSetX = 0
@@ -794,13 +795,13 @@ Public Sub RenderView(Optional ByVal TwoDimension As Boolean = False, Optional B
 
     
     Dim i As Byte
-    For X = 1 To ThatchXUnits
-        For Y = 1 To ThatchYUnits
+    For x = 1 To ThatchXUnits
+        For y = 1 To ThatchYUnits
             'If ProjGrid(X, Y).count > 0 Then
-                For i = 1 To ProjGrid(X, Y).Count
+                For i = 1 To ProjGrid(x, y).Count
                     'If ProjGrid(X, Y).Details(i).Stitch > 0 Then
                     
-                        DrawStitch X, Y, ProjGrid(X, Y).Details(i).Stitch, ProjGrid(X, Y).Details(i).Color, TwoDimension
+                        DrawStitch x, y, ProjGrid(x, y).Details(i).Stitch, ProjGrid(x, y).Details(i).Color, TwoDimension
 
                     'End If
                 Next
@@ -949,37 +950,37 @@ Private Sub SetLocatoins(ByVal locX As Single, ByVal locY As Single, TwoDimensio
             ScreenImgVert(1) = MakeScreen((locX + BlockX + BlockY + (BlockX / 2)), (locY + BlockY + (BlockX / 2)), -1, 0, 1)
             ScreenImgVert(2) = MakeScreen((locX + (BlockX / 2)), (locY + (BlockX / 2)), -1, 1, 0)
             ScreenImgVert(3) = MakeScreen((locX + BlockX + (BlockX / 2)), (locY + (BlockX / 2)), -1, 0, 0)
-            ScreenImgVert(0).Y = (-totY - ScreenImgVert(0).Y) + (totY * 2)
-            ScreenImgVert(1).Y = (-totY - ScreenImgVert(1).Y) + (totY * 2)
-            ScreenImgVert(2).Y = (-totY - ScreenImgVert(2).Y) + (totY * 2)
-            ScreenImgVert(3).Y = (-totY - ScreenImgVert(3).Y) + (totY * 2)
+            ScreenImgVert(0).y = (-totY - ScreenImgVert(0).y) + (totY * 2)
+            ScreenImgVert(1).y = (-totY - ScreenImgVert(1).y) + (totY * 2)
+            ScreenImgVert(2).y = (-totY - ScreenImgVert(2).y) + (totY * 2)
+            ScreenImgVert(3).y = (-totY - ScreenImgVert(3).y) + (totY * 2)
         ElseIf LineType = 2 Then 'black
             ScreenImgVert(0) = MakeScreen((locX + (BlockX / 2)), (locY + BlockY + (BlockX / 2)), -1, 1, 1)
             ScreenImgVert(1) = MakeScreen((locX + BlockX + (BlockX / 2)), (locY + BlockY + (BlockX / 2)), -1, 0, 1)
             ScreenImgVert(2) = MakeScreen((locX + BlockY + (BlockX / 2)), (locY + (BlockX / 2)), -1, 1, 0)
             ScreenImgVert(3) = MakeScreen((locX + BlockX + BlockY + (BlockX / 2)), (locY + (BlockX / 2)), -1, 0, 0)
-            ScreenImgVert(0).Y = (-totY - ScreenImgVert(0).Y) + (totY * 2)
-            ScreenImgVert(1).Y = (-totY - ScreenImgVert(1).Y) + (totY * 2)
-            ScreenImgVert(2).Y = (-totY - ScreenImgVert(2).Y) + (totY * 2)
-            ScreenImgVert(3).Y = (-totY - ScreenImgVert(3).Y) + (totY * 2)
+            ScreenImgVert(0).y = (-totY - ScreenImgVert(0).y) + (totY * 2)
+            ScreenImgVert(1).y = (-totY - ScreenImgVert(1).y) + (totY * 2)
+            ScreenImgVert(2).y = (-totY - ScreenImgVert(2).y) + (totY * 2)
+            ScreenImgVert(3).y = (-totY - ScreenImgVert(3).y) + (totY * 2)
         ElseIf LineType = 3 Then 'vertical
             ScreenImgVert(0) = MakeScreen((locX - (BlockY / 2)), (locY + BlockY + (BlockX / 2)), -1, 1, 1)
             ScreenImgVert(1) = MakeScreen((locX + BlockX - (BlockY / 2)), (locY + BlockY + (BlockX / 2)), -1, 0, 1)
             ScreenImgVert(2) = MakeScreen((locX - (BlockY / 2)), (locY + (BlockX / 2)), -1, 1, 0)
             ScreenImgVert(3) = MakeScreen((locX + BlockX - (BlockY / 2)), (locY + (BlockX / 2)), -1, 0, 0)
-            ScreenImgVert(0).Y = (-totY - ScreenImgVert(0).Y) + (totY * 2)
-            ScreenImgVert(1).Y = (-totY - ScreenImgVert(1).Y) + (totY * 2)
-            ScreenImgVert(2).Y = (-totY - ScreenImgVert(2).Y) + (totY * 2)
-            ScreenImgVert(3).Y = (-totY - ScreenImgVert(3).Y) + (totY * 2)
+            ScreenImgVert(0).y = (-totY - ScreenImgVert(0).y) + (totY * 2)
+            ScreenImgVert(1).y = (-totY - ScreenImgVert(1).y) + (totY * 2)
+            ScreenImgVert(2).y = (-totY - ScreenImgVert(2).y) + (totY * 2)
+            ScreenImgVert(3).y = (-totY - ScreenImgVert(3).y) + (totY * 2)
         ElseIf LineType = 4 Then 'horizontal
             ScreenImgVert(0) = MakeScreen((locX + (BlockY / 2)), (locY - BlockY - (BlockX / 2)), -1, 1, 1)
             ScreenImgVert(1) = MakeScreen((locX + BlockX + (BlockY / 2)), (locY - BlockY - (BlockX / 2)), -1, 0, 1)
             ScreenImgVert(2) = MakeScreen((locX + (BlockY / 2)), (locY - (BlockX / 2)), -1, 1, 0)
             ScreenImgVert(3) = MakeScreen((locX + BlockX + (BlockY / 2)), (locY - (BlockX / 2)), -1, 0, 0)
-            ScreenImgVert(0).Y = (-totY - ScreenImgVert(0).Y) + (totY * 2)
-            ScreenImgVert(1).Y = (-totY - ScreenImgVert(1).Y) + (totY * 2)
-            ScreenImgVert(2).Y = (-totY - ScreenImgVert(2).Y) + (totY * 2)
-            ScreenImgVert(3).Y = (-totY - ScreenImgVert(3).Y) + (totY * 2)
+            ScreenImgVert(0).y = (-totY - ScreenImgVert(0).y) + (totY * 2)
+            ScreenImgVert(1).y = (-totY - ScreenImgVert(1).y) + (totY * 2)
+            ScreenImgVert(2).y = (-totY - ScreenImgVert(2).y) + (totY * 2)
+            ScreenImgVert(3).y = (-totY - ScreenImgVert(3).y) + (totY * 2)
         End If
     End If
 
@@ -1003,7 +1004,7 @@ Public Sub DrawStitch(ByVal BlockX As Single, ByVal BlockY As Single, ByVal Thre
         
     Dim a As Single
     Dim S As Single
-    Dim c As Single
+    Dim C As Single
     Dim t As Single
     
     If frmStudio.TabStrip1.SelectedItem.Key = "pattern" Then
@@ -1343,15 +1344,15 @@ End Sub
 
 Public Function CountColorUsed(ByVal Color As Long) As Long
 
-    Dim X As Single
-    Dim Y As Single
+    Dim x As Single
+    Dim y As Single
     Dim i As Byte
-    For X = 1 To ThatchXUnits
-        For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).Count > 0 Then
-                For i = 1 To ProjGrid(X, Y).Count
-                    If ProjGrid(X, Y).Details(i).Stitch > 0 Then
-                        If Color = ProjGrid(X, Y).Details(i).Color Then CountColorUsed = CountColorUsed + 1
+    For x = 1 To ThatchXUnits
+        For y = 1 To ThatchYUnits
+            If ProjGrid(x, y).Count > 0 Then
+                For i = 1 To ProjGrid(x, y).Count
+                    If ProjGrid(x, y).Details(i).Stitch > 0 Then
+                        If Color = ProjGrid(x, y).Details(i).Color Then CountColorUsed = CountColorUsed + 1
                     End If
                 Next
             End If
@@ -1362,15 +1363,15 @@ End Function
 
 Public Function RemoveColorUsed(ByVal Color As Long) As Long
 
-    Dim X As Single
-    Dim Y As Single
+    Dim x As Single
+    Dim y As Single
     Dim i As Byte
-    For X = 1 To ThatchXUnits
-        For Y = 1 To ThatchYUnits
-            If ProjGrid(X, Y).Count > 0 Then
-                For i = 1 To ProjGrid(X, Y).Count
-                    If ProjGrid(X, Y).Details(i).Stitch > 0 Then
-                        If Color = ProjGrid(X, Y).Details(i).Color Then ProjGrid(X, Y).Details(i).Stitch = 0
+    For x = 1 To ThatchXUnits
+        For y = 1 To ThatchYUnits
+            If ProjGrid(x, y).Count > 0 Then
+                For i = 1 To ProjGrid(x, y).Count
+                    If ProjGrid(x, y).Details(i).Stitch > 0 Then
+                        If Color = ProjGrid(x, y).Details(i).Color Then ProjGrid(x, y).Details(i).Stitch = 0
                     End If
                 Next
             End If
@@ -1396,6 +1397,7 @@ Public Sub ResizeMultidimArray()
 
         ReDim ProjGrid(1 To ThatchXUnits, 1 To ThatchYUnits) As GridItem
     Else
+        'If Not ProjGrid Is Nothing Then
     
         xcount = LBound(ProjGrid, 1)
         ycount = LBound(ProjGrid, 2)
@@ -1405,7 +1407,7 @@ Public Sub ResizeMultidimArray()
                 xs(xcount, ycount) = ProjGrid(xcount, ycount)
             Next
         Next
-    
+
         Erase ProjGrid
         ReDim ProjGrid(1 To ThatchXUnits, 1 To ThatchYUnits) As GridItem
 
