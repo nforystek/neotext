@@ -78,72 +78,41 @@ Private Sub Command1_Click()
             Set frm = mdiMain.ActiveForm
             Command1.Enabled = False
             Text1.Enabled = False
-            Debug.Print SoundLevelAtDistance(CInt(Text1.Text))
+
+
+'            frm.WaveView1.WaveSaveAs frm.WaveView1.FileName
+'            Exit Sub
+'################################################################################################################################################
+'################################################################################################################################################
+'################################################################################################################################################
+           
             
-           ' frm.WaveView1.WaveSaveAs frm.WaveView1.FileName
-'################################################################################################################################################
-'################################################################################################################################################
-'################################################################################################################################################
-'            Dim nfrm As New frmMain
-'            ChangeWaveVolume frm.WaveView1.FileName, App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
-'            AddSilenceToWav App.Path & "\downvol.wav", App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
-'            MixWavFiles App.Path & "\withsilence.wav", frm.WaveView1.FileName, App.Path & "\combined.wav"
-'            SubtractWavFile App.Path & "\combined.wav", frm.WaveView1.FileName, App.Path & "\final.wav"
-'            nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
+            
 '################################################################################################################################################
 '################################################################################################################################################
 '################################################################################################################################################
             
-            
-            
+
+
             Dim nfrm As New frmMain
+            
             AddSilenceToWav frm.WaveView1.FileName, App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
-            ChangeWaveVolume App.Path & "\withsilence.wav", App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
-            
-            MixWavFiles App.Path & "\withsilence.wav", frm.WaveView1.FileName, App.Path & "\combined.wav"
-            SubtractWavFile App.Path & "\combined.wav", frm.WaveView1.FileName, App.Path & "\beforevol.wav"
-
-            SubtractWavFile App.Path & "\withsilence.wav", App.Path & "\beforevol.wav", App.Path & "\combined.wav"
-            
-            Dim db1 As Double
-            Dim db2 As Double
-            db1 = GetPeakDBFS(frm.WaveView1.FileName)
-            db2 = GetPeakDBFS(App.Path & "\combined.wav")
-            
-            If (db1 - db2) <> 0 Then
-                ChangeWaveVolume App.Path & "\combined.wav", App.Path & "\final.wav", db2 + (db1 - db2)
-                nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
-            Else
-                nfrm.WaveView1.WaveFromFile App.Path & "\combined.wav"
-            End If
-            
-'            Dim nfrm As New frmMain
-'            AddSilenceToWav frm.WaveView1.FileName, App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
-'            ChangeWaveVolume App.Path & "\withsilence.wav", App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
-'
-'            MixWavFiles App.Path & "\withsilence.wav", frm.WaveView1.FileName, App.Path & "\combined.wav"
-'            SubtractWavFile App.Path & "\combined.wav", frm.WaveView1.FileName, App.Path & "\beforevol.wav"
-'
-'            SubtractWavFile App.Path & "\beforevol.wav", App.Path & "\withsilence.wav", App.Path & "\combined.wav"
-'
-'            Dim db1 As Double
-'            Dim db2 As Double
-'            db1 = GetPeakDBFS(frm.WaveView1.FileName)
-'            db2 = GetPeakDBFS(App.Path & "\beforevol.wav")
-'
-'            If (db1 - db2) <> 0 Then
-'                ChangeWaveVolume App.Path & "\beforevol.wav", App.Path & "\final.wav", db2 + (db1 - db2)
-'                nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
-'            Else
-'                nfrm.WaveView1.WaveFromFile App.Path & "\beforevol.wav"
-'            End If
-            
-            
+            ChangeWaveVolume frm.WaveView1.FileName, App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
+            MixWavFiles App.Path & "\downvol.wav", App.Path & "\withsilence.wav", App.Path & "\combined.wav"
+            BlendWavFiles frm.WaveView1.FileName, App.Path & "\combined.wav", App.Path & "\midwave.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text))
+            SubtractWavFile frm.WaveView1.FileName, App.Path & "\midwave.wav", App.Path & "\halfwave.wav"
+            MixWavFiles App.Path & "\combined.wav", App.Path & "\halfwave.wav", App.Path & "\final.wav"
+            nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
 
 
-
+            
+'################################################################################################################################################
+'################################################################################################################################################
+'################################################################################################################################################
+            
             Me.Hide
-            
+   
+               
             nfrm.Show
             Set nfrm = Nothing
             

@@ -101,22 +101,22 @@ Public Function ChangeWaveVolume(ByVal inFile As String, ByVal outFile As String
     Dim gain As Double
     gain = 10 ^ (dBChange / 20#)
 
-    Dim b() As Byte
+    Dim B() As Byte
     Dim f As Integer
     f = FreeFile
 
     ' Load entire WAV file
     Open inFile For Binary As #f
-        ReDim b(LOF(f) - 1)
-        Get #f, , b
+        ReDim B(LOF(f) - 1)
+        Get #f, , B
     Close #f
 
     ' PCM data starts at offset 44 for standard WAV
     Dim i As Long
     Dim sample As Double
 
-    For i = 44 To UBound(b) Step 2
-        sample = BytesToInt(b(i), b(i + 1))
+    For i = 44 To UBound(B) Step 2
+        sample = BytesToInt(B(i), B(i + 1))
         If sample > 32767 Then sample = sample - 65536
 
         sample = CLng(sample * gain)
@@ -124,13 +124,13 @@ Public Function ChangeWaveVolume(ByVal inFile As String, ByVal outFile As String
         If sample > 32767 Then sample = 32767
         If sample < -32768 Then sample = -32768
 
-        b(i) = sample And &HFF
-        b(i + 1) = (sample \ &H100) And &HFF
+        B(i) = sample And &HFF
+        B(i + 1) = (sample \ &H100) And &HFF
     Next i
 
     f = FreeFile
     Open outFile For Binary As #f
-        Put #f, , b
+        Put #f, , B
     Close #f
 
     ChangeWaveVolume = True
@@ -245,18 +245,16 @@ Public Function AddSilenceToWav( _
     dataSize = hdr(40) + hdr(41) * &H100& + hdr(42) * &H10000 + hdr(43) * &H1000000
 
     '--- read PCM data
-    ReDim data(dataSize - 1)
+    ReDim data(dataSize - 1) As Byte
     Get #f, , data
     Close #f
 
     '--- compute silence length in bytes
-    Dim bytesPerMs As Long
-    bytesPerMs = (sampleRate * blockAlign) \ 1000
-
     Dim silenceBytes As Long
-    silenceBytes = bytesPerMs * SilenceMs
+    silenceBytes = (sampleRate * blockAlign * SilenceMs) \ 1000
+    silenceBytes = (silenceBytes \ blockAlign) * blockAlign
 
-    ReDim silence(silenceBytes - 1)
+    ReDim silence(silenceBytes - 1) As Byte
 
     '--- build new PCM buffer
     Dim newData() As Byte
@@ -265,7 +263,7 @@ Public Function AddSilenceToWav( _
     If AddAtEnd = False Then
         ' silence at beginning
         newSize = silenceBytes + dataSize
-        ReDim newData(newSize - 1)
+        ReDim newData(newSize - 1) As Byte
         ' copy silence
         CopyMemory newData(0), silence(0), silenceBytes
         ' copy original
@@ -273,7 +271,7 @@ Public Function AddSilenceToWav( _
     Else
         ' silence at end
         newSize = dataSize + silenceBytes
-        ReDim newData(newSize - 1)
+        ReDim newData(newSize - 1) As Byte
         ' copy original
         CopyMemory newData(0), data(0), dataSize
         ' copy silence
@@ -296,6 +294,8 @@ Public Function AddSilenceToWav( _
 
     '--- write output file
     f = FreeFile
+    Open outFile For Output As #f
+    Close #f
     Open outFile For Binary As #f
     Put #f, , hdr
     Put #f, , newData
@@ -496,12 +496,20 @@ Public Function MixWavFiles( _
     If bits = 8 Then
         '--- 8-bit unsigned PCM
         For i = 0 To outSize - 1
-            Dim a As Integer, b As Integer, m As Integer
+            Dim a As Integer, B As Integer, m As Integer
 
-            a = IIf(i < sizeA, dataA(i), 128)
-            b = IIf(i < sizeB, dataB(i), 128)
+            If i < sizeA Then
+                a = dataA(i)
+            Else
+                a = 128
+            End If
+            If i < sizeB Then
+                B = dataB(i)
+            Else
+                B = 128
+            End If
 
-            m = (a + b) - 128
+            m = (a + B) - 128
             If m < 0 Then m = 0
             If m > 255 Then m = 255
 
@@ -576,6 +584,393 @@ fail:
     MixWavFiles = False
 End Function
 
+'Public Function AverageWavesDifference( _
+'        ByVal FileA As String, _
+'        ByVal FileB As String, _
+'        ByVal FileC As Variant, _
+'        ByVal outFile As String, ByVal BLatency As Double, Optional ByVal WaveFunc As Integer = 1) As Boolean
+'
+'    On Error GoTo fail
+'
+'    Dim hdrA(43) As Byte, hdrB(43) As Byte, hdrC(43) As Byte
+'    Dim dataA() As Byte, dataB() As Byte, dataC() As Byte
+'
+'    Dim f As Integer
+'
+'    '--- read header A
+'    f = FreeFile
+'    Open FileA For Binary As #f
+'    Get #f, , hdrA
+'    Dim sizeA As Long
+'    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+'    ReDim dataA(sizeA - 1)
+'    Get #f, , dataA
+'    Close #f
+'
+'    '--- read header B
+'    f = FreeFile
+'    Open FileB For Binary As #f
+'    Get #f, , hdrB
+'    Dim sizeB As Long
+'    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+'    ReDim dataB(sizeB - 1)
+'    Get #f, , dataB
+'    Close #f
+'
+'
+'    '--- read header C
+'    f = FreeFile
+'    Open FileC For Binary As #f
+'    Get #f, , hdrC
+'    Dim sizeC As Long
+'    sizeC = hdrC(40) + hdrC(41) * &H100& + hdrC(42) * &H10000 + hdrC(43) * &H1000000
+'    ReDim dataC(sizeC - 1)
+'    Get #f, , dataC
+'    Close #f
+'
+'    '--- extract format (must match)
+'    Dim bits As Integer
+'    Dim blockAlign As Integer
+'
+'   ' Dim channels As Integer
+'    Dim sampleRate As Long
+'    'Dim bitsPerSample As Integer
+'    'Dim blockAlign As Integer
+'
+'
+'
+'    sampleRate = hdrA(24) + hdrA(25) * &H100& + hdrA(26) * &H10000 + hdrA(27) * &H1000000
+'    blockAlign = hdrA(32) + hdrA(33) * &H100&
+'
+'    bits = hdrA(34) + hdrA(35) * &H100&
+'    blockAlign = hdrA(32) + hdrA(33) * &H100&
+'
+'
+'
+'    '--- compute silence length in bytes
+'    Dim silenceBytes As Long
+'    silenceBytes = (sampleRate * blockAlign * BLatency) \ 1000
+'    silenceBytes = (silenceBytes \ blockAlign) * blockAlign
+'
+'    Dim silenceHalfBytes As Long
+'    silenceHalfBytes = ((silenceBytes / 2) + 1)
+'
+'    '--- choose larger size
+'    Dim outSize As Long
+'    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+'
+'    Dim outData() As Byte
+'    ReDim outData(outSize - 1)
+'
+'    Dim i As Long
+'
+'    If bits = 8 Then
+'        '--- 8-bit unsigned PCM
+'        For i = 0 To outSize - 1 - silenceBytes
+'            Dim a As Integer, B As Integer, C As Integer, m As Integer
+'
+'            a = IIf(i < sizeA, dataA(i), 128)
+'            B = IIf(i < sizeB, dataB(silenceBytes + i), 128)
+'
+'            C = IIf(i < sizeC, dataC(silenceBytes + i), 128)
+'
+'            If WaveFunc = 1 Then
+'                m = (a + B + C) / 3 - 128
+'            ElseIf WaveFunc = 2 Then
+'                m = ((a + B) - C) - 128
+'            End If
+'            If m < 0 Then m = 0
+'            If m > 255 Then m = 255
+'
+'            outData(i) = m
+'        Next i
+'
+'    ElseIf bits = 16 Then
+'        '--- 16-bit signed PCM
+'        For i = 0 To outSize - 1 Step 2
+'            Dim sa1 As Long, sb1 As Long, sc1 As Long, sm As Long, sa2 As Long, sb2 As Long, sc2 As Long, sa3 As Long, sb3 As Long, sc3  As Long
+'
+'            '--- sample A1
+'            If i + 1 < sizeA Then
+'                sa1 = BytesToInt(dataA(i), dataA(i + 1))
+'                If sa1 > 32767 Then sa1 = sa1 - 65536
+'            Else
+'                sa1 = 0
+'            End If
+'            '--- sample A2
+'            If silenceBytes + i + 1 < sizeA Then
+'                sa2 = BytesToInt(dataA(silenceBytes + i), dataA(silenceBytes + i + 1))
+'                If sa2 > 32767 Then sa2 = sa2 - 65536
+'            Else
+'                sa2 = 0
+'            End If
+'            '--- sample A3
+'            If silenceHalfBytes + i + 1 < sizeA Then
+'                sa3 = BytesToInt(dataA(silenceHalfBytes + i), dataA(silenceHalfBytes + i + 1))
+'                If sa3 > 32767 Then sa3 = sa3 - 65536
+'            Else
+'                sa3 = 0
+'            End If
+'
+'            '--- sample B1
+'            If i + 1 < sizeB Then
+'                sb1 = BytesToInt(dataB(i), dataB(i + 1))
+'                If sb1 > 32767 Then sb1 = sb1 - 65536
+'            Else
+'                sb1 = 0
+'            End If
+'            '--- sample B2
+'            If silenceBytes + i + 1 < sizeB Then
+'                sb2 = BytesToInt(dataB(silenceBytes + i), dataB(silenceBytes + i + 1))
+'                If sb2 > 32767 Then sb2 = sb2 - 65536
+'            Else
+'                sb2 = 0
+'            End If
+'            '--- sample B3
+'            If silenceHalfBytes + 1 + i < sizeB Then
+'                sb3 = BytesToInt(dataB(silenceHalfBytes + i), dataB(silenceHalfBytes + i + 1))
+'                If sb3 > 32767 Then sb3 = sb3 - 65536
+'            Else
+'                sb3 = 0
+'            End If
+'
+'            '--- sample C1
+'            If i + 1 < sizeC Then
+'                sc1 = BytesToInt(dataC(i), dataC(i + 1))
+'                If sc1 > 32767 Then sc1 = sc1 - 65536
+'            Else
+'                sc1 = 0
+'            End If
+'            '--- sample C2
+'            If silenceBytes + i + 1 < sizeC Then
+'                sc2 = BytesToInt(dataC(silenceBytes + i), dataC(silenceBytes + i + 1))
+'                If sc2 > 32767 Then sc2 = sc2 - 65536
+'            Else
+'                sc2 = 0
+'            End If
+'            '--- sample C3
+'            If silenceHalfBytes + i + 1 < sizeC Then
+'                sc3 = BytesToInt(dataC(silenceHalfBytes + i), dataC(silenceHalfBytes + i + 1))
+'                If sc3 > 32767 Then sc3 = sc3 - 65536
+'            Else
+'                sc3 = 0
+'            End If
+'
+'            '--- mix
+'            If WaveFunc = 1 Then
+'                sm = ((sa1 + sb2 + sc2) / 3)
+'            ElseIf WaveFunc = 2 Then
+'                sm = ((sa1 + sb2) - sc2)
+'            ElseIf WaveFunc = 3 Then
+'                sm = ((sa3 + sb3 + sc3) / 3)
+'            End If
+'
+'            If sm < -32768 Then sm = -32768
+'            If sm > 32767 Then sm = 32767
+'
+'            '--- store
+'            Dim us As Long
+'            If sm < 0 Then
+'                us = sm + 65536
+'            Else
+'                us = sm
+'            End If
+'
+'            outData(i) = us And &HFF&
+'            outData(i + 1) = (us \ &H100&) And &HFF&
+'        Next i
+'    End If
+'
+'    '--- update header A (use A's format)
+'    Dim riffSize As Long
+'    riffSize = 36 + outSize
+'
+'    hdrA(4) = riffSize And &HFF&
+'    hdrA(5) = (riffSize \ &H100&) And &HFF&
+'    hdrA(6) = (riffSize \ &H10000) And &HFF&
+'    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+'
+'    hdrA(40) = outSize And &HFF&
+'    hdrA(41) = (outSize \ &H100&) And &HFF&
+'    hdrA(42) = (outSize \ &H10000) And &HFF&
+'    hdrA(43) = (outSize \ &H1000000) And &HFF&
+'
+'    '--- write output
+'    f = FreeFile
+'    Open outFile For Binary As #f
+'    Put #f, , hdrB
+'    Put #f, , outData
+'    Close #f
+'
+'    AverageWavesDifference = True
+'    Exit Function
+'
+'fail:
+'    Close #f
+'    AverageWavesDifference = False
+'End Function
+
+Public Function BlendWavFiles( _
+        ByVal FileA As String, _
+        ByVal FileB As String, _
+        ByVal outFile As String, ByVal BLatency As Double) As Boolean
+
+    On Error GoTo fail
+
+    Dim hdrA(43) As Byte, hdrB(43) As Byte
+    Dim dataA() As Byte, dataB() As Byte
+    Dim f As Integer
+
+    '--- read header A
+    f = FreeFile
+    Open FileA For Binary As #f
+    Get #f, , hdrA
+    Dim sizeA As Long
+    sizeA = hdrA(40) + hdrA(41) * &H100& + hdrA(42) * &H10000 + hdrA(43) * &H1000000
+    ReDim dataA(sizeA - 1)
+    Get #f, , dataA
+    Close #f
+
+    '--- read header B
+    f = FreeFile
+    Open FileB For Binary As #f
+    Get #f, , hdrB
+    Dim sizeB As Long
+    sizeB = hdrB(40) + hdrB(41) * &H100& + hdrB(42) * &H10000 + hdrB(43) * &H1000000
+    ReDim dataB(sizeB - 1)
+    Get #f, , dataB
+    Close #f
+
+    '--- extract format (must match)
+    Dim bits As Integer
+    Dim blockAlign As Integer
+
+   ' Dim channels As Integer
+    Dim sampleRate As Long
+    'Dim bitsPerSample As Integer
+    'Dim blockAlign As Integer
+
+    sampleRate = hdrA(24) + hdrA(25) * &H100& + hdrA(26) * &H10000 + hdrA(27) * &H1000000
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+    
+    bits = hdrA(34) + hdrA(35) * &H100&
+    blockAlign = hdrA(32) + hdrA(33) * &H100&
+    
+
+    '--- compute silence length in bytes
+    Dim silenceBytes As Long
+    silenceBytes = (sampleRate * blockAlign * BLatency) \ 1000
+    silenceBytes = (silenceBytes \ blockAlign) * blockAlign
+    
+    Dim silenceHalfBytes As Long
+    silenceHalfBytes = ((silenceBytes / 2) + 1)
+    
+    '--- choose larger size
+    Dim outSize As Long
+    outSize = IIf(sizeA > sizeB, sizeA, sizeB)
+
+    Dim outData() As Byte
+    ReDim outData(outSize - 1)
+
+    Dim i As Long
+
+    If bits = 8 Then
+        '--- 8-bit unsigned PCM
+        For i = silenceHalfBytes To outSize - silenceHalfBytes - 1
+            Dim a As Integer, B As Integer, m As Integer
+
+            If i < sizeA Then
+                a = dataA(i)
+            Else
+                a = 128
+            End If
+            If i + silenceBytes < sizeB Then
+                B = dataB(i + silenceBytes)
+            Else
+                B = 128
+            End If
+
+            m = ((a + B) / 2) - 128
+
+            If m < 0 Then m = 0
+            If m > 255 Then m = 255
+
+            If i + silenceHalfBytes < outSize Then
+                outData(i + silenceHalfBytes) = m
+            End If
+        Next i
+
+    ElseIf bits = 16 Then
+        '--- 16-bit signed PCM
+        For i = 0 To outSize - 1 Step 2
+            Dim sa As Long, sb As Long, sm As Long
+
+            '--- sample A
+            If i < sizeA Then
+                sa = BytesToInt(dataA(i), dataA(i + 1))
+                If sa > 32767 Then sa = sa - 65536
+            Else
+                sa = 0
+            End If
+
+            '--- sample B
+            If i + silenceBytes < sizeB Then
+                sb = BytesToInt(dataB(i + silenceBytes), dataB(i + silenceBytes + 1))
+                If sb > 32767 Then sb = sb - 65536
+            Else
+                sb = 0
+            End If
+
+            '--- mix
+            sm = (sa + sb) / 2
+            
+            If sm < -32768 Then sm = -32768
+            If sm > 32767 Then sm = 32767
+
+            '--- store
+            Dim us As Long
+            If sm < 0 Then
+                us = sm + 65536
+            Else
+                us = sm
+            End If
+
+            If i + silenceHalfBytes < outSize Then
+                outData(i + silenceHalfBytes) = us And &HFF&
+                outData(i + silenceHalfBytes + 1) = (us \ &H100&) And &HFF&
+            End If
+        Next i
+    End If
+
+    '--- update header A (use A's format)
+    Dim riffSize As Long
+    riffSize = 36 + outSize
+
+    hdrA(4) = riffSize And &HFF&
+    hdrA(5) = (riffSize \ &H100&) And &HFF&
+    hdrA(6) = (riffSize \ &H10000) And &HFF&
+    hdrA(7) = (riffSize \ &H1000000) And &HFF&
+
+    hdrA(40) = outSize And &HFF&
+    hdrA(41) = (outSize \ &H100&) And &HFF&
+    hdrA(42) = (outSize \ &H10000) And &HFF&
+    hdrA(43) = (outSize \ &H1000000) And &HFF&
+
+    '--- write output
+    f = FreeFile
+    Open outFile For Binary As #f
+    Put #f, , hdrA
+    Put #f, , outData
+    Close #f
+
+    BlendWavFiles = True
+    Exit Function
+
+fail:
+    Close #f
+    BlendWavFiles = False
+End Function
+
 Public Function DeductWavFile( _
         ByVal FileA As String, _
         ByVal FileB As String, _
@@ -626,12 +1021,20 @@ Public Function DeductWavFile( _
     If bits = 8 Then
         '--- 8-bit unsigned PCM
         For i = 0 To outSize - 1
-            Dim a As Integer, b As Integer, m As Integer
+            Dim a As Integer, B As Integer, m As Integer
 
-            a = IIf(i < sizeA, dataA(i), 128)
-            b = IIf(i < sizeB, dataB(i), 128)
+            If i < sizeA Then
+                a = dataA(i)
+            Else
+                a = 128
+            End If
+            If i < sizeB Then
+                B = dataB(i)
+            Else
+                B = 128
+            End If
 
-            m = (a - b) - 128
+            m = (a - B) - 128
             If m < 0 Then m = 0
             If m > 255 Then m = 255
 
@@ -756,12 +1159,20 @@ Public Function AverageWavFiles( _
     If bits = 8 Then
         '--- 8-bit unsigned PCM
         For i = 0 To outSize - 1
-            Dim a As Integer, b As Integer, m As Integer
+            Dim a As Integer, B As Integer, m As Integer
 
-            a = IIf(i < sizeA, dataA(i), 128)
-            b = IIf(i < sizeB, dataB(i), 128)
+            If i < sizeA Then
+                a = dataA(i)
+            Else
+                a = 128
+            End If
+            If i < sizeB Then
+                B = dataB(i)
+            Else
+                B = 128
+            End If
 
-            m = ((a + b) / 2) - 128
+            m = ((a + B) / 2) - 128
 
             If m < 0 Then m = 0
             If m > 255 Then m = 255
@@ -888,22 +1299,30 @@ Public Function SubtractWavFile( _
     If bits = 8 Then
         '--- 8-bit unsigned PCM
         For i = 0 To outSize - 1
-            Dim a As Integer, b As Integer, m As Integer
+            Dim a As Integer, B As Integer, m As Integer
 
-            a = IIf(i < sizeA, dataA(i), 128)
-            b = IIf(i < sizeB, dataB(i), 128)
+            If i < sizeA Then
+                a = dataA(i)
+            Else
+                a = 128
+            End If
+            If i < sizeB Then
+                B = dataB(i)
+            Else
+                B = 128
+            End If
 
-            If (Abs(a) > Abs(b)) Then
+            If (Abs(a) > Abs(B)) Then
                 If a > 0 Then
-                    m = (Abs(a) - Abs(b)) - 128
+                    m = (Abs(a) - Abs(B)) - 128
                 ElseIf a < 0 Then
-                    m = -(Abs(a) - Abs(b)) + 128
+                    m = -(Abs(a) - Abs(B)) + 128
                 End If
-            ElseIf (Abs(a) < Abs(b)) Then
-                If b > 0 Then
-                    m = (Abs(b) - Abs(a)) - 128
-                ElseIf b < 0 Then
-                    m = -(Abs(b) - Abs(a)) + 128
+            ElseIf (Abs(a) < Abs(B)) Then
+                If B > 0 Then
+                    m = (Abs(B) - Abs(a)) - 128
+                ElseIf B < 0 Then
+                    m = -(Abs(B) - Abs(a)) + 128
                 End If
             End If
             
@@ -999,14 +1418,14 @@ Public Function GetPeakDBFS(ByVal wavFile As String) As Double
     On Error GoTo ErrHandler
     If CancelCalled Then GoTo ErrHandler
     
-    Dim b() As Byte
+    Dim B() As Byte
     Dim f As Integer
     f = FreeFile
 
     ' Load entire WAV file
     Open wavFile For Binary As #f
-        ReDim b(LOF(f) - 1)
-        Get #f, , b
+        ReDim B(LOF(f) - 1)
+        Get #f, , B
     Close #f
 
     ' PCM data starts at offset 44
@@ -1015,8 +1434,8 @@ Public Function GetPeakDBFS(ByVal wavFile As String) As Double
     Dim peak As Long
     peak = 0
 
-    For i = 44 To UBound(b) - 1 Step 2
-        sample = BytesToInt(b(i), b(i + 1))
+    For i = 44 To UBound(B) - 1 Step 2
+        sample = BytesToInt(B(i), B(i + 1))
         
         ' Convert unsigned to signed
         If sample > 32767 Then sample = sample - 65536
