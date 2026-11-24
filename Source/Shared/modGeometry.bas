@@ -1105,13 +1105,15 @@ Public Function AngleAxisRestrictDegree(ByRef Angles As Point) As Point
     Angles.Z = AngleRestrictDegree(Angles.Z)
     Set AngleAxisRestrictDegree = Angles
 End Function
-
 Public Function AngleRestrict(ByRef Angle1 As Double) As Double
-    Angle1 = Angle1 * DEGREE
-    Angle1 = AngleRestrictDegree(Angle1)
-    AngleRestrict = Round(Angle1 * RADIAN, 6)
-    If AngleRestrict = PI Or AngleRestrict = PI * 2 Or AngleRestrict = 0 Then
-        AngleRestrict = (-AngleRestrict + (PI * 2)) + -(PI * 4)
+    AngleRestrict = Round(Angle1, 6)
+    If AngleRestrict Mod Round(PI, 6) = 0 Or AngleRestrict = 0 Then
+        If AngleRestrict = 0 Then
+            AngleRestrict = (Round(PI, 6) * 2)
+        Else
+            AngleRestrict = AngleRestrict + (Round(PI, 6) * 2)
+        End If
+        AngleRestrict = Round(Round((AngleRestrict + (PI * 2)), 6) - (Round(PI, 6) * 4), 6)
     End If
 End Function
 
