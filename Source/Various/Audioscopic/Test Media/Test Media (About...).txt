@@ -1,0 +1,18 @@
+The file "Test Media (Magic at 4tf away).wav"
+is a 16bit stereo WAVE that is a recordinfg
+of two YoutTube creators, the first closest
+is "Lord Beatjitzu" (an instrumental) which
+was played right next to an omnidirectional
+studio microphone, the second creator is
+"Mystery Man" which is simultaniously being
+played at about 4 feet away from the micro-
+phone on a Roku TV.  The volumes are little
+attempt to be similar when in the room, but
+"Lord Beatjitzu" is predominatly heard by
+default when listening to the wave fle play.
+Loading the media into Audioscopic and then
+selecting "Magic..." from the file menu will
+ask for the distance in which you want to
+isolate out, or filter the media to.  Enter
+4ft and the application will produce a new
+WAVE that hears predominatly "Mystery Man."
