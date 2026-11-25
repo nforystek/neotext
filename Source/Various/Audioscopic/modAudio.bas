@@ -815,7 +815,7 @@ Public Function BlendWavFiles( _
         ByVal FileB As String, _
         ByVal outFile As String, ByVal BLatency As Double) As Boolean
 
-    On Error GoTo fail
+   ' On Error GoTo fail
 
     Dim hdrA(43) As Byte, hdrB(43) As Byte
     Dim dataA() As Byte, dataB() As Byte
@@ -863,7 +863,7 @@ Public Function BlendWavFiles( _
     silenceBytes = (silenceBytes \ blockAlign) * blockAlign
     
     Dim silenceHalfBytes As Long
-    silenceHalfBytes = ((silenceBytes / 2) + 1)
+    silenceHalfBytes = (silenceBytes / 2)
     
     '--- choose larger size
     Dim outSize As Long
@@ -902,11 +902,11 @@ Public Function BlendWavFiles( _
 
     ElseIf bits = 16 Then
         '--- 16-bit signed PCM
-        For i = 0 To outSize - 1 Step 2
+        For i = silenceHalfBytes To outSize - silenceHalfBytes - 1 Step 2
             Dim sa As Long, sb As Long, sm As Long
 
             '--- sample A
-            If i < sizeA Then
+            If i + 1 < sizeA Then
                 sa = BytesToInt(dataA(i), dataA(i + 1))
                 If sa > 32767 Then sa = sa - 65536
             Else
@@ -914,7 +914,7 @@ Public Function BlendWavFiles( _
             End If
 
             '--- sample B
-            If i + silenceBytes < sizeB Then
+            If i + silenceBytes + 1 < sizeB Then
                 sb = BytesToInt(dataB(i + silenceBytes), dataB(i + silenceBytes + 1))
                 If sb > 32767 Then sb = sb - 65536
             Else
@@ -935,7 +935,7 @@ Public Function BlendWavFiles( _
                 us = sm
             End If
 
-            If i + silenceHalfBytes < outSize Then
+            If i + silenceHalfBytes + 1 < outSize Then
                 outData(i + silenceHalfBytes) = us And &HFF&
                 outData(i + silenceHalfBytes + 1) = (us \ &H100&) And &HFF&
             End If

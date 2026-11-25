@@ -94,14 +94,29 @@ Private Sub Command1_Click()
             
 
 
+'            Dim nfrm As New frmMain
+'
+'            AddSilenceToWav frm.WaveView1.FileName, App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
+'            ChangeWaveVolume frm.WaveView1.FileName, App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
+'            MixWavFiles App.Path & "\downvol.wav", App.Path & "\withsilence.wav", App.Path & "\combined.wav"
+'            BlendWavFiles frm.WaveView1.FileName, App.Path & "\combined.wav", App.Path & "\midwave.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text))
+'            SubtractWavFile frm.WaveView1.FileName, App.Path & "\midwave.wav", App.Path & "\halfwave.wav"
+'            MixWavFiles App.Path & "\combined.wav", App.Path & "\halfwave.wav", App.Path & "\final.wav"
+'            nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
+'
+'
+'
+''################################################################################################################################################
+''################################################################################################################################################
+''################################################################################################################################################
+
             Dim nfrm As New frmMain
-            
-            AddSilenceToWav frm.WaveView1.FileName, App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
+
             ChangeWaveVolume frm.WaveView1.FileName, App.Path & "\downvol.wav", SoundLevelAtDistance(CInt(Text1.Text))
+            AddSilenceToWav frm.WaveView1.FileName, App.Path & "\withsilence.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text)), False
             MixWavFiles App.Path & "\downvol.wav", App.Path & "\withsilence.wav", App.Path & "\combined.wav"
-            BlendWavFiles frm.WaveView1.FileName, App.Path & "\combined.wav", App.Path & "\midwave.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text))
-            SubtractWavFile frm.WaveView1.FileName, App.Path & "\midwave.wav", App.Path & "\halfwave.wav"
-            MixWavFiles App.Path & "\combined.wav", App.Path & "\halfwave.wav", App.Path & "\final.wav"
+            BlendWavFiles frm.WaveView1.FileName, App.Path & "\combined.wav", App.Path & "\final.wav", SoundTravelTimeMilliseconds(CInt(Text1.Text))
+
             nfrm.WaveView1.WaveFromFile App.Path & "\final.wav"
 
 
@@ -109,7 +124,7 @@ Private Sub Command1_Click()
 '################################################################################################################################################
 '################################################################################################################################################
 '################################################################################################################################################
-            
+
             Me.Hide
    
                
